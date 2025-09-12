@@ -1,0 +1,308 @@
+import { useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Target, 
+  TrendingUp, 
+  Wallet, 
+  Trophy, 
+  Zap, 
+  Users, 
+  MessageCircle,
+  Settings,
+  Bell,
+  Plus
+} from 'lucide-react';
+
+const Dashboard = () => {
+  const [currentXP] = useState(1250);
+  const [nextLevelXP] = useState(1500);
+  const [level] = useState(8);
+
+  const progressPercentage = (currentXP / nextLevelXP) * 100;
+  
+  const goals = [
+    {
+      id: 1,
+      title: "Viaje a Japón",
+      target: 50000,
+      current: 32500,
+      deadline: "Dic 2024",
+      type: "personal",
+      color: "primary"
+    },
+    {
+      id: 2,
+      title: "Fondo de emergencia",
+      target: 25000,
+      current: 18750,
+      deadline: "Mar 2025",
+      type: "personal",
+      color: "success"
+    },
+    {
+      id: 3,
+      title: "Viaje Grupal - Tulum",
+      target: 15000,
+      current: 8500,
+      deadline: "Jul 2024",
+      type: "group",
+      color: "warning",
+      members: 4
+    }
+  ];
+
+  const recentTransactions = [
+    { id: 1, description: "Starbucks - Insurgentes", amount: -89, category: "Café", time: "Hace 2h" },
+    { id: 2, description: "Salario depositado", amount: 15000, category: "Ingreso", time: "Ayer" },
+    { id: 3, description: "Uber - Casa a oficina", amount: -67, category: "Transporte", time: "Ayer" },
+    { id: 4, description: "Mercado Soriana", amount: -580, category: "Supermercado", time: "2 días" }
+  ];
+
+  const achievements = [
+    { id: 1, title: "Ahorro Constante", description: "7 días seguidos cumpliendo meta diaria", earned: true },
+    { id: 2, title: "Cazador de Ofertas", description: "Usaste 3 promociones esta semana", earned: true },
+    { id: 3, title: "Planificador", description: "Creaste tu primer presupuesto", earned: false }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-hero p-4">
+      <div className="container mx-auto max-w-7xl space-y-6">
+        
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">¡Hola, María! 👋</h1>
+            <p className="text-muted-foreground">Vas excelente con tus metas financieras</p>
+          </div>
+          <div className="flex items-center space-x-3">
+            <Button variant="outline" size="icon">
+              <Bell className="w-4 h-4" />
+            </Button>
+            <Button variant="outline" size="icon">
+              <Settings className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Level Progress */}
+        <Card className="p-6 bg-gradient-card card-glow">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center">
+                <Trophy className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-foreground">Nivel {level} - Ahorrador Pro</h2>
+                <p className="text-muted-foreground">{currentXP} / {nextLevelXP} XP</p>
+              </div>
+            </div>
+            <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">
+              +50 XP hoy
+            </Badge>
+          </div>
+          <Progress value={progressPercentage} className="h-3" />
+          <p className="text-sm text-muted-foreground mt-2">
+            {nextLevelXP - currentXP} XP para el siguiente nivel
+          </p>
+        </Card>
+
+        <div className="grid lg:grid-cols-3 gap-6">
+          
+          {/* Main Goals Section */}
+          <div className="lg:col-span-2 space-y-6">
+            
+            {/* Quick Stats */}
+            <div className="grid md:grid-cols-3 gap-4">
+              <Card className="p-4 bg-gradient-card card-glow hover-lift">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                    <Wallet className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Balance Total</p>
+                    <p className="text-xl font-semibold text-foreground">$23,450</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-4 bg-gradient-card card-glow hover-lift">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-xl bg-success/20 flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-success" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Ahorrado este mes</p>
+                    <p className="text-xl font-semibold text-foreground">$4,200</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-4 bg-gradient-card card-glow hover-lift">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-xl bg-warning/20 flex items-center justify-center">
+                    <Target className="w-5 h-5 text-warning" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Metas activas</p>
+                    <p className="text-xl font-semibold text-foreground">{goals.length}</p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            {/* Goals */}
+            <div>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold text-foreground">Tus Metas</h3>
+                <Button size="sm" className="bg-primary/20 hover:bg-primary/30 text-primary border-primary/30">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Nueva Meta
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                {goals.map((goal) => {
+                  const goalProgress = (goal.current / goal.target) * 100;
+                  return (
+                    <Card key={goal.id} className="p-6 bg-gradient-card card-glow hover-lift">
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <h4 className="text-lg font-semibold text-foreground">{goal.title}</h4>
+                            {goal.type === 'group' && (
+                              <Badge variant="outline" className="text-xs">
+                                <Users className="w-3 h-3 mr-1" />
+                                {goal.members} personas
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground">Meta: {goal.deadline}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-semibold text-foreground">
+                            ${goal.current.toLocaleString()}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            de ${goal.target.toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <Progress value={goalProgress} className="h-3 mb-2" />
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">{Math.round(goalProgress)}% completado</span>
+                        <span className="text-primary font-medium">
+                          ${(goal.target - goal.current).toLocaleString()} restante
+                        </span>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            
+            {/* Chat with AI */}
+            <Card className="p-6 bg-gradient-card card-glow">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                  <MessageCircle className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-foreground">Moni AI Coach</h4>
+                  <p className="text-xs text-muted-foreground">En línea</p>
+                </div>
+              </div>
+              
+              <div className="space-y-3 mb-4">
+                <div className="bg-muted/50 rounded-2xl rounded-bl-md p-3">
+                  <p className="text-sm text-foreground">
+                    ¡Excelente progreso en tu meta de Japón! 🇯🇵 
+                    <br /><br />
+                    Te quedan solo $17,500. Si ahorras $890 extra este mes, ¡estarás súper cerca! 
+                  </p>
+                </div>
+                
+                <div className="bg-primary/20 rounded-2xl rounded-br-md p-3 ml-8">
+                  <p className="text-sm text-foreground">
+                    ¿Cómo puedo ahorrar esos $890 extras? 🤔
+                  </p>
+                </div>
+              </div>
+
+              <Button size="sm" className="w-full bg-primary/20 hover:bg-primary/30 text-primary border-primary/30">
+                <MessageCircle className="w-4 h-4 mr-2" />
+                <a href="/chat" className="no-underline">Continuar chat</a>
+              </Button>
+            </Card>
+
+            {/* Recent Transactions */}
+            <Card className="p-6 bg-gradient-card card-glow">
+              <h4 className="font-semibold text-foreground mb-4">Movimientos Recientes</h4>
+              <div className="space-y-3">
+                {recentTransactions.map((transaction) => (
+                  <div key={transaction.id} className="flex justify-between items-center">
+                    <div>
+                      <p className="text-sm font-medium text-foreground">
+                        {transaction.description}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {transaction.category} • {transaction.time}
+                      </p>
+                    </div>
+                    <span className={`text-sm font-semibold ${
+                      transaction.amount > 0 ? 'text-success' : 'text-foreground'
+                    }`}>
+                      ${Math.abs(transaction.amount)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Achievements */}
+            <Card className="p-6 bg-gradient-card card-glow">
+              <h4 className="font-semibold text-foreground mb-4 flex items-center">
+                <Trophy className="w-4 h-4 mr-2 text-primary" />
+                Logros Recientes
+              </h4>
+              <div className="space-y-3">
+                {achievements.map((achievement) => (
+                  <div key={achievement.id} className={`p-3 rounded-lg border ${
+                    achievement.earned 
+                      ? 'border-primary/30 bg-primary/10' 
+                      : 'border-muted bg-muted/20'
+                  }`}>
+                    <div className="flex items-start space-x-2">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                        achievement.earned ? 'bg-primary text-primary-foreground' : 'bg-muted'
+                      }`}>
+                        {achievement.earned ? <Zap className="w-3 h-3" /> : <Target className="w-3 h-3" />}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-foreground">
+                          {achievement.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {achievement.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
