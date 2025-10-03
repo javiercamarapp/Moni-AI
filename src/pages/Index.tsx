@@ -130,7 +130,7 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section className="px-4 py-20 bg-background/50">
+      <section className="px-4 py-8 sm:py-12 bg-background/50">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center space-y-4 mb-16">
             <h3 className="text-3xl md:text-4xl font-bold text-foreground">
@@ -219,7 +219,7 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="px-4 py-20">
+      <section className="px-4 py-8 sm:py-12">
         <div className="container mx-auto max-w-4xl text-center">
           <Card className="p-12 bg-gradient-card card-glow">
             <div className="space-y-8">
