@@ -153,59 +153,89 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <style>{`
-        @keyframes circuit-flow {
+        @keyframes rotate-pattern {
           0% {
-            background-position: 0% 0%;
+            transform: rotate(0deg);
           }
           100% {
-            background-position: 100% 100%;
+            transform: rotate(360deg);
           }
         }
         
-        @keyframes pulse-dots {
+        @keyframes pulse-glow {
           0%, 100% {
-            opacity: 0.3;
+            opacity: 0.2;
           }
           50% {
-            opacity: 1;
+            opacity: 0.6;
           }
         }
         
-        .ai-circuit-bg {
+        @keyframes float-particles {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-20px);
+          }
+        }
+        
+        .ai-pattern-bg {
           position: relative;
           background: #000000;
           overflow: hidden;
         }
         
-        .ai-circuit-bg::before {
+        .ai-pattern-bg::before {
           content: '';
           position: absolute;
-          inset: 0;
+          inset: -50%;
           background-image: 
-            linear-gradient(90deg, transparent 0%, transparent 48%, rgba(100, 100, 100, 0.1) 49%, rgba(100, 100, 100, 0.1) 51%, transparent 52%, transparent 100%),
-            linear-gradient(0deg, transparent 0%, transparent 48%, rgba(100, 100, 100, 0.1) 49%, rgba(100, 100, 100, 0.1) 51%, transparent 52%, transparent 100%),
-            radial-gradient(circle at 20% 30%, rgba(150, 150, 150, 0.15) 0%, transparent 50%),
-            radial-gradient(circle at 80% 70%, rgba(150, 150, 150, 0.15) 0%, transparent 50%);
-          background-size: 50px 50px, 50px 50px, 200% 200%, 200% 200%;
-          animation: circuit-flow 20s linear infinite;
+            repeating-conic-gradient(from 0deg at 50% 50%, 
+              transparent 0deg 5deg, 
+              rgba(100, 100, 100, 0.1) 5deg 10deg,
+              transparent 10deg 15deg),
+            radial-gradient(circle at center, 
+              transparent 30%, 
+              rgba(120, 120, 120, 0.05) 35%, 
+              transparent 40%,
+              rgba(100, 100, 100, 0.05) 60%,
+              transparent 65%),
+            repeating-radial-gradient(circle at 50% 50%,
+              transparent 0px,
+              rgba(140, 140, 140, 0.08) 2px,
+              transparent 4px,
+              transparent 40px);
+          animation: rotate-pattern 60s linear infinite;
         }
         
-        .ai-circuit-bg::after {
+        .ai-pattern-bg::after {
           content: '';
           position: absolute;
           inset: 0;
           background-image: 
-            radial-gradient(circle, rgba(200, 200, 200, 0.8) 1px, transparent 1px),
-            radial-gradient(circle, rgba(180, 180, 180, 0.6) 1px, transparent 1px);
-          background-size: 60px 60px, 80px 80px;
-          background-position: 0 0, 30px 30px;
-          animation: pulse-dots 3s ease-in-out infinite;
+            linear-gradient(90deg, transparent 0%, transparent 48%, rgba(150, 150, 150, 0.1) 49%, rgba(150, 150, 150, 0.1) 51%, transparent 52%, transparent 100%),
+            linear-gradient(0deg, transparent 0%, transparent 48%, rgba(150, 150, 150, 0.1) 49%, rgba(150, 150, 150, 0.1) 51%, transparent 52%, transparent 100%),
+            radial-gradient(circle, rgba(180, 180, 180, 0.4) 1px, transparent 1px);
+          background-size: 80px 80px, 80px 80px, 40px 40px;
+          animation: pulse-glow 4s ease-in-out infinite, float-particles 8s ease-in-out infinite;
+        }
+        
+        .circuit-overlay {
+          position: absolute;
+          inset: 0;
+          background-image:
+            radial-gradient(ellipse at 20% 30%, rgba(160, 160, 160, 0.15) 0%, transparent 40%),
+            radial-gradient(ellipse at 80% 70%, rgba(140, 140, 140, 0.15) 0%, transparent 40%),
+            radial-gradient(ellipse at 50% 50%, rgba(120, 120, 120, 0.1) 0%, transparent 60%);
+          animation: pulse-glow 6s ease-in-out infinite alternate;
         }
       `}</style>
       
       <div 
-        className="flex-1 flex items-center justify-center p-4 relative ai-circuit-bg"
+        className="flex-1 flex items-center justify-center p-4 relative ai-pattern-bg"
       >
+        <div className="circuit-overlay"></div>
         <div className="w-full max-w-md space-y-8 relative z-10">
         <div className="bg-black/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
           <div className="text-center p-6">
