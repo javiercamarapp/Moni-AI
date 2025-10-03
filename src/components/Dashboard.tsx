@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useToast } from "@/hooks/use-toast";
 import { 
   Target, 
@@ -138,32 +139,94 @@ const Dashboard = () => {
         </Button>
       </div>
 
-      {/* Banner Publicitario */}
+      {/* Banner Publicitario - Carrusel */}
       <div className="mx-4 mb-4">
-        <Card className="bg-muted/30 p-6 relative overflow-hidden border border-border/50">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-primary" />
+        <Carousel className="w-full">
+          <CarouselContent>
+            <CarouselItem>
+              <Card className="bg-muted/30 p-6 relative overflow-hidden border border-border/50">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <TrendingUp className="w-4 h-4 text-primary" />
+                      </div>
+                      <h3 className="text-base sm:text-lg font-semibold text-foreground">
+                        Oferta Especial
+                      </h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      20% de descuento en tu primer inversión
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="text-xs sm:text-sm"
+                    >
+                      Ver más
+                    </Button>
+                  </div>
                 </div>
-                <h3 className="text-base sm:text-lg font-semibold text-foreground">
-                  Oferta Especial
-                </h3>
-              </div>
-              <p className="text-sm text-muted-foreground mb-3">
-                20% de descuento en tu primer inversión
-              </p>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="text-xs sm:text-sm"
-              >
-                Ver más
-              </Button>
-            </div>
-          </div>
-        </Card>
+              </Card>
+            </CarouselItem>
+            
+            <CarouselItem>
+              <Card className="bg-muted/30 p-6 relative overflow-hidden border border-border/50">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <Target className="w-4 h-4 text-primary" />
+                      </div>
+                      <h3 className="text-base sm:text-lg font-semibold text-foreground">
+                        Alcanza tus Metas
+                      </h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Planifica y ahorra para cumplir tus objetivos
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="text-xs sm:text-sm"
+                    >
+                      Comenzar
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            </CarouselItem>
+            
+            <CarouselItem>
+              <Card className="bg-muted/30 p-6 relative overflow-hidden border border-border/50">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <Users className="w-4 h-4 text-primary" />
+                      </div>
+                      <h3 className="text-base sm:text-lg font-semibold text-foreground">
+                        Ahorro en Grupo
+                      </h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Únete a grupos y multiplica tus ahorros
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="text-xs sm:text-sm"
+                    >
+                      Explorar
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            </CarouselItem>
+          </CarouselContent>
+          <CarouselPrevious className="left-2" />
+          <CarouselNext className="right-2" />
+        </Carousel>
       </div>
       
       {/* Bottom Navigation Menu - Fixed */}
