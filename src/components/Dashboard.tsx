@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from "@/hooks/use-toast";
 import { 
   Target, 
   TrendingUp, 
@@ -13,10 +16,58 @@ import {
   MessageCircle,
   Settings,
   Bell,
-  Plus
+  Plus,
+  LogOut
 } from 'lucide-react';
 
 const Dashboard = () => {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // Check authentication
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        navigate("/auth");
+      } else {
+        setUser(session.user);
+      }
+      setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        navigate("/auth");
+      } else {
+        setUser(session.user);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast({
+      title: "Sesión cerrada",
+      description: "Hasta pronto!",
+    });
+    navigate("/");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
   const [currentXP] = useState(1250);
   const [nextLevelXP] = useState(1500);
   const [level] = useState(8);
@@ -74,7 +125,9 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">¡Hola, María! 👋</h1>
+            <h1 className="text-2xl font-bold text-foreground">
+              ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
+            </h1>
             <p className="text-muted-foreground">Vas excelente con tus metas financieras</p>
           </div>
           <div className="flex items-center space-x-3">
@@ -83,6 +136,10 @@ const Dashboard = () => {
             </Button>
             <Button variant="outline" size="icon">
               <Settings className="w-4 h-4" />
+            </Button>
+            <Button variant="outline" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Salir
             </Button>
           </div>
         </div>
@@ -236,9 +293,13 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <Button size="sm" className="w-full bg-primary/20 hover:bg-primary/30 text-primary border-primary/30">
+              <Button 
+                size="sm" 
+                className="w-full bg-primary/20 hover:bg-primary/30 text-primary border-primary/30"
+                onClick={() => navigate("/chat")}
+              >
                 <MessageCircle className="w-4 h-4 mr-2" />
-                <a href="/chat" className="no-underline">Continuar chat</a>
+                Continuar chat
               </Button>
             </Card>
 

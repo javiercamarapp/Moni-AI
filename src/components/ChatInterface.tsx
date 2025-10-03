@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from "@/hooks/use-toast";
 import { 
   MessageCircle, 
   Send, 
@@ -13,16 +16,21 @@ import {
   MoreVertical,
   ArrowLeft,
   Bot,
-  User
+  User,
+  LogOut
 } from 'lucide-react';
 
 const ChatInterface = () => {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [message, setMessage] = useState('');
   const [messages] = useState([
     {
       id: 1,
       type: 'ai',
-      content: "¡Hola María! 👋 Soy tu coach financiero personal. Veo que has estado muy activa ahorrando para tu viaje a Japón. ¡Felicidades! 🎉",
+      content: "¡Hola! 👋 Soy tu coach financiero personal. Veo que has estado muy activa ahorrando para tu viaje a Japón. ¡Felicidades! 🎉",
       timestamp: "10:30 AM",
       read: true
     },
@@ -64,6 +72,48 @@ const ChatInterface = () => {
     }
   ]);
 
+  useEffect(() => {
+    // Check authentication
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        navigate("/auth");
+      } else {
+        setUser(session.user);
+      }
+      setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        navigate("/auth");
+      } else {
+        setUser(session.user);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast({
+      title: "Sesión cerrada",
+      description: "Hasta pronto!",
+    });
+    navigate("/");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
   const handleSendMessage = () => {
     if (message.trim()) {
       // Aquí se enviaría el mensaje
@@ -85,7 +135,7 @@ const ChatInterface = () => {
         <Card className="bg-gradient-card card-glow border-0 rounded-b-none">
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center space-x-3">
-              <Button variant="ghost" size="icon" className="lg:hidden">
+              <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => navigate("/dashboard")}>
                 <ArrowLeft className="w-4 h-4" />
               </Button>
               
@@ -112,8 +162,8 @@ const ChatInterface = () => {
               <Button variant="ghost" size="icon">
                 <Video className="w-4 h-4" />
               </Button>
-              <Button variant="ghost" size="icon">
-                <MoreVertical className="w-4 h-4" />
+              <Button variant="ghost" size="icon" onClick={handleLogout}>
+                <LogOut className="w-4 h-4" />
               </Button>
             </div>
           </div>

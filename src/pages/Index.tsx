@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,7 +8,20 @@ import { Sparkles, Zap, Target, TrendingUp, Users, MessageCircle, Trophy, Shield
 import heroImage from '@/assets/hero-dashboard.jpg';
 
 const Index = () => {
-  const [isAnimated, setIsAnimated] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsLoggedIn(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-hero">
@@ -42,13 +57,22 @@ const Index = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button size="lg" className="bg-gradient-primary text-primary-foreground hover:scale-105 transition-all glow-primary px-8 py-4 text-lg font-semibold">
+              <Button 
+                size="lg" 
+                className="bg-gradient-primary text-primary-foreground hover:scale-105 transition-all glow-primary px-8 py-4 text-lg font-semibold"
+                onClick={() => navigate(isLoggedIn ? "/dashboard" : "/auth")}
+              >
                 <Zap className="w-5 h-5 mr-2" />
-                <a href="/dashboard" className="no-underline">Comenzar Gratis</a>
+                {isLoggedIn ? "Ir al Dashboard" : "Comenzar Gratis"}
               </Button>
-              <Button variant="outline" size="lg" className="px-8 py-4 text-lg border-card-border hover:border-primary/50">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="px-8 py-4 text-lg border-card-border hover:border-primary/50"
+                onClick={() => navigate("/chat")}
+              >
                 <MessageCircle className="w-5 h-5 mr-2" />
-                <a href="/chat" className="no-underline">Ver Demo</a>
+                Ver Demo
               </Button>
             </div>
 
@@ -209,9 +233,13 @@ const Index = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-gradient-primary text-primary-foreground hover:scale-105 transition-all glow-primary px-12 py-4 text-lg font-semibold">
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-primary text-primary-foreground hover:scale-105 transition-all glow-primary px-12 py-4 text-lg font-semibold"
+                  onClick={() => navigate(isLoggedIn ? "/dashboard" : "/auth")}
+                >
                   <Zap className="w-5 h-5 mr-2" />
-                  <a href="/dashboard" className="no-underline">Empezar Ahora Gratis</a>
+                  {isLoggedIn ? "Ir al Dashboard" : "Empezar Ahora Gratis"}
                 </Button>
               </div>
 
