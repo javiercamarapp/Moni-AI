@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import heroAuth from "@/assets/hero-auth.jpg";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -202,14 +203,23 @@ const Auth = () => {
       >
         <div className="w-full max-w-md space-y-8 relative z-10">
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
-          <div className="text-center p-6">
-            <h1 className="text-4xl font-bold text-primary mb-2">Moni</h1>
-            <p className="text-muted-foreground mb-3">
-              {isLogin ? "Inicia sesión en tu cuenta" : "Crea tu cuenta gratis"}
-            </p>
-            <p className="text-center text-sm text-muted-foreground">
-              Primer mes gratis · Después $150 MXN/mes
-            </p>
+          <div className="grid md:grid-cols-2">
+            <div className="text-center p-6 flex flex-col justify-center">
+              <h1 className="text-4xl font-bold text-primary mb-2">Moni</h1>
+              <p className="text-muted-foreground mb-3">
+                {isLogin ? "Inicia sesión en tu cuenta" : "Crea tu cuenta gratis"}
+              </p>
+              <p className="text-center text-sm text-muted-foreground">
+                Primer mes gratis · Después $150 MXN/mes
+              </p>
+            </div>
+            <div className="hidden md:block">
+              <img 
+                src={heroAuth} 
+                alt="Moni Dashboard" 
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
         </div>
 
