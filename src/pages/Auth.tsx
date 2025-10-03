@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
-import heroDashboard from "@/assets/hero-dashboard.jpg";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -153,18 +152,36 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <div 
-        className="flex-1 flex items-center justify-center p-4 relative"
-        style={{
-          backgroundImage: `url(${heroDashboard})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      >
-        {/* Overlay oscuro para mejorar legibilidad */}
-        <div className="absolute inset-0 bg-black/40"></div>
+      <style>{`
+        @keyframes wave {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
         
+        .animated-wave-bg {
+          background: linear-gradient(
+            135deg,
+            #000000 0%,
+            #1a1a1a 25%,
+            #ffffff 50%,
+            #1a1a1a 75%,
+            #000000 100%
+          );
+          background-size: 400% 400%;
+          animation: wave 15s ease infinite;
+        }
+      `}</style>
+      
+      <div 
+        className="flex-1 flex items-center justify-center p-4 relative animated-wave-bg"
+      >
         <div className="w-full max-w-md space-y-8 relative z-10">
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
           {/* Banner horizontal decorativo */}
