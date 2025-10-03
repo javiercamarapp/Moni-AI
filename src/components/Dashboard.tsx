@@ -119,76 +119,73 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-hero pb-20">
-      {/* Top Navigation Menu - Fixed */}
-      <nav className="sticky top-0 z-50 bg-card border-b border-border shadow-lg">
+      {/* Header con saludo y botón de logout para desktop */}
+      <div className="p-4 flex justify-between items-center">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+            ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
+          </h1>
+          <p className="text-sm text-muted-foreground">Vas excelente con tus metas financieras</p>
+        </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleLogout}
+          className="hidden md:flex"
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          Salir
+        </Button>
+      </div>
+      
+      {/* Bottom Navigation Menu - Fixed */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border shadow-lg">
         <div className="container mx-auto px-2">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo/Brand */}
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-xl bg-gradient-primary flex items-center justify-center">
-                <Trophy className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <span className="font-bold text-primary hidden sm:inline">Moni</span>
-            </div>
-
-            {/* Main Navigation - 5 Sections */}
-            <div className="flex items-center space-x-1 sm:space-x-4">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="flex flex-col sm:flex-row items-center gap-0 sm:gap-2 h-auto py-1 px-2 sm:px-3"
-              >
-                <Target className="w-4 h-4" />
-                <span className="text-xs sm:text-sm">Metas</span>
-              </Button>
-
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="flex flex-col sm:flex-row items-center gap-0 sm:gap-2 h-auto py-1 px-2 sm:px-3"
-                onClick={() => navigate("/chat")}
-              >
-                <MessageCircle className="w-4 h-4" />
-                <span className="text-xs sm:text-sm">Chat</span>
-              </Button>
-
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="flex flex-col sm:flex-row items-center gap-0 sm:gap-2 h-auto py-1 px-2 sm:px-3"
-              >
-                <TrendingUp className="w-4 h-4" />
-                <span className="text-xs sm:text-sm">Análisis</span>
-              </Button>
-
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="flex flex-col sm:flex-row items-center gap-0 sm:gap-2 h-auto py-1 px-2 sm:px-3"
-              >
-                <Users className="w-4 h-4" />
-                <span className="text-xs sm:text-sm">Grupos</span>
-              </Button>
-
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="flex flex-col sm:flex-row items-center gap-0 sm:gap-2 h-auto py-1 px-2 sm:px-3"
-              >
-                <Settings className="w-4 h-4" />
-                <span className="text-xs sm:text-sm">Más</span>
-              </Button>
-            </div>
-
-            {/* Logout Button */}
+          <div className="flex items-center justify-around h-16">
             <Button 
-              variant="outline" 
+              variant="ghost" 
               size="sm" 
-              onClick={handleLogout}
-              className="hidden md:flex"
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
             >
-              <LogOut className="h-4 w-4 mr-2" />
-              Salir
+              <Target className="w-5 h-5" />
+              <span className="text-xs">Metas</span>
+            </Button>
+
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+              onClick={() => navigate("/chat")}
+            >
+              <MessageCircle className="w-5 h-5" />
+              <span className="text-xs">Chat</span>
+            </Button>
+
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+            >
+              <TrendingUp className="w-5 h-5" />
+              <span className="text-xs">Análisis</span>
+            </Button>
+
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+            >
+              <Users className="w-5 h-5" />
+              <span className="text-xs">Grupos</span>
+            </Button>
+
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+            >
+              <Settings className="w-5 h-5" />
+              <span className="text-xs">Más</span>
             </Button>
           </div>
         </div>
