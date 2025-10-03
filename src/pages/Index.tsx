@@ -80,11 +80,9 @@ const Index = () => {
                   size="lg" 
                   className="px-8 py-4 text-lg"
                   onClick={async () => {
-                    console.log('Logout desde Index');
+                    localStorage.removeItem('sb-gfojxewccmjwdzdmdfxv-auth-token');
                     await supabase.auth.signOut();
-                    setTimeout(() => {
-                      navigate("/auth");
-                    }, 300);
+                    navigate("/auth");
                   }}
                 >
                   Cerrar Sesión

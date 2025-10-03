@@ -13,32 +13,19 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isChecking, setIsChecking] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Dar un pequeño tiempo para que el signOut() se complete antes de verificar
-    const checkTimer = setTimeout(() => {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        console.log('Session check in Auth:', session ? 'exists' : 'null');
-        if (session) {
-          navigate("/dashboard");
-        }
-        setIsChecking(false);
-      });
-    }, 300);
-
-    // Listen for auth changes
+    // Solo escuchar cambios de auth, no verificar sesión inicial
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state change in Auth:', event, session ? 'session exists' : 'no session');
-      if (session && event !== 'SIGNED_OUT') {
+      // Solo navegar al dashboard en SIGNED_IN o INITIAL_SESSION con sesión válida
+      if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
         navigate("/dashboard");
       }
     });
 
     return () => {
-      clearTimeout(checkTimer);
       subscription.unsubscribe();
     };
   }, [navigate]);

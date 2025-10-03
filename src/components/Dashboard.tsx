@@ -70,30 +70,21 @@ const Dashboard = () => {
 
   const handleLogout = async () => {
     try {
-      console.log('Iniciando logout...');
-      const { error } = await supabase.auth.signOut();
+      // Limpiar localStorage manualmente primero
+      localStorage.removeItem('sb-gfojxewccmjwdzdmdfxv-auth-token');
       
-      if (error) {
-        console.error('Error en signOut:', error);
-      } else {
-        console.log('SignOut exitoso');
-      }
+      await supabase.auth.signOut();
       
       toast({
         title: "Sesión cerrada",
         description: "Hasta pronto!",
       });
       
-      // Dar tiempo suficiente para que el signOut se complete
-      setTimeout(() => {
-        console.log('Navegando a /auth');
-        navigate("/auth");
-      }, 300);
+      // Navegar inmediatamente, el onAuthStateChange ya no interferirá
+      navigate("/auth");
     } catch (error: any) {
       console.error('Error al cerrar sesión:', error);
-      setTimeout(() => {
-        navigate("/auth");
-      }, 300);
+      navigate("/auth");
     }
   };
 
