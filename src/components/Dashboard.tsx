@@ -146,7 +146,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-hero pb-20">
+    <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header con saludo y botón de logout para desktop */}
       <div className="p-4 flex justify-between items-center">
         <div>

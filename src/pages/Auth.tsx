@@ -153,50 +153,6 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <style>{`
-        @keyframes wave-flow {
-          0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%;
-          }
-        }
-        
-        @keyframes wave-3d {
-          0%, 100% {
-            background-position: 0% 50%, 100% 50%, 50% 0%;
-          }
-          33% {
-            background-position: 100% 50%, 0% 50%, 0% 100%;
-          }
-          66% {
-            background-position: 50% 100%, 50% 0%, 100% 50%;
-          }
-        }
-        
-        .animated-wave-bg {
-          background: 
-            radial-gradient(circle at 20% 50%, rgba(60, 60, 60, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 80% 50%, rgba(40, 40, 40, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 50% 80%, rgba(30, 30, 30, 0.4) 0%, transparent 50%),
-            linear-gradient(135deg, 
-              #000000 0%, 
-              #1a1a1a 15%,
-              #2d2d2d 30%,
-              #1f1f1f 45%,
-              #2a2a2a 60%,
-              #151515 75%,
-              #0d0d0d 90%,
-              #000000 100%
-            );
-          background-size: 200% 200%, 200% 200%, 200% 200%, 400% 400%;
-          animation: wave-3d 20s ease-in-out infinite;
-        }
-      `}</style>
       
       <div 
         className="flex-1 flex items-center justify-center py-8 md:py-12 px-2 md:px-4 relative animated-wave-bg"
