@@ -199,7 +199,7 @@ const Auth = () => {
       `}</style>
       
       <div 
-        className="flex-1 flex items-center justify-center p-2 md:p-4 relative animated-wave-bg"
+        className="flex-1 flex items-center justify-center py-8 md:py-12 px-2 md:px-4 relative animated-wave-bg"
       >
         <div className="w-full max-w-[280px] md:max-w-sm space-y-3 md:space-y-8 relative z-10">
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
