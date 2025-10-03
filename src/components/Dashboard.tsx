@@ -174,8 +174,9 @@ const Dashboard = () => {
                 />
                 <div className="absolute inset-0 flex items-end justify-center pb-6">
                   <Button 
-                    size="lg"
-                    className="bg-orange-500 hover:bg-orange-600 text-white font-bold shadow-lg"
+                    variant="outline"
+                    size="sm"
+                    className="text-xs sm:text-sm bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 w-fit"
                   >
                     Comprar Ahora
                   </Button>
