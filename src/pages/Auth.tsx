@@ -166,11 +166,16 @@ const Auth = () => {
         <div className="absolute inset-0 bg-black/40"></div>
         
         <div className="w-full max-w-md space-y-8 relative z-10">
-        <div className="text-center bg-white/95 backdrop-blur-sm p-4 rounded-2xl shadow-lg inline-block mx-auto">
-          <h1 className="text-4xl font-bold text-primary mb-2">Moni</h1>
-          <p className="text-muted-foreground">
-            {isLogin ? "Inicia sesión en tu cuenta" : "Crea tu cuenta gratis"}
-          </p>
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
+          {/* Banner horizontal decorativo */}
+          <div className="h-2 bg-gradient-to-r from-black via-gray-600 to-black"></div>
+          
+          <div className="text-center p-6">
+            <h1 className="text-4xl font-bold text-primary mb-2">Moni</h1>
+            <p className="text-muted-foreground">
+              {isLogin ? "Inicia sesión en tu cuenta" : "Crea tu cuenta gratis"}
+            </p>
+          </div>
         </div>
 
         <div className="bg-card p-8 rounded-2xl border border-border shadow-xl backdrop-blur-sm bg-white/95">
