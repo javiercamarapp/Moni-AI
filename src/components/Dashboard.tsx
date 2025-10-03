@@ -344,32 +344,35 @@ const Dashboard = () => {
           <div className="lg:col-span-2 space-y-6">
             
             {/* Quick Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-              <Card className="p-3 sm:p-4 bg-gradient-card card-glow hover-lift">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-                    <Wallet className="w-5 h-5 text-primary" />
+            <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
+              <div className="space-y-4">
+                {/* Primera sección: Balance y Ahorro */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                      <Wallet className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Balance Total</p>
+                      <p className="text-xl font-semibold text-foreground">$23,450</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Balance Total</p>
-                    <p className="text-xl font-semibold text-foreground">$23,450</p>
+
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-xl bg-success/20 flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-success" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Ahorrado este mes</p>
+                      <p className="text-xl font-semibold text-foreground">$4,200</p>
+                    </div>
                   </div>
                 </div>
-              </Card>
 
-              <Card className="p-4 bg-gradient-card card-glow hover-lift">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-xl bg-success/20 flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-success" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Ahorrado este mes</p>
-                    <p className="text-xl font-semibold text-foreground">$4,200</p>
-                  </div>
-                </div>
-              </Card>
+                {/* Separador */}
+                <div className="border-t border-border"></div>
 
-              <Card className="p-4 bg-gradient-card card-glow hover-lift">
+                {/* Segunda sección: Metas activas */}
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-xl bg-warning/20 flex items-center justify-center">
                     <Target className="w-5 h-5 text-warning" />
@@ -379,8 +382,8 @@ const Dashboard = () => {
                     <p className="text-xl font-semibold text-foreground">{goals.length}</p>
                   </div>
                 </div>
-              </Card>
-            </div>
+              </div>
+            </Card>
 
             {/* Goals */}
             <div>
