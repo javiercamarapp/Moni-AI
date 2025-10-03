@@ -219,6 +219,72 @@ const Auth = () => {
           Primer mes gratis · Después $150 MXN/mes
         </p>
       </div>
+
+      {/* Footer */}
+      <footer className="w-full max-w-6xl mx-auto px-4 py-8 mt-12">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+          {/* Producto */}
+          <div>
+            <h4 className="font-semibold text-foreground mb-4">Producto</h4>
+            <ul className="space-y-2">
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Características</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Precios</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Demo</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Actualizaciones</a></li>
+            </ul>
+          </div>
+
+          {/* Recursos */}
+          <div>
+            <h4 className="font-semibold text-foreground mb-4">Recursos</h4>
+            <ul className="space-y-2">
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Blog</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Guías</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Tutoriales</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Centro de Ayuda</a></li>
+            </ul>
+          </div>
+
+          {/* Empresa */}
+          <div>
+            <h4 className="font-semibold text-foreground mb-4">Empresa</h4>
+            <ul className="space-y-2">
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Nosotros</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Impacto Social</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Carreras</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Contacto</a></li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h4 className="font-semibold text-foreground mb-4">Legal</h4>
+            <ul className="space-y-2">
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Privacidad</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Términos</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Seguridad</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Cookies</a></li>
+            </ul>
+          </div>
+
+          {/* Síguenos */}
+          <div>
+            <h4 className="font-semibold text-foreground mb-4">Síguenos</h4>
+            <ul className="space-y-2">
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Twitter</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Instagram</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">LinkedIn</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">YouTube</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="border-t border-border mt-8 pt-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            © 2025 Moni. Todos los derechos reservados.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };
