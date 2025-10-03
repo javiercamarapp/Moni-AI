@@ -26,7 +26,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-hero">
       {/* Hero Section */}
-      <section className="relative overflow-hidden px-4 py-12 sm:py-16">
+      <section className="relative overflow-hidden px-4 py-8 sm:py-12">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center space-y-8">
             {/* Logo and Badge */}
