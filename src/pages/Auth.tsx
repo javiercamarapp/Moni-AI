@@ -166,7 +166,7 @@ const Auth = () => {
         <div className="absolute inset-0 bg-black/40"></div>
         
         <div className="w-full max-w-md space-y-8 relative z-10">
-        <div className="text-center">
+        <div className="text-center bg-white/95 backdrop-blur-sm p-6 rounded-2xl shadow-lg">
           <Button
             variant="ghost"
             onClick={() => navigate("/")}
@@ -180,7 +180,7 @@ const Auth = () => {
           </p>
         </div>
 
-        <div className="bg-card p-8 rounded-2xl border border-border shadow-xl">
+        <div className="bg-card p-8 rounded-2xl border border-border shadow-xl backdrop-blur-sm bg-white/95">
           <form onSubmit={handleAuth} className="space-y-6">
             {!isLogin && (
               <div className="space-y-2">
@@ -300,7 +300,7 @@ const Auth = () => {
           </div>
         </div>
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-sm text-muted-foreground bg-white/95 backdrop-blur-sm py-3 px-6 rounded-full shadow-lg">
           Primer mes gratis · Después $150 MXN/mes
         </p>
         </div>
