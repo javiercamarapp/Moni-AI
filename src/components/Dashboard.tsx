@@ -74,7 +74,7 @@ const Dashboard = () => {
       title: "Sesión cerrada",
       description: "Hasta pronto!",
     });
-    navigate("/");
+    navigate("/auth");
   };
 
   if (loading) {
