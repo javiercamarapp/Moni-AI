@@ -204,12 +204,12 @@ const Auth = () => {
         <div className="w-full max-w-md space-y-8 relative z-10">
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-2">
-            <div className="text-center p-6 flex flex-col justify-center">
-              <h1 className="text-4xl font-bold text-primary mb-2">Moni</h1>
-              <p className="text-muted-foreground mb-3">
+            <div className="text-center p-3 md:p-6 flex flex-col justify-center">
+              <h1 className="text-2xl md:text-4xl font-bold text-primary mb-1 md:mb-2">Moni</h1>
+              <p className="text-sm md:text-base text-muted-foreground mb-2 md:mb-3">
                 {isLogin ? "Inicia sesión en tu cuenta" : "Crea tu cuenta gratis"}
               </p>
-              <p className="text-center text-sm text-muted-foreground">
+              <p className="text-center text-xs md:text-sm text-muted-foreground">
                 Primer mes gratis · Después $150 MXN/mes
               </p>
             </div>
