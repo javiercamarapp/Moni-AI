@@ -153,34 +153,58 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <style>{`
-        @keyframes wave {
+        @keyframes circuit-flow {
           0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
+            background-position: 0% 0%;
           }
           100% {
-            background-position: 0% 50%;
+            background-position: 100% 100%;
           }
         }
         
-        .animated-wave-bg {
-          background: linear-gradient(
-            135deg,
-            #000000 0%,
-            #1a1a1a 25%,
-            #ffffff 50%,
-            #1a1a1a 75%,
-            #000000 100%
-          );
-          background-size: 400% 400%;
-          animation: wave 15s ease infinite;
+        @keyframes pulse-dots {
+          0%, 100% {
+            opacity: 0.3;
+          }
+          50% {
+            opacity: 1;
+          }
+        }
+        
+        .ai-circuit-bg {
+          position: relative;
+          background: #000000;
+          overflow: hidden;
+        }
+        
+        .ai-circuit-bg::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background-image: 
+            linear-gradient(90deg, transparent 0%, transparent 48%, rgba(100, 100, 100, 0.1) 49%, rgba(100, 100, 100, 0.1) 51%, transparent 52%, transparent 100%),
+            linear-gradient(0deg, transparent 0%, transparent 48%, rgba(100, 100, 100, 0.1) 49%, rgba(100, 100, 100, 0.1) 51%, transparent 52%, transparent 100%),
+            radial-gradient(circle at 20% 30%, rgba(150, 150, 150, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(150, 150, 150, 0.15) 0%, transparent 50%);
+          background-size: 50px 50px, 50px 50px, 200% 200%, 200% 200%;
+          animation: circuit-flow 20s linear infinite;
+        }
+        
+        .ai-circuit-bg::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background-image: 
+            radial-gradient(circle, rgba(200, 200, 200, 0.8) 1px, transparent 1px),
+            radial-gradient(circle, rgba(180, 180, 180, 0.6) 1px, transparent 1px);
+          background-size: 60px 60px, 80px 80px;
+          background-position: 0 0, 30px 30px;
+          animation: pulse-dots 3s ease-in-out infinite;
         }
       `}</style>
       
       <div 
-        className="flex-1 flex items-center justify-center p-4 relative animated-wave-bg"
+        className="flex-1 flex items-center justify-center p-4 relative ai-circuit-bg"
       >
         <div className="w-full max-w-md space-y-8 relative z-10">
         <div className="bg-black/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
