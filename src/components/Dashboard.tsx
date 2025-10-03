@@ -118,8 +118,8 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-hero p-4">
-      <div className="container mx-auto max-w-7xl space-y-6">
+    <div className="min-h-screen bg-gradient-hero p-2 sm:p-4">
+      <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
         
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -144,23 +144,23 @@ const Dashboard = () => {
         </div>
 
         {/* Level Progress */}
-        <Card className="p-6 bg-gradient-card card-glow">
-          <div className="flex items-center justify-between mb-4">
+        <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center">
-                <Trophy className="w-6 h-6 text-primary" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/20 flex items-center justify-center">
+                <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
               </div>
               <div>
                 <h2 className="text-lg sm:text-xl font-semibold text-foreground">Nivel {level} - Ahorrador Pro</h2>
-                <p className="text-muted-foreground">{currentXP} / {nextLevelXP} XP</p>
+                <p className="text-sm text-muted-foreground">{currentXP} / {nextLevelXP} XP</p>
               </div>
             </div>
-            <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">
+            <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30 text-xs">
               +50 XP hoy
             </Badge>
           </div>
-          <Progress value={progressPercentage} className="h-3" />
-          <p className="text-sm text-muted-foreground mt-2">
+          <Progress value={progressPercentage} className="h-2 sm:h-3" />
+          <p className="text-xs sm:text-sm text-muted-foreground mt-2">
             {nextLevelXP - currentXP} XP para el siguiente nivel
           </p>
         </Card>
@@ -171,8 +171,8 @@ const Dashboard = () => {
           <div className="lg:col-span-2 space-y-6">
             
             {/* Quick Stats */}
-            <div className="grid md:grid-cols-3 gap-4">
-              <Card className="p-4 bg-gradient-card card-glow hover-lift">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+              <Card className="p-3 sm:p-4 bg-gradient-card card-glow hover-lift">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
                     <Wallet className="w-5 h-5 text-primary" />
@@ -211,23 +211,23 @@ const Dashboard = () => {
 
             {/* Goals */}
             <div>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-semibold text-foreground">Tus Metas</h3>
-                <Button size="sm" className="bg-primary/20 hover:bg-primary/30 text-primary border-primary/30">
-                  <Plus className="w-4 h-4 mr-2" />
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+                <h3 className="text-lg sm:text-xl font-semibold text-foreground">Tus Metas</h3>
+                <Button size="sm" className="bg-primary/20 hover:bg-primary/30 text-primary border-primary/30 text-xs sm:text-sm">
+                  <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   Nueva Meta
                 </Button>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {goals.map((goal) => {
                   const goalProgress = (goal.current / goal.target) * 100;
                   return (
-                    <Card key={goal.id} className="p-6 bg-gradient-card card-glow hover-lift">
-                      <div className="flex justify-between items-start mb-4">
+                    <Card key={goal.id} className="p-4 sm:p-6 bg-gradient-card card-glow hover-lift">
+                      <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-4">
                         <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <h4 className="text-lg font-semibold text-foreground">{goal.title}</h4>
+                          <div className="flex items-center flex-wrap space-x-2 mb-2 gap-1">
+                            <h4 className="text-base sm:text-lg font-semibold text-foreground">{goal.title}</h4>
                             {goal.type === 'group' && (
                               <Badge variant="outline" className="text-xs">
                                 <Users className="w-3 h-3 mr-1" />
@@ -235,20 +235,20 @@ const Dashboard = () => {
                               </Badge>
                             )}
                           </div>
-                          <p className="text-sm text-muted-foreground">Meta: {goal.deadline}</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground">Meta: {goal.deadline}</p>
                         </div>
-                        <div className="text-right">
-                          <p className="text-lg font-semibold text-foreground">
+                        <div className="text-left sm:text-right">
+                          <p className="text-base sm:text-lg font-semibold text-foreground">
                             ${goal.current.toLocaleString()}
                           </p>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-xs sm:text-sm text-muted-foreground">
                             de ${goal.target.toLocaleString()}
                           </p>
                         </div>
                       </div>
                       
-                      <Progress value={goalProgress} className="h-3 mb-2" />
-                      <div className="flex justify-between text-sm">
+                      <Progress value={goalProgress} className="h-2 sm:h-3 mb-2" />
+                      <div className="flex justify-between text-xs sm:text-sm">
                         <span className="text-muted-foreground">{Math.round(goalProgress)}% completado</span>
                         <span className="text-primary font-medium">
                           ${(goal.target - goal.current).toLocaleString()} restante
@@ -265,28 +265,28 @@ const Dashboard = () => {
           <div className="space-y-6">
             
             {/* Chat with AI */}
-            <Card className="p-6 bg-gradient-card card-glow">
+            <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                  <MessageCircle className="w-5 h-5 text-primary" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                  <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground">Moni AI Coach</h4>
+                  <h4 className="text-sm sm:text-base font-semibold text-foreground">Moni AI Coach</h4>
                   <p className="text-xs text-muted-foreground">En línea</p>
                 </div>
               </div>
               
               <div className="space-y-3 mb-4">
-                <div className="bg-muted/50 rounded-2xl rounded-bl-md p-3">
-                  <p className="text-sm text-foreground">
+                <div className="bg-muted/50 rounded-2xl rounded-bl-md p-2 sm:p-3">
+                  <p className="text-xs sm:text-sm text-foreground">
                     ¡Excelente progreso en tu meta de Japón! 🇯🇵 
                     <br /><br />
                     Te quedan solo $17,500. Si ahorras $890 extra este mes, ¡estarás súper cerca! 
                   </p>
                 </div>
                 
-                <div className="bg-primary/20 rounded-2xl rounded-br-md p-3 ml-8">
-                  <p className="text-sm text-foreground">
+                <div className="bg-primary/20 rounded-2xl rounded-br-md p-2 sm:p-3 ml-6 sm:ml-8">
+                  <p className="text-xs sm:text-sm text-foreground">
                     ¿Cómo puedo ahorrar esos $890 extras? 🤔
                   </p>
                 </div>
@@ -303,8 +303,8 @@ const Dashboard = () => {
             </Card>
 
             {/* Recent Transactions */}
-            <Card className="p-6 bg-gradient-card card-glow">
-              <h4 className="font-semibold text-foreground mb-4">Movimientos Recientes</h4>
+            <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
+              <h4 className="text-sm sm:text-base font-semibold text-foreground mb-4">Movimientos Recientes</h4>
               <div className="space-y-3">
                 {recentTransactions.map((transaction) => (
                   <div key={transaction.id} className="flex justify-between items-center">
@@ -327,8 +327,8 @@ const Dashboard = () => {
             </Card>
 
             {/* Achievements */}
-            <Card className="p-6 bg-gradient-card card-glow">
-              <h4 className="font-semibold text-foreground mb-4 flex items-center">
+            <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
+              <h4 className="text-sm sm:text-base font-semibold text-foreground mb-4 flex items-center">
                 <Trophy className="w-4 h-4 mr-2 text-primary" />
                 Logros Recientes
               </h4>
