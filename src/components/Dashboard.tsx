@@ -150,16 +150,16 @@ const Dashboard = () => {
       {/* Header con saludo y botón de logout para desktop */}
       <div className="p-4 flex justify-between items-center">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+          <h1 className="text-xl sm:text-2xl font-bold text-white">
             ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
           </h1>
-          <p className="text-sm text-muted-foreground">Vas excelente con tus metas financieras</p>
+          <p className="text-sm text-gray-300">Vas excelente con tus metas financieras</p>
         </div>
         <Button 
           variant="outline" 
           size="sm" 
           onClick={handleLogout}
-          className="hidden md:flex"
+          className="hidden md:flex border-white/30 text-white hover:bg-white/10"
         >
           <LogOut className="h-4 w-4 mr-2" />
           Salir
