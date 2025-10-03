@@ -183,7 +183,7 @@ const Auth = () => {
         className="flex-1 flex items-center justify-center p-4 relative animated-wave-bg"
       >
         <div className="w-full max-w-md space-y-8 relative z-10">
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
+        <div className="bg-black/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
           <div className="text-center p-6">
             <h1 className="text-4xl font-bold text-primary mb-2">Moni</h1>
             <p className="text-muted-foreground mb-3">
@@ -195,7 +195,7 @@ const Auth = () => {
           </div>
         </div>
 
-        <div className="bg-card p-8 rounded-2xl border border-border shadow-xl backdrop-blur-sm bg-white/95">
+        <div className="bg-card p-8 rounded-2xl border border-border shadow-xl backdrop-blur-sm bg-black/95">
           <form onSubmit={handleAuth} className="space-y-6">
             {!isLogin && (
               <div className="space-y-2">
