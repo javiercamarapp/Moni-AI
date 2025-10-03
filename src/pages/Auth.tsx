@@ -320,7 +320,7 @@ const Auth = () => {
       </div>
 
       {/* Footer fijo en la parte inferior */}
-      <footer className="w-full bg-background border-t border-border py-4">
+      <footer className="w-full border-t border-border py-4 animated-wave-bg">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 text-xs">
             {/* Producto */}
