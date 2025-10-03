@@ -168,12 +168,12 @@ const Auth = () => {
         .animated-wave-bg {
           background: linear-gradient(
             135deg,
-            #ffffff 0%,
-            #f5f5f5 20%,
-            #e0e0e0 40%,
-            #f5f5f5 60%,
-            #fafafa 80%,
-            #ffffff 100%
+            #000000 0%,
+            #1a1a1a 20%,
+            #2a2a2a 40%,
+            #1a1a1a 60%,
+            #0a0a0a 80%,
+            #000000 100%
           );
           background-size: 400% 400%;
           animation: wave-flow 15s ease infinite;
