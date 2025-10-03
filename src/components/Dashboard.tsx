@@ -316,76 +316,70 @@ const Dashboard = () => {
       <div className="p-2 sm:p-4">
       <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
         
-        {/* Level Progress */}
-        <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/20 flex items-center justify-center">
-                <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+        {/* Level Progress y Quick Stats en la misma fila */}
+        <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+          {/* Level Progress */}
+          <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/20 flex items-center justify-center">
+                  <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-lg sm:text-xl font-semibold text-foreground">Nivel {level} - Ahorrador Pro</h2>
+                  <p className="text-sm text-muted-foreground">{currentXP} / {nextLevelXP} XP</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-lg sm:text-xl font-semibold text-foreground">Nivel {level} - Ahorrador Pro</h2>
-                <p className="text-sm text-muted-foreground">{currentXP} / {nextLevelXP} XP</p>
+              <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30 text-xs">
+                +50 XP hoy
+              </Badge>
+            </div>
+            <Progress value={progressPercentage} className="h-2 sm:h-3" />
+            <p className="text-xs sm:text-sm text-muted-foreground mt-2">
+              {nextLevelXP - currentXP} XP para el siguiente nivel
+            </p>
+          </Card>
+
+          {/* Quick Stats */}
+          <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 h-full">
+              <div className="flex flex-col items-start justify-center space-y-1">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                    <Wallet className="w-4 h-4 text-primary" />
+                  </div>
+                  <p className="text-xs text-muted-foreground">Balance Total</p>
+                </div>
+                <p className="text-xl font-semibold text-foreground ml-10">$23,450</p>
+              </div>
+
+              <div className="flex flex-col items-start justify-center space-y-1">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center">
+                    <TrendingUp className="w-4 h-4 text-success" />
+                  </div>
+                  <p className="text-xs text-muted-foreground">Ahorrado</p>
+                </div>
+                <p className="text-xl font-semibold text-foreground ml-10">$4,200</p>
+              </div>
+
+              <div className="flex flex-col items-start justify-center space-y-1">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-lg bg-warning/20 flex items-center justify-center">
+                    <Target className="w-4 h-4 text-warning" />
+                  </div>
+                  <p className="text-xs text-muted-foreground">Metas activas</p>
+                </div>
+                <p className="text-xl font-semibold text-foreground ml-10">{goals.length}</p>
               </div>
             </div>
-            <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30 text-xs">
-              +50 XP hoy
-            </Badge>
-          </div>
-          <Progress value={progressPercentage} className="h-2 sm:h-3" />
-          <p className="text-xs sm:text-sm text-muted-foreground mt-2">
-            {nextLevelXP - currentXP} XP para el siguiente nivel
-          </p>
-        </Card>
+          </Card>
+        </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
           
           {/* Main Goals Section */}
           <div className="lg:col-span-2 space-y-6">
-            
-            {/* Quick Stats */}
-            <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
-              <div className="space-y-4">
-                {/* Primera sección: Balance y Ahorro */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-                      <Wallet className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Balance Total</p>
-                      <p className="text-xl font-semibold text-foreground">$23,450</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-xl bg-success/20 flex items-center justify-center">
-                      <TrendingUp className="w-5 h-5 text-success" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Ahorrado este mes</p>
-                      <p className="text-xl font-semibold text-foreground">$4,200</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Separador */}
-                <div className="border-t border-border"></div>
-
-                {/* Segunda sección: Metas activas */}
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-xl bg-warning/20 flex items-center justify-center">
-                    <Target className="w-5 h-5 text-warning" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Metas activas</p>
-                    <p className="text-xl font-semibold text-foreground">{goals.length}</p>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            {/* Goals */}
             <div>
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
                 <h3 className="text-lg sm:text-xl font-semibold text-foreground">Tus Metas</h3>
