@@ -153,89 +153,91 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <style>{`
-        @keyframes rotate-pattern {
+        @keyframes line-flow {
           0% {
-            transform: rotate(0deg);
+            stroke-dashoffset: 1000;
+            opacity: 0.3;
+          }
+          50% {
+            opacity: 0.8;
           }
           100% {
-            transform: rotate(360deg);
+            stroke-dashoffset: 0;
+            opacity: 0.3;
           }
         }
         
-        @keyframes pulse-glow {
+        @keyframes node-pulse {
           0%, 100% {
-            opacity: 0.2;
+            r: 3;
+            opacity: 0.4;
           }
           50% {
-            opacity: 0.6;
+            r: 5;
+            opacity: 1;
           }
         }
         
-        @keyframes float-particles {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-20px);
-          }
-        }
-        
-        .ai-pattern-bg {
+        .neural-network-bg {
           position: relative;
           background: #000000;
           overflow: hidden;
         }
         
-        .ai-pattern-bg::before {
-          content: '';
-          position: absolute;
-          inset: -50%;
-          background-image: 
-            repeating-conic-gradient(from 0deg at 50% 50%, 
-              transparent 0deg 5deg, 
-              rgba(100, 100, 100, 0.1) 5deg 10deg,
-              transparent 10deg 15deg),
-            radial-gradient(circle at center, 
-              transparent 30%, 
-              rgba(120, 120, 120, 0.05) 35%, 
-              transparent 40%,
-              rgba(100, 100, 100, 0.05) 60%,
-              transparent 65%),
-            repeating-radial-gradient(circle at 50% 50%,
-              transparent 0px,
-              rgba(140, 140, 140, 0.08) 2px,
-              transparent 4px,
-              transparent 40px);
-          animation: rotate-pattern 60s linear infinite;
-        }
-        
-        .ai-pattern-bg::after {
-          content: '';
+        .neural-network-bg svg {
           position: absolute;
           inset: 0;
-          background-image: 
-            linear-gradient(90deg, transparent 0%, transparent 48%, rgba(150, 150, 150, 0.1) 49%, rgba(150, 150, 150, 0.1) 51%, transparent 52%, transparent 100%),
-            linear-gradient(0deg, transparent 0%, transparent 48%, rgba(150, 150, 150, 0.1) 49%, rgba(150, 150, 150, 0.1) 51%, transparent 52%, transparent 100%),
-            radial-gradient(circle, rgba(180, 180, 180, 0.4) 1px, transparent 1px);
-          background-size: 80px 80px, 80px 80px, 40px 40px;
-          animation: pulse-glow 4s ease-in-out infinite, float-particles 8s ease-in-out infinite;
+          width: 100%;
+          height: 100%;
         }
         
-        .circuit-overlay {
-          position: absolute;
-          inset: 0;
-          background-image:
-            radial-gradient(ellipse at 20% 30%, rgba(160, 160, 160, 0.15) 0%, transparent 40%),
-            radial-gradient(ellipse at 80% 70%, rgba(140, 140, 140, 0.15) 0%, transparent 40%),
-            radial-gradient(ellipse at 50% 50%, rgba(120, 120, 120, 0.1) 0%, transparent 60%);
-          animation: pulse-glow 6s ease-in-out infinite alternate;
+        .neural-network-bg .line {
+          stroke: rgba(150, 150, 150, 0.5);
+          stroke-width: 1;
+          fill: none;
+          stroke-dasharray: 5, 10;
+          animation: line-flow 4s linear infinite;
+        }
+        
+        .neural-network-bg .node {
+          fill: rgba(180, 180, 180, 0.6);
+          animation: node-pulse 3s ease-in-out infinite;
         }
       `}</style>
       
       <div 
-        className="flex-1 flex items-center justify-center p-4 relative ai-pattern-bg"
+        className="flex-1 flex items-center justify-center p-4 relative neural-network-bg"
       >
-        <div className="circuit-overlay"></div>
+        <svg xmlns="http://www.w3.org/2000/svg">
+          {/* Red neuronal - líneas horizontales */}
+          <line className="line" x1="0" y1="20%" x2="100%" y2="20%" style={{ animationDelay: '0s' }} />
+          <line className="line" x1="0" y1="40%" x2="100%" y2="35%" style={{ animationDelay: '0.5s' }} />
+          <line className="line" x1="0" y1="60%" x2="100%" y2="65%" style={{ animationDelay: '1s' }} />
+          <line className="line" x1="0" y1="80%" x2="100%" y2="80%" style={{ animationDelay: '1.5s' }} />
+          
+          {/* Líneas diagonales */}
+          <line className="line" x1="10%" y1="0" x2="30%" y2="100%" style={{ animationDelay: '0.2s' }} />
+          <line className="line" x1="40%" y1="0" x2="60%" y2="100%" style={{ animationDelay: '0.7s' }} />
+          <line className="line" x1="70%" y1="0" x2="90%" y2="100%" style={{ animationDelay: '1.2s' }} />
+          
+          {/* Líneas verticales */}
+          <line className="line" x1="20%" y1="0" x2="20%" y2="100%" style={{ animationDelay: '0.3s' }} />
+          <line className="line" x1="50%" y1="0" x2="50%" y2="100%" style={{ animationDelay: '0.8s' }} />
+          <line className="line" x1="80%" y1="0" x2="80%" y2="100%" style={{ animationDelay: '1.3s' }} />
+          
+          {/* Conexiones diagonales cruzadas */}
+          <line className="line" x1="0" y1="30%" x2="100%" y2="70%" style={{ animationDelay: '0.4s' }} />
+          <line className="line" x1="100%" y1="30%" x2="0" y2="70%" style={{ animationDelay: '0.9s' }} />
+          
+          {/* Nodos de conexión */}
+          <circle className="node" cx="20%" cy="20%" style={{ animationDelay: '0s' }} />
+          <circle className="node" cx="50%" cy="35%" style={{ animationDelay: '0.5s' }} />
+          <circle className="node" cx="80%" cy="65%" style={{ animationDelay: '1s' }} />
+          <circle className="node" cx="30%" cy="80%" style={{ animationDelay: '1.5s' }} />
+          <circle className="node" cx="70%" cy="50%" style={{ animationDelay: '2s' }} />
+          <circle className="node" cx="40%" cy="40%" style={{ animationDelay: '2.5s' }} />
+          <circle className="node" cx="60%" cy="70%" style={{ animationDelay: '3s' }} />
+        </svg>
         <div className="w-full max-w-md space-y-8 relative z-10">
         <div className="bg-black/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
           <div className="text-center p-6">
