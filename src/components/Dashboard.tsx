@@ -5,9 +5,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, CarouselApi } from '@/components/ui/carousel';
 import { useToast } from "@/hooks/use-toast";
-import Autoplay from "embla-carousel-autoplay";
 import { 
   Target, 
   TrendingUp, 
@@ -28,8 +27,20 @@ const Dashboard = () => {
   const [currentXP] = useState(1250);
   const [nextLevelXP] = useState(1500);
   const [level] = useState(8);
+  const [api, setApi] = useState<CarouselApi>();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Auto-scroll carousel
+  useEffect(() => {
+    if (!api) return;
+
+    const interval = setInterval(() => {
+      api.scrollNext();
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [api]);
 
   useEffect(() => {
     // Check authentication
@@ -144,11 +155,7 @@ const Dashboard = () => {
       <div className="mx-4 mb-4">
         <Carousel 
           className="w-full"
-          plugins={[
-            Autoplay({
-              delay: 3000,
-            }),
-          ]}
+          setApi={setApi}
           opts={{
             loop: true,
           }}
