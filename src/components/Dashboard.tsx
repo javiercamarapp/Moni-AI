@@ -70,21 +70,22 @@ const Dashboard = () => {
 
   const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      
+      await supabase.auth.signOut();
       toast({
         title: "Sesión cerrada",
         description: "Hasta pronto!",
       });
-      // No navegamos manualmente, el onAuthStateChange se encargará
-    } catch (error) {
-      console.error('Error al cerrar sesión:', error);
-      toast({
-        title: "Error",
-        description: "Hubo un problema al cerrar sesión",
-        variant: "destructive",
-      });
+      // El onAuthStateChange manejará la navegación automáticamente
+    } catch (error: any) {
+      // Si el error es que la sesión ya no existe, está bien - significa que el logout funcionó
+      if (error?.message !== "Auth session missing!") {
+        console.error('Error al cerrar sesión:', error);
+        toast({
+          title: "Error",
+          description: "Hubo un problema al cerrar sesión",
+          variant: "destructive",
+        });
+      }
     }
   };
 
