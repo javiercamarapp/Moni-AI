@@ -184,9 +184,6 @@ const Auth = () => {
       >
         <div className="w-full max-w-md space-y-8 relative z-10">
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
-          {/* Banner horizontal decorativo */}
-          <div className="h-2 bg-gradient-to-r from-black via-gray-600 to-black"></div>
-          
           <div className="text-center p-6">
             <h1 className="text-4xl font-bold text-primary mb-2">Moni</h1>
             <p className="text-muted-foreground mb-3">
