@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import bannerInvestment from '@/assets/banner-investment.jpg';
 import bannerGoals from '@/assets/banner-goals.jpg';
 import bannerGroups from '@/assets/banner-groups.jpg';
+import bannerHalloween from '@/assets/banner-halloween.png';
 import { 
   Target, 
   TrendingUp, 
@@ -167,31 +168,10 @@ const Dashboard = () => {
             <CarouselItem>
               <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
                 <img 
-                  src={bannerInvestment} 
-                  alt="Banner de inversión" 
+                  src={bannerHalloween} 
+                  alt="Halloween Special Sale" 
                   className="absolute inset-0 w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
-                <div className="relative p-6 h-full flex flex-col justify-center">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                      <TrendingUp className="w-4 h-4 text-white" />
-                    </div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      Oferta Especial
-                    </h3>
-                  </div>
-                  <p className="text-sm text-white/90 mb-3">
-                    20% de descuento en tu primer inversión
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="text-xs sm:text-sm bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 w-fit"
-                  >
-                    Ver más
-                  </Button>
-                </div>
               </Card>
             </CarouselItem>
             
