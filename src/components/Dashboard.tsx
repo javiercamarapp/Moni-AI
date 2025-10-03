@@ -118,31 +118,85 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-hero p-2 sm:p-4">
-      <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
-        
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
-              ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
-            </h1>
-            <p className="text-sm sm:text-base text-muted-foreground">Vas excelente con tus metas financieras</p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="icon">
-              <Bell className="w-4 h-4" />
-            </Button>
-            <Button variant="outline" size="icon">
-              <Settings className="w-4 h-4" />
-            </Button>
-            <Button variant="outline" onClick={handleLogout} className="flex items-center">
-              <LogOut className="h-4 w-4" />
-              <span className="hidden sm:inline ml-2">Salir</span>
+    <div className="min-h-screen bg-gradient-hero pb-20">
+      {/* Top Navigation Menu - Fixed */}
+      <nav className="sticky top-0 z-50 bg-card border-b border-border shadow-lg">
+        <div className="container mx-auto px-2">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo/Brand */}
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 rounded-xl bg-gradient-primary flex items-center justify-center">
+                <Trophy className="w-4 h-4 text-primary-foreground" />
+              </div>
+              <span className="font-bold text-primary hidden sm:inline">Moni</span>
+            </div>
+
+            {/* Main Navigation - 5 Sections */}
+            <div className="flex items-center space-x-1 sm:space-x-4">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="flex flex-col sm:flex-row items-center gap-0 sm:gap-2 h-auto py-1 px-2 sm:px-3"
+              >
+                <Target className="w-4 h-4" />
+                <span className="text-xs sm:text-sm">Metas</span>
+              </Button>
+
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="flex flex-col sm:flex-row items-center gap-0 sm:gap-2 h-auto py-1 px-2 sm:px-3"
+                onClick={() => navigate("/chat")}
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span className="text-xs sm:text-sm">Chat</span>
+              </Button>
+
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="flex flex-col sm:flex-row items-center gap-0 sm:gap-2 h-auto py-1 px-2 sm:px-3"
+              >
+                <TrendingUp className="w-4 h-4" />
+                <span className="text-xs sm:text-sm">Análisis</span>
+              </Button>
+
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="flex flex-col sm:flex-row items-center gap-0 sm:gap-2 h-auto py-1 px-2 sm:px-3"
+              >
+                <Users className="w-4 h-4" />
+                <span className="text-xs sm:text-sm">Grupos</span>
+              </Button>
+
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="flex flex-col sm:flex-row items-center gap-0 sm:gap-2 h-auto py-1 px-2 sm:px-3"
+              >
+                <Settings className="w-4 h-4" />
+                <span className="text-xs sm:text-sm">Más</span>
+              </Button>
+            </div>
+
+            {/* Logout Button */}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleLogout}
+              className="hidden md:flex"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Salir
             </Button>
           </div>
         </div>
+      </nav>
 
+      <div className="p-2 sm:p-4">
+      <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
+        
         {/* Level Progress */}
         <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
@@ -360,6 +414,7 @@ const Dashboard = () => {
             </Card>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
