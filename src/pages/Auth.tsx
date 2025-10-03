@@ -325,52 +325,52 @@ const Auth = () => {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 text-xs">
             {/* Producto */}
             <div>
-              <h4 className="font-semibold text-foreground mb-2">Producto</h4>
+              <h4 className="font-semibold text-white mb-2">Producto</h4>
               <ul className="space-y-1">
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Características</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Precios</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Características</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Precios</a></li>
               </ul>
             </div>
 
             {/* Recursos */}
             <div>
-              <h4 className="font-semibold text-foreground mb-2">Recursos</h4>
+              <h4 className="font-semibold text-white mb-2">Recursos</h4>
               <ul className="space-y-1">
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Blog</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Ayuda</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Blog</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Ayuda</a></li>
               </ul>
             </div>
 
             {/* Empresa */}
             <div>
-              <h4 className="font-semibold text-foreground mb-2">Empresa</h4>
+              <h4 className="font-semibold text-white mb-2">Empresa</h4>
               <ul className="space-y-1">
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Nosotros</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Impacto Social</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Nosotros</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Impacto Social</a></li>
               </ul>
             </div>
 
             {/* Legal */}
             <div>
-              <h4 className="font-semibold text-foreground mb-2">Legal</h4>
+              <h4 className="font-semibold text-white mb-2">Legal</h4>
               <ul className="space-y-1">
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Privacidad</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Términos</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Privacidad</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Términos</a></li>
               </ul>
             </div>
 
             {/* Síguenos */}
             <div>
-              <h4 className="font-semibold text-foreground mb-2">Síguenos</h4>
+              <h4 className="font-semibold text-white mb-2">Síguenos</h4>
               <ul className="space-y-1">
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Twitter</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary">Instagram</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Twitter</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Instagram</a></li>
               </ul>
             </div>
           </div>
 
-          <div className="mt-4 pt-4 border-t border-border text-center">
-            <p className="text-xs text-muted-foreground">
+          <div className="mt-4 pt-4 border-t border-gray-700 text-center">
+            <p className="text-xs text-gray-400">
               © 2025 Moni. Todos los derechos reservados.
             </p>
           </div>
