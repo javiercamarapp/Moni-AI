@@ -151,7 +151,7 @@ const Dashboard = () => {
                 <Trophy className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-foreground">Nivel {level} - Ahorrador Pro</h2>
+                <h2 className="text-lg sm:text-xl font-semibold text-foreground">Nivel {level} - Ahorrador Pro</h2>
                 <p className="text-muted-foreground">{currentXP} / {nextLevelXP} XP</p>
               </div>
             </div>
