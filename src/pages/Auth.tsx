@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import heroDashboard from "@/assets/hero-dashboard.jpg";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -152,8 +153,19 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <div className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-md space-y-8">
+      <div 
+        className="flex-1 flex items-center justify-center p-4 relative"
+        style={{
+          backgroundImage: `url(${heroDashboard})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/* Overlay oscuro para mejorar legibilidad */}
+        <div className="absolute inset-0 bg-black/40"></div>
+        
+        <div className="w-full max-w-md space-y-8 relative z-10">
         <div className="text-center">
           <Button
             variant="ghost"
