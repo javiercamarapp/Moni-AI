@@ -137,6 +137,35 @@ const Dashboard = () => {
           Salir
         </Button>
       </div>
+
+      {/* Banner Publicitario */}
+      <div className="mx-4 mb-4">
+        <Card className="bg-gradient-primary p-6 relative overflow-hidden border-none shadow-xl">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12" />
+          
+          <div className="relative z-10 flex items-center justify-between">
+            <div className="flex-1">
+              <h3 className="text-lg sm:text-xl font-bold text-primary-foreground mb-2">
+                🎉 ¡Oferta Especial!
+              </h3>
+              <p className="text-sm sm:text-base text-primary-foreground/90 mb-3">
+                Obtén 20% de descuento en tu primer inversión
+              </p>
+              <Button 
+                variant="secondary" 
+                size="sm"
+                className="bg-white text-primary hover:bg-white/90"
+              >
+                Aprovechar ahora
+              </Button>
+            </div>
+            <div className="hidden sm:flex items-center justify-center w-20 h-20 bg-white/20 rounded-full">
+              <TrendingUp className="w-10 h-10 text-primary-foreground" />
+            </div>
+          </div>
+        </Card>
+      </div>
       
       {/* Bottom Navigation Menu - Fixed */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border shadow-lg">
