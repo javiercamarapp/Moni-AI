@@ -159,7 +159,7 @@ const Dashboard = () => {
           variant="outline" 
           size="sm" 
           onClick={handleLogout}
-          className="hidden md:flex border-white/50 text-white hover:bg-white hover:text-black transition-colors"
+          className="hidden md:flex border-white bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-black transition-colors"
         >
           <LogOut className="h-4 w-4 mr-2" />
           Salir
