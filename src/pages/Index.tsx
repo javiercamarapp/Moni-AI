@@ -80,8 +80,10 @@ const Index = () => {
                   size="lg" 
                   className="px-8 py-4 text-lg"
                   onClick={async () => {
-                    await supabase.auth.signOut();
-                    // El onAuthStateChange manejará la navegación
+                    await supabase.auth.signOut({ scope: 'local' });
+                    setTimeout(() => {
+                      navigate("/auth");
+                    }, 100);
                   }}
                 >
                   Cerrar Sesión
