@@ -166,14 +166,7 @@ const Auth = () => {
         <div className="absolute inset-0 bg-black/40"></div>
         
         <div className="w-full max-w-md space-y-8 relative z-10">
-        <div className="text-center bg-white/95 backdrop-blur-sm p-6 rounded-2xl shadow-lg">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/")}
-            className="mb-4"
-          >
-            ← Volver al inicio
-          </Button>
+        <div className="text-center bg-white/95 backdrop-blur-sm p-4 rounded-2xl shadow-lg inline-block mx-auto">
           <h1 className="text-4xl font-bold text-primary mb-2">Moni</h1>
           <p className="text-muted-foreground">
             {isLogin ? "Inicia sesión en tu cuenta" : "Crea tu cuenta gratis"}
