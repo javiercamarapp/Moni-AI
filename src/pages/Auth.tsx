@@ -153,91 +153,36 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <style>{`
-        @keyframes line-flow {
+        @keyframes wave-flow {
           0% {
-            stroke-dashoffset: 1000;
-            opacity: 0.3;
+            background-position: 0% 50%;
           }
           50% {
-            opacity: 0.8;
+            background-position: 100% 50%;
           }
           100% {
-            stroke-dashoffset: 0;
-            opacity: 0.3;
+            background-position: 0% 50%;
           }
         }
         
-        @keyframes node-pulse {
-          0%, 100% {
-            r: 3;
-            opacity: 0.4;
-          }
-          50% {
-            r: 5;
-            opacity: 1;
-          }
-        }
-        
-        .neural-network-bg {
-          position: relative;
-          background: #000000;
-          overflow: hidden;
-        }
-        
-        .neural-network-bg svg {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-        }
-        
-        .neural-network-bg .line {
-          stroke: rgba(150, 150, 150, 0.5);
-          stroke-width: 1;
-          fill: none;
-          stroke-dasharray: 5, 10;
-          animation: line-flow 4s linear infinite;
-        }
-        
-        .neural-network-bg .node {
-          fill: rgba(180, 180, 180, 0.6);
-          animation: node-pulse 3s ease-in-out infinite;
+        .animated-wave-bg {
+          background: linear-gradient(
+            135deg,
+            #000000 0%,
+            #1a1a1a 20%,
+            #2a2a2a 40%,
+            #1a1a1a 60%,
+            #0a0a0a 80%,
+            #000000 100%
+          );
+          background-size: 400% 400%;
+          animation: wave-flow 15s ease infinite;
         }
       `}</style>
       
       <div 
-        className="flex-1 flex items-center justify-center p-4 relative neural-network-bg"
+        className="flex-1 flex items-center justify-center p-4 relative animated-wave-bg"
       >
-        <svg xmlns="http://www.w3.org/2000/svg">
-          {/* Red neuronal - líneas horizontales */}
-          <line className="line" x1="0" y1="20%" x2="100%" y2="20%" style={{ animationDelay: '0s' }} />
-          <line className="line" x1="0" y1="40%" x2="100%" y2="35%" style={{ animationDelay: '0.5s' }} />
-          <line className="line" x1="0" y1="60%" x2="100%" y2="65%" style={{ animationDelay: '1s' }} />
-          <line className="line" x1="0" y1="80%" x2="100%" y2="80%" style={{ animationDelay: '1.5s' }} />
-          
-          {/* Líneas diagonales */}
-          <line className="line" x1="10%" y1="0" x2="30%" y2="100%" style={{ animationDelay: '0.2s' }} />
-          <line className="line" x1="40%" y1="0" x2="60%" y2="100%" style={{ animationDelay: '0.7s' }} />
-          <line className="line" x1="70%" y1="0" x2="90%" y2="100%" style={{ animationDelay: '1.2s' }} />
-          
-          {/* Líneas verticales */}
-          <line className="line" x1="20%" y1="0" x2="20%" y2="100%" style={{ animationDelay: '0.3s' }} />
-          <line className="line" x1="50%" y1="0" x2="50%" y2="100%" style={{ animationDelay: '0.8s' }} />
-          <line className="line" x1="80%" y1="0" x2="80%" y2="100%" style={{ animationDelay: '1.3s' }} />
-          
-          {/* Conexiones diagonales cruzadas */}
-          <line className="line" x1="0" y1="30%" x2="100%" y2="70%" style={{ animationDelay: '0.4s' }} />
-          <line className="line" x1="100%" y1="30%" x2="0" y2="70%" style={{ animationDelay: '0.9s' }} />
-          
-          {/* Nodos de conexión */}
-          <circle className="node" cx="20%" cy="20%" style={{ animationDelay: '0s' }} />
-          <circle className="node" cx="50%" cy="35%" style={{ animationDelay: '0.5s' }} />
-          <circle className="node" cx="80%" cy="65%" style={{ animationDelay: '1s' }} />
-          <circle className="node" cx="30%" cy="80%" style={{ animationDelay: '1.5s' }} />
-          <circle className="node" cx="70%" cy="50%" style={{ animationDelay: '2s' }} />
-          <circle className="node" cx="40%" cy="40%" style={{ animationDelay: '2.5s' }} />
-          <circle className="node" cx="60%" cy="70%" style={{ animationDelay: '3s' }} />
-        </svg>
         <div className="w-full max-w-md space-y-8 relative z-10">
         <div className="bg-black/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
           <div className="text-center p-6">
