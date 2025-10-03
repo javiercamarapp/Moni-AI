@@ -23,6 +23,9 @@ import {
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [currentXP] = useState(1250);
+  const [nextLevelXP] = useState(1500);
+  const [level] = useState(8);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -67,10 +70,6 @@ const Dashboard = () => {
       </div>
     );
   }
-
-  const [currentXP] = useState(1250);
-  const [nextLevelXP] = useState(1500);
-  const [level] = useState(8);
 
   const progressPercentage = (currentXP / nextLevelXP) * 100;
   
