@@ -172,6 +172,14 @@ const Dashboard = () => {
                   alt="Halloween Special Sale" 
                   className="absolute inset-0 w-full h-full object-cover"
                 />
+                <div className="absolute inset-0 flex items-end justify-center pb-6">
+                  <Button 
+                    size="lg"
+                    className="bg-orange-500 hover:bg-orange-600 text-white font-bold shadow-lg"
+                  >
+                    Comprar Ahora
+                  </Button>
+                </div>
               </Card>
             </CarouselItem>
             
