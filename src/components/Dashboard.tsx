@@ -7,6 +7,9 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from '@/components/ui/carousel';
 import { useToast } from "@/hooks/use-toast";
+import bannerInvestment from '@/assets/banner-investment.jpg';
+import bannerGoals from '@/assets/banner-goals.jpg';
+import bannerGroups from '@/assets/banner-groups.jpg';
 import { 
   Target, 
   TrendingUp, 
@@ -162,82 +165,94 @@ const Dashboard = () => {
         >
           <CarouselContent>
             <CarouselItem>
-              <Card className="bg-muted/30 p-6 relative overflow-hidden border border-border/50">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <TrendingUp className="w-4 h-4 text-primary" />
-                      </div>
-                      <h3 className="text-base sm:text-lg font-semibold text-foreground">
-                        Oferta Especial
-                      </h3>
+              <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
+                <img 
+                  src={bannerInvestment} 
+                  alt="Banner de inversión" 
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
+                <div className="relative p-6 h-full flex flex-col justify-center">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                      <TrendingUp className="w-4 h-4 text-white" />
                     </div>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      20% de descuento en tu primer inversión
-                    </p>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="text-xs sm:text-sm"
-                    >
-                      Ver más
-                    </Button>
+                    <h3 className="text-base sm:text-lg font-semibold text-white">
+                      Oferta Especial
+                    </h3>
                   </div>
+                  <p className="text-sm text-white/90 mb-3">
+                    20% de descuento en tu primer inversión
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="text-xs sm:text-sm bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 w-fit"
+                  >
+                    Ver más
+                  </Button>
                 </div>
               </Card>
             </CarouselItem>
             
             <CarouselItem>
-              <Card className="bg-muted/30 p-6 relative overflow-hidden border border-border/50">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <Target className="w-4 h-4 text-primary" />
-                      </div>
-                      <h3 className="text-base sm:text-lg font-semibold text-foreground">
-                        Alcanza tus Metas
-                      </h3>
+              <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
+                <img 
+                  src={bannerGoals} 
+                  alt="Banner de metas" 
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
+                <div className="relative p-6 h-full flex flex-col justify-center">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                      <Target className="w-4 h-4 text-white" />
                     </div>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Planifica y ahorra para cumplir tus objetivos
-                    </p>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="text-xs sm:text-sm"
-                    >
-                      Comenzar
-                    </Button>
+                    <h3 className="text-base sm:text-lg font-semibold text-white">
+                      Alcanza tus Metas
+                    </h3>
                   </div>
+                  <p className="text-sm text-white/90 mb-3">
+                    Planifica y ahorra para cumplir tus objetivos
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="text-xs sm:text-sm bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 w-fit"
+                  >
+                    Comenzar
+                  </Button>
                 </div>
               </Card>
             </CarouselItem>
             
             <CarouselItem>
-              <Card className="bg-muted/30 p-6 relative overflow-hidden border border-border/50">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <Users className="w-4 h-4 text-primary" />
-                      </div>
-                      <h3 className="text-base sm:text-lg font-semibold text-foreground">
-                        Ahorro en Grupo
-                      </h3>
+              <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
+                <img 
+                  src={bannerGroups} 
+                  alt="Banner de ahorro grupal" 
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
+                <div className="relative p-6 h-full flex flex-col justify-center">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                      <Users className="w-4 h-4 text-white" />
                     </div>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Únete a grupos y multiplica tus ahorros
-                    </p>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="text-xs sm:text-sm"
-                    >
-                      Explorar
-                    </Button>
+                    <h3 className="text-base sm:text-lg font-semibold text-white">
+                      Ahorro en Grupo
+                    </h3>
                   </div>
+                  <p className="text-sm text-white/90 mb-3">
+                    Únete a grupos y multiplica tus ahorros
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="text-xs sm:text-sm bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 w-fit"
+                  >
+                    Explorar
+                  </Button>
                 </div>
               </Card>
             </CarouselItem>
