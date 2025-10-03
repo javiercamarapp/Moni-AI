@@ -122,23 +122,23 @@ const Dashboard = () => {
       <div className="container mx-auto max-w-7xl space-y-6">
         
         {/* Header */}
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
               ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
             </h1>
-            <p className="text-muted-foreground">Vas excelente con tus metas financieras</p>
+            <p className="text-sm sm:text-base text-muted-foreground">Vas excelente con tus metas financieras</p>
           </div>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
             <Button variant="outline" size="icon">
               <Bell className="w-4 h-4" />
             </Button>
             <Button variant="outline" size="icon">
               <Settings className="w-4 h-4" />
             </Button>
-            <Button variant="outline" onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" />
-              Salir
+            <Button variant="outline" onClick={handleLogout} className="flex items-center">
+              <LogOut className="h-4 w-4" />
+              <span className="hidden sm:inline ml-2">Salir</span>
             </Button>
           </div>
         </div>
