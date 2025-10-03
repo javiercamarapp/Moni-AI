@@ -4,56 +4,56 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Moni Fintech Design System - Minimalist White & Black Futuristic (Inverted) */
+/* Moni Fintech Design System - Minimalist Black & White Futuristic */
 
 @layer base {
   :root {
-    /* Minimalist black base */
-    --background: 0 0% 4%;
-    --foreground: 0 0% 98%;
+    /* Minimalist white base */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3%;
 
     /* Cards and surfaces */
-    --card: 0 0% 7%;
-    --card-foreground: 0 0% 98%;
-    --card-border: 0 0% 14%;
+    --card: 0 0% 98%;
+    --card-foreground: 0 0% 3%;
+    --card-border: 0 0% 90%;
 
-    /* Primary white */
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --primary-glow: 0 0% 85%;
+    /* Primary black */
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 0 0% 20%;
 
     /* Secondary grey accent */
-    --secondary: 0 0% 14%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
 
     /* Muted colors */
-    --muted: 0 0% 14%;
-    --muted-foreground: 0 0% 63%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
     /* Accent colors */
-    --accent: 0 0% 14%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 9%;
 
     /* Status colors */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --success: 0 0% 85%;
-    --warning: 0 0% 75%;
+    --success: 0 0% 20%;
+    --warning: 0 0% 30%;
 
     /* Interactive elements */
-    --border: 0 0% 14%;
-    --input: 0 0% 7%;
-    --ring: 0 0% 98%;
+    --border: 0 0% 89%;
+    --input: 0 0% 100%;
+    --ring: 0 0% 9%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(0 0% 98%) 0%, hsl(0 0% 85%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 7%) 0%, hsl(0 0% 4%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(0 0% 4%) 0%, hsl(0 0% 7%) 50%, hsl(0 0% 10%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 9%) 0%, hsl(0 0% 20%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 98%) 0%, hsl(0 0% 100%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 50%, hsl(0 0% 96%) 100%);
 
     /* Shadows */
-    --shadow-glow: 0 0 30px hsl(0 0% 100% / 0.1);
-    --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.5);
-    --shadow-elegant: 0 10px 40px hsl(0 0% 0% / 0.3);
+    --shadow-glow: 0 0 30px hsl(0 0% 0% / 0.08);
+    --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.06);
+    --shadow-elegant: 0 10px 40px hsl(0 0% 0% / 0.1);
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -61,14 +61,14 @@
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 7%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 0 0% 98%;
-    --sidebar-primary-foreground: 0 0% 9%;
-    --sidebar-accent: 0 0% 14%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 14%;
-    --sidebar-ring: 0 0% 98%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 9%;
+    --sidebar-primary: 0 0% 9%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 9%;
+    --sidebar-border: 0 0% 89%;
+    --sidebar-ring: 0 0% 9%;
   }
 
   .dark {

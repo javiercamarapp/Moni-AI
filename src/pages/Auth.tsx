@@ -168,12 +168,12 @@ const Auth = () => {
         .animated-wave-bg {
           background: linear-gradient(
             135deg,
-            #000000 0%,
-            #1a1a1a 20%,
-            #2a2a2a 40%,
-            #1a1a1a 60%,
-            #0a0a0a 80%,
-            #000000 100%
+            #ffffff 0%,
+            #f5f5f5 20%,
+            #e0e0e0 40%,
+            #f5f5f5 60%,
+            #fafafa 80%,
+            #ffffff 100%
           );
           background-size: 400% 400%;
           animation: wave-flow 15s ease infinite;
@@ -184,7 +184,7 @@ const Auth = () => {
         className="flex-1 flex items-center justify-center p-4 relative animated-wave-bg"
       >
         <div className="w-full max-w-md space-y-8 relative z-10">
-        <div className="bg-black/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
           <div className="text-center p-6">
             <h1 className="text-4xl font-bold text-primary mb-2">Moni</h1>
             <p className="text-muted-foreground mb-3">
@@ -196,7 +196,7 @@ const Auth = () => {
           </div>
         </div>
 
-        <div className="bg-card p-8 rounded-2xl border border-border shadow-xl backdrop-blur-sm bg-black/95">
+        <div className="bg-card p-8 rounded-2xl border border-border shadow-xl backdrop-blur-sm bg-white/95">
           <form onSubmit={handleAuth} className="space-y-6">
             {!isLogin && (
               <div className="space-y-2">
