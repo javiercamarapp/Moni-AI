@@ -201,7 +201,7 @@ const Auth = () => {
       <div 
         className="flex-1 flex items-center justify-center p-2 md:p-4 relative animated-wave-bg"
       >
-        <div className="w-full max-w-md space-y-3 md:space-y-8 relative z-10">
+        <div className="w-full max-w-sm md:max-w-md space-y-3 md:space-y-8 relative z-10 mx-4">
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-2">
             <div className="text-center p-2 md:p-6 flex flex-col justify-center">
