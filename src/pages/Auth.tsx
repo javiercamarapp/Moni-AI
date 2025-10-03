@@ -172,8 +172,11 @@ const Auth = () => {
           
           <div className="text-center p-6">
             <h1 className="text-4xl font-bold text-primary mb-2">Moni</h1>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground mb-3">
               {isLogin ? "Inicia sesión en tu cuenta" : "Crea tu cuenta gratis"}
+            </p>
+            <p className="text-center text-sm text-muted-foreground">
+              Primer mes gratis · Después $150 MXN/mes
             </p>
           </div>
         </div>
@@ -298,9 +301,6 @@ const Auth = () => {
           </div>
         </div>
 
-        <p className="text-center text-sm text-muted-foreground bg-white/95 backdrop-blur-sm py-3 px-6 rounded-full shadow-lg">
-          Primer mes gratis · Después $150 MXN/mes
-        </p>
         </div>
       </div>
 
