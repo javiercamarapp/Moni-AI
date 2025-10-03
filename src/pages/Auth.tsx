@@ -13,25 +13,34 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if user is already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        navigate("/dashboard");
-      }
-    });
+    // Dar un pequeño tiempo para que el signOut() se complete antes de verificar
+    const checkTimer = setTimeout(() => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        console.log('Session check in Auth:', session ? 'exists' : 'null');
+        if (session) {
+          navigate("/dashboard");
+        }
+        setIsChecking(false);
+      });
+    }, 300);
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
+      console.log('Auth state change in Auth:', event, session ? 'session exists' : 'no session');
+      if (session && event !== 'SIGNED_OUT') {
         navigate("/dashboard");
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      clearTimeout(checkTimer);
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   const handleAuth = async (e: React.FormEvent) => {

@@ -70,22 +70,30 @@ const Dashboard = () => {
 
   const handleLogout = async () => {
     try {
-      // Usar scope 'local' para asegurar que se limpie el localStorage
-      await supabase.auth.signOut({ scope: 'local' });
+      console.log('Iniciando logout...');
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('Error en signOut:', error);
+      } else {
+        console.log('SignOut exitoso');
+      }
       
       toast({
         title: "Sesión cerrada",
         description: "Hasta pronto!",
       });
       
-      // Pequeña pausa para asegurar que el signOut se complete
+      // Dar tiempo suficiente para que el signOut se complete
       setTimeout(() => {
+        console.log('Navegando a /auth');
         navigate("/auth");
-      }, 100);
+      }, 300);
     } catch (error: any) {
       console.error('Error al cerrar sesión:', error);
-      // Forzar navegación incluso si hay error
-      navigate("/auth");
+      setTimeout(() => {
+        navigate("/auth");
+      }, 300);
     }
   };
 
