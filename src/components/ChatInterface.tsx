@@ -105,7 +105,7 @@ const ChatInterface = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-muted-foreground">Cargando...</p>
@@ -128,7 +128,7 @@ const ChatInterface = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen animated-wave-bg">
       <div className="container mx-auto max-w-4xl h-screen flex flex-col">
         
         {/* Chat Header */}
@@ -170,7 +170,7 @@ const ChatInterface = () => {
         </Card>
 
         {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto bg-black p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto bg-black/50 backdrop-blur-sm p-4 space-y-4">
           {messages.map((msg) => (
             <div key={msg.id} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`flex items-start space-x-2 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg ${

@@ -152,10 +152,10 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen animated-wave-bg flex flex-col">
       
       <div 
-        className="flex-1 flex items-center justify-center py-8 md:py-12 px-2 md:px-4 relative bg-black"
+        className="flex-1 flex items-center justify-center py-8 md:py-12 px-2 md:px-4 relative"
       >
         <div className="w-full max-w-[280px] md:max-w-sm space-y-3 md:space-y-8 relative z-10">
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
@@ -295,7 +295,7 @@ const Auth = () => {
       </div>
 
       {/* Footer fijo en la parte inferior */}
-      <footer className="w-full border-t border-gray-700 py-2 md:py-4 bg-black">
+      <footer className="w-full border-t border-gray-700 py-2 md:py-4 bg-black/50 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 md:gap-4 text-[10px] md:text-xs">
             {/* Producto */}

@@ -146,7 +146,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black pb-20">
+    <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header con saludo y botón de logout para desktop */}
       <div className="p-4 flex justify-between items-center">
         <div>
@@ -261,7 +261,7 @@ const Dashboard = () => {
       </div>
       
       {/* Bottom Navigation Menu - Fixed */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black border-t border-white/20 shadow-lg">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-t border-white/20 shadow-lg">
         <div className="container mx-auto px-2">
           <div className="flex items-center justify-around h-16">
             <Button 
