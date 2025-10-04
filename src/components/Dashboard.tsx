@@ -148,19 +148,29 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
-      {/* Logo banner - esquina superior izquierda */}
-      <div className="p-2 absolute top-0 left-0 z-10">
-        <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden w-24 h-16">
+      {/* Header superior con logo y notificaciones */}
+      <div className="p-2 flex justify-between items-start">
+        {/* Logo banner - esquina superior izquierda */}
+        <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden w-16 h-10">
           <img 
             src={heroAuth} 
             alt="Moni" 
             className="w-full h-full object-cover"
           />
         </div>
+        
+        {/* Botón de notificaciones */}
+        <Button 
+          variant="ghost" 
+          size="icon"
+          className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white h-10 w-10"
+        >
+          <Bell className="h-5 w-5" />
+        </Button>
       </div>
 
       {/* Header con saludo y botón de logout para desktop */}
-      <div className="p-4 pt-20 flex justify-between items-center">
+      <div className="p-4 pt-2 flex justify-between items-center">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-white">
             ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
