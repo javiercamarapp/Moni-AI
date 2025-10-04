@@ -7,7 +7,7 @@ import heroAuth from '@/assets/moni-ai-logo.png';
 import aiImage from '@/assets/onboarding-ai.png';
 
 const OnboardingSlide = ({ image, title, description }: { image: string, title: string, description: string }) => (
-  <div className="px-4">
+  <div className="px-4 mt-8">
     <div className="bg-white/95 backdrop-blur-sm rounded-2xl border border-border shadow-xl p-6 md:p-8">
       <div className="flex flex-col items-center space-y-6">
         <div className="w-full">
