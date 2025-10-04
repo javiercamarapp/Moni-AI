@@ -160,7 +160,7 @@ const Auth = () => {
         <div className="w-full max-w-[280px] md:max-w-sm space-y-3 md:space-y-8 relative z-10">
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
           <div className="grid grid-cols-1">
-            <div className="h-48 md:h-64 w-full">
+            <div className="h-32 md:h-40 w-full">
               <img 
                 src={heroAuth} 
                 alt="Moni Dashboard" 
