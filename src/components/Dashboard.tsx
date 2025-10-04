@@ -153,7 +153,7 @@ const Dashboard = () => {
           <h1 className="text-xl sm:text-2xl font-bold text-white">
             ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
           </h1>
-          <p className="text-sm text-gray-300">Vas excelente con tus metas financieras</p>
+          <p className="text-sm text-white">Vas excelente con tus metas financieras</p>
         </div>
         <Button 
           variant="outline" 
@@ -328,7 +328,7 @@ const Dashboard = () => {
                   </div>
                   <div className="min-w-0 flex-1">
                     <h2 className="text-xs sm:text-sm lg:text-base font-semibold text-white leading-tight">Nivel {level}</h2>
-                    <p className="text-[9px] sm:text-[10px] text-gray-300 leading-tight">Ahorrador Pro</p>
+                    <p className="text-[9px] sm:text-[10px] text-white leading-tight">Ahorrador Pro</p>
                   </div>
                 </div>
                 <Badge variant="secondary" className="bg-white/20 text-white border-white/30 text-[9px] sm:text-[10px] px-1 py-0.5 flex-shrink-0 leading-tight">
@@ -338,11 +338,11 @@ const Dashboard = () => {
               
               <div className="space-y-0.5 sm:space-y-1">
                 <div className="flex justify-between text-[9px] sm:text-[10px]">
-                  <span className="text-gray-300">{currentXP}</span>
-                  <span className="text-gray-300">{nextLevelXP}</span>
+                  <span className="text-white">{currentXP}</span>
+                  <span className="text-white">{nextLevelXP}</span>
                 </div>
                 <Progress value={progressPercentage} className="h-1.5 sm:h-2" />
-                <p className="text-[8px] sm:text-[9px] text-gray-300 text-center leading-tight">
+                <p className="text-[8px] sm:text-[9px] text-white text-center leading-tight">
                   {nextLevelXP - currentXP} XP restantes
                 </p>
               </div>
@@ -357,7 +357,7 @@ const Dashboard = () => {
                   <Wallet className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
                 <div>
-                  <p className="text-[10px] sm:text-xs text-gray-300">Balance</p>
+                  <p className="text-[10px] sm:text-xs text-white">Balance</p>
                   <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">$23,450</p>
                 </div>
               </div>
@@ -369,7 +369,7 @@ const Dashboard = () => {
                   <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
                 <div>
-                  <p className="text-[10px] sm:text-xs text-gray-300">Ahorrado</p>
+                  <p className="text-[10px] sm:text-xs text-white">Ahorrado</p>
                   <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">$4,200</p>
                 </div>
               </div>
@@ -381,7 +381,7 @@ const Dashboard = () => {
                   <Target className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
                 <div>
-                  <p className="text-[10px] sm:text-xs text-gray-300">Metas</p>
+                  <p className="text-[10px] sm:text-xs text-white">Metas</p>
                   <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">{goals.length}</p>
                 </div>
               </div>
@@ -418,13 +418,13 @@ const Dashboard = () => {
                               </Badge>
                             )}
                           </div>
-                          <p className="text-xs sm:text-sm text-gray-300">Meta: {goal.deadline}</p>
+                          <p className="text-xs sm:text-sm text-white">Meta: {goal.deadline}</p>
                         </div>
                         <div className="text-left sm:text-right">
                           <p className="text-base sm:text-lg font-semibold text-white">
                             ${goal.current.toLocaleString()}
                           </p>
-                          <p className="text-xs sm:text-sm text-gray-300">
+                          <p className="text-xs sm:text-sm text-white">
                             de ${goal.target.toLocaleString()}
                           </p>
                         </div>
@@ -432,7 +432,7 @@ const Dashboard = () => {
                       
                       <Progress value={goalProgress} className="h-2 sm:h-3 mb-2" />
                       <div className="flex justify-between text-xs sm:text-sm">
-                        <span className="text-gray-300">{Math.round(goalProgress)}% completado</span>
+                        <span className="text-white">{Math.round(goalProgress)}% completado</span>
                         <span className="text-white font-medium">
                           ${(goal.target - goal.current).toLocaleString()} restante
                         </span>
@@ -455,7 +455,7 @@ const Dashboard = () => {
                 </div>
                 <div>
                   <h4 className="text-sm sm:text-base font-semibold text-white">Moni AI Coach</h4>
-                  <p className="text-xs text-gray-300">En línea</p>
+                  <p className="text-xs text-white">En línea</p>
                 </div>
               </div>
               
@@ -495,7 +495,7 @@ const Dashboard = () => {
                       <p className="text-sm font-medium text-white">
                         {transaction.description}
                       </p>
-                      <p className="text-xs text-gray-300">
+                      <p className="text-xs text-white">
                         {transaction.category} • {transaction.time}
                       </p>
                     </div>
@@ -532,7 +532,7 @@ const Dashboard = () => {
                         <p className="text-sm font-medium text-white">
                           {achievement.title}
                         </p>
-                        <p className="text-xs text-gray-300">
+                        <p className="text-xs text-white">
                           {achievement.description}
                         </p>
                       </div>
