@@ -106,27 +106,37 @@ const Onboarding = () => {
 
       {/* Bottom navigation */}
       <div className="pb-12 px-8">
-        <div className="flex items-center justify-between max-w-md mx-auto">
-          {/* Dot indicators */}
-          <div className="flex items-center gap-2">
-            {slides.map((_, index) => (
-              <div
-                key={index}
-                className={`rounded-full transition-all ${
-                  index === currentSlide 
-                    ? 'w-8 h-2 bg-white' 
-                    : 'w-2 h-2 bg-gray-600'
-                }`}
-              />
-            ))}
-          </div>
+        <div className="flex flex-col items-center gap-4 max-w-md mx-auto">
+          <div className="flex items-center justify-between w-full">
+            {/* Dot indicators */}
+            <div className="flex items-center gap-2">
+              {slides.map((_, index) => (
+                <div
+                  key={index}
+                  className={`rounded-full transition-all ${
+                    index === currentSlide 
+                      ? 'w-8 h-2 bg-white' 
+                      : 'w-2 h-2 bg-gray-600'
+                  }`}
+                />
+              ))}
+            </div>
 
-          {/* Next button */}
+            {/* Next button */}
+            <button
+              onClick={handleNext}
+              className="w-14 h-14 rounded-full border-2 border-white flex items-center justify-center hover:bg-white/10 transition-colors"
+            >
+              <ArrowRight className="w-6 h-6 text-white" />
+            </button>
+          </div>
+          
+          {/* Skip button below dots */}
           <button
-            onClick={handleNext}
-            className="w-14 h-14 rounded-full border-2 border-white flex items-center justify-center hover:bg-white/10 transition-colors"
+            onClick={() => navigate('/auth')}
+            className="text-gray-300 text-sm font-normal hover:text-white transition-colors"
           >
-            <ArrowRight className="w-6 h-6 text-white" />
+            Skip
           </button>
         </div>
       </div>
