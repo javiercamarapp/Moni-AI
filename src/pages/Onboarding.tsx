@@ -80,59 +80,6 @@ const Onboarding = () => {
 
   return (
     <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4 relative">
-      {/* Skip button */}
-      <Button
-        variant="ghost"
-        className="absolute top-8 right-8 text-white hover:bg-white/10"
-        onClick={() => navigate('/auth')}
-      >
-        Saltar
-      </Button>
-
-      {/* Logo pequeño arriba */}
-      <div className="absolute top-8 left-8 flex items-center space-x-2">
-        <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center glow-primary backdrop-blur-sm">
-          <Sparkles className="w-4 h-4 text-white" />
-        </div>
-        <span className="text-2xl font-bold text-white">Moni</span>
-      </div>
-
-      {/* Carousel */}
-      <div className="w-full max-w-4xl">
-        <Carousel className="w-full">
-          <CarouselContent>
-            {slides.map((slide, index) => (
-              <CarouselItem key={index}>
-                <Card className="border-0 bg-transparent">
-                  <OnboardingSlide 
-                    icon={slide.icon}
-                    title={slide.title}
-                    description={slide.description}
-                  />
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <div className="flex justify-center gap-4 mt-8">
-            <CarouselPrevious className="relative static translate-y-0 bg-white/10 border-white/20 text-white hover:bg-white/20" />
-            <CarouselNext className="relative static translate-y-0 bg-white/10 border-white/20 text-white hover:bg-white/20" />
-          </div>
-        </Carousel>
-      </div>
-
-      {/* CTA Button */}
-      <div className="mt-12 space-y-4 text-center">
-        <Button
-          size="lg"
-          className="bg-white text-black hover:bg-gray-200 hover:scale-105 transition-all glow-primary px-8 py-4 text-lg font-semibold"
-          onClick={() => navigate('/auth')}
-        >
-          Comenzar Gratis
-        </Button>
-        <p className="text-sm text-gray-400">
-          Primer mes gratis • Sin compromiso • Cancela cuando quieras
-        </p>
-      </div>
     </div>
   );
 };
