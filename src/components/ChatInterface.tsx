@@ -193,7 +193,7 @@ const ChatInterface = () => {
                 {/* Message Bubble */}
                 <div className={`relative px-4 py-3 rounded-2xl ${
                   msg.type === 'ai'
-                    ? 'bg-gradient-card card-glow rounded-bl-md'
+                    ? 'bg-gray-100 text-gray-900 rounded-bl-md'
                     : 'bg-primary text-primary-foreground rounded-br-md'
                 } ${msg.typing ? 'animate-pulse' : ''}`}>
                   
@@ -202,7 +202,7 @@ const ChatInterface = () => {
                   </div>
                   
                   <div className={`text-xs mt-2 ${
-                    msg.type === 'ai' ? 'text-muted-foreground' : 'text-primary-foreground/70'
+                    msg.type === 'ai' ? 'text-gray-600' : 'text-primary-foreground/70'
                   }`}>
                     {msg.timestamp}
                   </div>
