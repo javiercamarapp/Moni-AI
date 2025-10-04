@@ -466,14 +466,24 @@ const Dashboard = () => {
             
             {/* Chat with AI */}
             <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                  <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm sm:text-base font-semibold text-white">Moni AI Coach</h4>
+                    <p className="text-xs text-white">En línea</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-sm sm:text-base font-semibold text-white">Moni AI Coach</h4>
-                  <p className="text-xs text-white">En línea</p>
-                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="text-xs text-white hover:bg-white/10"
+                  onClick={() => navigate("/chat")}
+                >
+                  Ver todos
+                </Button>
               </div>
               
               <div className="space-y-3 mb-4">
@@ -504,7 +514,16 @@ const Dashboard = () => {
 
             {/* Recent Transactions */}
             <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
-              <h4 className="text-sm sm:text-base font-semibold text-white mb-4">Movimientos Recientes</h4>
+              <div className="flex justify-between items-center mb-4">
+                <h4 className="text-sm sm:text-base font-semibold text-white">Movimientos Recientes</h4>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="text-xs text-white hover:bg-white/10"
+                >
+                  Ver todos
+                </Button>
+              </div>
               <div className="space-y-3">
                 {recentTransactions.map((transaction) => (
                   <div key={transaction.id} className="flex justify-between items-center">
