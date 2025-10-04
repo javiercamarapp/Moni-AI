@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
+import heroAuth from '@/assets/moni-ai-logo.png';
 
 const OnboardingSlide = ({ image, title, description }: { image: string, title: string, description: string }) => (
   <div className="flex flex-col items-center justify-between h-full px-6 py-8">
@@ -83,6 +84,17 @@ const Onboarding = () => {
 
   return (
     <div className="min-h-screen animated-wave-bg flex flex-col relative">
+      {/* Logo banner at the top */}
+      <div className="w-full bg-white/95 backdrop-blur-sm">
+        <div className="h-24 md:h-32 w-full">
+          <img 
+            src={heroAuth} 
+            alt="Moni" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </div>
+
       {/* Slide content */}
       <div className="flex-1 flex items-center justify-center">
         <div className="w-full max-w-md h-full">
