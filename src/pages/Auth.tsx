@@ -242,7 +242,7 @@ const Auth = () => {
               <span className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-[10px] md:text-xs uppercase">
-              <span className="px-2 text-muted-foreground">O continúa con</span>
+              <span className="bg-black px-2 text-muted-foreground">O continúa con</span>
             </div>
           </div>
 
