@@ -11,6 +11,7 @@ import bannerInvestment from '@/assets/banner-investment.jpg';
 import bannerGoals from '@/assets/banner-goals.jpg';
 import bannerGroups from '@/assets/banner-groups.jpg';
 import bannerHalloween from '@/assets/banner-halloween.png';
+import heroAuth from '@/assets/moni-ai-logo.png';
 import { 
   Target, 
   TrendingUp, 
@@ -147,8 +148,19 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
+      {/* Logo banner - esquina superior izquierda */}
+      <div className="p-2 absolute top-0 left-0 z-10">
+        <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden w-24 h-16">
+          <img 
+            src={heroAuth} 
+            alt="Moni" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </div>
+
       {/* Header con saludo y botón de logout para desktop */}
-      <div className="p-4 flex justify-between items-center">
+      <div className="p-4 pt-20 flex justify-between items-center">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-white">
             ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
