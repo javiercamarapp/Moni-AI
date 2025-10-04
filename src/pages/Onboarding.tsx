@@ -83,16 +83,6 @@ const Onboarding = () => {
 
   return (
     <div className="min-h-screen animated-wave-bg flex flex-col relative">
-      {/* Skip button */}
-      <div className="absolute top-8 left-8 z-10">
-        <button
-          onClick={() => navigate('/auth')}
-          className="text-gray-300 text-base font-normal hover:text-white transition-colors"
-        >
-          Skip
-        </button>
-      </div>
-
       {/* Slide content */}
       <div className="flex-1 flex items-center justify-center">
         <div className="w-full max-w-md h-full">
