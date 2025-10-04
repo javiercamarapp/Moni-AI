@@ -183,7 +183,19 @@ const Dashboard = () => {
                   alt="Halloween Special Sale" 
                   className="absolute inset-0 w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 flex items-end justify-center pb-6">
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
+                <div className="relative p-6 h-full flex flex-col justify-center">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                      <Zap className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className="text-base sm:text-lg font-semibold text-white">
+                      Oferta Especial Halloween
+                    </h3>
+                  </div>
+                  <p className="text-sm text-white/90 mb-3">
+                    Descuentos exclusivos por tiempo limitado
+                  </p>
                   <Button 
                     variant="outline"
                     size="sm"
