@@ -114,7 +114,7 @@ const Onboarding = () => {
       </div>
 
       {/* Bottom navigation */}
-      <div className="pb-12 px-8">
+      <div className="pb-12 px-8 mt-8">
         <div className="max-w-md mx-auto">
           <div className="flex items-center justify-between mb-2">
             {/* Dot indicators - left aligned */}
