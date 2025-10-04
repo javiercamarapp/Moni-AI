@@ -132,37 +132,37 @@ const ChatInterface = () => {
       <div className="container mx-auto max-w-4xl h-screen flex flex-col">
         
         {/* Chat Header */}
-        <Card className="bg-gradient-card card-glow border-0 rounded-b-none">
+        <Card className="bg-white/95 backdrop-blur-sm border-0 rounded-b-none shadow-lg">
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center space-x-3">
-              <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => navigate("/dashboard")}>
+              <Button variant="ghost" size="icon" className="lg:hidden text-gray-900 hover:bg-gray-100" onClick={() => navigate("/dashboard")}>
                 <ArrowLeft className="w-4 h-4" />
               </Button>
               
               <div className="w-10 h-10 rounded-full bg-gradient-primary flex items-center justify-center glow-primary">
-                <Bot className="w-5 h-5 text-primary-foreground" />
+                <Bot className="w-5 h-5 text-white" />
               </div>
               
               <div>
-                <h2 className="font-semibold text-foreground">Moni AI Coach</h2>
+                <h2 className="font-semibold text-gray-900">Moni AI Coach</h2>
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
-                  <span className="text-xs text-muted-foreground">En línea • Analizando tus finanzas</span>
+                  <span className="text-xs text-gray-600">En línea • Analizando tus finanzas</span>
                 </div>
               </div>
             </div>
             
             <div className="flex items-center space-x-2">
-              <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30 text-xs">
+              <Badge variant="secondary" className="bg-purple-100 text-purple-700 border-purple-200 text-xs">
                 +25 XP por chat activo
               </Badge>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="text-gray-900 hover:bg-gray-100">
                 <Phone className="w-4 h-4" />
               </Button>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="text-gray-900 hover:bg-gray-100">
                 <Video className="w-4 h-4" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={handleLogout}>
+              <Button variant="ghost" size="icon" className="text-gray-900 hover:bg-gray-100" onClick={handleLogout}>
                 <LogOut className="w-4 h-4" />
               </Button>
             </div>
@@ -238,10 +238,10 @@ const ChatInterface = () => {
         </div>
 
         {/* Message Input */}
-        <Card className="bg-gradient-card card-glow border-0 rounded-t-none">
+        <Card className="bg-white/95 backdrop-blur-sm border-0 rounded-t-none shadow-lg">
           <div className="p-4">
             <div className="flex items-center space-x-3">
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+              <Button variant="ghost" size="icon" className="text-gray-600 hover:text-gray-900 hover:bg-gray-100">
                 <Paperclip className="w-4 h-4" />
               </Button>
               
@@ -251,12 +251,12 @@ const ChatInterface = () => {
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Pregúntame sobre tus finanzas..."
-                  className="bg-input border-border focus:border-primary pr-12"
+                  className="bg-white border-gray-300 text-gray-900 focus:border-purple-500 pr-12"
                 />
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-primary"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 >
                   <Smile className="w-4 h-4" />
                 </Button>
@@ -265,13 +265,13 @@ const ChatInterface = () => {
               <Button 
                 onClick={handleSendMessage}
                 disabled={!message.trim()}
-                className="bg-gradient-primary text-primary-foreground hover:scale-105 transition-all glow-primary"
+                className="bg-gradient-primary text-white hover:scale-105 transition-all glow-primary"
               >
                 <Send className="w-4 h-4" />
               </Button>
             </div>
             
-            <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
+            <div className="flex items-center justify-between mt-3 text-xs text-gray-600">
               <span>🤖 Respuesta instantánea con IA • 🔐 Datos 100% seguros</span>
               <span>Presiona Enter para enviar</span>
             </div>
