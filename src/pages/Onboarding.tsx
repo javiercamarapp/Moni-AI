@@ -69,7 +69,7 @@ const Onboarding = () => {
 
   if (showLogo) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
         <div className="animate-fade-in">
           <img 
             src={moniLogo} 
@@ -82,7 +82,7 @@ const Onboarding = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col relative">
+    <div className="min-h-screen animated-wave-bg flex flex-col relative">
       {/* Skip button */}
       <div className="absolute top-8 left-8 z-10">
         <button
