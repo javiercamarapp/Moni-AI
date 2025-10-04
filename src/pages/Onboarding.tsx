@@ -6,21 +6,25 @@ import moniLogo from '/moni-logo.png';
 import heroAuth from '@/assets/moni-ai-logo.png';
 
 const OnboardingSlide = ({ image, title, description }: { image: string, title: string, description: string }) => (
-  <div className="flex flex-col items-center justify-between h-full px-6 py-8">
-    <div className="flex-1 flex items-center justify-center w-full">
-      <img 
-        src={image} 
-        alt={title}
-        className="w-full max-w-md h-auto object-contain"
-      />
-    </div>
-    <div className="text-center space-y-4 mt-8">
-      <h2 className="text-2xl md:text-3xl font-bold text-white leading-tight">
-        {title}
-      </h2>
-      <p className="text-base md:text-lg text-gray-300 leading-relaxed max-w-md mx-auto">
-        {description}
-      </p>
+  <div className="px-4">
+    <div className="bg-white/95 backdrop-blur-sm rounded-2xl border border-border shadow-xl p-6 md:p-8">
+      <div className="flex flex-col items-center space-y-6">
+        <div className="w-full">
+          <img 
+            src={image} 
+            alt={title}
+            className="w-full max-w-sm mx-auto h-auto object-contain rounded-lg"
+          />
+        </div>
+        <div className="text-center space-y-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
+            {title}
+          </h2>
+          <p className="text-base md:text-lg text-gray-700 leading-relaxed max-w-md mx-auto">
+            {description}
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 );
