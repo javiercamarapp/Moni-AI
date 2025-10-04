@@ -170,7 +170,7 @@ const ChatInterface = () => {
         </Card>
 
         {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto bg-black/50 backdrop-blur-sm p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto bg-white/90 backdrop-blur-sm p-4 space-y-4">
           {messages.map((msg) => (
             <div key={msg.id} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`flex items-start space-x-2 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg ${
