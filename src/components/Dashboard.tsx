@@ -173,10 +173,11 @@ const Dashboard = () => {
           setApi={setApi}
           opts={{
             loop: true,
+            align: "center",
           }}
         >
-          <CarouselContent>
-            <CarouselItem>
+          <CarouselContent className="-ml-2 md:-ml-4">
+            <CarouselItem className="pl-2 md:pl-4 basis-[85%] md:basis-[80%]">
               <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
                 <img 
                   src={bannerHalloween} 
@@ -207,7 +208,7 @@ const Dashboard = () => {
               </Card>
             </CarouselItem>
             
-            <CarouselItem>
+            <CarouselItem className="pl-2 md:pl-4 basis-[85%] md:basis-[80%]">
               <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
                 <img 
                   src={bannerGoals} 
@@ -238,7 +239,7 @@ const Dashboard = () => {
               </Card>
             </CarouselItem>
             
-            <CarouselItem>
+            <CarouselItem className="pl-2 md:pl-4 basis-[85%] md:basis-[80%]">
               <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
                 <img 
                   src={bannerGroups} 
