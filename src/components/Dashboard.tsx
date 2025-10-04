@@ -324,25 +324,25 @@ const Dashboard = () => {
               <div className="flex items-start justify-between gap-1.5">
                 <div className="flex items-center space-x-1.5 sm:space-x-2 min-w-0">
                   <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
-                    <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
+                    <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h2 className="text-xs sm:text-sm lg:text-base font-semibold text-foreground leading-tight">Nivel {level}</h2>
-                    <p className="text-[9px] sm:text-[10px] text-muted-foreground leading-tight">Ahorrador Pro</p>
+                    <h2 className="text-xs sm:text-sm lg:text-base font-semibold text-white leading-tight">Nivel {level}</h2>
+                    <p className="text-[9px] sm:text-[10px] text-gray-300 leading-tight">Ahorrador Pro</p>
                   </div>
                 </div>
-                <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30 text-[9px] sm:text-[10px] px-1 py-0.5 flex-shrink-0 leading-tight">
+                <Badge variant="secondary" className="bg-white/20 text-white border-white/30 text-[9px] sm:text-[10px] px-1 py-0.5 flex-shrink-0 leading-tight">
                   +50 XP
                 </Badge>
               </div>
               
               <div className="space-y-0.5 sm:space-y-1">
                 <div className="flex justify-between text-[9px] sm:text-[10px]">
-                  <span className="text-muted-foreground">{currentXP}</span>
-                  <span className="text-muted-foreground">{nextLevelXP}</span>
+                  <span className="text-gray-300">{currentXP}</span>
+                  <span className="text-gray-300">{nextLevelXP}</span>
                 </div>
                 <Progress value={progressPercentage} className="h-1.5 sm:h-2" />
-                <p className="text-[8px] sm:text-[9px] text-muted-foreground text-center leading-tight">
+                <p className="text-[8px] sm:text-[9px] text-gray-300 text-center leading-tight">
                   {nextLevelXP - currentXP} XP restantes
                 </p>
               </div>
@@ -354,11 +354,11 @@ const Dashboard = () => {
             <Card className="p-2 sm:p-3 bg-gradient-card card-glow">
               <div className="flex items-center space-x-2">
                 <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                  <Wallet className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
+                  <Wallet className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
                 <div>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">Balance</p>
-                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-foreground">$23,450</p>
+                  <p className="text-[10px] sm:text-xs text-gray-300">Balance</p>
+                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">$23,450</p>
                 </div>
               </div>
             </Card>
@@ -366,11 +366,11 @@ const Dashboard = () => {
             <Card className="p-2 sm:p-3 bg-gradient-card card-glow">
               <div className="flex items-center space-x-2">
                 <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-success/20 flex items-center justify-center">
-                  <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-success" />
+                  <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
                 <div>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">Ahorrado</p>
-                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-foreground">$4,200</p>
+                  <p className="text-[10px] sm:text-xs text-gray-300">Ahorrado</p>
+                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">$4,200</p>
                 </div>
               </div>
             </Card>
@@ -378,11 +378,11 @@ const Dashboard = () => {
             <Card className="p-2 sm:p-3 bg-gradient-card card-glow">
               <div className="flex items-center space-x-2">
                 <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-warning/20 flex items-center justify-center">
-                  <Target className="w-3 h-3 sm:w-4 sm:h-4 text-warning" />
+                  <Target className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
                 <div>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">Metas</p>
-                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-foreground">{goals.length}</p>
+                  <p className="text-[10px] sm:text-xs text-gray-300">Metas</p>
+                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">{goals.length}</p>
                 </div>
               </div>
             </Card>
@@ -395,8 +395,8 @@ const Dashboard = () => {
           <div className="lg:col-span-2 space-y-6">
             <div>
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
-                <h3 className="text-lg sm:text-xl font-semibold text-foreground">Tus Metas</h3>
-                <Button size="sm" className="bg-primary/20 hover:bg-primary/30 text-primary border-primary/30 text-xs sm:text-sm">
+                <h3 className="text-lg sm:text-xl font-semibold text-white">Tus Metas</h3>
+                <Button size="sm" className="bg-white/20 hover:bg-white/30 text-white border-white/30 text-xs sm:text-sm">
                   <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   Nueva Meta
                 </Button>
@@ -410,21 +410,21 @@ const Dashboard = () => {
                       <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-4">
                         <div className="flex-1">
                           <div className="flex items-center flex-wrap space-x-2 mb-2 gap-1">
-                            <h4 className="text-base sm:text-lg font-semibold text-foreground">{goal.title}</h4>
+                            <h4 className="text-base sm:text-lg font-semibold text-white">{goal.title}</h4>
                             {goal.type === 'group' && (
-                              <Badge variant="outline" className="text-xs">
+                              <Badge variant="outline" className="text-xs text-white border-white/30">
                                 <Users className="w-3 h-3 mr-1" />
                                 {goal.members} personas
                               </Badge>
                             )}
                           </div>
-                          <p className="text-xs sm:text-sm text-muted-foreground">Meta: {goal.deadline}</p>
+                          <p className="text-xs sm:text-sm text-gray-300">Meta: {goal.deadline}</p>
                         </div>
                         <div className="text-left sm:text-right">
-                          <p className="text-base sm:text-lg font-semibold text-foreground">
+                          <p className="text-base sm:text-lg font-semibold text-white">
                             ${goal.current.toLocaleString()}
                           </p>
-                          <p className="text-xs sm:text-sm text-muted-foreground">
+                          <p className="text-xs sm:text-sm text-gray-300">
                             de ${goal.target.toLocaleString()}
                           </p>
                         </div>
@@ -432,8 +432,8 @@ const Dashboard = () => {
                       
                       <Progress value={goalProgress} className="h-2 sm:h-3 mb-2" />
                       <div className="flex justify-between text-xs sm:text-sm">
-                        <span className="text-muted-foreground">{Math.round(goalProgress)}% completado</span>
-                        <span className="text-primary font-medium">
+                        <span className="text-gray-300">{Math.round(goalProgress)}% completado</span>
+                        <span className="text-white font-medium">
                           ${(goal.target - goal.current).toLocaleString()} restante
                         </span>
                       </div>
@@ -451,25 +451,25 @@ const Dashboard = () => {
             <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                  <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                  <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
                 <div>
-                  <h4 className="text-sm sm:text-base font-semibold text-foreground">Moni AI Coach</h4>
-                  <p className="text-xs text-muted-foreground">En línea</p>
+                  <h4 className="text-sm sm:text-base font-semibold text-white">Moni AI Coach</h4>
+                  <p className="text-xs text-gray-300">En línea</p>
                 </div>
               </div>
               
               <div className="space-y-3 mb-4">
-                <div className="bg-muted/50 rounded-2xl rounded-bl-md p-2 sm:p-3">
-                  <p className="text-xs sm:text-sm text-foreground">
+                <div className="bg-white/10 rounded-2xl rounded-bl-md p-2 sm:p-3">
+                  <p className="text-xs sm:text-sm text-white">
                     ¡Excelente progreso en tu meta de Japón! 🇯🇵 
                     <br /><br />
                     Te quedan solo $17,500. Si ahorras $890 extra este mes, ¡estarás súper cerca! 
                   </p>
                 </div>
                 
-                <div className="bg-primary/20 rounded-2xl rounded-br-md p-2 sm:p-3 ml-6 sm:ml-8">
-                  <p className="text-xs sm:text-sm text-foreground">
+                <div className="bg-white/20 rounded-2xl rounded-br-md p-2 sm:p-3 ml-6 sm:ml-8">
+                  <p className="text-xs sm:text-sm text-white">
                     ¿Cómo puedo ahorrar esos $890 extras? 🤔
                   </p>
                 </div>
@@ -477,7 +477,7 @@ const Dashboard = () => {
 
               <Button 
                 size="sm" 
-                className="w-full bg-primary/20 hover:bg-primary/30 text-primary border-primary/30"
+                className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30"
                 onClick={() => navigate("/chat")}
               >
                 <MessageCircle className="w-4 h-4 mr-2" />
@@ -487,20 +487,20 @@ const Dashboard = () => {
 
             {/* Recent Transactions */}
             <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
-              <h4 className="text-sm sm:text-base font-semibold text-foreground mb-4">Movimientos Recientes</h4>
+              <h4 className="text-sm sm:text-base font-semibold text-white mb-4">Movimientos Recientes</h4>
               <div className="space-y-3">
                 {recentTransactions.map((transaction) => (
                   <div key={transaction.id} className="flex justify-between items-center">
                     <div>
-                      <p className="text-sm font-medium text-foreground">
+                      <p className="text-sm font-medium text-white">
                         {transaction.description}
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-gray-300">
                         {transaction.category} • {transaction.time}
                       </p>
                     </div>
                     <span className={`text-sm font-semibold ${
-                      transaction.amount > 0 ? 'text-success' : 'text-foreground'
+                      transaction.amount > 0 ? 'text-green-400' : 'text-white'
                     }`}>
                       ${Math.abs(transaction.amount)}
                     </span>
@@ -511,28 +511,28 @@ const Dashboard = () => {
 
             {/* Achievements */}
             <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
-              <h4 className="text-sm sm:text-base font-semibold text-foreground mb-4 flex items-center">
-                <Trophy className="w-4 h-4 mr-2 text-primary" />
+              <h4 className="text-sm sm:text-base font-semibold text-white mb-4 flex items-center">
+                <Trophy className="w-4 h-4 mr-2 text-white" />
                 Logros Recientes
               </h4>
               <div className="space-y-3">
                 {achievements.map((achievement) => (
                   <div key={achievement.id} className={`p-3 rounded-lg border ${
                     achievement.earned 
-                      ? 'border-primary/30 bg-primary/10' 
-                      : 'border-muted bg-muted/20'
+                      ? 'border-white/30 bg-white/10' 
+                      : 'border-white/20 bg-white/5'
                   }`}>
                     <div className="flex items-start space-x-2">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                        achievement.earned ? 'bg-primary text-primary-foreground' : 'bg-muted'
+                        achievement.earned ? 'bg-white text-black' : 'bg-gray-600'
                       }`}>
                         {achievement.earned ? <Zap className="w-3 h-3" /> : <Target className="w-3 h-3" />}
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-foreground">
+                        <p className="text-sm font-medium text-white">
                           {achievement.title}
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-gray-300">
                           {achievement.description}
                         </p>
                       </div>
