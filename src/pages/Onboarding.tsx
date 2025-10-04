@@ -14,10 +14,10 @@ const OnboardingSlide = ({ image, title, description }: { image: string, title: 
       />
     </div>
     <div className="text-center space-y-4 mt-8">
-      <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
+      <h2 className="text-2xl md:text-3xl font-bold text-white leading-tight">
         {title}
       </h2>
-      <p className="text-base md:text-lg text-gray-700 leading-relaxed max-w-md mx-auto">
+      <p className="text-base md:text-lg text-gray-300 leading-relaxed max-w-md mx-auto">
         {description}
       </p>
     </div>
@@ -69,7 +69,7 @@ const Onboarding = () => {
 
   if (showLogo) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="animate-fade-in">
           <img 
             src={moniLogo} 
@@ -82,12 +82,12 @@ const Onboarding = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col relative">
+    <div className="min-h-screen bg-black flex flex-col relative">
       {/* Skip button */}
       <div className="absolute top-8 left-8 z-10">
         <button
           onClick={() => navigate('/auth')}
-          className="text-gray-600 text-base font-normal"
+          className="text-gray-300 text-base font-normal hover:text-white transition-colors"
         >
           Skip
         </button>
@@ -114,8 +114,8 @@ const Onboarding = () => {
                 key={index}
                 className={`rounded-full transition-all ${
                   index === currentSlide 
-                    ? 'w-8 h-2 bg-gray-900' 
-                    : 'w-2 h-2 bg-gray-300'
+                    ? 'w-8 h-2 bg-white' 
+                    : 'w-2 h-2 bg-gray-600'
                 }`}
               />
             ))}
@@ -124,9 +124,9 @@ const Onboarding = () => {
           {/* Next button */}
           <button
             onClick={handleNext}
-            className="w-14 h-14 rounded-full border-2 border-gray-900 flex items-center justify-center hover:bg-gray-50 transition-colors"
+            className="w-14 h-14 rounded-full border-2 border-white flex items-center justify-center hover:bg-white/10 transition-colors"
           >
-            <ArrowRight className="w-6 h-6 text-gray-900" />
+            <ArrowRight className="w-6 h-6 text-white" />
           </button>
         </div>
       </div>
