@@ -319,25 +319,34 @@ const Dashboard = () => {
         {/* Level Progress y Quick Stats en la misma fila - dos secciones */}
         <div className="grid grid-cols-2 gap-2 sm:gap-4">
           {/* Sección 1: Level Progress */}
-          <Card className="p-2 sm:p-4 lg:p-6 bg-gradient-card card-glow">
-            <div className="flex flex-col items-start justify-between mb-2 sm:mb-4 gap-2">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-                  <Trophy className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-primary" />
+          <Card className="p-3 sm:p-4 lg:p-6 bg-gradient-card card-glow">
+            <div className="space-y-2 sm:space-y-3">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <Trophy className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-primary" />
+                  </div>
+                  <div className="min-w-0">
+                    <h2 className="text-sm sm:text-lg lg:text-xl font-semibold text-foreground truncate">Nivel {level}</h2>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Ahorrador Pro</p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-xs sm:text-base lg:text-xl font-semibold text-foreground">Nivel {level}</h2>
-                  <p className="text-[10px] sm:text-xs lg:text-sm text-muted-foreground">{currentXP}/{nextLevelXP} XP</p>
-                </div>
+                <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30 text-[10px] sm:text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 flex-shrink-0">
+                  +50 XP
+                </Badge>
               </div>
-              <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30 text-[10px] sm:text-xs px-2 py-0.5">
-                +50 XP
-              </Badge>
+              
+              <div className="space-y-1 sm:space-y-2">
+                <div className="flex justify-between text-xs sm:text-sm">
+                  <span className="text-muted-foreground">{currentXP} XP</span>
+                  <span className="text-muted-foreground">{nextLevelXP} XP</span>
+                </div>
+                <Progress value={progressPercentage} className="h-2 sm:h-2.5 lg:h-3" />
+                <p className="text-[10px] sm:text-xs text-muted-foreground text-center">
+                  {nextLevelXP - currentXP} XP para siguiente nivel
+                </p>
+              </div>
             </div>
-            <Progress value={progressPercentage} className="h-1.5 sm:h-2 lg:h-3" />
-            <p className="text-[10px] sm:text-xs lg:text-sm text-muted-foreground mt-1 sm:mt-2">
-              {nextLevelXP - currentXP} XP
-            </p>
           </Card>
 
           {/* Sección 2: Quick Stats - 3 estadísticas */}
