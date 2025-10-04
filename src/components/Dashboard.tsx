@@ -261,53 +261,53 @@ const Dashboard = () => {
       </div>
       
       {/* Bottom Navigation Menu - Fixed */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border shadow-lg">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black border-t border-white/20 shadow-lg">
         <div className="container mx-auto px-2">
           <div className="flex items-center justify-around h-16">
             <Button 
               variant="ghost" 
               size="sm" 
-              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10"
             >
-              <Target className="w-5 h-5" />
-              <span className="text-xs">Metas</span>
+              <Target className="w-5 h-5 text-white" />
+              <span className="text-xs text-white">Metas</span>
             </Button>
 
             <Button 
               variant="ghost" 
               size="sm" 
-              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10"
               onClick={() => navigate("/chat")}
             >
-              <MessageCircle className="w-5 h-5" />
-              <span className="text-xs">Chat</span>
+              <MessageCircle className="w-5 h-5 text-white" />
+              <span className="text-xs text-white">Chat</span>
             </Button>
 
             <Button 
               variant="ghost" 
               size="sm" 
-              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10"
             >
-              <TrendingUp className="w-5 h-5" />
-              <span className="text-xs">Análisis</span>
+              <TrendingUp className="w-5 h-5 text-white" />
+              <span className="text-xs text-white">Análisis</span>
             </Button>
 
             <Button 
               variant="ghost" 
               size="sm" 
-              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10"
             >
-              <Users className="w-5 h-5" />
-              <span className="text-xs">Grupos</span>
+              <Users className="w-5 h-5 text-white" />
+              <span className="text-xs text-white">Grupos</span>
             </Button>
 
             <Button 
               variant="ghost" 
               size="sm" 
-              className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10"
             >
-              <Settings className="w-5 h-5" />
-              <span className="text-xs">Más</span>
+              <Settings className="w-5 h-5 text-white" />
+              <span className="text-xs text-white">Más</span>
             </Button>
           </div>
         </div>
