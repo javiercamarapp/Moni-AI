@@ -1,27 +1,32 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { MessageCircle, Trophy, Target, Users, Shield, Heart, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
 
-const OnboardingSlide = ({ icon: Icon, title, description }: { icon: any, title: string, description: string }) => (
-  <div className="flex flex-col items-center justify-center text-center space-y-6 p-8">
-    <div className="w-20 h-20 rounded-3xl bg-white/20 flex items-center justify-center glow-primary backdrop-blur-sm">
-      <Icon className="w-10 h-10 text-white" />
+const OnboardingSlide = ({ image, title, description }: { image: string, title: string, description: string }) => (
+  <div className="flex flex-col items-center justify-between h-full px-6 py-8">
+    <div className="flex-1 flex items-center justify-center w-full">
+      <img 
+        src={image} 
+        alt={title}
+        className="w-full max-w-md h-auto object-contain"
+      />
     </div>
-    <h2 className="text-3xl md:text-4xl font-bold text-white max-w-md">
-      {title}
-    </h2>
-    <p className="text-lg md:text-xl text-gray-300 max-w-md leading-relaxed">
-      {description}
-    </p>
+    <div className="text-center space-y-4 mt-8">
+      <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
+        {title}
+      </h2>
+      <p className="text-base md:text-lg text-gray-700 leading-relaxed max-w-md mx-auto">
+        {description}
+      </p>
+    </div>
   </div>
 );
 
 const Onboarding = () => {
   const [showLogo, setShowLogo] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,40 +38,38 @@ const Onboarding = () => {
 
   const slides = [
     {
-      icon: MessageCircle,
-      title: 'Coach en WhatsApp',
-      description: 'Recibe tips personalizados y motivación directamente en WhatsApp'
+      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
+      title: 'Tu coach financiero personal en WhatsApp',
+      description: 'La IA que te acompaña día a día y te ayuda a gastar mejor, ahorrar más y cumplir tus metas.'
     },
     {
-      icon: Trophy,
+      image: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&h=600&fit=crop',
       title: 'Gamificación Real',
-      description: 'Gana XP, sube de nivel y desbloquea badges. Ahorrar nunca fue tan divertido'
+      description: 'Gana XP, sube de nivel y desbloquea badges. Ahorrar nunca fue tan divertido.'
     },
     {
-      icon: Target,
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
       title: 'Metas Inteligentes',
-      description: 'IA que analiza tus patrones de gasto y crea planes personalizados'
+      description: 'IA que analiza tus patrones de gasto y crea planes personalizados para ti.'
     },
     {
-      icon: Users,
+      image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=600&fit=crop',
       title: 'Metas Grupales',
-      description: 'Planea viajes o proyectos con amigos. Todos aportan y ven el progreso'
-    },
-    {
-      icon: Shield,
-      title: 'Seguro y Privado',
-      description: 'Tecnología bancaria de nivel mundial. Tus datos están seguros'
-    },
-    {
-      icon: Heart,
-      title: 'Impacto Social',
-      description: 'Tu suscripción dona acceso gratuito a estudiantes'
+      description: 'Planea viajes o proyectos con amigos. Todos aportan y ven el progreso en tiempo real.'
     }
   ];
 
+  const handleNext = () => {
+    if (currentSlide < slides.length - 1) {
+      setCurrentSlide(currentSlide + 1);
+    } else {
+      navigate('/auth');
+    }
+  };
+
   if (showLogo) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="animate-fade-in">
           <img 
             src={moniLogo} 
@@ -79,7 +82,54 @@ const Onboarding = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4 relative">
+    <div className="min-h-screen bg-white flex flex-col relative">
+      {/* Skip button */}
+      <div className="absolute top-8 left-8 z-10">
+        <button
+          onClick={() => navigate('/auth')}
+          className="text-gray-600 text-base font-normal"
+        >
+          Skip
+        </button>
+      </div>
+
+      {/* Slide content */}
+      <div className="flex-1 flex items-center justify-center">
+        <div className="w-full max-w-md h-full">
+          <OnboardingSlide 
+            image={slides[currentSlide].image}
+            title={slides[currentSlide].title}
+            description={slides[currentSlide].description}
+          />
+        </div>
+      </div>
+
+      {/* Bottom navigation */}
+      <div className="pb-12 px-8">
+        <div className="flex items-center justify-between max-w-md mx-auto">
+          {/* Dot indicators */}
+          <div className="flex items-center gap-2">
+            {slides.map((_, index) => (
+              <div
+                key={index}
+                className={`rounded-full transition-all ${
+                  index === currentSlide 
+                    ? 'w-8 h-2 bg-gray-900' 
+                    : 'w-2 h-2 bg-gray-300'
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Next button */}
+          <button
+            onClick={handleNext}
+            className="w-14 h-14 rounded-full border-2 border-gray-900 flex items-center justify-center hover:bg-gray-50 transition-colors"
+          >
+            <ArrowRight className="w-6 h-6 text-gray-900" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
