@@ -106,10 +106,10 @@ const Onboarding = () => {
 
       {/* Bottom navigation */}
       <div className="pb-12 px-8">
-        <div className="flex flex-col items-center gap-4 max-w-md mx-auto">
-          <div className="flex items-center justify-between w-full">
-            {/* Dot indicators */}
-            <div className="flex items-center gap-2">
+        <div className="max-w-md mx-auto">
+          <div className="flex items-center justify-between mb-4">
+            {/* Dot indicators - centered */}
+            <div className="flex items-center gap-2 mx-auto">
               {slides.map((_, index) => (
                 <div
                   key={index}
@@ -131,13 +131,15 @@ const Onboarding = () => {
             </button>
           </div>
           
-          {/* Skip button below dots */}
-          <button
-            onClick={() => navigate('/auth')}
-            className="text-gray-300 text-sm font-normal hover:text-white transition-colors"
-          >
-            Skip
-          </button>
+          {/* Skip button centered below dots */}
+          <div className="flex justify-center">
+            <button
+              onClick={() => navigate('/auth')}
+              className="text-gray-300 text-sm font-normal hover:text-white transition-colors"
+            >
+              Skip
+            </button>
+          </div>
         </div>
       </div>
     </div>
