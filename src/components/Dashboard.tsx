@@ -317,7 +317,17 @@ const Dashboard = () => {
             <Button 
               variant="ghost" 
               size="sm" 
-              className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10"
+              className="flex md:hidden flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10"
+              onClick={handleLogout}
+            >
+              <LogOut className="w-5 h-5 text-white" />
+              <span className="text-xs text-white">Salir</span>
+            </Button>
+
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="hidden md:flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10"
             >
               <Settings className="w-5 h-5 text-white" />
               <span className="text-xs text-white">Más</span>
