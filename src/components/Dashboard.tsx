@@ -500,7 +500,7 @@ const Dashboard = () => {
                       </p>
                     </div>
                     <span className={`text-sm font-semibold ${
-                      transaction.amount > 0 ? 'text-green-400' : 'text-white'
+                      transaction.amount > 0 ? 'text-green-500' : 'text-red-500'
                     }`}>
                       ${Math.abs(transaction.amount)}
                     </span>
