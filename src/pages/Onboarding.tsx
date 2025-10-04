@@ -85,13 +85,15 @@ const Onboarding = () => {
   return (
     <div className="min-h-screen animated-wave-bg flex flex-col relative">
       {/* Logo banner at the top */}
-      <div className="w-full bg-white/95 backdrop-blur-sm">
-        <div className="h-24 md:h-32 w-full">
-          <img 
-            src={heroAuth} 
-            alt="Moni" 
-            className="w-full h-full object-cover"
-          />
+      <div className="px-4 pt-4">
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden max-w-md mx-auto">
+          <div className="h-24 md:h-32 w-full">
+            <img 
+              src={heroAuth} 
+              alt="Moni" 
+              className="w-full h-full object-cover"
+            />
+          </div>
         </div>
       </div>
 
