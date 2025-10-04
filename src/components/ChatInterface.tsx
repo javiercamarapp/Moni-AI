@@ -217,27 +217,27 @@ const ChatInterface = () => {
         
         {/* Chat Header */}
         <Card className="bg-white/95 backdrop-blur-sm border-0 rounded-b-none shadow-lg">
-          <div className="flex items-center justify-between p-4">
-            <div className="flex items-center space-x-3">
-              <Button variant="ghost" size="icon" className="lg:hidden text-gray-900 hover:bg-gray-100" onClick={() => navigate("/dashboard")}>
+          <div className="flex items-center justify-between p-3 sm:p-4 gap-2">
+            <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
+              <Button variant="ghost" size="icon" className="lg:hidden text-gray-900 hover:bg-gray-100 flex-shrink-0" onClick={() => navigate("/dashboard")}>
                 <ArrowLeft className="w-4 h-4" />
               </Button>
               
-              <div className="w-10 h-10 rounded-full bg-gradient-primary flex items-center justify-center glow-primary">
-                <Bot className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-primary flex items-center justify-center glow-primary flex-shrink-0">
+                <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
               
-              <div>
-                <h2 className="font-semibold text-gray-900">Moni AI Coach</h2>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
-                  <span className="text-xs text-gray-600">En línea • Analizando tus finanzas</span>
+              <div className="min-w-0 flex-1">
+                <h2 className="font-semibold text-gray-900 text-sm sm:text-base truncate">Moni AI Coach</h2>
+                <div className="flex items-center space-x-1 sm:space-x-2">
+                  <div className="w-2 h-2 rounded-full bg-success animate-pulse flex-shrink-0"></div>
+                  <span className="text-[10px] sm:text-xs text-gray-600 truncate">En línea • Analizando tus finanzas</span>
                 </div>
               </div>
             </div>
             
-            <div className="flex items-center space-x-2">
-              <Badge variant="secondary" className="bg-purple-100 text-purple-700 border-purple-200 text-xs">
+            <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+              <Badge variant="secondary" className="hidden sm:flex bg-purple-100 text-purple-700 border-purple-200 text-xs">
                 +25 XP por chat activo
               </Badge>
               <Button variant="ghost" size="icon" className="text-gray-900 hover:bg-gray-100">
