@@ -24,7 +24,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen animated-wave-bg">
+    <div className="min-h-screen bg-black">
       {/* Hero Section */}
       <section className="relative overflow-hidden px-4 py-8 sm:py-12">
         <div className="container mx-auto max-w-6xl">
