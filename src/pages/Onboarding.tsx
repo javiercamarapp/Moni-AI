@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
 import heroAuth from '@/assets/moni-ai-logo.png';
-import checklistImage from '@/assets/onboarding-checklist.png';
+import aiImage from '@/assets/onboarding-ai.png';
 
 const OnboardingSlide = ({ image, title, description }: { image: string, title: string, description: string }) => (
   <div className="px-4">
@@ -44,7 +44,7 @@ const Onboarding = () => {
 
   const slides = [
     {
-      image: checklistImage,
+      image: aiImage,
       title: 'Tu coach financiero personal en WhatsApp',
       description: 'La IA que te acompaña día a día y te ayuda a gastar mejor, ahorrar más y cumplir tus metas.'
     },
