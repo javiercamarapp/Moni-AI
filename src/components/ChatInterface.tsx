@@ -217,31 +217,31 @@ const ChatInterface = () => {
         
         {/* Chat Header */}
         <Card className="bg-white/95 backdrop-blur-sm border-0 rounded-b-none shadow-lg">
-          <div className="flex items-center justify-between p-3 sm:p-4 gap-2">
-            <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
-              <Button variant="ghost" size="icon" className="lg:hidden text-gray-900 hover:bg-gray-100 flex-shrink-0" onClick={() => navigate("/dashboard")}>
-                <ArrowLeft className="w-4 h-4" />
+          <div className="flex items-center justify-between p-2 sm:p-3 gap-2">
+            <div className="flex items-center space-x-2 min-w-0 flex-1">
+              <Button variant="ghost" size="icon" className="lg:hidden text-gray-900 hover:bg-gray-100 flex-shrink-0 h-7 w-7" onClick={() => navigate("/dashboard")}>
+                <ArrowLeft className="w-3 h-3" />
               </Button>
               
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-primary flex items-center justify-center glow-primary flex-shrink-0">
-                <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-primary flex items-center justify-center glow-primary flex-shrink-0">
+                <Bot className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
               </div>
               
               <div className="min-w-0 flex-1">
-                <h2 className="font-semibold text-gray-900 text-sm sm:text-base">Moni AI Coach</h2>
-                <div className="flex items-center space-x-1 sm:space-x-2 flex-wrap">
-                  <div className="w-2 h-2 rounded-full bg-success animate-pulse flex-shrink-0"></div>
-                  <span className="text-[10px] sm:text-xs text-gray-600">En línea • Analizando</span>
+                <h2 className="font-semibold text-gray-900 text-xs sm:text-sm leading-tight">Moni AI Coach</h2>
+                <div className="flex items-center space-x-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse flex-shrink-0"></div>
+                  <span className="text-[9px] sm:text-[10px] text-gray-600 leading-tight">En línea</span>
                 </div>
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1 sm:gap-2 flex-shrink-0">
-              <Badge variant="secondary" className="bg-purple-100 text-purple-700 border-purple-200 text-[10px] sm:text-xs whitespace-nowrap">
+            <div className="flex items-center gap-1 flex-shrink-0">
+              <Badge variant="secondary" className="bg-purple-100 text-purple-700 border-purple-200 text-[9px] sm:text-[10px] whitespace-nowrap px-1.5 py-0.5">
                 +25 XP
               </Badge>
-              <Button variant="ghost" size="icon" className="text-gray-900 hover:bg-gray-100 h-8 w-8 sm:h-10 sm:w-10">
-                <Phone className="w-3 h-3 sm:w-4 sm:h-4" />
+              <Button variant="ghost" size="icon" className="text-gray-900 hover:bg-gray-100 h-7 w-7">
+                <Phone className="w-3 h-3" />
               </Button>
               <Button variant="ghost" size="icon" className="text-gray-900 hover:bg-gray-100">
                 <Video className="w-4 h-4" />
