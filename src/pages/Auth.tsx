@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
-import heroAuth from "@/assets/hero-auth.jpg";
+import heroAuth from "@/assets/moni-ai-logo.png";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
