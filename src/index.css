@@ -13,9 +13,9 @@
     --foreground: 0 0% 3%;
 
     /* Cards and surfaces */
-    --card: 0 0% 98%;
-    --card-foreground: 0 0% 3%;
-    --card-border: 0 0% 90%;
+    --card: 0 0% 15%;
+    --card-foreground: 0 0% 100%;
+    --card-border: 0 0% 30%;
 
     /* Primary black */
     --primary: 0 0% 9%;
@@ -41,13 +41,13 @@
     --warning: 0 0% 30%;
 
     /* Interactive elements */
-    --border: 0 0% 89%;
+    --border: 0 0% 30%;
     --input: 0 0% 100%;
     --ring: 0 0% 9%;
 
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(0 0% 9%) 0%, hsl(0 0% 20%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 98%) 0%, hsl(0 0% 100%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 15%) 0%, hsl(0 0% 20%) 100%);
     --gradient-hero: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 50%, hsl(0 0% 96%) 100%);
 
     /* Shadows */
@@ -75,8 +75,8 @@
     --background: 0 0% 100%;
     --foreground: 0 0% 3%;
 
-    --card: 0 0% 98%;
-    --card-foreground: 0 0% 3%;
+    --card: 0 0% 15%;
+    --card-foreground: 0 0% 100%;
 
     --popover: 0 0% 98%;
     --popover-foreground: 0 0% 3%;
@@ -96,7 +96,7 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 89%;
+    --border: 0 0% 30%;
     --input: 0 0% 96%;
     --ring: 0 0% 9%;
     --sidebar-background: 0 0% 98%;
