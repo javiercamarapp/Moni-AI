@@ -228,20 +228,20 @@ const ChatInterface = () => {
               </div>
               
               <div className="min-w-0 flex-1">
-                <h2 className="font-semibold text-gray-900 text-sm sm:text-base truncate">Moni AI Coach</h2>
-                <div className="flex items-center space-x-1 sm:space-x-2">
+                <h2 className="font-semibold text-gray-900 text-sm sm:text-base">Moni AI Coach</h2>
+                <div className="flex items-center space-x-1 sm:space-x-2 flex-wrap">
                   <div className="w-2 h-2 rounded-full bg-success animate-pulse flex-shrink-0"></div>
-                  <span className="text-[10px] sm:text-xs text-gray-600 truncate">En línea • Analizando tus finanzas</span>
+                  <span className="text-[10px] sm:text-xs text-gray-600">En línea • Analizando</span>
                 </div>
               </div>
             </div>
             
-            <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
-              <Badge variant="secondary" className="hidden sm:flex bg-purple-100 text-purple-700 border-purple-200 text-xs">
-                +25 XP por chat activo
+            <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1 sm:gap-2 flex-shrink-0">
+              <Badge variant="secondary" className="bg-purple-100 text-purple-700 border-purple-200 text-[10px] sm:text-xs whitespace-nowrap">
+                +25 XP
               </Badge>
-              <Button variant="ghost" size="icon" className="text-gray-900 hover:bg-gray-100">
-                <Phone className="w-4 h-4" />
+              <Button variant="ghost" size="icon" className="text-gray-900 hover:bg-gray-100 h-8 w-8 sm:h-10 sm:w-10">
+                <Phone className="w-3 h-3 sm:w-4 sm:h-4" />
               </Button>
               <Button variant="ghost" size="icon" className="text-gray-900 hover:bg-gray-100">
                 <Video className="w-4 h-4" />
