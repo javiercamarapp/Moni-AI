@@ -338,8 +338,8 @@ const ChatInterface = () => {
               </Button>
             </div>
             
-            <div className="flex items-center justify-center mt-3 text-xs text-gray-600">
-              <span>🤖 Respuesta instantánea con IA • 🔐 Datos 100% seguros</span>
+            <div className="flex items-center justify-center mt-3">
+              <span className="text-[10px] text-gray-600 text-center">🤖 Respuesta instantánea con IA • 🔐 Datos 100% seguros</span>
             </div>
           </div>
         </Card>
