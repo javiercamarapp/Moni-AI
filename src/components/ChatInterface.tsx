@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from '@/components/ui/card';
@@ -26,51 +26,16 @@ const ChatInterface = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [message, setMessage] = useState('');
-  const [messages] = useState([
+  const [messages, setMessages] = useState<Array<{id: number, type: string, content: string, timestamp: string}>>([
     {
       id: 1,
       type: 'ai',
-      content: "¡Hola! 👋 Soy tu coach financiero personal. Veo que has estado muy activa ahorrando para tu viaje a Japón. ¡Felicidades! 🎉",
-      timestamp: "10:30 AM",
-      read: true
-    },
-    {
-      id: 2,
-      type: 'ai', 
-      content: "Te tengo noticias importantes:\n\n💰 Detecté que gastaste $280 en delivery esta semana\n📊 Esto es 40% más que la semana pasada\n🎯 Si reduces esto a la mitad, ahorrarías $560 al mes extra\n\n¿Te doy algunos tips para cocinar rápido en casa?",
-      timestamp: "10:32 AM",
-      read: true
-    },
-    {
-      id: 3,
-      type: 'user',
-      content: "¡Sí! Me encantaría tener algunos tips. No sabía que gastaba tanto en delivery 😅",
-      timestamp: "10:35 AM",
-      read: true
-    },
-    {
-      id: 4,
-      type: 'ai',
-      content: "¡Perfecto! 🍳 Aquí van 3 tips súper prácticos:\n\n1️⃣ **Meal prep dominical**: 2 horas el domingo = comidas toda la semana\n\n2️⃣ **La regla 15-15**: 15 mins de prep + 15 mins cocinando = comida casera\n\n3️⃣ **Apps aliadas**: Usa \"Too Good To Go\" para comida gourmet a mitad de precio\n\n💡 Con estos cambios podrías llegar a Japón 2 meses antes de lo planeado",
-      timestamp: "10:36 AM",
-      read: true
-    },
-    {
-      id: 5,
-      type: 'user',
-      content: "Wow, ¿2 meses antes? ¿Cómo calculaste eso?",
-      timestamp: "10:38 AM",
-      read: true
-    },
-    {
-      id: 6,
-      type: 'ai',
-      content: "¡Te explico la magia de los números! ✨\n\n📈 **Ahorro actual**: $2,890/mes hacia Japón\n💸 **Reducir delivery**: +$280/mes\n🍕 **Otros gastos hormiga que detecté**: +$340/mes\n🎁 **Aprovechar ofertas**: +$150/mes\n\n**Total nuevo**: $3,660/mes\n\n🗓️ **Tiempo original**: 6 meses más\n🗓️ **Tiempo optimizado**: 4 meses más\n\n¿Quieres que te ayude a crear un plan específico para estos próximos 4 meses?",
-      timestamp: "10:40 AM",
-      read: true,
-      typing: true
+      content: "¡Hola! 👋 Soy Moni AI, tu coach financiero personal. Estoy aquí para ayudarte a alcanzar tus metas financieras de manera divertida. ¿En qué puedo ayudarte hoy?",
+      timestamp: new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })
     }
   ]);
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Check authentication
@@ -114,10 +79,129 @@ const ChatInterface = () => {
     );
   }
 
-  const handleSendMessage = () => {
-    if (message.trim()) {
-      // Aquí se enviaría el mensaje
-      setMessage('');
+  const handleSendMessage = async () => {
+    if (!message.trim()) return;
+
+    const userMessage = {
+      id: Date.now(),
+      type: 'user',
+      content: message.trim(),
+      timestamp: new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setMessage('');
+    setIsTyping(true);
+
+    try {
+      const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`;
+      
+      const conversationHistory = [...messages, userMessage].map(msg => ({
+        role: msg.type === 'user' ? 'user' : 'assistant',
+        content: msg.content
+      }));
+
+      const resp = await fetch(CHAT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ messages: conversationHistory }),
+      });
+
+      if (!resp.ok) {
+        if (resp.status === 429) {
+          toast({
+            title: "Límite alcanzado",
+            description: "Por favor intenta de nuevo en un momento",
+            variant: "destructive",
+          });
+        } else if (resp.status === 402) {
+          toast({
+            title: "Créditos agotados",
+            description: "Se requieren más créditos para continuar",
+            variant: "destructive",
+          });
+        } else {
+          throw new Error('Error en la respuesta');
+        }
+        setIsTyping(false);
+        return;
+      }
+
+      if (!resp.body) throw new Error('No response body');
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let textBuffer = '';
+      let streamDone = false;
+      let assistantMessage = '';
+      let assistantId = Date.now() + 1;
+
+      while (!streamDone) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        textBuffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = textBuffer.indexOf('\n')) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
+
+          if (line.endsWith('\r')) line = line.slice(0, -1);
+          if (line.startsWith(':') || line.trim() === '') continue;
+          if (!line.startsWith('data: ')) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === '[DONE]') {
+            streamDone = true;
+            break;
+          }
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) {
+              assistantMessage += content;
+              
+              setMessages(prev => {
+                const last = prev[prev.length - 1];
+                if (last?.type === 'ai' && last.id === assistantId) {
+                  return prev.map((m, i) => 
+                    i === prev.length - 1 
+                      ? { ...m, content: assistantMessage }
+                      : m
+                  );
+                }
+                return [...prev, {
+                  id: assistantId,
+                  type: 'ai',
+                  content: assistantMessage,
+                  timestamp: new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })
+                }];
+              });
+            }
+          } catch {
+            textBuffer = line + '\n' + textBuffer;
+            break;
+          }
+        }
+      }
+
+      setIsTyping(false);
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo enviar el mensaje. Intenta de nuevo.",
+        variant: "destructive",
+      });
+      setIsTyping(false);
     }
   };
 
@@ -195,7 +279,7 @@ const ChatInterface = () => {
                   msg.type === 'ai'
                     ? 'bg-gray-100 text-gray-900 rounded-bl-md'
                     : 'bg-primary text-primary-foreground rounded-br-md'
-                } ${msg.typing ? 'animate-pulse' : ''}`}>
+                }`}>
                   
                   <div className="whitespace-pre-wrap text-sm leading-relaxed">
                     {msg.content}
@@ -206,19 +290,30 @@ const ChatInterface = () => {
                   }`}>
                     {msg.timestamp}
                   </div>
-
-                  {/* Typing indicator */}
-                  {msg.typing && (
-                    <div className="flex space-x-1 mt-2">
-                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
           ))}
+
+          {/* Typing Indicator */}
+          {isTyping && (
+            <div className="flex justify-start">
+              <div className="flex items-start space-x-2 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-gradient-primary glow-primary">
+                  <Bot className="w-4 h-4 text-primary-foreground" />
+                </div>
+                <div className="relative px-4 py-3 rounded-2xl bg-gray-100 text-gray-900 rounded-bl-md">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <div ref={messagesEndRef} />
 
           {/* Quick Actions */}
           <div className="flex flex-wrap gap-2 justify-center py-4">
