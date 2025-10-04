@@ -6,40 +6,38 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from "@/hooks/use-toast";
-import { 
-  MessageCircle, 
-  Send, 
-  Smile, 
-  Paperclip, 
-  Phone,
-  Video,
-  MoreVertical,
-  ArrowLeft,
-  Bot,
-  User,
-  LogOut
-} from 'lucide-react';
-
+import { MessageCircle, Send, Smile, Paperclip, Phone, Video, MoreVertical, ArrowLeft, Bot, User, LogOut } from 'lucide-react';
 const ChatInterface = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<Array<{id: number, type: string, content: string, timestamp: string}>>([
-    {
-      id: 1,
-      type: 'ai',
-      content: "¡Hola! 👋 Soy Moni AI, tu coach financiero personal. Estoy aquí para ayudarte a alcanzar tus metas financieras de manera divertida. ¿En qué puedo ayudarte hoy?",
-      timestamp: new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })
-    }
-  ]);
+  const [messages, setMessages] = useState<Array<{
+    id: number;
+    type: string;
+    content: string;
+    timestamp: string;
+  }>>([{
+    id: 1,
+    type: 'ai',
+    content: "¡Hola! 👋 Soy Moni AI, tu coach financiero personal. Estoy aquí para ayudarte a alcanzar tus metas financieras de manera divertida. ¿En qué puedo ayudarte hoy?",
+    timestamp: new Date().toLocaleTimeString('es-MX', {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }]);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     // Check authentication
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({
+      data: {
+        session
+      }
+    }) => {
       if (!session) {
         navigate("/auth");
       } else {
@@ -47,81 +45,77 @@ const ChatInterface = () => {
       }
       setLoading(false);
     });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const {
+      data: {
+        subscription
+      }
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session) {
         navigate("/auth");
       } else {
         setUser(session.user);
       }
     });
-
     return () => subscription.unsubscribe();
   }, [navigate]);
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
     toast({
       title: "Sesión cerrada",
-      description: "Hasta pronto!",
+      description: "Hasta pronto!"
     });
     navigate("/");
   };
-
   if (loading) {
-    return (
-      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
+    return <div className="min-h-screen animated-wave-bg flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-muted-foreground">Cargando...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   const handleSendMessage = async () => {
     if (!message.trim()) return;
-
     const userMessage = {
       id: Date.now(),
       type: 'user',
       content: message.trim(),
-      timestamp: new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })
+      timestamp: new Date().toLocaleTimeString('es-MX', {
+        hour: '2-digit',
+        minute: '2-digit'
+      })
     };
-
     setMessages(prev => [...prev, userMessage]);
     setMessage('');
     setIsTyping(true);
-
     try {
       const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`;
-      
       const conversationHistory = [...messages, userMessage].map(msg => ({
         role: msg.type === 'user' ? 'user' : 'assistant',
         content: msg.content
       }));
-
       const resp = await fetch(CHAT_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`
         },
-        body: JSON.stringify({ messages: conversationHistory }),
+        body: JSON.stringify({
+          messages: conversationHistory
+        })
       });
-
       if (!resp.ok) {
         if (resp.status === 429) {
           toast({
             title: "Límite alcanzado",
             description: "Por favor intenta de nuevo en un momento",
-            variant: "destructive",
+            variant: "destructive"
           });
         } else if (resp.status === 402) {
           toast({
             title: "Créditos agotados",
             description: "Se requieren más créditos para continuar",
-            variant: "destructive",
+            variant: "destructive"
           });
         } else {
           throw new Error('Error en la respuesta');
@@ -129,56 +123,55 @@ const ChatInterface = () => {
         setIsTyping(false);
         return;
       }
-
       if (!resp.body) throw new Error('No response body');
-
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
       let textBuffer = '';
       let streamDone = false;
       let assistantMessage = '';
       let assistantId = Date.now() + 1;
-
       while (!streamDone) {
-        const { done, value } = await reader.read();
+        const {
+          done,
+          value
+        } = await reader.read();
         if (done) break;
-        textBuffer += decoder.decode(value, { stream: true });
-
+        textBuffer += decoder.decode(value, {
+          stream: true
+        });
         let newlineIndex: number;
         while ((newlineIndex = textBuffer.indexOf('\n')) !== -1) {
           let line = textBuffer.slice(0, newlineIndex);
           textBuffer = textBuffer.slice(newlineIndex + 1);
-
           if (line.endsWith('\r')) line = line.slice(0, -1);
           if (line.startsWith(':') || line.trim() === '') continue;
           if (!line.startsWith('data: ')) continue;
-
           const jsonStr = line.slice(6).trim();
           if (jsonStr === '[DONE]') {
             streamDone = true;
             break;
           }
-
           try {
             const parsed = JSON.parse(jsonStr);
             const content = parsed.choices?.[0]?.delta?.content as string | undefined;
             if (content) {
               assistantMessage += content;
-              
               setMessages(prev => {
                 const last = prev[prev.length - 1];
                 if (last?.type === 'ai' && last.id === assistantId) {
-                  return prev.map((m, i) => 
-                    i === prev.length - 1 
-                      ? { ...m, content: assistantMessage }
-                      : m
-                  );
+                  return prev.map((m, i) => i === prev.length - 1 ? {
+                    ...m,
+                    content: assistantMessage
+                  } : m);
                 }
                 return [...prev, {
                   id: assistantId,
                   type: 'ai',
                   content: assistantMessage,
-                  timestamp: new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })
+                  timestamp: new Date().toLocaleTimeString('es-MX', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })
                 }];
               });
             }
@@ -188,31 +181,28 @@ const ChatInterface = () => {
           }
         }
       }
-
       setIsTyping(false);
       setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        messagesEndRef.current?.scrollIntoView({
+          behavior: 'smooth'
+        });
       }, 100);
-
     } catch (error) {
       console.error('Error sending message:', error);
       toast({
         title: "Error",
         description: "No se pudo enviar el mensaje. Intenta de nuevo.",
-        variant: "destructive",
+        variant: "destructive"
       });
       setIsTyping(false);
     }
   };
-
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSendMessage();
     }
   };
-
-  return (
-    <div className="min-h-screen animated-wave-bg">
+  return <div className="min-h-screen animated-wave-bg">
       <div className="container mx-auto max-w-4xl h-screen flex flex-col">
         
         {/* Chat Header */}
@@ -255,49 +245,30 @@ const ChatInterface = () => {
 
         {/* Chat Messages */}
         <div className="flex-1 overflow-y-auto bg-white/90 backdrop-blur-sm p-4 space-y-4">
-          {messages.map((msg) => (
-            <div key={msg.id} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`flex items-start space-x-2 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg ${
-                msg.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''
-              }`}>
+          {messages.map(msg => <div key={msg.id} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`flex items-start space-x-2 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg ${msg.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
                 
                 {/* Avatar */}
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  msg.type === 'ai' 
-                    ? 'bg-gradient-primary glow-primary' 
-                    : 'bg-secondary'
-                }`}>
-                  {msg.type === 'ai' ? (
-                    <Bot className="w-4 h-4 text-primary-foreground" />
-                  ) : (
-                    <User className="w-4 h-4 text-secondary-foreground" />
-                  )}
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.type === 'ai' ? 'bg-gradient-primary glow-primary' : 'bg-secondary'}`}>
+                  {msg.type === 'ai' ? <Bot className="w-4 h-4 text-primary-foreground" /> : <User className="w-4 h-4 text-secondary-foreground" />}
                 </div>
 
                 {/* Message Bubble */}
-                <div className={`relative px-4 py-3 rounded-2xl ${
-                  msg.type === 'ai'
-                    ? 'bg-gray-100 text-gray-900 rounded-bl-md'
-                    : 'bg-primary text-primary-foreground rounded-br-md'
-                }`}>
+                <div className={`relative px-4 py-3 rounded-2xl ${msg.type === 'ai' ? 'bg-gray-100 text-gray-900 rounded-bl-md' : 'bg-primary text-primary-foreground rounded-br-md'}`}>
                   
                   <div className="whitespace-pre-wrap text-sm leading-relaxed">
                     {msg.content}
                   </div>
                   
-                  <div className={`text-xs mt-2 ${
-                    msg.type === 'ai' ? 'text-gray-600' : 'text-primary-foreground/70'
-                  }`}>
+                  <div className={`text-xs mt-2 ${msg.type === 'ai' ? 'text-gray-600' : 'text-primary-foreground/70'}`}>
                     {msg.timestamp}
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            </div>)}
 
           {/* Typing Indicator */}
-          {isTyping && (
-            <div className="flex justify-start">
+          {isTyping && <div className="flex justify-start">
               <div className="flex items-start space-x-2 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-gradient-primary glow-primary">
                   <Bot className="w-4 h-4 text-primary-foreground" />
@@ -305,60 +276,43 @@ const ChatInterface = () => {
                 <div className="relative px-4 py-3 rounded-2xl bg-gray-100 text-gray-900 rounded-bl-md">
                   <div className="flex space-x-1">
                     <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{
+                  animationDelay: '0.1s'
+                }}></div>
+                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{
+                  animationDelay: '0.2s'
+                }}></div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            </div>}
           
           <div ref={messagesEndRef} />
 
           {/* Quick Actions */}
           <div className="flex flex-wrap gap-2 justify-center py-4">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="text-xs border-white/30 text-gray-900 hover:bg-white/10 hover:border-white/50"
-              onClick={() => {
-                setMessage('Analiza mis gastos');
-                setTimeout(() => handleSendMessage(), 100);
-              }}
-            >
+            <Button variant="outline" size="sm" className="text-xs border-white/30 text-gray-900 hover:bg-white/10 hover:border-white/50" onClick={() => {
+            setMessage('Analiza mis gastos');
+            setTimeout(() => handleSendMessage(), 100);
+          }}>
               📊 Analizar mis gastos
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="text-xs border-white/30 text-gray-900 hover:bg-white/10 hover:border-white/50"
-              onClick={() => {
-                setMessage('Quiero crear una nueva meta');
-                setTimeout(() => handleSendMessage(), 100);
-              }}
-            >
+            <Button variant="outline" size="sm" className="text-xs border-white/30 text-gray-900 hover:bg-white/10 hover:border-white/50" onClick={() => {
+            setMessage('Quiero crear una nueva meta');
+            setTimeout(() => handleSendMessage(), 100);
+          }}>
               🎯 Crear nueva meta
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="text-xs border-white/30 text-gray-900 hover:bg-white/10 hover:border-white/50"
-              onClick={() => {
-                setMessage('Dame tips de ahorro');
-                setTimeout(() => handleSendMessage(), 100);
-              }}
-            >
+            <Button variant="outline" size="sm" className="text-xs border-white/30 text-gray-900 hover:bg-white/10 hover:border-white/50" onClick={() => {
+            setMessage('Dame tips de ahorro');
+            setTimeout(() => handleSendMessage(), 100);
+          }}>
               💡 Tips de ahorro
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="text-xs border-white/30 text-gray-900 hover:bg-white/10 hover:border-white/50"
-              onClick={() => {
-                setMessage('Muéstrame mi progreso');
-                setTimeout(() => handleSendMessage(), 100);
-              }}
-            >
+            <Button variant="outline" size="sm" className="text-xs border-white/30 text-gray-900 hover:bg-white/10 hover:border-white/50" onClick={() => {
+            setMessage('Muéstrame mi progreso');
+            setTimeout(() => handleSendMessage(), 100);
+          }}>
               📈 Ver mi progreso
             </Button>
           </div>
@@ -373,40 +327,24 @@ const ChatInterface = () => {
               </Button>
               
               <div className="flex-1 relative">
-                <Input
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Pregúntame sobre tus finanzas..."
-                  className="bg-white border-gray-300 text-gray-900 focus:border-purple-500 pr-12"
-                />
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                >
+                <Input value={message} onChange={e => setMessage(e.target.value)} onKeyPress={handleKeyPress} placeholder="Pregúntame sobre tus finanzas..." className="bg-white border-gray-300 text-gray-900 focus:border-purple-500 pr-12" />
+                <Button variant="ghost" size="icon" className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-900 hover:bg-gray-100">
                   <Smile className="w-4 h-4" />
                 </Button>
               </div>
               
-              <Button 
-                onClick={handleSendMessage}
-                disabled={!message.trim()}
-                className="bg-gradient-primary text-white hover:scale-105 transition-all glow-primary"
-              >
+              <Button onClick={handleSendMessage} disabled={!message.trim()} className="bg-gradient-primary text-white hover:scale-105 transition-all glow-primary">
                 <Send className="w-4 h-4" />
               </Button>
             </div>
             
             <div className="flex items-center justify-between mt-3 text-xs text-gray-600">
               <span>🤖 Respuesta instantánea con IA • 🔐 Datos 100% seguros</span>
-              <span>Presiona Enter para enviar</span>
+              
             </div>
           </div>
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ChatInterface;
