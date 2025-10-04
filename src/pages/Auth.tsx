@@ -159,17 +159,8 @@ const Auth = () => {
       >
         <div className="w-full max-w-[280px] md:max-w-sm space-y-3 md:space-y-8 relative z-10">
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-2">
-            <div className="text-center p-2 md:p-6 flex flex-col justify-center">
-              <h1 className="text-xl md:text-4xl font-bold text-primary mb-1 md:mb-2">Moni</h1>
-              <p className="text-xs md:text-base text-muted-foreground mb-1 md:mb-3">
-                {isLogin ? "Inicia sesión en tu cuenta" : "Crea tu cuenta gratis"}
-              </p>
-              <p className="text-center text-[10px] md:text-sm text-muted-foreground">
-                Primer mes gratis · Después $150 MXN/mes
-              </p>
-            </div>
-            <div className="h-32 md:h-auto">
+          <div className="grid grid-cols-1">
+            <div className="h-48 md:h-64 w-full">
               <img 
                 src={heroAuth} 
                 alt="Moni Dashboard" 
