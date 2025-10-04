@@ -317,16 +317,48 @@ const ChatInterface = () => {
 
           {/* Quick Actions */}
           <div className="flex flex-wrap gap-2 justify-center py-4">
-            <Button variant="outline" size="sm" className="text-xs border-white/30 text-gray-900 hover:bg-white/10 hover:border-white/50">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-xs border-white/30 text-gray-900 hover:bg-white/10 hover:border-white/50"
+              onClick={() => {
+                setMessage('Analiza mis gastos');
+                setTimeout(() => handleSendMessage(), 100);
+              }}
+            >
               📊 Analizar mis gastos
             </Button>
-            <Button variant="outline" size="sm" className="text-xs border-white/30 text-gray-900 hover:bg-white/10 hover:border-white/50">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-xs border-white/30 text-gray-900 hover:bg-white/10 hover:border-white/50"
+              onClick={() => {
+                setMessage('Quiero crear una nueva meta');
+                setTimeout(() => handleSendMessage(), 100);
+              }}
+            >
               🎯 Crear nueva meta
             </Button>
-            <Button variant="outline" size="sm" className="text-xs border-white/30 text-gray-900 hover:bg-white/10 hover:border-white/50">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-xs border-white/30 text-gray-900 hover:bg-white/10 hover:border-white/50"
+              onClick={() => {
+                setMessage('Dame tips de ahorro');
+                setTimeout(() => handleSendMessage(), 100);
+              }}
+            >
               💡 Tips de ahorro
             </Button>
-            <Button variant="outline" size="sm" className="text-xs border-white/30 text-gray-900 hover:bg-white/10 hover:border-white/50">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-xs border-white/30 text-gray-900 hover:bg-white/10 hover:border-white/50"
+              onClick={() => {
+                setMessage('Muéstrame mi progreso');
+                setTimeout(() => handleSendMessage(), 100);
+              }}
+            >
               📈 Ver mi progreso
             </Button>
           </div>
