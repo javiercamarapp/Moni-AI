@@ -116,7 +116,7 @@ const Onboarding = () => {
       {/* Bottom navigation */}
       <div className="pb-12 px-8 mt-8">
         <div className="max-w-md mx-auto">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between">
             {/* Dot indicators - left aligned */}
             <div className="flex items-center gap-2">
               {slides.map((_, index) => (
@@ -143,7 +143,7 @@ const Onboarding = () => {
           {/* Skip button left aligned below dots */}
           <button
             onClick={() => navigate('/auth')}
-            className="text-gray-300 text-sm font-normal hover:text-white transition-colors"
+            className="text-gray-300 text-sm font-normal hover:text-white transition-colors mt-1"
           >
             Skip
           </button>
