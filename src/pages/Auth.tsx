@@ -238,11 +238,10 @@ const Auth = () => {
           </form>
 
           <div className="relative my-3 md:my-6">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-border" />
-            </div>
-            <div className="relative flex justify-center text-[10px] md:text-xs uppercase">
-              <span className="px-4 text-muted-foreground">O continúa con</span>
+            <div className="flex items-center gap-4">
+              <span className="flex-1 border-t border-border" />
+              <span className="text-[10px] md:text-xs uppercase text-muted-foreground">O continúa con</span>
+              <span className="flex-1 border-t border-border" />
             </div>
           </div>
 
