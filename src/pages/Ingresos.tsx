@@ -191,14 +191,6 @@ const Ingresos = () => {
           >
             <img src={whatsappLogo} alt="WhatsApp" className="w-6 h-6 object-contain" />
           </Button>
-
-          <Button
-            size="icon"
-            onClick={() => navigate('/categorias')}
-            className="bg-white/20 hover:bg-white/30 border-white/30"
-          >
-            <Sliders className="h-5 w-5 text-white" />
-          </Button>
           
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
             <DialogTrigger asChild>
@@ -346,6 +338,14 @@ const Ingresos = () => {
               </form>
             </DialogContent>
           </Dialog>
+          
+          <Button
+            size="icon"
+            onClick={() => navigate('/categorias')}
+            className="bg-white/20 hover:bg-white/30 border-white/30"
+          >
+            <Sliders className="h-5 w-5 text-white" />
+          </Button>
         </div>
       </div>
 
