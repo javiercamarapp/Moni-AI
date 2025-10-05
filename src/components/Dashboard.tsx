@@ -159,14 +159,26 @@ const Dashboard = () => {
           />
         </div>
         
-        {/* Botón de notificaciones */}
-        <Button 
-          variant="ghost" 
-          size="icon"
-          className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white h-10 w-10"
-        >
-          <Bell className="h-5 w-5" />
-        </Button>
+        {/* Puntos y nivel + Notificaciones */}
+        <div className="flex gap-2 items-center">
+          {/* Botón de puntos y nivel */}
+          <Button 
+            variant="ghost"
+            className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white h-10 px-3 gap-2"
+          >
+            <span className="text-sm font-bold">{currentXP} pts</span>
+            <span className="text-xs opacity-80">Nivel {level}</span>
+          </Button>
+          
+          {/* Botón de notificaciones */}
+          <Button 
+            variant="ghost" 
+            size="icon"
+            className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white h-10 w-10"
+          >
+            <Bell className="h-5 w-5" />
+          </Button>
+        </div>
       </div>
 
       {/* Header con saludo y botón de logout para desktop */}
