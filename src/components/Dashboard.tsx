@@ -431,12 +431,16 @@ const Dashboard = () => {
               {/* Ingresos y Egresos */}
               <div className="grid grid-cols-2 gap-2">
                 <Card className="p-2 sm:p-3 bg-white/10 backdrop-blur-sm border-white/20">
-                  <p className="text-[9px] sm:text-[10px] text-white/80 mb-0.5">Ingresos</p>
-                  <p className="text-sm sm:text-base lg:text-lg font-bold text-white">${currentMonth.income.toLocaleString('es-MX')}</p>
+                  <div className="text-center">
+                    <p className="text-[9px] sm:text-[10px] text-white/80 mb-0.5">Ingresos</p>
+                    <p className="text-sm sm:text-base lg:text-lg font-bold text-white">${currentMonth.income.toLocaleString('es-MX')}</p>
+                  </div>
                 </Card>
                 <Card className="p-2 sm:p-3 bg-white/10 backdrop-blur-sm border-white/20">
-                  <p className="text-[9px] sm:text-[10px] text-white/80 mb-0.5">Gastos</p>
-                  <p className="text-sm sm:text-base lg:text-lg font-bold text-white">-${currentMonth.expenses.toLocaleString('es-MX')}</p>
+                  <div className="text-center">
+                    <p className="text-[9px] sm:text-[10px] text-white/80 mb-0.5">Gastos</p>
+                    <p className="text-sm sm:text-base lg:text-lg font-bold text-white">-${currentMonth.expenses.toLocaleString('es-MX')}</p>
+                  </div>
                 </Card>
               </div>
             </div>
