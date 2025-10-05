@@ -145,19 +145,19 @@ const Dashboard = () => {
   }, [selectedMonthOffset]);
 
   useEffect(() => {
-    // Check authentication
-    supabase.auth.getSession().then(({
-      data: {
-        session
-      }
-    }) => {
+    // Check authentication - use cached session for faster load
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         navigate("/auth");
       } else {
         setUser(session.user);
       }
       setLoading(false);
-    });
+    };
+    
+    checkAuth();
+
     const {
       data: {
         subscription
