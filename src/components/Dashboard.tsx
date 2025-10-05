@@ -445,7 +445,7 @@ const Dashboard = () => {
               </p>
               <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white border-0 text-xs h-8" onClick={() => window.open('https://wa.me/5215512345678', '_blank')}>
                 <MessageCircle className="w-3 h-3 mr-1" />
-                Chatea en WhatsApp
+                Registrar ingresos/gastos
               </Button>
             </div>
           </div>
