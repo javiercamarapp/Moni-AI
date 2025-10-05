@@ -22,6 +22,7 @@ const Dashboard = () => {
   const [level] = useState(8);
   const [api, setApi] = useState<CarouselApi>();
   const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
+  const [goals, setGoals] = useState<any[]>([]);
   const navigate = useNavigate();
   const {
     toast
@@ -74,6 +75,30 @@ const Dashboard = () => {
     }, 3000);
     return () => clearInterval(interval);
   }, [api]);
+
+  // Fetch goals
+  useEffect(() => {
+    const fetchGoals = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data, error } = await supabase
+          .from('goals')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        setGoals(data || []);
+      } catch (error) {
+        console.error('Error fetching goals:', error);
+      }
+    };
+
+    fetchGoals();
+  }, []);
+
   useEffect(() => {
     // Check authentication
     supabase.auth.getSession().then(({
@@ -127,32 +152,6 @@ const Dashboard = () => {
       </div>;
   }
   const progressPercentage = currentXP / nextLevelXP * 100;
-  const goals = [{
-    id: 1,
-    title: "Viaje a Japón",
-    target: 50000,
-    current: 32500,
-    deadline: "Dic 2024",
-    type: "personal",
-    color: "primary"
-  }, {
-    id: 2,
-    title: "Fondo de emergencia",
-    target: 25000,
-    current: 18750,
-    deadline: "Mar 2025",
-    type: "personal",
-    color: "success"
-  }, {
-    id: 3,
-    title: "Viaje Grupal - Tulum",
-    target: 15000,
-    current: 8500,
-    deadline: "Jul 2024",
-    type: "group",
-    color: "warning",
-    members: 4
-  }];
   const recentTransactions = [{
     id: 1,
     description: "Starbucks - Insurgentes",
@@ -471,39 +470,53 @@ const Dashboard = () => {
               </div>
 
               <div className="space-y-3 sm:space-y-4">
-                {goals.map(goal => {
-                  const goalProgress = goal.current / goal.target * 100;
-                  return <Card key={goal.id} className="p-4 sm:p-6 bg-gradient-card card-glow hover-lift">
-                      <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-4">
-                        <div className="flex-1">
-                          <div className="flex items-center flex-wrap space-x-2 mb-2 gap-1">
-                            <h4 className="text-base sm:text-lg font-semibold text-white">{goal.title}</h4>
-                            {goal.type === 'group' && <Badge variant="outline" className="text-xs text-white border-white/30">
-                                <Users className="w-3 h-3 mr-1" />
-                                {goal.members} personas
-                              </Badge>}
+                {goals.length === 0 ? (
+                  <Card className="p-6 bg-gradient-card card-glow text-center">
+                    <p className="text-white/70 mb-4">No tienes metas creadas aún</p>
+                    <Button 
+                      size="sm" 
+                      onClick={() => navigate('/new-goal')} 
+                      className="bg-white/20 hover:bg-white/30 text-white"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Crear tu primera meta
+                    </Button>
+                  </Card>
+                ) : (
+                  goals.map(goal => {
+                    const goalProgress = goal.current / goal.target * 100;
+                    return <Card key={goal.id} className="p-4 sm:p-6 bg-gradient-card card-glow hover-lift">
+                        <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-4">
+                          <div className="flex-1">
+                            <div className="flex items-center flex-wrap space-x-2 mb-2 gap-1">
+                              <h4 className="text-base sm:text-lg font-semibold text-white">{goal.title}</h4>
+                              {goal.type === 'group' && <Badge variant="outline" className="text-xs text-white border-white/30">
+                                  <Users className="w-3 h-3 mr-1" />
+                                  {goal.members} personas
+                                </Badge>}
+                            </div>
+                            <p className="text-xs sm:text-sm text-white">Meta: {goal.deadline}</p>
                           </div>
-                          <p className="text-xs sm:text-sm text-white">Meta: {goal.deadline}</p>
+                          <div className="text-left sm:text-right">
+                            <p className="text-base sm:text-lg font-semibold text-white">
+                              ${Number(goal.current).toLocaleString()}
+                            </p>
+                            <p className="text-xs sm:text-sm text-white">
+                              de ${Number(goal.target).toLocaleString()}
+                            </p>
+                          </div>
                         </div>
-                        <div className="text-left sm:text-right">
-                          <p className="text-base sm:text-lg font-semibold text-white">
-                            ${goal.current.toLocaleString()}
-                          </p>
-                          <p className="text-xs sm:text-sm text-white">
-                            de ${goal.target.toLocaleString()}
-                          </p>
+                        
+                        <Progress value={goalProgress} className="h-2 sm:h-3 mb-2" />
+                        <div className="flex justify-between text-xs sm:text-sm">
+                          <span className="text-white">{Math.round(goalProgress)}% completado</span>
+                          <span className="text-white font-medium">
+                            ${(Number(goal.target) - Number(goal.current)).toLocaleString()} restante
+                          </span>
                         </div>
-                      </div>
-                      
-                      <Progress value={goalProgress} className="h-2 sm:h-3 mb-2" />
-                      <div className="flex justify-between text-xs sm:text-sm">
-                        <span className="text-white">{Math.round(goalProgress)}% completado</span>
-                        <span className="text-white font-medium">
-                          ${(goal.target - goal.current).toLocaleString()} restante
-                        </span>
-                      </div>
-                    </Card>;
-                })}
+                      </Card>;
+                  })
+                )}
               </div>
             </div>
           </div>

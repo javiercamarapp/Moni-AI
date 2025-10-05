@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Target } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const NewGoal = () => {
   const navigate = useNavigate();
@@ -14,16 +15,49 @@ const NewGoal = () => {
   const [target, setTarget] = useState('');
   const [deadline, setDeadline] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Aquí guardarías la meta en la base de datos
-    toast({
-      title: "Meta creada",
-      description: "Tu nueva meta ha sido creada exitosamente",
-    });
-    
-    navigate('/dashboard');
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "Debes iniciar sesión para crear una meta",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { error } = await supabase
+        .from('goals')
+        .insert({
+          user_id: user.id,
+          title,
+          target: parseFloat(target),
+          current: 0,
+          deadline,
+          type: 'personal',
+          color: 'primary',
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Meta creada",
+        description: "Tu nueva meta ha sido creada exitosamente",
+      });
+      
+      navigate('/dashboard');
+    } catch (error: any) {
+      console.error('Error creating goal:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo crear la meta. Intenta de nuevo.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
