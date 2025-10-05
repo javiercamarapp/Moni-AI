@@ -26,24 +26,34 @@ const Dashboard = () => {
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [monthlyExpenses, setMonthlyExpenses] = useState(0);
+  const [selectedMonthOffset, setSelectedMonthOffset] = useState(0); // 0 = mes actual, 1 = mes anterior, etc.
   const navigate = useNavigate();
   const {
     toast
   } = useToast();
 
   // Datos por mes
+  const getMonthName = (offset: number) => {
+    const now = new Date();
+    const targetDate = new Date(now.getFullYear(), now.getMonth() - offset, 1);
+    return targetDate.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
+  };
+
   const currentMonth = {
-    month: new Date().toLocaleDateString('es-MX', { month: 'long', year: 'numeric' }),
+    month: getMonthName(selectedMonthOffset),
     income: monthlyIncome,
     expenses: monthlyExpenses,
     balance: monthlyIncome - monthlyExpenses
   };
   
   const handlePrevMonth = () => {
-    // TODO: Implement month navigation with real data
+    setSelectedMonthOffset(prev => prev + 1);
   };
+  
   const handleNextMonth = () => {
-    // TODO: Implement month navigation with real data
+    if (selectedMonthOffset > 0) {
+      setSelectedMonthOffset(prev => prev - 1);
+    }
   };
 
   // Auto-scroll carousel
@@ -85,12 +95,13 @@ const Dashboard = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        // Get current month's start and end dates
+        // Calculate the selected month's dates
         const now = new Date();
-        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        const targetDate = new Date(now.getFullYear(), now.getMonth() - selectedMonthOffset, 1);
+        const firstDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1);
+        const lastDay = new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 0);
 
-        // Fetch all transactions for current month
+        // Fetch all transactions for selected month
         const { data: allTransactions, error: allError } = await supabase
           .from('transactions')
           .select('*')
@@ -112,23 +123,25 @@ const Dashboard = () => {
         setMonthlyIncome(income);
         setMonthlyExpenses(expenses);
 
-        // Fetch recent transactions for display
-        const { data: recentData, error: recentError } = await supabase
-          .from('transactions')
-          .select('*, categories(name, color)')
-          .eq('user_id', user.id)
-          .order('transaction_date', { ascending: false })
-          .limit(5);
+        // Fetch recent transactions for display (always from current month for recent view)
+        if (selectedMonthOffset === 0) {
+          const { data: recentData, error: recentError } = await supabase
+            .from('transactions')
+            .select('*, categories(name, color)')
+            .eq('user_id', user.id)
+            .order('transaction_date', { ascending: false })
+            .limit(5);
 
-        if (recentError) throw recentError;
-        setRecentTransactions(recentData || []);
+          if (recentError) throw recentError;
+          setRecentTransactions(recentData || []);
+        }
       } catch (error) {
         console.error('Error fetching transactions:', error);
       }
     };
 
     fetchTransactions();
-  }, []);
+  }, [selectedMonthOffset]);
 
   useEffect(() => {
     // Check authentication
@@ -368,9 +381,26 @@ const Dashboard = () => {
 
                {/* Selector de Mes */}
                <div className="flex items-center justify-center gap-1 sm:gap-2">
+                 <Button 
+                   variant="ghost" 
+                   size="icon" 
+                   className="h-6 w-6 sm:h-7 sm:w-7 text-white hover:bg-white/10" 
+                   onClick={handlePrevMonth}
+                 >
+                   <span className="text-sm sm:text-base">&lt;</span>
+                 </Button>
                  <div className="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1">
-                   <span className="text-[10px] sm:text-xs text-white font-medium">{currentMonth.month}</span>
+                   <span className="text-[10px] sm:text-xs text-white font-medium capitalize">{currentMonth.month}</span>
                  </div>
+                 <Button 
+                   variant="ghost" 
+                   size="icon" 
+                   className="h-6 w-6 sm:h-7 sm:w-7 text-white hover:bg-white/10" 
+                   onClick={handleNextMonth}
+                   disabled={selectedMonthOffset === 0}
+                 >
+                   <span className="text-sm sm:text-base">&gt;</span>
+                 </Button>
                </div>
 
               {/* Ingresos y Egresos */}
