@@ -311,17 +311,12 @@ const Dashboard = () => {
       </div>
       
       {/* Bottom Navigation Menu - Fixed */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-t border-white/20 shadow-lg">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 animated-wave-bg border-t border-white/20 shadow-lg">
         <div className="container mx-auto px-2">
           <div className="flex items-center justify-around h-16">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10">
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/dashboard")}>
               <Target className="w-5 h-5 text-white" />
-              <span className="text-xs text-white">Metas</span>
-            </Button>
-
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/chat")}>
-              <MessageCircle className="w-5 h-5 text-white" />
-              <span className="text-xs text-white">Chat</span>
+              <span className="text-xs text-white">Home</span>
             </Button>
 
             <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10">
@@ -330,13 +325,18 @@ const Dashboard = () => {
             </Button>
 
             <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10">
-              <Users className="w-5 h-5 text-white" />
-              <span className="text-xs text-white">Grupos</span>
+              <Target className="w-5 h-5 text-white" />
+              <span className="text-xs text-white">Metas</span>
+            </Button>
+
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/chat")}>
+              <MessageCircle className="w-5 h-5 text-white" />
+              <span className="text-xs text-white">Chat AI</span>
             </Button>
 
             <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10">
               <Settings className="w-5 h-5 text-white" />
-              <span className="text-xs text-white">Más</span>
+              <span className="text-xs text-white">Perfil</span>
             </Button>
           </div>
         </div>
