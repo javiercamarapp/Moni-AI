@@ -23,6 +23,7 @@ const Dashboard = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
   const [goals, setGoals] = useState<any[]>([]);
+  const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
   const navigate = useNavigate();
   const {
     toast
@@ -99,6 +100,30 @@ const Dashboard = () => {
     fetchGoals();
   }, []);
 
+  // Fetch recent transactions
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data, error } = await supabase
+          .from('transactions')
+          .select('*, categories(name, color)')
+          .eq('user_id', user.id)
+          .order('transaction_date', { ascending: false })
+          .limit(5);
+
+        if (error) throw error;
+        setRecentTransactions(data || []);
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
   useEffect(() => {
     // Check authentication
     supabase.auth.getSession().then(({
@@ -152,31 +177,6 @@ const Dashboard = () => {
       </div>;
   }
   const progressPercentage = currentXP / nextLevelXP * 100;
-  const recentTransactions = [{
-    id: 1,
-    description: "Starbucks - Insurgentes",
-    amount: -89,
-    category: "Café",
-    time: "Hace 2h"
-  }, {
-    id: 2,
-    description: "Salario depositado",
-    amount: 15000,
-    category: "Ingreso",
-    time: "Ayer"
-  }, {
-    id: 3,
-    description: "Uber - Casa a oficina",
-    amount: -67,
-    category: "Transporte",
-    time: "Ayer"
-  }, {
-    id: 4,
-    description: "Mercado Soriana",
-    amount: -580,
-    category: "Supermercado",
-    time: "2 días"
-  }];
   const achievements = [{
     id: 1,
     title: "Ahorro Constante",
@@ -567,19 +567,25 @@ const Dashboard = () => {
                 </Button>
               </div>
               <div className="space-y-3">
-                {recentTransactions.map(transaction => <div key={transaction.id} className="flex justify-between items-center">
-                    <div>
-                      <p className="text-sm font-medium text-white">
-                        {transaction.description}
-                      </p>
-                      <p className="text-xs text-white">
-                        {transaction.category} • {transaction.time}
-                      </p>
-                    </div>
-                    <span className={`text-sm font-semibold ${transaction.amount > 0 ? 'text-green-500' : 'text-red-500'}`}>
-                      ${Math.abs(transaction.amount)}
-                    </span>
-                  </div>)}
+                {recentTransactions.length === 0 ? (
+                  <p className="text-white/70 text-sm text-center py-4">
+                    No hay transacciones registradas aún
+                  </p>
+                ) : (
+                  recentTransactions.map(transaction => <div key={transaction.id} className="flex justify-between items-center">
+                      <div>
+                        <p className="text-sm font-medium text-white">
+                          {transaction.description}
+                        </p>
+                        <p className="text-xs text-white">
+                          {transaction.categories?.name || 'Sin categoría'} • {new Date(transaction.transaction_date).toLocaleDateString('es-MX')}
+                        </p>
+                      </div>
+                      <span className={`text-sm font-semibold ${transaction.type === 'ingreso' ? 'text-green-500' : 'text-red-500'}`}>
+                        {transaction.type === 'ingreso' ? '+' : '-'}${Math.abs(Number(transaction.amount))}
+                      </span>
+                    </div>)
+                )}
               </div>
             </Card>
 
