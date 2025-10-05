@@ -46,7 +46,7 @@ const Ingresos = () => {
   const [date, setDate] = useState('');
   const [categories, setCategories] = useState<Array<{ id: string; name: string; color: string }>>([]);
   const [transactions, setTransactions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Changed to false for instant load
 
   useEffect(() => {
     fetchData();
