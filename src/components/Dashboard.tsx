@@ -196,22 +196,7 @@ const Dashboard = () => {
       </div>;
   }
   const progressPercentage = currentXP / nextLevelXP * 100;
-  const achievements = [{
-    id: 1,
-    title: "Ahorro Constante",
-    description: "7 días seguidos cumpliendo meta diaria",
-    earned: true
-  }, {
-    id: 2,
-    title: "Cazador de Ofertas",
-    description: "Usaste 3 promociones esta semana",
-    earned: true
-  }, {
-    id: 3,
-    title: "Planificador",
-    description: "Creaste tu primer presupuesto",
-    earned: false
-  }];
+  const achievements: any[] = []; // Los logros se implementarán en el futuro basados en la actividad del usuario
   return <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header superior con logo y notificaciones */}
       <div className="p-2 flex justify-between items-start">
@@ -635,21 +620,27 @@ const Dashboard = () => {
                 </Button>
               </div>
               <div className="space-y-3">
-                {achievements.map(achievement => <div key={achievement.id} className={`p-3 rounded-lg border ${achievement.earned ? 'border-white/30 bg-white/10' : 'border-white/20 bg-white/5'}`}>
-                    <div className="flex items-start space-x-2">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center ${achievement.earned ? 'bg-white text-black' : 'bg-gray-600'}`}>
-                        {achievement.earned ? <Zap className="w-3 h-3" /> : <Target className="w-3 h-3" />}
+                {achievements.length === 0 ? (
+                  <p className="text-white/70 text-sm text-center py-4">
+                    No hay logros aún. ¡Empieza a usar la app para desbloquearlos!
+                  </p>
+                ) : (
+                  achievements.map(achievement => <div key={achievement.id} className={`p-3 rounded-lg border ${achievement.earned ? 'border-white/30 bg-white/10' : 'border-white/20 bg-white/5'}`}>
+                      <div className="flex items-start space-x-2">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${achievement.earned ? 'bg-white text-black' : 'bg-gray-600'}`}>
+                          {achievement.earned ? <Zap className="w-3 h-3" /> : <Target className="w-3 h-3" />}
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-white">
+                            {achievement.title}
+                          </p>
+                          <p className="text-xs text-white">
+                            {achievement.description}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-white">
-                          {achievement.title}
-                        </p>
-                        <p className="text-xs text-white">
-                          {achievement.description}
-                        </p>
-                      </div>
-                    </div>
-                  </div>)}
+                    </div>)
+                )}
               </div>
             </Card>
           </div>
