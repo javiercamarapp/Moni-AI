@@ -12,6 +12,7 @@ import bannerGoals from '@/assets/banner-goals.jpg';
 import bannerGroups from '@/assets/banner-groups.jpg';
 import bannerHalloween from '@/assets/banner-halloween.png';
 import heroAuth from '@/assets/moni-ai-logo.png';
+import whatsappLogo from '@/assets/whatsapp-logo.png';
 import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut } from 'lucide-react';
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
@@ -435,7 +436,7 @@ const Dashboard = () => {
         <Card className="p-3 sm:p-4 bg-gradient-card card-glow mb-4">
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
-              <img src={heroAuth} alt="Moni AI" className="w-full h-full object-contain" />
+              <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
             </div>
             <div className="flex-1 min-w-0">
               
