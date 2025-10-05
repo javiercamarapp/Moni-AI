@@ -33,8 +33,32 @@ const Dashboard = () => {
   const [nextLevelXP] = useState(1500);
   const [level] = useState(8);
   const [api, setApi] = useState<CarouselApi>();
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Datos por mes
+  const monthlyData = [
+    { month: "Octubre 2025", income: 50000, expenses: 26550, balance: 23450 },
+    { month: "Septiembre 2025", income: 48000, expenses: 25200, balance: 22800 },
+    { month: "Agosto 2025", income: 50000, expenses: 28300, balance: 21700 },
+    { month: "Julio 2025", income: 52000, expenses: 27100, balance: 24900 },
+    { month: "Junio 2025", income: 48500, expenses: 26800, balance: 21700 },
+  ];
+
+  const currentMonth = monthlyData[currentMonthIndex];
+
+  const handlePrevMonth = () => {
+    if (currentMonthIndex < monthlyData.length - 1) {
+      setCurrentMonthIndex(currentMonthIndex + 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (currentMonthIndex > 0) {
+      setCurrentMonthIndex(currentMonthIndex - 1);
+    }
+  };
 
   // Auto-scroll carousel
   useEffect(() => {
@@ -364,82 +388,94 @@ const Dashboard = () => {
       <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
         
         {/* Balance Overview y Quick Stats en la misma fila */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
           {/* Sección 1: Balance Overview - Más grande */}
-          <Card className="col-span-2 p-3 sm:p-4 bg-gradient-card card-glow h-full flex flex-col justify-between">
-            <div className="space-y-3">
+          <Card className="sm:col-span-2 p-3 sm:p-4 bg-gradient-card card-glow h-full flex flex-col justify-between">
+            <div className="space-y-2 sm:space-y-3">
               {/* Balance Principal */}
               <div>
-                <p className="text-xs sm:text-sm text-white/80 mb-1">Te quedan</p>
-                <div className="flex items-baseline gap-2">
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
-                    $23,450.00
+                <p className="text-[10px] sm:text-xs text-white/80 mb-1">Te quedan</p>
+                <div className="flex items-baseline gap-1 sm:gap-2">
+                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">
+                    ${currentMonth.balance.toLocaleString('es-MX')}
                   </h2>
-                  <span className="text-sm text-white/60">MXN</span>
+                  <span className="text-xs sm:text-sm text-white/60">MXN</span>
                 </div>
               </div>
 
               {/* Selector de Mes */}
-              <div className="flex items-center justify-center gap-2">
-                <Button variant="ghost" size="icon" className="h-7 w-7 text-white hover:bg-white/10">
-                  <span className="text-base">&lt;</span>
+              <div className="flex items-center justify-center gap-1 sm:gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-6 w-6 sm:h-7 sm:w-7 text-white hover:bg-white/10"
+                  onClick={handlePrevMonth}
+                  disabled={currentMonthIndex >= monthlyData.length - 1}
+                >
+                  <span className="text-sm sm:text-base">&lt;</span>
                 </Button>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-3 py-1">
-                  <span className="text-xs sm:text-sm text-white font-medium">Octubre 2025</span>
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1">
+                  <span className="text-[10px] sm:text-xs text-white font-medium">{currentMonth.month}</span>
                 </div>
-                <Button variant="ghost" size="icon" className="h-7 w-7 text-white hover:bg-white/10">
-                  <span className="text-base">&gt;</span>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-6 w-6 sm:h-7 sm:w-7 text-white hover:bg-white/10"
+                  onClick={handleNextMonth}
+                  disabled={currentMonthIndex <= 0}
+                >
+                  <span className="text-sm sm:text-base">&gt;</span>
                 </Button>
               </div>
 
               {/* Ingresos y Egresos */}
               <div className="grid grid-cols-2 gap-2">
                 <Card className="p-2 sm:p-3 bg-white/10 backdrop-blur-sm border-white/20">
-                  <p className="text-[10px] sm:text-xs text-white/80 mb-0.5">Ingresos</p>
-                  <p className="text-lg sm:text-xl font-bold text-white">$50,000</p>
+                  <p className="text-[9px] sm:text-[10px] text-white/80 mb-0.5">Ingresos</p>
+                  <p className="text-sm sm:text-base lg:text-lg font-bold text-white">${currentMonth.income.toLocaleString('es-MX')}</p>
                 </Card>
                 <Card className="p-2 sm:p-3 bg-white/10 backdrop-blur-sm border-white/20">
-                  <p className="text-[10px] sm:text-xs text-white/80 mb-0.5">Gastos</p>
-                  <p className="text-lg sm:text-xl font-bold text-white">-$26,550</p>
+                  <p className="text-[9px] sm:text-[10px] text-white/80 mb-0.5">Gastos</p>
+                  <p className="text-sm sm:text-base lg:text-lg font-bold text-white">-${currentMonth.expenses.toLocaleString('es-MX')}</p>
                 </Card>
               </div>
             </div>
           </Card>
 
           {/* Sección 2: Quick Stats - 3 estadísticas */}
-          <div className="col-span-1 grid grid-cols-1 gap-2">
+          <div className="sm:col-span-1 grid grid-cols-3 sm:grid-cols-1 gap-2">
             <Card className="p-2 sm:p-3 bg-gradient-card card-glow">
-              <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                  <Wallet className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+              <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-primary/20 flex items-center justify-center mb-1 sm:mb-0">
+                  <Wallet className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
                 </div>
-                <div>
-                  <p className="text-[10px] sm:text-xs text-white">Balance</p>
-                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">$23,450</p>
+                <div className="text-center sm:text-left">
+                  <p className="text-[9px] sm:text-[10px] text-white">Balance</p>
+                  <p className="text-xs sm:text-sm lg:text-base font-semibold text-white">$23,450</p>
                 </div>
               </div>
             </Card>
 
             <Card className="p-2 sm:p-3 bg-gradient-card card-glow">
-              <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-success/20 flex items-center justify-center">
-                  <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+              <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-success/20 flex items-center justify-center mb-1 sm:mb-0">
+                  <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
                 </div>
-                <div>
-                  <p className="text-[10px] sm:text-xs text-white">Ahorrado</p>
-                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">$4,200</p>
+                <div className="text-center sm:text-left">
+                  <p className="text-[9px] sm:text-[10px] text-white">Ahorrado</p>
+                  <p className="text-xs sm:text-sm lg:text-base font-semibold text-white">$4,200</p>
                 </div>
               </div>
             </Card>
 
             <Card className="p-2 sm:p-3 bg-gradient-card card-glow">
-              <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-warning/20 flex items-center justify-center">
-                  <Target className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+              <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-warning/20 flex items-center justify-center mb-1 sm:mb-0">
+                  <Target className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
                 </div>
-                <div>
-                  <p className="text-[10px] sm:text-xs text-white">Metas</p>
-                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">{goals.length}</p>
+                <div className="text-center sm:text-left">
+                  <p className="text-[9px] sm:text-[10px] text-white">Metas</p>
+                  <p className="text-xs sm:text-sm lg:text-base font-semibold text-white">{goals.length}</p>
                 </div>
               </div>
             </Card>
