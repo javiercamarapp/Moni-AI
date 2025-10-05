@@ -24,48 +24,26 @@ const Dashboard = () => {
   const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
   const [goals, setGoals] = useState<any[]>([]);
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
+  const [monthlyIncome, setMonthlyIncome] = useState(0);
+  const [monthlyExpenses, setMonthlyExpenses] = useState(0);
   const navigate = useNavigate();
   const {
     toast
   } = useToast();
 
   // Datos por mes
-  const monthlyData = [{
-    month: "Octubre 2025",
-    income: 50000,
-    expenses: 26550,
-    balance: 23450
-  }, {
-    month: "Septiembre 2025",
-    income: 48000,
-    expenses: 25200,
-    balance: 22800
-  }, {
-    month: "Agosto 2025",
-    income: 50000,
-    expenses: 28300,
-    balance: 21700
-  }, {
-    month: "Julio 2025",
-    income: 52000,
-    expenses: 27100,
-    balance: 24900
-  }, {
-    month: "Junio 2025",
-    income: 48500,
-    expenses: 26800,
-    balance: 21700
-  }];
-  const currentMonth = monthlyData[currentMonthIndex];
+  const currentMonth = {
+    month: new Date().toLocaleDateString('es-MX', { month: 'long', year: 'numeric' }),
+    income: monthlyIncome,
+    expenses: monthlyExpenses,
+    balance: monthlyIncome - monthlyExpenses
+  };
+  
   const handlePrevMonth = () => {
-    if (currentMonthIndex < monthlyData.length - 1) {
-      setCurrentMonthIndex(currentMonthIndex + 1);
-    }
+    // TODO: Implement month navigation with real data
   };
   const handleNextMonth = () => {
-    if (currentMonthIndex > 0) {
-      setCurrentMonthIndex(currentMonthIndex - 1);
-    }
+    // TODO: Implement month navigation with real data
   };
 
   // Auto-scroll carousel
@@ -100,22 +78,50 @@ const Dashboard = () => {
     fetchGoals();
   }, []);
 
-  // Fetch recent transactions
+  // Fetch recent transactions and calculate monthly totals
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        const { data, error } = await supabase
+        // Get current month's start and end dates
+        const now = new Date();
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+        // Fetch all transactions for current month
+        const { data: allTransactions, error: allError } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', user.id)
+          .gte('transaction_date', firstDay.toISOString().split('T')[0])
+          .lte('transaction_date', lastDay.toISOString().split('T')[0]);
+
+        if (allError) throw allError;
+
+        // Calculate monthly totals
+        const income = allTransactions
+          ?.filter(t => t.type === 'ingreso')
+          .reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+        
+        const expenses = allTransactions
+          ?.filter(t => t.type === 'gasto')
+          .reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+
+        setMonthlyIncome(income);
+        setMonthlyExpenses(expenses);
+
+        // Fetch recent transactions for display
+        const { data: recentData, error: recentError } = await supabase
           .from('transactions')
           .select('*, categories(name, color)')
           .eq('user_id', user.id)
           .order('transaction_date', { ascending: false })
           .limit(5);
 
-        if (error) throw error;
-        setRecentTransactions(data || []);
+        if (recentError) throw recentError;
+        setRecentTransactions(recentData || []);
       } catch (error) {
         console.error('Error fetching transactions:', error);
       }
@@ -360,18 +366,12 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Selector de Mes */}
-              <div className="flex items-center justify-center gap-1 sm:gap-2">
-                <Button variant="ghost" size="icon" className="h-6 w-6 sm:h-7 sm:w-7 text-white hover:bg-white/10" onClick={handlePrevMonth} disabled={currentMonthIndex >= monthlyData.length - 1}>
-                  <span className="text-sm sm:text-base">&lt;</span>
-                </Button>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1">
-                  <span className="text-[10px] sm:text-xs text-white font-medium">{currentMonth.month}</span>
-                </div>
-                <Button variant="ghost" size="icon" className="h-6 w-6 sm:h-7 sm:w-7 text-white hover:bg-white/10" onClick={handleNextMonth} disabled={currentMonthIndex <= 0}>
-                  <span className="text-sm sm:text-base">&gt;</span>
-                </Button>
-              </div>
+               {/* Selector de Mes */}
+               <div className="flex items-center justify-center gap-1 sm:gap-2">
+                 <div className="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1">
+                   <span className="text-[10px] sm:text-xs text-white font-medium">{currentMonth.month}</span>
+                 </div>
+               </div>
 
               {/* Ingresos y Egresos */}
               <div className="grid grid-cols-2 gap-2">
