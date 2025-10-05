@@ -17,7 +17,7 @@ import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings
 import moniLogo from '/moni-logo.png';
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Changed to false for instant load
   const [currentXP] = useState(0);
   const [nextLevelXP] = useState(100);
   const [level] = useState(1);
@@ -145,7 +145,7 @@ const Dashboard = () => {
   }, [selectedMonthOffset]);
 
   useEffect(() => {
-    // Check authentication - use cached session for faster load
+    // Check authentication in background - no loading screen
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -153,7 +153,6 @@ const Dashboard = () => {
       } else {
         setUser(session.user);
       }
-      setLoading(false);
     };
     
     checkAuth();
@@ -171,34 +170,22 @@ const Dashboard = () => {
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
+  
   const handleLogout = async () => {
     try {
-      // Limpiar localStorage manualmente primero
       localStorage.removeItem('sb-gfojxewccmjwdzdmdfxv-auth-token');
       await supabase.auth.signOut();
       toast({
         title: "Sesión cerrada",
         description: "Hasta pronto!"
       });
-
-      // Navegar inmediatamente, el onAuthStateChange ya no interferirá
       navigate("/auth");
     } catch (error: any) {
       console.error('Error al cerrar sesión:', error);
       navigate("/auth");
     }
   };
-  if (loading) {
-    return <div className="min-h-screen animated-wave-bg flex items-center justify-center">
-        <div className="animate-fade-in">
-          <img 
-            src={moniLogo} 
-            alt="Moni Logo" 
-            className="w-80 max-w-[90vw] animate-pulse"
-          />
-        </div>
-      </div>;
-  }
+  
   const progressPercentage = currentXP / nextLevelXP * 100;
   const achievements: any[] = []; // Los logros se implementarán en el futuro basados en la actividad del usuario
   return <div className="min-h-screen animated-wave-bg pb-20">

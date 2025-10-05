@@ -10,7 +10,7 @@ import { MessageCircle, Send, Smile, Paperclip, Phone, Video, MoreVertical, Arro
 import moniLogo from '/moni-logo.png';
 const ChatInterface = () => {
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Changed to false for instant load
   const navigate = useNavigate();
   const {
     toast
@@ -33,7 +33,7 @@ const ChatInterface = () => {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    // Check authentication - use cached session for faster load
+    // Check authentication in background - no loading screen
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -41,7 +41,6 @@ const ChatInterface = () => {
       } else {
         setUser(session.user);
       }
-      setLoading(false);
     };
     
     checkAuth();
@@ -59,6 +58,7 @@ const ChatInterface = () => {
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
+  
   const handleLogout = async () => {
     await supabase.auth.signOut();
     toast({
@@ -67,17 +67,7 @@ const ChatInterface = () => {
     });
     navigate("/");
   };
-  if (loading) {
-    return <div className="min-h-screen animated-wave-bg flex items-center justify-center">
-        <div className="animate-fade-in">
-          <img 
-            src={moniLogo} 
-            alt="Moni Logo" 
-            className="w-80 max-w-[90vw] animate-pulse"
-          />
-        </div>
-      </div>;
-  }
+  
   const handleSendMessage = async () => {
     if (!message.trim()) return;
     const userMessage = {
