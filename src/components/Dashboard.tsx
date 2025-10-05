@@ -363,46 +363,88 @@ const Dashboard = () => {
       <div className="p-2 sm:p-4">
       <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
         
-        {/* Balance Overview Section */}
-        <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
-          <div className="space-y-4">
-            {/* Balance Principal */}
-            <div>
-              <p className="text-sm text-white/80 mb-2">Te quedan</p>
-              <div className="flex items-baseline gap-2">
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
-                  $23,450.00
-                </h2>
-                <span className="text-lg text-white/60">MXN</span>
+        {/* Balance Overview y Quick Stats en la misma fila */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-4">
+          {/* Sección 1: Balance Overview */}
+          <Card className="p-4 sm:p-6 bg-gradient-card card-glow h-full flex flex-col justify-between">
+            <div className="space-y-3">
+              {/* Balance Principal */}
+              <div>
+                <p className="text-xs sm:text-sm text-white/80 mb-1">Te quedan</p>
+                <div className="flex items-baseline gap-2">
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
+                    $23,450.00
+                  </h2>
+                  <span className="text-sm text-white/60">MXN</span>
+                </div>
+              </div>
+
+              {/* Selector de Mes */}
+              <div className="flex items-center justify-center gap-2">
+                <Button variant="ghost" size="icon" className="h-7 w-7 text-white hover:bg-white/10">
+                  <span className="text-base">&lt;</span>
+                </Button>
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-3 py-1">
+                  <span className="text-xs sm:text-sm text-white font-medium">Octubre 2025</span>
+                </div>
+                <Button variant="ghost" size="icon" className="h-7 w-7 text-white hover:bg-white/10">
+                  <span className="text-base">&gt;</span>
+                </Button>
+              </div>
+
+              {/* Ingresos y Egresos */}
+              <div className="grid grid-cols-2 gap-2">
+                <Card className="p-2 sm:p-3 bg-white/10 backdrop-blur-sm border-white/20">
+                  <p className="text-[10px] sm:text-xs text-white/80 mb-0.5">Ingresos</p>
+                  <p className="text-lg sm:text-xl font-bold text-white">$50,000</p>
+                </Card>
+                <Card className="p-2 sm:p-3 bg-white/10 backdrop-blur-sm border-white/20">
+                  <p className="text-[10px] sm:text-xs text-white/80 mb-0.5">Gastos</p>
+                  <p className="text-lg sm:text-xl font-bold text-white">-$26,550</p>
+                </Card>
               </div>
             </div>
+          </Card>
 
-            {/* Selector de Mes */}
-            <div className="flex items-center justify-center gap-2">
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/10">
-                <span className="text-lg">&lt;</span>
-              </Button>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
-                <span className="text-white font-medium">Octubre 2025</span>
+          {/* Sección 2: Quick Stats - 3 estadísticas */}
+          <div className="grid grid-cols-1 gap-2">
+            <Card className="p-2 sm:p-3 bg-gradient-card card-glow">
+              <div className="flex items-center space-x-2">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                  <Wallet className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] sm:text-xs text-white">Balance</p>
+                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">$23,450</p>
+                </div>
               </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/10">
-                <span className="text-lg">&gt;</span>
-              </Button>
-            </div>
+            </Card>
 
-            {/* Ingresos y Egresos */}
-            <div className="grid grid-cols-2 gap-3">
-              <Card className="p-4 bg-white/10 backdrop-blur-sm border-white/20">
-                <p className="text-sm text-white/80 mb-1">Ingresos</p>
-                <p className="text-2xl sm:text-3xl font-bold text-white">$50,000.00</p>
-              </Card>
-              <Card className="p-4 bg-white/10 backdrop-blur-sm border-white/20">
-                <p className="text-sm text-white/80 mb-1">Gastos</p>
-                <p className="text-2xl sm:text-3xl font-bold text-white">-$26,550.00</p>
-              </Card>
-            </div>
+            <Card className="p-2 sm:p-3 bg-gradient-card card-glow">
+              <div className="flex items-center space-x-2">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-success/20 flex items-center justify-center">
+                  <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] sm:text-xs text-white">Ahorrado</p>
+                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">$4,200</p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-2 sm:p-3 bg-gradient-card card-glow">
+              <div className="flex items-center space-x-2">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-warning/20 flex items-center justify-center">
+                  <Target className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] sm:text-xs text-white">Metas</p>
+                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">{goals.length}</p>
+                </div>
+              </div>
+            </Card>
           </div>
-        </Card>
+        </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
           
