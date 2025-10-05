@@ -104,9 +104,9 @@ const Ingresos = () => {
           <Button
             size="icon"
             onClick={handleWhatsAppRegister}
-            className="bg-white/20 hover:bg-white/30 border-white/30"
+            className="bg-white/20 hover:bg-white/30 border-white/30 p-2"
           >
-            <img src={whatsappLogo} alt="WhatsApp" className="w-5 h-5" />
+            <img src={whatsappLogo} alt="WhatsApp" className="w-6 h-6 object-contain" />
           </Button>
           
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
