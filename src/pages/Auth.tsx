@@ -174,7 +174,7 @@ const Auth = () => {
           <form onSubmit={handleAuth} className="space-y-3 md:space-y-6">
             {!isLogin && (
               <div className="space-y-1 md:space-y-2">
-                <Label htmlFor="fullName" className="text-xs md:text-sm">Nombre Completo</Label>
+                <Label htmlFor="fullName" className="text-xs md:text-sm text-gray-900">Nombre Completo</Label>
                 <Input
                   id="fullName"
                   type="text"
@@ -187,7 +187,7 @@ const Auth = () => {
             )}
 
             <div className="space-y-1 md:space-y-2">
-              <Label htmlFor="email" className="text-xs md:text-sm">Correo Electrónico</Label>
+              <Label htmlFor="email" className="text-xs md:text-sm text-gray-900">Correo Electrónico</Label>
               <Input
                 id="email"
                 type="email"
@@ -200,7 +200,7 @@ const Auth = () => {
             </div>
 
             <div className="space-y-1 md:space-y-2">
-              <Label htmlFor="password" className="text-xs md:text-sm">Contraseña</Label>
+              <Label htmlFor="password" className="text-xs md:text-sm text-gray-900">Contraseña</Label>
               <Input
                 id="password"
                 type="password"
@@ -212,7 +212,7 @@ const Auth = () => {
                 className="text-sm md:text-base h-9 md:h-10"
               />
               {!isLogin && (
-                <p className="text-[10px] md:text-xs text-muted-foreground">
+                <p className="text-[10px] md:text-xs text-gray-600">
                   Mínimo 6 caracteres
                 </p>
               )}
@@ -231,7 +231,7 @@ const Auth = () => {
           <div className="relative my-3 md:my-6">
             <div className="flex items-center gap-4">
               <span className="flex-1 border-t border-border" />
-              <span className="text-[10px] md:text-xs uppercase text-muted-foreground">O continúa con</span>
+              <span className="text-[10px] md:text-xs uppercase text-gray-600">O continúa con</span>
               <span className="flex-1 border-t border-border" />
             </div>
           </div>
@@ -282,7 +282,7 @@ const Auth = () => {
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
-              className="text-xs md:text-sm text-primary hover:underline"
+              className="text-xs md:text-sm text-gray-900 hover:underline font-medium"
             >
               {isLogin
                 ? "¿No tienes cuenta? Regístrate"
