@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      categories: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          name: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          id?: string
+          name: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          name?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -40,6 +70,59 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      transactions: {
+        Row: {
+          account: string | null
+          amount: number
+          category_id: string | null
+          created_at: string
+          description: string
+          frequency: string | null
+          id: string
+          payment_method: string | null
+          transaction_date: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account?: string | null
+          amount: number
+          category_id?: string | null
+          created_at?: string
+          description: string
+          frequency?: string | null
+          id?: string
+          payment_method?: string | null
+          transaction_date: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account?: string | null
+          amount?: number
+          category_id?: string | null
+          created_at?: string
+          description?: string
+          frequency?: string | null
+          id?: string
+          payment_method?: string | null
+          transaction_date?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

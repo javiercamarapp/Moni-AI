@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,14 +18,15 @@ import {
   ChevronLeft, 
   ChevronRight, 
   Plus,
-  Tag
+  Tag,
+  Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -43,23 +44,61 @@ const Gastos = () => {
   const [category, setCategory] = useState('');
   const [frequency, setFrequency] = useState('');
   const [date, setDate] = useState('');
+  const [categories, setCategories] = useState<Array<{ id: string; name: string; color: string }>>([]);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Datos de ejemplo
-  const totalGastos = 35000;
-  const historial = [
-    { id: 1, concepto: 'Renta', categoria: 'Vivienda', tipo: 'Transferencia', monto: 15000, fecha: '05 Oct 2025' },
-    { id: 2, concepto: 'Supermercado', categoria: 'Alimentación', tipo: 'Tarjeta', monto: 8500, fecha: '03 Oct 2025' },
-    { id: 3, concepto: 'Gasolina', categoria: 'Transporte', tipo: 'Efectivo', monto: 2500, fecha: '02 Oct 2025' },
-    { id: 4, concepto: 'Luz', categoria: 'Servicios', tipo: 'Débito', monto: 1200, fecha: '01 Oct 2025' },
-  ];
+  useEffect(() => {
+    fetchData();
+  }, [currentMonth]);
 
-  const categorias = [
-    { nombre: 'Vivienda', total: 15000, color: 'bg-red-500/20' },
-    { nombre: 'Alimentación', total: 8500, color: 'bg-orange-500/20' },
-    { nombre: 'Transporte', total: 5500, color: 'bg-yellow-500/20' },
-    { nombre: 'Servicios', total: 3200, color: 'bg-blue-500/20' },
-    { nombre: 'Entretenimiento', total: 2800, color: 'bg-purple-500/20' },
-  ];
+  const fetchData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate('/auth');
+        return;
+      }
+
+      // Fetch categories
+      const { data: categoriesData } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('type', 'gasto');
+
+      setCategories(categoriesData || []);
+
+      // Fetch transactions for current month
+      const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+      const endOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+
+      const { data: transactionsData } = await supabase
+        .from('transactions')
+        .select('*, categories(name, color)')
+        .eq('user_id', user.id)
+        .eq('type', 'gasto')
+        .gte('transaction_date', startOfMonth.toISOString().split('T')[0])
+        .lte('transaction_date', endOfMonth.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false });
+
+      setTransactions(transactionsData || []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const totalGastos = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
+
+  // Calcular totales por categoría
+  const categoriasConTotales = categories.map(cat => {
+    const total = transactions
+      .filter(t => t.category_id === cat.id)
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+    return { ...cat, total };
+  }).filter(cat => cat.total > 0);
 
   const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
@@ -76,20 +115,51 @@ const Gastos = () => {
     window.open(`https://wa.me/?text=${message}`, '_blank');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Gasto registrado",
-      description: "Tu gasto ha sido agregado exitosamente",
-    });
-    setShowAddDialog(false);
-    setAmount('');
-    setDescription('');
-    setPaymentMethod('');
-    setAccount('');
-    setCategory('');
-    setFrequency('');
-    setDate('');
+    
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('transactions')
+        .insert({
+          user_id: user.id,
+          amount: parseFloat(amount),
+          description,
+          category_id: category || null,
+          payment_method: paymentMethod,
+          account,
+          frequency,
+          transaction_date: date,
+          type: 'gasto',
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Gasto registrado",
+        description: "Tu gasto ha sido agregado exitosamente",
+      });
+
+      setShowAddDialog(false);
+      setAmount('');
+      setDescription('');
+      setPaymentMethod('');
+      setAccount('');
+      setCategory('');
+      setFrequency('');
+      setDate('');
+      fetchData();
+    } catch (error) {
+      console.error('Error adding transaction:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo registrar el gasto",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -120,6 +190,14 @@ const Gastos = () => {
             className="bg-white/20 hover:bg-white/30 border-white/30 p-2"
           >
             <img src={whatsappLogo} alt="WhatsApp" className="w-6 h-6 object-contain" />
+          </Button>
+
+          <Button
+            size="icon"
+            onClick={() => navigate('/categorias')}
+            className="bg-white/20 hover:bg-white/30 border-white/30"
+          >
+            <Settings className="h-5 w-5 text-white" />
           </Button>
           
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
@@ -212,13 +290,17 @@ const Gastos = () => {
                       <SelectValue placeholder="Categorías" />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-white/20 z-50">
-                      <SelectItem value="vivienda" className="text-white">Vivienda</SelectItem>
-                      <SelectItem value="alimentacion" className="text-white">Alimentación</SelectItem>
-                      <SelectItem value="transporte" className="text-white">Transporte</SelectItem>
-                      <SelectItem value="servicios" className="text-white">Servicios</SelectItem>
-                      <SelectItem value="entretenimiento" className="text-white">Entretenimiento</SelectItem>
-                      <SelectItem value="salud" className="text-white">Salud</SelectItem>
-                      <SelectItem value="otro" className="text-white">Otro</SelectItem>
+                      {categories.length === 0 ? (
+                        <SelectItem value="none" className="text-white" disabled>
+                          No hay categorías. Créalas en Gestionar Categorías
+                        </SelectItem>
+                      ) : (
+                        categories.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id} className="text-white">
+                            {cat.name}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -316,58 +398,84 @@ const Gastos = () => {
           </TabsList>
 
           <TabsContent value="historial" className="space-y-3 mt-4">
-            {historial.map((item) => (
-              <Card key={item.id} className="p-4 bg-gradient-card card-glow">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-white mb-2">
-                      {item.concepto}
-                    </h3>
-                    <div className="flex gap-2">
-                      <Badge className="bg-white/20 text-white border-white/30">
-                        {item.categoria}
-                      </Badge>
-                      <Badge className="bg-white/10 text-white/80 border-white/20">
-                        {item.tipo}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-white">
-                      ${item.monto.toLocaleString('es-MX')}
-                    </p>
-                    <p className="text-sm text-white/70 mt-1">
-                      {item.fecha}
-                    </p>
-                  </div>
-                </div>
+            {loading ? (
+              <p className="text-white text-center">Cargando...</p>
+            ) : transactions.length === 0 ? (
+              <Card className="p-6 bg-gradient-card card-glow text-center">
+                <p className="text-white/70">No hay gastos registrados este mes</p>
               </Card>
-            ))}
-          </TabsContent>
-
-          <TabsContent value="categorias" className="space-y-3 mt-4">
-            {categorias.map((cat, index) => (
-              <Card key={index} className="p-4 bg-gradient-card card-glow">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-12 h-12 rounded-lg ${cat.color} flex items-center justify-center`}>
-                      <Tag className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">
-                        {cat.nombre}
+            ) : (
+              transactions.map((item) => (
+                <Card key={item.id} className="p-4 bg-gradient-card card-glow">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-white mb-2">
+                        {item.description}
                       </h3>
-                      <p className="text-sm text-white/70">
-                        Categoría de gasto
+                      <div className="flex gap-2">
+                        {item.categories && (
+                          <Badge className="bg-white/20 text-white border-white/30">
+                            {item.categories.name}
+                          </Badge>
+                        )}
+                        {item.payment_method && (
+                          <Badge className="bg-white/10 text-white/80 border-white/20">
+                            {item.payment_method}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-bold text-white">
+                        ${Number(item.amount).toLocaleString('es-MX')}
+                      </p>
+                      <p className="text-sm text-white/70 mt-1">
+                        {new Date(item.transaction_date).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })}
                       </p>
                     </div>
                   </div>
-                  <p className="text-2xl font-bold text-white">
-                    ${cat.total.toLocaleString('es-MX')}
-                  </p>
-                </div>
+                </Card>
+              ))
+            )}
+          </TabsContent>
+
+          <TabsContent value="categorias" className="space-y-3 mt-4">
+            {loading ? (
+              <p className="text-white text-center">Cargando...</p>
+            ) : categoriasConTotales.length === 0 ? (
+              <Card className="p-6 bg-gradient-card card-glow text-center">
+                <p className="text-white/70 mb-4">No hay categorías con gastos este mes</p>
+                <Button
+                  onClick={() => navigate('/categorias')}
+                  className="bg-white/20 hover:bg-white/30 text-white"
+                >
+                  Gestionar Categorías
+                </Button>
               </Card>
-            ))}
+            ) : (
+              categoriasConTotales.map((cat) => (
+                <Card key={cat.id} className="p-4 bg-gradient-card card-glow">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-12 h-12 rounded-lg ${cat.color} flex items-center justify-center`}>
+                        <Tag className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">
+                          {cat.name}
+                        </h3>
+                        <p className="text-sm text-white/70">
+                          Categoría de gasto
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-2xl font-bold text-white">
+                      ${cat.total.toLocaleString('es-MX')}
+                    </p>
+                  </div>
+                </Card>
+              ))
+            )}
           </TabsContent>
         </Tabs>
       </div>
