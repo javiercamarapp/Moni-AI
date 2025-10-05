@@ -441,7 +441,7 @@ const Dashboard = () => {
             <div className="flex-1 min-w-0">
               
               <p className="text-xs text-white mb-2 line-clamp-2">
-                Hazme tus preguntas financieras y recibe recomendaciones personalizadas.
+                Ahora registra todos tus ingresos y gastos vía WhatsApp y aquí encontrarás todas tus analíticas
               </p>
               <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white border-0 text-xs h-8" onClick={() => window.open('https://wa.me/5215512345678', '_blank')}>
                 <MessageCircle className="w-3 h-3 mr-1" />
