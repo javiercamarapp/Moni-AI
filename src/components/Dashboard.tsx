@@ -13,7 +13,7 @@ import bannerGroups from '@/assets/banner-groups.jpg';
 import bannerHalloween from '@/assets/banner-halloween.png';
 import heroAuth from '@/assets/moni-ai-logo.png';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
-import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut } from 'lucide-react';
+import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User } from 'lucide-react';
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -315,7 +315,7 @@ const Dashboard = () => {
         <div className="container mx-auto px-2">
           <div className="flex items-center justify-around h-16">
             <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/dashboard")}>
-              <Target className="w-5 h-5 text-white" />
+              <Home className="w-5 h-5 text-white" />
               <span className="text-xs text-white">Home</span>
             </Button>
 
@@ -335,7 +335,7 @@ const Dashboard = () => {
             </Button>
 
             <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10">
-              <Settings className="w-5 h-5 text-white" />
+              <User className="w-5 h-5 text-white" />
               <span className="text-xs text-white">Perfil</span>
             </Button>
           </div>
