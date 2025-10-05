@@ -486,6 +486,35 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* WhatsApp Banner */}
+        <Card className="p-4 sm:p-6 bg-gradient-to-r from-purple-500/90 to-blue-500/90 backdrop-blur-sm border-purple-300/30 mb-6">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0">
+              <img 
+                src={heroAuth} 
+                alt="Moni AI" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div className="flex-1">
+              <div className="bg-white rounded-2xl rounded-bl-none px-4 py-2 mb-2 inline-block">
+                <h3 className="text-base sm:text-lg font-bold text-gray-900">¡Hola, soy Moni!</h3>
+              </div>
+              <p className="text-sm sm:text-base text-white mb-3">
+                Hazme tus preguntas financieras y recibe recomendaciones personalizadas.
+              </p>
+              <Button 
+                size="sm"
+                className="bg-green-500 hover:bg-green-600 text-white border-0"
+                onClick={() => window.open('https://wa.me/5215512345678', '_blank')}
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Chatea en WhatsApp
+              </Button>
+            </div>
+          </div>
+        </Card>
+
         <div className="grid lg:grid-cols-3 gap-6">
           
           {/* Main Goals Section */}
