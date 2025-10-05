@@ -227,15 +227,9 @@ const ChatInterface = () => {
             </div>
             
             <div className="flex items-center gap-1 flex-shrink-0">
-              <Badge variant="secondary" className="bg-purple-100 text-purple-700 border-purple-200 text-[9px] sm:text-[10px] whitespace-nowrap px-1.5 py-0.5">
-                +25 XP
-              </Badge>
-              <Button variant="ghost" size="icon" className="text-gray-900 hover:bg-gray-100 h-7 w-7">
-                <Phone className="w-3 h-3" />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-gray-900 hover:bg-gray-100">
-                <Video className="w-4 h-4" />
-              </Button>
+              
+              
+              
               <Button variant="ghost" size="icon" className="text-gray-900 hover:bg-gray-100" onClick={handleLogout}>
                 <LogOut className="w-4 h-4" />
               </Button>
