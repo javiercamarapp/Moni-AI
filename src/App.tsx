@@ -13,6 +13,7 @@ import FinancialChat from "./pages/FinancialChat";
 import Ingresos from "./pages/Ingresos";
 import Gastos from "./pages/Gastos";
 import GestionarCategorias from "./pages/GestionarCategorias";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/ingresos" element={<Ingresos />} />
           <Route path="/gastos" element={<Gastos />} />
           <Route path="/categorias" element={<GestionarCategorias />} />
+          <Route path="/profile" element={<Profile />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
