@@ -96,11 +96,11 @@ const Profile = () => {
               <span className="text-2xl font-bold text-white">{getInitials(userName)}</span>
             </div>
             <div className="flex-1">
-              <h2 className="text-xl font-bold text-foreground">{userName}</h2>
+              <h2 className="text-xl font-bold text-gray-900">{userName}</h2>
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-muted-foreground p-0 h-auto hover:bg-transparent"
+                className="text-gray-600 p-0 h-auto hover:bg-transparent hover:text-gray-900"
               >
                 Editar perfil <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
@@ -111,13 +111,13 @@ const Profile = () => {
           <Card className="bg-gradient-to-r from-amber-50 to-amber-100 border-amber-300 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Tu plan</p>
+                <p className="text-sm text-gray-600 mb-1">Tu plan</p>
                 <div className="flex items-center gap-2">
                   <Crown className="w-5 h-5 text-amber-600" />
-                  <span className="text-lg font-bold text-foreground">Pro Black</span>
+                  <span className="text-lg font-bold text-gray-900">Pro Black</span>
                 </div>
               </div>
-              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              <ChevronRight className="h-5 w-5 text-gray-600" />
             </div>
           </Card>
         </Card>
@@ -133,45 +133,45 @@ const Profile = () => {
           <Card className="bg-white/95 backdrop-blur-sm border-white/20 divide-y divide-border">
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-white/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-100"
             >
-              <span className="text-muted-foreground">Divisa</span>
+              <span className="text-gray-600">Divisa</span>
               <div className="flex items-center gap-2">
-                <span className="text-foreground">Peso mexicano</span>
-                <ChevronRight className="h-5 w-5" />
+                <span className="text-gray-900">Peso mexicano</span>
+                <ChevronRight className="h-5 w-5 text-gray-600" />
               </div>
             </Button>
             
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-white/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-100"
             >
-              <span className="text-muted-foreground">Ubicación</span>
+              <span className="text-gray-600">Ubicación</span>
               <div className="flex items-center gap-2">
-                <span className="text-foreground">México</span>
-                <ChevronRight className="h-5 w-5" />
+                <span className="text-gray-900">México</span>
+                <ChevronRight className="h-5 w-5 text-gray-600" />
               </div>
             </Button>
 
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-white/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-100"
               onClick={() => navigate('/categorias')}
             >
-              <span className="text-muted-foreground">Mis tarjetas/cuentas</span>
-              <ChevronRight className="h-5 w-5" />
+              <span className="text-gray-600">Mis tarjetas/cuentas</span>
+              <ChevronRight className="h-5 w-5 text-gray-600" />
             </Button>
 
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-white/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-100"
             >
-              <span className="text-muted-foreground">Centro de facturación automática</span>
-              <ChevronRight className="h-5 w-5" />
+              <span className="text-gray-600">Centro de facturación automática</span>
+              <ChevronRight className="h-5 w-5 text-gray-600" />
             </Button>
 
             <div className="flex items-center justify-between py-4 px-4">
-              <span className="text-muted-foreground">Alertas de audio</span>
+              <span className="text-gray-600">Alertas de audio</span>
               <Switch checked={audioAlerts} onCheckedChange={setAudioAlerts} />
             </div>
           </Card>
@@ -183,10 +183,10 @@ const Profile = () => {
           <Card className="bg-white/95 backdrop-blur-sm border-white/20">
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-white/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-100"
             >
-              <span className="text-muted-foreground">Historial de gastos e ingresos</span>
-              <ChevronRight className="h-5 w-5" />
+              <span className="text-gray-600">Historial de gastos e ingresos</span>
+              <ChevronRight className="h-5 w-5 text-gray-600" />
             </Button>
           </Card>
         </div>
@@ -197,18 +197,18 @@ const Profile = () => {
           <Card className="bg-white/95 backdrop-blur-sm border-white/20 divide-y divide-border">
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-white/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-100"
             >
-              <span className="text-muted-foreground">Centro de ayuda</span>
-              <ChevronRight className="h-5 w-5" />
+              <span className="text-gray-600">Centro de ayuda</span>
+              <ChevronRight className="h-5 w-5 text-gray-600" />
             </Button>
             
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-white/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-100"
             >
-              <span className="text-muted-foreground">Preguntas Frecuentes</span>
-              <ChevronRight className="h-5 w-5" />
+              <span className="text-gray-600">Preguntas Frecuentes</span>
+              <ChevronRight className="h-5 w-5 text-gray-600" />
             </Button>
           </Card>
         </div>
@@ -219,18 +219,18 @@ const Profile = () => {
           <Card className="bg-white/95 backdrop-blur-sm border-white/20 divide-y divide-border">
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-white/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-100"
             >
-              <span className="text-muted-foreground">Términos y condiciones</span>
-              <ChevronRight className="h-5 w-5" />
+              <span className="text-gray-600">Términos y condiciones</span>
+              <ChevronRight className="h-5 w-5 text-gray-600" />
             </Button>
             
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-white/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-100"
             >
-              <span className="text-muted-foreground">Aviso de privacidad</span>
-              <ChevronRight className="h-5 w-5" />
+              <span className="text-gray-600">Aviso de privacidad</span>
+              <ChevronRight className="h-5 w-5 text-gray-600" />
             </Button>
           </Card>
         </div>
@@ -241,21 +241,21 @@ const Profile = () => {
           <Card className="bg-white/95 backdrop-blur-sm border-white/20 divide-y divide-border">
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-white/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-100"
               onClick={handleLogout}
             >
-              <span className="text-muted-foreground">Cerrar sesión</span>
-              <ChevronRight className="h-5 w-5" />
+              <span className="text-gray-600">Cerrar sesión</span>
+              <ChevronRight className="h-5 w-5 text-gray-600" />
             </Button>
             
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="w-full justify-between h-auto py-4 px-4 hover:bg-destructive/10"
+                  className="w-full justify-between h-auto py-4 px-4 hover:bg-red-50"
                 >
-                  <span className="text-destructive">Eliminar cuenta</span>
-                  <ChevronRight className="h-5 w-5 text-destructive" />
+                  <span className="text-red-600">Eliminar cuenta</span>
+                  <ChevronRight className="h-5 w-5 text-red-600" />
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent className="bg-card">
