@@ -178,10 +178,10 @@ const Gastos = () => {
                       <SelectValue placeholder="Selecciona método de pago" />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-white/20 z-50">
-                      <SelectItem value="debito">Débito</SelectItem>
-                      <SelectItem value="credito">Crédito</SelectItem>
-                      <SelectItem value="efectivo">Efectivo</SelectItem>
-                      <SelectItem value="transferencia">Transferencia</SelectItem>
+                      <SelectItem value="debito" className="text-white">Débito</SelectItem>
+                      <SelectItem value="credito" className="text-white">Crédito</SelectItem>
+                      <SelectItem value="efectivo" className="text-white">Efectivo</SelectItem>
+                      <SelectItem value="transferencia" className="text-white">Transferencia</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -195,10 +195,10 @@ const Gastos = () => {
                       <SelectValue placeholder="Escoge o agrega tu tarjeta/cuenta" />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-white/20 z-50">
-                      <SelectItem value="banco1">Cuenta Principal</SelectItem>
-                      <SelectItem value="banco2">Cuenta de Ahorros</SelectItem>
-                      <SelectItem value="banco3">Tarjeta Nómina</SelectItem>
-                      <SelectItem value="otro">Otra cuenta</SelectItem>
+                      <SelectItem value="banco1" className="text-white">Cuenta Principal</SelectItem>
+                      <SelectItem value="banco2" className="text-white">Cuenta de Ahorros</SelectItem>
+                      <SelectItem value="banco3" className="text-white">Tarjeta Nómina</SelectItem>
+                      <SelectItem value="otro" className="text-white">Otra cuenta</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -212,13 +212,13 @@ const Gastos = () => {
                       <SelectValue placeholder="Categorías" />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-white/20 z-50">
-                      <SelectItem value="vivienda">Vivienda</SelectItem>
-                      <SelectItem value="alimentacion">Alimentación</SelectItem>
-                      <SelectItem value="transporte">Transporte</SelectItem>
-                      <SelectItem value="servicios">Servicios</SelectItem>
-                      <SelectItem value="entretenimiento">Entretenimiento</SelectItem>
-                      <SelectItem value="salud">Salud</SelectItem>
-                      <SelectItem value="otro">Otro</SelectItem>
+                      <SelectItem value="vivienda" className="text-white">Vivienda</SelectItem>
+                      <SelectItem value="alimentacion" className="text-white">Alimentación</SelectItem>
+                      <SelectItem value="transporte" className="text-white">Transporte</SelectItem>
+                      <SelectItem value="servicios" className="text-white">Servicios</SelectItem>
+                      <SelectItem value="entretenimiento" className="text-white">Entretenimiento</SelectItem>
+                      <SelectItem value="salud" className="text-white">Salud</SelectItem>
+                      <SelectItem value="otro" className="text-white">Otro</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -232,12 +232,12 @@ const Gastos = () => {
                       <SelectValue placeholder="Sin frecuencia" />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-white/20 z-50">
-                      <SelectItem value="unico">Sin frecuencia</SelectItem>
-                      <SelectItem value="diario">Diario</SelectItem>
-                      <SelectItem value="semanal">Semanal</SelectItem>
-                      <SelectItem value="quincenal">Quincenal</SelectItem>
-                      <SelectItem value="mensual">Mensual</SelectItem>
-                      <SelectItem value="anual">Anual</SelectItem>
+                      <SelectItem value="unico" className="text-white">Sin frecuencia</SelectItem>
+                      <SelectItem value="diario" className="text-white">Diario</SelectItem>
+                      <SelectItem value="semanal" className="text-white">Semanal</SelectItem>
+                      <SelectItem value="quincenal" className="text-white">Quincenal</SelectItem>
+                      <SelectItem value="mensual" className="text-white">Mensual</SelectItem>
+                      <SelectItem value="anual" className="text-white">Anual</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
