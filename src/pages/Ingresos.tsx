@@ -133,7 +133,7 @@ const Ingresos = () => {
             <DialogContent className="bg-gradient-card border-white/20 max-h-[85vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-bold text-white">
-                  ¡Hola otra vez! 👋
+                  Registrar Ingreso
                 </DialogTitle>
               </DialogHeader>
               
