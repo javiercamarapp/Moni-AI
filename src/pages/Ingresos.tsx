@@ -4,7 +4,13 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
@@ -34,7 +40,10 @@ const Ingresos = () => {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const [account, setAccount] = useState('');
   const [category, setCategory] = useState('');
+  const [frequency, setFrequency] = useState('');
   const [date, setDate] = useState('');
 
   // Datos de ejemplo
@@ -75,7 +84,10 @@ const Ingresos = () => {
     setShowAddDialog(false);
     setAmount('');
     setDescription('');
+    setPaymentMethod('');
+    setAccount('');
     setCategory('');
+    setFrequency('');
     setDate('');
   };
 
@@ -118,61 +130,118 @@ const Ingresos = () => {
                 <Plus className="h-5 w-5 text-white" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-gradient-card border-white/20">
+            <DialogContent className="bg-gradient-card border-white/20 max-h-[85vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle className="text-white">Registrar Ingreso</DialogTitle>
-                <DialogDescription className="text-white/70">
-                  Completa los detalles de tu ingreso
-                </DialogDescription>
+                <DialogTitle className="text-2xl font-bold text-white">
+                  ¡Hola otra vez! 👋
+                </DialogTitle>
               </DialogHeader>
               
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="amount" className="text-white">
-                    Monto
+                  <Label htmlFor="amount" className="text-white/90 text-base">
+                    ¿Cuál es el monto de tu ingreso?
                   </Label>
                   <Input
                     id="amount"
                     type="number"
+                    step="0.01"
                     placeholder="$0.00"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     required
-                    className="bg-white/10 border-white/30 text-white placeholder:text-white/50"
+                    className="bg-white/10 border-white/30 text-white placeholder:text-white/40 h-14 text-lg"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description" className="text-white">
-                    Descripción
+                  <Label htmlFor="description" className="text-white/90 text-base">
+                    ¿Qué nombre le quieres dar?
                   </Label>
-                  <Textarea
+                  <Input
                     id="description"
-                    placeholder="Ej: Sueldo mensual, Freelance, Venta..."
+                    placeholder="Nombre de tu ingreso"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     required
-                    className="bg-white/10 border-white/30 text-white placeholder:text-white/50"
+                    className="bg-white/10 border-white/30 text-white placeholder:text-white/40 h-14"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="category" className="text-white">
-                    Categoría
+                  <Label className="text-white/90 text-base">
+                    ¿El ingreso lo recibiste en?
                   </Label>
-                  <Input
-                    id="category"
-                    placeholder="Ej: Salario, Negocio, Inversión..."
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    required
-                    className="bg-white/10 border-white/30 text-white placeholder:text-white/50"
-                  />
+                  <Select value={paymentMethod} onValueChange={setPaymentMethod} required>
+                    <SelectTrigger className="bg-white/10 border-white/30 text-white h-14">
+                      <SelectValue placeholder="Selecciona método de pago" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-white/20 z-50">
+                      <SelectItem value="debito">Débito</SelectItem>
+                      <SelectItem value="credito">Crédito</SelectItem>
+                      <SelectItem value="efectivo">Efectivo</SelectItem>
+                      <SelectItem value="transferencia">Transferencia</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="date" className="text-white">
-                    Fecha
+                  <Label className="text-white/90 text-base">
+                    ¿En cuál tarjeta/cuenta recibiste el ingreso?
+                  </Label>
+                  <Select value={account} onValueChange={setAccount} required>
+                    <SelectTrigger className="bg-white/10 border-white/30 text-white h-14">
+                      <SelectValue placeholder="Escoge o agrega tu tarjeta/cuenta" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-white/20 z-50">
+                      <SelectItem value="banco1">Cuenta Principal</SelectItem>
+                      <SelectItem value="banco2">Cuenta de Ahorros</SelectItem>
+                      <SelectItem value="banco3">Tarjeta Nómina</SelectItem>
+                      <SelectItem value="otro">Otra cuenta</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-white/90 text-base">
+                    Categoría de tu ingreso
+                  </Label>
+                  <Select value={category} onValueChange={setCategory} required>
+                    <SelectTrigger className="bg-white/10 border-white/30 text-white h-14">
+                      <SelectValue placeholder="Categorías" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-white/20 z-50">
+                      <SelectItem value="salario">Salario</SelectItem>
+                      <SelectItem value="freelance">Freelance</SelectItem>
+                      <SelectItem value="negocio">Negocio</SelectItem>
+                      <SelectItem value="inversion">Inversión</SelectItem>
+                      <SelectItem value="venta">Venta</SelectItem>
+                      <SelectItem value="otro">Otro</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-white/90 text-base">
+                    ¿Cada cuánto te llega este ingreso?
+                  </Label>
+                  <Select value={frequency} onValueChange={setFrequency} required>
+                    <SelectTrigger className="bg-white/10 border-white/30 text-white h-14">
+                      <SelectValue placeholder="Sin frecuencia" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-white/20 z-50">
+                      <SelectItem value="unico">Sin frecuencia</SelectItem>
+                      <SelectItem value="semanal">Semanal</SelectItem>
+                      <SelectItem value="quincenal">Quincenal</SelectItem>
+                      <SelectItem value="mensual">Mensual</SelectItem>
+                      <SelectItem value="anual">Anual</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="date" className="text-white/90 text-base">
+                    Fecha de tu ingreso
                   </Label>
                   <Input
                     id="date"
@@ -180,26 +249,16 @@ const Ingresos = () => {
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                     required
-                    className="bg-white/10 border-white/30 text-white placeholder:text-white/50"
+                    className="bg-white/10 border-white/30 text-white h-14"
                   />
                 </div>
 
-                <div className="flex gap-3 pt-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setShowAddDialog(false)}
-                    className="flex-1 bg-white/10 border-white/30 text-white hover:bg-white/20"
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    type="submit"
-                    className="flex-1 bg-white/20 hover:bg-white/30 text-white"
-                  >
-                    Registrar
-                  </Button>
-                </div>
+                <Button
+                  type="submit"
+                  className="w-full bg-primary hover:bg-primary/90 text-white h-14 text-lg font-semibold"
+                >
+                  Agregar Ingreso
+                </Button>
               </form>
             </DialogContent>
           </Dialog>
