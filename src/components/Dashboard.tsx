@@ -436,7 +436,9 @@ const Dashboard = () => {
                 </div>
                 <div className="text-center sm:text-left">
                   <p className="text-[9px] sm:text-[10px] text-white">Balance</p>
-                  <p className="text-xs sm:text-sm lg:text-base font-semibold text-white">$23,450</p>
+                  <p className="text-xs sm:text-sm lg:text-base font-semibold text-white">
+                    ${currentMonth.balance.toLocaleString('es-MX')}
+                  </p>
                 </div>
               </div>
             </Card>
@@ -448,7 +450,9 @@ const Dashboard = () => {
                 </div>
                 <div className="text-center sm:text-left">
                   <p className="text-[9px] sm:text-[10px] text-white">Ahorrado</p>
-                  <p className="text-xs sm:text-sm lg:text-base font-semibold text-white">$4,200</p>
+                  <p className="text-xs sm:text-sm lg:text-base font-semibold text-white">
+                    ${goals.reduce((sum, goal) => sum + Number(goal.current), 0).toLocaleString('es-MX')}
+                  </p>
                 </div>
               </div>
             </Card>
