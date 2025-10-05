@@ -8,9 +8,9 @@
 
 @layer base {
   :root {
-    /* Minimalist white base */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3%;
+    /* Minimalist black base */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%;
 
     /* Cards and surfaces */
     --card: 0 0% 15%;
@@ -72,8 +72,8 @@
   }
 
   .dark {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%;
 
     --card: 0 0% 15%;
     --card-foreground: 0 0% 100%;
