@@ -364,9 +364,9 @@ const Dashboard = () => {
       <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
         
         {/* Balance Overview y Quick Stats en la misma fila */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-4">
-          {/* Sección 1: Balance Overview */}
-          <Card className="p-4 sm:p-6 bg-gradient-card card-glow h-full flex flex-col justify-between">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
+          {/* Sección 1: Balance Overview - Más grande */}
+          <Card className="col-span-2 p-3 sm:p-4 bg-gradient-card card-glow h-full flex flex-col justify-between">
             <div className="space-y-3">
               {/* Balance Principal */}
               <div>
@@ -407,7 +407,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Sección 2: Quick Stats - 3 estadísticas */}
-          <div className="grid grid-cols-1 gap-2">
+          <div className="col-span-1 grid grid-cols-1 gap-2">
             <Card className="p-2 sm:p-3 bg-gradient-card card-glow">
               <div className="flex items-center space-x-2">
                 <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-primary/20 flex items-center justify-center">
