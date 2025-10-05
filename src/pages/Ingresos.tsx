@@ -19,7 +19,7 @@ import {
   ChevronRight, 
   Plus,
   Tag,
-  Settings
+  Sliders
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -197,7 +197,7 @@ const Ingresos = () => {
             onClick={() => navigate('/categorias')}
             className="bg-white/20 hover:bg-white/30 border-white/30"
           >
-            <Settings className="h-5 w-5 text-white" />
+            <Sliders className="h-5 w-5 text-white" />
           </Button>
           
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
