@@ -443,7 +443,7 @@ const Dashboard = () => {
               <p className="text-xs text-white mb-2 line-clamp-2">
                 Mándale un WhatsApp a tu AI para conocer tu vida financiera.
               </p>
-              <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white border-0 text-xs h-8" onClick={() => window.open('https://wa.me/5215512345678', '_blank')}>
+              <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white border-0 text-xs h-8" onClick={() => navigate('/financial-chat')}>
                 <MessageCircle className="w-3 h-3 mr-1" />
                 Enviar WhatsApp
               </Button>
