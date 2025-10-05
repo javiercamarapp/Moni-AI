@@ -363,78 +363,46 @@ const Dashboard = () => {
       <div className="p-2 sm:p-4">
       <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
         
-        {/* Level Progress y Quick Stats en la misma fila - dos secciones */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-4">
-          {/* Sección 1: Level Progress */}
-          <Card className="p-2 sm:p-3 lg:p-4 bg-gradient-card card-glow h-full flex flex-col justify-between">
-            <div className="space-y-1.5 sm:space-y-2 flex-1 flex flex-col justify-center">
-              <div className="flex items-start justify-between gap-1.5">
-                <div className="flex items-center space-x-1.5 sm:space-x-2 min-w-0">
-                  <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
-                    <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h2 className="text-xs sm:text-sm lg:text-base font-semibold text-white leading-tight">Nivel {level}</h2>
-                    <p className="text-[9px] sm:text-[10px] text-white leading-tight">Ahorrador Pro</p>
-                  </div>
-                </div>
-                <Badge variant="secondary" className="bg-white/20 text-white border-white/30 text-[9px] sm:text-[10px] px-1 py-0.5 flex-shrink-0 leading-tight">
-                  +50 XP
-                </Badge>
-              </div>
-              
-              <div className="space-y-0.5 sm:space-y-1">
-                <div className="flex justify-between text-[9px] sm:text-[10px]">
-                  <span className="text-white">{currentXP}</span>
-                  <span className="text-white">{nextLevelXP}</span>
-                </div>
-                <Progress value={progressPercentage} className="h-1.5 sm:h-2" />
-                <p className="text-[8px] sm:text-[9px] text-white text-center leading-tight">
-                  {nextLevelXP - currentXP} XP restantes
-                </p>
+        {/* Balance Overview Section */}
+        <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
+          <div className="space-y-4">
+            {/* Balance Principal */}
+            <div>
+              <p className="text-sm text-white/80 mb-2">Te quedan</p>
+              <div className="flex items-baseline gap-2">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
+                  $23,450.00
+                </h2>
+                <span className="text-lg text-white/60">MXN</span>
               </div>
             </div>
-          </Card>
 
-          {/* Sección 2: Quick Stats - 3 estadísticas */}
-          <div className="grid grid-cols-1 gap-2">
-            <Card className="p-2 sm:p-3 bg-gradient-card card-glow">
-              <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                  <Wallet className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
-                </div>
-                <div>
-                  <p className="text-[10px] sm:text-xs text-white">Balance</p>
-                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">$23,450</p>
-                </div>
+            {/* Selector de Mes */}
+            <div className="flex items-center justify-center gap-2">
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/10">
+                <span className="text-lg">&lt;</span>
+              </Button>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
+                <span className="text-white font-medium">Octubre 2025</span>
               </div>
-            </Card>
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/10">
+                <span className="text-lg">&gt;</span>
+              </Button>
+            </div>
 
-            <Card className="p-2 sm:p-3 bg-gradient-card card-glow">
-              <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-success/20 flex items-center justify-center">
-                  <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
-                </div>
-                <div>
-                  <p className="text-[10px] sm:text-xs text-white">Ahorrado</p>
-                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">$4,200</p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-2 sm:p-3 bg-gradient-card card-glow">
-              <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-warning/20 flex items-center justify-center">
-                  <Target className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
-                </div>
-                <div>
-                  <p className="text-[10px] sm:text-xs text-white">Metas</p>
-                  <p className="text-sm sm:text-base lg:text-lg font-semibold text-white">{goals.length}</p>
-                </div>
-              </div>
-            </Card>
+            {/* Ingresos y Egresos */}
+            <div className="grid grid-cols-2 gap-3">
+              <Card className="p-4 bg-white/10 backdrop-blur-sm border-white/20">
+                <p className="text-sm text-white/80 mb-1">Ingresos</p>
+                <p className="text-2xl sm:text-3xl font-bold text-white">$50,000.00</p>
+              </Card>
+              <Card className="p-4 bg-white/10 backdrop-blur-sm border-white/20">
+                <p className="text-sm text-white/80 mb-1">Gastos</p>
+                <p className="text-2xl sm:text-3xl font-bold text-white">-$26,550.00</p>
+              </Card>
+            </div>
           </div>
-        </div>
+        </Card>
 
         <div className="grid lg:grid-cols-3 gap-6">
           
