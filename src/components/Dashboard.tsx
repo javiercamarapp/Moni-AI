@@ -17,9 +17,9 @@ import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [currentXP] = useState(1250);
-  const [nextLevelXP] = useState(1500);
-  const [level] = useState(8);
+  const [currentXP] = useState(0);
+  const [nextLevelXP] = useState(100);
+  const [level] = useState(1);
   const [api, setApi] = useState<CarouselApi>();
   const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
   const [goals, setGoals] = useState<any[]>([]);
