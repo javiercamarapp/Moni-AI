@@ -14,6 +14,7 @@ import bannerHalloween from '@/assets/banner-halloween.png';
 import heroAuth from '@/assets/moni-ai-logo.png';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
 import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User } from 'lucide-react';
+import moniLogo from '/moni-logo.png';
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -188,10 +189,13 @@ const Dashboard = () => {
     }
   };
   if (loading) {
-    return <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Cargando...</p>
+    return <div className="min-h-screen animated-wave-bg flex items-center justify-center">
+        <div className="animate-fade-in">
+          <img 
+            src={moniLogo} 
+            alt="Moni Logo" 
+            className="w-80 max-w-[90vw] animate-pulse"
+          />
         </div>
       </div>;
   }

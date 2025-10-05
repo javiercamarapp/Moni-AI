@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from "@/hooks/use-toast";
 import { MessageCircle, Send, Smile, Paperclip, Phone, Video, MoreVertical, ArrowLeft, Bot, User, LogOut } from 'lucide-react';
+import moniLogo from '/moni-logo.png';
 const ChatInterface = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -68,9 +69,12 @@ const ChatInterface = () => {
   };
   if (loading) {
     return <div className="min-h-screen animated-wave-bg flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Cargando...</p>
+        <div className="animate-fade-in">
+          <img 
+            src={moniLogo} 
+            alt="Moni Logo" 
+            className="w-80 max-w-[90vw] animate-pulse"
+          />
         </div>
       </div>;
   }
