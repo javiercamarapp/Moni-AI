@@ -487,28 +487,28 @@ const Dashboard = () => {
         </div>
 
         {/* WhatsApp Banner */}
-        <Card className="p-4 sm:p-6 bg-gradient-to-r from-purple-500/90 to-blue-500/90 backdrop-blur-sm border-purple-300/30 mb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0">
+        <Card className="p-3 sm:p-4 bg-gradient-card card-glow mb-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
               <img 
                 src={heroAuth} 
                 alt="Moni AI" 
                 className="w-full h-full object-contain"
               />
             </div>
-            <div className="flex-1">
-              <div className="bg-white rounded-2xl rounded-bl-none px-4 py-2 mb-2 inline-block">
-                <h3 className="text-base sm:text-lg font-bold text-gray-900">¡Hola, soy Moni!</h3>
+            <div className="flex-1 min-w-0">
+              <div className="bg-white rounded-xl rounded-bl-none px-2 py-1 mb-1 inline-block">
+                <h3 className="text-xs sm:text-sm font-bold text-gray-900">¡Hola, soy Moni!</h3>
               </div>
-              <p className="text-sm sm:text-base text-white mb-3">
+              <p className="text-xs text-white mb-2 line-clamp-2">
                 Hazme tus preguntas financieras y recibe recomendaciones personalizadas.
               </p>
               <Button 
                 size="sm"
-                className="bg-green-500 hover:bg-green-600 text-white border-0"
+                className="bg-green-500 hover:bg-green-600 text-white border-0 text-xs h-8"
                 onClick={() => window.open('https://wa.me/5215512345678', '_blank')}
               >
-                <MessageCircle className="w-4 h-4 mr-2" />
+                <MessageCircle className="w-3 h-3 mr-1" />
                 Chatea en WhatsApp
               </Button>
             </div>
