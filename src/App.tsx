@@ -10,6 +10,7 @@ import Dashboard from "./components/Dashboard";
 import ChatInterface from "./components/ChatInterface";
 import NewGoal from "./pages/NewGoal";
 import FinancialChat from "./pages/FinancialChat";
+import Ingresos from "./pages/Ingresos";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/chat" element={<ChatInterface />} />
           <Route path="/new-goal" element={<NewGoal />} />
           <Route path="/financial-chat" element={<FinancialChat />} />
+          <Route path="/ingresos" element={<Ingresos />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
