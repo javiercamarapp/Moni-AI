@@ -558,22 +558,16 @@ const Dashboard = () => {
               <div className="space-y-3 mb-4">
                 <div className="bg-white/10 rounded-2xl rounded-bl-md p-2 sm:p-3">
                   <p className="text-xs sm:text-sm text-white">
-                    ¡Excelente progreso en tu meta de Japón! 🇯🇵 
+                    ¡Hola! 👋 Soy tu coach financiero personal.
                     <br /><br />
-                    Te quedan solo $17,500. Si ahorras $890 extra este mes, ¡estarás súper cerca! 
-                  </p>
-                </div>
-                
-                <div className="bg-white/20 rounded-2xl rounded-br-md p-2 sm:p-3 ml-6 sm:ml-8">
-                  <p className="text-xs sm:text-sm text-white">
-                    ¿Cómo puedo ahorrar esos $890 extras? 🤔
+                    Estoy aquí para ayudarte a mejorar tus finanzas, crear metas de ahorro y darte consejos personalizados. ¿Empezamos? 💰
                   </p>
                 </div>
               </div>
 
               <Button size="sm" className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30" onClick={() => navigate("/chat")}>
                 <MessageCircle className="w-4 h-4 mr-2" />
-                Continuar chat
+                Chatear con Moni AI
               </Button>
             </Card>
 
