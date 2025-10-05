@@ -111,7 +111,7 @@ const FinancialChat = () => {
               <Card
                 key={index}
                 onClick={() => handleSuggestedQuestion(q)}
-                className="p-4 bg-green-400/20 hover:bg-green-400/30 border-green-400/30 cursor-pointer transition-all hover-lift"
+                className="p-4 bg-gradient-card card-glow hover:bg-white/30 cursor-pointer transition-all hover-lift"
               >
                 <p className="text-white text-sm sm:text-base">{q}</p>
               </Card>
