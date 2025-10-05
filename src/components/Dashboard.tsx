@@ -491,7 +491,7 @@ const Dashboard = () => {
           {/* Main Goals Section */}
           <div className="lg:col-span-2 space-y-6">
             <div>
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+              <div className="flex flex-row justify-between items-center mb-4">
                 <h3 className="text-lg sm:text-xl font-semibold text-white">Tus Metas</h3>
                 <Button 
                   size="sm" 
