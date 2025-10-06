@@ -408,7 +408,7 @@ serve(async (req) => {
 🏆 SCORE MONI: ${scoreMoni}/100
 
 📊 Top 5 categorías de gasto:
-${topCategories.map((c, i) => \`\${i + 1}. \${c.name}: $\${Number(c.total).toLocaleString()} (\${c.percentage}%)\`).join('\n')}
+${topCategories.map((c, i) => `${i + 1}. ${c.name}: $${Number(c.total).toLocaleString()} (${c.percentage}%)`).join('\n')}
 
 Genera un análisis financiero integral y profesional que:
 
