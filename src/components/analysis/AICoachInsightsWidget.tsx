@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/components/ui/carousel";
 import { useEffect, useState } from "react";
-
 interface AICoachInsightsProps {
   monthlyIncome: number;
   monthlyExpenses: number;
@@ -9,8 +8,7 @@ interface AICoachInsightsProps {
   savingsGoals: number;
   balance: number;
 }
-
-export default function AICoachInsightsWidget({ 
+export default function AICoachInsightsWidget({
   monthlyIncome,
   monthlyExpenses,
   fixedExpenses,
@@ -18,7 +16,7 @@ export default function AICoachInsightsWidget({
   balance
 }: AICoachInsightsProps) {
   const [api, setApi] = useState<CarouselApi>();
-  
+
   // Auto-scroll carousel
   useEffect(() => {
     if (!api) return;
@@ -30,7 +28,7 @@ export default function AICoachInsightsWidget({
 
   // Generate dynamic insights
   const insights = [];
-  
+
   // Balance insight
   if (balance > 0) {
     insights.push({
@@ -47,7 +45,7 @@ export default function AICoachInsightsWidget({
   }
 
   // Fixed expenses ratio
-  const fixedRatio = monthlyIncome > 0 ? (fixedExpenses / monthlyIncome) * 100 : 0;
+  const fixedRatio = monthlyIncome > 0 ? fixedExpenses / monthlyIncome * 100 : 0;
   if (fixedRatio < 50) {
     insights.push({
       emoji: "💪",
@@ -63,7 +61,7 @@ export default function AICoachInsightsWidget({
   }
 
   // Savings insight
-  const savingsRatio = monthlyIncome > 0 ? ((monthlyIncome - monthlyExpenses) / monthlyIncome) * 100 : 0;
+  const savingsRatio = monthlyIncome > 0 ? (monthlyIncome - monthlyExpenses) / monthlyIncome * 100 : 0;
   if (savingsRatio > 20) {
     insights.push({
       emoji: "🚀",
@@ -105,28 +103,14 @@ export default function AICoachInsightsWidget({
       gradient: "bg-gradient-card"
     });
   }
-
-  return (
-    <Carousel 
-      className="w-full"
-      setApi={setApi}
-      opts={{
-        loop: true,
-        align: "center"
-      }}
-    >
+  return <Carousel className="w-full" setApi={setApi} opts={{
+    loop: true,
+    align: "center"
+  }}>
       <CarouselContent>
-        {insights.map((insight, index) => (
-          <CarouselItem key={index}>
-            <Card className={`p-3 ${insight.gradient} card-glow border-white/20 animate-fade-in`}>
-              <p className="text-xs text-white leading-snug">
-                <span className="text-base mr-1">{insight.emoji}</span>
-                <span className="font-medium">{insight.message}</span>
-              </p>
-            </Card>
-          </CarouselItem>
-        ))}
+        {insights.map((insight, index) => <CarouselItem key={index}>
+            
+          </CarouselItem>)}
       </CarouselContent>
-    </Carousel>
-  );
+    </Carousel>;
 }
