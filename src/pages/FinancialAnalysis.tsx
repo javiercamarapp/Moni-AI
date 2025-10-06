@@ -350,6 +350,8 @@ export default function FinancialAnalysis() {
                 </BarChart>
               </ResponsiveContainer>
             </Card>
+          </>
+        )}
       </div>
 
       {/* Bottom Navigation */}
