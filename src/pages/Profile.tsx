@@ -122,10 +122,6 @@ const Profile = () => {
           </Card>
         </Card>
 
-        {/* Email */}
-        <div className="text-center">
-          <p className="text-white text-sm">{userEmail}</p>
-        </div>
 
         {/* Preferencias */}
         <div className="space-y-2">
