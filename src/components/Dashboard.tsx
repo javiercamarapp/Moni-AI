@@ -16,6 +16,7 @@ import whatsappLogo from '@/assets/whatsapp-logo.png';
 import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User, BarChart3, AlertCircle } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
 import SafeToSpendWidget from '@/components/analysis/SafeToSpendWidget';
+import AICoachInsightsWidget from '@/components/analysis/AICoachInsightsWidget';
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false); // Changed to false for instant load
@@ -308,6 +309,29 @@ const Dashboard = () => {
           </Card>
         </div>
       )}
+
+      {/* AI Coach Insights - Right below Score Moni */}
+      <div className="mx-4 mb-4">
+        <AICoachInsightsWidget 
+          monthStatus={
+            monthlyExpenses > monthlyIncome ? "overspending" : 
+            (monthlyIncome - monthlyExpenses) > fixedExpenses ? "improved" : 
+            "stable"
+          }
+          mainMessage={
+            monthlyExpenses > monthlyIncome 
+              ? `Gastaste $${(monthlyExpenses - monthlyIncome).toLocaleString('es-MX')} más de lo que ganaste este mes`
+              : (monthlyIncome - monthlyExpenses) > fixedExpenses
+                ? `¡Excelente! Te sobran $${((monthlyIncome - monthlyExpenses) - fixedExpenses).toLocaleString('es-MX')} después de gastos fijos`
+                : `Balance estable: $${(monthlyIncome - monthlyExpenses).toLocaleString('es-MX')} de ahorro este mes`
+          }
+          improvementTip={
+            monthlyExpenses > monthlyIncome 
+              ? "Intenta reducir gastos variables como delivery o entretenimiento"
+              : undefined
+          }
+        />
+      </div>
 
       {/* Safe to Spend Widget */}
       <div className="mx-4 mb-4">
