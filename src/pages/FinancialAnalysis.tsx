@@ -259,7 +259,13 @@ export default function FinancialAnalysis() {
             {analysis.safeToSpend && <SafeToSpendWidget {...analysis.safeToSpend} />}
 
             {/* AI Coach Insights */}
-            <AICoachInsightsWidget monthStatus="stable" mainMessage="Tus finanzas respiran." improvementTip="Reduciendo Comida 8% liberas +$520/mes y subes tu Score +5 pts. Mantén el ritmo con +$300 a fondo de emergencia." />
+            <AICoachInsightsWidget 
+              monthlyIncome={analysis.metrics.monthlyIncome || 0}
+              monthlyExpenses={analysis.metrics.monthlyExpenses || 0}
+              fixedExpenses={analysis.metrics.fixedExpenses || 0}
+              savingsGoals={0}
+              balance={(analysis.metrics.monthlyIncome || 0) - (analysis.metrics.monthlyExpenses || 0)}
+            />
 
             {/* Risk Indicators */}
             <RiskIndicatorsWidget hasIssues={(analysis.metrics.liquidityMonths || 0) < 3 || (analysis.metrics.financialBurden || 0) > 20 || analysis.metrics.scoreMoni < 70} indicators={[

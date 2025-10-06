@@ -313,23 +313,11 @@ const Dashboard = () => {
       {/* AI Coach Insights - Right below Score Moni */}
       <div className="mx-4 mb-4">
         <AICoachInsightsWidget 
-          monthStatus={
-            monthlyExpenses > monthlyIncome ? "overspending" : 
-            (monthlyIncome - monthlyExpenses) > fixedExpenses ? "improved" : 
-            "stable"
-          }
-          mainMessage={
-            monthlyExpenses > monthlyIncome 
-              ? `Gastaste $${(monthlyExpenses - monthlyIncome).toLocaleString('es-MX')} más de lo que ganaste este mes`
-              : (monthlyIncome - monthlyExpenses) > fixedExpenses
-                ? `¡Excelente! Te sobran $${((monthlyIncome - monthlyExpenses) - fixedExpenses).toLocaleString('es-MX')} después de gastos fijos`
-                : `Balance estable: $${(monthlyIncome - monthlyExpenses).toLocaleString('es-MX')} de ahorro este mes`
-          }
-          improvementTip={
-            monthlyExpenses > monthlyIncome 
-              ? "Intenta reducir gastos variables como delivery o entretenimiento"
-              : undefined
-          }
+          monthlyIncome={monthlyIncome}
+          monthlyExpenses={monthlyExpenses}
+          fixedExpenses={fixedExpenses}
+          savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12}
+          balance={monthlyIncome - monthlyExpenses}
         />
       </div>
 
