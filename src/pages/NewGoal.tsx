@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Target } from 'lucide-react';
+import { ArrowLeft, Target, Home, BarChart3, MessageSquare, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -61,7 +61,7 @@ const NewGoal = () => {
   };
 
   return (
-    <div className="min-h-screen animated-wave-bg">
+    <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
       <div className="p-4 flex items-center gap-4">
         <Button 
@@ -156,6 +156,38 @@ const NewGoal = () => {
           </form>
         </Card>
       </div>
+
+      {/* Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 animated-wave-bg border-t border-white/20 shadow-lg">
+        <div className="container mx-auto px-2">
+          <div className="flex items-center justify-around h-16">
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/dashboard")}>
+              <Home className="w-5 h-5 text-white" />
+              <span className="text-xs text-white">Home</span>
+            </Button>
+
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/analysis")}>
+              <BarChart3 className="w-5 h-5 text-white" />
+              <span className="text-xs text-white">Análisis</span>
+            </Button>
+
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-purple-400" onClick={() => navigate("/goals")}>
+              <Target className="w-5 h-5 text-purple-400" />
+              <span className="text-xs text-purple-400">Metas</span>
+            </Button>
+
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/chat")}>
+              <MessageSquare className="w-5 h-5 text-white" />
+              <span className="text-xs text-white">Chat AI</span>
+            </Button>
+
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/profile")}>
+              <User className="w-5 h-5 text-white" />
+              <span className="text-xs text-white">Perfil</span>
+            </Button>
+          </div>
+        </div>
+      </nav>
     </div>
   );
 };
