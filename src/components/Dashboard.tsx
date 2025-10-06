@@ -337,64 +337,81 @@ const Dashboard = () => {
         
         {/* Balance Overview y Quick Stats en la misma fila */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
-          {/* Sección 1: Balance Overview - Más grande */}
+          {/* Sección 1: Safe to Spend Overview */}
           <Card className="sm:col-span-2 p-3 sm:p-4 bg-gradient-card card-glow h-full flex flex-col justify-between animate-fade-in" style={{ animationDelay: '0ms' }}>
-            <div className="space-y-2 sm:space-y-3">
-              {/* Balance Principal */}
-              <div className="text-center">
-                <p className="text-[10px] sm:text-xs text-white/80 mb-1">Te quedan</p>
+            <div className="space-y-3 sm:space-y-4">
+              {/* Safe-to-Spend Principal */}
+              <div className="text-center border-b border-white/20 pb-3">
+                <p className="text-[10px] sm:text-xs text-white/80 mb-1">Disponible hoy (Safe-to-Spend)</p>
                 <div className="flex items-baseline gap-1 sm:gap-2 justify-center">
-                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">
-                    ${currentMonth.balance.toLocaleString('es-MX')}
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
+                    ${(currentMonth.balance * 0.7).toLocaleString('es-MX', { maximumFractionDigits: 0 })}
                   </h2>
                   <span className="text-xs sm:text-sm text-white/60">MXN</span>
                 </div>
+                <p className="text-[9px] sm:text-[10px] text-white/60 mt-1">
+                  Ingresos - gastos fijos - apartados del mes
+                </p>
               </div>
 
-               {/* Selector de Mes */}
-               <div className="flex items-center justify-center gap-1 sm:gap-2">
-                 <Button 
-                   variant="ghost" 
-                   size="icon" 
-                   className="h-6 w-6 sm:h-7 sm:w-7 text-white hover:bg-white/10" 
-                   onClick={handlePrevMonth}
-                 >
-                   <span className="text-sm sm:text-base">&lt;</span>
-                 </Button>
-                 <div className="bg-gradient-card card-glow backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1">
-                   <span className="text-[10px] sm:text-xs text-white font-medium capitalize">{currentMonth.month}</span>
-                 </div>
-                 <Button 
-                   variant="ghost" 
-                   size="icon" 
-                   className="h-6 w-6 sm:h-7 sm:w-7 text-white hover:bg-white/10" 
-                   onClick={handleNextMonth}
-                   disabled={selectedMonthOffset === 0}
-                 >
-                   <span className="text-sm sm:text-base">&gt;</span>
-                 </Button>
-               </div>
+              {/* Próximos cobros/cargos */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-xs sm:text-sm font-semibold text-white">Próximos 7 días</h4>
+                  <Badge variant="outline" className="text-[9px] text-white border-white/30">3 movimientos</Badge>
+                </div>
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-[10px] sm:text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="text-white/60">15 Oct</span>
+                      <span className="text-white">Nómina</span>
+                    </div>
+                    <span className="font-semibold text-green-500">+$12,000</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] sm:text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="text-white/60">18 Oct</span>
+                      <span className="text-white">Renta</span>
+                    </div>
+                    <span className="font-semibold text-red-500">-$5,000</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] sm:text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="text-white/60">20 Oct</span>
+                      <span className="text-white">Tarjeta</span>
+                      <Badge variant="outline" className="text-[8px] text-red-400 border-red-400/50">¡Riesgo!</Badge>
+                    </div>
+                    <span className="font-semibold text-red-500">-$3,200</span>
+                  </div>
+                </div>
+              </div>
 
-               {/* Ingresos y Egresos */}
-              <div className="grid grid-cols-2 gap-2">
-                <Card 
-                  className="p-2 sm:p-3 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200"
-                  onClick={() => navigate('/ingresos')}
-                >
-                  <div className="text-center">
-                    <p className="text-[9px] sm:text-[10px] text-white/80 mb-0.5">Ingresos</p>
-                    <p className="text-sm sm:text-base lg:text-lg font-bold text-green-500">${currentMonth.income.toLocaleString('es-MX')}</p>
+              {/* Top 3 Acciones de Ahorro */}
+              <div>
+                <h4 className="text-xs sm:text-sm font-semibold text-white mb-2">Top 3 acciones de ahorro</h4>
+                <div className="space-y-1.5">
+                  <div className="flex items-start gap-2 text-[10px] sm:text-xs">
+                    <span className="text-white/60 flex-shrink-0">1.</span>
+                    <div className="flex-1">
+                      <span className="text-white">Cancela 'Netflix Premium'</span>
+                      <span className="text-green-400 font-semibold ml-2">+$219/mes</span>
+                    </div>
                   </div>
-                </Card>
-                <Card 
-                  className="p-2 sm:p-3 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200"
-                  onClick={() => navigate('/gastos')}
-                >
-                  <div className="text-center">
-                    <p className="text-[9px] sm:text-[10px] text-white/80 mb-0.5">Gastos</p>
-                    <p className="text-sm sm:text-base lg:text-lg font-bold text-red-500">-${currentMonth.expenses.toLocaleString('es-MX')}</p>
+                  <div className="flex items-start gap-2 text-[10px] sm:text-xs">
+                    <span className="text-white/60 flex-shrink-0">2.</span>
+                    <div className="flex-1">
+                      <span className="text-white">Bajar comida 10%</span>
+                      <span className="text-green-400 font-semibold ml-2">+$480/mes</span>
+                    </div>
                   </div>
-                </Card>
+                  <div className="flex items-start gap-2 text-[10px] sm:text-xs">
+                    <span className="text-white/60 flex-shrink-0">3.</span>
+                    <div className="flex-1">
+                      <span className="text-white">Pagar TC2 antes del 12</span>
+                      <span className="text-green-400 font-semibold ml-2">+$95 intereses</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </Card>
