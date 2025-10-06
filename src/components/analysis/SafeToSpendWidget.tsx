@@ -20,56 +20,41 @@ export default function SafeToSpendWidget({
   const percentageOfIncome = safeMonthlyIncome > 0 ? safeSafeToSpend / safeMonthlyIncome * 100 : 0;
   
   return (
-    <Card className="p-4 bg-gradient-card card-glow border-white/20">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
-            <DollarSign className="w-4 h-4 text-white" />
+    <Card className="p-6 bg-gradient-card card-glow border-white/20">
+      <div className="text-center mb-4">
+        <p className="text-sm text-white/80 mb-2">Puedes gastar</p>
+        <div className="relative inline-block">
+          <div className="text-5xl font-bold text-white">
+            ${Math.abs(safeSafeToSpend).toLocaleString('es-MX')}
           </div>
-          <h3 className="text-sm font-semibold text-white">Safe to Spend</h3>
+          {safeSafeToSpend > 0 ? (
+            <div className="absolute -top-2 -right-8">
+              <TrendingUp className="w-6 h-6 text-emerald-300" />
+            </div>
+          ) : (
+            <div className="absolute -top-2 -right-8">
+              <TrendingDown className="w-6 h-6 text-red-300" />
+            </div>
+          )}
         </div>
+        <p className="text-xs text-white/70 mt-2">
+          sin comprometer tus metas
+        </p>
       </div>
       
-      <div className="space-y-3">
-        <div>
-          <p className="text-3xl font-bold text-white">
-            ${safeSafeToSpend.toLocaleString('es-MX')}
-          </p>
-          <p className="text-xs text-white/70 mt-1">
-            {percentageOfIncome.toFixed(0)}% de tu ingreso disponible
-          </p>
+      <div className="grid grid-cols-3 gap-2 mt-4">
+        <div className="text-center p-2 rounded-lg bg-white/10">
+          <p className="text-2xl text-white font-bold">${(safeMonthlyIncome / 1000).toFixed(0)}k</p>
+          <p className="text-xs text-white/70 mt-1">Ingresos</p>
         </div>
-        
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-white/70">Ingresos</span>
-            <span className="text-xs text-white font-medium">${safeMonthlyIncome.toLocaleString('es-MX')}</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-white/70">Gastos fijos</span>
-            <span className="text-xs text-red-300">-${safeFixedExpenses.toLocaleString('es-MX')}</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-white/70">Metas de ahorro</span>
-            <span className="text-xs text-red-300">-${safeSavingsGoals.toLocaleString('es-MX')}</span>
-          </div>
+        <div className="text-center p-2 rounded-lg bg-white/10">
+          <p className="text-2xl text-red-300 font-bold">${(safeFixedExpenses / 1000).toFixed(0)}k</p>
+          <p className="text-xs text-white/70 mt-1">Fijos</p>
         </div>
-        
-        {safeSafeToSpend > 0 ? (
-          <div className="flex items-start gap-2 p-2 bg-emerald-500/20 rounded-lg border border-emerald-500/30">
-            <TrendingUp className="w-4 h-4 text-emerald-300 mt-0.5" />
-            <p className="text-xs text-emerald-100">
-              Puedes gastar libremente este monto sin afectar tus metas
-            </p>
-          </div>
-        ) : (
-          <div className="flex items-start gap-2 p-2 bg-red-500/20 rounded-lg border border-red-500/30">
-            <TrendingDown className="w-4 h-4 text-red-300 mt-0.5" />
-            <p className="text-xs text-red-100">
-              Tus gastos fijos y metas superan tus ingresos
-            </p>
-          </div>
-        )}
+        <div className="text-center p-2 rounded-lg bg-white/10">
+          <p className="text-2xl text-yellow-300 font-bold">${(safeSavingsGoals / 1000).toFixed(0)}k</p>
+          <p className="text-xs text-white/70 mt-1">Metas</p>
+        </div>
       </div>
     </Card>
   );

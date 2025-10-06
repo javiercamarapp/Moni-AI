@@ -26,7 +26,7 @@ export default function AICoachInsightsWidget({
     return () => clearInterval(interval);
   }, [api]);
 
-  // Generate dynamic insights
+  // Generate dynamic insights with colors
   const insights = [];
 
   // Balance insight
@@ -34,13 +34,13 @@ export default function AICoachInsightsWidget({
     insights.push({
       emoji: "✅",
       message: `¡Excelente! Te sobran $${balance.toLocaleString('es-MX')} este mes`,
-      gradient: "bg-gradient-card"
+      isPositive: true
     });
   } else if (balance < 0) {
     insights.push({
       emoji: "⚠️",
       message: `Atención: gastaste $${Math.abs(balance).toLocaleString('es-MX')} más de lo que ganaste`,
-      gradient: "bg-gradient-card"
+      isPositive: false
     });
   }
 
@@ -50,13 +50,13 @@ export default function AICoachInsightsWidget({
     insights.push({
       emoji: "💪",
       message: `Tus gastos fijos son solo el ${fixedRatio.toFixed(0)}% de tu ingreso. ¡Muy bien!`,
-      gradient: "bg-gradient-card"
+      isPositive: true
     });
   } else if (fixedRatio > 70) {
     insights.push({
       emoji: "🎯",
       message: `Tus gastos fijos son ${fixedRatio.toFixed(0)}% del ingreso. Intenta reducirlos`,
-      gradient: "bg-gradient-card"
+      isPositive: false
     });
   }
 
@@ -66,13 +66,19 @@ export default function AICoachInsightsWidget({
     insights.push({
       emoji: "🚀",
       message: `¡Increíble! Estás ahorrando el ${savingsRatio.toFixed(0)}% de tus ingresos`,
-      gradient: "bg-gradient-card"
+      isPositive: true
     });
   } else if (savingsRatio > 0 && savingsRatio < 10) {
     insights.push({
       emoji: "💡",
       message: `Ahorras ${savingsRatio.toFixed(0)}% de tus ingresos. Intenta llegar al 20%`,
-      gradient: "bg-gradient-card"
+      isPositive: false
+    });
+  } else if (savingsRatio <= 0) {
+    insights.push({
+      emoji: "❌",
+      message: `No estás ahorrando este mes. Revisa tus gastos variables`,
+      isPositive: false
     });
   }
 
@@ -82,7 +88,7 @@ export default function AICoachInsightsWidget({
     insights.push({
       emoji: "🔍",
       message: `Tus gastos variables ($${variableSpending.toLocaleString('es-MX')}) son altos. Revisa delivery y entretenimiento`,
-      gradient: "bg-gradient-card"
+      isPositive: false
     });
   }
 
@@ -91,7 +97,7 @@ export default function AICoachInsightsWidget({
     insights.push({
       emoji: "🎯",
       message: `Necesitas ahorrar $${savingsGoals.toLocaleString('es-MX')} al mes para tus metas`,
-      gradient: "bg-gradient-card"
+      isPositive: savingsGoals < monthlyIncome * 0.3
     });
   }
 
@@ -100,17 +106,32 @@ export default function AICoachInsightsWidget({
     insights.push({
       emoji: "👋",
       message: "Comienza a registrar tus gastos para obtener insights personalizados",
-      gradient: "bg-gradient-card"
+      isPositive: true
     });
   }
-  return <Carousel className="w-full" setApi={setApi} opts={{
-    loop: true,
-    align: "center"
-  }}>
+  return (
+    <Carousel className="w-full" setApi={setApi} opts={{
+      loop: true,
+      align: "center"
+    }}>
       <CarouselContent>
-        {insights.map((insight, index) => <CarouselItem key={index}>
-            
-          </CarouselItem>)}
+        {insights.map((insight, index) => (
+          <CarouselItem key={index}>
+            <Card className={`p-4 border-white/20 transition-all ${
+              insight.isPositive 
+                ? 'bg-gradient-to-br from-emerald-500/90 to-emerald-600/90' 
+                : 'bg-gradient-to-br from-red-500/90 to-red-600/90'
+            }`}>
+              <div className="flex items-start gap-3">
+                <div className="text-3xl">{insight.emoji}</div>
+                <p className="text-sm text-white font-medium leading-relaxed pt-1">
+                  {insight.message}
+                </p>
+              </div>
+            </Card>
+          </CarouselItem>
+        ))}
       </CarouselContent>
-    </Carousel>;
+    </Carousel>
+  );
 }
