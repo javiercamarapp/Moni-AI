@@ -23,6 +23,10 @@ import HistoricalComparisonWidget from "@/components/analysis/HistoricalComparis
 import FutureCalendarWidget from "@/components/analysis/FutureCalendarWidget";
 import RecentMovementsWidget from "@/components/analysis/RecentMovementsWidget";
 import AICoachInsightsWidget from "@/components/analysis/AICoachInsightsWidget";
+import IncomeExpensePieWidget from "@/components/analysis/IncomeExpensePieWidget";
+import CategoryBreakdownWidget from "@/components/analysis/CategoryBreakdownWidget";
+import FinancialHealthPieWidget from "@/components/analysis/FinancialHealthPieWidget";
+import LiquidityGaugeWidget from "@/components/analysis/LiquidityGaugeWidget";
 export default function FinancialAnalysis() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -713,6 +717,39 @@ export default function FinancialAnalysis() {
               ]}
               insight="Tu ahorro promedio subió 12% en 3 meses, pero tu gasto fijo sigue alto. Ajustar renta o servicios podría darte +4 pts."
             />
+
+            {/* Additional Financial Health Charts */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <IncomeExpensePieWidget 
+                income={analysis.metrics.totalIncome}
+                expenses={analysis.metrics.totalExpenses}
+              />
+              
+              <FinancialHealthPieWidget 
+                savings={analysis.metrics.balance > 0 ? analysis.metrics.balance : 0}
+                fixedExpenses={analysis.metrics.totalExpenses * 0.6}
+                variableExpenses={analysis.metrics.totalExpenses * 0.4}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <CategoryBreakdownWidget 
+                categories={[
+                  { name: 'Vivienda', value: analysis.metrics.totalExpenses * 0.3, color: '#8b5cf6' },
+                  { name: 'Alimentación', value: analysis.metrics.totalExpenses * 0.25, color: '#ec4899' },
+                  { name: 'Transporte', value: analysis.metrics.totalExpenses * 0.15, color: '#f59e0b' },
+                  { name: 'Servicios', value: analysis.metrics.totalExpenses * 0.12, color: '#10b981' },
+                  { name: 'Entretenimiento', value: analysis.metrics.totalExpenses * 0.10, color: '#3b82f6' },
+                  { name: 'Otros', value: analysis.metrics.totalExpenses * 0.08, color: '#ef4444' },
+                ]}
+              />
+              
+              <LiquidityGaugeWidget 
+                months={analysis.metrics.liquidityMonths || 0}
+                currentBalance={analysis.metrics.balance}
+                monthlyExpenses={analysis.metrics.totalExpenses}
+              />
+            </div>
           </>}
       </div>
 
