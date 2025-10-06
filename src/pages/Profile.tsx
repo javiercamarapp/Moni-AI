@@ -8,12 +8,11 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, ChevronRight, Crown, LogOut, Trash2 } from 'lucide-react';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -172,41 +171,67 @@ const Profile = () => {
         <div className="space-y-2">
           <h3 className="text-lg font-bold text-white px-2">Preferencias</h3>
           <Card className="bg-card/80 backdrop-blur border-border/50 divide-y divide-border animate-fade-in" style={{ animationDelay: '100ms' }}>
-            <div className="py-4 px-4">
-              <div className="flex items-center justify-between">
-                <span className="text-white/70">Divisa</span>
-                <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
-                  <SelectTrigger className="w-[200px] bg-transparent border-white/20 text-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-border">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
+                >
+                  <span className="text-white/70">Divisa</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-white">{currencies.find(c => c.code === selectedCurrency)?.name}</span>
+                    <ChevronRight className="h-5 w-5 text-white/70" />
+                  </div>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 bg-card border-border p-0" align="end">
+                <ScrollArea className="h-64">
+                  <div className="p-1">
                     {currencies.map((currency) => (
-                      <SelectItem key={currency.code} value={currency.code} className="text-white">
+                      <Button
+                        key={currency.code}
+                        variant="ghost"
+                        className="w-full justify-start text-white hover:bg-primary/10"
+                        onClick={() => setSelectedCurrency(currency.code)}
+                      >
                         {currency.name}
-                      </SelectItem>
+                      </Button>
                     ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+                  </div>
+                </ScrollArea>
+              </PopoverContent>
+            </Popover>
             
-            <div className="py-4 px-4">
-              <div className="flex items-center justify-between">
-                <span className="text-white/70">Ubicación</span>
-                <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-                  <SelectTrigger className="w-[200px] bg-transparent border-white/20 text-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-border">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
+                >
+                  <span className="text-white/70">Ubicación</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-white">{selectedCountry}</span>
+                    <ChevronRight className="h-5 w-5 text-white/70" />
+                  </div>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 bg-card border-border p-0" align="end">
+                <ScrollArea className="h-64">
+                  <div className="p-1">
                     {countries.map((country) => (
-                      <SelectItem key={country} value={country} className="text-white">
+                      <Button
+                        key={country}
+                        variant="ghost"
+                        className="w-full justify-start text-white hover:bg-primary/10"
+                        onClick={() => setSelectedCountry(country)}
+                      >
                         {country}
-                      </SelectItem>
+                      </Button>
                     ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+                  </div>
+                </ScrollArea>
+              </PopoverContent>
+            </Popover>
 
             <Button
               variant="ghost"
