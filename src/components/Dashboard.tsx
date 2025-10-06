@@ -313,7 +313,7 @@ const Dashboard = () => {
               <span className="text-xs text-white">Home</span>
             </Button>
 
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10">
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/analysis")}>
               <TrendingUp className="w-5 h-5 text-white" />
               <span className="text-xs text-white">Análisis</span>
             </Button>
