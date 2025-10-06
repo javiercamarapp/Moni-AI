@@ -137,24 +137,6 @@ export default function FinancialAnalysis() {
 
         {analysis && (
           <>
-            {/* 1. VALOR INMEDIATO */}
-            {analysis.safeToSpend && (
-              <SafeToSpendWidget {...analysis.safeToSpend} />
-            )}
-
-            {analysis.upcomingTransactions && (
-              <UpcomingTransactionsWidget {...analysis.upcomingTransactions} />
-            )}
-
-            {analysis.topActions && analysis.topActions.length > 0 && (
-              <TopActionsWidget actions={analysis.topActions} />
-            )}
-
-            {/* 2. EXPLICABILIDAD DEL SCORE */}
-            {analysis.scoreBreakdown && (
-              <ScoreBreakdownWidget {...analysis.scoreBreakdown} />
-            )}
-
             {/* Score Moni - Compacto (resumen rápido) */}
             <Card className="p-4 bg-white/10 backdrop-blur border-white/20">
               <div className="flex items-center justify-between">
@@ -185,6 +167,24 @@ export default function FinancialAnalysis() {
               </div>
             </Card>
 
+            {/* 1. VALOR INMEDIATO */}
+            {analysis.safeToSpend && (
+              <SafeToSpendWidget {...analysis.safeToSpend} />
+            )}
+
+            {analysis.upcomingTransactions && (
+              <UpcomingTransactionsWidget {...analysis.upcomingTransactions} />
+            )}
+
+            {analysis.topActions && analysis.topActions.length > 0 && (
+              <TopActionsWidget actions={analysis.topActions} />
+            )}
+
+            {/* 2. EXPLICABILIDAD DEL SCORE */}
+            {analysis.scoreBreakdown && (
+              <ScoreBreakdownWidget {...analysis.scoreBreakdown} />
+            )}
+
             {/* 3. PATRIMONIO Y RUNWAY */}
             {analysis.netWorth && (
               <NetWorthWidget {...analysis.netWorth} />
@@ -209,6 +209,14 @@ export default function FinancialAnalysis() {
             {analysis.subscriptions && analysis.subscriptions.subscriptions && analysis.subscriptions.subscriptions.length > 0 && (
               <SubscriptionsWidget {...analysis.subscriptions} />
             )}
+
+            {/* Microcopy Empático */}
+            <Card className="p-3 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 backdrop-blur border-emerald-500/30">
+              <p className="text-xs text-emerald-200 leading-relaxed">
+                🌿 <span className="font-medium">Tus finanzas respiran</span>. Reduciendo Comida 8% liberas +$520/mes y subes tu Score +5 pts. 
+                Mantén el ritmo con +$300 a fondo de emergencia.
+              </p>
+            </Card>
 
             {/* Liquidez - Grid Compacto Mejorado */}
             <div className="space-y-2">
