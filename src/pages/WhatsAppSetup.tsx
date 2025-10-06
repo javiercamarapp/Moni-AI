@@ -129,7 +129,7 @@ export default function WhatsAppSetup() {
         {/* ¿Cómo funciona? */}
         <Card className="p-4 bg-card/80 backdrop-blur border-border/50">
           <h3 className="font-bold text-base text-white mb-3 flex items-center gap-2 animate-fade-in">
-            <CheckCircle2 className="h-4 w-4 text-primary" />
+            <CheckCircle2 className="h-4 w-4 text-white" />
             ¿Cómo funciona?
           </h3>
           <Carousel
