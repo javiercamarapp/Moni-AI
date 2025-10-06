@@ -31,6 +31,8 @@ const Dashboard = () => {
   const [fixedExpenses, setFixedExpenses] = useState(0);
   const [selectedMonthOffset, setSelectedMonthOffset] = useState(0); // 0 = mes actual, 1 = mes anterior, etc.
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
+  const [scoreMoni, setScoreMoni] = useState<number | null>(null);
+  const [loadingScore, setLoadingScore] = useState(false);
   const navigate = useNavigate();
   const {
     toast
@@ -110,6 +112,32 @@ const Dashboard = () => {
       }
     };
     fetchGoals();
+  }, []);
+
+  // Fetch Score Moni
+  useEffect(() => {
+    const fetchScoreMoni = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        setLoadingScore(true);
+        const { data, error } = await supabase.functions.invoke('financial-analysis', {
+          body: { userId: user.id, period: 'month' }
+        });
+        
+        if (error) throw error;
+        if (data?.metrics?.scoreMoni != null) {
+          setScoreMoni(data.metrics.scoreMoni);
+        }
+      } catch (error) {
+        console.error('Error fetching Score Moni:', error);
+      } finally {
+        setLoadingScore(false);
+      }
+    };
+    
+    fetchScoreMoni();
   }, []);
 
   // Fetch recent transactions and calculate monthly totals
@@ -257,6 +285,29 @@ const Dashboard = () => {
           <p className="text-sm text-white">Vas excelente con tus metas financieras</p>
         </div>
       </div>
+
+      {/* Score Moni - Compacto */}
+      {scoreMoni !== null && (
+        <div className="mx-4 mb-4">
+          <Card className="p-4 bg-gradient-card card-glow border-white/20 hover:scale-105 transition-transform duration-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-white/70 mb-1">Score Moni</p>
+                <p className="text-3xl font-bold text-white">{scoreMoni}<span className="text-sm text-white/60">/100</span></p>
+                <p className="text-xs text-white/70 mt-1">
+                  {scoreMoni >= 70 ? '✅ Excelente' : scoreMoni >= 40 ? '⚠️ Mejorable' : '❌ Crítico'}
+                </p>
+              </div>
+              <div className="relative">
+                <svg className="w-20 h-20 transform -rotate-90">
+                  <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" className="text-white/20" />
+                  <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" strokeDasharray={`${2 * Math.PI * 34}`} strokeDashoffset={`${2 * Math.PI * 34 * (1 - scoreMoni / 100)}`} className={`transition-all ${scoreMoni >= 70 ? 'text-emerald-400' : scoreMoni >= 40 ? 'text-yellow-400' : 'text-red-400'}`} strokeLinecap="round" />
+                </svg>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* Safe to Spend Widget */}
       <div className="mx-4 mb-4">
