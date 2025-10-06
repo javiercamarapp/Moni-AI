@@ -83,12 +83,12 @@ export default function WhatsAppSetup() {
         <Card className="p-4 bg-gradient-to-br from-green-500/20 to-green-600/10 backdrop-blur border-green-500/30">
           <div className="text-center space-y-3">
             <div className="flex items-center justify-center gap-3 mb-2">
-              <div className="w-14 h-14 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                <img src={whatsappLogo} alt="WhatsApp" className="w-9 h-9" />
+              <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                <img src={whatsappLogo} alt="WhatsApp" className="w-8 h-8 object-contain" />
               </div>
-              <div className="text-left">
+              <div className="text-left flex-1">
                 <h2 className="text-lg font-bold text-white leading-tight">
-                  ¡Habla con Moni <br/>por WhatsApp! 💬
+                  ¡Habla con Moni por WhatsApp! 💬
                 </h2>
               </div>
             </div>
