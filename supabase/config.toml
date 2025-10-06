@@ -11,3 +11,18 @@ verify_jwt = false
 
 [functions.financial-analysis]
 verify_jwt = false
+
+[functions.bank-webhook]
+verify_jwt = false
+
+[functions.sync-bank-transactions]
+verify_jwt = false
+
+[functions.categorize-transaction]
+verify_jwt = false
+
+[functions.send-proactive-message]
+verify_jwt = false
+
+[functions.scheduled-notifications]
+verify_jwt = false

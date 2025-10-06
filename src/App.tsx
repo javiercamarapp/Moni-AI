@@ -17,6 +17,8 @@ import Profile from "./pages/Profile";
 import Balance from "./pages/Balance";
 import WhatsAppSetup from "./pages/WhatsAppSetup";
 import FinancialAnalysis from "./pages/FinancialAnalysis";
+import BankConnection from "./pages/BankConnection";
+import NotificationSettings from "./pages/NotificationSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +44,8 @@ const App = () => (
           <Route path="/balance" element={<Balance />} />
           <Route path="/whatsapp" element={<WhatsAppSetup />} />
           <Route path="/analysis" element={<FinancialAnalysis />} />
+          <Route path="/bank-connection" element={<BankConnection />} />
+          <Route path="/notifications" element={<NotificationSettings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

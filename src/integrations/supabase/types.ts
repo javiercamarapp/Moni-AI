@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      bank_connections: {
+        Row: {
+          access_token: string
+          account_id: string
+          bank_name: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          last_sync: string | null
+          plaid_item_id: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          account_id: string
+          bank_name: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_sync?: string | null
+          plaid_item_id?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          account_id?: string
+          bank_name?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_sync?: string | null
+          plaid_item_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           color: string
@@ -83,6 +122,87 @@ export type Database = {
           type?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      notification_history: {
+        Row: {
+          id: string
+          message: string
+          metadata: Json | null
+          notification_type: string
+          sent_at: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          message: string
+          metadata?: Json | null
+          notification_type: string
+          sent_at?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          message?: string
+          metadata?: Json | null
+          notification_type?: string
+          sent_at?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notification_settings: {
+        Row: {
+          created_at: string | null
+          daily_spending_limit: number | null
+          daily_summary: boolean | null
+          goal_reminders: boolean | null
+          id: string
+          preferred_notification_time: string | null
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
+          savings_tips: boolean | null
+          spending_alerts: boolean | null
+          transaction_alert_threshold: number | null
+          updated_at: string | null
+          user_id: string
+          weekly_analysis: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          daily_spending_limit?: number | null
+          daily_summary?: boolean | null
+          goal_reminders?: boolean | null
+          id?: string
+          preferred_notification_time?: string | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          savings_tips?: boolean | null
+          spending_alerts?: boolean | null
+          transaction_alert_threshold?: number | null
+          updated_at?: string | null
+          user_id: string
+          weekly_analysis?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          daily_spending_limit?: number | null
+          daily_summary?: boolean | null
+          goal_reminders?: boolean | null
+          id?: string
+          preferred_notification_time?: string | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          savings_tips?: boolean | null
+          spending_alerts?: boolean | null
+          transaction_alert_threshold?: number | null
+          updated_at?: string | null
+          user_id?: string
+          weekly_analysis?: boolean | null
         }
         Relationships: []
       }
