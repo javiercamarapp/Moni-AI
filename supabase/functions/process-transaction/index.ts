@@ -167,10 +167,73 @@ Si no puedes interpretar el mensaje como una transacción, responde:
       .eq('phone_number', phoneNumber)
       .eq('message_text', messageText);
 
+    // Verificar preferencias de notificación del usuario
+    const { data: settings } = await supabase
+      .from('notification_settings')
+      .select('spending_alerts, transaction_alert_threshold, daily_spending_limit, quiet_hours_start, quiet_hours_end')
+      .eq('user_id', userId)
+      .single();
+
+    let shouldSendAlert = false;
+    let alertMessage = '';
+
+    if (settings && settings.spending_alerts && interpretation.type === 'gasto') {
+      const now = new Date();
+      const currentTime = now.toTimeString().split(' ')[0].substring(0, 5);
+      
+      // Función para verificar horario silencioso
+      const isInQuietHours = (quietStart: string, quietEnd: string): boolean => {
+        if (!quietStart || !quietEnd) return false;
+        const [currentH, currentM] = currentTime.split(':').map(Number);
+        const [startH, startM] = quietStart.substring(0, 5).split(':').map(Number);
+        const [endH, endM] = quietEnd.substring(0, 5).split(':').map(Number);
+        const current = currentH * 60 + currentM;
+        const start = startH * 60 + startM;
+        const end = endH * 60 + endM;
+        if (start > end) return current >= start || current <= end;
+        return current >= start && current <= end;
+      };
+
+      const inQuietHours = isInQuietHours(
+        settings.quiet_hours_start || '22:00',
+        settings.quiet_hours_end || '08:00'
+      );
+
+      if (!inQuietHours) {
+        // Alerta por transacción grande
+        if (interpretation.amount >= (settings.transaction_alert_threshold || 500)) {
+          shouldSendAlert = true;
+          alertMessage = `⚠️ Alerta: Gasto grande detectado de $${interpretation.amount}`;
+        }
+
+        // Verificar límite diario
+        const today = new Date().toISOString().split('T')[0];
+        const { data: todayTransactions } = await supabase
+          .from('transactions')
+          .select('amount')
+          .eq('user_id', userId)
+          .eq('type', 'gasto')
+          .eq('transaction_date', today);
+
+        if (todayTransactions) {
+          const totalToday = todayTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
+          const dailyLimit = settings.daily_spending_limit || 1000;
+          
+          if (totalToday >= dailyLimit) {
+            shouldSendAlert = true;
+            alertMessage = `🚨 Has alcanzado tu límite diario de gastos ($${dailyLimit})\nTotal hoy: $${totalToday}`;
+          } else if (totalToday >= dailyLimit * 0.8) {
+            shouldSendAlert = true;
+            alertMessage = `⚠️ Cerca del límite diario ($${dailyLimit})\nGastado: $${totalToday} (${Math.round((totalToday/dailyLimit)*100)}%)`;
+          }
+        }
+      }
+    }
+
     const responseMessage = `✅ ${interpretation.type === 'ingreso' ? 'Ingreso' : 'Gasto'} registrado
 💰 Monto: $${interpretation.amount}
 📝 ${interpretation.description}
-📊 Categoría: ${interpretation.category}`;
+📊 Categoría: ${interpretation.category}${shouldSendAlert ? '\n\n' + alertMessage : ''}`;
 
     return new Response(JSON.stringify({ 
       success: true,

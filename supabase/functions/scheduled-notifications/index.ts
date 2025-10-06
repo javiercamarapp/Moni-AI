@@ -22,10 +22,30 @@ serve(async (req) => {
     const currentTime = now.toTimeString().split(' ')[0].substring(0, 5);
     const dayOfWeek = now.getDay(); // 0 = domingo, 1 = lunes, etc.
 
+    // Función para verificar si está en horario silencioso
+    const isQuietHours = (quietStart: string, quietEnd: string, currentTime: string): boolean => {
+      if (!quietStart || !quietEnd) return false;
+      
+      // Convertir a minutos desde medianoche
+      const [currentH, currentM] = currentTime.split(':').map(Number);
+      const [startH, startM] = quietStart.split(':').map(Number);
+      const [endH, endM] = quietEnd.split(':').map(Number);
+      
+      const current = currentH * 60 + currentM;
+      const start = startH * 60 + startM;
+      const end = endH * 60 + endM;
+      
+      // Si el horario silencioso cruza medianoche (ej: 22:00 - 08:00)
+      if (start > end) {
+        return current >= start || current <= end;
+      }
+      return current >= start && current <= end;
+    };
+
     // Obtener usuarios con notificaciones activas
     const { data: users } = await supabase
       .from('notification_settings')
-      .select('user_id, daily_summary, weekly_analysis, savings_tips, goal_reminders, preferred_notification_time')
+      .select('user_id, daily_summary, weekly_analysis, savings_tips, goal_reminders, preferred_notification_time, quiet_hours_start, quiet_hours_end')
       .or('daily_summary.eq.true,weekly_analysis.eq.true,savings_tips.eq.true,goal_reminders.eq.true');
 
     if (!users || users.length === 0) {
@@ -39,8 +59,20 @@ serve(async (req) => {
 
     for (const user of users) {
       try {
+        // Verificar si está en horario silencioso
+        const inQuietHours = isQuietHours(
+          user.quiet_hours_start?.substring(0, 5) || '22:00',
+          user.quiet_hours_end?.substring(0, 5) || '08:00',
+          currentTime
+        );
+
+        if (inQuietHours) {
+          console.log(`User ${user.user_id} is in quiet hours, skipping notifications`);
+          continue;
+        }
+
         // Resumen diario (a la hora preferida del usuario)
-        if (user.daily_summary && currentTime === user.preferred_notification_time) {
+        if (user.daily_summary && currentTime === user.preferred_notification_time?.substring(0, 5)) {
           await supabase.functions.invoke('send-proactive-message', {
             body: {
               userId: user.user_id,
