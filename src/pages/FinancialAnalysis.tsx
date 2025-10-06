@@ -121,6 +121,14 @@ export default function FinancialAnalysis() {
             {/* 1. VALOR INMEDIATO */}
             {analysis.safeToSpend && <SafeToSpendWidget {...analysis.safeToSpend} />}
 
+            {/* Microcopy Empático */}
+            <Card className="p-2 bg-gradient-to-r from-emerald-600/90 to-teal-600/90 card-glow border-emerald-500/30">
+              <p className="text-[10px] text-emerald-200 leading-snug">
+                🌿 <span className="font-medium">Tus finanzas respiran</span>. Reduciendo Comida 8% liberas +$520/mes y subes tu Score +5 pts. 
+                Mantén el ritmo con +$300 a fondo de emergencia.
+              </p>
+            </Card>
+
             {/* Risk Indicators */}
             <RiskIndicatorsWidget 
               liquidityMonths={analysis.metrics.liquidityMonths || 0}
@@ -149,14 +157,6 @@ export default function FinancialAnalysis() {
 
             {/* 7. SUSCRIPCIONES */}
             {analysis.subscriptions && analysis.subscriptions.subscriptions && analysis.subscriptions.subscriptions.length > 0 && <SubscriptionsWidget {...analysis.subscriptions} />}
-
-            {/* Microcopy Empático */}
-            <Card className="p-2 bg-gradient-to-r from-emerald-600/90 to-teal-600/90 card-glow border-emerald-500/30">
-              <p className="text-[10px] text-emerald-200 leading-snug">
-                🌿 <span className="font-medium">Tus finanzas respiran</span>. Reduciendo Comida 8% liberas +$520/mes y subes tu Score +5 pts. 
-                Mantén el ritmo con +$300 a fondo de emergencia.
-              </p>
-            </Card>
 
             {/* Llamados a la Acción */}
             <div className="space-y-2">
