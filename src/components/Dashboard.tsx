@@ -190,7 +190,7 @@ const Dashboard = () => {
   const achievements: any[] = []; // Los logros se implementarán en el futuro basados en la actividad del usuario
   return <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header superior con logo y notificaciones */}
-      <div className="p-2 flex justify-between items-start">
+      <div className="p-4 flex justify-between items-start">
         {/* Logo banner - esquina superior izquierda */}
         <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden w-16 h-10">
           <img src={heroAuth} alt="Moni" className="w-full h-full object-cover" />
@@ -302,7 +302,7 @@ const Dashboard = () => {
       
       {/* Bottom Navigation Menu - Fixed */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 animated-wave-bg border-t border-white/20 shadow-lg">
-        <div className="container mx-auto px-2">
+        <div className="container mx-auto px-4">
           <div className="flex items-center justify-around h-16">
             <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-purple-400 hover:bg-white/10 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/dashboard")}>
               <Home className="w-5 h-5 text-purple-400" />
@@ -332,7 +332,7 @@ const Dashboard = () => {
         </div>
       </nav>
 
-      <div className="p-2 sm:p-4">
+      <div className="px-4">
       <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
         
         {/* Balance Overview y Quick Stats en la misma fila */}
