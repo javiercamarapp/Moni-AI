@@ -287,22 +287,28 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Score Moni - Compacto */}
+      {/* Score Moni - Compacto con Banner Dinámico */}
       {scoreMoni !== null && (
         <div className="mx-4 mb-4">
-          <Card className="p-4 bg-gradient-card card-glow border-white/20 hover:scale-105 transition-transform duration-200">
+          <Card className={`p-4 border-white/20 hover:scale-105 transition-transform duration-200 ${
+            scoreMoni >= 70 
+              ? 'bg-gradient-to-br from-emerald-500/90 to-emerald-600/90' 
+              : scoreMoni >= 40 
+              ? 'bg-gradient-to-br from-yellow-500/90 to-yellow-600/90' 
+              : 'bg-gradient-to-br from-red-500/90 to-red-600/90'
+          }`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-white/70 mb-1">Score Moni</p>
-                <p className="text-3xl font-bold text-white">{scoreMoni}<span className="text-sm text-white/60">/100</span></p>
-                <p className="text-xs text-white/70 mt-1">
+                <p className="text-xs text-white/90 mb-1">Score Moni</p>
+                <p className="text-3xl font-bold text-white">{scoreMoni}<span className="text-sm text-white/80">/100</span></p>
+                <p className="text-xs text-white/90 mt-1 font-medium">
                   {scoreMoni >= 70 ? '✅ Excelente' : scoreMoni >= 40 ? '⚠️ Mejorable' : '❌ Crítico'}
                 </p>
               </div>
               <div className="relative">
                 <svg className="w-20 h-20 transform -rotate-90">
-                  <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" className="text-white/20" />
-                  <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" strokeDasharray={`${2 * Math.PI * 34}`} strokeDashoffset={`${2 * Math.PI * 34 * (1 - scoreMoni / 100)}`} className={`transition-all ${scoreMoni >= 70 ? 'text-emerald-400' : scoreMoni >= 40 ? 'text-yellow-400' : 'text-red-400'}`} strokeLinecap="round" />
+                  <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" className="text-white/30" />
+                  <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" strokeDasharray={`${2 * Math.PI * 34}`} strokeDashoffset={`${2 * Math.PI * 34 * (1 - scoreMoni / 100)}`} className="text-white transition-all" strokeLinecap="round" />
                 </svg>
               </div>
             </div>
