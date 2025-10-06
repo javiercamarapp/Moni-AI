@@ -342,7 +342,7 @@ const Dashboard = () => {
         {/* Balance Overview y Quick Stats en la misma fila */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
           {/* Sección 1: Balance Overview - Más grande */}
-          <Card className="sm:col-span-2 p-3 sm:p-4 bg-gradient-card card-glow h-full flex flex-col justify-between">
+          <Card className="sm:col-span-2 p-3 sm:p-4 bg-gradient-card card-glow h-full flex flex-col justify-between animate-fade-in" style={{ animationDelay: '0ms' }}>
             <div className="space-y-2 sm:space-y-3">
               {/* Balance Principal */}
               <div>
@@ -382,7 +382,7 @@ const Dashboard = () => {
               {/* Ingresos y Egresos */}
               <div className="grid grid-cols-2 gap-2">
                 <Card 
-                  className="p-2 sm:p-3 bg-white/10 backdrop-blur-sm border-white/20 cursor-pointer hover:bg-white/20 transition-colors"
+                  className="p-2 sm:p-3 bg-white/10 backdrop-blur-sm border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200"
                   onClick={() => navigate('/ingresos')}
                 >
                   <div className="text-center">
@@ -391,7 +391,7 @@ const Dashboard = () => {
                   </div>
                 </Card>
                 <Card 
-                  className="p-2 sm:p-3 bg-white/10 backdrop-blur-sm border-white/20 cursor-pointer hover:bg-white/20 transition-colors"
+                  className="p-2 sm:p-3 bg-white/10 backdrop-blur-sm border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200"
                   onClick={() => navigate('/gastos')}
                 >
                   <div className="text-center">
@@ -406,8 +406,9 @@ const Dashboard = () => {
           {/* Sección 2: Quick Stats - 3 estadísticas */}
           <div className="sm:col-span-1 grid grid-cols-3 sm:grid-cols-1 gap-2">
             <Card 
-              className="p-2 sm:p-3 bg-gradient-card card-glow cursor-pointer hover:bg-white/20 transition-colors"
+              className="p-2 sm:p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in"
               onClick={() => navigate('/balance')}
+              style={{ animationDelay: '100ms' }}
             >
               <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
                 <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-primary/20 flex items-center justify-center mb-1 sm:mb-0">
@@ -422,7 +423,7 @@ const Dashboard = () => {
               </div>
             </Card>
 
-            <Card className="p-2 sm:p-3 bg-gradient-card card-glow">
+            <Card className="p-2 sm:p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '200ms' }}>
               <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
                 <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-success/20 flex items-center justify-center mb-1 sm:mb-0">
                   <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
@@ -436,7 +437,7 @@ const Dashboard = () => {
               </div>
             </Card>
 
-            <Card className="p-2 sm:p-3 bg-gradient-card card-glow">
+            <Card className="p-2 sm:p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '300ms' }}>
               <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
                 <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-warning/20 flex items-center justify-center mb-1 sm:mb-0">
                   <Target className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
@@ -451,7 +452,7 @@ const Dashboard = () => {
         </div>
 
         {/* WhatsApp Banner */}
-        <Card className="p-3 sm:p-4 bg-gradient-card card-glow mb-4">
+        <Card className="p-3 sm:p-4 bg-gradient-card card-glow mb-4 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '400ms' }}>
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
               <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />

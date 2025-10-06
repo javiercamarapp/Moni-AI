@@ -113,7 +113,7 @@ export default function FinancialAnalysis() {
             {analysis && (
               <>
                 {/* Score Moni - Prominente */}
-                <Card className="p-8 bg-gradient-to-br from-primary/20 to-primary/5 backdrop-blur border-primary/30">
+                <Card className="p-8 bg-gradient-to-br from-primary/20 to-primary/5 backdrop-blur border-primary/30 animate-fade-in" style={{ animationDelay: '0ms' }}>
                   <div className="text-center space-y-4">
                     <h2 className="text-xl font-bold text-foreground">Tu Salud Financiera</h2>
                     <div className="relative w-32 h-32 mx-auto">
@@ -154,7 +154,7 @@ export default function FinancialAnalysis() {
 
                 {/* Métricas principales */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
+                  <Card className="p-6 bg-card/80 backdrop-blur border-border/50 hover:scale-105 transition-transform duration-200 animate-fade-in" style={{ animationDelay: '100ms' }}>
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-muted-foreground">Ingresos</p>
@@ -166,7 +166,7 @@ export default function FinancialAnalysis() {
                     </div>
                   </Card>
 
-                  <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
+                  <Card className="p-6 bg-card/80 backdrop-blur border-border/50 hover:scale-105 transition-transform duration-200 animate-fade-in" style={{ animationDelay: '150ms' }}>
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-muted-foreground">Gastos</p>
@@ -178,7 +178,7 @@ export default function FinancialAnalysis() {
                     </div>
                   </Card>
 
-                  <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
+                  <Card className="p-6 bg-card/80 backdrop-blur border-border/50 hover:scale-105 transition-transform duration-200 animate-fade-in" style={{ animationDelay: '200ms' }}>
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-muted-foreground">Balance</p>
@@ -190,7 +190,7 @@ export default function FinancialAnalysis() {
                     </div>
                   </Card>
 
-                  <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
+                  <Card className="p-6 bg-card/80 backdrop-blur border-border/50 hover:scale-105 transition-transform duration-200 animate-fade-in" style={{ animationDelay: '250ms' }}>
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-muted-foreground">Tasa Ahorro</p>
@@ -201,7 +201,7 @@ export default function FinancialAnalysis() {
                       <div className="text-4xl">💰</div>
                     </div>
                   </Card>
-                  <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
+                  <Card className="p-6 bg-card/80 backdrop-blur border-border/50 hover:scale-105 transition-transform duration-200 animate-fade-in" style={{ animationDelay: '300ms' }}>
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-muted-foreground">Ratio Liquidez</p>

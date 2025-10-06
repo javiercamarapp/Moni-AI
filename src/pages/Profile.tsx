@@ -90,7 +90,7 @@ const Profile = () => {
 
       <div className="px-4 space-y-6">
         {/* User Profile Section */}
-        <Card className="bg-card/80 backdrop-blur border-border/50 p-6">
+        <Card className="bg-card/80 backdrop-blur border-border/50 p-6 animate-fade-in" style={{ animationDelay: '0ms' }}>
           <div className="flex items-center space-x-4 mb-4">
             <div className="w-16 h-16 rounded-full bg-gradient-primary flex items-center justify-center">
               <span className="text-2xl font-bold text-white">{getInitials(userName)}</span>
@@ -108,7 +108,7 @@ const Profile = () => {
           </div>
 
           {/* Plan Section */}
-          <Card className="bg-primary/10 border-primary/30 p-4">
+          <Card className="bg-primary/10 border-primary/30 p-4 hover:scale-105 transition-transform duration-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Tu plan</p>
@@ -126,10 +126,10 @@ const Profile = () => {
         {/* Preferencias */}
         <div className="space-y-2">
           <h3 className="text-lg font-bold text-white px-2">Preferencias</h3>
-          <Card className="bg-card/80 backdrop-blur border-border/50 divide-y divide-border">
+          <Card className="bg-card/80 backdrop-blur border-border/50 divide-y divide-border animate-fade-in" style={{ animationDelay: '100ms' }}>
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10 hover:translate-x-2 transition-transform duration-200"
             >
               <span className="text-muted-foreground">Divisa</span>
               <div className="flex items-center gap-2">
@@ -140,7 +140,7 @@ const Profile = () => {
             
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10 hover:translate-x-2 transition-transform duration-200"
             >
               <span className="text-muted-foreground">Ubicación</span>
               <div className="flex items-center gap-2">

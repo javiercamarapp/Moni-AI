@@ -228,7 +228,7 @@ const Balance = () => {
 
       <div className="px-4 space-y-4">
         {/* Ahorro destacado */}
-        <Card className="p-6 bg-gradient-to-br from-green-600/90 to-green-800/90 card-glow border-green-500/30">
+        <Card className="p-6 bg-gradient-to-br from-green-600/90 to-green-800/90 card-glow border-green-500/30 animate-fade-in" style={{ animationDelay: '0ms' }}>
           <div className="flex items-center gap-3 mb-3">
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-full">
               <Wallet className="h-6 w-6 text-white" />
@@ -253,7 +253,7 @@ const Balance = () => {
 
         {/* Balance Summary */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card className="p-4 bg-gradient-card card-glow text-center">
+          <Card className="p-4 bg-gradient-card card-glow text-center hover:scale-105 transition-transform duration-200 animate-fade-in" style={{ animationDelay: '100ms' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <TrendingUp className="h-5 w-5 text-green-400" />
               <p className="text-sm text-white/70">Ingresos</p>
@@ -263,7 +263,7 @@ const Balance = () => {
             </p>
           </Card>
 
-          <Card className="p-4 bg-gradient-card card-glow text-center">
+          <Card className="p-4 bg-gradient-card card-glow text-center hover:scale-105 transition-transform duration-200 animate-fade-in" style={{ animationDelay: '200ms' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <TrendingDown className="h-5 w-5 text-red-400" />
               <p className="text-sm text-white/70">Gastos</p>
@@ -273,7 +273,7 @@ const Balance = () => {
             </p>
           </Card>
 
-          <Card className="p-4 bg-gradient-card card-glow text-center">
+          <Card className="p-4 bg-gradient-card card-glow text-center hover:scale-105 transition-transform duration-200 animate-fade-in" style={{ animationDelay: '300ms' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <Wallet className="h-5 w-5 text-blue-400" />
               <p className="text-sm text-white/70">Balance</p>
