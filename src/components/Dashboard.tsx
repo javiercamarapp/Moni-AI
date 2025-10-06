@@ -13,7 +13,7 @@ import bannerGroups from '@/assets/banner-groups.jpg';
 import bannerHalloween from '@/assets/banner-halloween.png';
 import heroAuth from '@/assets/moni-ai-logo.png';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
-import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User, BarChart3 } from 'lucide-react';
+import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User, BarChart3, AlertCircle } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
@@ -332,14 +332,20 @@ const Dashboard = () => {
         {/* Balance Overview y Quick Stats en la misma fila */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
           {/* Sección 1: Balance Overview - Más grande */}
-          <Card className="sm:col-span-2 p-4 bg-white/5 backdrop-blur border-white/20 animate-fade-in" style={{
+          <Card className={`sm:col-span-2 p-4 backdrop-blur border-2 animate-fade-in ${
+            currentMonth.balance >= 0 
+              ? 'bg-emerald-600/20 border-emerald-400/40' 
+              : 'bg-red-600/20 border-red-400/40'
+          }`} style={{
             animationDelay: '0ms'
           }}>
             <div className="space-y-3">
               <div>
                 <p className="text-xs font-medium text-white/80 mb-1">Safe-to-Spend</p>
                 <div className="flex items-baseline gap-2">
-                  <p className="text-4xl sm:text-5xl font-bold text-white">
+                  <p className={`text-4xl sm:text-5xl font-bold ${
+                    currentMonth.balance >= 0 ? 'text-emerald-300' : 'text-red-300'
+                  }`}>
                     ${(currentMonth.balance * 0.7).toLocaleString('es-MX', { maximumFractionDigits: 0 })}
                   </p>
                   <span className="text-sm text-white/60">MXN</span>
@@ -348,6 +354,42 @@ const Dashboard = () => {
                   Disponible hoy = Ingresos - Gastos Fijos - Apartados del mes
                 </p>
               </div>
+
+              {currentMonth.balance < 0 && (
+                <div className="bg-red-500/20 rounded-lg p-3 border border-red-400/40">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="h-4 w-4 text-red-300 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs font-semibold text-red-200 mb-2">⚠️ Balance en Rojo</p>
+                      <div className="space-y-1.5">
+                        <p className="text-xs text-white/90">💡 <span className="font-medium">Empieza a presupuestar:</span> Define límites por categoría</p>
+                        <p className="text-xs text-white/90">💰 <span className="font-medium">Reduce gastos hormiga:</span> Cafés, apps, delivery</p>
+                        <p className="text-xs text-white/90">📊 <span className="font-medium">Revisa suscripciones:</span> Cancela las que no uses</p>
+                        <p className="text-xs text-white/90">🎯 <span className="font-medium">Crea un fondo de emergencia:</span> Aunque sea $500/mes</p>
+                      </div>
+                      <Button 
+                        size="sm" 
+                        className="mt-3 w-full bg-red-600 hover:bg-red-700 text-white border-0 text-xs h-8"
+                        onClick={() => navigate('/analysis')}
+                      >
+                        Ver plan de ahorro personalizado
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {currentMonth.balance >= 0 && (
+                <div className="bg-emerald-500/20 rounded-lg p-3 border border-emerald-400/40">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">✅</span>
+                    <div>
+                      <p className="text-xs font-semibold text-emerald-200">¡Vas excelente!</p>
+                      <p className="text-xs text-white/80">Tus finanzas están saludables este mes</p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="pt-3 border-t border-white/10">
                 <p className="text-xs font-medium text-white/80 mb-2">Balance del mes</p>
@@ -366,7 +408,7 @@ const Dashboard = () => {
                   </div>
                   <div>
                     <p className="text-[10px] text-white/60">Balance</p>
-                    <p className={`text-sm font-semibold ${currentMonth.balance >= 0 ? 'text-white' : 'text-red-400'}`}>
+                    <p className={`text-sm font-semibold ${currentMonth.balance >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
                       ${currentMonth.balance.toLocaleString('es-MX')}
                     </p>
                   </div>
