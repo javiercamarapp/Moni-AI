@@ -341,7 +341,7 @@ const Dashboard = () => {
           }}>
             <div className="space-y-3">
               <div>
-                <p className="text-xs font-medium text-white/80 mb-1">Safe-to-Spend</p>
+                <p className="text-xs font-medium text-white/80 mb-1">Disponible para gastar</p>
                 <div className="flex items-baseline gap-2">
                   <p className={`text-4xl sm:text-5xl font-bold ${
                     currentMonth.balance >= 0 ? 'text-emerald-300' : 'text-red-300'
