@@ -383,7 +383,7 @@ export default function FinancialAnalysis() {
                 <Button variant="ghost" size="sm" className="bg-gradient-card card-glow text-white border border-white/20 hover:bg-white/20 hover:text-white active:bg-white/30 active:text-white hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2">
                   ↑ Ahorro a 10%
                 </Button>
-                <Button variant="outline" size="sm" className="bg-gradient-card card-glow border-white/20 text-white hover:scale-105 transition-transform duration-200 text-xs h-auto py-2">
+                <Button variant="ghost" size="sm" className="bg-gradient-card card-glow text-white border border-white/20 hover:bg-white/20 hover:text-white active:bg-white/30 active:text-white hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2">
                   Revisar subs
                 </Button>
               </div>
