@@ -332,10 +332,47 @@ const Dashboard = () => {
         {/* Balance Overview y Quick Stats en la misma fila */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
           {/* Sección 1: Balance Overview - Más grande */}
-          <Card className="sm:col-span-2 p-3 sm:p-4 bg-gradient-card card-glow h-full flex flex-col justify-between animate-fade-in" style={{
+          <Card className="sm:col-span-2 p-4 bg-white/5 backdrop-blur border-white/20 animate-fade-in" style={{
             animationDelay: '0ms'
           }}>
-            
+            <div className="space-y-3">
+              <div>
+                <p className="text-xs font-medium text-white/80 mb-1">Safe-to-Spend</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-4xl sm:text-5xl font-bold text-white">
+                    ${(currentMonth.balance * 0.7).toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+                  </p>
+                  <span className="text-sm text-white/60">MXN</span>
+                </div>
+                <p className="text-xs text-white/70 mt-2">
+                  Disponible hoy = Ingresos - Gastos Fijos - Apartados del mes
+                </p>
+              </div>
+
+              <div className="pt-3 border-t border-white/10">
+                <p className="text-xs font-medium text-white/80 mb-2">Balance del mes</p>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <p className="text-[10px] text-white/60">Ingresos</p>
+                    <p className="text-sm font-semibold text-emerald-400">
+                      +${currentMonth.income.toLocaleString('es-MX')}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-white/60">Gastos</p>
+                    <p className="text-sm font-semibold text-red-400">
+                      -${currentMonth.expenses.toLocaleString('es-MX')}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-white/60">Balance</p>
+                    <p className={`text-sm font-semibold ${currentMonth.balance >= 0 ? 'text-white' : 'text-red-400'}`}>
+                      ${currentMonth.balance.toLocaleString('es-MX')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </Card>
 
           {/* Sección 2: Quick Stats - 3 estadísticas */}
