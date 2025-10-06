@@ -144,19 +144,19 @@ export default function FinancialAnalysis() {
                           stroke="currentColor"
                           strokeWidth="8"
                           fill="none"
-                          strokeDasharray={`${(analysis.metrics.scoreMoni / 100) * 351.86} 351.86`}
+                          strokeDasharray={`${((analysis.metrics.scoreMoni || 0) / 100) * 351.86} 351.86`}
                           className="text-primary transition-all duration-1000"
                         />
                       </svg>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-4xl font-bold text-foreground">{analysis.metrics.scoreMoni}</span>
+                        <span className="text-4xl font-bold text-foreground">{analysis.metrics.scoreMoni || 0}</span>
                         <span className="text-sm text-muted-foreground">Score Moni</span>
                       </div>
                     </div>
                     <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                      {analysis.metrics.scoreMoni >= 80 ? "¡Excelente! Tus finanzas respiran muy bien 🌿" :
-                       analysis.metrics.scoreMoni >= 60 ? "Buen progreso, sigue así 💪" :
-                       analysis.metrics.scoreMoni >= 40 ? "Hay oportunidad de mejora 📈" :
+                      {(analysis.metrics.scoreMoni || 0) >= 80 ? "¡Excelente! Tus finanzas respiran muy bien 🌿" :
+                       (analysis.metrics.scoreMoni || 0) >= 60 ? "Buen progreso, sigue así 💪" :
+                       (analysis.metrics.scoreMoni || 0) >= 40 ? "Hay oportunidad de mejora 📈" :
                        "Comencemos a construir mejores hábitos juntos 🚀"}
                     </p>
                   </div>
@@ -169,7 +169,7 @@ export default function FinancialAnalysis() {
                       <div>
                         <p className="text-sm text-muted-foreground">Ingresos</p>
                         <p className="text-2xl font-bold text-primary">
-                          ${analysis.metrics.totalIngresos.toFixed(2)}
+                          ${(analysis.metrics.totalIngresos || 0).toFixed(2)}
                         </p>
                       </div>
                       <TrendingUp className="h-8 w-8 text-primary" />
@@ -181,7 +181,7 @@ export default function FinancialAnalysis() {
                       <div>
                         <p className="text-sm text-muted-foreground">Gastos</p>
                         <p className="text-2xl font-bold text-destructive">
-                          ${analysis.metrics.totalGastos.toFixed(2)}
+                          ${(analysis.metrics.totalGastos || 0).toFixed(2)}
                         </p>
                       </div>
                       <TrendingDown className="h-8 w-8 text-destructive" />
@@ -192,8 +192,8 @@ export default function FinancialAnalysis() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-muted-foreground">Balance</p>
-                        <p className={`text-2xl font-bold ${analysis.metrics.balance >= 0 ? 'text-primary' : 'text-destructive'}`}>
-                          ${analysis.metrics.balance.toFixed(2)}
+                        <p className={`text-2xl font-bold ${(analysis.metrics.balance || 0) >= 0 ? 'text-primary' : 'text-destructive'}`}>
+                          ${(analysis.metrics.balance || 0).toFixed(2)}
                         </p>
                       </div>
                       <DollarSign className="h-8 w-8 text-foreground" />
@@ -205,7 +205,7 @@ export default function FinancialAnalysis() {
                       <div>
                         <p className="text-sm text-muted-foreground">Tasa Ahorro</p>
                         <p className="text-2xl font-bold text-foreground">
-                          {analysis.metrics.tasaAhorro}%
+                          {analysis.metrics.tasaAhorro || 0}%
                         </p>
                       </div>
                       <div className="text-4xl">💰</div>
@@ -216,11 +216,11 @@ export default function FinancialAnalysis() {
                       <div>
                         <p className="text-sm text-muted-foreground">Ratio Liquidez</p>
                         <p className="text-2xl font-bold text-foreground">
-                          {analysis.metrics.ratioLiquidez.toFixed(1)}x
+                          {(analysis.metrics.ratioLiquidez || 0).toFixed(1)}x
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          {analysis.metrics.ratioLiquidez >= 3 ? "¡Muy saludable!" :
-                           analysis.metrics.ratioLiquidez >= 1 ? "Aceptable" : "Necesita atención"}
+                          {(analysis.metrics.ratioLiquidez || 0) >= 3 ? "¡Muy saludable!" :
+                           (analysis.metrics.ratioLiquidez || 0) >= 1 ? "Aceptable" : "Necesita atención"}
                         </p>
                       </div>
                       <div className="text-4xl">💧</div>
@@ -232,7 +232,7 @@ export default function FinancialAnalysis() {
                       <div>
                         <p className="text-sm text-muted-foreground">Mindful Index</p>
                         <p className="text-2xl font-bold text-foreground">
-                          {analysis.metrics.mindfulIndex}%
+                          {analysis.metrics.mindfulIndex || 0}%
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
                           Gastos conscientes
@@ -247,7 +247,7 @@ export default function FinancialAnalysis() {
                       <div>
                         <p className="text-sm text-muted-foreground">Ahorro Anual</p>
                         <p className="text-2xl font-bold text-primary">
-                          ${analysis.metrics.ahorroProyectadoAnual.toFixed(0)}
+                          ${(analysis.metrics.ahorroProyectadoAnual || 0).toFixed(0)}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
                           Proyección
@@ -262,7 +262,7 @@ export default function FinancialAnalysis() {
                       <div>
                         <p className="text-sm text-muted-foreground">Recurrentes</p>
                         <p className="text-2xl font-bold text-foreground">
-                          {analysis.metrics.gastosRecurrentes}
+                          {analysis.metrics.gastosRecurrentes || 0}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
                           Gastos fijos

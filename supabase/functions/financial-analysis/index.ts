@@ -48,7 +48,12 @@ serve(async (req) => {
           totalGastos: 0,
           balance: 0,
           tasaAhorro: 0,
-          transaccionesCount: 0
+          transaccionesCount: 0,
+          scoreMoni: 0,
+          ratioLiquidez: 0,
+          ahorroProyectadoAnual: 0,
+          gastosRecurrentes: 0,
+          mindfulIndex: 0
         },
         topCategories: [],
         projections: {
@@ -56,7 +61,8 @@ serve(async (req) => {
           ingresos: 0,
           balance: 0,
           period: period === 'year' ? 'Anual' : 'Mensual'
-        }
+        },
+        cashFlow: []
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -66,8 +72,8 @@ serve(async (req) => {
     const ingresos = transactions.filter(t => t.type === 'ingreso');
     const gastos = transactions.filter(t => t.type === 'gasto');
     
-    const totalIngresos = ingresos.reduce((sum, t) => sum + Number(t.amount), 0);
-    const totalGastos = gastos.reduce((sum, t) => sum + Number(t.amount), 0);
+    const totalIngresos = ingresos.reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+    const totalGastos = gastos.reduce((sum, t) => sum + Number(t.amount), 0) || 0;
     const balance = totalIngresos - totalGastos;
     const tasaAhorro = totalIngresos > 0 ? (balance / totalIngresos) * 100 : 0;
 
@@ -95,12 +101,12 @@ serve(async (req) => {
     ));
 
     // Ratio de liquidez (cuántos meses puede sobrevivir con balance actual)
-    const ratioLiquidez = totalGastos > 0 ? balance / totalGastos : 0;
+    const ratioLiquidez = totalGastos > 0 ? Math.max(0, balance / totalGastos) : 0;
 
     // Ahorro proyectado anual
-    const diasTranscurridos = Math.ceil((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-    const ahorroDiarioPromedio = balance / diasTranscurridos;
-    const ahorroProyectadoAnual = ahorroDiarioPromedio * 365;
+    const diasTranscurridos = Math.max(1, Math.ceil((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
+    const ahorroDiarioPromedio = diasTranscurridos > 0 ? balance / diasTranscurridos : 0;
+    const ahorroProyectadoAnual = ahorroDiarioPromedio * 365 || 0;
 
     // Agrupar por categoría
     const gastosPorCategoria: Record<string, number> = {};
@@ -116,14 +122,14 @@ serve(async (req) => {
     // Gastos recurrentes (transacciones con montos similares)
     const gastosRecurrentes = gastos.filter((g, i, arr) => 
       arr.filter(g2 => Math.abs(Number(g.amount) - Number(g2.amount)) < 50 && g.id !== g2.id).length > 0
-    ).length;
+    ).length || 0;
 
     // Mindful Spending Index (0-100) - gastos conscientes vs impulsivos
     const gastosFinDeSemana = gastos.filter(g => {
       const dia = new Date(g.transaction_date).getDay();
       return dia === 0 || dia === 6;
     }).length;
-    const mindfulIndex = Math.max(0, 100 - (gastosFinDeSemana / gastos.length) * 100);
+    const mindfulIndex = gastos.length > 0 ? Math.max(0, 100 - (gastosFinDeSemana / gastos.length) * 100) : 0;
 
     // Usar Lovable AI para análisis inteligente
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
