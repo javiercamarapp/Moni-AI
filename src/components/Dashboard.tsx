@@ -15,6 +15,7 @@ import heroAuth from '@/assets/moni-ai-logo.png';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
 import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User, BarChart3, AlertCircle } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
+import SafeToSpendWidget from '@/components/analysis/SafeToSpendWidget';
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false); // Changed to false for instant load
@@ -27,6 +28,7 @@ const Dashboard = () => {
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [monthlyExpenses, setMonthlyExpenses] = useState(0);
+  const [fixedExpenses, setFixedExpenses] = useState(0);
   const [selectedMonthOffset, setSelectedMonthOffset] = useState(0); // 0 = mes actual, 1 = mes anterior, etc.
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const navigate = useNavigate();
@@ -137,8 +139,30 @@ const Dashboard = () => {
         // Calculate monthly totals
         const income = allTransactions?.filter(t => t.type === 'ingreso').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
         const expenses = allTransactions?.filter(t => t.type === 'gasto').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+        
+        // Calculate fixed expenses (rent, utilities, subscriptions, etc.)
+        const fixedExpensesCategories = [
+          '22cecde3-c7c8-437e-9b9d-d73bc7f3bdfe', // Luz
+          'c88f9517-ba61-4420-bc49-ba6261c37e9c', // Agua
+          '4675137c-d5b5-4679-b308-6259762ea100', // Internet
+          'c4d8514f-54be-4fba-8300-b18164d78790', // Teléfono
+          '77bc7935-51b3-418b-9945-7028c27d47ec', // Gas
+          '8544dcaa-4114-4893-aa38-c4372c46a821', // Netflix
+          'eba3ecce-a824-41d3-8209-175902e66cb9', // Spotify
+          '94c263d1-aed5-4399-b5af-da3dfe758b58', // Amazon Prime
+          'd81abe12-0879-49bc-9d94-ebf7c3e9e315', // Disney+
+          'd9251ee1-749f-4cc7-94a2-ceb19a16fd8c', // HBO Max
+          'e50cbb0b-6f45-4afd-bf09-218e413a3086', // Gym
+        ];
+        
+        const fixed = allTransactions?.filter(t => 
+          t.type === 'gasto' && 
+          (fixedExpensesCategories.includes(t.category_id) || t.description?.toLowerCase().includes('renta'))
+        ).reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+        
         setMonthlyIncome(income);
         setMonthlyExpenses(expenses);
+        setFixedExpenses(fixed);
 
         // Fetch recent transactions for display (always from current month for recent view)
         if (selectedMonthOffset === 0) {
@@ -232,6 +256,16 @@ const Dashboard = () => {
           </h1>
           <p className="text-sm text-white">Vas excelente con tus metas financieras</p>
         </div>
+      </div>
+
+      {/* Safe to Spend Widget */}
+      <div className="mx-4 mb-4">
+        <SafeToSpendWidget 
+          safeToSpend={monthlyIncome - fixedExpenses - (goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12)}
+          monthlyIncome={monthlyIncome}
+          fixedExpenses={fixedExpenses}
+          savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12}
+        />
       </div>
 
       {/* Banner Publicitario - Carrusel */}
