@@ -43,53 +43,53 @@ export default function WhatsAppSetup() {
   };
 
   return (
-    <div className="min-h-screen animated-wave-bg p-6 pb-24">
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div className="flex items-center gap-4 mb-8">
+    <div className="min-h-screen animated-wave-bg p-4 pb-20">
+      <div className="max-w-2xl mx-auto space-y-3">
+        <div className="flex items-center gap-3 mb-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/dashboard")}
             className="text-white hover:bg-white/10"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-white">Chatea con Moni AI</h1>
-            <p className="text-white/70">Por WhatsApp, 24/7</p>
+            <h1 className="text-2xl font-bold text-white">Chatea con Moni AI</h1>
+            <p className="text-sm text-white/70">Por WhatsApp, 24/7</p>
           </div>
         </div>
 
         {/* Hero Card */}
-        <Card className="p-8 bg-gradient-to-br from-green-500/20 to-green-600/10 backdrop-blur border-green-500/30">
-          <div className="text-center space-y-6">
-            <div className="mx-auto w-24 h-24 rounded-full bg-green-500/20 flex items-center justify-center">
-              <img src={whatsappLogo} alt="WhatsApp" className="w-16 h-16" />
+        <Card className="p-4 bg-gradient-to-br from-green-500/20 to-green-600/10 backdrop-blur border-green-500/30">
+          <div className="text-center space-y-3">
+            <div className="mx-auto w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center">
+              <img src={whatsappLogo} alt="WhatsApp" className="w-10 h-10" />
             </div>
             
             <div>
-              <h2 className="text-2xl font-bold text-white mb-2">
+              <h2 className="text-xl font-bold text-white mb-1">
                 ¡Habla con Moni por WhatsApp! 💬
               </h2>
-              <p className="text-white/70">
-                Registra tus gastos e ingresos de forma natural, como si hablaras con un amigo
+              <p className="text-sm text-white/70">
+                Registra tus gastos e ingresos de forma natural
               </p>
             </div>
 
             {/* Número de WhatsApp */}
-            <div className="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20">
-              <p className="text-sm text-white/70 mb-2">Envía un mensaje a:</p>
-              <div className="flex items-center justify-center gap-3">
-                <p className="text-3xl font-bold text-white font-mono">
+            <div className="bg-white/10 backdrop-blur rounded-lg p-3 border border-white/20">
+              <p className="text-xs text-white/70 mb-1">Envía un mensaje a:</p>
+              <div className="flex items-center justify-center gap-2">
+                <p className="text-xl font-bold text-white font-mono">
                   {MONI_WHATSAPP}
                 </p>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={copyPhoneNumber}
-                  className="text-white hover:bg-white/10"
+                  className="text-white hover:bg-white/10 h-8 w-8"
                 >
-                  <Copy className="h-5 w-5" />
+                  <Copy className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -97,116 +97,116 @@ export default function WhatsAppSetup() {
             {/* CTA Principal */}
             <Button
               onClick={openWhatsApp}
-              className="w-full bg-green-500 hover:bg-green-600 text-white h-14 text-lg font-semibold"
+              className="w-full bg-green-500 hover:bg-green-600 text-white h-10 text-base font-semibold"
             >
-              <MessageCircle className="mr-2 h-6 w-6" />
+              <MessageCircle className="mr-2 h-5 w-5" />
               Abrir Chat con Moni
             </Button>
           </div>
         </Card>
 
         {/* ¿Cómo funciona? */}
-        <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
-          <h3 className="font-bold text-xl text-white mb-4 flex items-center gap-2 animate-fade-in">
-            <CheckCircle2 className="h-5 w-5 text-primary" />
+        <Card className="p-4 bg-card/80 backdrop-blur border-border/50">
+          <h3 className="font-bold text-base text-white mb-3 flex items-center gap-2 animate-fade-in">
+            <CheckCircle2 className="h-4 w-4 text-primary" />
             ¿Cómo funciona?
           </h3>
-          <div className="space-y-4">
-            <div className="flex gap-3 animate-fade-in hover:translate-x-2 transition-transform duration-200" style={{ animationDelay: '100ms' }}>
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+          <div className="space-y-2">
+            <div className="flex gap-2 animate-fade-in hover:translate-x-2 transition-transform duration-200" style={{ animationDelay: '100ms' }}>
+              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
                 1
               </div>
               <div>
-                <p className="font-semibold text-white">Agrega el número a tus contactos</p>
-                <p className="text-sm text-white/70">Guarda {MONI_WHATSAPP} como "Moni AI"</p>
+                <p className="font-semibold text-white text-sm">Agrega el número</p>
+                <p className="text-xs text-white/70">Guarda como "Moni AI"</p>
               </div>
             </div>
             
-            <div className="flex gap-3 animate-fade-in hover:translate-x-2 transition-transform duration-200" style={{ animationDelay: '250ms' }}>
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+            <div className="flex gap-2 animate-fade-in hover:translate-x-2 transition-transform duration-200" style={{ animationDelay: '250ms' }}>
+              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
                 2
               </div>
               <div>
-                <p className="font-semibold text-white">Envía tus transacciones</p>
-                <p className="text-sm text-white/70">Escribe de forma natural, como hablas</p>
+                <p className="font-semibold text-white text-sm">Envía transacciones</p>
+                <p className="text-xs text-white/70">Escribe natural, como hablas</p>
               </div>
             </div>
             
-            <div className="flex gap-3 animate-fade-in hover:translate-x-2 transition-transform duration-200" style={{ animationDelay: '400ms' }}>
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+            <div className="flex gap-2 animate-fade-in hover:translate-x-2 transition-transform duration-200" style={{ animationDelay: '400ms' }}>
+              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
                 3
               </div>
               <div>
-                <p className="font-semibold text-white">Recibe confirmación</p>
-                <p className="text-sm text-white/70">Moni AI te confirma y categoriza automáticamente</p>
+                <p className="font-semibold text-white text-sm">Recibe confirmación</p>
+                <p className="text-xs text-white/70">Moni categoriza automáticamente</p>
               </div>
             </div>
           </div>
         </Card>
 
         {/* Ejemplos de mensajes */}
-        <Card className="p-6 bg-card/80 backdrop-blur border-border/50 overflow-hidden">
-          <h3 className="font-bold text-xl text-white mb-4">
+        <Card className="p-4 bg-card/80 backdrop-blur border-border/50 overflow-hidden">
+          <h3 className="font-bold text-base text-white mb-2">
             Ejemplos de mensajes
           </h3>
-          <div className="space-y-3">
-            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '0ms' }}>
-              <p className="text-white font-medium">"Gasté $350 en el supermercado"</p>
-              <p className="text-xs text-white/60 mt-1">→ Gasto registrado en categoría Comida</p>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '0ms' }}>
+              <p className="text-white font-medium text-xs">"Gasté $350 en súper"</p>
+              <p className="text-[10px] text-white/60 mt-0.5">→ Comida</p>
             </div>
             
-            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '150ms' }}>
-              <p className="text-white font-medium">"Me pagaron $5000 por freelance"</p>
-              <p className="text-xs text-white/60 mt-1">→ Ingreso registrado en categoría Trabajo</p>
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '150ms' }}>
+              <p className="text-white font-medium text-xs">"$5000 freelance"</p>
+              <p className="text-[10px] text-white/60 mt-0.5">→ Trabajo</p>
             </div>
             
-            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '300ms' }}>
-              <p className="text-white font-medium">"$120 gasolina"</p>
-              <p className="text-xs text-white/60 mt-1">→ Gasto registrado en categoría Transporte</p>
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '300ms' }}>
+              <p className="text-white font-medium text-xs">"$120 gasolina"</p>
+              <p className="text-[10px] text-white/60 mt-0.5">→ Transporte</p>
             </div>
 
-            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '450ms' }}>
-              <p className="text-white font-medium">"Comida con amigos $450"</p>
-              <p className="text-xs text-white/60 mt-1">→ Gasto registrado en categoría Ocio</p>
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '450ms' }}>
+              <p className="text-white font-medium text-xs">"$450 con amigos"</p>
+              <p className="text-[10px] text-white/60 mt-0.5">→ Ocio</p>
             </div>
           </div>
         </Card>
 
         {/* Beneficios */}
-        <Card className="p-6 bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur border-primary/20">
-          <h3 className="font-bold text-xl text-white mb-4 animate-fade-in">
+        <Card className="p-4 bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur border-primary/20">
+          <h3 className="font-bold text-base text-white mb-2 animate-fade-in">
             ¿Por qué usar WhatsApp? 💡
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-start gap-3 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '0ms' }}>
-              <div className="text-2xl">⚡</div>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex items-start gap-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '0ms' }}>
+              <div className="text-lg">⚡</div>
               <div>
-                <p className="font-semibold text-white">Instantáneo</p>
-                <p className="text-sm text-white/70">Registra en segundos, desde donde estés</p>
+                <p className="font-semibold text-white text-xs">Instantáneo</p>
+                <p className="text-[10px] text-white/70">Registra en segundos</p>
               </div>
             </div>
             
-            <div className="flex items-start gap-3 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '150ms' }}>
-              <div className="text-2xl">🤖</div>
+            <div className="flex items-start gap-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '150ms' }}>
+              <div className="text-lg">🤖</div>
               <div>
-                <p className="font-semibold text-white">Inteligente</p>
-                <p className="text-sm text-white/70">IA que entiende lenguaje natural</p>
+                <p className="font-semibold text-white text-xs">Inteligente</p>
+                <p className="text-[10px] text-white/70">IA que entiende</p>
               </div>
             </div>
             
-            <div className="flex items-start gap-3 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '300ms' }}>
-              <div className="text-2xl">🎯</div>
+            <div className="flex items-start gap-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '300ms' }}>
+              <div className="text-lg">🎯</div>
               <div>
-                <p className="font-semibold text-white">Preciso</p>
-                <p className="text-sm text-white/70">Categorización automática inteligente</p>
+                <p className="font-semibold text-white text-xs">Preciso</p>
+                <p className="text-[10px] text-white/70">Auto-categoriza</p>
               </div>
             </div>
             
-            <div className="flex items-start gap-3 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '450ms' }}>
-              <div className="text-2xl">🔔</div>
+            <div className="flex items-start gap-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '450ms' }}>
+              <div className="text-lg">🔔</div>
               <div>
-                <p className="font-semibold text-white">Recordatorios</p>
-                <p className="text-sm text-white/70">Moni te recuerda registrar tus gastos</p>
+                <p className="font-semibold text-white text-xs">Recordatorios</p>
+                <p className="text-[10px] text-white/70">Alertas útiles</p>
               </div>
             </div>
           </div>
