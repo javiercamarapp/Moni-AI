@@ -24,7 +24,7 @@ const Balance = () => {
   const [gastosByCategory, setGastosByCategory] = useState<CategoryBalance[]>([]);
   const [totalIngresos, setTotalIngresos] = useState(0);
   const [totalGastos, setTotalGastos] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchBalanceData();
