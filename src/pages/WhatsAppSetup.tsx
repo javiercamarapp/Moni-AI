@@ -132,37 +132,87 @@ export default function WhatsAppSetup() {
             <CheckCircle2 className="h-4 w-4 text-primary" />
             ¿Cómo funciona?
           </h3>
-          <div className="space-y-2">
-            <div className="flex gap-2 animate-fade-in hover:translate-x-2 transition-transform duration-200" style={{ animationDelay: '100ms' }}>
-              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
-                1
-              </div>
-              <div>
-                <p className="font-semibold text-white text-sm">Agrega el número</p>
-                <p className="text-xs text-white/70">Guarda como "Moni AI"</p>
-              </div>
-            </div>
-            
-            <div className="flex gap-2 animate-fade-in hover:translate-x-2 transition-transform duration-200" style={{ animationDelay: '250ms' }}>
-              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
-                2
-              </div>
-              <div>
-                <p className="font-semibold text-white text-sm">Envía transacciones</p>
-                <p className="text-xs text-white/70">Escribe natural, como hablas</p>
-              </div>
-            </div>
-            
-            <div className="flex gap-2 animate-fade-in hover:translate-x-2 transition-transform duration-200" style={{ animationDelay: '400ms' }}>
-              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
-                3
-              </div>
-              <div>
-                <p className="font-semibold text-white text-sm">Recibe confirmación</p>
-                <p className="text-xs text-white/70">Moni categoriza automáticamente</p>
-              </div>
-            </div>
-          </div>
+          <Carousel
+            className="w-full"
+            opts={{
+              align: "start",
+              loop: false,
+            }}
+          >
+            <CarouselContent className="-ml-2">
+              <CarouselItem className="basis-1/2 pl-2">
+                <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+                    1
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white text-sm">Agrega el número</p>
+                    <p className="text-xs text-white/70">Guarda como "Moni AI"</p>
+                  </div>
+                </div>
+              </CarouselItem>
+
+              <CarouselItem className="basis-1/2 pl-2">
+                <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+                    2
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white text-sm">Envía transacciones</p>
+                    <p className="text-xs text-white/70">Escribe natural, como hablas</p>
+                  </div>
+                </div>
+              </CarouselItem>
+
+              <CarouselItem className="basis-1/2 pl-2">
+                <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+                    3
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white text-sm">Recibe confirmación</p>
+                    <p className="text-xs text-white/70">Moni categoriza automáticamente</p>
+                  </div>
+                </div>
+              </CarouselItem>
+
+              <CarouselItem className="basis-1/2 pl-2">
+                <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+                    4
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white text-sm">Consulta tu balance</p>
+                    <p className="text-xs text-white/70">Pregunta: "¿Cuánto he gastado?"</p>
+                  </div>
+                </div>
+              </CarouselItem>
+
+              <CarouselItem className="basis-1/2 pl-2">
+                <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+                    5
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white text-sm">Recibe análisis</p>
+                    <p className="text-xs text-white/70">Reportes y consejos personalizados</p>
+                  </div>
+                </div>
+              </CarouselItem>
+
+              <CarouselItem className="basis-1/2 pl-2">
+                <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+                    6
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white text-sm">Mejora tus finanzas</p>
+                    <p className="text-xs text-white/70">Alcanza tus metas con Moni</p>
+                  </div>
+                </div>
+              </CarouselItem>
+            </CarouselContent>
+          </Carousel>
         </Card>
 
         {/* Ejemplos de mensajes - Carrusel */}
