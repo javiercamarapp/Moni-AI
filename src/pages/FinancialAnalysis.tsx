@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { addDays, addWeeks, addMonths, addYears, isBefore, startOfDay } from "date-fns";
 import { TrendingUp, TrendingDown, DollarSign, PiggyBank, Home, Target, MessageSquare, User, RefreshCw, Droplets, AlertCircle, Zap, Activity, BarChart3, Shield, Trophy, Heart } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import SafeToSpendWidget from "@/components/analysis/SafeToSpendWidget";
@@ -28,14 +29,161 @@ export default function FinancialAnalysis() {
   const [period, setPeriod] = useState("month");
   const [analysis, setAnalysis] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
+  const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
+  const [futureEvents, setFutureEvents] = useState<any[]>([]);
+  const [loadingTransactions, setLoadingTransactions] = useState(true);
   useEffect(() => {
     checkAuth();
   }, []);
   useEffect(() => {
     if (user) {
       loadAnalysis();
+      fetchTransactionsData();
     }
   }, [user, period]);
+
+  const fetchTransactionsData = async () => {
+    if (!user) return;
+    
+    setLoadingTransactions(true);
+    try {
+      // Fetch recent transactions (last 30 days)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const { data: transactions, error } = await supabase
+        .from('transactions')
+        .select(`
+          *,
+          categories (name, color)
+        `)
+        .eq('user_id', user.id)
+        .gte('transaction_date', thirtyDaysAgo.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+
+      // Format recent transactions
+      const formattedRecent = transactions?.map(t => ({
+        date: new Date(t.transaction_date),
+        type: t.type as "income" | "expense",
+        description: t.description,
+        amount: Number(t.amount),
+        category: t.categories?.name,
+        paymentMethod: t.payment_method,
+        account: t.account
+      })) || [];
+
+      setRecentTransactions(formattedRecent);
+
+      // Predict future payments based on recurring transactions
+      const { data: recurringTx } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .not('frequency', 'is', null)
+        .order('transaction_date', { ascending: false });
+
+      const predicted = predictFuturePayments(recurringTx || []);
+      setFutureEvents(predicted);
+      
+      setLoadingTransactions(false);
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+      setLoadingTransactions(false);
+    }
+  };
+
+  const predictFuturePayments = (recurringTransactions: any[]) => {
+    const today = startOfDay(new Date());
+    const futurePayments: any[] = [];
+    const nextThreeMonths = addMonths(today, 3);
+
+    recurringTransactions.forEach(tx => {
+      const lastDate = new Date(tx.transaction_date);
+      let nextDate = new Date(lastDate);
+
+      // Calculate next payment date based on frequency
+      switch (tx.frequency) {
+        case 'daily':
+          nextDate = addDays(lastDate, 1);
+          break;
+        case 'weekly':
+          nextDate = addWeeks(lastDate, 1);
+          break;
+        case 'biweekly':
+          nextDate = addWeeks(lastDate, 2);
+          break;
+        case 'monthly':
+          nextDate = addMonths(lastDate, 1);
+          break;
+        case 'quarterly':
+          nextDate = addMonths(lastDate, 3);
+          break;
+        case 'yearly':
+          nextDate = addYears(lastDate, 1);
+          break;
+      }
+
+      // Generate future occurrences within next 3 months
+      while (isBefore(nextDate, nextThreeMonths)) {
+        if (!isBefore(nextDate, today)) {
+          futurePayments.push({
+            date: new Date(nextDate),
+            type: tx.type,
+            description: `${tx.description} (${getFrequencyLabel(tx.frequency)})`,
+            amount: Number(tx.amount),
+            risk: calculatePaymentRisk(nextDate, Number(tx.amount))
+          });
+        }
+
+        // Calculate next occurrence
+        switch (tx.frequency) {
+          case 'daily':
+            nextDate = addDays(nextDate, 1);
+            break;
+          case 'weekly':
+            nextDate = addWeeks(nextDate, 1);
+            break;
+          case 'biweekly':
+            nextDate = addWeeks(nextDate, 2);
+            break;
+          case 'monthly':
+            nextDate = addMonths(nextDate, 1);
+            break;
+          case 'quarterly':
+            nextDate = addMonths(nextDate, 3);
+            break;
+          case 'yearly':
+            nextDate = addYears(nextDate, 1);
+            break;
+        }
+      }
+    });
+
+    return futurePayments.sort((a, b) => a.date.getTime() - b.date.getTime());
+  };
+
+  const getFrequencyLabel = (frequency: string) => {
+    const labels: Record<string, string> = {
+      daily: 'Diario',
+      weekly: 'Semanal',
+      biweekly: 'Quincenal',
+      monthly: 'Mensual',
+      quarterly: 'Trimestral',
+      yearly: 'Anual'
+    };
+    return labels[frequency] || frequency;
+  };
+
+  const calculatePaymentRisk = (date: Date, amount: number): "low" | "medium" | "high" => {
+    const daysUntil = Math.ceil((date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysUntil <= 3 && amount > 1000) return "high";
+    if (daysUntil <= 7 && amount > 500) return "medium";
+    return "low";
+  };
   const checkAuth = async () => {
     const {
       data: {
@@ -449,88 +597,34 @@ export default function FinancialAnalysis() {
             </Card>
 
             {/* Calendario de Próximos Movimientos */}
-            <FutureCalendarWidget 
-              events={[
-                {
-                  date: new Date(2025, 9, 12),
-                  type: "subscription",
-                  description: "Netflix",
-                  amount: 219
-                },
-                {
-                  date: new Date(2025, 9, 15),
-                  type: "income",
-                  description: "Nómina",
-                  amount: 15000
-                },
-                {
-                  date: new Date(2025, 9, 20),
-                  type: "expense",
-                  description: "Pago TC Banamex",
-                  amount: 3500
-                },
-                {
-                  date: new Date(2025, 9, 22),
-                  type: "subscription",
-                  description: "Spotify",
-                  amount: 115
-                },
-                {
-                  date: new Date(2025, 9, 25),
-                  type: "expense",
-                  description: "Renta",
-                  amount: 8000
-                }
-              ]}
-            />
+            {loadingTransactions ? (
+              <Card className="p-4 bg-gradient-card card-glow border-white/20">
+                <div className="text-center text-white/60 py-4">Cargando pagos futuros...</div>
+              </Card>
+            ) : futureEvents.length > 0 ? (
+              <FutureCalendarWidget events={futureEvents} />
+            ) : (
+              <Card className="p-4 bg-gradient-card card-glow border-white/20">
+                <div className="text-center text-white/60 py-4">
+                  No hay pagos recurrentes configurados
+                </div>
+              </Card>
+            )}
 
             {/* Movimientos Recientes */}
-            <RecentMovementsWidget 
-              transactions={[
-                {
-                  date: new Date(2025, 9, 8),
-                  type: "expense",
-                  description: "Uber Eats - Cena",
-                  amount: 350,
-                  category: "Comida"
-                },
-                {
-                  date: new Date(2025, 9, 7),
-                  type: "expense",
-                  description: "Oxxo - Compras",
-                  amount: 125,
-                  category: "Hormiga"
-                },
-                {
-                  date: new Date(2025, 9, 6),
-                  type: "expense",
-                  description: "Gasolina",
-                  amount: 800,
-                  category: "Transporte"
-                },
-                {
-                  date: new Date(2025, 9, 5),
-                  type: "income",
-                  description: "Freelance - Proyecto",
-                  amount: 5000,
-                  category: "Ingresos extras"
-                },
-                {
-                  date: new Date(2025, 9, 4),
-                  type: "expense",
-                  description: "Supermercado",
-                  amount: 1200,
-                  category: "Comida"
-                },
-                {
-                  date: new Date(2025, 9, 3),
-                  type: "expense",
-                  description: "Farmacia",
-                  amount: 450,
-                  category: "Salud"
-                }
-              ]}
-            />
+            {loadingTransactions ? (
+              <Card className="p-4 bg-gradient-card card-glow border-white/20">
+                <div className="text-center text-white/60 py-4">Cargando transacciones...</div>
+              </Card>
+            ) : recentTransactions.length > 0 ? (
+              <RecentMovementsWidget transactions={recentTransactions} />
+            ) : (
+              <Card className="p-4 bg-gradient-card card-glow border-white/20">
+                <div className="text-center text-white/60 py-4">
+                  No hay transacciones recientes
+                </div>
+              </Card>
+            )}
 
             {/* Gráficas adicionales */}
             <Card className="p-3 bg-gradient-card card-glow border-white/20">
