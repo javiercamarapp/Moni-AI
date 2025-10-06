@@ -34,6 +34,11 @@ const Profile = () => {
   const [selectedCountry, setSelectedCountry] = useState('México');
 
   const currencies = [
+    // Top 3 principales
+    { code: 'USD', name: 'Dólar estadounidense' },
+    { code: 'EUR', name: 'Euro' },
+    { code: 'MXN', name: 'Peso mexicano' },
+    // Resto en orden alfabético
     { code: 'AED', name: 'Dirham de los Emiratos Árabes Unidos' },
     { code: 'AFN', name: 'Afgani afgano' },
     { code: 'ALL', name: 'Lek albanés' },
@@ -76,7 +81,6 @@ const Profile = () => {
     { code: 'EGP', name: 'Libra egipcia' },
     { code: 'ERN', name: 'Nakfa eritreo' },
     { code: 'ETB', name: 'Birr etíope' },
-    { code: 'EUR', name: 'Euro' },
     { code: 'FJD', name: 'Dólar fiyiano' },
     { code: 'FKP', name: 'Libra malvinense' },
     { code: 'GBP', name: 'Libra esterlina' },
@@ -130,7 +134,6 @@ const Profile = () => {
     { code: 'MUR', name: 'Rupia mauriciana' },
     { code: 'MVR', name: 'Rufiyaa maldiva' },
     { code: 'MWK', name: 'Kwacha malauí' },
-    { code: 'MXN', name: 'Peso mexicano' },
     { code: 'MYR', name: 'Ringgit malayo' },
     { code: 'MZN', name: 'Metical mozambiqueño' },
     { code: 'NAD', name: 'Dólar namibio' },
@@ -177,7 +180,6 @@ const Profile = () => {
     { code: 'TZS', name: 'Chelín tanzano' },
     { code: 'UAH', name: 'Grivna ucraniana' },
     { code: 'UGX', name: 'Chelín ugandés' },
-    { code: 'USD', name: 'Dólar estadounidense' },
     { code: 'UYU', name: 'Peso uruguayo' },
     { code: 'UZS', name: 'Som uzbeko' },
     { code: 'VES', name: 'Bolívar venezolano' },
