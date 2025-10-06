@@ -244,7 +244,7 @@ const Dashboard = () => {
                   <p className="text-sm text-white/90 mb-3">
                     Descuentos exclusivos por tiempo limitado
                   </p>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-white/10 text-white border-white/30 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
+                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/20 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
                     Comprar Ahora
                   </Button>
                 </div>
@@ -267,7 +267,7 @@ const Dashboard = () => {
                   <p className="text-sm text-white/90 mb-3">
                     Planifica y ahorra para cumplir tus objetivos
                   </p>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-white/10 text-white border-white/30 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
+                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/20 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
                     Comenzar
                   </Button>
                 </div>
@@ -290,7 +290,7 @@ const Dashboard = () => {
                   <p className="text-sm text-white/90 mb-3">
                     Únete a grupos y multiplica tus ahorros
                   </p>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-white/10 text-white border-white/30 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
+                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/20 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
                     Explorar
                   </Button>
                 </div>
