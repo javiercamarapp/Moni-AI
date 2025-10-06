@@ -23,23 +23,23 @@ export default function FinancialHealthPieWidget({
       name: 'Ahorro', 
       value: validSavings, 
       color: '#10b981',
-      percentage: (validSavings / total) * 100 
+      percentage: total > 0 ? (validSavings / total) * 100 : 0
     },
     { 
       name: 'Gastos Fijos', 
       value: validFixed, 
       color: '#f59e0b',
-      percentage: (validFixed / total) * 100 
+      percentage: total > 0 ? (validFixed / total) * 100 : 0
     },
     { 
       name: 'Gastos Variables', 
       value: validVariable, 
       color: '#8b5cf6',
-      percentage: (validVariable / total) * 100 
+      percentage: total > 0 ? (validVariable / total) * 100 : 0
     },
   ];
 
-  const savingsRate = (validSavings / total) * 100;
+  const savingsRate = total > 0 ? (validSavings / total) * 100 : 0;
   const healthStatus = savingsRate >= 20 ? '✅ Excelente' : savingsRate >= 10 ? '⚠️ Mejorable' : '❌ Crítico';
 
   return (
@@ -55,7 +55,10 @@ export default function FinancialHealthPieWidget({
             cx="50%"
             cy="50%"
             labelLine={false}
-            label={({ name, percentage }) => `${name} ${percentage.toFixed(0)}%`}
+            label={({ name, percentage }) => {
+              const validPercentage = percentage && !isNaN(percentage) ? percentage : 0;
+              return `${name} ${validPercentage.toFixed(0)}%`;
+            }}
             outerRadius={70}
             fill="#8884d8"
             dataKey="value"
@@ -83,7 +86,7 @@ export default function FinancialHealthPieWidget({
               <span className="text-white/70">{item.name}</span>
             </div>
             <span className="text-white/90 font-medium">
-              ${item.value.toLocaleString()} ({item.percentage.toFixed(1)}%)
+              ${item.value.toLocaleString()} ({(item.percentage || 0).toFixed(1)}%)
             </span>
           </div>
         ))}
