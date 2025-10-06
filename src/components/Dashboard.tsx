@@ -345,9 +345,9 @@ const Dashboard = () => {
           <Card className="sm:col-span-2 p-3 sm:p-4 bg-gradient-card card-glow h-full flex flex-col justify-between animate-fade-in" style={{ animationDelay: '0ms' }}>
             <div className="space-y-2 sm:space-y-3">
               {/* Balance Principal */}
-              <div>
+              <div className="text-center">
                 <p className="text-[10px] sm:text-xs text-white/80 mb-1">Te quedan</p>
-                <div className="flex items-baseline gap-1 sm:gap-2">
+                <div className="flex items-baseline gap-1 sm:gap-2 justify-center">
                   <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">
                     ${currentMonth.balance.toLocaleString('es-MX')}
                   </h2>
