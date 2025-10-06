@@ -37,20 +37,20 @@ const Dashboard = () => {
   const getMonthName = (offset: number) => {
     const now = new Date();
     const targetDate = new Date(now.getFullYear(), now.getMonth() - offset, 1);
-    return targetDate.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
+    return targetDate.toLocaleDateString('es-MX', {
+      month: 'long',
+      year: 'numeric'
+    });
   };
-
   const currentMonth = {
     month: getMonthName(selectedMonthOffset),
     income: monthlyIncome,
     expenses: monthlyExpenses,
     balance: monthlyIncome - monthlyExpenses
   };
-  
   const handlePrevMonth = () => {
     setSelectedMonthOffset(prev => prev + 1);
   };
-  
   const handleNextMonth = () => {
     if (selectedMonthOffset > 0) {
       setSelectedMonthOffset(prev => prev - 1);
@@ -70,22 +70,24 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchGoals = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: {
+            user
+          }
+        } = await supabase.auth.getUser();
         if (!user) return;
-
-        const { data, error } = await supabase
-          .from('goals')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
-
+        const {
+          data,
+          error
+        } = await supabase.from('goals').select('*').eq('user_id', user.id).order('created_at', {
+          ascending: false
+        });
         if (error) throw error;
         setGoals(data || []);
       } catch (error) {
         console.error('Error fetching goals:', error);
       }
     };
-
     fetchGoals();
   }, []);
 
@@ -93,7 +95,11 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: {
+            user
+          }
+        } = await supabase.auth.getUser();
         if (!user) return;
 
         // Calculate the selected month's dates
@@ -103,36 +109,26 @@ const Dashboard = () => {
         const lastDay = new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 0);
 
         // Fetch all transactions for selected month
-        const { data: allTransactions, error: allError } = await supabase
-          .from('transactions')
-          .select('*')
-          .eq('user_id', user.id)
-          .gte('transaction_date', firstDay.toISOString().split('T')[0])
-          .lte('transaction_date', lastDay.toISOString().split('T')[0]);
-
+        const {
+          data: allTransactions,
+          error: allError
+        } = await supabase.from('transactions').select('*').eq('user_id', user.id).gte('transaction_date', firstDay.toISOString().split('T')[0]).lte('transaction_date', lastDay.toISOString().split('T')[0]);
         if (allError) throw allError;
 
         // Calculate monthly totals
-        const income = allTransactions
-          ?.filter(t => t.type === 'ingreso')
-          .reduce((sum, t) => sum + Number(t.amount), 0) || 0;
-        
-        const expenses = allTransactions
-          ?.filter(t => t.type === 'gasto')
-          .reduce((sum, t) => sum + Number(t.amount), 0) || 0;
-
+        const income = allTransactions?.filter(t => t.type === 'ingreso').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+        const expenses = allTransactions?.filter(t => t.type === 'gasto').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
         setMonthlyIncome(income);
         setMonthlyExpenses(expenses);
 
         // Fetch recent transactions for display (always from current month for recent view)
         if (selectedMonthOffset === 0) {
-          const { data: recentData, error: recentError } = await supabase
-            .from('transactions')
-            .select('*, categories(name, color)')
-            .eq('user_id', user.id)
-            .order('transaction_date', { ascending: false })
-            .limit(5);
-
+          const {
+            data: recentData,
+            error: recentError
+          } = await supabase.from('transactions').select('*, categories(name, color)').eq('user_id', user.id).order('transaction_date', {
+            ascending: false
+          }).limit(5);
           if (recentError) throw recentError;
           setRecentTransactions(recentData || []);
         }
@@ -140,23 +136,23 @@ const Dashboard = () => {
         console.error('Error fetching transactions:', error);
       }
     };
-
     fetchTransactions();
   }, [selectedMonthOffset]);
-
   useEffect(() => {
     // Check authentication in background - no loading screen
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (!session) {
         navigate("/auth");
       } else {
         setUser(session.user);
       }
     };
-    
     checkAuth();
-
     const {
       data: {
         subscription
@@ -170,7 +166,6 @@ const Dashboard = () => {
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
-  
   const handleLogout = async () => {
     try {
       localStorage.removeItem('sb-gfojxewccmjwdzdmdfxv-auth-token');
@@ -185,12 +180,11 @@ const Dashboard = () => {
       navigate("/auth");
     }
   };
-  
   const progressPercentage = currentXP / nextLevelXP * 100;
   const achievements: any[] = []; // Los logros se implementarán en el futuro basados en la actividad del usuario
   return <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header superior con logo y notificaciones */}
-      <div className="p-4 flex justify-between items-start">
+      <div className="p-2 flex justify-between items-start">
         {/* Logo banner - esquina superior izquierda */}
         <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden w-16 h-10">
           <img src={heroAuth} alt="Moni" className="w-full h-full object-cover" />
@@ -229,7 +223,7 @@ const Dashboard = () => {
       }}>
           <CarouselContent className="-ml-2 md:-ml-4">
             <CarouselItem className="pl-2 md:pl-4 basis-[85%] md:basis-[80%]">
-              <Card className="relative overflow-hidden bg-gradient-card card-glow border-white/20 h-[200px] sm:h-[240px] hover:scale-105 transition-transform duration-200">
+              <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
                 <img src={bannerHalloween} alt="Halloween Special Sale" className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
                 <div className="relative p-6 h-full flex flex-col justify-center">
@@ -244,7 +238,7 @@ const Dashboard = () => {
                   <p className="text-sm text-white/90 mb-3">
                     Descuentos exclusivos por tiempo limitado
                   </p>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/20 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
+                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
                     Comprar Ahora
                   </Button>
                 </div>
@@ -252,7 +246,7 @@ const Dashboard = () => {
             </CarouselItem>
             
             <CarouselItem className="pl-2 md:pl-4 basis-[85%] md:basis-[80%]">
-              <Card className="relative overflow-hidden bg-gradient-card card-glow border-white/20 h-[200px] sm:h-[240px] hover:scale-105 transition-transform duration-200">
+              <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
                 <img src={bannerGoals} alt="Banner de metas" className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
                 <div className="relative p-6 h-full flex flex-col justify-center">
@@ -267,7 +261,7 @@ const Dashboard = () => {
                   <p className="text-sm text-white/90 mb-3">
                     Planifica y ahorra para cumplir tus objetivos
                   </p>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/20 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
+                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
                     Comenzar
                   </Button>
                 </div>
@@ -275,7 +269,7 @@ const Dashboard = () => {
             </CarouselItem>
             
             <CarouselItem className="pl-2 md:pl-4 basis-[85%] md:basis-[80%]">
-              <Card className="relative overflow-hidden bg-gradient-card card-glow border-white/20 h-[200px] sm:h-[240px] hover:scale-105 transition-transform duration-200">
+              <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
                 <img src={bannerGroups} alt="Banner de ahorro grupal" className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
                 <div className="relative p-6 h-full flex flex-col justify-center">
@@ -290,7 +284,7 @@ const Dashboard = () => {
                   <p className="text-sm text-white/90 mb-3">
                     Únete a grupos y multiplica tus ahorros
                   </p>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/20 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
+                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
                     Explorar
                   </Button>
                 </div>
@@ -302,7 +296,7 @@ const Dashboard = () => {
       
       {/* Bottom Navigation Menu - Fixed */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 animated-wave-bg border-t border-white/20 shadow-lg">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-2">
           <div className="flex items-center justify-around h-16">
             <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-purple-400 hover:bg-white/10 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/dashboard")}>
               <Home className="w-5 h-5 text-purple-400" />
@@ -332,97 +326,23 @@ const Dashboard = () => {
         </div>
       </nav>
 
-      <div className="px-4">
+      <div className="p-2 sm:p-4">
       <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
         
         {/* Balance Overview y Quick Stats en la misma fila */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
-          {/* Sección 1: Safe to Spend Overview */}
-          <Card className="sm:col-span-2 p-3 sm:p-4 bg-gradient-card card-glow h-full flex flex-col justify-between animate-fade-in" style={{ animationDelay: '0ms' }}>
-            <div className="space-y-3 sm:space-y-4">
-              {/* Safe-to-Spend Principal */}
-              <div className="text-center border-b border-white/20 pb-3">
-                <p className="text-[10px] sm:text-xs text-white/80 mb-1">Disponible hoy (Safe-to-Spend)</p>
-                <div className="flex items-baseline gap-1 sm:gap-2 justify-center">
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
-                    ${(currentMonth.balance * 0.7).toLocaleString('es-MX', { maximumFractionDigits: 0 })}
-                  </h2>
-                  <span className="text-xs sm:text-sm text-white/60">MXN</span>
-                </div>
-                <p className="text-[9px] sm:text-[10px] text-white/60 mt-1">
-                  Ingresos - gastos fijos - apartados del mes
-                </p>
-              </div>
-
-              {/* Próximos cobros/cargos */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-xs sm:text-sm font-semibold text-white">Próximos 7 días</h4>
-                  <Badge variant="outline" className="text-[9px] text-white border-white/30">3 movimientos</Badge>
-                </div>
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-[10px] sm:text-xs">
-                    <div className="flex items-center gap-2">
-                      <span className="text-white/60">15 Oct</span>
-                      <span className="text-white">Nómina</span>
-                    </div>
-                    <span className="font-semibold text-green-500">+$12,000</span>
-                  </div>
-                  <div className="flex items-center justify-between text-[10px] sm:text-xs">
-                    <div className="flex items-center gap-2">
-                      <span className="text-white/60">18 Oct</span>
-                      <span className="text-white">Renta</span>
-                    </div>
-                    <span className="font-semibold text-red-500">-$5,000</span>
-                  </div>
-                  <div className="flex items-center justify-between text-[10px] sm:text-xs">
-                    <div className="flex items-center gap-2">
-                      <span className="text-white/60">20 Oct</span>
-                      <span className="text-white">Tarjeta</span>
-                      <Badge variant="outline" className="text-[8px] text-red-400 border-red-400/50">¡Riesgo!</Badge>
-                    </div>
-                    <span className="font-semibold text-red-500">-$3,200</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Top 3 Acciones de Ahorro */}
-              <div>
-                <h4 className="text-xs sm:text-sm font-semibold text-white mb-2">Top 3 acciones de ahorro</h4>
-                <div className="space-y-1.5">
-                  <div className="flex items-start gap-2 text-[10px] sm:text-xs">
-                    <span className="text-white/60 flex-shrink-0">1.</span>
-                    <div className="flex-1">
-                      <span className="text-white">Cancela 'Netflix Premium'</span>
-                      <span className="text-green-400 font-semibold ml-2">+$219/mes</span>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-2 text-[10px] sm:text-xs">
-                    <span className="text-white/60 flex-shrink-0">2.</span>
-                    <div className="flex-1">
-                      <span className="text-white">Bajar comida 10%</span>
-                      <span className="text-green-400 font-semibold ml-2">+$480/mes</span>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-2 text-[10px] sm:text-xs">
-                    <span className="text-white/60 flex-shrink-0">3.</span>
-                    <div className="flex-1">
-                      <span className="text-white">Pagar TC2 antes del 12</span>
-                      <span className="text-green-400 font-semibold ml-2">+$95 intereses</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          {/* Sección 1: Balance Overview - Más grande */}
+          <Card className="sm:col-span-2 p-3 sm:p-4 bg-gradient-card card-glow h-full flex flex-col justify-between animate-fade-in" style={{
+            animationDelay: '0ms'
+          }}>
+            
           </Card>
 
           {/* Sección 2: Quick Stats - 3 estadísticas */}
           <div className="sm:col-span-1 grid grid-cols-3 sm:grid-cols-1 gap-2">
-            <Card 
-              className="p-2 sm:p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in"
-              onClick={() => navigate('/balance')}
-              style={{ animationDelay: '100ms' }}
-            >
+            <Card className="p-2 sm:p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
+              animationDelay: '100ms'
+            }}>
               <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
                 <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-primary/20 flex items-center justify-center mb-1 sm:mb-0">
                   <Wallet className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
@@ -436,7 +356,9 @@ const Dashboard = () => {
               </div>
             </Card>
 
-            <Card className="p-2 sm:p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '200ms' }}>
+            <Card className="p-2 sm:p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+              animationDelay: '200ms'
+            }}>
               <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
                 <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-success/20 flex items-center justify-center mb-1 sm:mb-0">
                   <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
@@ -450,7 +372,9 @@ const Dashboard = () => {
               </div>
             </Card>
 
-            <Card className="p-2 sm:p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '300ms' }}>
+            <Card className="p-2 sm:p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+              animationDelay: '300ms'
+            }}>
               <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
                 <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-warning/20 flex items-center justify-center mb-1 sm:mb-0">
                   <Target className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
@@ -465,7 +389,9 @@ const Dashboard = () => {
         </div>
 
         {/* WhatsApp Banner */}
-        <Card className="p-3 sm:p-4 bg-gradient-card card-glow mb-4 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '400ms' }}>
+        <Card className="p-3 sm:p-4 bg-gradient-card card-glow mb-4 animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+          animationDelay: '400ms'
+        }}>
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
               <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
@@ -497,22 +423,15 @@ const Dashboard = () => {
               </div>
 
               <div className="space-y-3 sm:space-y-4">
-                {goals.length === 0 ? (
-                  <Card className="p-6 bg-gradient-card card-glow text-center">
+                {goals.length === 0 ? <Card className="p-6 bg-gradient-card card-glow text-center">
                     <p className="text-white/70 mb-4">No tienes metas creadas aún</p>
-                    <Button 
-                      size="sm" 
-                      onClick={() => navigate('/new-goal')} 
-                      className="bg-gradient-card card-glow hover:bg-white/30 text-white hover:scale-105 transition-transform duration-200"
-                    >
+                    <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-gradient-card card-glow hover:bg-white/30 text-white hover:scale-105 transition-transform duration-200">
                       <Plus className="w-4 h-4 mr-2" />
                       Crear tu primera meta
                     </Button>
-                  </Card>
-                ) : (
-                  goals.map(goal => {
-                    const goalProgress = goal.current / goal.target * 100;
-                    return <Card key={goal.id} className="p-4 sm:p-6 bg-gradient-card card-glow hover-lift">
+                  </Card> : goals.map(goal => {
+                  const goalProgress = goal.current / goal.target * 100;
+                  return <Card key={goal.id} className="p-4 sm:p-6 bg-gradient-card card-glow hover-lift">
                         <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-4">
                           <div className="flex-1">
                             <div className="flex items-center flex-wrap space-x-2 mb-2 gap-1">
@@ -542,8 +461,7 @@ const Dashboard = () => {
                           </span>
                         </div>
                       </Card>;
-                  })
-                )}
+                })}
               </div>
             </div>
           </div>
@@ -620,12 +538,9 @@ const Dashboard = () => {
                 </Button>
               </div>
               <div className="space-y-3">
-                {recentTransactions.length === 0 ? (
-                  <p className="text-white/70 text-sm text-center py-4">
+                {recentTransactions.length === 0 ? <p className="text-white/70 text-sm text-center py-4">
                     No hay transacciones registradas aún
-                  </p>
-                ) : (
-                  recentTransactions.map(transaction => <div key={transaction.id} className="flex justify-between items-center">
+                  </p> : recentTransactions.map(transaction => <div key={transaction.id} className="flex justify-between items-center">
                       <div>
                         <p className="text-sm font-medium text-white">
                           {transaction.description}
@@ -637,8 +552,7 @@ const Dashboard = () => {
                       <span className={`text-sm font-semibold ${transaction.type === 'ingreso' ? 'text-green-500' : 'text-red-500'}`}>
                         {transaction.type === 'ingreso' ? '+' : '-'}${Math.abs(Number(transaction.amount))}
                       </span>
-                    </div>)
-                )}
+                    </div>)}
               </div>
             </Card>
 
@@ -654,12 +568,9 @@ const Dashboard = () => {
                 </Button>
               </div>
               <div className="space-y-3">
-                {achievements.length === 0 ? (
-                  <p className="text-white/70 text-sm text-center py-4">
+                {achievements.length === 0 ? <p className="text-white/70 text-sm text-center py-4">
                     No hay logros aún. ¡Empieza a usar la app para desbloquearlos!
-                  </p>
-                ) : (
-                  achievements.map(achievement => <div key={achievement.id} className={`p-3 rounded-lg border ${achievement.earned ? 'border-white/30 bg-white/10' : 'border-white/20 bg-white/5'}`}>
+                  </p> : achievements.map(achievement => <div key={achievement.id} className={`p-3 rounded-lg border ${achievement.earned ? 'border-white/30 bg-white/10' : 'border-white/20 bg-white/5'}`}>
                       <div className="flex items-start space-x-2">
                         <div className={`w-6 h-6 rounded-full flex items-center justify-center ${achievement.earned ? 'bg-white text-black' : 'bg-gray-600'}`}>
                           {achievement.earned ? <Zap className="w-3 h-3" /> : <Target className="w-3 h-3" />}
@@ -673,8 +584,7 @@ const Dashboard = () => {
                           </p>
                         </div>
                       </div>
-                    </div>)
-                )}
+                    </div>)}
               </div>
             </Card>
           </div>
