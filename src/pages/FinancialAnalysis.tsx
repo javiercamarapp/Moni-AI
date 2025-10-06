@@ -417,7 +417,7 @@ export default function FinancialAnalysis() {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-lg border-t border-white/10">
+      <div className="fixed bottom-0 left-0 right-0 z-50 animated-wave-bg border-t border-white/20 shadow-lg">
         <div className="flex justify-around items-center h-16 max-w-md mx-auto px-4">
           <button
             onClick={() => navigate("/dashboard")}
