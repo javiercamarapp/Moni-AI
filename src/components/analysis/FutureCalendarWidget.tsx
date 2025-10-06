@@ -57,7 +57,7 @@ export default function FutureCalendarWidget({ events }: FutureCalendarProps) {
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-blue-400" />
-          <p className="text-sm font-medium text-white">📅 Calendario de Movimientos</p>
+          <p className="text-sm font-medium text-white">📅 Calendario de próximos movimientos</p>
         </div>
 
         <div className="space-y-2 max-h-64 overflow-y-auto">
