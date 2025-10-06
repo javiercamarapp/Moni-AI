@@ -51,22 +51,27 @@ export default function FinancialAnalysis() {
       fetchTransactionsData();
     }
   }, [user, period]);
+
   const fetchTransactionsData = async () => {
     if (!user) return;
+    
     setLoadingTransactions(true);
     try {
       // Fetch recent transactions (last 30 days)
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      const {
-        data: recentTx,
-        error: recentError
-      } = await supabase.from('transactions').select(`
+      
+      const { data: recentTx, error: recentError } = await supabase
+        .from('transactions')
+        .select(`
           *,
           categories (name, color)
-        `).eq('user_id', user.id).gte('transaction_date', thirtyDaysAgo.toISOString().split('T')[0]).order('transaction_date', {
-        ascending: false
-      }).limit(10);
+        `)
+        .eq('user_id', user.id)
+        .gte('transaction_date', thirtyDaysAgo.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false })
+        .limit(10);
+
       if (recentError) throw recentError;
 
       // Format recent transactions
@@ -79,38 +84,47 @@ export default function FinancialAnalysis() {
         paymentMethod: t.payment_method,
         account: t.account
       })) || [];
+
       setRecentTransactions(formattedRecent);
 
       // Fetch ALL transactions (last 6 months) to detect patterns
       const sixMonthsAgo = new Date();
       sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-      const {
-        data: allTx,
-        error: allError
-      } = await supabase.from('transactions').select('*').eq('user_id', user.id).gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0]).order('transaction_date', {
-        ascending: false
-      });
+      
+      const { data: allTx, error: allError } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false });
+
       if (allError) throw allError;
 
       // AI analyzes patterns and predicts future payments
       const predicted = detectRecurringPayments(allTx || []);
       setFutureEvents(predicted);
+      
       setLoadingTransactions(false);
     } catch (error) {
       console.error('Error fetching transactions:', error);
       setLoadingTransactions(false);
     }
   };
+
   const detectRecurringPayments = (transactions: any[]) => {
     const today = startOfDay(new Date());
     const futurePayments: any[] = [];
-
+    
     // Group transactions by similar descriptions (normalize text)
     const groupedByDescription: Record<string, any[]> = {};
+    
     transactions.forEach(tx => {
-      const normalizedDesc = tx.description.toLowerCase().replace(/\d+/g, '') // Remove numbers
-      .replace(/[^\w\s]/g, '') // Remove special chars
-      .trim();
+      const normalizedDesc = tx.description
+        .toLowerCase()
+        .replace(/\d+/g, '') // Remove numbers
+        .replace(/[^\w\s]/g, '') // Remove special chars
+        .trim();
+      
       if (!groupedByDescription[normalizedDesc]) {
         groupedByDescription[normalizedDesc] = [];
       }
@@ -122,14 +136,21 @@ export default function FinancialAnalysis() {
       if (txs.length < 2) return; // Need at least 2 occurrences
 
       // Sort by date
-      const sortedTxs = txs.sort((a, b) => new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime());
+      const sortedTxs = txs.sort((a, b) => 
+        new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime()
+      );
 
       // Calculate average interval between transactions (in days)
       const intervals: number[] = [];
       for (let i = 1; i < sortedTxs.length; i++) {
-        const daysDiff = Math.round((new Date(sortedTxs[i].transaction_date).getTime() - new Date(sortedTxs[i - 1].transaction_date).getTime()) / (1000 * 60 * 60 * 24));
+        const daysDiff = Math.round(
+          (new Date(sortedTxs[i].transaction_date).getTime() - 
+           new Date(sortedTxs[i-1].transaction_date).getTime()) / 
+          (1000 * 60 * 60 * 24)
+        );
         intervals.push(daysDiff);
       }
+
       const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
       const avgAmount = sortedTxs.reduce((sum, tx) => sum + Number(tx.amount), 0) / sortedTxs.length;
 
@@ -163,6 +184,7 @@ export default function FinancialAnalysis() {
         // Generate next 3 occurrences
         const nextThreeMonths = addMonths(today, 3);
         let count = 0;
+        
         while (isBefore(nextDate, nextThreeMonths) && count < 3) {
           if (!isBefore(nextDate, today)) {
             futurePayments.push({
@@ -178,10 +200,14 @@ export default function FinancialAnalysis() {
         }
       }
     });
+
     return futurePayments.sort((a, b) => a.date.getTime() - b.date.getTime());
   };
+
+
   const calculatePaymentRisk = (date: Date, amount: number): "low" | "medium" | "high" => {
     const daysUntil = Math.ceil((date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    
     if (daysUntil <= 3 && amount > 1000) return "high";
     if (daysUntil <= 7 && amount > 500) return "medium";
     return "low";
@@ -253,51 +279,74 @@ export default function FinancialAnalysis() {
 
         {analysis && <>
             {/* Score Moni - Compacto (resumen rápido) */}
-            
+            <Card className="p-4 bg-gradient-card card-glow border-white/20 hover:scale-105 transition-transform duration-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-white/70 mb-1">Score Moni</p>
+                  <p className="text-3xl font-bold text-white">{analysis.metrics.scoreMoni}<span className="text-sm text-white/60">/100</span></p>
+                  <p className="text-xs text-white/70 mt-1">
+                    {analysis.metrics.scoreMoni >= 70 ? '✅ Excelente' : analysis.metrics.scoreMoni >= 40 ? '⚠️ Mejorable' : '❌ Crítico'}
+                  </p>
+                </div>
+                <div className="relative">
+                  <svg className="w-20 h-20 transform -rotate-90">
+                    <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" className="text-white/20" />
+                    <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" strokeDasharray={`${2 * Math.PI * 34}`} strokeDashoffset={`${2 * Math.PI * 34 * (1 - analysis.metrics.scoreMoni / 100)}`} className={`transition-all ${analysis.metrics.scoreMoni >= 70 ? 'text-emerald-400' : analysis.metrics.scoreMoni >= 40 ? 'text-yellow-400' : 'text-red-400'}`} strokeLinecap="round" />
+                  </svg>
+                </div>
+              </div>
+            </Card>
 
             {/* 1. VALOR INMEDIATO */}
             {analysis.safeToSpend && <SafeToSpendWidget {...analysis.safeToSpend} />}
 
             {/* AI Coach Insights */}
             <AICoachInsightsWidget 
-              monthlyIncome={analysis.metrics.monthlyIncome || 0}
-              monthlyExpenses={analysis.metrics.monthlyExpenses || 0}
-              fixedExpenses={analysis.metrics.fixedExpenses || 0}
-              savingsGoals={0}
-              balance={(analysis.metrics.monthlyIncome || 0) - (analysis.metrics.monthlyExpenses || 0)}
+              monthStatus="stable"
+              mainMessage="Tus finanzas respiran."
+              improvementTip="Reduciendo Comida 8% liberas +$520/mes y subes tu Score +5 pts. Mantén el ritmo con +$300 a fondo de emergencia."
             />
 
             {/* Risk Indicators */}
-            <RiskIndicatorsWidget hasIssues={(analysis.metrics.liquidityMonths || 0) < 3 || (analysis.metrics.financialBurden || 0) > 20 || analysis.metrics.scoreMoni < 70} indicators={[
-        // Liquidity
-        ...((analysis.metrics.liquidityMonths || 0) < 1.5 ? [{
-          level: "critical" as const,
-          message: `🔴 Liquidez crítica: ${(analysis.metrics.liquidityMonths || 0).toFixed(1)} meses de gasto cubierto.`
-        }] : (analysis.metrics.liquidityMonths || 0) < 3 ? [{
-          level: "warning" as const,
-          message: `🟡 Liquidez baja: ${(analysis.metrics.liquidityMonths || 0).toFixed(1)} meses cubiertos (meta: 3m).`
-        }] : []),
-        // Financial burden
-        ...((analysis.metrics.financialBurden || 0) > 30 ? [{
-          level: "critical" as const,
-          message: `🔴 Carga financiera al límite (${(analysis.metrics.financialBurden || 0).toFixed(0)}%).`
-        }] : (analysis.metrics.financialBurden || 0) > 20 ? [{
-          level: "warning" as const,
-          message: `🟡 Carga de deuda moderada (${(analysis.metrics.financialBurden || 0).toFixed(0)}%).`
-        }] : []),
-        // Score
-        ...(analysis.metrics.scoreMoni < 40 ? [{
-          level: "critical" as const,
-          message: `🔴 Score Moni crítico (${analysis.metrics.scoreMoni}/100). Requiere atención inmediata.`
-        }] : analysis.metrics.scoreMoni < 70 ? [{
-          level: "warning" as const,
-          message: `🟡 Score Moni mejorable (${analysis.metrics.scoreMoni}/100). Hay oportunidades de mejora.`
-        }] : []),
-        // Savings rate
-        ...(analysis.metrics.savingsRate < 10 ? [{
-          level: "warning" as const,
-          message: `🟡 Tasa de ahorro baja (${analysis.metrics.savingsRate}%). Meta recomendada: 20%.`
-        }] : [])]} />
+            <RiskIndicatorsWidget 
+              hasIssues={
+                (analysis.metrics.liquidityMonths || 0) < 3 || 
+                (analysis.metrics.financialBurden || 0) > 20 ||
+                analysis.metrics.scoreMoni < 70
+              }
+              indicators={[
+                // Liquidity
+                ...(
+                  (analysis.metrics.liquidityMonths || 0) < 1.5 
+                    ? [{ level: "critical" as const, message: `🔴 Liquidez crítica: ${(analysis.metrics.liquidityMonths || 0).toFixed(1)} meses de gasto cubierto.` }]
+                    : (analysis.metrics.liquidityMonths || 0) < 3
+                    ? [{ level: "warning" as const, message: `🟡 Liquidez baja: ${(analysis.metrics.liquidityMonths || 0).toFixed(1)} meses cubiertos (meta: 3m).` }]
+                    : []
+                ),
+                // Financial burden
+                ...(
+                  (analysis.metrics.financialBurden || 0) > 30
+                    ? [{ level: "critical" as const, message: `🔴 Carga financiera al límite (${(analysis.metrics.financialBurden || 0).toFixed(0)}%).` }]
+                    : (analysis.metrics.financialBurden || 0) > 20
+                    ? [{ level: "warning" as const, message: `🟡 Carga de deuda moderada (${(analysis.metrics.financialBurden || 0).toFixed(0)}%).` }]
+                    : []
+                ),
+                // Score
+                ...(
+                  analysis.metrics.scoreMoni < 40
+                    ? [{ level: "critical" as const, message: `🔴 Score Moni crítico (${analysis.metrics.scoreMoni}/100). Requiere atención inmediata.` }]
+                    : analysis.metrics.scoreMoni < 70
+                    ? [{ level: "warning" as const, message: `🟡 Score Moni mejorable (${analysis.metrics.scoreMoni}/100). Hay oportunidades de mejora.` }]
+                    : []
+                ),
+                // Savings rate
+                ...(
+                  analysis.metrics.savingsRate < 10
+                    ? [{ level: "warning" as const, message: `🟡 Tasa de ahorro baja (${analysis.metrics.savingsRate}%). Meta recomendada: 20%.` }]
+                    : []
+                )
+              ]}
+            />
 
             {analysis.upcomingTransactions && <UpcomingTransactionsWidget {...analysis.upcomingTransactions} />}
 
@@ -576,22 +625,34 @@ export default function FinancialAnalysis() {
             </Card>
 
             {/* Calendario de Próximos Movimientos */}
-            {loadingTransactions ? <Card className="p-4 bg-gradient-card card-glow border-white/20">
+            {loadingTransactions ? (
+              <Card className="p-4 bg-gradient-card card-glow border-white/20">
                 <div className="text-center text-white/60 py-4">Cargando pagos futuros...</div>
-              </Card> : futureEvents.length > 0 ? <FutureCalendarWidget events={futureEvents} /> : <Card className="p-4 bg-gradient-card card-glow border-white/20">
+              </Card>
+            ) : futureEvents.length > 0 ? (
+              <FutureCalendarWidget events={futureEvents} />
+            ) : (
+              <Card className="p-4 bg-gradient-card card-glow border-white/20">
                 <div className="text-center text-white/60 py-4">
                   No hay pagos recurrentes configurados
                 </div>
-              </Card>}
+              </Card>
+            )}
 
             {/* Movimientos Recientes */}
-            {loadingTransactions ? <Card className="p-4 bg-gradient-card card-glow border-white/20">
+            {loadingTransactions ? (
+              <Card className="p-4 bg-gradient-card card-glow border-white/20">
                 <div className="text-center text-white/60 py-4">Cargando transacciones...</div>
-              </Card> : recentTransactions.length > 0 ? <RecentMovementsWidget transactions={recentTransactions} /> : <Card className="p-4 bg-gradient-card card-glow border-white/20">
+              </Card>
+            ) : recentTransactions.length > 0 ? (
+              <RecentMovementsWidget transactions={recentTransactions} />
+            ) : (
+              <Card className="p-4 bg-gradient-card card-glow border-white/20">
                 <div className="text-center text-white/60 py-4">
                   No hay transacciones recientes
                 </div>
-              </Card>}
+              </Card>
+            )}
 
             {/* Gráficas adicionales */}
             <Card className="p-3 bg-gradient-card card-glow border-white/20">
@@ -638,118 +699,62 @@ export default function FinancialAnalysis() {
             </Card>
 
             {/* Historical Comparison */}
-            <HistoricalComparisonWidget data={[{
-          month: 'May',
-          income: 15000,
-          expenses: 12500,
-          savings: 2500
-        }, {
-          month: 'Jun',
-          income: 15500,
-          expenses: 12400,
-          savings: 3100
-        }, {
-          month: 'Jul',
-          income: 16000,
-          expenses: 12200,
-          savings: 3800
-        }, {
-          month: 'Ago',
-          income: 16200,
-          expenses: 12000,
-          savings: 4200
-        }, {
-          month: 'Sep',
-          income: 16500,
-          expenses: 11700,
-          savings: 4800
-        }, {
-          month: 'Oct',
-          income: 17000,
-          expenses: 11800,
-          savings: 5200
-        }]} insight="Tu gasto promedio bajó $1,200 desde julio. Mantén la tendencia." />
+            <HistoricalComparisonWidget 
+              data={[
+                { month: 'May', income: 15000, expenses: 12500, savings: 2500 },
+                { month: 'Jun', income: 15500, expenses: 12400, savings: 3100 },
+                { month: 'Jul', income: 16000, expenses: 12200, savings: 3800 },
+                { month: 'Ago', income: 16200, expenses: 12000, savings: 4200 },
+                { month: 'Sep', income: 16500, expenses: 11700, savings: 4800 },
+                { month: 'Oct', income: 17000, expenses: 11800, savings: 5200 },
+              ]}
+              insight="Tu gasto promedio bajó $1,200 desde julio. Mantén la tendencia."
+            />
 
             {/* Evolution Chart */}
-            <EvolutionChartWidget data={[{
-          month: 'May',
-          score: 62,
-          savings: 2.5,
-          balance: 8.2,
-          income: 15,
-          expenses: 12
-        }, {
-          month: 'Jun',
-          score: 65,
-          savings: 3.1,
-          balance: 11.3,
-          income: 15.5,
-          expenses: 11.8
-        }, {
-          month: 'Jul',
-          score: 68,
-          savings: 3.8,
-          balance: 15.1,
-          income: 16,
-          expenses: 11.5
-        }, {
-          month: 'Ago',
-          score: 70,
-          savings: 4.2,
-          balance: 19.3,
-          income: 16.2,
-          expenses: 11.2
-        }, {
-          month: 'Sep',
-          score: 73,
-          savings: 4.8,
-          balance: 24.1,
-          income: 16.5,
-          expenses: 10.9
-        }, {
-          month: 'Oct',
-          score: 75,
-          savings: 5.2,
-          balance: 29.3,
-          income: 17,
-          expenses: 10.8
-        }]} insight="Tu ahorro promedio subió 12% en 3 meses, pero tu gasto fijo sigue alto. Ajustar renta o servicios podría darte +4 pts." />
+            <EvolutionChartWidget 
+              data={[
+                { month: 'May', score: 62, savings: 2.5, balance: 8.2, income: 15, expenses: 12 },
+                { month: 'Jun', score: 65, savings: 3.1, balance: 11.3, income: 15.5, expenses: 11.8 },
+                { month: 'Jul', score: 68, savings: 3.8, balance: 15.1, income: 16, expenses: 11.5 },
+                { month: 'Ago', score: 70, savings: 4.2, balance: 19.3, income: 16.2, expenses: 11.2 },
+                { month: 'Sep', score: 73, savings: 4.8, balance: 24.1, income: 16.5, expenses: 10.9 },
+                { month: 'Oct', score: 75, savings: 5.2, balance: 29.3, income: 17, expenses: 10.8 },
+              ]}
+              insight="Tu ahorro promedio subió 12% en 3 meses, pero tu gasto fijo sigue alto. Ajustar renta o servicios podría darte +4 pts."
+            />
 
             {/* Additional Financial Health Charts */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <IncomeExpensePieWidget income={analysis.metrics.totalIncome} expenses={analysis.metrics.totalExpenses} />
+              <IncomeExpensePieWidget 
+                income={analysis.metrics.totalIncome}
+                expenses={analysis.metrics.totalExpenses}
+              />
               
-              <FinancialHealthPieWidget savings={analysis.metrics.balance > 0 ? analysis.metrics.balance : 0} fixedExpenses={analysis.metrics.totalExpenses * 0.6} variableExpenses={analysis.metrics.totalExpenses * 0.4} />
+              <FinancialHealthPieWidget 
+                savings={analysis.metrics.balance > 0 ? analysis.metrics.balance : 0}
+                fixedExpenses={analysis.metrics.totalExpenses * 0.6}
+                variableExpenses={analysis.metrics.totalExpenses * 0.4}
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <CategoryBreakdownWidget categories={[{
-            name: 'Vivienda',
-            value: analysis.metrics.totalExpenses * 0.3,
-            color: '#8b5cf6'
-          }, {
-            name: 'Alimentación',
-            value: analysis.metrics.totalExpenses * 0.25,
-            color: '#ec4899'
-          }, {
-            name: 'Transporte',
-            value: analysis.metrics.totalExpenses * 0.15,
-            color: '#f59e0b'
-          }, {
-            name: 'Servicios',
-            value: analysis.metrics.totalExpenses * 0.12,
-            color: '#10b981'
-          }, {
-            name: 'Entretenimiento',
-            value: analysis.metrics.totalExpenses * 0.10,
-            color: '#3b82f6'
-          }, {
-            name: 'Otros',
-            value: analysis.metrics.totalExpenses * 0.08,
-            color: '#ef4444'
-          }]} />
+              <CategoryBreakdownWidget 
+                categories={[
+                  { name: 'Vivienda', value: analysis.metrics.totalExpenses * 0.3, color: '#8b5cf6' },
+                  { name: 'Alimentación', value: analysis.metrics.totalExpenses * 0.25, color: '#ec4899' },
+                  { name: 'Transporte', value: analysis.metrics.totalExpenses * 0.15, color: '#f59e0b' },
+                  { name: 'Servicios', value: analysis.metrics.totalExpenses * 0.12, color: '#10b981' },
+                  { name: 'Entretenimiento', value: analysis.metrics.totalExpenses * 0.10, color: '#3b82f6' },
+                  { name: 'Otros', value: analysis.metrics.totalExpenses * 0.08, color: '#ef4444' },
+                ]}
+              />
               
-              <LiquidityGaugeWidget months={analysis.metrics.liquidityMonths || 0} currentBalance={analysis.metrics.balance} monthlyExpenses={analysis.metrics.totalExpenses} />
+              <LiquidityGaugeWidget 
+                months={analysis.metrics.liquidityMonths || 0}
+                currentBalance={analysis.metrics.balance}
+                monthlyExpenses={analysis.metrics.totalExpenses}
+              />
             </div>
           </>}
       </div>
