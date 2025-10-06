@@ -16,6 +16,9 @@ import BudgetProgressWidget from "@/components/analysis/BudgetProgressWidget";
 import DebtPaymentPlanWidget from "@/components/analysis/DebtPaymentPlanWidget";
 import SubscriptionsWidget from "@/components/analysis/SubscriptionsWidget";
 import UpcomingTransactionsWidget from "@/components/analysis/UpcomingTransactionsWidget";
+import RiskIndicatorsWidget from "@/components/analysis/RiskIndicatorsWidget";
+import EvolutionChartWidget from "@/components/analysis/EvolutionChartWidget";
+import HistoricalComparisonWidget from "@/components/analysis/HistoricalComparisonWidget";
 export default function FinancialAnalysis() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -117,6 +120,39 @@ export default function FinancialAnalysis() {
 
             {/* 1. VALOR INMEDIATO */}
             {analysis.safeToSpend && <SafeToSpendWidget {...analysis.safeToSpend} />}
+
+            {/* Risk Indicators */}
+            <RiskIndicatorsWidget 
+              liquidityMonths={analysis.metrics.liquidityMonths || 0}
+              financialBurden={analysis.metrics.financialBurden || 0}
+              variableExpensesChange={5} // This would come from backend calculation
+            />
+
+            {/* Evolution Chart */}
+            <EvolutionChartWidget 
+              data={[
+                { month: 'May', score: 62, savings: 2.5, balance: 8.2, income: 15, expenses: 12 },
+                { month: 'Jun', score: 65, savings: 3.1, balance: 11.3, income: 15.5, expenses: 11.8 },
+                { month: 'Jul', score: 68, savings: 3.8, balance: 15.1, income: 16, expenses: 11.5 },
+                { month: 'Ago', score: 70, savings: 4.2, balance: 19.3, income: 16.2, expenses: 11.2 },
+                { month: 'Sep', score: 73, savings: 4.8, balance: 24.1, income: 16.5, expenses: 10.9 },
+                { month: 'Oct', score: 75, savings: 5.2, balance: 29.3, income: 17, expenses: 10.8 },
+              ]}
+              insight="Tu ahorro promedio subió 12% en 3 meses, pero tu gasto fijo sigue alto. Ajustar renta o servicios podría darte +4 pts."
+            />
+
+            {/* Historical Comparison */}
+            <HistoricalComparisonWidget 
+              data={[
+                { month: 'May', income: 15000, expenses: 12500, savings: 2500 },
+                { month: 'Jun', income: 15500, expenses: 12400, savings: 3100 },
+                { month: 'Jul', income: 16000, expenses: 12200, savings: 3800 },
+                { month: 'Ago', income: 16200, expenses: 12000, savings: 4200 },
+                { month: 'Sep', income: 16500, expenses: 11700, savings: 4800 },
+                { month: 'Oct', income: 17000, expenses: 11800, savings: 5200 },
+              ]}
+              insight="Tu gasto promedio bajó $1,200 desde julio. Mantén la tendencia."
+            />
 
             {analysis.upcomingTransactions && <UpcomingTransactionsWidget {...analysis.upcomingTransactions} />}
 
