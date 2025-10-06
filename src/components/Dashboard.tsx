@@ -199,13 +199,13 @@ const Dashboard = () => {
         {/* Puntos y nivel + Notificaciones */}
         <div className="flex gap-2 items-center">
           {/* Botón de puntos y nivel */}
-          <Button variant="ghost" className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white h-10 px-3 gap-2">
+          <Button variant="ghost" className="bg-gradient-card card-glow hover:bg-white/20 text-white h-10 px-3 gap-2 hover:scale-105 transition-transform duration-200">
             <span className="text-sm font-bold">{currentXP} pts</span>
             <span className="text-xs opacity-80">Nivel {level}</span>
           </Button>
           
           {/* Botón de notificaciones */}
-          <Button variant="ghost" size="icon" className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white h-10 w-10">
+          <Button variant="ghost" size="icon" className="bg-gradient-card card-glow hover:bg-white/20 text-white h-10 w-10 hover:scale-105 transition-transform duration-200">
             <Bell className="h-5 w-5" />
           </Button>
         </div>
@@ -244,7 +244,7 @@ const Dashboard = () => {
                   <p className="text-sm text-white/90 mb-3">
                     Descuentos exclusivos por tiempo limitado
                   </p>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 w-fit">
+                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
                     Comprar Ahora
                   </Button>
                 </div>
@@ -267,7 +267,7 @@ const Dashboard = () => {
                   <p className="text-sm text-white/90 mb-3">
                     Planifica y ahorra para cumplir tus objetivos
                   </p>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 w-fit">
+                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
                     Comenzar
                   </Button>
                 </div>
@@ -290,7 +290,7 @@ const Dashboard = () => {
                   <p className="text-sm text-white/90 mb-3">
                     Únete a grupos y multiplica tus ahorros
                   </p>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 w-fit">
+                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
                     Explorar
                   </Button>
                 </div>
@@ -304,27 +304,27 @@ const Dashboard = () => {
       <nav className="fixed bottom-0 left-0 right-0 z-50 animated-wave-bg border-t border-white/20 shadow-lg">
         <div className="container mx-auto px-2">
           <div className="flex items-center justify-around h-16">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-purple-400 hover:bg-white/10" onClick={() => navigate("/dashboard")}>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-purple-400 hover:bg-white/10 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/dashboard")}>
               <Home className="w-5 h-5 text-purple-400" />
               <span className="text-xs text-purple-400">Home</span>
             </Button>
 
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/analysis")}>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/analysis")}>
               <BarChart3 className="w-5 h-5 text-white" />
               <span className="text-xs text-white">Análisis</span>
             </Button>
 
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/goals")}>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/goals")}>
               <Target className="w-5 h-5 text-white" />
               <span className="text-xs text-white">Metas</span>
             </Button>
 
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/chat")}>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/chat")}>
               <MessageCircle className="w-5 h-5 text-white" />
               <span className="text-xs text-white">Chat AI</span>
             </Button>
 
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/profile")}>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/profile")}>
               <User className="w-5 h-5 text-white" />
               <span className="text-xs text-white">Perfil</span>
             </Button>
@@ -361,7 +361,7 @@ const Dashboard = () => {
                  >
                    <span className="text-sm sm:text-base">&lt;</span>
                  </Button>
-                 <div className="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1">
+                 <div className="bg-gradient-card card-glow backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1">
                    <span className="text-[10px] sm:text-xs text-white font-medium capitalize">{currentMonth.month}</span>
                  </div>
                  <Button 
@@ -375,10 +375,10 @@ const Dashboard = () => {
                  </Button>
                </div>
 
-              {/* Ingresos y Egresos */}
+               {/* Ingresos y Egresos */}
               <div className="grid grid-cols-2 gap-2">
                 <Card 
-                  className="p-2 sm:p-3 bg-white/10 backdrop-blur-sm border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200"
+                  className="p-2 sm:p-3 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200"
                   onClick={() => navigate('/ingresos')}
                 >
                   <div className="text-center">
@@ -387,7 +387,7 @@ const Dashboard = () => {
                   </div>
                 </Card>
                 <Card 
-                  className="p-2 sm:p-3 bg-white/10 backdrop-blur-sm border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200"
+                  className="p-2 sm:p-3 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200"
                   onClick={() => navigate('/gastos')}
                 >
                   <div className="text-center">
@@ -473,7 +473,7 @@ const Dashboard = () => {
             <div>
               <div className="flex flex-row justify-between items-center mb-4">
                 <h3 className="text-lg sm:text-xl font-semibold text-white">Tus Metas</h3>
-                <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-white/20 hover:bg-white/30 text-white border-white/30 text-xs sm:text-sm">
+                <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-gradient-card card-glow hover:bg-white/30 text-white border-white/30 text-xs sm:text-sm hover:scale-105 transition-transform duration-200">
                   <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   Nueva Meta
                 </Button>
@@ -486,7 +486,7 @@ const Dashboard = () => {
                     <Button 
                       size="sm" 
                       onClick={() => navigate('/new-goal')} 
-                      className="bg-white/20 hover:bg-white/30 text-white"
+                      className="bg-gradient-card card-glow hover:bg-white/30 text-white hover:scale-105 transition-transform duration-200"
                     >
                       <Plus className="w-4 h-4 mr-2" />
                       Crear tu primera meta
@@ -547,7 +547,7 @@ const Dashboard = () => {
               </div>
               
               <div className="space-y-3 mb-4">
-                <div className="bg-white/10 rounded-2xl rounded-bl-md p-2 sm:p-3">
+                 <div className="bg-gradient-card card-glow rounded-2xl rounded-bl-md p-2 sm:p-3">
                   <p className="text-xs sm:text-sm text-white">
                     ¡Hola! 👋 Soy tu coach financiero personal.
                     <br /><br />
@@ -556,7 +556,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <Button size="sm" className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30" onClick={() => navigate("/chat")}>
+              <Button size="sm" className="w-full bg-gradient-card card-glow hover:bg-white/30 text-white border-white/30 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/chat")}>
                 <MessageCircle className="w-4 h-4 mr-2" />
                 Chatear con Moni AI
               </Button>
@@ -575,7 +575,7 @@ const Dashboard = () => {
               </div>
               
               <div className="space-y-3 mb-4">
-                <div className="bg-white/10 rounded-2xl rounded-bl-md p-2 sm:p-3">
+                <div className="bg-gradient-card card-glow rounded-2xl rounded-bl-md p-2 sm:p-3">
                   <p className="text-xs sm:text-sm text-white">
                     📊 Obtén análisis detallado de tus finanzas con IA
                     <br /><br />
@@ -588,7 +588,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <Button size="sm" className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30" onClick={() => navigate("/analysis")}>
+              <Button size="sm" className="w-full bg-gradient-card card-glow hover:bg-white/30 text-white border-white/30 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/analysis")}>
                 <TrendingUp className="w-4 h-4 mr-2" />
                 Ver Análisis
               </Button>
@@ -598,7 +598,7 @@ const Dashboard = () => {
             <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
               <div className="flex justify-between items-center mb-4">
                 <h4 className="text-sm sm:text-base font-semibold text-white">Movimientos Recientes</h4>
-                <Button variant="ghost" size="sm" className="text-xs text-white hover:bg-white/10">
+                <Button variant="ghost" size="sm" className="text-xs text-white hover:bg-white/10 hover:scale-105 transition-transform duration-200">
                   Ver todos
                 </Button>
               </div>
@@ -632,7 +632,7 @@ const Dashboard = () => {
                   <Trophy className="w-4 h-4 mr-2 text-white" />
                   Logros Recientes
                 </h4>
-                <Button variant="ghost" size="sm" className="text-xs text-white hover:bg-white/10">
+                <Button variant="ghost" size="sm" className="text-xs text-white hover:bg-white/10 hover:scale-105 transition-transform duration-200">
                   Ver todos
                 </Button>
               </div>
