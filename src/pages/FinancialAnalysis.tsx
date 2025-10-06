@@ -19,6 +19,8 @@ import UpcomingTransactionsWidget from "@/components/analysis/UpcomingTransactio
 import RiskIndicatorsWidget from "@/components/analysis/RiskIndicatorsWidget";
 import EvolutionChartWidget from "@/components/analysis/EvolutionChartWidget";
 import HistoricalComparisonWidget from "@/components/analysis/HistoricalComparisonWidget";
+import FutureCalendarWidget from "@/components/analysis/FutureCalendarWidget";
+import AICoachInsightsWidget from "@/components/analysis/AICoachInsightsWidget";
 export default function FinancialAnalysis() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -121,13 +123,51 @@ export default function FinancialAnalysis() {
             {/* 1. VALOR INMEDIATO */}
             {analysis.safeToSpend && <SafeToSpendWidget {...analysis.safeToSpend} />}
 
-            {/* Microcopy Empático */}
-            <Card className="p-2 bg-gradient-to-r from-emerald-600/90 to-teal-600/90 card-glow border-emerald-500/30">
-              <p className="text-[10px] text-emerald-200 leading-snug">
-                🌿 <span className="font-medium">Tus finanzas respiran</span>. Reduciendo Comida 8% liberas +$520/mes y subes tu Score +5 pts. 
-                Mantén el ritmo con +$300 a fondo de emergencia.
-              </p>
-            </Card>
+            {/* AI Coach Insights */}
+            <AICoachInsightsWidget 
+              monthStatus="stable"
+              mainMessage="Tus finanzas respiran"
+              details={[
+                "Reduciendo Comida 8% liberas +$520/mes y subes tu Score +5 pts",
+                "Mantén el ritmo con +$300 a fondo de emergencia"
+              ]}
+            />
+
+            {/* Future Calendar */}
+            <FutureCalendarWidget 
+              events={[
+                {
+                  date: new Date(2025, 9, 12),
+                  type: "subscription",
+                  description: "Netflix",
+                  amount: 219
+                },
+                {
+                  date: new Date(2025, 9, 15),
+                  type: "income",
+                  description: "Nómina",
+                  amount: 15000
+                },
+                {
+                  date: new Date(2025, 9, 20),
+                  type: "expense",
+                  description: "Pago TC Banamex",
+                  amount: 3500
+                },
+                {
+                  date: new Date(2025, 9, 22),
+                  type: "subscription",
+                  description: "Spotify",
+                  amount: 115
+                },
+                {
+                  date: new Date(2025, 9, 25),
+                  type: "expense",
+                  description: "Renta",
+                  amount: 8000
+                }
+              ]}
+            />
 
             {/* Risk Indicators */}
             <RiskIndicatorsWidget 
