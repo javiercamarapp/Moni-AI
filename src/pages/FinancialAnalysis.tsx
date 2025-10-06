@@ -605,7 +605,7 @@ export default function FinancialAnalysis() {
         {/* Bottom Navigation */}
         <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-lg border-t border-white/10 p-4 z-50">
           <div className="max-w-6xl mx-auto flex justify-around items-center">
-            <button onClick={() => navigate("/")} className="flex flex-col items-center gap-1 text-white/60 hover:text-white transition-colors">
+            <button onClick={() => navigate("/dashboard")} className="flex flex-col items-center gap-1 text-white/60 hover:text-white transition-colors">
               <Home className="h-6 w-6" />
               <span className="text-xs">Inicio</span>
             </button>
