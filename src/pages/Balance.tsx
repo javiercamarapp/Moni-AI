@@ -271,7 +271,11 @@ const Balance = () => {
             </p>
           </Card>
 
-          <Card className="p-4 bg-gradient-card card-glow text-center hover:scale-105 transition-transform duration-200 animate-fade-in" style={{ animationDelay: '200ms' }}>
+          <Card 
+            className="p-4 bg-gradient-card card-glow text-center hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer" 
+            style={{ animationDelay: '200ms' }}
+            onClick={() => navigate('/gastos')}
+          >
             <div className="flex items-center justify-center gap-2 mb-2">
               <TrendingDown className="h-5 w-5 text-red-400" />
               <p className="text-sm text-white/70">Gastos</p>
