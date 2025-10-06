@@ -405,7 +405,10 @@ const Dashboard = () => {
 
           {/* Sección 2: Quick Stats - 3 estadísticas */}
           <div className="sm:col-span-1 grid grid-cols-3 sm:grid-cols-1 gap-2">
-            <Card className="p-2 sm:p-3 bg-gradient-card card-glow">
+            <Card 
+              className="p-2 sm:p-3 bg-gradient-card card-glow cursor-pointer hover:bg-white/20 transition-colors"
+              onClick={() => navigate('/balance')}
+            >
               <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
                 <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-primary/20 flex items-center justify-center mb-1 sm:mb-0">
                   <Wallet className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
