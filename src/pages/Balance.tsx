@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Progress } from '@/components/ui/progress';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
 interface CategoryBalance {
   id: string;
@@ -480,27 +481,43 @@ const Balance = () => {
           {ingresosByCategory.length === 0 ? (
             <p className="text-white/70 text-center py-4">No hay ingresos registrados</p>
           ) : (
-            <div className="space-y-3">
-              {ingresosByCategory.map((cat) => (
-                <div key={cat.id}>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <Badge className="bg-green-500/20 text-green-200 border-green-500/30">
-                        {cat.name}
-                      </Badge>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-white font-semibold">
-                        ${cat.total.toLocaleString('es-MX')}
-                      </p>
-                      <p className="text-xs text-white/60">
-                        {cat.percentage.toFixed(1)}%
-                      </p>
-                    </div>
-                  </div>
-                  <Progress value={cat.percentage} className="h-2 bg-white/10" />
-                </div>
-              ))}
+            <div className="w-full h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={ingresosByCategory}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percentage }) => `${name}: ${percentage.toFixed(1)}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="total"
+                  >
+                    {ingresosByCategory.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={`hsl(${120 + index * 30}, 70%, 50%)`} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    formatter={(value: number) => `$${value.toLocaleString('es-MX')}`}
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(0, 0, 0, 0.8)', 
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      color: 'white'
+                    }}
+                  />
+                  <Legend 
+                    verticalAlign="bottom" 
+                    height={36}
+                    formatter={(value, entry: any) => (
+                      <span className="text-white text-xs">
+                        {value}: ${entry.payload.total.toLocaleString('es-MX')}
+                      </span>
+                    )}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           )}
         </Card>
@@ -515,27 +532,43 @@ const Balance = () => {
           {gastosByCategory.length === 0 ? (
             <p className="text-white/70 text-center py-4">No hay gastos registrados</p>
           ) : (
-            <div className="space-y-3">
-              {gastosByCategory.map((cat) => (
-                <div key={cat.id}>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <Badge className="bg-red-500/20 text-red-200 border-red-500/30">
-                        {cat.name}
-                      </Badge>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-white font-semibold">
-                        ${cat.total.toLocaleString('es-MX')}
-                      </p>
-                      <p className="text-xs text-white/60">
-                        {cat.percentage.toFixed(1)}%
-                      </p>
-                    </div>
-                  </div>
-                  <Progress value={cat.percentage} className="h-2 bg-white/10" />
-                </div>
-              ))}
+            <div className="w-full h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={gastosByCategory}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percentage }) => `${name}: ${percentage.toFixed(1)}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="total"
+                  >
+                    {gastosByCategory.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={`hsl(${0 + index * 30}, 70%, 50%)`} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    formatter={(value: number) => `$${value.toLocaleString('es-MX')}`}
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(0, 0, 0, 0.8)', 
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      color: 'white'
+                    }}
+                  />
+                  <Legend 
+                    verticalAlign="bottom" 
+                    height={36}
+                    formatter={(value, entry: any) => (
+                      <span className="text-white text-xs">
+                        {value}: ${entry.payload.total.toLocaleString('es-MX')}
+                      </span>
+                    )}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           )}
         </Card>
