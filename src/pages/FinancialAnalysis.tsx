@@ -127,11 +127,8 @@ export default function FinancialAnalysis() {
             {/* AI Coach Insights */}
             <AICoachInsightsWidget 
               monthStatus="stable"
-              mainMessage="Tus finanzas respiran"
-              details={[
-                "Reduciendo Comida 8% liberas +$520/mes y subes tu Score +5 pts",
-                "Mantén el ritmo con +$300 a fondo de emergencia"
-              ]}
+              mainMessage="Tus finanzas respiran."
+              improvementTip="Reduciendo Comida 8% liberas +$520/mes y subes tu Score +5 pts. Mantén el ritmo con +$300 a fondo de emergencia."
             />
 
             {/* Risk Indicators */}
