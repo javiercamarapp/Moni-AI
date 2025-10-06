@@ -20,6 +20,7 @@ import RiskIndicatorsWidget from "@/components/analysis/RiskIndicatorsWidget";
 import EvolutionChartWidget from "@/components/analysis/EvolutionChartWidget";
 import HistoricalComparisonWidget from "@/components/analysis/HistoricalComparisonWidget";
 import FutureCalendarWidget from "@/components/analysis/FutureCalendarWidget";
+import RecentMovementsWidget from "@/components/analysis/RecentMovementsWidget";
 import AICoachInsightsWidget from "@/components/analysis/AICoachInsightsWidget";
 export default function FinancialAnalysis() {
   const navigate = useNavigate();
@@ -130,42 +131,6 @@ export default function FinancialAnalysis() {
               details={[
                 "Reduciendo Comida 8% liberas +$520/mes y subes tu Score +5 pts",
                 "Mantén el ritmo con +$300 a fondo de emergencia"
-              ]}
-            />
-
-            {/* Future Calendar */}
-            <FutureCalendarWidget 
-              events={[
-                {
-                  date: new Date(2025, 9, 12),
-                  type: "subscription",
-                  description: "Netflix",
-                  amount: 219
-                },
-                {
-                  date: new Date(2025, 9, 15),
-                  type: "income",
-                  description: "Nómina",
-                  amount: 15000
-                },
-                {
-                  date: new Date(2025, 9, 20),
-                  type: "expense",
-                  description: "Pago TC Banamex",
-                  amount: 3500
-                },
-                {
-                  date: new Date(2025, 9, 22),
-                  type: "subscription",
-                  description: "Spotify",
-                  amount: 115
-                },
-                {
-                  date: new Date(2025, 9, 25),
-                  type: "expense",
-                  description: "Renta",
-                  amount: 8000
-                }
               ]}
             />
 
@@ -452,8 +417,89 @@ export default function FinancialAnalysis() {
               </div>
             </Card>
 
-            {/* Análisis AI */}
-            
+            {/* Calendario de Próximos Movimientos */}
+            <FutureCalendarWidget 
+              events={[
+                {
+                  date: new Date(2025, 9, 12),
+                  type: "subscription",
+                  description: "Netflix",
+                  amount: 219
+                },
+                {
+                  date: new Date(2025, 9, 15),
+                  type: "income",
+                  description: "Nómina",
+                  amount: 15000
+                },
+                {
+                  date: new Date(2025, 9, 20),
+                  type: "expense",
+                  description: "Pago TC Banamex",
+                  amount: 3500
+                },
+                {
+                  date: new Date(2025, 9, 22),
+                  type: "subscription",
+                  description: "Spotify",
+                  amount: 115
+                },
+                {
+                  date: new Date(2025, 9, 25),
+                  type: "expense",
+                  description: "Renta",
+                  amount: 8000
+                }
+              ]}
+            />
+
+            {/* Movimientos Recientes */}
+            <RecentMovementsWidget 
+              transactions={[
+                {
+                  date: new Date(2025, 9, 8),
+                  type: "expense",
+                  description: "Uber Eats - Cena",
+                  amount: 350,
+                  category: "Comida"
+                },
+                {
+                  date: new Date(2025, 9, 7),
+                  type: "expense",
+                  description: "Oxxo - Compras",
+                  amount: 125,
+                  category: "Hormiga"
+                },
+                {
+                  date: new Date(2025, 9, 6),
+                  type: "expense",
+                  description: "Gasolina",
+                  amount: 800,
+                  category: "Transporte"
+                },
+                {
+                  date: new Date(2025, 9, 5),
+                  type: "income",
+                  description: "Freelance - Proyecto",
+                  amount: 5000,
+                  category: "Ingresos extras"
+                },
+                {
+                  date: new Date(2025, 9, 4),
+                  type: "expense",
+                  description: "Supermercado",
+                  amount: 1200,
+                  category: "Comida"
+                },
+                {
+                  date: new Date(2025, 9, 3),
+                  type: "expense",
+                  description: "Farmacia",
+                  amount: 450,
+                  category: "Salud"
+                }
+              ]}
+            />
 
             {/* Gráficas adicionales */}
             <Card className="p-3 bg-gradient-card card-glow border-white/20">
