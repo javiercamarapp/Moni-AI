@@ -3,17 +3,36 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, MessageCircle, CheckCircle2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/components/ui/carousel";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import whatsappLogo from '@/assets/whatsapp-logo.png';
+import Autoplay from "embla-carousel-autoplay";
 
 export default function WhatsAppSetup() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [user, setUser] = useState<any>(null);
+  const [api, setApi] = useState<CarouselApi>();
   
   // Número de WhatsApp de Moni AI (esto debería venir de configuración)
   const MONI_WHATSAPP = "+52 123 456 7890"; // Reemplazar con el número real
+
+  // Ejemplos de mensajes
+  const ejemplosMensajes = [
+    { mensaje: "Gasté $350 en súper", categoria: "Comida", tipo: "gasto" },
+    { mensaje: "$5000 freelance", categoria: "Trabajo", tipo: "ingreso" },
+    { mensaje: "$120 gasolina", categoria: "Transporte", tipo: "gasto" },
+    { mensaje: "$450 con amigos", categoria: "Ocio", tipo: "gasto" },
+    { mensaje: "Me pagaron $8000", categoria: "Salario", tipo: "ingreso" },
+    { mensaje: "$80 Netflix", categoria: "Suscripciones", tipo: "gasto" },
+    { mensaje: "Cena $250", categoria: "Comida", tipo: "gasto" },
+    { mensaje: "Ingreso $1500 venta", categoria: "Trabajo", tipo: "ingreso" },
+    { mensaje: "$600 luz", categoria: "Servicios", tipo: "gasto" },
+    { mensaje: "Uber $150", categoria: "Transporte", tipo: "gasto" },
+    { mensaje: "$3000 bono", categoria: "Salario", tipo: "ingreso" },
+    { mensaje: "Farmacia $280", categoria: "Salud", tipo: "gasto" },
+  ];
 
   useEffect(() => {
     checkAuth();
@@ -144,32 +163,35 @@ export default function WhatsAppSetup() {
           </div>
         </Card>
 
-        {/* Ejemplos de mensajes */}
+        {/* Ejemplos de mensajes - Carrusel */}
         <Card className="p-4 bg-card/80 backdrop-blur border-border/50 overflow-hidden">
           <h3 className="font-bold text-base text-white mb-2">
             Ejemplos de mensajes
           </h3>
-          <div className="grid grid-cols-2 gap-2">
-            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '0ms' }}>
-              <p className="text-white font-medium text-xs">"Gasté $350 en súper"</p>
-              <p className="text-[10px] text-white/60 mt-0.5">→ Comida</p>
-            </div>
-            
-            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '150ms' }}>
-              <p className="text-white font-medium text-xs">"$5000 freelance"</p>
-              <p className="text-[10px] text-white/60 mt-0.5">→ Trabajo</p>
-            </div>
-            
-            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '300ms' }}>
-              <p className="text-white font-medium text-xs">"$120 gasolina"</p>
-              <p className="text-[10px] text-white/60 mt-0.5">→ Transporte</p>
-            </div>
-
-            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '450ms' }}>
-              <p className="text-white font-medium text-xs">"$450 con amigos"</p>
-              <p className="text-[10px] text-white/60 mt-0.5">→ Ocio</p>
-            </div>
-          </div>
+          <Carousel
+            setApi={setApi}
+            className="w-full"
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            plugins={[
+              Autoplay({
+                delay: 2500,
+              }),
+            ]}
+          >
+            <CarouselContent>
+              {ejemplosMensajes.map((ejemplo, index) => (
+                <CarouselItem key={index} className="basis-1/2">
+                  <div className={`${ejemplo.tipo === 'ingreso' ? 'bg-green-500/10 border-green-500/30' : 'bg-red-500/10 border-red-500/30'} border rounded-lg p-2 hover:scale-105 transition-transform duration-200`}>
+                    <p className="text-white font-medium text-xs">"{ejemplo.mensaje}"</p>
+                    <p className="text-[10px] text-white/60 mt-0.5">→ {ejemplo.categoria}</p>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
         </Card>
 
         {/* Beneficios */}
