@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, TrendingUp, TrendingDown, Wallet, ChevronLeft, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Progress } from '@/components/ui/progress';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 interface CategoryBalance {
   id: string;
@@ -29,7 +30,12 @@ const Balance = () => {
     proyeccionAnual: number;
     proyeccionSemestral: number;
     confianza: string;
-    razonamiento: string;
+    insights: Array<{
+      titulo: string;
+      metrica: string;
+      descripcion: string;
+      tipo: 'positivo' | 'negativo' | 'neutral' | 'consejo';
+    }>;
   } | null>(null);
   const [loadingProyecciones, setLoadingProyecciones] = useState(false);
 
@@ -52,7 +58,12 @@ const Balance = () => {
         proyeccionAnual: 0,
         proyeccionSemestral: 0,
         confianza: 'sin-datos',
-        razonamiento: 'Aún no hay suficientes datos para hacer proyecciones. Empieza registrando tus ingresos y gastos.'
+        insights: [{
+          titulo: 'Sin Datos Suficientes',
+          metrica: '0 transacciones',
+          descripcion: 'Aún no hay suficientes datos para hacer proyecciones. Empieza registrando tus ingresos y gastos.',
+          tipo: 'neutral'
+        }]
       });
       setLoadingProyecciones(false);
     }
@@ -101,7 +112,12 @@ const Balance = () => {
         proyeccionAnual: viewMode === 'mensual' ? balance * 12 : balance,
         proyeccionSemestral: viewMode === 'mensual' ? balance * 6 : balance / 2,
         confianza: 'baja',
-        razonamiento: 'Proyección simple basada en balance actual'
+        insights: [{
+          titulo: 'Proyección Simple',
+          metrica: 'Básica',
+          descripcion: 'Proyección simple basada en balance actual',
+          tipo: 'neutral'
+        }]
       });
     } finally {
       setLoadingProyecciones(false);
@@ -410,11 +426,42 @@ const Balance = () => {
                 </div>
               </div>
               
-              {proyecciones.razonamiento && (
-                <div className="bg-white/5 rounded-lg p-3 border border-white/10">
-                  <p className="text-xs text-white/70 mb-1">Análisis</p>
-                  <p className="text-sm text-white">{proyecciones.razonamiento}</p>
-                </div>
+              {proyecciones.insights && proyecciones.insights.length > 0 && (
+                <Carousel className="w-full">
+                  <CarouselContent>
+                    {proyecciones.insights.map((insight, index) => (
+                      <CarouselItem key={index}>
+                        <div className={`bg-white/5 rounded-lg p-4 border ${
+                          insight.tipo === 'positivo' 
+                            ? 'border-green-500/30 bg-green-500/5'
+                            : insight.tipo === 'negativo'
+                            ? 'border-red-500/30 bg-red-500/5'
+                            : insight.tipo === 'consejo'
+                            ? 'border-blue-500/30 bg-blue-500/5'
+                            : 'border-white/10'
+                        }`}>
+                          <div className="flex items-start justify-between mb-2">
+                            <h4 className="text-base font-semibold text-white">{insight.titulo}</h4>
+                            <Badge className={`${
+                              insight.tipo === 'positivo'
+                                ? 'bg-green-500/20 text-green-200'
+                                : insight.tipo === 'negativo'
+                                ? 'bg-red-500/20 text-red-200'
+                                : insight.tipo === 'consejo'
+                                ? 'bg-blue-500/20 text-blue-200'
+                                : 'bg-gray-500/20 text-gray-200'
+                            }`}>
+                              {insight.metrica}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-white/80 leading-relaxed">{insight.descripcion}</p>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="left-2" />
+                  <CarouselNext className="right-2" />
+                </Carousel>
               )}
             </>
           ) : (

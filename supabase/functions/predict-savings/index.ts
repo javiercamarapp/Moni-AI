@@ -27,7 +27,7 @@ serve(async (req) => {
       category: t.categories?.name
     })) || [];
 
-    const prompt = `Analiza los siguientes datos financieros y predice proyecciones de ahorro realistas:
+    const prompt = `Analiza los siguientes datos financieros y genera un análisis detallado con métricas y recomendaciones:
 
 Datos actuales (${viewMode}):
 - Ingresos totales: $${totalIngresos}
@@ -37,20 +37,40 @@ Datos actuales (${viewMode}):
 Historial reciente de transacciones:
 ${JSON.stringify(transactionSummary, null, 2)}
 
-Basándote en estos patrones de ingresos y gastos, predice:
-1. Proyección de ahorro anual (considera variaciones estacionales, tendencias de gasto)
-2. Proyección de ahorro semestral (considera el primer semestre)
+Genera un análisis completo con:
+1. Proyecciones de ahorro (anual y semestral)
+2. Métricas clave (tasa de ahorro, tendencia, categorías más gastadas)
+3. Análisis de patrones de consumo
+4. Recomendaciones específicas y accionables
 
-IMPORTANTE: Sé realista. Si los gastos son altos o hay déficit, ajusta las proyecciones en consecuencia.
-Si hay patrones de gasto recurrente o deudas, considéralos.
-
-Devuelve SOLO un JSON con este formato exacto (números sin formato, solo valores numéricos):
+Devuelve SOLO un JSON con este formato exacto:
 {
   "proyeccionAnual": 50000,
   "proyeccionSemestral": 25000,
   "confianza": "alta",
-  "razonamiento": "Explicación breve de las proyecciones"
-}`;
+  "insights": [
+    {
+      "titulo": "Proyección de Ahorro",
+      "metrica": "35%",
+      "descripcion": "Descripción detallada",
+      "tipo": "positivo"
+    },
+    {
+      "titulo": "Análisis de Gastos",
+      "metrica": "$15,000",
+      "descripcion": "Análisis de patrones",
+      "tipo": "neutral"
+    },
+    {
+      "titulo": "Recomendación Principal",
+      "metrica": "3 acciones",
+      "descripcion": "Recomendaciones específicas",
+      "tipo": "consejo"
+    }
+  ]
+}
+
+IMPORTANTE: Genera entre 3-5 insights. Tipos válidos: "positivo", "negativo", "neutral", "consejo"`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -112,7 +132,14 @@ Devuelve SOLO un JSON con este formato exacto (números sin formato, solo valore
         proyeccionAnual: viewMode === 'mensual' ? balance * 12 : balance,
         proyeccionSemestral: viewMode === 'mensual' ? balance * 6 : balance / 2,
         confianza: "baja",
-        razonamiento: "Proyección basada en balance actual (sin análisis de patrones)"
+        insights: [
+          {
+            titulo: "Proyección Básica",
+            metrica: "Calculada",
+            descripcion: "Proyección simple basada en balance actual sin análisis de patrones históricos",
+            tipo: "neutral"
+          }
+        ]
       };
     }
 
