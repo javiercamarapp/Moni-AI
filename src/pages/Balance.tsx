@@ -253,7 +253,11 @@ const Balance = () => {
 
         {/* Balance Summary */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card className="p-4 bg-gradient-card card-glow text-center hover:scale-105 transition-transform duration-200 animate-fade-in" style={{ animationDelay: '100ms' }}>
+          <Card 
+            className="p-4 bg-gradient-card card-glow text-center hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer" 
+            style={{ animationDelay: '100ms' }}
+            onClick={() => navigate('/ingresos')}
+          >
             <div className="flex items-center justify-center gap-2 mb-2">
               <TrendingUp className="h-5 w-5 text-green-400" />
               <p className="text-sm text-white/70">Ingresos</p>
