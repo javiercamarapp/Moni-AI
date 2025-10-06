@@ -211,18 +211,14 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Header con saludo y botón de logout para desktop */}
-      <div className="p-4 pt-2 flex justify-between items-center">
+      {/* Header con saludo */}
+      <div className="p-4 pt-2">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-white">
             ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
           </h1>
           <p className="text-sm text-white">Vas excelente con tus metas financieras</p>
         </div>
-        <Button variant="outline" size="sm" onClick={handleLogout} className="hidden md:flex border-white bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-black transition-colors">
-          <LogOut className="h-4 w-4 mr-2" />
-          Salir
-        </Button>
       </div>
 
       {/* Banner Publicitario - Carrusel */}
