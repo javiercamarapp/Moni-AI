@@ -368,15 +368,18 @@ const Balance = () => {
         <Card className="p-5 bg-gradient-card card-glow">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-white">Proyecciones Inteligentes</h3>
-            {proyecciones?.confianza && (
-              <Badge className={`${
-                proyecciones.confianza === 'alta' 
+            {proyecciones && (
+              <Badge className={`whitespace-nowrap px-3 ${
+                proyecciones.confianza === 'sin-datos' || proyecciones.proyeccionAnual <= 0
+                  ? 'bg-red-500/20 text-red-200 border-red-500/30'
+                  : proyecciones.proyeccionAnual > 0 && proyecciones.confianza === 'alta'
                   ? 'bg-green-500/20 text-green-200 border-green-500/30'
-                  : proyecciones.confianza === 'media'
-                  ? 'bg-yellow-500/20 text-yellow-200 border-yellow-500/30'
-                  : 'bg-red-500/20 text-red-200 border-red-500/30'
+                  : 'bg-yellow-500/20 text-yellow-200 border-yellow-500/30'
               }`}>
-                Confianza {proyecciones.confianza}
+                {proyecciones.confianza === 'sin-datos' 
+                  ? 'Sin datos'
+                  : `Confianza ${proyecciones.confianza}`
+                }
               </Badge>
             )}
           </div>
