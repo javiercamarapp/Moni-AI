@@ -80,11 +80,11 @@ const Profile = () => {
           variant="ghost"
           size="icon"
           onClick={() => navigate('/dashboard')}
-          className="text-foreground hover:bg-primary/10"
+          className="text-white hover:bg-white/10"
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-xl font-bold text-foreground">Perfil</h1>
+        <h1 className="text-xl font-bold text-white">Perfil</h1>
         <div className="w-10"></div>
       </div>
 
@@ -125,7 +125,7 @@ const Profile = () => {
 
         {/* Preferencias */}
         <div className="space-y-2">
-          <h3 className="text-lg font-bold text-foreground px-2">Preferencias</h3>
+          <h3 className="text-lg font-bold text-white px-2">Preferencias</h3>
           <Card className="bg-card/80 backdrop-blur border-border/50 divide-y divide-border">
             <Button
               variant="ghost"
@@ -175,7 +175,7 @@ const Profile = () => {
 
         {/* Descargas */}
         <div className="space-y-2">
-          <h3 className="text-lg font-bold text-foreground px-2">Descargas</h3>
+          <h3 className="text-lg font-bold text-white px-2">Descargas</h3>
           <Card className="bg-card/80 backdrop-blur border-border/50">
             <Button
               variant="ghost"
@@ -189,7 +189,7 @@ const Profile = () => {
 
         {/* Ayuda */}
         <div className="space-y-2">
-          <h3 className="text-lg font-bold text-foreground px-2">Ayuda</h3>
+          <h3 className="text-lg font-bold text-white px-2">Ayuda</h3>
           <Card className="bg-card/80 backdrop-blur border-border/50 divide-y divide-border">
             <Button
               variant="ghost"
@@ -211,7 +211,7 @@ const Profile = () => {
 
         {/* Legal */}
         <div className="space-y-2">
-          <h3 className="text-lg font-bold text-foreground px-2">Legal</h3>
+          <h3 className="text-lg font-bold text-white px-2">Legal</h3>
           <Card className="bg-card/80 backdrop-blur border-border/50 divide-y divide-border">
             <Button
               variant="ghost"
@@ -233,7 +233,7 @@ const Profile = () => {
 
         {/* Cuenta */}
         <div className="space-y-2 pb-4">
-          <h3 className="text-lg font-bold text-foreground px-2">Cuenta</h3>
+          <h3 className="text-lg font-bold text-white px-2">Cuenta</h3>
           <Card className="bg-card/80 backdrop-blur border-border/50 divide-y divide-border">
             <Button
               variant="ghost"
