@@ -128,19 +128,6 @@ export default function FinancialAnalysis() {
               variableExpensesChange={5} // This would come from backend calculation
             />
 
-            {/* Historical Comparison */}
-            <HistoricalComparisonWidget 
-              data={[
-                { month: 'May', income: 15000, expenses: 12500, savings: 2500 },
-                { month: 'Jun', income: 15500, expenses: 12400, savings: 3100 },
-                { month: 'Jul', income: 16000, expenses: 12200, savings: 3800 },
-                { month: 'Ago', income: 16200, expenses: 12000, savings: 4200 },
-                { month: 'Sep', income: 16500, expenses: 11700, savings: 4800 },
-                { month: 'Oct', income: 17000, expenses: 11800, savings: 5200 },
-              ]}
-              insight="Tu gasto promedio bajó $1,200 desde julio. Mantén la tendencia."
-            />
-
             {analysis.upcomingTransactions && <UpcomingTransactionsWidget {...analysis.upcomingTransactions} />}
 
             {analysis.topActions && analysis.topActions.length > 0 && <TopActionsWidget actions={analysis.topActions} />}
@@ -483,6 +470,19 @@ export default function FinancialAnalysis() {
                 { month: 'Oct', score: 75, savings: 5.2, balance: 29.3, income: 17, expenses: 10.8 },
               ]}
               insight="Tu ahorro promedio subió 12% en 3 meses, pero tu gasto fijo sigue alto. Ajustar renta o servicios podría darte +4 pts."
+            />
+
+            {/* Historical Comparison */}
+            <HistoricalComparisonWidget 
+              data={[
+                { month: 'May', income: 15000, expenses: 12500, savings: 2500 },
+                { month: 'Jun', income: 15500, expenses: 12400, savings: 3100 },
+                { month: 'Jul', income: 16000, expenses: 12200, savings: 3800 },
+                { month: 'Ago', income: 16200, expenses: 12000, savings: 4200 },
+                { month: 'Sep', income: 16500, expenses: 11700, savings: 4800 },
+                { month: 'Oct', income: 17000, expenses: 11800, savings: 5200 },
+              ]}
+              insight="Tu gasto promedio bajó $1,200 desde julio. Mantén la tendencia."
             />
           </>}
       </div>
