@@ -1,0 +1,47 @@
+-- Script temporal para generar 4000+ transacciones realistas
+-- Este archivo se usa solo para generar datos, no es parte del proyecto
+
+-- Usuario ID
+-- '09f27ef5-f648-4e02-a388-e41ef12fd535'
+
+-- IDs de Categorías:
+-- Ingresos:
+-- Salario: ae022e66-187b-456b-8133-2a3dd31f6a63
+-- Bonos: 6902afae-0e4a-4c4e-a485-136b427c55be
+-- Freelance Desarrollo: d82c8179-6103-4a2b-afad-39e156a58cb7
+-- Freelance Consultoría: 17aac811-69d3-4803-a9a7-531cb6e9619f
+-- Inversiones: aa671926-c480-4bf9-803d-386619d38cdd
+
+-- Gastos:
+-- Supermercado: 6b212471-88f0-495e-b108-7faa3972bc0e
+-- Restaurantes: 3717a3bf-d4f3-498e-8148-e8b95d73d824
+-- Café: 3f520acd-05d0-441d-88da-cc59042ffb80
+-- Rappi: 9576ee2f-1c99-4b87-a361-2df2e9ea993c
+-- Uber Eats: ed39d3fa-8559-4507-aa43-079de603f508
+-- Bar y Copas: 88d050f5-07a0-4b09-8e4b-5f854b88ce49
+-- Uber: 5838a9e5-77f6-4566-b21b-0a115c660650
+-- Gasolina: 90c47b93-3cf3-4184-913f-a8fe339079cb
+-- Estacionamiento: 258686cd-4eb5-4bbd-9c01-a075cc74b821
+-- Mantenimiento Auto: deee8804-fb6c-4b1b-bebc-34c0c38ab18b
+-- Cine: adffa992-2c16-455e-a933-2a865cf63404
+-- Conciertos: c08504c4-c1f9-455b-9ef8-226d5e127b32
+-- Night Club: 92301cdc-e142-41da-bfcc-53940163a1f2
+-- Eventos: 8c03139f-0b07-40da-9ea6-ee4ff0f12399
+-- Netflix: 8544dcaa-4114-4893-aa38-c4372c46a821
+-- Spotify: eba3ecce-a824-41d3-8209-175902e66cb9
+-- Amazon Prime: 94c263d1-aed5-4399-b5af-da3dfe758b58
+-- Disney+: d81abe12-0879-49bc-9d94-ebf7c3e9e315
+-- HBO Max: d9251ee1-749f-4cc7-94a2-ceb19a16fd8c
+-- Gym: e50cbb0b-6f45-4afd-bf09-218e413a3086
+-- Luz: 22cecde3-c7c8-437e-9b9d-d73bc7f3bdfe
+-- Agua: c88f9517-ba61-4420-bc49-ba6261c37e9c
+-- Internet: 4675137c-d5b5-4679-b308-6259762ea100
+-- Teléfono: c4d8514f-54be-4fba-8300-b18164d78790
+-- Gas: 77bc7935-51b3-418b-9945-7028c27d47ec
+-- Farmacia: 6625b1c6-f7c4-4c1e-8758-1f4159e6982f
+-- Médico: 455b29ac-723b-4f48-8ece-322894549a86
+-- Dentista: fd568049-9f1a-4ba6-911f-dc024b69a751
+-- Ropa: 9504b72b-6eab-4339-8223-387d2d090243
+-- Tecnología: 1b1e5d3f-8ddc-4871-9d3a-e3c3a9188d5a
+-- Amazon: 735ceaba-889b-4e5b-89be-212ca9334609
+-- Mercado Libre: 4e3686ea-6738-469e-8ca0-f7ac172ca3a1
