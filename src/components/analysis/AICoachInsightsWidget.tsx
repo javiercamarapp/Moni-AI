@@ -1,58 +1,144 @@
 import { Card } from "@/components/ui/card";
+import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/components/ui/carousel";
+import { useEffect, useState } from "react";
 
 interface AICoachInsightsProps {
-  monthStatus: "stable" | "overspending" | "improved";
-  mainMessage: string;
-  improvementTip?: string;
+  monthlyIncome: number;
+  monthlyExpenses: number;
+  fixedExpenses: number;
+  savingsGoals: number;
+  balance: number;
 }
 
 export default function AICoachInsightsWidget({ 
-  monthStatus, 
-  mainMessage,
-  improvementTip
+  monthlyIncome,
+  monthlyExpenses,
+  fixedExpenses,
+  savingsGoals,
+  balance
 }: AICoachInsightsProps) {
-  
-  const getStatusConfig = () => {
-    switch (monthStatus) {
-      case "stable":
-        return {
-          emoji: "🌿",
-          gradient: "from-emerald-600/90 to-teal-600/90",
-          border: "border-emerald-500/30",
-          textColor: "text-emerald-200"
-        };
-      case "overspending":
-        return {
-          emoji: "🔥",
-          gradient: "from-red-600/90 to-orange-600/90",
-          border: "border-red-500/30",
-          textColor: "text-red-200"
-        };
-      case "improved":
-        return {
-          emoji: "🚀",
-          gradient: "from-purple-600/90 to-pink-600/90",
-          border: "border-purple-500/30",
-          textColor: "text-purple-200"
-        };
-      default:
-        return {
-          emoji: "💡",
-          gradient: "from-blue-600/90 to-cyan-600/90",
-          border: "border-blue-500/30",
-          textColor: "text-blue-200"
-        };
+  const [api, setApi] = useState<CarouselApi>();
+
+  // Auto-scroll carousel
+  useEffect(() => {
+    if (!api) return;
+    const interval = setInterval(() => {
+      api.scrollNext();
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [api]);
+
+  // Generate dynamic insights based on financial data
+  const generateInsights = () => {
+    const insights: Array<{ emoji: string; message: string; isPositive: boolean }> = [];
+    
+    // Balance status
+    if (balance > 0) {
+      insights.push({
+        emoji: "✅",
+        message: `Balance positivo de $${balance.toLocaleString('es-MX', { maximumFractionDigits: 0 })} este mes.`,
+        isPositive: true
+      });
+    } else {
+      insights.push({
+        emoji: "⚠️",
+        message: `Déficit de $${Math.abs(balance).toLocaleString('es-MX', { maximumFractionDigits: 0 })} este mes. Revisa gastos.`,
+        isPositive: false
+      });
     }
+    
+    // Fixed expenses ratio
+    const fixedRatio = monthlyIncome > 0 ? (fixedExpenses / monthlyIncome) * 100 : 0;
+    if (fixedRatio > 50) {
+      insights.push({
+        emoji: "🔴",
+        message: `Gastos fijos ${fixedRatio.toFixed(0)}% del ingreso. Busca reducir obligaciones.`,
+        isPositive: false
+      });
+    } else if (fixedRatio > 30) {
+      insights.push({
+        emoji: "🟡",
+        message: `Gastos fijos ${fixedRatio.toFixed(0)}% del ingreso. Nivel moderado.`,
+        isPositive: false
+      });
+    } else {
+      insights.push({
+        emoji: "💚",
+        message: `Gastos fijos solo ${fixedRatio.toFixed(0)}% del ingreso. ¡Excelente control!`,
+        isPositive: true
+      });
+    }
+    
+    // Savings ratio
+    const savingsRatio = monthlyIncome > 0 ? (savingsGoals / monthlyIncome) * 100 : 0;
+    if (savingsRatio >= 20) {
+      insights.push({
+        emoji: "🚀",
+        message: `Ahorro ${savingsRatio.toFixed(0)}% mensual. ¡Vas por buen camino!`,
+        isPositive: true
+      });
+    } else if (savingsRatio >= 10) {
+      insights.push({
+        emoji: "📊",
+        message: `Ahorro ${savingsRatio.toFixed(0)}% mensual. Intenta llegar al 20%.`,
+        isPositive: true
+      });
+    } else {
+      insights.push({
+        emoji: "💡",
+        message: `Ahorro ${savingsRatio.toFixed(0)}% mensual. Aumenta poco a poco.`,
+        isPositive: false
+      });
+    }
+    
+    // Variable spending
+    const variableSpending = monthlyExpenses - fixedExpenses;
+    const variableRatio = monthlyIncome > 0 ? (variableSpending / monthlyIncome) * 100 : 0;
+    if (variableRatio > 40) {
+      insights.push({
+        emoji: "🔥",
+        message: `Gastos variables ${variableRatio.toFixed(0)}%. Recorta delivery y antojos.`,
+        isPositive: false
+      });
+    } else {
+      insights.push({
+        emoji: "✨",
+        message: `Gastos variables ${variableRatio.toFixed(0)}%. Buen control.`,
+        isPositive: true
+      });
+    }
+    
+    // Goals progress
+    if (savingsGoals > 0) {
+      insights.push({
+        emoji: "🎯",
+        message: `Metas de ahorro: $${savingsGoals.toLocaleString('es-MX', { maximumFractionDigits: 0 })}/mes. ¡Sigue así!`,
+        isPositive: true
+      });
+    }
+    
+    return insights;
   };
 
-  const config = getStatusConfig();
+  const insights = generateInsights();
 
   return (
-    <Card className={`p-2 bg-gradient-to-r ${config.gradient} card-glow ${config.border}`}>
-      <p className={`text-[10px] ${config.textColor} leading-snug`}>
-        {config.emoji} <span className="font-medium">{mainMessage}</span>
-        {improvementTip && ` ${improvementTip}`}
-      </p>
-    </Card>
+    <Carousel className="w-full" setApi={setApi} opts={{ loop: true, align: "center" }}>
+      <CarouselContent>
+        {insights.map((insight, index) => (
+          <CarouselItem key={index}>
+            <Card className={`p-3 card-glow border-white/20 bg-gradient-to-br ${
+              insight.isPositive 
+                ? 'from-emerald-500/90 to-emerald-600/90' 
+                : 'from-red-500/90 to-red-600/90'
+            }`}>
+              <p className="text-xs text-white leading-snug">
+                {insight.emoji} <span className="font-medium">{insight.message}</span>
+              </p>
+            </Card>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+    </Carousel>
   );
 }

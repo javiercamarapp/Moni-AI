@@ -278,34 +278,8 @@ export default function FinancialAnalysis() {
         </div>
 
         {analysis && <>
-            {/* Score Moni - Compacto (resumen rápido) */}
-            <Card className="p-4 bg-gradient-card card-glow border-white/20 hover:scale-105 transition-transform duration-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-white/70 mb-1">Score Moni</p>
-                  <p className="text-3xl font-bold text-white">{analysis.metrics.scoreMoni}<span className="text-sm text-white/60">/100</span></p>
-                  <p className="text-xs text-white/70 mt-1">
-                    {analysis.metrics.scoreMoni >= 70 ? '✅ Excelente' : analysis.metrics.scoreMoni >= 40 ? '⚠️ Mejorable' : '❌ Crítico'}
-                  </p>
-                </div>
-                <div className="relative">
-                  <svg className="w-20 h-20 transform -rotate-90">
-                    <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" className="text-white/20" />
-                    <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" strokeDasharray={`${2 * Math.PI * 34}`} strokeDashoffset={`${2 * Math.PI * 34 * (1 - analysis.metrics.scoreMoni / 100)}`} className={`transition-all ${analysis.metrics.scoreMoni >= 70 ? 'text-emerald-400' : analysis.metrics.scoreMoni >= 40 ? 'text-yellow-400' : 'text-red-400'}`} strokeLinecap="round" />
-                  </svg>
-                </div>
-              </div>
-            </Card>
-
             {/* 1. VALOR INMEDIATO */}
             {analysis.safeToSpend && <SafeToSpendWidget {...analysis.safeToSpend} />}
-
-            {/* AI Coach Insights */}
-            <AICoachInsightsWidget 
-              monthStatus="stable"
-              mainMessage="Tus finanzas respiran."
-              improvementTip="Reduciendo Comida 8% liberas +$520/mes y subes tu Score +5 pts. Mantén el ritmo con +$300 a fondo de emergencia."
-            />
 
             {/* Risk Indicators */}
             <RiskIndicatorsWidget 
