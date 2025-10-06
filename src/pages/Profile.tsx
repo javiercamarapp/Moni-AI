@@ -8,6 +8,13 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, ChevronRight, Crown, LogOut, Trash2 } from 'lucide-react';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -24,6 +31,44 @@ const Profile = () => {
   const { toast } = useToast();
   const [user, setUser] = useState<any>(null);
   const [audioAlerts, setAudioAlerts] = useState(true);
+  const [selectedCurrency, setSelectedCurrency] = useState('MXN');
+  const [selectedCountry, setSelectedCountry] = useState('México');
+
+  const currencies = [
+    { code: 'MXN', name: 'Peso mexicano' },
+    { code: 'USD', name: 'Dólar estadounidense' },
+    { code: 'EUR', name: 'Euro' },
+    { code: 'GBP', name: 'Libra esterlina' },
+    { code: 'CAD', name: 'Dólar canadiense' },
+    { code: 'ARS', name: 'Peso argentino' },
+    { code: 'COP', name: 'Peso colombiano' },
+    { code: 'CLP', name: 'Peso chileno' },
+    { code: 'PEN', name: 'Sol peruano' },
+    { code: 'BRL', name: 'Real brasileño' },
+  ];
+
+  const countries = [
+    'México',
+    'Estados Unidos',
+    'España',
+    'Argentina',
+    'Colombia',
+    'Chile',
+    'Perú',
+    'Brasil',
+    'Reino Unido',
+    'Canadá',
+    'Venezuela',
+    'Ecuador',
+    'Uruguay',
+    'Paraguay',
+    'Bolivia',
+    'Costa Rica',
+    'Panamá',
+    'Guatemala',
+    'Honduras',
+    'El Salvador',
+  ];
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -127,27 +172,41 @@ const Profile = () => {
         <div className="space-y-2">
           <h3 className="text-lg font-bold text-white px-2">Preferencias</h3>
           <Card className="bg-card/80 backdrop-blur border-border/50 divide-y divide-border animate-fade-in" style={{ animationDelay: '100ms' }}>
-            <Button
-              variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10 hover:translate-x-2 transition-transform duration-200"
-            >
-              <span className="text-white/70">Divisa</span>
-              <div className="flex items-center gap-2">
-                <span className="text-white">Peso mexicano</span>
-                <ChevronRight className="h-5 w-5 text-white/70" />
+            <div className="py-4 px-4">
+              <div className="flex items-center justify-between">
+                <span className="text-white/70">Divisa</span>
+                <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
+                  <SelectTrigger className="w-[200px] bg-transparent border-white/20 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border">
+                    {currencies.map((currency) => (
+                      <SelectItem key={currency.code} value={currency.code} className="text-white">
+                        {currency.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-            </Button>
+            </div>
             
-            <Button
-              variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10 hover:translate-x-2 transition-transform duration-200"
-            >
-              <span className="text-white/70">Ubicación</span>
-              <div className="flex items-center gap-2">
-                <span className="text-white">México</span>
-                <ChevronRight className="h-5 w-5 text-white/70" />
+            <div className="py-4 px-4">
+              <div className="flex items-center justify-between">
+                <span className="text-white/70">Ubicación</span>
+                <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+                  <SelectTrigger className="w-[200px] bg-transparent border-white/20 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border">
+                    {countries.map((country) => (
+                      <SelectItem key={country} value={country} className="text-white">
+                        {country}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-            </Button>
+            </div>
 
             <Button
               variant="ghost"
