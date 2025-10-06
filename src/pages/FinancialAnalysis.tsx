@@ -36,6 +36,12 @@ export default function FinancialAnalysis() {
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
   const [futureEvents, setFutureEvents] = useState<any[]>([]);
   const [loadingTransactions, setLoadingTransactions] = useState(true);
+
+  // Helper function to safely format values in thousands
+  const formatK = (value: number | undefined | null): string => {
+    if (value == null || isNaN(value)) return '0.0';
+    return (value / 1000).toFixed(1);
+  };
   useEffect(() => {
     checkAuth();
   }, []);
@@ -398,7 +404,7 @@ export default function FinancialAnalysis() {
                     </div>
                   </div>
                   <p className={`text-lg font-bold ${analysis.metrics.balance >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                    ${(analysis.metrics.balance / 1000).toFixed(1)}k
+                    ${formatK(analysis.metrics.balance)}k
                   </p>
                   <p className="text-[10px] text-white/60">MoM: +2.3%</p>
                 </Card>
@@ -434,7 +440,7 @@ export default function FinancialAnalysis() {
                     <TrendingUp className="h-3 w-3 text-teal-400" />
                   </div>
                   <p className="text-lg font-bold text-teal-300">
-                    ${(analysis.metrics.cashFlowAccumulated / 1000).toFixed(1)}k
+                    ${formatK(analysis.metrics.cashFlowAccumulated)}k
                   </p>
                   <Button variant="ghost" size="sm" className="text-[10px] text-white/60 hover:text-white p-0 h-auto hover-lift">
                     ver por semana →
@@ -455,7 +461,7 @@ export default function FinancialAnalysis() {
                     <AlertCircle className="h-3 w-3 text-orange-400" />
                   </div>
                   <p className="text-lg font-bold text-orange-300">
-                    ${(analysis.metrics.fixedExpenses / 1000).toFixed(1)}k
+                    ${formatK(analysis.metrics.fixedExpenses)}k
                   </p>
                   <div className="flex items-center justify-between text-[10px]">
                     <span className="text-white/60">{(analysis.metrics.fixedExpensesPercentage || 0).toFixed(0)}% del gasto</span>
@@ -469,7 +475,7 @@ export default function FinancialAnalysis() {
                     <Zap className="h-3 w-3 text-violet-400" />
                   </div>
                   <p className="text-lg font-bold text-violet-300">
-                    ${(analysis.metrics.variableExpenses / 1000).toFixed(1)}k
+                    ${formatK(analysis.metrics.variableExpenses)}k
                   </p>
                   <p className="text-[10px] text-white/60">{(analysis.metrics.variableExpensesPercentage || 0).toFixed(0)}%</p>
                 </Card>
@@ -480,7 +486,7 @@ export default function FinancialAnalysis() {
                     <span className="text-lg">🐜</span>
                   </div>
                   <p className="text-lg font-bold text-yellow-300">
-                    ${(analysis.metrics.antExpenses / 1000).toFixed(1)}k
+                    ${formatK(analysis.metrics.antExpenses)}k
                   </p>
                   <div className="flex items-center justify-between text-[10px]">
                     <span className="text-white/60">{(analysis.metrics.antExpensesPercentage || 0).toFixed(1)}% ingreso</span>
@@ -592,7 +598,7 @@ export default function FinancialAnalysis() {
                     <span className="text-[10px] text-white/60">Proy.</span>
                     <TrendingUp className="h-3 w-3 text-amber-400" />
                   </div>
-                  <p className="text-sm font-bold text-amber-300">${(analysis.metrics.projectedAnnualSavings / 1000).toFixed(1)}k</p>
+                  <p className="text-sm font-bold text-amber-300">${formatK(analysis.metrics.projectedAnnualSavings)}k</p>
                 </Card>
                 <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between mb-1">
