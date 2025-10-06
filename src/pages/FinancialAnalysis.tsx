@@ -278,9 +278,6 @@ export default function FinancialAnalysis() {
         </div>
 
         {analysis && <>
-            {/* 1. VALOR INMEDIATO */}
-            {analysis.safeToSpend && <SafeToSpendWidget {...analysis.safeToSpend} />}
-
             {/* Risk Indicators */}
             <RiskIndicatorsWidget 
               hasIssues={
