@@ -13,7 +13,7 @@ import bannerGroups from '@/assets/banner-groups.jpg';
 import bannerHalloween from '@/assets/banner-halloween.png';
 import heroAuth from '@/assets/moni-ai-logo.png';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
-import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User } from 'lucide-react';
+import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User, BarChart3 } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
@@ -304,17 +304,17 @@ const Dashboard = () => {
       <nav className="fixed bottom-0 left-0 right-0 z-50 animated-wave-bg border-t border-white/20 shadow-lg">
         <div className="container mx-auto px-2">
           <div className="flex items-center justify-around h-16">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/dashboard")}>
-              <Home className="w-5 h-5 text-white" />
-              <span className="text-xs text-white">Home</span>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-purple-400 hover:bg-white/10" onClick={() => navigate("/dashboard")}>
+              <Home className="w-5 h-5 text-purple-400" />
+              <span className="text-xs text-purple-400">Home</span>
             </Button>
 
             <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/analysis")}>
-              <TrendingUp className="w-5 h-5 text-white" />
+              <BarChart3 className="w-5 h-5 text-white" />
               <span className="text-xs text-white">Análisis</span>
             </Button>
 
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10">
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/goals")}>
               <Target className="w-5 h-5 text-white" />
               <span className="text-xs text-white">Metas</span>
             </Button>
