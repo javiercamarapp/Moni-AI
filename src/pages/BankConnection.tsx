@@ -59,38 +59,84 @@ export default function BankConnection() {
   return (
     <div className="min-h-screen animated-wave-bg p-6">
       <div className="max-w-2xl mx-auto space-y-6">
-        <div className="flex items-center gap-4 mb-8">
+        {/* Header con opción de saltar */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/dashboard")}
+              className="text-foreground hover:bg-primary/10"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">¡Haz tu vida más fácil!</h1>
+              <p className="text-muted-foreground">Conecta tu banco y automatiza todo</p>
+            </div>
+          </div>
           <Button
             variant="ghost"
-            size="icon"
             onClick={() => navigate("/dashboard")}
-            className="text-foreground hover:bg-primary/10"
+            className="text-muted-foreground hover:text-foreground"
           >
-            <ArrowLeft className="h-5 w-5" />
+            Saltar por ahora
           </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Conexión Bancaria</h1>
-            <p className="text-muted-foreground">Detecta transacciones automáticamente</p>
-          </div>
         </div>
 
-        {/* Info sobre la funcionalidad */}
-        <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
-          <div className="flex items-start gap-4">
-            <AlertCircle className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+        {/* Hero Card con beneficios */}
+        <Card className="p-8 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+          <div className="text-center space-y-6">
+            <div className="text-6xl">🤖</div>
             <div>
-              <h3 className="font-semibold text-foreground mb-2">
-                Detección Automática de Transacciones
-              </h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Al conectar tu banco, Moni detectará automáticamente tus transacciones en tiempo real:
+              <h2 className="text-2xl font-bold text-foreground mb-3">
+                Moni se encarga de todo por ti
+              </h2>
+              <p className="text-muted-foreground max-w-lg mx-auto">
+                Conecta tu banco una vez y olvídate de registrar transacciones manualmente. Moni hace todo el trabajo por ti.
               </p>
-              <ul className="text-sm text-muted-foreground space-y-2 ml-4 list-disc">
-                <li>Notificación instantánea cuando gastes o recibas dinero</li>
-                <li>Categorización automática con IA</li>
-                <li>Alertas inteligentes si excedes tu presupuesto</li>
-                <li>Análisis de patrones de gasto</li>
-              </ul>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+              <div className="flex gap-3 items-start">
+                <div className="text-2xl">⚡</div>
+                <div>
+                  <h4 className="font-semibold text-foreground">Detección Instantánea</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Te notificamos al momento de cada transacción
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex gap-3 items-start">
+                <div className="text-2xl">🧠</div>
+                <div>
+                  <h4 className="font-semibold text-foreground">Categorización con IA</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Organiza tus gastos automáticamente
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex gap-3 items-start">
+                <div className="text-2xl">🚨</div>
+                <div>
+                  <h4 className="font-semibold text-foreground">Alertas Inteligentes</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Te avisamos si te pasas del presupuesto
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex gap-3 items-start">
+                <div className="text-2xl">📊</div>
+                <div>
+                  <h4 className="font-semibold text-foreground">Análisis Automático</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Insights personalizados de tus finanzas
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </Card>
@@ -120,29 +166,48 @@ export default function BankConnection() {
           </div>
         )}
 
-        {/* Botón para conectar */}
+        {/* CTA Principal */}
         <Card className="p-8 bg-card/80 backdrop-blur border-border/50">
-          <div className="text-center space-y-4">
-            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-              <Building2 className="h-8 w-8 text-primary" />
+          <div className="text-center space-y-6">
+            <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+              <Building2 className="h-10 w-10 text-primary" />
             </div>
-            <h3 className="text-xl font-bold text-foreground">
-              Conecta tu Banco
-            </h3>
-            <p className="text-sm text-muted-foreground max-w-md mx-auto">
-              Usa Open Banking para conectar tu cuenta de forma segura. Tus credenciales nunca se comparten con Moni.
-            </p>
-            <Button
-              onClick={handleConnectBank}
-              disabled={loading}
-              className="bg-primary hover:bg-primary/90"
-              size="lg"
-            >
-              {loading ? "Conectando..." : "Conectar Banco"}
-            </Button>
-            <p className="text-xs text-muted-foreground">
-              🔒 Conexión segura encriptada
-            </p>
+            <div>
+              <h3 className="text-2xl font-bold text-foreground mb-2">
+                Conecta tu Banco Ahora
+              </h3>
+              <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                Conexión 100% segura con Open Banking. Tus credenciales nunca se comparten con Moni, todo está encriptado.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button
+                onClick={handleConnectBank}
+                disabled={loading}
+                className="bg-primary hover:bg-primary/90"
+                size="lg"
+              >
+                {loading ? "Conectando..." : "🚀 Conectar Mi Banco"}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate("/dashboard")}
+                size="lg"
+              >
+                Lo haré después
+              </Button>
+            </div>
+            <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                🔒 Encriptación bancaria
+              </span>
+              <span className="flex items-center gap-1">
+                ✓ Conexión segura
+              </span>
+              <span className="flex items-center gap-1">
+                🏦 Open Banking
+              </span>
+            </div>
           </div>
         </Card>
 

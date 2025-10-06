@@ -20,8 +20,15 @@ const Auth = () => {
   useEffect(() => {
     // Solo escuchar cambios de auth, no verificar sesión inicial
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      // Solo navegar al dashboard en SIGNED_IN o INITIAL_SESSION con sesión válida
-      if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
+      // Redirigir según el evento
+      if (session && event === 'SIGNED_IN') {
+        // Usuario que ya existía - ir al dashboard
+        navigate("/dashboard");
+      } else if (session && event === 'USER_UPDATED') {
+        // Nuevo usuario - ir a configuración bancaria
+        navigate("/bank-connection");
+      } else if (session && event === 'INITIAL_SESSION') {
+        // Sesión existente - ir al dashboard
         navigate("/dashboard");
       }
     });
@@ -87,7 +94,7 @@ const Auth = () => {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/dashboard`,
+            emailRedirectTo: `${window.location.origin}/bank-connection`,
             data: {
               full_name: fullName,
             },
