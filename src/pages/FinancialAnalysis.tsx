@@ -89,7 +89,7 @@ export default function FinancialAnalysis() {
                 </TabsTrigger>
               </TabsList>
             </Tabs>
-            <Button onClick={loadAnalysis} disabled={loading} variant="outline" size="sm" className="h-8 bg-white/10 border-white/30 text-white hover:bg-white/20">
+            <Button onClick={loadAnalysis} disabled={loading} variant="outline" size="sm" className="h-8 bg-white/10 border-white/30 text-white hover:bg-white/20 hover-lift">
               <RefreshCw className={`h-3 w-3 ${loading ? 'animate-spin' : ''}`} />
             </Button>
           </div>
@@ -201,7 +201,7 @@ export default function FinancialAnalysis() {
                   <p className="text-lg font-bold text-teal-300">
                     ${(analysis.metrics.cashFlowAccumulated / 1000).toFixed(1)}k
                   </p>
-                  <Button variant="ghost" size="sm" className="text-[10px] text-white/60 hover:text-white p-0 h-auto">
+                  <Button variant="ghost" size="sm" className="text-[10px] text-white/60 hover:text-white p-0 h-auto hover-lift">
                     ver por semana →
                   </Button>
                 </Card>
@@ -390,16 +390,16 @@ export default function FinancialAnalysis() {
             <div className="space-y-2">
               <p className="text-xs font-medium text-white/80">🎯 Acciones Recomendadas</p>
               <div className="grid grid-cols-2 gap-2">
-                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10 text-xs h-auto py-2">
+                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10 text-xs h-auto py-2 hover-lift">
                   Ajustar presupuesto
                 </Button>
-                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10 text-xs h-auto py-2">
+                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10 text-xs h-auto py-2 hover-lift">
                   Plan de deudas
                 </Button>
-                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10 text-xs h-auto py-2">
+                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10 text-xs h-auto py-2 hover-lift">
                   ↑ Ahorro a 10%
                 </Button>
-                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10 text-xs h-auto py-2">
+                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10 text-xs h-auto py-2 hover-lift">
                   Revisar subs
                 </Button>
               </div>
@@ -455,27 +455,27 @@ export default function FinancialAnalysis() {
       <nav className="fixed bottom-0 left-0 right-0 z-50 animated-wave-bg border-t border-white/20 shadow-lg">
         <div className="container mx-auto px-2">
           <div className="flex items-center justify-around h-16">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/dashboard")}>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10 hover-lift" onClick={() => navigate("/dashboard")}>
               <Home className="w-5 h-5 text-white" />
               <span className="text-xs text-white">Home</span>
             </Button>
 
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-purple-400 hover:bg-white/10" onClick={() => navigate("/analysis")}>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-purple-400 hover:bg-white/10 hover-lift" onClick={() => navigate("/analysis")}>
               <BarChart3 className="w-5 h-5 text-purple-400" />
               <span className="text-xs text-purple-400">Análisis</span>
             </Button>
 
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/goals")}>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10 hover-lift" onClick={() => navigate("/goals")}>
               <Target className="w-5 h-5 text-white" />
               <span className="text-xs text-white">Metas</span>
             </Button>
 
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/chat")}>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10 hover-lift" onClick={() => navigate("/chat")}>
               <MessageSquare className="w-5 h-5 text-white" />
               <span className="text-xs text-white">Chat AI</span>
             </Button>
 
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/profile")}>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10 hover-lift" onClick={() => navigate("/profile")}>
               <User className="w-5 h-5 text-white" />
               <span className="text-xs text-white">Perfil</span>
             </Button>
