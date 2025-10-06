@@ -340,6 +340,15 @@ const Profile = () => {
         <div className="space-y-2">
           <h3 className="text-lg font-bold text-white px-2">Preferencias</h3>
           <Card className="bg-card/80 backdrop-blur border-border/50 divide-y divide-border animate-fade-in" style={{ animationDelay: '100ms' }}>
+            <Button
+              variant="ghost"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
+              onClick={() => navigate('/notifications')}
+            >
+              <span className="text-white/70">Notificaciones</span>
+              <ChevronRight className="h-5 w-5 text-white/70" />
+            </Button>
+
             <Popover>
               <PopoverTrigger asChild>
                 <Button
