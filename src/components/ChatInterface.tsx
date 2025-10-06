@@ -221,12 +221,6 @@ const ChatInterface = () => {
             </div>
             
             <div className="flex items-center gap-1 flex-shrink-0">
-              
-              
-              
-              <Button variant="ghost" size="icon" className="text-gray-900 hover:bg-gray-100" onClick={handleLogout}>
-                <LogOut className="w-4 h-4" />
-              </Button>
             </div>
           </div>
         </Card>
