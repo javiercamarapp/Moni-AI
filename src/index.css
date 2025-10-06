@@ -8,27 +8,27 @@
 
 @layer base {
   :root {
-    /* Minimalist black base */
+    /* Minimalist black base - High contrast */
     --background: 0 0% 0%;
-    --foreground: 0 0% 98%;
+    --foreground: 0 0% 100%;
 
-    /* Cards and surfaces */
-    --card: 0 0% 15%;
+    /* Cards and surfaces - Better readability */
+    --card: 0 0% 12%;
     --card-foreground: 0 0% 100%;
     --card-border: 0 0% 30%;
 
-    /* Primary black */
+    /* Primary black - Enhanced */
     --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
+    --primary-foreground: 0 0% 100%;
     --primary-glow: 0 0% 20%;
 
     /* Secondary grey accent */
     --secondary: 0 0% 96%;
     --secondary-foreground: 0 0% 9%;
 
-    /* Muted colors */
+    /* Muted colors - Improved contrast */
     --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted-foreground: 0 0% 60%;
 
     /* Accent colors */
     --accent: 0 0% 96%;
@@ -73,22 +73,22 @@
 
   .dark {
     --background: 0 0% 0%;
-    --foreground: 0 0% 98%;
+    --foreground: 0 0% 100%;
 
-    --card: 0 0% 15%;
+    --card: 0 0% 12%;
     --card-foreground: 0 0% 100%;
 
     --popover: 0 0% 98%;
     --popover-foreground: 0 0% 3%;
 
     --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 0 0% 96%;
     --secondary-foreground: 0 0% 3%;
 
     --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted-foreground: 0 0% 60%;
 
     --accent: 0 0% 96%;
     --accent-foreground: 0 0% 3%;
@@ -116,7 +116,9 @@
   }
 
   body {
-    @apply bg-background text-foreground font-inter;
+    @apply bg-background text-foreground font-inter antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
