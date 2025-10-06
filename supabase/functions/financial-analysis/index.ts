@@ -42,9 +42,21 @@ serve(async (req) => {
 
     if (!transactions || transactions.length === 0) {
       return new Response(JSON.stringify({
-        analysis: 'No hay transacciones en este período para analizar.',
-        insights: [],
-        projections: {}
+        analysis: 'No hay transacciones en este período para analizar. ¡Comienza a registrar tus ingresos y gastos para obtener insights personalizados! 💪',
+        metrics: {
+          totalIngresos: 0,
+          totalGastos: 0,
+          balance: 0,
+          tasaAhorro: 0,
+          transaccionesCount: 0
+        },
+        topCategories: [],
+        projections: {
+          gastos: 0,
+          ingresos: 0,
+          balance: 0,
+          period: period === 'year' ? 'Anual' : 'Mensual'
+        }
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
