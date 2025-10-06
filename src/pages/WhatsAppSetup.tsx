@@ -142,7 +142,7 @@ export default function WhatsAppSetup() {
             <CarouselContent className="-ml-2">
               <CarouselItem className="basis-1/2 pl-2">
                 <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-white font-bold text-xs">
                     1
                   </div>
                   <div>
@@ -154,7 +154,7 @@ export default function WhatsAppSetup() {
 
               <CarouselItem className="basis-1/2 pl-2">
                 <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-white font-bold text-xs">
                     2
                   </div>
                   <div>
@@ -166,7 +166,7 @@ export default function WhatsAppSetup() {
 
               <CarouselItem className="basis-1/2 pl-2">
                 <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-white font-bold text-xs">
                     3
                   </div>
                   <div>
@@ -178,7 +178,7 @@ export default function WhatsAppSetup() {
 
               <CarouselItem className="basis-1/2 pl-2">
                 <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-white font-bold text-xs">
                     4
                   </div>
                   <div>
@@ -190,7 +190,7 @@ export default function WhatsAppSetup() {
 
               <CarouselItem className="basis-1/2 pl-2">
                 <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-white font-bold text-xs">
                     5
                   </div>
                   <div>
@@ -202,7 +202,7 @@ export default function WhatsAppSetup() {
 
               <CarouselItem className="basis-1/2 pl-2">
                 <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-white font-bold text-xs">
                     6
                   </div>
                   <div>
