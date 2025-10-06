@@ -452,19 +452,8 @@ const Balance = () => {
                             ? 'border-blue-500/30 bg-blue-500/5'
                             : 'border-white/10'
                         }`}>
-                          <div className="flex items-start justify-between mb-2">
+                          <div className="mb-2">
                             <h4 className="text-base font-semibold text-white">{insight.titulo}</h4>
-                            <Badge className={`${
-                              insight.tipo === 'positivo'
-                                ? 'bg-green-500/20 text-green-200'
-                                : insight.tipo === 'negativo'
-                                ? 'bg-red-500/20 text-red-200'
-                                : insight.tipo === 'consejo'
-                                ? 'bg-blue-500/20 text-blue-200'
-                                : 'bg-gray-500/20 text-gray-200'
-                            }`}>
-                              {insight.metrica}
-                            </Badge>
                           </div>
                           <p className="text-sm text-white/80 leading-relaxed">{insight.descripcion}</p>
                         </div>
