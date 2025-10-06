@@ -667,14 +667,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Logout Button for Mobile - At the bottom */}
-        <div className="md:hidden mt-6 pb-4">
-          <Button variant="outline" className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20" onClick={handleLogout}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Cerrar sesión
-          </Button>
         </div>
-      </div>
       </div>
     </div>;
 };
