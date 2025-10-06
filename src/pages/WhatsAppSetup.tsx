@@ -1,234 +1,214 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, MessageCircle, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, MessageCircle, CheckCircle2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import whatsappLogo from '@/assets/whatsapp-logo.png';
 
 export default function WhatsAppSetup() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
   const [user, setUser] = useState<any>(null);
+  
+  // Número de WhatsApp de Moni AI (esto debería venir de configuración)
+  const MONI_WHATSAPP = "+52 123 456 7890"; // Reemplazar con el número real
 
   useEffect(() => {
-    checkConnection();
+    checkAuth();
   }, []);
 
-  const checkConnection = async () => {
+  const checkAuth = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       navigate("/auth");
       return;
     }
     setUser(user);
-
-    const { data } = await supabase
-      .from("whatsapp_users")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("is_active", true)
-      .single();
-
-    if (data) {
-      setIsConnected(true);
-      setPhoneNumber(data.phone_number);
-    }
   };
 
-  const handleConnect = async () => {
-    if (!phoneNumber.trim()) {
-      toast({
-        title: "Error",
-        description: "Ingresa tu número de WhatsApp",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Validar formato de teléfono
-    const cleanPhone = phoneNumber.replace(/\D/g, '');
-    if (cleanPhone.length < 10) {
-      toast({
-        title: "Error",
-        description: "Número de teléfono inválido",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const formattedPhone = cleanPhone.startsWith('+') ? cleanPhone : `+${cleanPhone}`;
-      
-      const { error } = await supabase
-        .from("whatsapp_users")
-        .insert({
-          user_id: user.id,
-          phone_number: formattedPhone,
-          is_active: true
-        });
-
-      if (error) throw error;
-
-      setIsConnected(true);
-      toast({
-        title: "¡Conectado! 🎉",
-        description: "Ahora puedes enviar tus transacciones por WhatsApp",
-      });
-    } catch (error: any) {
-      console.error("Error connecting WhatsApp:", error);
-      toast({
-        title: "Error",
-        description: error.message || "No se pudo conectar WhatsApp",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
+  const copyPhoneNumber = () => {
+    navigator.clipboard.writeText(MONI_WHATSAPP);
+    toast({
+      title: "¡Copiado!",
+      description: "Número copiado al portapapeles",
+    });
   };
 
-  const handleDisconnect = async () => {
-    setLoading(true);
-    try {
-      const { error } = await supabase
-        .from("whatsapp_users")
-        .update({ is_active: false })
-        .eq("user_id", user.id);
-
-      if (error) throw error;
-
-      setIsConnected(false);
-      setPhoneNumber("");
-      toast({
-        title: "Desconectado",
-        description: "WhatsApp ha sido desconectado",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
+  const openWhatsApp = () => {
+    const cleanNumber = MONI_WHATSAPP.replace(/\D/g, '');
+    const message = encodeURIComponent("¡Hola Moni! Quiero empezar a registrar mis transacciones 💰");
+    window.open(`https://wa.me/${cleanNumber}?text=${message}`, '_blank');
   };
 
   return (
-    <div className="min-h-screen animated-wave-bg p-6">
+    <div className="min-h-screen animated-wave-bg p-6 pb-24">
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="flex items-center gap-4 mb-8">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/dashboard")}
-            className="text-foreground hover:bg-primary/10"
+            className="text-white hover:bg-white/10"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-foreground">WhatsApp</h1>
-            <p className="text-muted-foreground">Conecta tu número para registrar transacciones</p>
+            <h1 className="text-3xl font-bold text-white">Chatea con Moni AI</h1>
+            <p className="text-white/70">Por WhatsApp, 24/7</p>
           </div>
         </div>
 
-        <Card className="p-8 bg-card/80 backdrop-blur border-border/50">
-          <div className="space-y-6">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
-                <MessageCircle className="h-8 w-8 text-primary" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-foreground">Conecta WhatsApp</h2>
-                <p className="text-muted-foreground">Envía tus transacciones fácilmente</p>
+        {/* Hero Card */}
+        <Card className="p-8 bg-gradient-to-br from-green-500/20 to-green-600/10 backdrop-blur border-green-500/30">
+          <div className="text-center space-y-6">
+            <div className="mx-auto w-24 h-24 rounded-full bg-green-500/20 flex items-center justify-center">
+              <img src={whatsappLogo} alt="WhatsApp" className="w-16 h-16" />
+            </div>
+            
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-2">
+                ¡Habla con Moni por WhatsApp! 💬
+              </h2>
+              <p className="text-white/70">
+                Registra tus gastos e ingresos de forma natural, como si hablaras con un amigo
+              </p>
+            </div>
+
+            {/* Número de WhatsApp */}
+            <div className="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20">
+              <p className="text-sm text-white/70 mb-2">Envía un mensaje a:</p>
+              <div className="flex items-center justify-center gap-3">
+                <p className="text-3xl font-bold text-white font-mono">
+                  {MONI_WHATSAPP}
+                </p>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={copyPhoneNumber}
+                  className="text-white hover:bg-white/10"
+                >
+                  <Copy className="h-5 w-5" />
+                </Button>
               </div>
             </div>
 
-            {!isConnected ? (
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
-                    Número de WhatsApp
-                  </label>
-                  <Input
-                    type="tel"
-                    placeholder="+52 123 456 7890"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="bg-background/50"
-                  />
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Incluye el código de país (ej: +52 para México)
-                  </p>
-                </div>
+            {/* CTA Principal */}
+            <Button
+              onClick={openWhatsApp}
+              className="w-full bg-green-500 hover:bg-green-600 text-white h-14 text-lg font-semibold"
+            >
+              <MessageCircle className="mr-2 h-6 w-6" />
+              Abrir Chat con Moni
+            </Button>
+          </div>
+        </Card>
 
-                <Button
-                  onClick={handleConnect}
-                  disabled={loading}
-                  className="w-full bg-primary hover:bg-primary/90"
-                >
-                  {loading ? "Conectando..." : "Conectar WhatsApp"}
-                </Button>
-
-                <div className="bg-primary/5 rounded-lg p-4 space-y-2">
-                  <h3 className="font-semibold text-foreground flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-primary" />
-                    ¿Cómo funciona?
-                  </h3>
-                  <ul className="text-sm text-muted-foreground space-y-1 ml-6 list-disc">
-                    <li>Conecta tu número de WhatsApp</li>
-                    <li>Envía mensajes como: "Gasté $500 en comida" o "Me pagaron $2000"</li>
-                    <li>Moni AI interpretará y registrará automáticamente tu transacción</li>
-                    <li>Recibirás confirmación y análisis en tiempo real</li>
-                  </ul>
-                </div>
+        {/* ¿Cómo funciona? */}
+        <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
+          <h3 className="font-bold text-xl text-white mb-4 flex items-center gap-2">
+            <CheckCircle2 className="h-5 w-5 text-primary" />
+            ¿Cómo funciona?
+          </h3>
+          <div className="space-y-4">
+            <div className="flex gap-3">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                1
               </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="bg-primary/10 rounded-lg p-6 text-center">
-                  <CheckCircle2 className="h-12 w-12 text-primary mx-auto mb-4" />
-                  <h3 className="font-bold text-lg text-foreground mb-2">
-                    ¡Conectado!
-                  </h3>
-                  <p className="text-muted-foreground mb-1">
-                    Número conectado:
-                  </p>
-                  <p className="font-mono text-foreground font-semibold">
-                    {phoneNumber}
-                  </p>
-                </div>
-
-                <div className="bg-card rounded-lg p-4 space-y-3">
-                  <h3 className="font-semibold text-foreground">Ejemplos de mensajes:</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="bg-primary/5 rounded p-3">
-                      <p className="text-foreground">"Gasté $350 en el supermercado"</p>
-                    </div>
-                    <div className="bg-primary/5 rounded p-3">
-                      <p className="text-foreground">"Ingreso de $5000 por freelance"</p>
-                    </div>
-                    <div className="bg-primary/5 rounded p-3">
-                      <p className="text-foreground">"$120 en gasolina"</p>
-                    </div>
-                  </div>
-                </div>
-
-                <Button
-                  onClick={handleDisconnect}
-                  disabled={loading}
-                  variant="destructive"
-                  className="w-full"
-                >
-                  {loading ? "Desconectando..." : "Desconectar WhatsApp"}
-                </Button>
+              <div>
+                <p className="font-semibold text-white">Agrega el número a tus contactos</p>
+                <p className="text-sm text-white/70">Guarda {MONI_WHATSAPP} como "Moni AI"</p>
               </div>
-            )}
+            </div>
+            
+            <div className="flex gap-3">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                2
+              </div>
+              <div>
+                <p className="font-semibold text-white">Envía tus transacciones</p>
+                <p className="text-sm text-white/70">Escribe de forma natural, como hablas</p>
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                3
+              </div>
+              <div>
+                <p className="font-semibold text-white">Recibe confirmación</p>
+                <p className="text-sm text-white/70">Moni AI te confirma y categoriza automáticamente</p>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Ejemplos de mensajes */}
+        <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
+          <h3 className="font-bold text-xl text-white mb-4">
+            Ejemplos de mensajes
+          </h3>
+          <div className="space-y-3">
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+              <p className="text-white font-medium">"Gasté $350 en el supermercado"</p>
+              <p className="text-xs text-white/60 mt-1">→ Gasto registrado en categoría Comida</p>
+            </div>
+            
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+              <p className="text-white font-medium">"Me pagaron $5000 por freelance"</p>
+              <p className="text-xs text-white/60 mt-1">→ Ingreso registrado en categoría Trabajo</p>
+            </div>
+            
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+              <p className="text-white font-medium">"$120 gasolina"</p>
+              <p className="text-xs text-white/60 mt-1">→ Gasto registrado en categoría Transporte</p>
+            </div>
+
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+              <p className="text-white font-medium">"Comida con amigos $450"</p>
+              <p className="text-xs text-white/60 mt-1">→ Gasto registrado en categoría Ocio</p>
+            </div>
+          </div>
+        </Card>
+
+        {/* Beneficios */}
+        <Card className="p-6 bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur border-primary/20">
+          <h3 className="font-bold text-xl text-white mb-4">
+            ¿Por qué usar WhatsApp? 💡
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="flex items-start gap-3">
+              <div className="text-2xl">⚡</div>
+              <div>
+                <p className="font-semibold text-white">Instantáneo</p>
+                <p className="text-sm text-white/70">Registra en segundos, desde donde estés</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="text-2xl">🤖</div>
+              <div>
+                <p className="font-semibold text-white">Inteligente</p>
+                <p className="text-sm text-white/70">IA que entiende lenguaje natural</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="text-2xl">🎯</div>
+              <div>
+                <p className="font-semibold text-white">Preciso</p>
+                <p className="text-sm text-white/70">Categorización automática inteligente</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="text-2xl">🔔</div>
+              <div>
+                <p className="font-semibold text-white">Recordatorios</p>
+                <p className="text-sm text-white/70">Moni te recuerda registrar tus gastos</p>
+              </div>
+            </div>
           </div>
         </Card>
       </div>
