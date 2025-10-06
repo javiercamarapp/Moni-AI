@@ -88,19 +88,9 @@ export default function FinancialAnalysis() {
     <div className="min-h-screen animated-wave-bg p-6">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate("/dashboard")}
-              className="text-foreground hover:bg-primary/10"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Análisis Financiero</h1>
-              <p className="text-muted-foreground">Insights generados por IA</p>
-            </div>
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Análisis Financiero</h1>
+            <p className="text-muted-foreground">Insights generados por IA</p>
           </div>
           <Button
             onClick={loadAnalysis}
