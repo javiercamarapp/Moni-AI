@@ -14,7 +14,19 @@ interface CategoryBreakdownWidgetProps {
 const COLORS = ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#ef4444', '#14b8a6'];
 
 export default function CategoryBreakdownWidget({ categories }: CategoryBreakdownWidgetProps) {
-  const total = categories.reduce((sum, cat) => sum + cat.value, 0);
+  const validCategories = categories.filter(cat => cat.value && !isNaN(cat.value) && cat.value > 0);
+  const total = validCategories.reduce((sum, cat) => sum + cat.value, 0);
+
+  if (validCategories.length === 0 || total === 0) {
+    return (
+      <Card className="p-4 bg-gradient-card card-glow border-white/20">
+        <p className="text-sm font-medium text-white/90 mb-3">📊 Gastos por Categoría</p>
+        <div className="h-[220px] flex items-center justify-center">
+          <p className="text-white/60 text-sm">Sin datos disponibles</p>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Card className="p-4 bg-gradient-card card-glow border-white/20">
@@ -22,7 +34,7 @@ export default function CategoryBreakdownWidget({ categories }: CategoryBreakdow
       <ResponsiveContainer width="100%" height={220}>
         <PieChart>
           <Pie
-            data={categories}
+            data={validCategories}
             cx="50%"
             cy="50%"
             labelLine={false}
@@ -31,7 +43,7 @@ export default function CategoryBreakdownWidget({ categories }: CategoryBreakdow
             fill="#8884d8"
             dataKey="value"
           >
-            {categories.map((entry, index) => (
+            {validCategories.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color || COLORS[index % COLORS.length]} />
             ))}
           </Pie>
@@ -47,7 +59,7 @@ export default function CategoryBreakdownWidget({ categories }: CategoryBreakdow
         </PieChart>
       </ResponsiveContainer>
       <div className="mt-3 space-y-1.5 max-h-32 overflow-y-auto">
-        {categories.map((cat, idx) => (
+        {validCategories.map((cat, idx) => (
           <div key={idx} className="flex justify-between items-center text-xs">
             <div className="flex items-center gap-2">
               <div 

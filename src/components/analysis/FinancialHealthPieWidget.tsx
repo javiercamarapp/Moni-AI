@@ -12,30 +12,47 @@ export default function FinancialHealthPieWidget({
   fixedExpenses, 
   variableExpenses 
 }: FinancialHealthPieWidgetProps) {
-  const total = savings + fixedExpenses + variableExpenses;
+  const validSavings = savings && !isNaN(savings) ? Math.max(0, savings) : 0;
+  const validFixed = fixedExpenses && !isNaN(fixedExpenses) ? Math.max(0, fixedExpenses) : 0;
+  const validVariable = variableExpenses && !isNaN(variableExpenses) ? Math.max(0, variableExpenses) : 0;
+  
+  const total = validSavings + validFixed + validVariable;
+  
+  if (total === 0) {
+    return (
+      <Card className="p-4 bg-gradient-card card-glow border-white/20">
+        <div className="flex justify-between items-center mb-3">
+          <p className="text-sm font-medium text-white/90">💚 Salud Financiera</p>
+        </div>
+        <div className="h-[200px] flex items-center justify-center">
+          <p className="text-white/60 text-sm">Sin datos disponibles</p>
+        </div>
+      </Card>
+    );
+  }
   
   const data = [
     { 
       name: 'Ahorro', 
-      value: savings, 
+      value: validSavings, 
       color: '#10b981',
-      percentage: (savings / total) * 100 
+      percentage: (validSavings / total) * 100 
     },
     { 
       name: 'Gastos Fijos', 
-      value: fixedExpenses, 
+      value: validFixed, 
       color: '#f59e0b',
-      percentage: (fixedExpenses / total) * 100 
+      percentage: (validFixed / total) * 100 
     },
     { 
       name: 'Gastos Variables', 
-      value: variableExpenses, 
+      value: validVariable, 
       color: '#8b5cf6',
-      percentage: (variableExpenses / total) * 100 
+      percentage: (validVariable / total) * 100 
     },
   ];
 
-  const savingsRate = (savings / total) * 100;
+  const savingsRate = (validSavings / total) * 100;
   const healthStatus = savingsRate >= 20 ? '✅ Excelente' : savingsRate >= 10 ? '⚠️ Mejorable' : '❌ Crítico';
 
   return (
