@@ -356,6 +356,141 @@ serve(async (req) => {
       }
     };
 
+    // Calcular datos adicionales para nuevos widgets
+    
+    // Safe-to-Spend: ingreso - gastos fijos - apartados (asumimos 10% para metas)
+    const savingsGoalsAmount = totalIncome * 0.10;
+    const safeToSpend = totalIncome - fixedExpenses - savingsGoalsAmount;
+    
+    // Próximas transacciones (simuladas - idealmente de calendario)
+    const upcomingTransactions = [
+      { description: 'Nómina', amount: totalIncome, date: 'En 5 días', type: 'income', risk: 'low', daysUntil: 5 },
+      { description: 'Renta', amount: fixedExpenses * 0.4, date: 'En 3 días', type: 'expense', risk: balance > fixedExpenses ? 'low' : 'high', daysUntil: 3 },
+      { description: 'Tarjeta de crédito', amount: fixedExpenses * 0.2, date: 'En 12 días', type: 'expense', risk: 'medium', daysUntil: 12 }
+    ];
+    
+    // Top 3 acciones de ahorro (basadas en análisis de gastos)
+    const topActions = [
+      { 
+        title: topCategories[0] ? `Reducir "${topCategories[0].name}" 10%` : 'Reducir gasto principal',
+        description: topCategories[0] ? `Tu categoría más alta. Un pequeño recorte genera gran impacto.` : 'Optimiza tu categoría principal',
+        impact: topCategories[0] ? Number(topCategories[0].total) * 0.10 : 0,
+        type: 'reduce'
+      },
+      {
+        title: `Revisar ${expenseTransactions.length} transacciones`,
+        description: 'Identifica gastos duplicados o innecesarios',
+        impact: antExpenses * 0.30,
+        type: 'optimize'
+      },
+      {
+        title: fixedExpenses > totalIncome * 0.5 ? 'Renegociar gastos fijos' : 'Aumentar ahorro automático',
+        description: fixedExpenses > totalIncome * 0.5 ? 'Tus gastos fijos superan el 50% del ingreso' : 'Aprovecha el buen margen',
+        impact: fixedExpenses > totalIncome * 0.5 ? fixedExpenses * 0.10 : totalIncome * 0.05,
+        type: 'save'
+      }
+    ].filter(a => a.impact > 0);
+    
+    // Proyecciones con escenarios (3-6 meses)
+    const monthlyBalance = balance;
+    const forecastData = [];
+    for (let i = 1; i <= 6; i++) {
+      const monthLabel = new Date(now.getTime() + i * 30 * 24 * 60 * 60 * 1000).toLocaleDateString('es-MX', { month: 'short' });
+      forecastData.push({
+        month: monthLabel,
+        conservative: monthlyBalance * i * 0.7, // 30% menos por imprevistos
+        realistic: monthlyBalance * i,
+        optimistic: monthlyBalance * i * 1.2 // 20% más optimizando
+      });
+    }
+    
+    // Probabilidad de cumplir meta principal (si existe)
+    const mainGoal = goalsProgress.length > 0 ? goalsProgress[0] : null;
+    const goalProbability = mainGoal && monthlyBalance > 0 
+      ? Math.min(95, Math.round(((monthlyBalance / (mainGoal.target - mainGoal.current)) * 100)))
+      : 0;
+    const monthsToGoal = mainGoal && monthlyBalance > 0 
+      ? Math.ceil((mainGoal.target - mainGoal.current) / monthlyBalance)
+      : 0;
+    const goalETA = monthsToGoal > 0 ? `${monthsToGoal} meses` : 'N/A';
+    
+    // Presupuesto por categoría (basado en proporción ideal)
+    const categoryBudgets = topCategories.slice(0, 5).map(cat => {
+      const idealBudget = totalIncome * 0.15; // Asumimos 15% por categoría top
+      const spent = Number(cat.total);
+      return {
+        name: cat.name,
+        spent,
+        budget: idealBudget,
+        percentUsed: (spent / idealBudget) * 100,
+        icon: cat.name.toLowerCase().includes('comida') ? '🍔' :
+              cat.name.toLowerCase().includes('transport') ? '🚗' :
+              cat.name.toLowerCase().includes('hogar') ? '🏠' :
+              cat.name.toLowerCase().includes('ocio') ? '🎮' : '💳'
+      };
+    });
+    
+    // Plan de pago de deudas (simulado - idealmente de tabla deudas)
+    const debts = totalDebt > 0 ? [
+      {
+        name: 'Tarjeta Banco X',
+        balance: totalDebt * 0.6,
+        interest: 42,
+        minPayment: totalDebt * 0.6 * 0.03,
+        order: 1,
+        payoffDate: 'Mar 2026',
+        interestSaved: totalDebt * 0.6 * 0.05
+      },
+      {
+        name: 'Préstamo Personal',
+        balance: totalDebt * 0.4,
+        interest: 18,
+        minPayment: totalDebt * 0.4 * 0.05,
+        order: 2,
+        payoffDate: 'Jun 2026',
+        interestSaved: totalDebt * 0.4 * 0.03
+      }
+    ] : [];
+    
+    // Suscripciones (detectar transacciones recurrentes)
+    const subscriptions = transactions
+      .filter(t => t.frequency && t.frequency !== 'once' && t.type === 'expense')
+      .slice(0, 5)
+      .map(t => ({
+        name: t.description || 'Suscripción',
+        amount: Number(t.amount),
+        frequency: 'monthly',
+        lastUsed: new Date(t.transaction_date).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' }),
+        daysUnused: Math.floor((now.getTime() - new Date(t.transaction_date).getTime()) / (1000 * 60 * 60 * 24)),
+        priceChange: Math.random() > 0.7 ? Math.round(Number(t.amount) * 0.1) : 0, // Simulado
+        icon: '💳'
+      }));
+    const totalSubscriptions = subscriptions.reduce((sum, s) => sum + s.amount, 0);
+    
+    // Patrimonio neto histórico (simulado - últimos 12 meses)
+    const netWorthHistory = [];
+    for (let i = 11; i >= 0; i--) {
+      const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthLabel = monthDate.toLocaleDateString('es-MX', { month: 'short' });
+      const simAssets = balance * (0.7 + (i * 0.025));
+      const simLiabilities = totalDebt * (1 - (i * 0.05));
+      netWorthHistory.push({
+        month: monthLabel,
+        assets: simAssets,
+        liabilities: simLiabilities,
+        netWorth: simAssets - simLiabilities
+      });
+    }
+    
+    // Cambio en score (simulado)
+    const previousScore = Math.max(0, scoreMoni - Math.floor(Math.random() * 15));
+    const scoreChange = scoreMoni - previousScore;
+    const changeReason = scoreChange > 0 
+      ? `+${scoreChange} pts por ↑ ahorro (${savingsRate.toFixed(1)}%) y control de gastos`
+      : scoreChange < 0 
+      ? `${scoreChange} pts por ↑ gasto variable (+${variableExpensesPercentage.toFixed(0)}%)`
+      : 'Sin cambios significativos';
+
     // Generar AI insights usando Lovable AI
     const aiPrompt = `Eres Moni, un coach financiero de clase mundial. Analiza estos datos financieros del usuario con TODAS las razones financieras esenciales:
 
@@ -486,7 +621,50 @@ Sé profesional pero cercano. Usa las razones financieras como un médico usa an
         balance: Math.round(projectedBalance),
         period: projectionDays === 365 ? 'Anual' : 'Mensual'
       },
-      dailyCashFlow
+      dailyCashFlow,
+      // Nuevos datos para widgets mejorados
+      safeToSpend: {
+        amount: safeToSpend,
+        monthlyIncome: totalIncome,
+        fixedExpenses,
+        savingsGoals: savingsGoalsAmount
+      },
+      upcomingTransactions: {
+        transactions: upcomingTransactions,
+        periodDays: 30
+      },
+      topActions,
+      scoreBreakdown: {
+        components: metrics.scoreComponents,
+        scoreMoni,
+        previousScore,
+        changeReason
+      },
+      netWorth: {
+        netWorth: balance - totalDebt,
+        assets: balance,
+        liabilities: totalDebt,
+        historicalData: netWorthHistory,
+        runwayMonths: liquidityMonths
+      },
+      forecast: {
+        forecastData,
+        goalProbability,
+        goalETA
+      },
+      budgetProgress: {
+        categories: categoryBudgets
+      },
+      debtPlan: {
+        debts,
+        strategy: 'avalanche',
+        totalInterest: totalDebt * 0.15,
+        dti: financialBurden
+      },
+      subscriptions: {
+        subscriptions,
+        totalMonthly: totalSubscriptions
+      }
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

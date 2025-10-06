@@ -36,6 +36,15 @@ import {
   ResponsiveContainer,
   Cell
 } from 'recharts';
+import SafeToSpendWidget from "@/components/analysis/SafeToSpendWidget";
+import TopActionsWidget from "@/components/analysis/TopActionsWidget";
+import ScoreBreakdownWidget from "@/components/analysis/ScoreBreakdownWidget";
+import NetWorthWidget from "@/components/analysis/NetWorthWidget";
+import ForecastWidget from "@/components/analysis/ForecastWidget";
+import BudgetProgressWidget from "@/components/analysis/BudgetProgressWidget";
+import DebtPaymentPlanWidget from "@/components/analysis/DebtPaymentPlanWidget";
+import SubscriptionsWidget from "@/components/analysis/SubscriptionsWidget";
+import UpcomingTransactionsWidget from "@/components/analysis/UpcomingTransactionsWidget";
 
 export default function FinancialAnalysis() {
   const navigate = useNavigate();
@@ -128,224 +137,196 @@ export default function FinancialAnalysis() {
 
         {analysis && (
           <>
-            {/* Score Moni - Compacto */}
-            <Card className="p-4 bg-white/10 backdrop-blur border-white/20">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-white/70 mb-1">Score Moni</p>
-                  <p className="text-3xl font-bold text-white">{analysis.metrics.scoreMoni}<span className="text-sm text-white/60">/100</span></p>
-                  <p className="text-xs text-white/70 mt-1">
-                    {analysis.metrics.scoreMoni >= 70 ? '✅ Excelente' :
-                     analysis.metrics.scoreMoni >= 40 ? '⚠️ Mejorable' : '❌ Crítico'}
-                  </p>
+            {/* Valor Inmediato - Sección Superior */}
+            <div className="space-y-3">
+              <p className="text-sm font-bold text-white/90">💎 Valor Inmediato</p>
+              
+              <div className="grid grid-cols-1 gap-3">
+                {analysis.safeToSpend && (
+                  <SafeToSpendWidget {...analysis.safeToSpend} />
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 gap-3">
+                {analysis.upcomingTransactions && (
+                  <UpcomingTransactionsWidget {...analysis.upcomingTransactions} />
+                )}
+              </div>
+
+              {analysis.topActions && analysis.topActions.length > 0 && (
+                <TopActionsWidget actions={analysis.topActions} />
+              )}
+            </div>
+
+            {/* Score Moni - Explicabilidad */}
+            <div className="space-y-3">
+              <p className="text-sm font-bold text-white/90">🏆 Tu Score Financiero</p>
+              
+              {analysis.scoreBreakdown && (
+                <ScoreBreakdownWidget {...analysis.scoreBreakdown} />
+              )}
+            </div>
+
+            {/* Patrimonio y Runway */}
+            <div className="space-y-3">
+              <p className="text-sm font-bold text-white/90">💰 Patrimonio & Liquidez</p>
+              
+              {analysis.netWorth && (
+                <NetWorthWidget {...analysis.netWorth} />
+              )}
+            </div>
+
+            {/* Proyecciones con Escenarios */}
+            <div className="space-y-3">
+              <p className="text-sm font-bold text-white/90">📈 Proyecciones Inteligentes</p>
+              
+              {analysis.forecast && (
+                <ForecastWidget {...analysis.forecast} />
+              )}
+            </div>
+
+            {/* Presupuesto Vivo */}
+            <div className="space-y-3">
+              <p className="text-sm font-bold text-white/90">📊 Presupuesto del Mes</p>
+              
+              {analysis.budgetProgress && analysis.budgetProgress.categories && (
+                <BudgetProgressWidget {...analysis.budgetProgress} />
+              )}
+            </div>
+
+            {/* Deuda Inteligente */}
+            {analysis.debtPlan && analysis.debtPlan.debts && analysis.debtPlan.debts.length > 0 && (
+              <div className="space-y-3">
+                <p className="text-sm font-bold text-white/90">💳 Gestión de Deudas</p>
+                
+                <DebtPaymentPlanWidget {...analysis.debtPlan} />
+              </div>
+            )}
+
+            {/* Suscripciones */}
+            {analysis.subscriptions && analysis.subscriptions.subscriptions && analysis.subscriptions.subscriptions.length > 0 && (
+              <div className="space-y-3">
+                <p className="text-sm font-bold text-white/90">🔄 Suscripciones Activas</p>
+                
+                <SubscriptionsWidget {...analysis.subscriptions} />
+              </div>
+            )}
+
+            {/* Métricas Detalladas (Colapsables) */}
+            <div className="space-y-2">
+              <p className="text-sm font-bold text-white/90">📊 Métricas Detalladas</p>
+              
+              {/* Liquidez - Grid Compacto */}
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-white/80 flex items-center gap-1">
+                  <Droplets className="h-3 w-3" /> Liquidez y Estabilidad
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  <Card className="p-3 bg-white/10 backdrop-blur border-white/20">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-white/70">Balance</span>
+                      <DollarSign className="h-3 w-3 text-emerald-400" />
+                    </div>
+                    <p className={`text-lg font-bold ${analysis.metrics.balance >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                      ${(analysis.metrics.balance/1000).toFixed(1)}k
+                    </p>
+                  </Card>
+
+                  <Card className="p-3 bg-white/10 backdrop-blur border-white/20">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-white/70">Ahorro</span>
+                      <PiggyBank className="h-3 w-3 text-purple-400" />
+                    </div>
+                    <p className="text-lg font-bold text-purple-300">{analysis.metrics.savingsRate}%</p>
+                    <p className="text-[10px] text-white/60">meta: 20%</p>
+                  </Card>
+
+                  <Card className="p-3 bg-white/10 backdrop-blur border-white/20">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-white/70">Liquidez</span>
+                      <Droplets className="h-3 w-3 text-cyan-400" />
+                    </div>
+                    <p className="text-lg font-bold text-cyan-300">
+                      {(analysis.metrics.liquidityMonths || 0).toFixed(1)} m
+                    </p>
+                    <p className="text-[10px] text-white/60">
+                      {(analysis.metrics.liquidityMonths || 0) >= 3 ? '✅ ok' : '⚠️ bajo'}
+                    </p>
+                  </Card>
+
+                  <Card className="p-3 bg-white/10 backdrop-blur border-white/20">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-white/70">Cash Flow</span>
+                      <TrendingUp className="h-3 w-3 text-teal-400" />
+                    </div>
+                    <p className="text-lg font-bold text-teal-300">
+                      ${(analysis.metrics.cashFlowAccumulated/1000).toFixed(1)}k
+                    </p>
+                  </Card>
                 </div>
-                <div className="relative">
-                  <svg className="w-20 h-20 transform -rotate-90">
-                    <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" className="text-white/20" />
-                    <circle
-                      cx="40" cy="40" r="34"
-                      stroke="currentColor" strokeWidth="6" fill="none"
-                      strokeDasharray={`${2 * Math.PI * 34}`}
-                      strokeDashoffset={`${2 * Math.PI * 34 * (1 - analysis.metrics.scoreMoni / 100)}`}
-                      className={`transition-all ${
-                        analysis.metrics.scoreMoni >= 70 ? 'text-emerald-400' :
-                        analysis.metrics.scoreMoni >= 40 ? 'text-yellow-400' : 'text-red-400'
-                      }`}
-                      strokeLinecap="round"
-                    />
-                  </svg>
+              </div>
+
+              {/* Control de Gastos - Compacto */}
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-white/80 flex items-center gap-1">
+                  <TrendingDown className="h-3 w-3" /> Control de Gastos
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  <Card className="p-3 bg-white/10 backdrop-blur border-white/20">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-white/70">Fijos</span>
+                      <AlertCircle className="h-3 w-3 text-orange-400" />
+                    </div>
+                    <p className="text-lg font-bold text-orange-300">
+                      ${(analysis.metrics.fixedExpenses/1000).toFixed(1)}k
+                    </p>
+                    <p className="text-[10px] text-white/60">{(analysis.metrics.fixedExpensesPercentage || 0).toFixed(0)}% del gasto</p>
+                  </Card>
+
+                  <Card className="p-3 bg-white/10 backdrop-blur border-white/20">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-white/70">Variables</span>
+                      <Zap className="h-3 w-3 text-violet-400" />
+                    </div>
+                    <p className="text-lg font-bold text-violet-300">
+                      ${(analysis.metrics.variableExpenses/1000).toFixed(1)}k
+                    </p>
+                    <p className="text-[10px] text-white/60">{(analysis.metrics.variableExpensesPercentage || 0).toFixed(0)}% del gasto</p>
+                  </Card>
+
+                  <Card className="p-3 bg-white/10 backdrop-blur border-white/20">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-white/70">Hormiga 🐜</span>
+                    </div>
+                    <p className="text-lg font-bold text-yellow-300">
+                      ${(analysis.metrics.antExpenses/1000).toFixed(1)}k
+                    </p>
+                    <p className="text-[10px] text-white/60">{(analysis.metrics.antExpensesPercentage || 0).toFixed(1)}% del ingreso</p>
+                  </Card>
+
+                  <Card className="p-3 bg-white/10 backdrop-blur border-white/20">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-white/70">Impulsivos</span>
+                      <AlertCircle className="h-3 w-3 text-rose-400" />
+                    </div>
+                    <p className="text-lg font-bold text-rose-300">{analysis.metrics.impulsivePurchases}</p>
+                    <p className="text-[10px] text-white/60">compras</p>
+                  </Card>
                 </div>
+              </div>
+            </div>
+
+            {/* Análisis AI */}
+            <Card className="p-3 bg-white/5 backdrop-blur border-white/20">
+              <p className="text-xs font-medium text-white/80 mb-2 flex items-center gap-1">
+                <BarChart3 className="h-3 w-3" /> Análisis Moni AI
+              </p>
+              <div className="text-xs text-white/80 leading-relaxed whitespace-pre-line max-h-60 overflow-y-auto">
+                {analysis.analysis}
               </div>
             </Card>
 
-            {/* Liquidez - Grid Compacto */}
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-white/80 flex items-center gap-1">
-                <Droplets className="h-3 w-3" /> Liquidez y Estabilidad
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <Card className="p-3 bg-white/10 backdrop-blur border-white/20">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/70">Balance</span>
-                    <DollarSign className="h-3 w-3 text-emerald-400" />
-                  </div>
-                  <p className={`text-lg font-bold ${analysis.metrics.balance >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                    ${(analysis.metrics.balance/1000).toFixed(1)}k
-                  </p>
-                </Card>
-
-                <Card className="p-3 bg-white/10 backdrop-blur border-white/20">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/70">Ahorro</span>
-                    <PiggyBank className="h-3 w-3 text-purple-400" />
-                  </div>
-                  <p className="text-lg font-bold text-purple-300">{analysis.metrics.savingsRate}%</p>
-                  <p className="text-[10px] text-white/60">meta: 20%</p>
-                </Card>
-
-                <Card className="p-3 bg-white/10 backdrop-blur border-white/20">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/70">Liquidez</span>
-                    <Droplets className="h-3 w-3 text-cyan-400" />
-                  </div>
-                  <p className="text-lg font-bold text-cyan-300">
-                    {(analysis.metrics.liquidityMonths || 0).toFixed(1)} m
-                  </p>
-                  <p className="text-[10px] text-white/60">
-                    {(analysis.metrics.liquidityMonths || 0) >= 3 ? '✅ ok' : '⚠️ bajo'}
-                  </p>
-                </Card>
-
-                <Card className="p-3 bg-white/10 backdrop-blur border-white/20">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/70">Cash Flow</span>
-                    <TrendingUp className="h-3 w-3 text-teal-400" />
-                  </div>
-                  <p className="text-lg font-bold text-teal-300">
-                    ${(analysis.metrics.cashFlowAccumulated/1000).toFixed(1)}k
-                  </p>
-                </Card>
-              </div>
-            </div>
-
-            {/* Control de Gastos - Compacto */}
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-white/80 flex items-center gap-1">
-                <TrendingDown className="h-3 w-3" /> Control de Gastos
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <Card className="p-3 bg-white/10 backdrop-blur border-white/20">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/70">Fijos</span>
-                    <AlertCircle className="h-3 w-3 text-orange-400" />
-                  </div>
-                  <p className="text-lg font-bold text-orange-300">
-                    ${(analysis.metrics.fixedExpenses/1000).toFixed(1)}k
-                  </p>
-                  <p className="text-[10px] text-white/60">{(analysis.metrics.fixedExpensesPercentage || 0).toFixed(0)}%</p>
-                </Card>
-
-                <Card className="p-3 bg-white/10 backdrop-blur border-white/20">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/70">Variables</span>
-                    <Zap className="h-3 w-3 text-violet-400" />
-                  </div>
-                  <p className="text-lg font-bold text-violet-300">
-                    ${(analysis.metrics.variableExpenses/1000).toFixed(1)}k
-                  </p>
-                  <p className="text-[10px] text-white/60">{(analysis.metrics.variableExpensesPercentage || 0).toFixed(0)}%</p>
-                </Card>
-
-                <Card className="p-3 bg-white/10 backdrop-blur border-white/20">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/70">Hormiga</span>
-                    <span className="text-lg">🐜</span>
-                  </div>
-                  <p className="text-lg font-bold text-yellow-300">
-                    ${(analysis.metrics.antExpenses/1000).toFixed(1)}k
-                  </p>
-                  <p className="text-[10px] text-white/60">{(analysis.metrics.antExpensesPercentage || 0).toFixed(1)}%</p>
-                </Card>
-
-                <Card className="p-3 bg-white/10 backdrop-blur border-white/20">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/70">Impulsivos</span>
-                    <AlertCircle className="h-3 w-3 text-rose-400" />
-                  </div>
-                  <p className="text-lg font-bold text-rose-300">{analysis.metrics.impulsivePurchases}</p>
-                  <p className="text-[10px] text-white/60">este periodo</p>
-                </Card>
-              </div>
-            </div>
-
-            {/* Endeudamiento */}
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-white/80 flex items-center gap-1">
-                <Shield className="h-3 w-3" /> Endeudamiento
-              </p>
-              <div className="grid grid-cols-4 gap-2">
-                <Card className="p-2 bg-white/10 backdrop-blur border-white/20">
-                  <span className="text-[10px] text-white/60">Razón</span>
-                  <p className="text-sm font-bold text-red-300">{(analysis.metrics.debtRatio || 0).toFixed(1)}%</p>
-                </Card>
-                <Card className="p-2 bg-white/10 backdrop-blur border-white/20">
-                  <span className="text-[10px] text-white/60">Carga</span>
-                  <p className="text-sm font-bold text-orange-300">{(analysis.metrics.financialBurden || 0).toFixed(1)}%</p>
-                </Card>
-                <Card className="p-2 bg-white/10 backdrop-blur border-white/20">
-                  <span className="text-[10px] text-white/60">D/I</span>
-                  <p className="text-sm font-bold text-yellow-300">{(analysis.metrics.debtToIncomeRatio || 0).toFixed(2)}</p>
-                </Card>
-                <Card className="p-2 bg-white/10 backdrop-blur border-white/20">
-                  <span className="text-[10px] text-white/60">Int.</span>
-                  <p className="text-sm font-bold text-rose-300">{(analysis.metrics.interestOnIncome || 0).toFixed(1)}%</p>
-                </Card>
-              </div>
-            </div>
-
-            {/* Inversión y Rentabilidad */}
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-white/80 flex items-center gap-1">
-                <TrendingUp className="h-3 w-3" /> Inversión & Rentabilidad
-              </p>
-              <div className="grid grid-cols-4 gap-2">
-                <Card className="p-2 bg-white/10 backdrop-blur border-white/20">
-                  <span className="text-[10px] text-white/60">Inv.</span>
-                  <p className="text-sm font-bold text-emerald-300">{(analysis.metrics.investmentRate || 0).toFixed(1)}%</p>
-                </Card>
-                <Card className="p-2 bg-white/10 backdrop-blur border-white/20">
-                  <span className="text-[10px] text-white/60">ROE</span>
-                  <p className="text-sm font-bold text-teal-300">{(analysis.metrics.personalROE || 0).toFixed(1)}%</p>
-                </Card>
-                <Card className="p-2 bg-white/10 backdrop-blur border-white/20">
-                  <span className="text-[10px] text-white/60">Crec.</span>
-                  <p className="text-sm font-bold text-green-300">{(analysis.metrics.equityGrowth || 0).toFixed(1)}%</p>
-                </Card>
-                <Card className="p-2 bg-white/10 backdrop-blur border-white/20">
-                  <span className="text-[10px] text-white/60">ROI</span>
-                  <p className="text-sm font-bold text-lime-300">{(analysis.metrics.personalROI || 0).toFixed(1)}%</p>
-                </Card>
-              </div>
-            </div>
-
-            {/* Estabilidad y Metas */}
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-white/80 flex items-center gap-1">
-                <Target className="h-3 w-3" /> Estabilidad & Metas
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <Card className="p-2 bg-white/10 backdrop-blur border-white/20">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-white/60">Metas</span>
-                    <Trophy className="h-3 w-3 text-yellow-400" />
-                  </div>
-                  <p className="text-sm font-bold text-indigo-300">{analysis.metrics.avgGoalCompletion}%</p>
-                </Card>
-                <Card className="p-2 bg-white/10 backdrop-blur border-white/20">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-white/60">Consist.</span>
-                    <Activity className="h-3 w-3 text-lime-400" />
-                  </div>
-                  <p className="text-sm font-bold text-lime-300">{analysis.metrics.consistencyScore}</p>
-                </Card>
-                <Card className="p-2 bg-white/10 backdrop-blur border-white/20">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-white/60">Proy.</span>
-                    <TrendingUp className="h-3 w-3 text-amber-400" />
-                  </div>
-                  <p className="text-sm font-bold text-amber-300">${(analysis.metrics.projectedAnnualSavings/1000).toFixed(1)}k</p>
-                </Card>
-                <Card className="p-2 bg-white/10 backdrop-blur border-white/20">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-white/60">Consc.</span>
-                    <Heart className="h-3 w-3 text-pink-400" />
-                  </div>
-                  <p className="text-sm font-bold text-green-300">{analysis.metrics.mindfulSpendingIndex}</p>
-                </Card>
-              </div>
-            </div>
-
-            {/* Gráfica Ingresos vs Gastos */}
+            {/* Gráficas adicionales */}
             <Card className="p-3 bg-white/5 backdrop-blur border-white/20">
               <p className="text-xs font-medium text-white/80 mb-2">Ingresos vs Gastos</p>
               <ResponsiveContainer width="100%" height={150}>
@@ -369,51 +350,6 @@ export default function FinancialAnalysis() {
                 </BarChart>
               </ResponsiveContainer>
             </Card>
-
-            {/* Análisis AI */}
-            <Card className="p-3 bg-white/5 backdrop-blur border-white/20">
-              <p className="text-xs font-medium text-white/80 mb-2 flex items-center gap-1">
-                <BarChart3 className="h-3 w-3" /> Análisis Moni AI
-              </p>
-              <div className="text-xs text-white/80 leading-relaxed whitespace-pre-line max-h-60 overflow-y-auto">
-                {analysis.analysis}
-              </div>
-            </Card>
-
-            {/* Top Categorías */}
-            {analysis.topCategories && analysis.topCategories.length > 0 && (
-              <Card className="p-3 bg-white/5 backdrop-blur border-white/20">
-                <p className="text-xs font-medium text-white/80 mb-2">Top Categorías de Gasto</p>
-                <div className="space-y-1">
-                  {analysis.topCategories.slice(0, 3).map((cat: any, i: number) => (
-                    <div key={i} className="flex items-center justify-between text-xs">
-                      <span className="text-white/70">{cat.name}</span>
-                      <span className="text-white font-medium">${(cat.total/1000).toFixed(1)}k ({cat.percentage}%)</span>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            )}
-
-            {/* Cash Flow */}
-            {analysis.dailyCashFlow && analysis.dailyCashFlow.length > 0 && (
-              <Card className="p-3 bg-white/5 backdrop-blur border-white/20">
-                <p className="text-xs font-medium text-white/80 mb-2">Flujo Diario (14 días)</p>
-                <ResponsiveContainer width="100%" height={120}>
-                  <LineChart data={analysis.dailyCashFlow}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="date" tick={{ fill: 'white', fontSize: 9 }} angle={-45} textAnchor="end" height={50} />
-                    <YAxis tick={{ fill: 'white', fontSize: 9 }} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: 'rgba(0,0,0,0.9)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', fontSize: '10px' }}
-                    />
-                    <Line type="monotone" dataKey="amount" stroke="#14b8a6" strokeWidth={2} dot={{ r: 2 }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </Card>
-            )}
-          </>
-        )}
       </div>
 
       {/* Bottom Navigation */}
