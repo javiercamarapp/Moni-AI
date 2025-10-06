@@ -7,7 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, TrendingUp, TrendingDown, Wallet, ChevronLeft, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Progress } from '@/components/ui/progress';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
 
 interface CategoryBalance {
   id: string;
@@ -427,7 +428,18 @@ const Balance = () => {
               </div>
               
               {proyecciones.insights && proyecciones.insights.length > 0 && (
-                <Carousel className="w-full">
+                <Carousel 
+                  className="w-full"
+                  opts={{
+                    align: "start",
+                    loop: true,
+                  }}
+                  plugins={[
+                    Autoplay({
+                      delay: 4000,
+                    }),
+                  ]}
+                >
                   <CarouselContent>
                     {proyecciones.insights.map((insight, index) => (
                       <CarouselItem key={index}>
@@ -459,8 +471,6 @@ const Balance = () => {
                       </CarouselItem>
                     ))}
                   </CarouselContent>
-                  <CarouselPrevious className="left-2" />
-                  <CarouselNext className="right-2" />
                 </Carousel>
               )}
             </>
