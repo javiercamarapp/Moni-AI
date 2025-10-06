@@ -459,11 +459,11 @@ const Dashboard = () => {
             <div className="flex-1 min-w-0">
               
               <p className="text-xs text-white mb-2 line-clamp-2">
-                Mándale un WhatsApp a tu AI para conocer tu vida financiera.
+                Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
               </p>
-              <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white border-0 text-xs h-8" onClick={() => navigate('/financial-chat')}>
+              <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white border-0 text-xs h-8" onClick={() => navigate('/whatsapp')}>
                 <MessageCircle className="w-3 h-3 mr-1" />
-                Enviar WhatsApp
+                Conectar WhatsApp
               </Button>
             </div>
           </div>
@@ -562,6 +562,38 @@ const Dashboard = () => {
               <Button size="sm" className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30" onClick={() => navigate("/chat")}>
                 <MessageCircle className="w-4 h-4 mr-2" />
                 Chatear con Moni AI
+              </Button>
+            </Card>
+
+            {/* Financial Analysis with AI */}
+            <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                </div>
+                <div>
+                  <h4 className="text-sm sm:text-base font-semibold text-white">Análisis Financiero</h4>
+                  <p className="text-xs text-white">Insights con IA</p>
+                </div>
+              </div>
+              
+              <div className="space-y-3 mb-4">
+                <div className="bg-white/10 rounded-2xl rounded-bl-md p-2 sm:p-3">
+                  <p className="text-xs sm:text-sm text-white">
+                    📊 Obtén análisis detallado de tus finanzas con IA
+                    <br /><br />
+                    • Métricas y gráficas
+                    <br />
+                    • Proyecciones personalizadas
+                    <br />
+                    • Recomendaciones inteligentes
+                  </p>
+                </div>
+              </div>
+
+              <Button size="sm" className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30" onClick={() => navigate("/analysis")}>
+                <TrendingUp className="w-4 h-4 mr-2" />
+                Ver Análisis
               </Button>
             </Card>
 

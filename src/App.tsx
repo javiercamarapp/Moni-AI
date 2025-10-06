@@ -15,6 +15,8 @@ import Gastos from "./pages/Gastos";
 import GestionarCategorias from "./pages/GestionarCategorias";
 import Profile from "./pages/Profile";
 import Balance from "./pages/Balance";
+import WhatsAppSetup from "./pages/WhatsAppSetup";
+import FinancialAnalysis from "./pages/FinancialAnalysis";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +40,8 @@ const App = () => (
           <Route path="/categorias" element={<GestionarCategorias />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/balance" element={<Balance />} />
+          <Route path="/whatsapp" element={<WhatsAppSetup />} />
+          <Route path="/analysis" element={<FinancialAnalysis />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
