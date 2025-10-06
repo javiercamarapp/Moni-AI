@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, TrendingUp, TrendingDown, DollarSign, RefreshCw } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, DollarSign, RefreshCw, Home, MessageCircle, Target, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -85,7 +85,7 @@ export default function FinancialAnalysis() {
   }
 
   return (
-    <div className="min-h-screen animated-wave-bg p-6">
+    <div className="min-h-screen animated-wave-bg p-6 pb-24">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -406,6 +406,61 @@ export default function FinancialAnalysis() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Bottom Navigation Menu - Fixed */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 animated-wave-bg border-t border-white/20 shadow-lg">
+        <div className="container mx-auto px-2">
+          <div className="flex items-center justify-around h-16">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" 
+              onClick={() => navigate("/dashboard")}
+            >
+              <Home className="w-5 h-5 text-white" />
+              <span className="text-xs text-white">Home</span>
+            </Button>
+
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10 bg-white/10"
+            >
+              <TrendingUp className="w-5 h-5 text-white" />
+              <span className="text-xs text-white font-semibold">Análisis</span>
+            </Button>
+
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10"
+            >
+              <Target className="w-5 h-5 text-white" />
+              <span className="text-xs text-white">Metas</span>
+            </Button>
+
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" 
+              onClick={() => navigate("/chat")}
+            >
+              <MessageCircle className="w-5 h-5 text-white" />
+              <span className="text-xs text-white">Chat AI</span>
+            </Button>
+
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" 
+              onClick={() => navigate("/profile")}
+            >
+              <User className="w-5 h-5 text-white" />
+              <span className="text-xs text-white">Perfil</span>
+            </Button>
+          </div>
+        </div>
+      </nav>
     </div>
   );
 }
