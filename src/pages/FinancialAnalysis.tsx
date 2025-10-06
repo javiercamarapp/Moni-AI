@@ -51,7 +51,7 @@ export default function FinancialAnalysis() {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       
-      const { data: transactions, error } = await supabase
+      const { data: recentTx, error: recentError } = await supabase
         .from('transactions')
         .select(`
           *,
@@ -62,10 +62,10 @@ export default function FinancialAnalysis() {
         .order('transaction_date', { ascending: false })
         .limit(10);
 
-      if (error) throw error;
+      if (recentError) throw recentError;
 
       // Format recent transactions
-      const formattedRecent = transactions?.map(t => ({
+      const formattedRecent = recentTx?.map(t => ({
         date: new Date(t.transaction_date),
         type: t.type as "income" | "expense",
         description: t.description,
@@ -77,15 +77,21 @@ export default function FinancialAnalysis() {
 
       setRecentTransactions(formattedRecent);
 
-      // Predict future payments based on recurring transactions
-      const { data: recurringTx } = await supabase
+      // Fetch ALL transactions (last 6 months) to detect patterns
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+      
+      const { data: allTx, error: allError } = await supabase
         .from('transactions')
         .select('*')
         .eq('user_id', user.id)
-        .not('frequency', 'is', null)
+        .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
 
-      const predicted = predictFuturePayments(recurringTx || []);
+      if (allError) throw allError;
+
+      // AI analyzes patterns and predicts future payments
+      const predicted = detectRecurringPayments(allTx || []);
       setFutureEvents(predicted);
       
       setLoadingTransactions(false);
@@ -95,69 +101,92 @@ export default function FinancialAnalysis() {
     }
   };
 
-  const predictFuturePayments = (recurringTransactions: any[]) => {
+  const detectRecurringPayments = (transactions: any[]) => {
     const today = startOfDay(new Date());
     const futurePayments: any[] = [];
-    const nextThreeMonths = addMonths(today, 3);
+    
+    // Group transactions by similar descriptions (normalize text)
+    const groupedByDescription: Record<string, any[]> = {};
+    
+    transactions.forEach(tx => {
+      const normalizedDesc = tx.description
+        .toLowerCase()
+        .replace(/\d+/g, '') // Remove numbers
+        .replace(/[^\w\s]/g, '') // Remove special chars
+        .trim();
+      
+      if (!groupedByDescription[normalizedDesc]) {
+        groupedByDescription[normalizedDesc] = [];
+      }
+      groupedByDescription[normalizedDesc].push(tx);
+    });
 
-    recurringTransactions.forEach(tx => {
-      const lastDate = new Date(tx.transaction_date);
-      let nextDate = new Date(lastDate);
+    // Analyze each group for patterns
+    Object.entries(groupedByDescription).forEach(([desc, txs]) => {
+      if (txs.length < 2) return; // Need at least 2 occurrences
 
-      // Calculate next payment date based on frequency
-      switch (tx.frequency) {
-        case 'daily':
-          nextDate = addDays(lastDate, 1);
-          break;
-        case 'weekly':
-          nextDate = addWeeks(lastDate, 1);
-          break;
-        case 'biweekly':
-          nextDate = addWeeks(lastDate, 2);
-          break;
-        case 'monthly':
-          nextDate = addMonths(lastDate, 1);
-          break;
-        case 'quarterly':
-          nextDate = addMonths(lastDate, 3);
-          break;
-        case 'yearly':
-          nextDate = addYears(lastDate, 1);
-          break;
+      // Sort by date
+      const sortedTxs = txs.sort((a, b) => 
+        new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime()
+      );
+
+      // Calculate average interval between transactions (in days)
+      const intervals: number[] = [];
+      for (let i = 1; i < sortedTxs.length; i++) {
+        const daysDiff = Math.round(
+          (new Date(sortedTxs[i].transaction_date).getTime() - 
+           new Date(sortedTxs[i-1].transaction_date).getTime()) / 
+          (1000 * 60 * 60 * 24)
+        );
+        intervals.push(daysDiff);
       }
 
-      // Generate future occurrences within next 3 months
-      while (isBefore(nextDate, nextThreeMonths)) {
-        if (!isBefore(nextDate, today)) {
-          futurePayments.push({
-            date: new Date(nextDate),
-            type: tx.type,
-            description: `${tx.description} (${getFrequencyLabel(tx.frequency)})`,
-            amount: Number(tx.amount),
-            risk: calculatePaymentRisk(nextDate, Number(tx.amount))
-          });
-        }
+      const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+      const avgAmount = sortedTxs.reduce((sum, tx) => sum + Number(tx.amount), 0) / sortedTxs.length;
 
-        // Calculate next occurrence
-        switch (tx.frequency) {
-          case 'daily':
-            nextDate = addDays(nextDate, 1);
-            break;
-          case 'weekly':
-            nextDate = addWeeks(nextDate, 1);
-            break;
-          case 'biweekly':
-            nextDate = addWeeks(nextDate, 2);
-            break;
-          case 'monthly':
-            nextDate = addMonths(nextDate, 1);
-            break;
-          case 'quarterly':
-            nextDate = addMonths(nextDate, 3);
-            break;
-          case 'yearly':
-            nextDate = addYears(nextDate, 1);
-            break;
+      // Detect if it's a recurring pattern (weekly: ~7d, biweekly: ~15d, monthly: ~30d)
+      let frequency: string | null = null;
+      let predictInterval = 30; // default monthly
+
+      if (avgInterval >= 6 && avgInterval <= 8) {
+        frequency = 'Semanal';
+        predictInterval = 7;
+      } else if (avgInterval >= 13 && avgInterval <= 16) {
+        frequency = 'Quincenal';
+        predictInterval = 15;
+      } else if (avgInterval >= 28 && avgInterval <= 32) {
+        frequency = 'Mensual';
+        predictInterval = 30;
+      } else if (avgInterval >= 88 && avgInterval <= 95) {
+        frequency = 'Trimestral';
+        predictInterval = 90;
+      } else if (avgInterval >= 360 && avgInterval <= 370) {
+        frequency = 'Anual';
+        predictInterval = 365;
+      }
+
+      // Only predict if we detected a clear pattern
+      if (frequency) {
+        const lastTx = sortedTxs[sortedTxs.length - 1];
+        const lastDate = new Date(lastTx.transaction_date);
+        let nextDate = addDays(lastDate, predictInterval);
+
+        // Generate next 3 occurrences
+        const nextThreeMonths = addMonths(today, 3);
+        let count = 0;
+        
+        while (isBefore(nextDate, nextThreeMonths) && count < 3) {
+          if (!isBefore(nextDate, today)) {
+            futurePayments.push({
+              date: new Date(nextDate),
+              type: lastTx.type,
+              description: `${lastTx.description} (${frequency})`,
+              amount: Math.round(avgAmount),
+              risk: calculatePaymentRisk(nextDate, avgAmount)
+            });
+            count++;
+          }
+          nextDate = addDays(nextDate, predictInterval);
         }
       }
     });
@@ -165,17 +194,6 @@ export default function FinancialAnalysis() {
     return futurePayments.sort((a, b) => a.date.getTime() - b.date.getTime());
   };
 
-  const getFrequencyLabel = (frequency: string) => {
-    const labels: Record<string, string> = {
-      daily: 'Diario',
-      weekly: 'Semanal',
-      biweekly: 'Quincenal',
-      monthly: 'Mensual',
-      quarterly: 'Trimestral',
-      yearly: 'Anual'
-    };
-    return labels[frequency] || frequency;
-  };
 
   const calculatePaymentRisk = (date: Date, amount: number): "low" | "medium" | "high" => {
     const daysUntil = Math.ceil((date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
