@@ -46,6 +46,15 @@ const Balance = () => {
   useEffect(() => {
     if (totalIngresos > 0 || totalGastos > 0) {
       fetchAIProjections();
+    } else {
+      // No hay datos, establecer proyecciones vacías
+      setProyecciones({
+        proyeccionAnual: 0,
+        proyeccionSemestral: 0,
+        confianza: 'sin-datos',
+        razonamiento: 'Aún no hay suficientes datos para hacer proyecciones. Empieza registrando tus ingresos y gastos.'
+      });
+      setLoadingProyecciones(false);
     }
   }, [totalIngresos, totalGastos, balance, viewMode]);
 
