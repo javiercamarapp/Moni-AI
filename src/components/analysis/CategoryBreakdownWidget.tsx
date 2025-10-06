@@ -17,10 +17,18 @@ export default function CategoryBreakdownWidget({ categories }: CategoryBreakdow
   const validCategories = categories.filter(cat => cat.value && !isNaN(cat.value) && cat.value > 0);
   const total = validCategories.reduce((sum, cat) => sum + cat.value, 0);
 
+  const hasData = validCategories.length > 0 && total > 0;
+
   return (
     <Card className="p-4 bg-gradient-card card-glow border-white/20">
       <p className="text-sm font-medium text-white/90 mb-3">📊 Gastos por Categoría</p>
-      <ResponsiveContainer width="100%" height={220}>
+      {!hasData ? (
+        <div className="h-[220px] flex items-center justify-center">
+          <p className="text-white/60 text-sm">Sin datos disponibles</p>
+        </div>
+      ) : (
+        <>
+          <ResponsiveContainer width="100%" height={220}>
         <PieChart>
           <Pie
             data={validCategories}
@@ -45,24 +53,26 @@ export default function CategoryBreakdownWidget({ categories }: CategoryBreakdow
             }}
             formatter={(value: any) => `$${value.toLocaleString()}`}
           />
-        </PieChart>
-      </ResponsiveContainer>
-      <div className="mt-3 space-y-1.5 max-h-32 overflow-y-auto">
-        {validCategories.map((cat, idx) => (
-          <div key={idx} className="flex justify-between items-center text-xs">
-            <div className="flex items-center gap-2">
-              <div 
-                className="w-3 h-3 rounded-full" 
-                style={{ backgroundColor: cat.color || COLORS[idx % COLORS.length] }}
-              />
-              <span className="text-white/70">{cat.name}</span>
+          </PieChart>
+        </ResponsiveContainer>
+        <div className="mt-3 space-y-1.5 max-h-32 overflow-y-auto">
+          {validCategories.map((cat, idx) => (
+            <div key={idx} className="flex justify-between items-center text-xs">
+              <div className="flex items-center gap-2">
+                <div 
+                  className="w-3 h-3 rounded-full" 
+                  style={{ backgroundColor: cat.color || COLORS[idx % COLORS.length] }}
+                />
+                <span className="text-white/70">{cat.name}</span>
+              </div>
+              <span className="text-white/90 font-medium">
+                ${cat.value.toLocaleString()} ({((cat.value / total) * 100).toFixed(1)}%)
+              </span>
             </div>
-            <span className="text-white/90 font-medium">
-              ${cat.value.toLocaleString()} ({((cat.value / total) * 100).toFixed(1)}%)
-            </span>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </>
+      )}
     </Card>
   );
 }
