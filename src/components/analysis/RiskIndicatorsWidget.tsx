@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { AlertCircle, AlertTriangle, CheckCircle } from "lucide-react";
+import { AlertCircle, AlertTriangle, CheckCircle, Sparkles } from "lucide-react";
 
 interface RiskIndicator {
   level: "critical" | "warning" | "good";
@@ -7,67 +7,11 @@ interface RiskIndicator {
 }
 
 interface RiskIndicatorsProps {
-  liquidityMonths: number;
-  financialBurden: number;
-  variableExpensesChange: number;
+  indicators: RiskIndicator[];
+  hasIssues: boolean;
 }
 
-export default function RiskIndicatorsWidget({ 
-  liquidityMonths, 
-  financialBurden, 
-  variableExpensesChange 
-}: RiskIndicatorsProps) {
-  const indicators: RiskIndicator[] = [];
-
-  // Liquidity risk
-  if (liquidityMonths < 1.5) {
-    indicators.push({
-      level: "critical",
-      message: `🔴 Liquidez crítica: ${liquidityMonths.toFixed(1)} meses de gasto cubierto.`
-    });
-  } else if (liquidityMonths < 3) {
-    indicators.push({
-      level: "warning",
-      message: `🟡 Liquidez baja: ${liquidityMonths.toFixed(1)} meses cubiertos (meta: 3m).`
-    });
-  } else {
-    indicators.push({
-      level: "good",
-      message: `🟢 Liquidez saludable: ${liquidityMonths.toFixed(1)} meses protegidos.`
-    });
-  }
-
-  // Financial burden risk
-  if (financialBurden > 30) {
-    indicators.push({
-      level: "critical",
-      message: `🔴 Carga financiera al límite (${financialBurden.toFixed(0)}%).`
-    });
-  } else if (financialBurden > 20) {
-    indicators.push({
-      level: "warning",
-      message: `🟡 Carga de deuda moderada (${financialBurden.toFixed(0)}%).`
-    });
-  } else if (financialBurden > 0) {
-    indicators.push({
-      level: "good",
-      message: `🟢 Carga de deuda controlada (${financialBurden.toFixed(0)}%).`
-    });
-  }
-
-  // Variable expenses risk
-  if (variableExpensesChange > 10) {
-    indicators.push({
-      level: "warning",
-      message: `🟡 Gasto variable aumentó +${variableExpensesChange.toFixed(0)}% vs promedio.`
-    });
-  } else if (variableExpensesChange < -5) {
-    indicators.push({
-      level: "good",
-      message: `🟢 Buen control: gasto variable ${Math.abs(variableExpensesChange).toFixed(0)}% bajo promedio.`
-    });
-  }
-
+export default function RiskIndicatorsWidget({ indicators, hasIssues }: RiskIndicatorsProps) {
   const getIndicatorStyle = (level: string) => {
     switch (level) {
       case "critical":
@@ -96,22 +40,43 @@ export default function RiskIndicatorsWidget({
 
   return (
     <div className="space-y-2">
-      <p className="text-xs font-medium text-white/80">⚡ Indicadores de Riesgo</p>
-      <div className="space-y-2">
-        {indicators.map((indicator, index) => (
-          <Card 
-            key={index}
-            className={`p-3 card-glow hover:scale-105 transition-transform duration-200 ${getIndicatorStyle(indicator.level)}`}
-          >
-            <div className="flex items-center gap-2">
-              {getIcon(indicator.level)}
-              <p className="text-xs text-white leading-snug flex-1">
-                {indicator.message}
+      <div className="flex items-center gap-2">
+        <Sparkles className="h-4 w-4 text-purple-400" />
+        <p className="text-xs font-medium text-white/80">⚡ Análisis de Riesgos IA</p>
+      </div>
+      
+      {!hasIssues ? (
+        <Card className="p-4 bg-gradient-to-br from-emerald-600/90 to-emerald-800/90 card-glow border-emerald-500/30 hover:scale-105 transition-transform duration-200">
+          <div className="flex items-start gap-3">
+            <CheckCircle className="h-5 w-5 text-emerald-200 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-white mb-1">
+                🎉 ¡Excelente salud financiera!
+              </p>
+              <p className="text-xs text-emerald-200 leading-snug">
+                Tu Moni AI no detectó puntos críticos. Tus métricas están en niveles saludables. 
+                Sigue con el buen trabajo y mantén estos hábitos financieros.
               </p>
             </div>
-          </Card>
-        ))}
-      </div>
+          </div>
+        </Card>
+      ) : (
+        <div className="space-y-2">
+          {indicators.map((indicator, index) => (
+            <Card 
+              key={index}
+              className={`p-3 card-glow hover:scale-105 transition-transform duration-200 ${getIndicatorStyle(indicator.level)}`}
+            >
+              <div className="flex items-center gap-2">
+                {getIcon(indicator.level)}
+                <p className="text-xs text-white leading-snug flex-1">
+                  {indicator.message}
+                </p>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

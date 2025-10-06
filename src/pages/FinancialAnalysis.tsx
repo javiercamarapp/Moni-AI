@@ -133,9 +133,43 @@ export default function FinancialAnalysis() {
 
             {/* Risk Indicators */}
             <RiskIndicatorsWidget 
-              liquidityMonths={analysis.metrics.liquidityMonths || 0}
-              financialBurden={analysis.metrics.financialBurden || 0}
-              variableExpensesChange={5} // This would come from backend calculation
+              hasIssues={
+                (analysis.metrics.liquidityMonths || 0) < 3 || 
+                (analysis.metrics.financialBurden || 0) > 20 ||
+                analysis.metrics.scoreMoni < 70
+              }
+              indicators={[
+                // Liquidity
+                ...(
+                  (analysis.metrics.liquidityMonths || 0) < 1.5 
+                    ? [{ level: "critical" as const, message: `🔴 Liquidez crítica: ${(analysis.metrics.liquidityMonths || 0).toFixed(1)} meses de gasto cubierto.` }]
+                    : (analysis.metrics.liquidityMonths || 0) < 3
+                    ? [{ level: "warning" as const, message: `🟡 Liquidez baja: ${(analysis.metrics.liquidityMonths || 0).toFixed(1)} meses cubiertos (meta: 3m).` }]
+                    : []
+                ),
+                // Financial burden
+                ...(
+                  (analysis.metrics.financialBurden || 0) > 30
+                    ? [{ level: "critical" as const, message: `🔴 Carga financiera al límite (${(analysis.metrics.financialBurden || 0).toFixed(0)}%).` }]
+                    : (analysis.metrics.financialBurden || 0) > 20
+                    ? [{ level: "warning" as const, message: `🟡 Carga de deuda moderada (${(analysis.metrics.financialBurden || 0).toFixed(0)}%).` }]
+                    : []
+                ),
+                // Score
+                ...(
+                  analysis.metrics.scoreMoni < 40
+                    ? [{ level: "critical" as const, message: `🔴 Score Moni crítico (${analysis.metrics.scoreMoni}/100). Requiere atención inmediata.` }]
+                    : analysis.metrics.scoreMoni < 70
+                    ? [{ level: "warning" as const, message: `🟡 Score Moni mejorable (${analysis.metrics.scoreMoni}/100). Hay oportunidades de mejora.` }]
+                    : []
+                ),
+                // Savings rate
+                ...(
+                  analysis.metrics.savingsRate < 10
+                    ? [{ level: "warning" as const, message: `🟡 Tasa de ahorro baja (${analysis.metrics.savingsRate}%). Meta recomendada: 20%.` }]
+                    : []
+                )
+              ]}
             />
 
             {analysis.upcomingTransactions && <UpcomingTransactionsWidget {...analysis.upcomingTransactions} />}
