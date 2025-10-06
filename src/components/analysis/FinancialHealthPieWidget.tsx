@@ -18,19 +18,6 @@ export default function FinancialHealthPieWidget({
   
   const total = validSavings + validFixed + validVariable;
   
-  if (total === 0) {
-    return (
-      <Card className="p-4 bg-gradient-card card-glow border-white/20">
-        <div className="flex justify-between items-center mb-3">
-          <p className="text-sm font-medium text-white/90">💚 Salud Financiera</p>
-        </div>
-        <div className="h-[200px] flex items-center justify-center">
-          <p className="text-white/60 text-sm">Sin datos disponibles</p>
-        </div>
-      </Card>
-    );
-  }
-  
   const data = [
     { 
       name: 'Ahorro', 

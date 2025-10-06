@@ -9,19 +9,6 @@ interface IncomeExpensePieWidgetProps {
 export default function IncomeExpensePieWidget({ income, expenses }: IncomeExpensePieWidgetProps) {
   const validIncome = income && !isNaN(income) ? income : 0;
   const validExpenses = expenses && !isNaN(expenses) ? expenses : 0;
-  
-  const hasData = validIncome > 0 || validExpenses > 0;
-  
-  if (!hasData) {
-    return (
-      <Card className="p-4 bg-gradient-card card-glow border-white/20">
-        <p className="text-sm font-medium text-white/90 mb-3">💰 Distribución Ingresos vs Gastos</p>
-        <div className="h-[200px] flex items-center justify-center">
-          <p className="text-white/60 text-sm">Sin datos disponibles</p>
-        </div>
-      </Card>
-    );
-  }
 
   const data = [
     { name: 'Ingresos', value: validIncome, color: '#10b981' },

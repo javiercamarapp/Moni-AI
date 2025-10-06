@@ -17,25 +17,9 @@ export default function LiquidityGaugeWidget({
   const validBalance = currentBalance && !isNaN(currentBalance) ? currentBalance : 0;
   const validExpenses = monthlyExpenses && !isNaN(monthlyExpenses) && monthlyExpenses > 0 ? monthlyExpenses : 0;
 
-  if (validExpenses === 0) {
-    return (
-      <Card className="p-4 bg-gradient-card card-glow border-white/20">
-        <div className="flex justify-between items-center mb-2">
-          <p className="text-sm font-medium text-white/90 flex items-center gap-2">
-            <Droplets className="h-4 w-4" />
-            Liquidez de Emergencia
-          </p>
-        </div>
-        <div className="h-[120px] flex items-center justify-center">
-          <p className="text-white/60 text-sm">Sin datos de gastos mensuales</p>
-        </div>
-      </Card>
-    );
-  }
-
   // Create gauge data (semicircle)
   const maxMonths = 6;
-  const percentage = Math.min((validMonths / maxMonths) * 100, 100);
+  const percentage = validExpenses > 0 ? Math.min((validMonths / maxMonths) * 100, 100) : 0;
   
   const data = [
     { value: percentage, color: validMonths >= 3 ? '#10b981' : validMonths >= 1.5 ? '#f59e0b' : '#ef4444' },

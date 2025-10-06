@@ -17,17 +17,6 @@ export default function CategoryBreakdownWidget({ categories }: CategoryBreakdow
   const validCategories = categories.filter(cat => cat.value && !isNaN(cat.value) && cat.value > 0);
   const total = validCategories.reduce((sum, cat) => sum + cat.value, 0);
 
-  if (validCategories.length === 0 || total === 0) {
-    return (
-      <Card className="p-4 bg-gradient-card card-glow border-white/20">
-        <p className="text-sm font-medium text-white/90 mb-3">📊 Gastos por Categoría</p>
-        <div className="h-[220px] flex items-center justify-center">
-          <p className="text-white/60 text-sm">Sin datos disponibles</p>
-        </div>
-      </Card>
-    );
-  }
-
   return (
     <Card className="p-4 bg-gradient-card card-glow border-white/20">
       <p className="text-sm font-medium text-white/90 mb-3">📊 Gastos por Categoría</p>
