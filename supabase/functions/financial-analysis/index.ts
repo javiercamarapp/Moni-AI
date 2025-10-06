@@ -62,13 +62,45 @@ serve(async (req) => {
       });
     }
 
-    // Calcular métricas
+    // Calcular métricas básicas
     const ingresos = transactions.filter(t => t.type === 'ingreso');
     const gastos = transactions.filter(t => t.type === 'gasto');
     
     const totalIngresos = ingresos.reduce((sum, t) => sum + Number(t.amount), 0);
     const totalGastos = gastos.reduce((sum, t) => sum + Number(t.amount), 0);
     const balance = totalIngresos - totalGastos;
+    const tasaAhorro = totalIngresos > 0 ? (balance / totalIngresos) * 100 : 0;
+
+    // Cash Flow Diario
+    const cashFlowDiario: Record<string, { ingresos: number; gastos: number; balance: number }> = {};
+    transactions.forEach(t => {
+      const fecha = t.transaction_date;
+      if (!cashFlowDiario[fecha]) {
+        cashFlowDiario[fecha] = { ingresos: 0, gastos: 0, balance: 0 };
+      }
+      if (t.type === 'ingreso') {
+        cashFlowDiario[fecha].ingresos += Number(t.amount);
+      } else {
+        cashFlowDiario[fecha].gastos += Number(t.amount);
+      }
+      cashFlowDiario[fecha].balance = cashFlowDiario[fecha].ingresos - cashFlowDiario[fecha].gastos;
+    });
+
+    // Score Moni (0-100)
+    const scoreMoni = Math.min(100, Math.max(0, 
+      (tasaAhorro > 0 ? 30 : 0) + // 30 pts si ahorra
+      (tasaAhorro > 20 ? 20 : tasaAhorro) + // 20 pts por tasa de ahorro
+      (transactions.length > 0 ? 20 : 0) + // 20 pts por registrar transacciones
+      (balance > 0 ? 30 : Math.max(0, 30 + (balance / 1000) * 10)) // 30 pts por balance positivo
+    ));
+
+    // Ratio de liquidez (cuántos meses puede sobrevivir con balance actual)
+    const ratioLiquidez = totalGastos > 0 ? balance / totalGastos : 0;
+
+    // Ahorro proyectado anual
+    const diasTranscurridos = Math.ceil((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    const ahorroDiarioPromedio = balance / diasTranscurridos;
+    const ahorroProyectadoAnual = ahorroDiarioPromedio * 365;
 
     // Agrupar por categoría
     const gastosPorCategoria: Record<string, number> = {};
@@ -81,6 +113,18 @@ serve(async (req) => {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5);
 
+    // Gastos recurrentes (transacciones con montos similares)
+    const gastosRecurrentes = gastos.filter((g, i, arr) => 
+      arr.filter(g2 => Math.abs(Number(g.amount) - Number(g2.amount)) < 50 && g.id !== g2.id).length > 0
+    ).length;
+
+    // Mindful Spending Index (0-100) - gastos conscientes vs impulsivos
+    const gastosFinDeSemana = gastos.filter(g => {
+      const dia = new Date(g.transaction_date).getDay();
+      return dia === 0 || dia === 6;
+    }).length;
+    const mindfulIndex = Math.max(0, 100 - (gastosFinDeSemana / gastos.length) * 100);
+
     // Usar Lovable AI para análisis inteligente
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
@@ -89,9 +133,20 @@ serve(async (req) => {
 
     const contextForAI = `
 Período: ${period === 'month' ? 'Este mes' : period === 'year' ? 'Este año' : 'Últimos 30 días'}
+
+📊 Métricas Financieras:
 Total ingresos: $${totalIngresos.toFixed(2)}
 Total gastos: $${totalGastos.toFixed(2)}
 Balance: $${balance.toFixed(2)}
+Tasa de ahorro: ${tasaAhorro.toFixed(1)}%
+Score Moni: ${scoreMoni.toFixed(0)}/100
+Ratio de liquidez: ${ratioLiquidez.toFixed(2)} meses
+Ahorro proyectado anual: $${ahorroProyectadoAnual.toFixed(2)}
+
+🧠 Comportamiento:
+Gastos recurrentes detectados: ${gastosRecurrentes}
+Mindful Spending Index: ${mindfulIndex.toFixed(0)}/100
+Gastos en fin de semana: ${gastosFinDeSemana}
 
 Top 5 categorías de gasto:
 ${categoriasMasGasto.map(([cat, amount], i) => `${i + 1}. ${cat}: $${amount.toFixed(2)}`).join('\n')}
@@ -113,15 +168,20 @@ ${transactions.slice(0, 10).map(t =>
         messages: [
           {
             role: 'system',
-            content: `Eres Moni, un coach financiero amigable y motivador. Analiza los datos financieros del usuario y proporciona:
+            content: `Eres Moni, un coach financiero amigable y motivador con inteligencia emocional. 
 
-1. Un análisis breve y motivador de su situación financiera actual
-2. 3-5 insights específicos y accionables sobre sus hábitos de gasto
-3. Proyecciones realistas para el próximo mes basadas en sus patrones
-4. Recomendaciones personalizadas para mejorar su salud financiera
+Analiza los datos financieros del usuario y proporciona:
 
-Usa emojis para hacer el mensaje más amigable. Sé específico con los números y categorías.
-Responde en un tono conversacional, como si estuvieras hablando con un amigo.`
+1. Una evaluación honesta pero motivadora de su Score Moni y salud financiera
+2. Insights específicos sobre patrones de gasto (especialmente gastos de fin de semana o emocionales)
+3. Reconocimiento de logros (aunque sean pequeños)
+4. 2-3 "Smart Nudges" - micro-recomendaciones accionables inmediatas
+5. Una proyección optimista pero realista si continúa con buenos hábitos
+
+Tono: Natural, cercano, sin ser condescendiente. Como un amigo que te apoya.
+Usa emojis estratégicamente (no exageres).
+Menciona el Score Moni como "tu salud financiera" de forma positiva.
+Si detectas gastos recurrentes altos o bajo Mindful Index, ofrece alternativas amables.`
           },
           {
             role: 'user',
@@ -141,8 +201,7 @@ Responde en un tono conversacional, como si estuvieras hablando con un amigo.`
     const aiData = await aiResponse.json();
     const analysis = aiData.choices[0].message.content;
 
-    // Calcular proyecciones simples
-    const diasTranscurridos = Math.ceil((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    // Calcular proyecciones
     const gastoPromedioDiario = totalGastos / diasTranscurridos;
     const ingresoPromedioDiario = totalIngresos / diasTranscurridos;
     
@@ -151,14 +210,29 @@ Responde en un tono conversacional, como si estuvieras hablando con un amigo.`
     const proyeccionIngresos = ingresoPromedioDiario * diasProyeccion;
     const proyeccionBalance = proyeccionIngresos - proyeccionGastos;
 
+    // Preparar datos de cash flow para gráfica
+    const cashFlowArray = Object.entries(cashFlowDiario)
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([fecha, data]) => ({
+        fecha: new Date(fecha).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' }),
+        ingresos: data.ingresos,
+        gastos: data.gastos,
+        balance: data.balance
+      }));
+
     return new Response(JSON.stringify({
       analysis,
       metrics: {
         totalIngresos,
         totalGastos,
         balance,
-        tasaAhorro: totalIngresos > 0 ? ((balance / totalIngresos) * 100).toFixed(1) : 0,
-        transaccionesCount: transactions.length
+        tasaAhorro: Number(tasaAhorro.toFixed(1)),
+        transaccionesCount: transactions.length,
+        scoreMoni: Number(scoreMoni.toFixed(0)),
+        ratioLiquidez: Number(ratioLiquidez.toFixed(2)),
+        ahorroProyectadoAnual: Number(ahorroProyectadoAnual.toFixed(2)),
+        gastosRecurrentes,
+        mindfulIndex: Number(mindfulIndex.toFixed(0))
       },
       topCategories: categoriasMasGasto.map(([name, amount]) => ({
         name,
@@ -170,7 +244,8 @@ Responde en un tono conversacional, como si estuvieras hablando con un amigo.`
         ingresos: Number(proyeccionIngresos.toFixed(2)),
         balance: Number(proyeccionBalance.toFixed(2)),
         period: diasProyeccion === 365 ? 'Anual' : 'Mensual'
-      }
+      },
+      cashFlow: cashFlowArray.slice(-14) // Últimos 14 días
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
