@@ -443,7 +443,7 @@ const Balance = () => {
                   <CarouselContent>
                     {proyecciones.insights.map((insight, index) => (
                       <CarouselItem key={index}>
-                        <div className={`bg-white/5 rounded-lg p-4 border ${
+                        <div className={`bg-white/5 rounded-lg p-3 border flex items-center gap-3 ${
                           insight.tipo === 'positivo' 
                             ? 'border-green-500/30 bg-green-500/5'
                             : insight.tipo === 'negativo'
@@ -452,21 +452,21 @@ const Balance = () => {
                             ? 'border-blue-500/30 bg-blue-500/5'
                             : 'border-white/10'
                         }`}>
-                          <div className="flex items-start justify-between mb-2">
-                            <h4 className="text-base font-semibold text-white">{insight.titulo}</h4>
-                            <Badge className={`${
-                              insight.tipo === 'positivo'
-                                ? 'bg-green-500/20 text-green-200'
-                                : insight.tipo === 'negativo'
-                                ? 'bg-red-500/20 text-red-200'
-                                : insight.tipo === 'consejo'
-                                ? 'bg-blue-500/20 text-blue-200'
-                                : 'bg-gray-500/20 text-gray-200'
-                            }`}>
-                              {insight.metrica}
-                            </Badge>
+                          <Badge className={`shrink-0 ${
+                            insight.tipo === 'positivo'
+                              ? 'bg-green-500/20 text-green-200'
+                              : insight.tipo === 'negativo'
+                              ? 'bg-red-500/20 text-red-200'
+                              : insight.tipo === 'consejo'
+                              ? 'bg-blue-500/20 text-blue-200'
+                              : 'bg-gray-500/20 text-gray-200'
+                          }`}>
+                            {insight.metrica}
+                          </Badge>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-sm font-semibold text-white mb-0.5">{insight.titulo}</h4>
+                            <p className="text-xs text-white/70 truncate">{insight.descripcion}</p>
                           </div>
-                          <p className="text-sm text-white/80 leading-relaxed">{insight.descripcion}</p>
                         </div>
                       </CarouselItem>
                     ))}
