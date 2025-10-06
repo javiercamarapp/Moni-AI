@@ -77,8 +77,8 @@ export default function FinancialAnalysis() {
     return (
       <div className="min-h-screen animated-wave-bg flex items-center justify-center">
         <div className="text-center space-y-4">
-          <RefreshCw className="h-12 w-12 animate-spin text-primary mx-auto" />
-          <p className="text-muted-foreground">Generando análisis con IA...</p>
+          <RefreshCw className="h-12 w-12 animate-spin text-white mx-auto" />
+          <p className="text-white">Generando análisis con IA...</p>
         </div>
       </div>
     );
@@ -89,14 +89,15 @@ export default function FinancialAnalysis() {
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Análisis Financiero</h1>
-            <p className="text-muted-foreground">Insights generados por IA</p>
+            <h1 className="text-3xl font-bold text-white">Análisis Financiero</h1>
+            <p className="text-white/80">Insights generados por IA</p>
           </div>
           <Button
             onClick={loadAnalysis}
             disabled={loading}
             variant="outline"
             size="sm"
+            className="bg-white/10 border-white/30 text-white hover:bg-white/20"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Actualizar
@@ -104,9 +105,9 @@ export default function FinancialAnalysis() {
         </div>
 
         <Tabs value={period} onValueChange={setPeriod} className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="month">Este Mes</TabsTrigger>
-            <TabsTrigger value="year">Este Año</TabsTrigger>
+          <TabsList className="grid w-full max-w-md grid-cols-2 bg-white/10 border border-white/30">
+            <TabsTrigger value="month" className="text-white data-[state=active]:bg-white data-[state=active]:text-black">Este Mes</TabsTrigger>
+            <TabsTrigger value="year" className="text-white data-[state=active]:bg-white data-[state=active]:text-black">Este Año</TabsTrigger>
           </TabsList>
 
           <TabsContent value={period} className="space-y-6 mt-6">
@@ -115,7 +116,7 @@ export default function FinancialAnalysis() {
                 {/* Score Moni - Prominente */}
                 <Card className="p-8 bg-gradient-to-br from-primary/20 to-primary/5 backdrop-blur border-primary/30 animate-fade-in" style={{ animationDelay: '0ms' }}>
                   <div className="text-center space-y-4">
-                    <h2 className="text-xl font-bold text-foreground">Tu Salud Financiera</h2>
+                    <h2 className="text-xl font-bold text-white">Tu Salud Financiera</h2>
                     <div className="relative w-32 h-32 mx-auto">
                       <svg className="w-full h-full transform -rotate-90">
                         <circle
@@ -125,7 +126,7 @@ export default function FinancialAnalysis() {
                           stroke="currentColor"
                           strokeWidth="8"
                           fill="none"
-                          className="text-muted/20"
+                          className="text-white/20"
                         />
                         <circle
                           cx="64"
@@ -135,15 +136,15 @@ export default function FinancialAnalysis() {
                           strokeWidth="8"
                           fill="none"
                           strokeDasharray={`${((analysis.metrics.scoreMoni || 0) / 100) * 351.86} 351.86`}
-                          className="text-primary transition-all duration-1000"
+                          className="text-white transition-all duration-1000"
                         />
                       </svg>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-4xl font-bold text-foreground">{analysis.metrics.scoreMoni || 0}</span>
-                        <span className="text-sm text-muted-foreground">Score Moni</span>
+                        <span className="text-4xl font-bold text-white">{analysis.metrics.scoreMoni || 0}</span>
+                        <span className="text-sm text-white/70">Score Moni</span>
                       </div>
                     </div>
-                    <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                    <p className="text-sm text-white/80 max-w-md mx-auto">
                       {(analysis.metrics.scoreMoni || 0) >= 80 ? "¡Excelente! Tus finanzas respiran muy bien 🌿" :
                        (analysis.metrics.scoreMoni || 0) >= 60 ? "Buen progreso, sigue así 💪" :
                        (analysis.metrics.scoreMoni || 0) >= 40 ? "Hay oportunidad de mejora 📈" :
@@ -157,44 +158,44 @@ export default function FinancialAnalysis() {
                   <Card className="p-6 bg-card/80 backdrop-blur border-border/50 hover:scale-105 transition-transform duration-200 animate-fade-in" style={{ animationDelay: '100ms' }}>
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground">Ingresos</p>
-                        <p className="text-2xl font-bold text-primary">
+                        <p className="text-sm text-white/70">Ingresos</p>
+                        <p className="text-2xl font-bold text-white">
                           ${(analysis.metrics.totalIngresos || 0).toFixed(2)}
                         </p>
                       </div>
-                      <TrendingUp className="h-8 w-8 text-primary" />
+                      <TrendingUp className="h-8 w-8 text-white" />
                     </div>
                   </Card>
 
                   <Card className="p-6 bg-card/80 backdrop-blur border-border/50 hover:scale-105 transition-transform duration-200 animate-fade-in" style={{ animationDelay: '150ms' }}>
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground">Gastos</p>
-                        <p className="text-2xl font-bold text-destructive">
+                        <p className="text-sm text-white/70">Gastos</p>
+                        <p className="text-2xl font-bold text-white">
                           ${(analysis.metrics.totalGastos || 0).toFixed(2)}
                         </p>
                       </div>
-                      <TrendingDown className="h-8 w-8 text-destructive" />
+                      <TrendingDown className="h-8 w-8 text-white" />
                     </div>
                   </Card>
 
                   <Card className="p-6 bg-card/80 backdrop-blur border-border/50 hover:scale-105 transition-transform duration-200 animate-fade-in" style={{ animationDelay: '200ms' }}>
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground">Balance</p>
-                        <p className={`text-2xl font-bold ${(analysis.metrics.balance || 0) >= 0 ? 'text-primary' : 'text-destructive'}`}>
+                        <p className="text-sm text-white/70">Balance</p>
+                        <p className={`text-2xl font-bold ${(analysis.metrics.balance || 0) >= 0 ? 'text-white' : 'text-white'}`}>
                           ${(analysis.metrics.balance || 0).toFixed(2)}
                         </p>
                       </div>
-                      <DollarSign className="h-8 w-8 text-foreground" />
+                      <DollarSign className="h-8 w-8 text-white" />
                     </div>
                   </Card>
 
                   <Card className="p-6 bg-card/80 backdrop-blur border-border/50 hover:scale-105 transition-transform duration-200 animate-fade-in" style={{ animationDelay: '250ms' }}>
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground">Tasa Ahorro</p>
-                        <p className="text-2xl font-bold text-foreground">
+                        <p className="text-sm text-white/70">Tasa Ahorro</p>
+                        <p className="text-2xl font-bold text-white">
                           {analysis.metrics.tasaAhorro || 0}%
                         </p>
                       </div>
@@ -204,11 +205,11 @@ export default function FinancialAnalysis() {
                   <Card className="p-6 bg-card/80 backdrop-blur border-border/50 hover:scale-105 transition-transform duration-200 animate-fade-in" style={{ animationDelay: '300ms' }}>
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground">Ratio Liquidez</p>
-                        <p className="text-2xl font-bold text-foreground">
+                        <p className="text-sm text-white/70">Ratio Liquidez</p>
+                        <p className="text-2xl font-bold text-white">
                           {(analysis.metrics.ratioLiquidez || 0).toFixed(1)}x
                         </p>
-                        <p className="text-xs text-muted-foreground mt-1">
+                        <p className="text-xs text-white/60 mt-1">
                           {(analysis.metrics.ratioLiquidez || 0) >= 3 ? "¡Muy saludable!" :
                            (analysis.metrics.ratioLiquidez || 0) >= 1 ? "Aceptable" : "Necesita atención"}
                         </p>
@@ -220,11 +221,11 @@ export default function FinancialAnalysis() {
                   <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground">Mindful Index</p>
-                        <p className="text-2xl font-bold text-foreground">
+                        <p className="text-sm text-white/70">Mindful Index</p>
+                        <p className="text-2xl font-bold text-white">
                           {analysis.metrics.mindfulIndex || 0}%
                         </p>
-                        <p className="text-xs text-muted-foreground mt-1">
+                        <p className="text-xs text-white/60 mt-1">
                           Gastos conscientes
                         </p>
                       </div>
@@ -235,11 +236,11 @@ export default function FinancialAnalysis() {
                   <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground">Ahorro Anual</p>
-                        <p className="text-2xl font-bold text-primary">
+                        <p className="text-sm text-white/70">Ahorro Anual</p>
+                        <p className="text-2xl font-bold text-white">
                           ${(analysis.metrics.ahorroProyectadoAnual || 0).toFixed(0)}
                         </p>
-                        <p className="text-xs text-muted-foreground mt-1">
+                        <p className="text-xs text-white/60 mt-1">
                           Proyección
                         </p>
                       </div>
@@ -250,11 +251,11 @@ export default function FinancialAnalysis() {
                   <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground">Recurrentes</p>
-                        <p className="text-2xl font-bold text-foreground">
+                        <p className="text-sm text-white/70">Recurrentes</p>
+                        <p className="text-2xl font-bold text-white">
                           {analysis.metrics.gastosRecurrentes || 0}
                         </p>
-                        <p className="text-xs text-muted-foreground mt-1">
+                        <p className="text-xs text-white/60 mt-1">
                           Gastos fijos
                         </p>
                       </div>
@@ -265,10 +266,10 @@ export default function FinancialAnalysis() {
 
                 {/* Análisis de IA */}
                 <Card className="p-8 bg-card/80 backdrop-blur border-border/50">
-                  <h2 className="text-2xl font-bold mb-4 text-foreground">
+                  <h2 className="text-2xl font-bold mb-4 text-white">
                     📊 Análisis de Moni AI
                   </h2>
-                  <div className="prose prose-sm max-w-none text-foreground whitespace-pre-line">
+                  <div className="prose prose-sm max-w-none text-white whitespace-pre-line">
                     {analysis.analysis}
                   </div>
                 </Card>
@@ -278,7 +279,7 @@ export default function FinancialAnalysis() {
                   {/* Cash Flow Diario */}
                   {analysis.cashFlow && analysis.cashFlow.length > 0 && (
                     <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
-                      <h3 className="text-xl font-bold mb-4 text-foreground">
+                      <h3 className="text-xl font-bold mb-4 text-white">
                         💸 Cash Flow Diario
                       </h3>
                       <ResponsiveContainer width="100%" height={300}>
@@ -324,7 +325,7 @@ export default function FinancialAnalysis() {
                   {/* Gráfica de categorías */}
                   {analysis.topCategories && analysis.topCategories.length > 0 && (
                     <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
-                      <h3 className="text-xl font-bold mb-4 text-foreground">
+                      <h3 className="text-xl font-bold mb-4 text-white">
                         Gastos por Categoría
                       </h3>
                       <ResponsiveContainer width="100%" height={300}>
@@ -351,7 +352,7 @@ export default function FinancialAnalysis() {
                   {/* Proyecciones */}
                   {analysis.projections && (
                     <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
-                      <h3 className="text-xl font-bold mb-4 text-foreground">
+                      <h3 className="text-xl font-bold mb-4 text-white">
                         Proyecciones {analysis.projections.period || 'Mensual'}
                       </h3>
                       <ResponsiveContainer width="100%" height={300}>
@@ -369,7 +370,7 @@ export default function FinancialAnalysis() {
                           <Bar dataKey="proyectado" fill="hsl(var(--secondary))" name="Proyectado" />
                         </BarChart>
                       </ResponsiveContainer>
-                      <p className="text-xs text-muted-foreground mt-2 text-center">
+                      <p className="text-xs text-white/70 mt-2 text-center">
                         Si continúas con tus hábitos actuales
                       </p>
                     </Card>
@@ -379,7 +380,7 @@ export default function FinancialAnalysis() {
                 {/* Top categorías como lista */}
                 {analysis.topCategories && analysis.topCategories.length > 0 && (
                   <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
-                    <h3 className="text-xl font-bold mb-4 text-foreground">
+                    <h3 className="text-xl font-bold mb-4 text-white">
                       Top 5 Categorías de Gasto
                     </h3>
                     <div className="space-y-3">
@@ -390,11 +391,11 @@ export default function FinancialAnalysis() {
                               className="w-4 h-4 rounded-full" 
                               style={{ backgroundColor: COLORS[index % COLORS.length] }}
                             />
-                            <span className="font-medium text-foreground">{cat.name || 'Sin categoría'}</span>
+                            <span className="font-medium text-white">{cat.name || 'Sin categoría'}</span>
                           </div>
                           <div className="text-right">
-                            <p className="font-bold text-foreground">${(cat.amount || 0).toFixed(2)}</p>
-                            <p className="text-sm text-muted-foreground">{cat.percentage || 0}%</p>
+                            <p className="font-bold text-white">${(cat.amount || 0).toFixed(2)}</p>
+                            <p className="text-sm text-white/70">{cat.percentage || 0}%</p>
                           </div>
                         </div>
                       ))}
