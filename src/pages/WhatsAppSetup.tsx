@@ -121,7 +121,7 @@ export default function WhatsAppSetup() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-6">
+    <div className="min-h-screen animated-wave-bg p-6">
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="flex items-center gap-4 mb-8">
           <Button

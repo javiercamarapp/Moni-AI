@@ -75,7 +75,7 @@ export default function FinancialAnalysis() {
 
   if (loading && !analysis) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center">
+      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
         <div className="text-center space-y-4">
           <RefreshCw className="h-12 w-12 animate-spin text-primary mx-auto" />
           <p className="text-muted-foreground">Generando análisis con IA...</p>
@@ -85,7 +85,7 @@ export default function FinancialAnalysis() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-6">
+    <div className="min-h-screen animated-wave-bg p-6">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
