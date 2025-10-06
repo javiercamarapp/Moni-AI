@@ -95,14 +95,39 @@ serve(async (req) => {
     const balance = totalIncome - totalExpenses;
     const savingsRate = totalIncome > 0 ? ((balance / totalIncome) * 100) : 0;
     
-    // Liquidez disponible (meses que puedes vivir sin ingresos)
+    // Liquidez inmediata (meses que puedes vivir sin ingresos)
     const monthlyExpenses = totalExpenses;
     const liquidityMonths = monthlyExpenses > 0 ? (balance / monthlyExpenses) : 0;
+    
+    // Coeficiente de liquidez (activos líquidos / pasivos corto plazo)
+    // Asumimos balance como activos líquidos y gastos mensuales como pasivos
+    const liquidityCoefficient = monthlyExpenses > 0 ? (balance / monthlyExpenses) : 0;
     
     // Cash Flow acumulado
     const cashFlowAccumulated = balance;
     
-    // 2. GASTOS Y CONSUMO
+    // 2. ENDEUDAMIENTO (simulado - idealmente vendrá de tabla de deudas)
+    // Por ahora usamos 0, pero preparamos la estructura
+    const totalDebt = 0; // TODO: obtener de tabla deudas
+    const monthlyDebtPayment = 0; // TODO: obtener de tabla deudas
+    const monthlyInterestPaid = 0; // TODO: obtener de tabla deudas
+    
+    // Razón de endeudamiento total (deuda / activos)
+    const totalAssets = balance > 0 ? balance : 1;
+    const debtRatio = (totalDebt / totalAssets) * 100;
+    
+    // Carga financiera mensual (pagos deuda / ingreso mensual)
+    const monthlyIncome = totalIncome;
+    const financialBurden = monthlyIncome > 0 ? (monthlyDebtPayment / monthlyIncome) * 100 : 0;
+    
+    // Relación deuda/ingreso anual
+    const annualIncome = totalIncome * 12;
+    const debtToIncomeRatio = annualIncome > 0 ? totalDebt / annualIncome : 0;
+    
+    // Intereses sobre ingreso
+    const interestOnIncome = monthlyIncome > 0 ? (monthlyInterestPaid / monthlyIncome) * 100 : 0;
+    
+    // 3. GASTOS Y CONSUMO
     const fixedExpenses = transactions
       .filter(t => t.type === 'expense' && t.frequency && t.frequency !== 'once')
       .reduce((sum, t) => sum + Number(t.amount), 0);
@@ -110,16 +135,61 @@ serve(async (req) => {
     const variableExpenses = totalExpenses - fixedExpenses;
     const fixedExpensesPercentage = totalExpenses > 0 ? (fixedExpenses / totalExpenses * 100) : 0;
     const variableExpensesPercentage = totalExpenses > 0 ? (variableExpenses / totalExpenses * 100) : 0;
+    const variableExpensesOnIncome = monthlyIncome > 0 ? (variableExpenses / monthlyIncome) * 100 : 0;
     
     const expenseTransactions = transactions.filter(t => t.type === 'expense');
     const daysInPeriod = 30;
     const avgDailyExpense = totalExpenses / daysInPeriod;
     
-    // 3. AHORRO E INVERSIÓN
+    // Gastos hormiga (gastos pequeños < $50)
+    const antExpenses = expenseTransactions
+      .filter(t => Number(t.amount) < 50)
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+    const antExpensesPercentage = monthlyIncome > 0 ? (antExpenses / monthlyIncome) * 100 : 0;
+    
+    // Gasto en ocio/entretenimiento
+    const leisureExpenses = expenseTransactions
+      .filter(t => {
+        const cat = t.categories?.name?.toLowerCase() || '';
+        return cat.includes('ocio') || cat.includes('entretenimiento') || 
+               cat.includes('diversión') || cat.includes('hobbies');
+      })
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+    const leisurePercentage = totalExpenses > 0 ? (leisureExpenses / totalExpenses) * 100 : 0;
+    
+    // 4. AHORRO E INVERSIÓN
     const projectedAnnualSavings = balance * 12;
     const savingsGrowthRate = savingsRate;
     
-    // 4. INDICADORES DE METAS
+    // Tasa de inversión personal (asumimos 0 por ahora)
+    const investmentAmount = 0; // TODO: obtener de tabla inversiones
+    const investmentRate = monthlyIncome > 0 ? (investmentAmount / monthlyIncome) * 100 : 0;
+    
+    // ROE personal (rendimiento sobre patrimonio)
+    const annualGains = 0; // TODO: obtener ganancias de inversiones
+    const totalEquity = balance > 0 ? balance : 1;
+    const personalROE = (annualGains / totalEquity) * 100;
+    
+    // Crecimiento patrimonial (simulado - necesitaríamos histórico)
+    const previousEquity = totalEquity * 0.9; // Simulado
+    const equityGrowth = previousEquity > 0 ? ((totalEquity - previousEquity) / previousEquity) * 100 : 0;
+    
+    // 5. RENTABILIDAD Y EFICIENCIA
+    const returnOnSavings = balance > 0 ? (annualGains / balance) * 100 : 0;
+    const personalROI = investmentAmount > 0 ? ((annualGains - investmentAmount) / investmentAmount) * 100 : 0;
+    
+    // 6. ESTABILIDAD Y PLANEACIÓN
+    const passiveIncome = 0; // TODO: obtener de tabla ingresos pasivos
+    const financialIndependenceIndex = monthlyExpenses > 0 ? passiveIncome / monthlyExpenses : 0;
+    
+    // Índice de sostenibilidad ((ahorro + inversiones) / deudas)
+    const sustainabilityIndex = totalDebt > 0 ? (balance + investmentAmount) / totalDebt : balance > 0 ? 999 : 0;
+    
+    // Índice de estabilidad del ingreso
+    const lowestIncome = totalIncome * 0.85; // Simulado - idealmente histórico
+    const incomeStability = totalIncome > 0 ? lowestIncome / totalIncome : 0;
+    
+    // 7. INDICADORES DE METAS
     const { data: goals } = await supabase
       .from('goals')
       .select('*')
@@ -136,15 +206,20 @@ serve(async (req) => {
       ? goalsProgress.reduce((sum, g) => sum + g.progress, 0) / goalsProgress.length 
       : 0;
     
-    // 5. COMPORTAMIENTO
+    // 8. COMPORTAMIENTO
     const consistencyScore = expenseTransactions.length > 0 ? 
       Math.min(100, (expenseTransactions.filter(t => Number(t.amount) < avgDailyExpense * 1.5).length / expenseTransactions.length) * 100) 
       : 0;
     
     // Detectar gastos impulsivos (>2x el promedio)
     const impulsivePurchases = expenseTransactions.filter(t => Number(t.amount) > avgDailyExpense * 2).length;
+    const impulsivePurchasesPercentage = expenseTransactions.length > 0 ? 
+      (impulsivePurchases / expenseTransactions.length) * 100 : 0;
     
-    // 6. SCORE MONI (0-100) - Ponderado
+    // Índice de bienestar financiero (subjetivo + score moni)
+    // Por ahora solo usamos score moni
+    
+    // 9. SCORE MONI (0-100) - Ponderado
     let scoreMoni = 0;
     
     // Ahorro y liquidez (30%)
@@ -152,8 +227,8 @@ serve(async (req) => {
     const liquidityComponent = Math.min(30, liquidityMonths * 10);
     scoreMoni += (savingsComponent + liquidityComponent) / 2;
     
-    // Endeudamiento (20%) - Por ahora asumimos 0 deuda = 20 puntos
-    const debtComponent = 20;
+    // Endeudamiento (20%)
+    const debtComponent = totalDebt > 0 ? Math.max(0, 20 - (financialBurden / 5)) : 20;
     scoreMoni += debtComponent;
     
     // Gasto y control (20%)
@@ -170,7 +245,7 @@ serve(async (req) => {
     
     scoreMoni = Math.round(Math.min(100, scoreMoni));
     
-    // 7. MINDFUL SPENDING INDEX
+    // 10. MINDFUL SPENDING INDEX
     const transactionCount = expenseTransactions.length;
     const avgExpensePerTransaction = transactionCount > 0 ? totalExpenses / transactionCount : 0;
     const mindfulSpendingIndex = Math.min(100, Math.max(0, 
@@ -217,38 +292,64 @@ serve(async (req) => {
       }));
 
     const metrics = {
-      // Liquidez y Estabilidad
+      // 1. LIQUIDEZ
       totalIncome,
       totalExpenses,
       balance,
       savingsRate: Math.round(savingsRate * 100) / 100,
       liquidityMonths: Math.round(liquidityMonths * 100) / 100,
+      liquidityCoefficient: Math.round(liquidityCoefficient * 100) / 100,
       cashFlowAccumulated,
       
-      // Gastos y Consumo
+      // 2. ENDEUDAMIENTO
+      totalDebt,
+      debtRatio: Math.round(debtRatio * 100) / 100,
+      financialBurden: Math.round(financialBurden * 100) / 100,
+      debtToIncomeRatio: Math.round(debtToIncomeRatio * 100) / 100,
+      interestOnIncome: Math.round(interestOnIncome * 100) / 100,
+      
+      // 3. GASTOS Y CONSUMO
       fixedExpenses,
       variableExpenses,
       fixedExpensesPercentage: Math.round(fixedExpensesPercentage * 100) / 100,
       variableExpensesPercentage: Math.round(variableExpensesPercentage * 100) / 100,
+      variableExpensesOnIncome: Math.round(variableExpensesOnIncome * 100) / 100,
       avgDailyExpense: Math.round(avgDailyExpense),
+      antExpenses: Math.round(antExpenses),
+      antExpensesPercentage: Math.round(antExpensesPercentage * 100) / 100,
+      leisureExpenses: Math.round(leisureExpenses),
+      leisurePercentage: Math.round(leisurePercentage * 100) / 100,
       
-      // Ahorro e Inversión
+      // 4. AHORRO E INVERSIÓN
       projectedAnnualSavings: Math.round(projectedAnnualSavings),
       savingsGrowthRate: Math.round(savingsGrowthRate * 100) / 100,
+      investmentRate: Math.round(investmentRate * 100) / 100,
+      personalROE: Math.round(personalROE * 100) / 100,
+      equityGrowth: Math.round(equityGrowth * 100) / 100,
       
-      // Metas y Comportamiento
+      // 5. RENTABILIDAD Y EFICIENCIA
+      returnOnSavings: Math.round(returnOnSavings * 100) / 100,
+      personalROI: Math.round(personalROI * 100) / 100,
+      
+      // 6. ESTABILIDAD Y PLANEACIÓN
+      financialIndependenceIndex: Math.round(financialIndependenceIndex * 100) / 100,
+      sustainabilityIndex: Math.round(sustainabilityIndex * 100) / 100,
+      incomeStability: Math.round(incomeStability * 100) / 100,
+      
+      // 7. COMPORTAMIENTO Y METAS
       avgGoalCompletion: Math.round(avgGoalCompletion),
       consistencyScore: Math.round(consistencyScore),
       impulsivePurchases,
+      impulsivePurchasesPercentage: Math.round(impulsivePurchasesPercentage * 100) / 100,
       
-      // Score Moni y salud financiera
+      // 8. SCORE MONI Y SALUD FINANCIERA
       scoreMoni,
       mindfulSpendingIndex: Math.round(mindfulSpendingIndex),
       
       // Componentes del Score (para visualización radar)
       scoreComponents: {
         savingsAndLiquidity: Math.round((savingsComponent + liquidityComponent) / 2),
-        debt: debtComponent,
+        debt: Math.round(debtComponent),
         control: Math.round(controlComponent),
         growth: Math.round(growthComponent),
         behavior: Math.round(behaviorComponent)
@@ -256,46 +357,79 @@ serve(async (req) => {
     };
 
     // Generar AI insights usando Lovable AI
-    const aiPrompt = `Eres Moni, un coach financiero de clase mundial. Analiza estos datos financieros del usuario:
+    const aiPrompt = `Eres Moni, un coach financiero de clase mundial. Analiza estos datos financieros del usuario con TODAS las razones financieras esenciales:
 
 📊 PERIODO: ${period}
 
-💰 LIQUIDEZ Y ESTABILIDAD:
+💰 1. LIQUIDEZ Y ESTABILIDAD:
 - Ingresos: $${totalIncome.toLocaleString()}
 - Gastos: $${totalExpenses.toLocaleString()}
 - Balance: $${balance.toLocaleString()}
-- Tasa de ahorro: ${savingsRate.toFixed(1)}%
-- Liquidez disponible: ${liquidityMonths.toFixed(1)} meses
+- Tasa de ahorro: ${savingsRate.toFixed(1)}% (Ideal ≥ 20%)
+- Liquidez inmediata: ${liquidityMonths.toFixed(1)} meses (Ideal ≥ 3)
+- Coeficiente de liquidez: ${liquidityCoefficient.toFixed(2)} (Ideal ≥ 1.0)
 
-💸 GASTOS Y CONSUMO:
-- Gastos fijos: $${fixedExpenses.toLocaleString()} (${fixedExpensesPercentage.toFixed(1)}%)
+💳 2. ENDEUDAMIENTO:
+- Deuda total: $${totalDebt.toLocaleString()}
+- Razón de endeudamiento: ${debtRatio.toFixed(1)}% (Ideal < 50%)
+- Carga financiera mensual: ${financialBurden.toFixed(1)}% (Ideal < 30%)
+- Relación deuda/ingreso: ${debtToIncomeRatio.toFixed(2)} (Ideal < 1.0)
+- Intereses sobre ingreso: ${interestOnIncome.toFixed(1)}% (Ideal < 10%)
+
+💸 3. CONTROL DE GASTOS:
+- Gastos fijos: $${fixedExpenses.toLocaleString()} (${fixedExpensesPercentage.toFixed(1)}%) - Ideal < 60%
 - Gastos variables: $${variableExpenses.toLocaleString()} (${variableExpensesPercentage.toFixed(1)}%)
+- Variables sobre ingreso: ${variableExpensesOnIncome.toFixed(1)}% (Ideal < 40%)
 - Gasto promedio diario: $${avgDailyExpense.toLocaleString()}
-- Compras impulsivas detectadas: ${impulsivePurchases}
+- Gastos hormiga: $${antExpenses.toLocaleString()} (${antExpensesPercentage.toFixed(1)}%) - Ideal < 5%
+- Gasto en ocio: $${leisureExpenses.toLocaleString()} (${leisurePercentage.toFixed(1)}%) - Ideal < 15%
 
-🎯 METAS Y COMPORTAMIENTO:
-- Cumplimiento promedio de metas: ${avgGoalCompletion.toFixed(1)}%
-- Índice de consistencia: ${consistencyScore.toFixed(1)}/100
-- Score Moni: ${scoreMoni}/100
+💎 4. AHORRO E INVERSIÓN:
+- Proyección anual de ahorro: $${projectedAnnualSavings.toLocaleString()}
+- Tasa de inversión: ${investmentRate.toFixed(1)}% (Ideal ≥ 10%)
+- ROE personal: ${personalROE.toFixed(1)}% (Ideal > 5% anual)
+- Crecimiento patrimonial: ${equityGrowth.toFixed(1)}% (Meta > 10%)
 
-📈 Top 5 categorías de gasto:
-${topCategories.map((c, i) => `${i + 1}. ${c.name}: $${Number(c.total).toLocaleString()} (${c.percentage}%)`).join('\n')}
+📈 5. RENTABILIDAD:
+- Retorno sobre ahorro: ${returnOnSavings.toFixed(1)}% (Ideal > 4% anual)
+- ROI personal: ${personalROI.toFixed(1)}% (Ideal > 5-10%)
 
-Genera un análisis financiero de clase mundial que incluya:
+🛡️ 6. ESTABILIDAD Y PLANEACIÓN:
+- Índice de independencia financiera: ${financialIndependenceIndex.toFixed(2)} (Meta ≥ 1.0)
+- Índice de sostenibilidad: ${sustainabilityIndex.toFixed(2)} (Ideal ≥ 1.0)
+- Estabilidad del ingreso: ${incomeStability.toFixed(2)} (Ideal > 0.8)
 
-1. **Resumen Ejecutivo** (3-4 frases): Evalúa la salud financiera general del usuario.
+🎯 7. COMPORTAMIENTO:
+- Cumplimiento de metas: ${avgGoalCompletion.toFixed(1)}%
+- Índice de consistencia: ${consistencyScore.toFixed(1)}/100 (Ideal ≥ 75%)
+- Compras impulsivas: ${impulsivePurchases} (${impulsivePurchasesPercentage.toFixed(1)}%) - Ideal < 10%
+- Mindful Spending: ${mindfulSpendingIndex.toFixed(0)}/100
 
-2. **Análisis de Liquidez**: ¿Qué tan preparado está para imprevistos? ¿Debería aumentar su fondo de emergencia?
+🏆 SCORE MONI: ${scoreMoni}/100
 
-3. **Análisis de Gastos**: Identifica patrones, fugas de dinero, y oportunidades de optimización.
+📊 Top 5 categorías de gasto:
+${topCategories.map((c, i) => \`\${i + 1}. \${c.name}: $\${Number(c.total).toLocaleString()} (\${c.percentage}%)\`).join('\n')}
 
-4. **Score Moni Desglosado**: Explica brevemente por qué tiene ese puntaje y qué componente puede mejorar más fácilmente.
+Genera un análisis financiero integral y profesional que:
 
-5. **3 Recomendaciones Accionables**: Específicas, priorizadas y realistas.
+1. **Resumen Ejecutivo** (3-4 frases): Evalúa TODAS las dimensiones de salud financiera.
 
-6. **Proyección y Motivación**: Si continúa así, ¿dónde estará en 6 meses? Mensaje motivacional.
+2. **Análisis por Razones Financieras**:
+   - Liquidez: ¿Está preparado para emergencias?
+   - Endeudamiento: ¿Su nivel de deuda es saludable?
+   - Gastos: ¿Dónde puede optimizar? (fijos, hormiga, ocio)
+   - Inversión: ¿Está haciendo crecer su patrimonio?
+   - Estabilidad: ¿Qué tan cerca está de la independencia financiera?
 
-Sé conversacional, empático, y usa emojis moderadamente. Habla como un verdadero coach financiero profesional.`;
+3. **Fortalezas y Áreas de Oportunidad**: Identifica 2-3 de cada una.
+
+4. **3 Recomendaciones Accionables Prioritarias**: Basadas en las razones que más necesitan mejora.
+
+5. **Proyección a 6-12 meses**: Si mantiene estos hábitos, ¿dónde estará?
+
+6. **Mensaje Motivacional**: Reconoce logros y motiva a seguir mejorando.
+
+Sé profesional pero cercano. Usa las razones financieras como un médico usa análisis clínicos: para diagnosticar y recetar soluciones específicas.`;
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {

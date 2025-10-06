@@ -20,7 +20,10 @@ import {
   AlertCircle,
   Zap,
   Activity,
-  BarChart3
+  BarChart3,
+  Shield,
+  Trophy,
+  Heart
 } from "lucide-react";
 import { 
   LineChart, 
@@ -289,11 +292,217 @@ export default function FinancialAnalysis() {
               </Card>
             </div>
 
-            {/* Indicadores de Comportamiento */}
+            {/* Nueva Sección: Razones de Endeudamiento */}
+            {(analysis.metrics.totalDebt > 0 || true) && (
+              <>
+                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+                  <AlertCircle className="h-5 w-5 text-red-400" />
+                  Razones de Endeudamiento
+                </h3>
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <Card className="p-4 bg-gradient-to-br from-red-500/20 to-red-600/10 backdrop-blur border-red-400/30">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-white/90">Razón Endeudamiento</span>
+                      <TrendingDown className="h-5 w-5 text-red-400" />
+                    </div>
+                    <p className="text-xl font-semibold text-red-300">
+                      {(analysis.metrics.debtRatio || 0).toFixed(1)}%
+                    </p>
+                    <p className="text-xs text-white/70 mt-1">Ideal &lt; 50%</p>
+                  </Card>
+
+                  <Card className="p-4 bg-gradient-to-br from-orange-500/20 to-orange-600/10 backdrop-blur border-orange-400/30">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-white/90">Carga Financiera</span>
+                      <AlertCircle className="h-5 w-5 text-orange-400" />
+                    </div>
+                    <p className="text-xl font-semibold text-orange-300">
+                      {(analysis.metrics.financialBurden || 0).toFixed(1)}%
+                    </p>
+                    <p className="text-xs text-white/70 mt-1">Ideal &lt; 30%</p>
+                  </Card>
+
+                  <Card className="p-4 bg-gradient-to-br from-yellow-500/20 to-yellow-600/10 backdrop-blur border-yellow-400/30">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-white/90">Deuda/Ingreso</span>
+                      <TrendingDown className="h-5 w-5 text-yellow-400" />
+                    </div>
+                    <p className="text-xl font-semibold text-yellow-300">
+                      {(analysis.metrics.debtToIncomeRatio || 0).toFixed(2)}
+                    </p>
+                    <p className="text-xs text-white/70 mt-1">Ideal &lt; 1.0</p>
+                  </Card>
+
+                  <Card className="p-4 bg-gradient-to-br from-rose-500/20 to-rose-600/10 backdrop-blur border-rose-400/30">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-white/90">Intereses/Ingreso</span>
+                      <AlertCircle className="h-5 w-5 text-rose-400" />
+                    </div>
+                    <p className="text-xl font-semibold text-rose-300">
+                      {(analysis.metrics.interestOnIncome || 0).toFixed(1)}%
+                    </p>
+                    <p className="text-xs text-white/70 mt-1">Ideal &lt; 10%</p>
+                  </Card>
+                </div>
+              </>
+            )}
+
+            {/* Nueva Sección: Gastos Hormiga y Ocio */}
             <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
-              <Activity className="h-5 w-5 text-lime-400" />
-              Comportamiento y Metas
+              <Zap className="h-5 w-5 text-yellow-400" />
+              Análisis Detallado de Gastos
             </h3>
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <Card className="p-4 bg-gradient-to-br from-yellow-500/20 to-amber-600/10 backdrop-blur border-yellow-400/30">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-white/90">Gastos Hormiga</span>
+                  <span className="text-2xl">🐜</span>
+                </div>
+                <p className="text-xl font-semibold text-yellow-300">
+                  ${(analysis.metrics.antExpenses || 0).toLocaleString()}
+                </p>
+                <p className="text-xs text-white/70 mt-1">
+                  {(analysis.metrics.antExpensesPercentage || 0).toFixed(1)}% del ingreso (Ideal &lt; 5%)
+                </p>
+              </Card>
+
+              <Card className="p-4 bg-gradient-to-br from-pink-500/20 to-fuchsia-600/10 backdrop-blur border-pink-400/30">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-white/90">Gasto en Ocio</span>
+                  <span className="text-2xl">🎮</span>
+                </div>
+                <p className="text-xl font-semibold text-pink-300">
+                  ${(analysis.metrics.leisureExpenses || 0).toLocaleString()}
+                </p>
+                <p className="text-xs text-white/70 mt-1">
+                  {(analysis.metrics.leisurePercentage || 0).toFixed(1)}% del total (Ideal &lt; 15%)
+                </p>
+              </Card>
+
+              <Card className="p-4 bg-gradient-to-br from-blue-500/20 to-blue-600/10 backdrop-blur border-blue-400/30">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-white/90">Variables/Ingreso</span>
+                  <Activity className="h-5 w-5 text-blue-400" />
+                </div>
+                <p className="text-xl font-semibold text-blue-300">
+                  {(analysis.metrics.variableExpensesOnIncome || 0).toFixed(1)}%
+                </p>
+                <p className="text-xs text-white/70 mt-1">Ideal &lt; 40%</p>
+              </Card>
+
+              <Card className="p-4 bg-gradient-to-br from-indigo-500/20 to-indigo-600/10 backdrop-blur border-indigo-400/30">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-white/90">Coef. Liquidez</span>
+                  <Droplets className="h-5 w-5 text-indigo-400" />
+                </div>
+                <p className="text-xl font-semibold text-indigo-300">
+                  {(analysis.metrics.liquidityCoefficient || 0).toFixed(2)}
+                </p>
+                <p className="text-xs text-white/70 mt-1">Ideal ≥ 1.0</p>
+              </Card>
+            </div>
+
+            {/* Nueva Sección: Inversión y Rentabilidad */}
+            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+              <TrendingUp className="h-5 w-5 text-emerald-400" />
+              Inversión y Rentabilidad
+            </h3>
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <Card className="p-4 bg-gradient-to-br from-emerald-500/20 to-green-600/10 backdrop-blur border-emerald-400/30">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-white/90">Tasa de Inversión</span>
+                  <TrendingUp className="h-5 w-5 text-emerald-400" />
+                </div>
+                <p className="text-xl font-semibold text-emerald-300">
+                  {(analysis.metrics.investmentRate || 0).toFixed(1)}%
+                </p>
+                <p className="text-xs text-white/70 mt-1">Ideal ≥ 10%</p>
+              </Card>
+
+              <Card className="p-4 bg-gradient-to-br from-teal-500/20 to-teal-600/10 backdrop-blur border-teal-400/30">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-white/90">ROE Personal</span>
+                  <BarChart3 className="h-5 w-5 text-teal-400" />
+                </div>
+                <p className="text-xl font-semibold text-teal-300">
+                  {(analysis.metrics.personalROE || 0).toFixed(1)}%
+                </p>
+                <p className="text-xs text-white/70 mt-1">Ideal &gt; 5% anual</p>
+              </Card>
+
+              <Card className="p-4 bg-gradient-to-br from-green-500/20 to-green-600/10 backdrop-blur border-green-400/30">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-white/90">Crecimiento Patrimonial</span>
+                  <TrendingUp className="h-5 w-5 text-green-400" />
+                </div>
+                <p className="text-xl font-semibold text-green-300">
+                  {(analysis.metrics.equityGrowth || 0).toFixed(1)}%
+                </p>
+                <p className="text-xs text-white/70 mt-1">Meta &gt; 10%</p>
+              </Card>
+
+              <Card className="p-4 bg-gradient-to-br from-lime-500/20 to-lime-600/10 backdrop-blur border-lime-400/30">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-white/90">ROI Personal</span>
+                  <Activity className="h-5 w-5 text-lime-400" />
+                </div>
+                <p className="text-xl font-semibold text-lime-300">
+                  {(analysis.metrics.personalROI || 0).toFixed(1)}%
+                </p>
+                <p className="text-xs text-white/70 mt-1">Ideal &gt; 5-10%</p>
+              </Card>
+            </div>
+
+            {/* Nueva Sección: Estabilidad y Planeación */}
+            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-white">
+              <Shield className="h-5 w-5 text-blue-400" />
+              Estabilidad y Planeación
+            </h3>
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <Card className="p-4 bg-gradient-to-br from-blue-500/20 to-cyan-600/10 backdrop-blur border-blue-400/30">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-white/90">Independencia Financiera</span>
+                  <Trophy className="h-5 w-5 text-blue-400" />
+                </div>
+                <p className="text-xl font-semibold text-blue-300">
+                  {(analysis.metrics.financialIndependenceIndex || 0).toFixed(2)}
+                </p>
+                <p className="text-xs text-white/70 mt-1">Meta ≥ 1.0</p>
+              </Card>
+
+              <Card className="p-4 bg-gradient-to-br from-indigo-500/20 to-purple-600/10 backdrop-blur border-indigo-400/30">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-white/90">Índice Sostenibilidad</span>
+                  <Heart className="h-5 w-5 text-indigo-400" />
+                </div>
+                <p className="text-xl font-semibold text-indigo-300">
+                  {(analysis.metrics.sustainabilityIndex || 0) > 100 ? '999+' : (analysis.metrics.sustainabilityIndex || 0).toFixed(2)}
+                </p>
+                <p className="text-xs text-white/70 mt-1">Ideal ≥ 1.0</p>
+              </Card>
+
+              <Card className="p-4 bg-gradient-to-br from-violet-500/20 to-violet-600/10 backdrop-blur border-violet-400/30">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-white/90">Estabilidad Ingresos</span>
+                  <Activity className="h-5 w-5 text-violet-400" />
+                </div>
+                <p className="text-xl font-semibold text-violet-300">
+                  {(analysis.metrics.incomeStability || 0).toFixed(2)}
+                </p>
+                <p className="text-xs text-white/70 mt-1">Ideal &gt; 0.8</p>
+              </Card>
+
+              <Card className="p-4 bg-gradient-to-br from-fuchsia-500/20 to-pink-600/10 backdrop-blur border-fuchsia-400/30">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-white/90">Gastos Impulsivos</span>
+                  <Zap className="h-5 w-5 text-fuchsia-400" />
+                </div>
+                <p className="text-xl font-semibold text-fuchsia-300">
+                  {(analysis.metrics.impulsivePurchasesPercentage || 0).toFixed(1)}%
+                </p>
+                <p className="text-xs text-white/70 mt-1">Ideal &lt; 10%</p>
+              </Card>
+            </div>
             <div className="grid grid-cols-2 gap-4 mb-6">
               <Card className="p-4 bg-gradient-to-br from-indigo-500/20 to-indigo-600/10 backdrop-blur border-indigo-400/30">
                 <div className="flex items-center justify-between mb-2">
