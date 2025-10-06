@@ -25,10 +25,79 @@ const Balance = () => {
   const [totalIngresos, setTotalIngresos] = useState(0);
   const [totalGastos, setTotalGastos] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [proyecciones, setProyecciones] = useState<{
+    proyeccionAnual: number;
+    proyeccionSemestral: number;
+    confianza: string;
+    razonamiento: string;
+  } | null>(null);
+  const [loadingProyecciones, setLoadingProyecciones] = useState(false);
+
+  // Calculate balance from state
+  const balance = totalIngresos - totalGastos;
+  const ahorro = balance;
+  const tasaAhorro = totalIngresos > 0 ? (ahorro / totalIngresos) * 100 : 0;
 
   useEffect(() => {
     fetchBalanceData();
   }, [currentMonth, viewMode]);
+
+  // Fetch AI predictions when balance data changes
+  useEffect(() => {
+    if (totalIngresos > 0 || totalGastos > 0) {
+      fetchAIProjections();
+    }
+  }, [totalIngresos, totalGastos, balance, viewMode]);
+
+  const fetchAIProjections = async () => {
+    try {
+      setLoadingProyecciones(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Get recent transactions for AI analysis
+      const startDate = viewMode === 'mensual' 
+        ? new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1)
+        : new Date(currentMonth.getFullYear(), 0, 1);
+      
+      const endDate = viewMode === 'mensual'
+        ? new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0)
+        : new Date(currentMonth.getFullYear(), 11, 31);
+
+      const { data: transactions } = await supabase
+        .from('transactions')
+        .select('*, categories(name)')
+        .eq('user_id', user.id)
+        .gte('transaction_date', startDate.toISOString().split('T')[0])
+        .lte('transaction_date', endDate.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false });
+
+      const { data, error } = await supabase.functions.invoke('predict-savings', {
+        body: {
+          userId: user.id,
+          transactions,
+          totalIngresos,
+          totalGastos,
+          balance,
+          viewMode
+        }
+      });
+
+      if (error) throw error;
+      setProyecciones(data);
+    } catch (error) {
+      console.error('Error fetching AI projections:', error);
+      // Fallback to simple calculation
+      setProyecciones({
+        proyeccionAnual: viewMode === 'mensual' ? balance * 12 : balance,
+        proyeccionSemestral: viewMode === 'mensual' ? balance * 6 : balance / 2,
+        confianza: 'baja',
+        razonamiento: 'Proyección simple basada en balance actual'
+      });
+    } finally {
+      setLoadingProyecciones(false);
+    }
+  };
 
   const fetchBalanceData = async () => {
     try {
@@ -115,20 +184,10 @@ const Balance = () => {
 
       setGastosByCategory(gastosWithPercentage);
 
-    } catch (error) {
-      console.error('Error fetching balance data:', error);
     } finally {
       setLoading(false);
     }
   };
-
-  const balance = totalIngresos - totalGastos;
-  const ahorro = balance;
-  const tasaAhorro = totalIngresos > 0 ? (ahorro / totalIngresos) * 100 : 0;
-
-  // Proyecciones
-  const proyeccionAnual = viewMode === 'mensual' ? balance * 12 : balance;
-  const proyeccionSemestral = viewMode === 'mensual' ? balance * 6 : balance / 2;
 
   const handlePreviousPeriod = () => {
     if (viewMode === 'mensual') {
@@ -296,27 +355,61 @@ const Balance = () => {
           </Card>
         </div>
 
-        {/* Proyecciones */}
+        {/* Proyecciones con IA */}
         <Card className="p-5 bg-gradient-card card-glow">
-          <h3 className="text-lg font-semibold text-white mb-4">Proyecciones</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-xs text-white/70 mb-1">
-                {viewMode === 'mensual' ? 'Proyección Anual' : 'Proyección Actual'}
-              </p>
-              <p className="text-xl font-bold text-white">
-                ${proyeccionAnual.toLocaleString('es-MX')}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-white/70 mb-1">
-                {viewMode === 'mensual' ? 'Proyección Semestral' : 'Proyección Semestral'}
-              </p>
-              <p className="text-xl font-bold text-white">
-                ${proyeccionSemestral.toLocaleString('es-MX')}
-              </p>
-            </div>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-white">Proyecciones Inteligentes</h3>
+            {proyecciones?.confianza && (
+              <Badge className={`${
+                proyecciones.confianza === 'alta' 
+                  ? 'bg-green-500/20 text-green-200 border-green-500/30'
+                  : proyecciones.confianza === 'media'
+                  ? 'bg-yellow-500/20 text-yellow-200 border-yellow-500/30'
+                  : 'bg-red-500/20 text-red-200 border-red-500/30'
+              }`}>
+                Confianza {proyecciones.confianza}
+              </Badge>
+            )}
           </div>
+
+          {loadingProyecciones ? (
+            <div className="text-center py-8">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+              <p className="text-white/70 mt-2 text-sm">Analizando patrones financieros...</p>
+            </div>
+          ) : proyecciones ? (
+            <>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <p className="text-xs text-white/70 mb-1">
+                    Proyección Anual
+                  </p>
+                  <p className="text-xl font-bold text-white">
+                    ${proyecciones.proyeccionAnual.toLocaleString('es-MX')}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-white/70 mb-1">
+                    Proyección Semestral
+                  </p>
+                  <p className="text-xl font-bold text-white">
+                    ${proyecciones.proyeccionSemestral.toLocaleString('es-MX')}
+                  </p>
+                </div>
+              </div>
+              
+              {proyecciones.razonamiento && (
+                <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                  <p className="text-xs text-white/70 mb-1">Análisis</p>
+                  <p className="text-sm text-white">{proyecciones.razonamiento}</p>
+                </div>
+              )}
+            </>
+          ) : (
+            <p className="text-white/70 text-center py-4">
+              Cargando proyecciones...
+            </p>
+          )}
         </Card>
 
         {/* Ingresos por categoría */}
