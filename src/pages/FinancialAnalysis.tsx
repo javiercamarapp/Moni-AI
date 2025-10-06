@@ -159,11 +159,11 @@ export default function FinancialAnalysis() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-white/70">Ingresos</p>
-                        <p className="text-2xl font-bold text-white">
+                        <p className="text-2xl font-bold text-green-500">
                           ${(analysis.metrics.totalIngresos || 0).toFixed(2)}
                         </p>
                       </div>
-                      <TrendingUp className="h-8 w-8 text-white" />
+                      <TrendingUp className="h-8 w-8 text-green-500" />
                     </div>
                   </Card>
 
@@ -171,11 +171,11 @@ export default function FinancialAnalysis() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-white/70">Gastos</p>
-                        <p className="text-2xl font-bold text-white">
+                        <p className="text-2xl font-bold text-red-500">
                           ${(analysis.metrics.totalGastos || 0).toFixed(2)}
                         </p>
                       </div>
-                      <TrendingDown className="h-8 w-8 text-white" />
+                      <TrendingDown className="h-8 w-8 text-red-500" />
                     </div>
                   </Card>
 

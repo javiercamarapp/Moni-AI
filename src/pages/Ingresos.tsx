@@ -364,7 +364,7 @@ const Ingresos = () => {
             
             <div>
               <p className="text-sm text-white/70 mb-2">Total del mes</p>
-              <h2 className="text-4xl sm:text-5xl font-bold text-white mb-2">
+              <h2 className="text-4xl sm:text-5xl font-bold text-green-500 mb-2">
                 ${totalIngresos.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
               </h2>
               <p className="text-white/80">

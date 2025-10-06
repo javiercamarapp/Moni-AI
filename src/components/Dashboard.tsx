@@ -387,7 +387,7 @@ const Dashboard = () => {
                 >
                   <div className="text-center">
                     <p className="text-[9px] sm:text-[10px] text-white/80 mb-0.5">Ingresos</p>
-                    <p className="text-sm sm:text-base lg:text-lg font-bold text-white">${currentMonth.income.toLocaleString('es-MX')}</p>
+                    <p className="text-sm sm:text-base lg:text-lg font-bold text-green-500">${currentMonth.income.toLocaleString('es-MX')}</p>
                   </div>
                 </Card>
                 <Card 
@@ -396,7 +396,7 @@ const Dashboard = () => {
                 >
                   <div className="text-center">
                     <p className="text-[9px] sm:text-[10px] text-white/80 mb-0.5">Gastos</p>
-                    <p className="text-sm sm:text-base lg:text-lg font-bold text-white">-${currentMonth.expenses.toLocaleString('es-MX')}</p>
+                    <p className="text-sm sm:text-base lg:text-lg font-bold text-red-500">-${currentMonth.expenses.toLocaleString('es-MX')}</p>
                   </div>
                 </Card>
               </div>
