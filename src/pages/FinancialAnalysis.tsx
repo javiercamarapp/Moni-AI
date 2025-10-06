@@ -332,79 +332,85 @@ export default function FinancialAnalysis() {
                   )}
 
                   {/* Gráfica de categorías */}
-                  <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
-                    <h3 className="text-xl font-bold mb-4 text-foreground">
-                      Gastos por Categoría
-                    </h3>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <PieChart>
-                        <Pie
-                          data={analysis.topCategories}
-                          dataKey="amount"
-                          nameKey="name"
-                          cx="50%"
-                          cy="50%"
-                          outerRadius={100}
-                          label={(entry) => `${entry.name}: ${entry.percentage}%`}
-                        >
-                          {analysis.topCategories.map((_: any, index: number) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </Card>
+                  {analysis.topCategories && analysis.topCategories.length > 0 && (
+                    <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
+                      <h3 className="text-xl font-bold mb-4 text-foreground">
+                        Gastos por Categoría
+                      </h3>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <PieChart>
+                          <Pie
+                            data={analysis.topCategories}
+                            dataKey="amount"
+                            nameKey="name"
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={100}
+                            label={(entry) => `${entry.name}: ${entry.percentage}%`}
+                          >
+                            {analysis.topCategories.map((_: any, index: number) => (
+                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </Card>
+                  )}
 
                   {/* Proyecciones */}
-                  <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
-                    <h3 className="text-xl font-bold mb-4 text-foreground">
-                      Proyecciones {analysis.projections.period}
-                    </h3>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={[
-                        { name: 'Ingresos', actual: analysis.metrics.totalIngresos, proyectado: analysis.projections.ingresos },
-                        { name: 'Gastos', actual: analysis.metrics.totalGastos, proyectado: analysis.projections.gastos },
-                        { name: 'Balance', actual: analysis.metrics.balance, proyectado: analysis.projections.balance }
-                      ]}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="actual" fill="hsl(var(--primary))" name="Actual" />
-                        <Bar dataKey="proyectado" fill="hsl(var(--secondary))" name="Proyectado" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                    <p className="text-xs text-muted-foreground mt-2 text-center">
-                      Si continúas con tus hábitos actuales
-                    </p>
-                  </Card>
+                  {analysis.projections && (
+                    <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
+                      <h3 className="text-xl font-bold mb-4 text-foreground">
+                        Proyecciones {analysis.projections.period || 'Mensual'}
+                      </h3>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <BarChart data={[
+                          { name: 'Ingresos', actual: analysis.metrics.totalIngresos || 0, proyectado: analysis.projections.ingresos || 0 },
+                          { name: 'Gastos', actual: analysis.metrics.totalGastos || 0, proyectado: analysis.projections.gastos || 0 },
+                          { name: 'Balance', actual: analysis.metrics.balance || 0, proyectado: analysis.projections.balance || 0 }
+                        ]}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="actual" fill="hsl(var(--primary))" name="Actual" />
+                          <Bar dataKey="proyectado" fill="hsl(var(--secondary))" name="Proyectado" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                      <p className="text-xs text-muted-foreground mt-2 text-center">
+                        Si continúas con tus hábitos actuales
+                      </p>
+                    </Card>
+                  )}
                 </div>
 
                 {/* Top categorías como lista */}
-                <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
-                  <h3 className="text-xl font-bold mb-4 text-foreground">
-                    Top 5 Categorías de Gasto
-                  </h3>
-                  <div className="space-y-3">
-                    {analysis.topCategories.map((cat: any, index: number) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <div 
-                            className="w-4 h-4 rounded-full" 
-                            style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                          />
-                          <span className="font-medium text-foreground">{cat.name}</span>
+                {analysis.topCategories && analysis.topCategories.length > 0 && (
+                  <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
+                    <h3 className="text-xl font-bold mb-4 text-foreground">
+                      Top 5 Categorías de Gasto
+                    </h3>
+                    <div className="space-y-3">
+                      {analysis.topCategories.map((cat: any, index: number) => (
+                        <div key={index} className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div 
+                              className="w-4 h-4 rounded-full" 
+                              style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                            />
+                            <span className="font-medium text-foreground">{cat.name || 'Sin categoría'}</span>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold text-foreground">${(cat.amount || 0).toFixed(2)}</p>
+                            <p className="text-sm text-muted-foreground">{cat.percentage || 0}%</p>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="font-bold text-foreground">${cat.amount}</p>
-                          <p className="text-sm text-muted-foreground">{cat.percentage}%</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </Card>
+                      ))}
+                    </div>
+                  </Card>
+                )}
               </>
             )}
           </TabsContent>
