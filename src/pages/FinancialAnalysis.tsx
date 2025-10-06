@@ -374,13 +374,13 @@ export default function FinancialAnalysis() {
             <div className="space-y-2">
               <p className="text-xs font-medium text-white/80">🎯 Acciones Recomendadas</p>
               <div className="grid grid-cols-2 gap-2">
-                <Button variant="action" size="sm" className="hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2">
+                <Button variant="outline" size="sm" className="bg-gradient-card card-glow text-white border-white/20 hover:bg-white/20 hover:scale-105 transition-transform duration-200 text-xs h-auto py-2">
                   Ajustar presupuesto
                 </Button>
-                <Button variant="action" size="sm" className="hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2">
+                <Button variant="outline" size="sm" className="bg-gradient-card card-glow text-white border-white/20 hover:bg-white/20 hover:scale-105 transition-transform duration-200 text-xs h-auto py-2">
                   Plan de deudas
                 </Button>
-                <Button variant="action" size="sm" className="hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2">
+                <Button variant="outline" size="sm" className="bg-gradient-card card-glow text-white border-white/20 hover:bg-white/20 hover:scale-105 transition-transform duration-200 text-xs h-auto py-2">
                   ↑ Ahorro a 10%
                 </Button>
                 <Button variant="outline" size="sm" className="bg-gradient-card card-glow border-white/20 text-white hover:scale-105 transition-transform duration-200 text-xs h-auto py-2">
