@@ -82,33 +82,35 @@ export default function WhatsAppSetup() {
         {/* Hero Card */}
         <Card className="p-4 bg-gradient-to-br from-green-500/20 to-green-600/10 backdrop-blur border-green-500/30">
           <div className="text-center space-y-3">
-            <div className="mx-auto w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center">
-              <img src={whatsappLogo} alt="WhatsApp" className="w-10 h-10" />
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <div className="w-14 h-14 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                <img src={whatsappLogo} alt="WhatsApp" className="w-9 h-9" />
+              </div>
+              <div className="text-left">
+                <h2 className="text-lg font-bold text-white leading-tight">
+                  ¡Habla con Moni <br/>por WhatsApp! 💬
+                </h2>
+              </div>
             </div>
             
-            <div>
-              <h2 className="text-xl font-bold text-white mb-1">
-                ¡Habla con Moni por WhatsApp! 💬
-              </h2>
-              <p className="text-sm text-white/70">
-                Registra tus gastos e ingresos de forma natural
-              </p>
-            </div>
+            <p className="text-xs text-white/70">
+              Registra tus gastos e ingresos de forma natural
+            </p>
 
             {/* Número de WhatsApp */}
-            <div className="bg-white/10 backdrop-blur rounded-lg p-3 border border-white/20">
-              <p className="text-xs text-white/70 mb-1">Envía un mensaje a:</p>
+            <div className="bg-white/10 backdrop-blur rounded-lg p-2.5 border border-white/20">
+              <p className="text-[10px] text-white/70 mb-1">Envía un mensaje a:</p>
               <div className="flex items-center justify-center gap-2">
-                <p className="text-xl font-bold text-white font-mono">
+                <p className="text-lg font-bold text-white font-mono">
                   {MONI_WHATSAPP}
                 </p>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={copyPhoneNumber}
-                  className="text-white hover:bg-white/10 h-8 w-8"
+                  className="text-white hover:bg-white/10 h-7 w-7"
                 >
-                  <Copy className="h-4 w-4" />
+                  <Copy className="h-3.5 w-3.5" />
                 </Button>
               </div>
             </div>
@@ -116,9 +118,9 @@ export default function WhatsAppSetup() {
             {/* CTA Principal */}
             <Button
               onClick={openWhatsApp}
-              className="w-full bg-green-500 hover:bg-green-600 text-white h-10 text-base font-semibold"
+              className="w-full bg-green-500 hover:bg-green-600 text-white h-9 text-sm font-semibold"
             >
-              <MessageCircle className="mr-2 h-5 w-5" />
+              <MessageCircle className="mr-2 h-4 w-4" />
               Abrir Chat con Moni
             </Button>
           </div>
