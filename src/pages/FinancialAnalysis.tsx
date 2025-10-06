@@ -125,25 +125,6 @@ export default function FinancialAnalysis() {
             {/* 2. EXPLICABILIDAD DEL SCORE */}
             {analysis.scoreBreakdown && <ScoreBreakdownWidget {...analysis.scoreBreakdown} />}
 
-            {/* Llamados a la Acción */}
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-white/80">🎯 Acciones Recomendadas</p>
-              <div className="grid grid-cols-2 gap-2">
-                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10 text-xs h-auto py-2">
-                  Ajustar presupuesto
-                </Button>
-                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10 text-xs h-auto py-2">
-                  Plan de deudas
-                </Button>
-                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10 text-xs h-auto py-2">
-                  ↑ Ahorro a 10%
-                </Button>
-                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10 text-xs h-auto py-2">
-                  Revisar subs
-                </Button>
-              </div>
-            </div>
-
             {/* 3. PATRIMONIO Y RUNWAY */}
             {analysis.netWorth && <NetWorthWidget {...analysis.netWorth} />}
 
@@ -390,12 +371,7 @@ export default function FinancialAnalysis() {
             </div>
 
             {/* Microcopy Empático */}
-            <Card className="p-3 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 backdrop-blur border-emerald-500/30">
-              <p className="text-xs text-emerald-200 leading-relaxed">
-                🌿 <span className="font-medium">Tus finanzas respiran</span>. Reduciendo Comida 8% liberas +$520/mes y subes tu Score +5 pts. 
-                Mantén el ritmo con +$300 a fondo de emergencia.
-              </p>
-            </Card>
+            
 
             {/* Análisis AI */}
             <Card className="p-3 bg-white/5 backdrop-blur border-white/20">
@@ -408,6 +384,26 @@ export default function FinancialAnalysis() {
             </Card>
 
             {/* Análisis AI */}
+            
+
+            {/* Llamados a la Acción */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-white/80">🎯 Acciones Recomendadas</p>
+              <div className="grid grid-cols-2 gap-2">
+                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10 text-xs h-auto py-2">
+                  Ajustar presupuesto
+                </Button>
+                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10 text-xs h-auto py-2">
+                  Plan de deudas
+                </Button>
+                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10 text-xs h-auto py-2">
+                  ↑ Ahorro a 10%
+                </Button>
+                <Button variant="outline" size="sm" className="bg-white/5 border-white/20 text-white hover:bg-white/10 text-xs h-auto py-2">
+                  Revisar subs
+                </Button>
+              </div>
+            </div>
 
             {/* Gráficas adicionales */}
             <Card className="p-3 bg-white/5 backdrop-blur border-white/20">
