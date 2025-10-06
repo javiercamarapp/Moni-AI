@@ -10,6 +10,8 @@ export default function IncomeExpensePieWidget({ income, expenses }: IncomeExpen
   const validIncome = income && !isNaN(income) ? income : 0;
   const validExpenses = expenses && !isNaN(expenses) ? expenses : 0;
 
+  const hasData = validIncome > 0 || validExpenses > 0;
+
   const data = [
     { name: 'Ingresos', value: validIncome, color: '#10b981' },
     { name: 'Gastos', value: validExpenses, color: '#ef4444' },
@@ -18,7 +20,12 @@ export default function IncomeExpensePieWidget({ income, expenses }: IncomeExpen
   return (
     <Card className="p-4 bg-gradient-card card-glow border-white/20">
       <p className="text-sm font-medium text-white/90 mb-3">💰 Distribución Ingresos vs Gastos</p>
-      <ResponsiveContainer width="100%" height={200}>
+      {!hasData ? (
+        <div className="h-[200px] flex items-center justify-center">
+          <p className="text-white/60 text-sm">Sin datos disponibles</p>
+        </div>
+      ) : (
+        <ResponsiveContainer width="100%" height={200}>
         <PieChart>
           <Pie
             data={data}
@@ -45,14 +52,17 @@ export default function IncomeExpensePieWidget({ income, expenses }: IncomeExpen
           />
         </PieChart>
       </ResponsiveContainer>
-      <div className="mt-3 space-y-2">
-        <div className="flex justify-between items-center text-xs">
-          <span className="text-white/70">Balance</span>
-          <span className={`font-bold ${validIncome - validExpenses >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-            ${(validIncome - validExpenses).toLocaleString()}
-          </span>
+      )}
+      {hasData && (
+        <div className="mt-3 space-y-2">
+          <div className="flex justify-between items-center text-xs">
+            <span className="text-white/70">Balance</span>
+            <span className={`font-bold ${validIncome - validExpenses >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+              ${(validIncome - validExpenses).toLocaleString()}
+            </span>
+          </div>
         </div>
-      </div>
+      )}
     </Card>
   );
 }
