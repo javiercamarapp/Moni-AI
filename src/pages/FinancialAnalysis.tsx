@@ -141,8 +141,8 @@ export default function FinancialAnalysis() {
             {analysis.subscriptions && analysis.subscriptions.subscriptions && analysis.subscriptions.subscriptions.length > 0 && <SubscriptionsWidget {...analysis.subscriptions} />}
 
             {/* Microcopy Empático */}
-            <Card className="p-3 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 backdrop-blur border-emerald-500/30">
-              <p className="text-xs text-emerald-200 leading-relaxed">
+            <Card className="p-2 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 backdrop-blur border-emerald-500/30">
+              <p className="text-[10px] text-emerald-200 leading-snug">
                 🌿 <span className="font-medium">Tus finanzas respiran</span>. Reduciendo Comida 8% liberas +$520/mes y subes tu Score +5 pts. 
                 Mantén el ritmo con +$300 a fondo de emergencia.
               </p>
