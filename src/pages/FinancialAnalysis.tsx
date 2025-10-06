@@ -76,9 +76,12 @@ export default function FinancialAnalysis() {
   if (loading && !analysis) {
     return (
       <div className="min-h-screen animated-wave-bg flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <RefreshCw className="h-12 w-12 animate-spin text-white mx-auto" />
-          <p className="text-white">Generando análisis con IA...</p>
+        <div className="text-center">
+          <img 
+            src="/moni-logo.png" 
+            alt="Moni Logo" 
+            className="w-[280px] max-w-[90vw] mx-auto animate-pulse" 
+          />
         </div>
       </div>
     );
