@@ -228,7 +228,11 @@ const Balance = () => {
 
       <div className="px-4 space-y-4">
         {/* Ahorro destacado */}
-        <Card className="p-6 bg-gradient-to-br from-green-600/90 to-green-800/90 card-glow border-green-500/30 animate-fade-in" style={{ animationDelay: '0ms' }}>
+        <Card className={`p-6 card-glow animate-fade-in ${
+          ahorro >= 0 
+            ? 'bg-gradient-to-br from-green-600/90 to-green-800/90 border-green-500/30' 
+            : 'bg-gradient-to-br from-red-600/90 to-red-800/90 border-red-500/30'
+        }`} style={{ animationDelay: '0ms' }}>
           <div className="flex items-center gap-3 mb-3">
             <div className="p-3 bg-white/20 backdrop-blur-sm rounded-full">
               <Wallet className="h-6 w-6 text-white" />
