@@ -354,20 +354,18 @@ const Profile = () => {
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-64 bg-card border-border p-0" align="end">
-                <ScrollArea className="h-64">
-                  <div className="p-1">
-                    {currencies.map((currency) => (
-                      <Button
-                        key={currency.code}
-                        variant="ghost"
-                        className="w-full justify-start text-white hover:bg-primary/10"
-                        onClick={() => setSelectedCurrency(currency.code)}
-                      >
-                        {currency.name}
-                      </Button>
-                    ))}
-                  </div>
-                </ScrollArea>
+                <div className="max-h-60 overflow-y-auto p-1">
+                  {currencies.map((currency) => (
+                    <Button
+                      key={currency.code}
+                      variant="ghost"
+                      className="w-full justify-start text-white hover:bg-primary/10"
+                      onClick={() => setSelectedCurrency(currency.code)}
+                    >
+                      {currency.name}
+                    </Button>
+                  ))}
+                </div>
               </PopoverContent>
             </Popover>
             
@@ -385,20 +383,18 @@ const Profile = () => {
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-64 bg-card border-border p-0" align="end">
-                <ScrollArea className="h-64">
-                  <div className="p-1">
-                    {countries.map((country) => (
-                      <Button
-                        key={country}
-                        variant="ghost"
-                        className="w-full justify-start text-white hover:bg-primary/10"
-                        onClick={() => setSelectedCountry(country)}
-                      >
-                        {country}
-                      </Button>
-                    ))}
-                  </div>
-                </ScrollArea>
+                <div className="max-h-60 overflow-y-auto p-1">
+                  {countries.map((country) => (
+                    <Button
+                      key={country}
+                      variant="ghost"
+                      className="w-full justify-start text-white hover:bg-primary/10"
+                      onClick={() => setSelectedCountry(country)}
+                    >
+                      {country}
+                    </Button>
+                  ))}
+                </div>
               </PopoverContent>
             </Popover>
 
