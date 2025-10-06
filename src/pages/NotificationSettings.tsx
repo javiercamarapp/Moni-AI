@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Bell, Clock, DollarSign } from "lucide-react";
+import { ArrowLeft, Bell, Clock, DollarSign, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -14,6 +14,8 @@ export default function NotificationSettings() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
   const [settings, setSettings] = useState({
     daily_summary: true,
     weekly_analysis: true,
@@ -67,7 +69,7 @@ export default function NotificationSettings() {
   const handleSave = async () => {
     if (!user) return;
 
-    setLoading(true);
+    setAutoSaveStatus('saving');
     try {
       const { error } = await supabase
         .from("notification_settings")
@@ -80,55 +82,79 @@ export default function NotificationSettings() {
 
       if (error) throw error;
 
-      toast({
-        title: "Guardado",
-        description: "Tu configuración de notificaciones se actualizó correctamente",
-      });
+      setAutoSaveStatus('saved');
+      setTimeout(() => setAutoSaveStatus('idle'), 2000);
     } catch (error: any) {
+      setAutoSaveStatus('idle');
       toast({
         title: "Error",
         description: error.message,
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
     }
   };
 
+  const autoSave = useCallback(() => {
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+    
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      handleSave();
+    }, 800);
+  }, [user, settings]);
+
   const updateSetting = (key: string, value: any) => {
     setSettings(prev => ({ ...prev, [key]: value }));
+    autoSave();
   };
 
   return (
-    <div className="min-h-screen animated-wave-bg p-6">
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div className="flex items-center gap-4 mb-8">
+    <div className="min-h-screen animated-wave-bg p-4 pb-20">
+      <div className="max-w-2xl mx-auto space-y-3">
+        <div className="flex items-center gap-3 mb-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/dashboard")}
-            className="text-foreground hover:bg-primary/10"
+            className="text-white hover:bg-white/10"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4" />
           </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Notificaciones</h1>
-            <p className="text-muted-foreground">Configura tus alertas de WhatsApp</p>
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold text-white">Notificaciones</h1>
+            <p className="text-sm text-white/70">Configura tus alertas de WhatsApp</p>
           </div>
+          {autoSaveStatus !== 'idle' && (
+            <div className="flex items-center gap-2 text-sm text-white animate-fade-in">
+              {autoSaveStatus === 'saving' && (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Guardando...</span>
+                </>
+              )}
+              {autoSaveStatus === 'saved' && (
+                <>
+                  <Check className="w-4 h-4 text-green-400" />
+                  <span>Guardado</span>
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Tipos de notificaciones */}
-        <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
-          <div className="flex items-center gap-3 mb-6">
-            <Bell className="h-5 w-5 text-primary" />
-            <h3 className="font-semibold text-foreground">Tipos de Notificaciones</h3>
+        <Card className="p-4 bg-card/80 backdrop-blur border-border/50">
+          <div className="flex items-center gap-2 mb-3">
+            <Bell className="h-4 w-4 text-white" />
+            <h3 className="font-bold text-base text-white">Tipos de Notificaciones</h3>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <Label className="text-foreground">Resumen Diario</Label>
-                <p className="text-sm text-muted-foreground">
+                <Label className="text-white text-sm">Resumen Diario</Label>
+                <p className="text-xs text-white/70">
                   Recibe un resumen de tus finanzas cada día
                 </p>
               </div>
@@ -140,8 +166,8 @@ export default function NotificationSettings() {
 
             <div className="flex items-center justify-between">
               <div>
-                <Label className="text-foreground">Análisis Semanal</Label>
-                <p className="text-sm text-muted-foreground">
+                <Label className="text-white text-sm">Análisis Semanal</Label>
+                <p className="text-xs text-white/70">
                   Análisis detallado cada lunes
                 </p>
               </div>
@@ -153,8 +179,8 @@ export default function NotificationSettings() {
 
             <div className="flex items-center justify-between">
               <div>
-                <Label className="text-foreground">Alertas de Gasto</Label>
-                <p className="text-sm text-muted-foreground">
+                <Label className="text-white text-sm">Alertas de Gasto</Label>
+                <p className="text-xs text-white/70">
                   Notificaciones cuando gastes más de lo normal
                 </p>
               </div>
@@ -166,8 +192,8 @@ export default function NotificationSettings() {
 
             <div className="flex items-center justify-between">
               <div>
-                <Label className="text-foreground">Tips de Ahorro</Label>
-                <p className="text-sm text-muted-foreground">
+                <Label className="text-white text-sm">Tips de Ahorro</Label>
+                <p className="text-xs text-white/70">
                   Consejos personalizados para ahorrar
                 </p>
               </div>
@@ -179,8 +205,8 @@ export default function NotificationSettings() {
 
             <div className="flex items-center justify-between">
               <div>
-                <Label className="text-foreground">Recordatorios de Metas</Label>
-                <p className="text-sm text-muted-foreground">
+                <Label className="text-white text-sm">Recordatorios de Metas</Label>
+                <p className="text-xs text-white/70">
                   Progreso de tus metas de ahorro
                 </p>
               </div>
@@ -193,15 +219,15 @@ export default function NotificationSettings() {
         </Card>
 
         {/* Umbrales */}
-        <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
-          <div className="flex items-center gap-3 mb-6">
-            <DollarSign className="h-5 w-5 text-primary" />
-            <h3 className="font-semibold text-foreground">Umbrales de Alerta</h3>
+        <Card className="p-4 bg-card/80 backdrop-blur border-border/50">
+          <div className="flex items-center gap-2 mb-3">
+            <DollarSign className="h-4 w-4 text-white" />
+            <h3 className="font-bold text-base text-white">Umbrales de Alerta</h3>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div>
-              <Label htmlFor="daily_limit" className="text-foreground">
+              <Label htmlFor="daily_limit" className="text-white text-sm">
                 Límite de Gasto Diario
               </Label>
               <Input
@@ -209,15 +235,15 @@ export default function NotificationSettings() {
                 type="number"
                 value={settings.daily_spending_limit}
                 onChange={(e) => updateSetting('daily_spending_limit', Number(e.target.value))}
-                className="mt-2"
+                className="mt-1 bg-white/10 border-white/20 text-white"
               />
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-[10px] text-white/70 mt-1">
                 Te alertaremos si gastas más de este monto en un día
               </p>
             </div>
 
             <div>
-              <Label htmlFor="transaction_threshold" className="text-foreground">
+              <Label htmlFor="transaction_threshold" className="text-white text-sm">
                 Alerta por Transacción Mayor a
               </Label>
               <Input
@@ -225,9 +251,9 @@ export default function NotificationSettings() {
                 type="number"
                 value={settings.transaction_alert_threshold}
                 onChange={(e) => updateSetting('transaction_alert_threshold', Number(e.target.value))}
-                className="mt-2"
+                className="mt-1 bg-white/10 border-white/20 text-white"
               />
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-[10px] text-white/70 mt-1">
                 Recibirás notificación de transacciones mayores a este monto
               </p>
             </div>
@@ -235,15 +261,15 @@ export default function NotificationSettings() {
         </Card>
 
         {/* Horarios */}
-        <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
-          <div className="flex items-center gap-3 mb-6">
-            <Clock className="h-5 w-5 text-primary" />
-            <h3 className="font-semibold text-foreground">Horarios</h3>
+        <Card className="p-4 bg-card/80 backdrop-blur border-border/50">
+          <div className="flex items-center gap-2 mb-3">
+            <Clock className="h-4 w-4 text-white" />
+            <h3 className="font-bold text-base text-white">Horarios</h3>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div>
-              <Label htmlFor="preferred_time" className="text-foreground">
+              <Label htmlFor="preferred_time" className="text-white text-sm">
                 Hora Preferida para Resumen Diario
               </Label>
               <Input
@@ -251,18 +277,18 @@ export default function NotificationSettings() {
                 type="time"
                 value={settings.preferred_notification_time}
                 onChange={(e) => updateSetting('preferred_notification_time', e.target.value)}
-                className="mt-2"
+                className="mt-1 bg-white/10 border-white/20 text-white"
               />
             </div>
 
             <div>
-              <Label className="text-foreground">Horario Silencioso</Label>
-              <p className="text-xs text-muted-foreground mb-2">
+              <Label className="text-white text-sm">Horario Silencioso</Label>
+              <p className="text-[10px] text-white/70 mb-2">
                 No recibirás notificaciones durante estas horas
               </p>
-              <div className="flex gap-4">
+              <div className="flex gap-2">
                 <div className="flex-1">
-                  <Label htmlFor="quiet_start" className="text-xs text-muted-foreground">
+                  <Label htmlFor="quiet_start" className="text-[10px] text-white/70">
                     Inicio
                   </Label>
                   <Input
@@ -270,11 +296,11 @@ export default function NotificationSettings() {
                     type="time"
                     value={settings.quiet_hours_start}
                     onChange={(e) => updateSetting('quiet_hours_start', e.target.value)}
-                    className="mt-1"
+                    className="mt-1 bg-white/10 border-white/20 text-white text-sm"
                   />
                 </div>
                 <div className="flex-1">
-                  <Label htmlFor="quiet_end" className="text-xs text-muted-foreground">
+                  <Label htmlFor="quiet_end" className="text-[10px] text-white/70">
                     Fin
                   </Label>
                   <Input
@@ -282,23 +308,13 @@ export default function NotificationSettings() {
                     type="time"
                     value={settings.quiet_hours_end}
                     onChange={(e) => updateSetting('quiet_hours_end', e.target.value)}
-                    className="mt-1"
+                    className="mt-1 bg-white/10 border-white/20 text-white text-sm"
                   />
                 </div>
               </div>
             </div>
           </div>
         </Card>
-
-        {/* Botón guardar */}
-        <Button
-          onClick={handleSave}
-          disabled={loading}
-          className="w-full bg-primary hover:bg-primary/90"
-          size="lg"
-        >
-          {loading ? "Guardando..." : "Guardar Configuración"}
-        </Button>
       </div>
     </div>
   );
