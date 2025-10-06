@@ -28,6 +28,7 @@ const Dashboard = () => {
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [monthlyExpenses, setMonthlyExpenses] = useState(0);
   const [selectedMonthOffset, setSelectedMonthOffset] = useState(0); // 0 = mes actual, 1 = mes anterior, etc.
+  const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const navigate = useNavigate();
   const {
     toast
@@ -56,6 +57,24 @@ const Dashboard = () => {
       setSelectedMonthOffset(prev => prev - 1);
     }
   };
+
+  // Success tips rotation
+  const successTips = [
+    { emoji: "✅", title: "¡Vas excelente!", message: "Tus finanzas están saludables este mes" },
+    { emoji: "💪", title: "¡Sigue así!", message: "Has gastado 15% menos en delivery este mes" },
+    { emoji: "🎯", title: "¡Bien hecho!", message: "Llevas 3 días sin gastos hormiga" },
+    { emoji: "📊", title: "¡Gran progreso!", message: "Este mes ahorraste más que el anterior" },
+    { emoji: "🌟", title: "¡Increíble!", message: "Has reducido gastos en el Oxxo un 20%" },
+    { emoji: "💰", title: "¡Excelente control!", message: "Tus gastos fijos están dentro del presupuesto" },
+  ];
+
+  // Auto-rotate success tips
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTipIndex((prev) => (prev + 1) % successTips.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Auto-scroll carousel
   useEffect(() => {
@@ -380,12 +399,12 @@ const Dashboard = () => {
               )}
 
               {currentMonth.balance >= 0 && (
-                <div className="bg-emerald-500/20 rounded-lg p-3 border border-emerald-400/40">
+                <div className="bg-emerald-500/20 rounded-lg p-3 border border-emerald-400/40 animate-fade-in" key={currentTipIndex}>
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl">✅</span>
+                    <span className="text-2xl">{successTips[currentTipIndex].emoji}</span>
                     <div>
-                      <p className="text-xs font-semibold text-emerald-200">¡Vas excelente!</p>
-                      <p className="text-xs text-white/80">Tus finanzas están saludables este mes</p>
+                      <p className="text-xs font-semibold text-emerald-200">{successTips[currentTipIndex].title}</p>
+                      <p className="text-xs text-white/80">{successTips[currentTipIndex].message}</p>
                     </div>
                   </div>
                 </div>
