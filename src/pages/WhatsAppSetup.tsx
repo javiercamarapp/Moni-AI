@@ -107,12 +107,12 @@ export default function WhatsAppSetup() {
 
         {/* ¿Cómo funciona? */}
         <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
-          <h3 className="font-bold text-xl text-white mb-4 flex items-center gap-2">
+          <h3 className="font-bold text-xl text-white mb-4 flex items-center gap-2 animate-fade-in">
             <CheckCircle2 className="h-5 w-5 text-primary" />
             ¿Cómo funciona?
           </h3>
           <div className="space-y-4">
-            <div className="flex gap-3">
+            <div className="flex gap-3 animate-fade-in hover:translate-x-2 transition-transform duration-200" style={{ animationDelay: '100ms' }}>
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
                 1
               </div>
@@ -122,7 +122,7 @@ export default function WhatsAppSetup() {
               </div>
             </div>
             
-            <div className="flex gap-3">
+            <div className="flex gap-3 animate-fade-in hover:translate-x-2 transition-transform duration-200" style={{ animationDelay: '250ms' }}>
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
                 2
               </div>
@@ -132,7 +132,7 @@ export default function WhatsAppSetup() {
               </div>
             </div>
             
-            <div className="flex gap-3">
+            <div className="flex gap-3 animate-fade-in hover:translate-x-2 transition-transform duration-200" style={{ animationDelay: '400ms' }}>
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
                 3
               </div>
@@ -145,27 +145,27 @@ export default function WhatsAppSetup() {
         </Card>
 
         {/* Ejemplos de mensajes */}
-        <Card className="p-6 bg-card/80 backdrop-blur border-border/50">
+        <Card className="p-6 bg-card/80 backdrop-blur border-border/50 overflow-hidden">
           <h3 className="font-bold text-xl text-white mb-4">
             Ejemplos de mensajes
           </h3>
           <div className="space-y-3">
-            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '0ms' }}>
               <p className="text-white font-medium">"Gasté $350 en el supermercado"</p>
               <p className="text-xs text-white/60 mt-1">→ Gasto registrado en categoría Comida</p>
             </div>
             
-            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '150ms' }}>
               <p className="text-white font-medium">"Me pagaron $5000 por freelance"</p>
               <p className="text-xs text-white/60 mt-1">→ Ingreso registrado en categoría Trabajo</p>
             </div>
             
-            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '300ms' }}>
               <p className="text-white font-medium">"$120 gasolina"</p>
               <p className="text-xs text-white/60 mt-1">→ Gasto registrado en categoría Transporte</p>
             </div>
 
-            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '450ms' }}>
               <p className="text-white font-medium">"Comida con amigos $450"</p>
               <p className="text-xs text-white/60 mt-1">→ Gasto registrado en categoría Ocio</p>
             </div>
@@ -174,11 +174,11 @@ export default function WhatsAppSetup() {
 
         {/* Beneficios */}
         <Card className="p-6 bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur border-primary/20">
-          <h3 className="font-bold text-xl text-white mb-4">
+          <h3 className="font-bold text-xl text-white mb-4 animate-fade-in">
             ¿Por qué usar WhatsApp? 💡
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-3 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '0ms' }}>
               <div className="text-2xl">⚡</div>
               <div>
                 <p className="font-semibold text-white">Instantáneo</p>
@@ -186,7 +186,7 @@ export default function WhatsAppSetup() {
               </div>
             </div>
             
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-3 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '150ms' }}>
               <div className="text-2xl">🤖</div>
               <div>
                 <p className="font-semibold text-white">Inteligente</p>
@@ -194,7 +194,7 @@ export default function WhatsAppSetup() {
               </div>
             </div>
             
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-3 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '300ms' }}>
               <div className="text-2xl">🎯</div>
               <div>
                 <p className="font-semibold text-white">Preciso</p>
@@ -202,7 +202,7 @@ export default function WhatsAppSetup() {
               </div>
             </div>
             
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-3 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '450ms' }}>
               <div className="text-2xl">🔔</div>
               <div>
                 <p className="font-semibold text-white">Recordatorios</p>
