@@ -24,7 +24,6 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
-import BottomNav from '@/components/BottomNav';
 import {
   Dialog,
   DialogContent,
@@ -164,14 +163,14 @@ const Ingresos = () => {
   };
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-20">
+    <div className="min-h-screen animated-wave-bg pb-4">
       {/* Header */}
       <div className="p-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button 
             variant="ghost" 
             size="icon"
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate('/balance')}
             className="text-white hover:bg-white/10"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -479,8 +478,6 @@ const Ingresos = () => {
           </TabsContent>
         </Tabs>
       </div>
-      
-      <BottomNav />
     </div>
   );
 };

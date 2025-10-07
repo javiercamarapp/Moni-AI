@@ -5,7 +5,6 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, MessageCircle } from 'lucide-react';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
-import BottomNav from '@/components/BottomNav';
 
 const FinancialChat = () => {
   const navigate = useNavigate();
@@ -31,13 +30,13 @@ const FinancialChat = () => {
   };
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-20">
+    <div className="min-h-screen animated-wave-bg pb-4">
       {/* Header con botón de regreso */}
       <div className="p-4">
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate('/balance')}
           className="text-white hover:bg-white/10"
         >
           <ArrowLeft className="h-6 w-6" />
@@ -120,8 +119,6 @@ const FinancialChat = () => {
           </div>
         </div>
       </div>
-
-      <BottomNav />
     </div>
   );
 };
