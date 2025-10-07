@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from '@/components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
 import { useToast } from "@/hooks/use-toast";
 import bannerInvestment from '@/assets/banner-investment.jpg';
 import bannerGoals from '@/assets/banner-goals.jpg';
@@ -35,6 +36,19 @@ const Dashboard = () => {
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const [scoreMoni, setScoreMoni] = useState<number | null>(null);
   const [loadingScore, setLoadingScore] = useState(false);
+  const [proyecciones, setProyecciones] = useState<{
+    proyeccionAnual: number;
+    proyeccionSemestral: number;
+    confianza: string;
+    insights: Array<{
+      titulo: string;
+      metrica: string;
+      descripcion: string;
+      tipo: 'positivo' | 'negativo' | 'neutral' | 'consejo';
+    }>;
+  } | null>(null);
+  const [loadingProyecciones, setLoadingProyecciones] = useState(false);
+  const [isUpdatingProjections, setIsUpdatingProjections] = useState(false);
   const navigate = useNavigate();
   const {
     toast
@@ -240,6 +254,94 @@ const Dashboard = () => {
     };
     fetchTransactions();
   }, [selectedMonthOffset]);
+
+  // Fetch AI projections
+  useEffect(() => {
+    if (isUpdatingProjections) return;
+    
+    if (monthlyIncome > 0 || monthlyExpenses > 0) {
+      fetchAIProjections();
+    } else {
+      setProyecciones({
+        proyeccionAnual: 0,
+        proyeccionSemestral: 0,
+        confianza: 'sin-datos',
+        insights: [{
+          titulo: 'Sin Datos Suficientes',
+          metrica: '0 transacciones',
+          descripcion: 'Aún no hay suficientes datos para hacer proyecciones. Empieza registrando tus ingresos y gastos.',
+          tipo: 'neutral'
+        }]
+      });
+      setLoadingProyecciones(false);
+    }
+  }, [monthlyIncome, monthlyExpenses]);
+
+  const fetchAIProjections = async () => {
+    if (isUpdatingProjections) return;
+    
+    try {
+      setIsUpdatingProjections(true);
+      setLoadingProyecciones(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Get current month transactions
+      const now = new Date();
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+      const { data: transactions } = await supabase
+        .from('transactions')
+        .select('*, categories(name)')
+        .eq('user_id', user.id)
+        .gte('transaction_date', firstDay.toISOString().split('T')[0])
+        .lte('transaction_date', lastDay.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false });
+
+      // Get ALL historical transactions
+      const { data: allTransactions } = await supabase
+        .from('transactions')
+        .select('*, categories(name)')
+        .eq('user_id', user.id)
+        .order('transaction_date', { ascending: false });
+
+      const periodLabel = getMonthName(0);
+
+      const { data, error } = await supabase.functions.invoke('predict-savings', {
+        body: {
+          userId: user.id,
+          transactions,
+          allTransactions,
+          totalIngresos: monthlyIncome,
+          totalGastos: monthlyExpenses,
+          balance: monthlyIncome - monthlyExpenses,
+          viewMode: 'mensual',
+          periodLabel
+        }
+      });
+
+      if (error) throw error;
+      setProyecciones(data);
+    } catch (error) {
+      console.error('Error fetching AI projections:', error);
+      const balance = monthlyIncome - monthlyExpenses;
+      setProyecciones({
+        proyeccionAnual: balance * 12,
+        proyeccionSemestral: balance * 6,
+        confianza: 'baja',
+        insights: [{
+          titulo: 'Proyección Simple',
+          metrica: 'Básica',
+          descripcion: 'Proyección simple basada en balance actual',
+          tipo: 'neutral'
+        }]
+      });
+    } finally {
+      setLoadingProyecciones(false);
+      setIsUpdatingProjections(false);
+    }
+  };
 
   // Actualización en tiempo real de transacciones
   useEffect(() => {
@@ -447,6 +549,97 @@ const Dashboard = () => {
 
         {/* Safe to Spend Widget */}
         <SafeToSpendWidget safeToSpend={monthlyIncome - fixedExpenses - goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} monthlyIncome={monthlyIncome} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} />
+
+        {/* Proyecciones Inteligentes */}
+        <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-semibold text-card-foreground">Proyecciones Inteligentes</h3>
+            {proyecciones && (
+               <Badge className={`whitespace-nowrap px-3 ${
+                 proyecciones.confianza === 'sin-datos' || proyecciones.proyeccionAnual <= 0
+                   ? 'bg-red-500/20 text-red-200 border-red-500/30'
+                   : proyecciones.confianza?.toLowerCase() === 'alta'
+                   ? 'bg-green-500/20 text-green-200 border-green-500/30'
+                   : proyecciones.confianza?.toLowerCase() === 'media'
+                   ? 'bg-yellow-500/20 text-yellow-200 border-yellow-500/30'
+                   : 'bg-yellow-500/20 text-yellow-200 border-yellow-500/30'
+               }`}>
+                {proyecciones.confianza === 'sin-datos' 
+                  ? 'Sin datos'
+                  : `Confianza ${proyecciones.confianza}`
+                }
+              </Badge>
+            )}
+          </div>
+
+          {loadingProyecciones ? (
+            <div className="text-center py-6">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-card-foreground"></div>
+              <p className="text-card-foreground/70 mt-2 text-sm">Analizando patrones financieros...</p>
+            </div>
+          ) : proyecciones ? (
+            <>
+              <div className="grid grid-cols-2 gap-4 mb-3">
+                <div>
+                  <p className="text-xs text-card-foreground/70 mb-1">
+                    Proyección Anual
+                  </p>
+                  <p className="text-xl font-bold text-card-foreground">
+                    ${proyecciones.proyeccionAnual.toLocaleString('es-MX')}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-card-foreground/70 mb-1">
+                    Proyección Semestral
+                  </p>
+                  <p className="text-xl font-bold text-card-foreground">
+                    ${proyecciones.proyeccionSemestral.toLocaleString('es-MX')}
+                  </p>
+                </div>
+              </div>
+              
+              {proyecciones.insights && proyecciones.insights.length > 0 && (
+                <Carousel 
+                  className="w-full"
+                  opts={{
+                    align: "start",
+                    loop: true,
+                  }}
+                  plugins={[
+                    Autoplay({
+                      delay: 6000,
+                    }),
+                  ]}
+                >
+                  <CarouselContent>
+                    {proyecciones.insights.map((insight, index) => (
+                      <CarouselItem key={index}>
+                        <div className={`bg-card/30 rounded-lg p-4 border ${
+                          insight.tipo === 'positivo' 
+                            ? 'border-success/30 bg-success/5'
+                            : insight.tipo === 'negativo'
+                            ? 'border-destructive/30 bg-destructive/5'
+                            : insight.tipo === 'consejo'
+                            ? 'border-accent/30 bg-accent/5'
+                           : 'border-border/20'
+                        }`}>
+                          <div className="mb-2">
+                            <h4 className="text-base font-semibold text-card-foreground">{insight.titulo}</h4>
+                          </div>
+                          <p className="text-sm text-card-foreground/80 leading-relaxed">{insight.descripcion}</p>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                </Carousel>
+              )}
+            </>
+          ) : (
+            <p className="text-card-foreground/70 text-center py-4">
+              Cargando proyecciones...
+            </p>
+          )}
+        </Card>
 
         {/* Banner Publicitario - Carrusel */}
         <Carousel className="w-full" setApi={setApi} opts={{
