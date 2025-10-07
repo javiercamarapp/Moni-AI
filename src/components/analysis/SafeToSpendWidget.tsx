@@ -21,19 +21,15 @@ export default function SafeToSpendWidget({
   const percentageOfIncome = safeMonthlyIncome > 0 ? safeSafeToSpend / safeMonthlyIncome * 100 : 0;
   
   return (
-    <Card className={`p-4 border hover:scale-105 transition-all duration-300 ${
+    <Card className={`p-4 card-glow border-white/20 hover:scale-105 transition-transform duration-200 ${
       safeSafeToSpend >= 0 
-        ? 'bg-gradient-to-br from-emerald-900/60 via-emerald-950/70 to-green-950/60 border-emerald-800/30 shadow-[0_0_20px_rgba(34,197,94,0.2)]' 
-        : 'bg-gradient-to-br from-rose-900/60 via-rose-950/70 to-red-950/60 border-rose-800/30 shadow-[0_0_20px_rgba(239,68,68,0.2)]'
+        ? 'bg-gradient-to-br from-emerald-900/80 to-emerald-950/80' 
+        : 'bg-gradient-to-br from-red-900/80 to-red-950/80'
     }`}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-            safeSafeToSpend >= 0
-              ? 'bg-gradient-to-br from-emerald-800/40 to-green-900/40 shadow-[0_0_10px_rgba(34,197,94,0.2)]'
-              : 'bg-gradient-to-br from-rose-800/40 to-red-900/40 shadow-[0_0_10px_rgba(239,68,68,0.2)]'
-          }`}>
-            <DollarSign className="w-5 h-5 text-white/90" />
+          <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+            <DollarSign className="w-5 h-5 text-white" />
           </div>
           <div>
             <p className="text-xs text-white/70">Seguro para gastar</p>
@@ -49,19 +45,19 @@ export default function SafeToSpendWidget({
       <div className="space-y-2 text-xs text-white/70">
         <div className="flex justify-between">
           <span>Ingreso mensual</span>
-          <span className="text-white/90 font-medium">${safeMonthlyIncome.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+          <span className="text-white font-medium">${safeMonthlyIncome.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
         </div>
         <div className="flex justify-between">
           <span>Gastos fijos</span>
-          <span className="text-white/90 font-medium">-${safeFixedExpenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+          <span className="text-white font-medium">-${safeFixedExpenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
         </div>
         <div className="flex justify-between">
           <span>Metas de ahorro</span>
-          <span className="text-white/90 font-medium">-${safeSavingsGoals.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+          <span className="text-white font-medium">-${safeSavingsGoals.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
         </div>
         <div className="border-t border-white/20 pt-2 flex justify-between font-semibold">
           <span className="text-white">Disponible</span>
-          <span className="text-white">
+          <span className={`${safeSafeToSpend >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
             ${safeSafeToSpend.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
           </span>
         </div>
