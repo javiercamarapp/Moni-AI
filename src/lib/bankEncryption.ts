@@ -1,7 +1,18 @@
 import { supabase } from "@/integrations/supabase/client";
 
 /**
- * Encripta un token bancario antes de guardarlo en la base de datos
+ * SECURITY CRITICAL: Bank Token Encryption
+ * 
+ * Encrypts bank access tokens using AES-256-GCM encryption via edge function.
+ * The encryption key is stored securely in Supabase secrets.
+ * 
+ * ⚠️ NEVER store plaintext tokens
+ * ⚠️ NEVER log the plaintext token
+ * ⚠️ ALWAYS use this function before storing tokens
+ * 
+ * @param token - Plaintext bank access token from Plaid
+ * @returns Base64-encoded encrypted token with IV
+ * @throws Error if encryption fails
  */
 export async function encryptBankToken(token: string): Promise<string> {
   const { data, error } = await supabase.functions.invoke('encrypt-bank-token', {
@@ -16,8 +27,15 @@ export async function encryptBankToken(token: string): Promise<string> {
 }
 
 /**
- * Desencripta un token bancario recuperado de la base de datos
- * (Normalmente no se necesita en el cliente, solo en edge functions)
+ * Decrypts a bank token from the database.
+ * 
+ * ⚠️ WARNING: This should ONLY be called from backend edge functions.
+ * ⚠️ NEVER call this from client-side code.
+ * ⚠️ Plaintext tokens should never exist on the client.
+ * 
+ * @param encryptedToken - Base64-encoded encrypted token from database
+ * @returns Decrypted plaintext token
+ * @throws Error if decryption fails
  */
 export async function decryptBankToken(encryptedToken: string): Promise<string> {
   const { data, error } = await supabase.functions.invoke('encrypt-bank-token', {

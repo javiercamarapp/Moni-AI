@@ -416,7 +416,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      insert_bank_connection_secure: {
+        Args: {
+          p_account_id: string
+          p_bank_name: string
+          p_encrypted_token: string
+          p_plaid_item_id?: string
+          p_user_id: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
