@@ -379,8 +379,8 @@ const ChatInterface = () => {
           <ArrowLeft className="w-6 h-6" />
         </Button>
         <div className="flex items-center gap-3 fade-in-up">
-          <div className="w-10 h-10 rounded-full bg-gradient-card flex items-center justify-center shadow-glow border border-border/50">
-            <img src={moniLogo} alt="MONI AI+" className="w-7 h-7 object-contain" />
+          <div className="w-10 h-10 rounded-full bg-gradient-card flex items-center justify-center shadow-glow border border-border/50 p-1.5">
+            <img src={moniLogo} alt="MONI AI+" className="w-full h-full object-contain" />
           </div>
           <span className="text-xl font-semibold text-foreground">MONI AI+</span>
         </div>
@@ -389,8 +389,8 @@ const ChatInterface = () => {
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto px-4">
         {messages.length === 0 ? <div className="h-full flex flex-col items-center justify-center pb-32">
-            <div className="w-20 h-20 rounded-full bg-gradient-card flex items-center justify-center mb-6 shadow-glow border border-border/50 bounce-in pulse-subtle">
-              <img src={moniLogo} alt="MONI AI+" className="w-14 h-14 object-contain" />
+            <div className="w-20 h-20 rounded-full bg-gradient-card flex items-center justify-center mb-6 shadow-glow border border-border/50 bounce-in pulse-subtle p-3">
+              <img src={moniLogo} alt="MONI AI+" className="w-full h-full object-contain" />
             </div>
             <h1 className="text-3xl font-normal text-foreground text-center fade-in-up">¿En qué puedo ayudarte hoy?</h1>
           </div> : <div className="py-6 space-y-6">
@@ -398,8 +398,8 @@ const ChatInterface = () => {
           animationDelay: `${index * 0.1}s`
         }}>
                 <div className="flex items-center gap-2">
-                  {msg.type === 'ai' ? <div className="w-7 h-7 rounded-full bg-gradient-card flex items-center justify-center flex-shrink-0 shadow-glow border border-border/50 hover-lift">
-                      <img src={moniLogo} alt="AI" className="w-5 h-5 object-contain" />
+                  {msg.type === 'ai' ? <div className="w-7 h-7 rounded-full bg-gradient-card flex items-center justify-center flex-shrink-0 shadow-glow border border-border/50 hover-lift p-1">
+                      <img src={moniLogo} alt="AI" className="w-full h-full object-contain" />
                     </div> : <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center flex-shrink-0 border border-border/50 hover-lift">
                       <span className="text-xs font-medium text-foreground">Tú</span>
                     </div>}
@@ -416,8 +416,8 @@ const ChatInterface = () => {
 
             {isTyping && <div className="space-y-2 fade-in-up">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-gradient-card flex items-center justify-center flex-shrink-0 shadow-glow border border-border/50 pulse-subtle">
-                    <img src={moniLogo} alt="AI" className="w-5 h-5 object-contain" />
+                  <div className="w-7 h-7 rounded-full bg-gradient-card flex items-center justify-center flex-shrink-0 shadow-glow border border-border/50 pulse-subtle p-1">
+                    <img src={moniLogo} alt="AI" className="w-full h-full object-contain" />
                   </div>
                   <span className="text-sm font-medium text-muted-foreground">MONI AI+</span>
                 </div>
