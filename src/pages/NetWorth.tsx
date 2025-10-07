@@ -332,7 +332,7 @@ export default function NetWorth() {
       </div>
 
       {/* Accounts List */}
-      <div className="px-4 pb-4 relative z-10">
+      <div className="pb-4 relative z-10">
         <div className="bg-gradient-card card-glow rounded-3xl shadow-2xl border border-white/10">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/10">
