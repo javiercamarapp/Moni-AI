@@ -73,15 +73,31 @@ const categoryGroupMapping: Record<string, string> = {
   'taxi': 'Auto',
 };
 
-// Colores vibrantes y distintos para grupos
+// Colores metálicos oscuros para grupos de gastos
 const groupColors: Record<string, string> = {
-  'Comidas': 'hsl(25, 85%, 55%)',        // Naranja vibrante
-  'Entretenimiento': 'hsl(280, 75%, 60%)', // Morado
-  'Salidas Nocturnas': 'hsl(340, 82%, 55%)', // Rosa fuerte
-  'Servicios': 'hsl(200, 75%, 50%)',     // Azul cielo
-  'Streaming': 'hsl(145, 65%, 45%)',     // Verde
-  'Auto': 'hsl(45, 90%, 55%)',           // Amarillo
-  'Otros': 'hsl(0, 70%, 55%)',           // Rojo
+  'Comidas': 'hsl(25, 60%, 35%)',        // Bronce
+  'Entretenimiento': 'hsl(280, 50%, 32%)', // Morado metálico
+  'Salidas Nocturnas': 'hsl(340, 55%, 30%)', // Rojo metálico
+  'Servicios': 'hsl(200, 55%, 32%)',     // Azul metálico
+  'Streaming': 'hsl(145, 45%, 30%)',     // Verde metálico
+  'Auto': 'hsl(45, 60%, 35%)',           // Dorado oscuro
+  'Otros': 'hsl(220, 45%, 28%)',         // Azul acero
+};
+
+// Colores metálicos oscuros para categorías de ingresos
+const incomeCategoryColors: string[] = [
+  'hsl(210, 55%, 35%)',  // Azul acero
+  'hsl(150, 50%, 32%)',  // Verde esmeralda
+  'hsl(280, 52%, 33%)',  // Morado metálico
+  'hsl(30, 58%, 36%)',   // Cobre
+  'hsl(190, 53%, 34%)',  // Turquesa metálico
+  'hsl(45, 55%, 38%)',   // Oro viejo
+  'hsl(0, 50%, 35%)',    // Rojo hierro
+  'hsl(260, 48%, 30%)',  // Índigo metálico
+];
+
+const getIncomeCategoryColor = (index: number): string => {
+  return incomeCategoryColors[index % incomeCategoryColors.length];
 };
 
 const getCategoryGroup = (categoryName: string): string => {
@@ -248,10 +264,10 @@ const Balance = () => {
         }
       });
 
-      const ingresosWithPercentage: CategoryBalance[] = Array.from(ingresosCategoryMap.entries()).map(([id, data]) => ({
+      const ingresosWithPercentage: CategoryBalance[] = Array.from(ingresosCategoryMap.entries()).map(([id, data], index) => ({
         id,
         name: data.name,
-        color: data.color,
+        color: getIncomeCategoryColor(index),
         total: data.total,
         percentage: totalIng > 0 ? (data.total / totalIng) * 100 : 0
       })).sort((a, b) => b.total - a.total);
