@@ -456,6 +456,11 @@ const Ingresos = () => {
             transactions.map((item, index) => {
               const transactionDate = new Date(item.transaction_date);
               
+              const capitalizedDescription = item.description.charAt(0).toUpperCase() + item.description.slice(1);
+              const capitalizedPaymentMethod = item.payment_method 
+                ? item.payment_method.charAt(0).toUpperCase() + item.payment_method.slice(1) 
+                : '';
+              
               return (
                 <Card 
                   key={item.id} 
@@ -464,16 +469,16 @@ const Ingresos = () => {
                 >
                   <div className="flex items-start gap-4">
                     {/* Logo del banco */}
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[hsl(145,45%,30%)] to-[hsl(145,55%,25%)] flex items-center justify-center flex-shrink-0 border border-[hsl(145,50%,35%)]/50">
-                      <span className="text-xl">🏦</span>
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[hsl(145,45%,35%)] to-[hsl(145,60%,30%)] flex items-center justify-center flex-shrink-0 border-2 border-[hsl(145,55%,40%)]/70 shadow-lg">
+                      <span className="text-2xl">🏦</span>
                     </div>
                     
                     {/* Información */}
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-card-foreground text-sm mb-1">
-                        {item.description}
+                      <h4 className="font-bold text-foreground text-base mb-1">
+                        {capitalizedDescription}
                       </h4>
-                      <p className="text-xs text-muted-foreground mb-2">
+                      <p className="text-sm text-foreground/80 mb-2 font-medium">
                         {transactionDate.toLocaleDateString('es-MX', {
                           day: 'numeric',
                           month: 'long',
@@ -483,18 +488,16 @@ const Ingresos = () => {
                       <div className="flex gap-2 flex-wrap">
                         {item.categories && (
                           <Badge 
-                            variant="outline" 
-                            className="text-xs border-[hsl(145,50%,35%)]/50 text-card-foreground"
+                            className="text-xs font-semibold bg-gradient-to-r from-[hsl(145,50%,40%)] to-[hsl(145,60%,35%)] text-white border-0 shadow-md px-3 py-1"
                           >
-                            {item.categories.name}
+                            {item.categories.name.charAt(0).toUpperCase() + item.categories.name.slice(1)}
                           </Badge>
                         )}
                         {item.payment_method && (
                           <Badge 
-                            variant="outline" 
-                            className="text-xs border-border/30 text-muted-foreground"
+                            className="text-xs font-semibold bg-gradient-to-r from-[hsl(210,60%,45%)] to-[hsl(210,70%,40%)] text-white border-0 shadow-md px-3 py-1"
                           >
-                            {item.payment_method}
+                            {capitalizedPaymentMethod}
                           </Badge>
                         )}
                       </div>
@@ -502,7 +505,7 @@ const Ingresos = () => {
                     
                     {/* Monto */}
                     <div className="text-right flex-shrink-0">
-                      <p className="text-xl font-bold text-success">
+                      <p className="text-xl font-bold text-foreground">
                         +${Number(item.amount).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                       </p>
                     </div>
