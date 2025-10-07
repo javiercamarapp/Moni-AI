@@ -658,10 +658,13 @@ const Balance = () => {
                         if (active && payload && payload.length) {
                           const data = payload[0].payload;
                           return (
-                            <div className="bg-popover border border-border rounded-lg p-3 shadow-lg">
-                              <p className="font-semibold text-popover-foreground">{data.name}</p>
-                              <p className="text-sm text-muted-foreground">
-                                ${data.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })} ({data.percentage.toFixed(1)}%)
+                            <div className="bg-white border-2 border-gray-800 rounded-lg p-3 shadow-2xl">
+                              <p className="font-bold text-gray-900 text-base">{data.name}</p>
+                              <p className="text-sm text-gray-700 font-medium mt-1">
+                                ${data.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                              </p>
+                              <p className="text-xs text-gray-600 font-semibold">
+                                {data.percentage.toFixed(1)}% del total
                               </p>
                             </div>
                           );
@@ -729,10 +732,13 @@ const Balance = () => {
                         if (active && payload && payload.length) {
                           const data = payload[0].payload;
                           return (
-                            <div className="bg-popover border border-border rounded-lg p-3 shadow-lg">
-                              <p className="font-semibold text-popover-foreground">{data.name}</p>
-                              <p className="text-sm text-muted-foreground">
-                                ${data.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })} ({data.percentage.toFixed(1)}%)
+                            <div className="bg-white border-2 border-gray-800 rounded-lg p-3 shadow-2xl">
+                              <p className="font-bold text-gray-900 text-base">{data.name}</p>
+                              <p className="text-sm text-gray-700 font-medium mt-1">
+                                ${data.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                              </p>
+                              <p className="text-xs text-gray-600 font-semibold">
+                                {data.percentage.toFixed(1)}% del total
                               </p>
                             </div>
                           );
