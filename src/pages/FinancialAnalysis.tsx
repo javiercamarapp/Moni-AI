@@ -279,8 +279,75 @@ export default function FinancialAnalysis() {
         </div>
 
         {analysis && <>
+            {/* Animated Income & Expense Lines */}
+            <Card className="p-4 bg-gradient-card card-glow space-y-4">
+              {/* Ingresos */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                      <TrendingUp className="w-4 h-4 text-green-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-white">Ingresos</p>
+                      <p className="text-xs text-white/70">Total del período</p>
+                    </div>
+                  </div>
+                  <p className="text-lg font-bold text-green-400">
+                    ${formatK(analysis.metrics.income)}k
+                  </p>
+                </div>
+                <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
+                  <div 
+                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full animate-[slideIn_1.5s_ease-out]"
+                    style={{ 
+                      width: `${Math.min((analysis.metrics.income / Math.max(analysis.metrics.income, analysis.metrics.expenses)) * 100, 100)}%`,
+                      animation: 'slideIn 1.5s ease-out'
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Gastos */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center">
+                      <TrendingDown className="w-4 h-4 text-red-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-white">Gastos</p>
+                      <p className="text-xs text-white/70">Total del período</p>
+                    </div>
+                  </div>
+                  <p className="text-lg font-bold text-red-400">
+                    ${formatK(analysis.metrics.expenses)}k
+                  </p>
+                </div>
+                <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
+                  <div 
+                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-500 to-red-400 rounded-full"
+                    style={{ 
+                      width: `${Math.min((analysis.metrics.expenses / Math.max(analysis.metrics.income, analysis.metrics.expenses)) * 100, 100)}%`,
+                      animation: 'slideIn 1.5s ease-out 0.3s both'
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Balance */}
+              <div className="pt-2 border-t border-white/10">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-white">Balance</p>
+                  <p className={`text-lg font-bold ${analysis.metrics.balance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    {analysis.metrics.balance >= 0 ? '+' : ''}${formatK(analysis.metrics.balance)}k
+                  </p>
+                </div>
+              </div>
+            </Card>
+
             {/* Risk Indicators */}
-            <RiskIndicatorsWidget 
+            <RiskIndicatorsWidget
               hasIssues={
                 (analysis.metrics.liquidityMonths || 0) < 3 || 
                 (analysis.metrics.financialBurden || 0) > 20 ||

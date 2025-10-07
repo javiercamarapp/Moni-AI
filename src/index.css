@@ -248,6 +248,16 @@
   }
 }
 
+@keyframes slideIn {
+  0% {
+    width: 0%;
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 /* Animated wave background */
 .animated-wave-bg {
   background: 
