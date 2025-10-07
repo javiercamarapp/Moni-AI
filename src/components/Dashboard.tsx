@@ -853,13 +853,13 @@ const Dashboard = () => {
                       {upcomingSubscriptions.map((sub) => (
                         <div 
                           key={sub.id} 
-                          className="flex items-center gap-0.5 py-0.5 px-1 bg-white/10 rounded backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all min-h-[18px]"
+                          className="flex items-center gap-0.5 sm:gap-2 py-0.5 sm:py-2 px-1 sm:px-3 bg-white/10 rounded backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all min-h-[18px] sm:min-h-[40px]"
                         >
-                          <div className="w-3 h-3 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-[6px] shadow-lg shrink-0">
+                          <div className="w-3 h-3 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-[6px] sm:text-base shadow-lg shrink-0">
                             {sub.icon}
                           </div>
-                          <p className="text-[6px] font-bold text-white truncate leading-none flex-1 min-w-0">{sub.name}</p>
-                          <p className="text-[6px] font-black text-white shrink-0 leading-none">${sub.amount.toFixed(0)}</p>
+                          <p className="text-[6px] sm:text-sm font-bold text-white truncate leading-none flex-1 min-w-0">{sub.name}</p>
+                          <p className="text-[6px] sm:text-base font-black text-white shrink-0 leading-none">${sub.amount.toFixed(0)}</p>
                         </div>
                       ))}
                     </div>
@@ -926,19 +926,19 @@ const Dashboard = () => {
                   <ScrollArea className="flex-1 min-h-0 pr-1">
                     <div className="space-y-0.5">
                       {creditCardDebts.map((card, index) => (
-                        <div key={index} className="bg-white/10 rounded py-0.5 px-1 backdrop-blur-sm border border-white/20 min-h-[18px]">
-                          <div className="flex items-center justify-between gap-0.5">
-                            <p className="text-[6px] font-bold text-white truncate flex-1 min-w-0 leading-none">{card.name}</p>
-                            <p className="text-[6px] font-black text-red-400 shrink-0 leading-none">${card.balance.toLocaleString('es-MX')}</p>
+                        <div key={index} className="bg-white/10 rounded py-0.5 sm:py-2 px-1 sm:px-3 backdrop-blur-sm border border-white/20 min-h-[18px] sm:min-h-[50px]">
+                          <div className="flex items-center justify-between gap-0.5 sm:gap-2 mb-0 sm:mb-1">
+                            <p className="text-[6px] sm:text-sm font-bold text-white truncate flex-1 min-w-0 leading-none">{card.name}</p>
+                            <p className="text-[6px] sm:text-base font-black text-red-400 shrink-0 leading-none">${card.balance.toLocaleString('es-MX')}</p>
                           </div>
-                          <div className="flex items-center gap-0.5 mt-0.5">
-                            <div className="flex-1 h-[1.5px] bg-white/20 rounded-full overflow-hidden">
+                          <div className="flex items-center gap-0.5 sm:gap-1 mt-0.5 sm:mt-1">
+                            <div className="flex-1 h-[1.5px] sm:h-2 bg-white/20 rounded-full overflow-hidden">
                               <div 
                                 className="h-full bg-gradient-to-r from-red-500 to-orange-500 rounded-full transition-all"
                                 style={{ width: `${card.percentage}%` }}
                               />
                             </div>
-                            <p className="text-[5px] text-white/80 font-semibold leading-none">{card.percentage}%</p>
+                            <p className="text-[5px] sm:text-xs text-white/80 font-semibold leading-none">{card.percentage}%</p>
                           </div>
                         </div>
                       ))}
