@@ -550,7 +550,7 @@ const Balance = () => {
         </Card>
 
         {/* Ingresos por categoría */}
-        <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
+        <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30 overflow-hidden">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="h-5 w-5 text-success" />
             <h3 className="text-lg font-semibold text-card-foreground">Ingresos por Categoría</h3>
@@ -559,7 +559,7 @@ const Balance = () => {
           {ingresosByCategory.length === 0 ? (
             <p className="text-card-foreground/70 text-center py-4">No hay ingresos registrados</p>
           ) : (
-            <div className="w-full h-[300px]">
+            <div className="w-full h-[300px] overflow-hidden">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -589,9 +589,18 @@ const Balance = () => {
                   <Legend 
                     verticalAlign="bottom" 
                     height={60}
-                    wrapperStyle={{ fontSize: '12px', paddingTop: '0px', marginTop: '-10px' }}
+                    wrapperStyle={{ 
+                      fontSize: '12px', 
+                      paddingTop: '0px', 
+                      marginTop: '-10px',
+                      paddingLeft: '10px',
+                      paddingRight: '10px',
+                      width: '100%',
+                      maxWidth: '100%',
+                      overflow: 'hidden'
+                    }}
                     formatter={(value, entry: any) => (
-                      <span className="text-card-foreground text-xs font-medium block">
+                      <span className="text-card-foreground text-xs font-medium block truncate">
                         {value} ({entry.payload.percentage.toFixed(1)}%)
                       </span>
                     )}
@@ -603,7 +612,7 @@ const Balance = () => {
         </Card>
 
         {/* Gastos por categoría */}
-        <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
+        <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30 overflow-hidden">
           <div className="flex items-center gap-2 mb-2">
             <TrendingDown className="h-5 w-5 text-destructive" />
             <h3 className="text-lg font-semibold text-card-foreground">Gastos por Categoría</h3>
@@ -612,7 +621,7 @@ const Balance = () => {
           {gastosByCategory.length === 0 ? (
             <p className="text-card-foreground/70 text-center py-4">No hay gastos registrados</p>
           ) : (
-            <div className="w-full h-[300px]">
+            <div className="w-full h-[300px] overflow-hidden">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -642,9 +651,18 @@ const Balance = () => {
                   <Legend 
                     verticalAlign="bottom" 
                     height={65}
-                    wrapperStyle={{ fontSize: '12px', paddingTop: '0px', marginTop: '-10px' }}
+                    wrapperStyle={{ 
+                      fontSize: '12px', 
+                      paddingTop: '0px', 
+                      marginTop: '-10px',
+                      paddingLeft: '10px',
+                      paddingRight: '10px',
+                      width: '100%',
+                      maxWidth: '100%',
+                      overflow: 'hidden'
+                    }}
                     formatter={(value, entry: any) => (
-                      <span className="text-card-foreground text-xs font-medium block">
+                      <span className="text-card-foreground text-xs font-medium block truncate">
                         {value} ({entry.payload.percentage.toFixed(1)}%)
                       </span>
                     )}
