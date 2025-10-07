@@ -808,7 +808,7 @@ const Dashboard = () => {
         {/* Grid de 2 columnas: Suscripciones y Deudas - Alineados horizontalmente siempre */}
         <div className="grid grid-cols-2 gap-2 sm:gap-4">
           {/* Widget de Suscripciones Próximas */}
-          <Card className="p-3 sm:p-5 bg-gradient-to-br from-[hsl(280,45%,18%)] to-[hsl(300,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(280,50%,35%)]/40 relative overflow-hidden h-full flex flex-col">
+          <Card className="p-3 bg-gradient-to-br from-[hsl(280,45%,18%)] to-[hsl(300,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(280,50%,35%)]/40 relative overflow-hidden h-[220px] flex flex-col">
             {/* Efecto brillante */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
                  style={{
@@ -817,47 +817,47 @@ const Dashboard = () => {
                  }}
             />
             
-            <div className="space-y-2 sm:space-y-3 relative z-10 flex-1 flex flex-col">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs sm:text-sm font-bold text-white drop-shadow-lg">📅 Suscripciones</h3>
-                <span className="text-[10px] sm:text-xs text-white/70 font-semibold">{upcomingSubscriptions.length}</span>
+            <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
+              <div className="flex items-center justify-between flex-shrink-0">
+                <h3 className="text-xs font-bold text-white drop-shadow-lg">📅 Suscripciones</h3>
+                <span className="text-[10px] text-white/70 font-semibold">{upcomingSubscriptions.length}</span>
               </div>
-              
+
               {upcomingSubscriptions.length === 0 ? (
-                <div className="text-center py-4 sm:py-6 flex-1 flex flex-col justify-center">
-                  <p className="text-[10px] sm:text-xs text-white/70 mb-2">Analizando gastos...</p>
-                  <p className="text-[10px] sm:text-xs text-white/50">La IA detectará suscripciones</p>
+                <div className="text-center py-3 flex-1 flex flex-col justify-center">
+                  <p className="text-[10px] text-white/70 mb-1">Analizando gastos...</p>
+                  <p className="text-[9px] text-white/50">La IA detectará suscripciones</p>
                 </div>
               ) : (
                 <>
-                  <ScrollArea className="flex-1 pr-1 sm:pr-2">
-                    <div className="space-y-1.5 sm:space-y-2">
+                  <ScrollArea className="flex-1 min-h-0 pr-1">
+                    <div className="space-y-1.5">
                       {upcomingSubscriptions.map((sub) => (
                         <div 
                           key={sub.id} 
-                          className="flex items-center gap-2 sm:gap-3 p-2 sm:p-2.5 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all"
+                          className="flex items-center gap-2 p-2 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all"
                         >
-                          <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-sm sm:text-xl shadow-lg shrink-0">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-xs shadow-lg shrink-0">
                             {sub.icon}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-[10px] sm:text-xs font-bold text-white truncate">{sub.name}</p>
-                            <p className="text-[8px] sm:text-[10px] text-white/60">
+                            <p className="text-[10px] font-bold text-white truncate">{sub.name}</p>
+                            <p className="text-[8px] text-white/60">
                               {sub.dueDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
                             </p>
                           </div>
                           <div className="text-right shrink-0">
-                            <p className="text-xs sm:text-sm font-black text-white">${sub.amount.toFixed(0)}</p>
+                            <p className="text-xs font-black text-white">${sub.amount.toFixed(0)}</p>
                           </div>
                         </div>
                       ))}
                     </div>
                   </ScrollArea>
                   
-                  <div className="pt-2 border-t border-white/20 mt-auto">
+                  <div className="pt-2 border-t border-white/20 mt-2 flex-shrink-0">
                     <div className="flex justify-between items-center">
-                      <p className="text-[10px] sm:text-xs text-white/70">Total mensual</p>
-                      <p className="text-sm sm:text-base font-black text-white drop-shadow-lg">
+                      <p className="text-[9px] text-white/70">Total mensual</p>
+                      <p className="text-xs font-black text-white drop-shadow-lg">
                         ${upcomingSubscriptions.reduce((sum, s) => sum + s.amount, 0).toLocaleString('es-MX')}
                       </p>
                     </div>
@@ -868,7 +868,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Widget de Deudas de Tarjetas */}
-          <Card className="p-3 sm:p-5 bg-gradient-to-br from-[hsl(0,45%,18%)] to-[hsl(15,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(0,50%,35%)]/40 relative overflow-hidden h-full flex flex-col">
+          <Card className="p-3 bg-gradient-to-br from-[hsl(0,45%,18%)] to-[hsl(15,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(0,50%,35%)]/40 relative overflow-hidden h-[220px] flex flex-col">
             {/* Efecto brillante */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
                  style={{
@@ -877,59 +877,59 @@ const Dashboard = () => {
                  }}
             />
             
-            <div className="space-y-2 sm:space-y-3 relative z-10 flex-1 flex flex-col">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs sm:text-sm font-bold text-white drop-shadow-lg">💳 Deudas</h3>
+            <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
+              <div className="flex items-center justify-between flex-shrink-0">
+                <h3 className="text-xs font-bold text-white drop-shadow-lg">💳 Deudas</h3>
               </div>
-              
+
               {!hasBankConnections ? (
-                <div className="text-center py-4 sm:py-6 flex-1 flex flex-col justify-center">
-                  <div className="mb-3 sm:mb-4">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto rounded-full bg-white/10 flex items-center justify-center mb-2 sm:mb-3">
-                      <span className="text-2xl sm:text-3xl">🏦</span>
+                <div className="text-center py-3 flex-1 flex flex-col justify-center">
+                  <div className="mb-2">
+                    <div className="w-10 h-10 mx-auto rounded-full bg-white/10 flex items-center justify-center mb-2">
+                      <span className="text-xl">🏦</span>
                     </div>
-                    <p className="text-[10px] sm:text-xs text-white/80 mb-1 sm:mb-2 font-semibold">Conecta tus cuentas</p>
-                    <p className="text-[10px] sm:text-xs text-white/60 mb-3 sm:mb-4">Monitorea tu salud financiera</p>
+                    <p className="text-[10px] text-white/80 mb-1 font-semibold">Conecta tus cuentas</p>
+                    <p className="text-[9px] text-white/60 mb-3">Monitorea tu salud</p>
                   </div>
                   <Button 
                     onClick={() => navigate('/bank-connection')}
-                    className="bg-white/20 hover:bg-white/30 text-white border border-white/30 font-semibold text-[10px] sm:text-xs px-3 sm:px-4 py-1.5 sm:py-2 h-auto"
+                    className="bg-white/20 hover:bg-white/30 text-white border border-white/30 font-semibold text-[9px] px-3 py-1.5 h-auto"
                   >
                     Conectar
                   </Button>
                 </div>
               ) : creditCardDebts.length === 0 ? (
-                <div className="text-center py-4 sm:py-6 flex-1 flex flex-col justify-center">
-                  <p className="text-sm sm:text-base font-bold text-green-400 drop-shadow-lg">✅ Sin deudas</p>
-                  <p className="text-[10px] sm:text-xs text-white/70 mt-1">¡Excelente!</p>
+                <div className="text-center py-3 flex-1 flex flex-col justify-center">
+                  <p className="text-sm font-bold text-green-400 drop-shadow-lg">✅ Sin deudas</p>
+                  <p className="text-[10px] text-white/70 mt-1">¡Excelente!</p>
                 </div>
               ) : (
                 <>
-                  <div className="text-center py-2 sm:py-3">
-                    <p className="text-[10px] sm:text-xs text-white/70 mb-1">Total adeudado</p>
-                    <p className="text-xl sm:text-3xl font-black text-red-400 drop-shadow-lg">
+                  <div className="text-center py-2 flex-shrink-0">
+                    <p className="text-[9px] text-white/70 mb-1">Total adeudado</p>
+                    <p className="text-xl font-black text-red-400 drop-shadow-lg">
                       ${creditCardDebts.reduce((sum, card) => sum + card.balance, 0).toLocaleString('es-MX')}
                     </p>
                   </div>
                   
-                  <ScrollArea className="flex-1 pr-1 sm:pr-2">
-                    <div className="space-y-1.5 sm:space-y-2">
+                  <ScrollArea className="flex-1 min-h-0 pr-1">
+                    <div className="space-y-1.5">
                       {creditCardDebts.map((card, index) => (
                         <div key={index} className="bg-white/10 rounded-lg p-2 backdrop-blur-sm border border-white/20">
                           <div className="flex items-center justify-between mb-1">
-                            <p className="text-[10px] sm:text-xs font-bold text-white truncate">{card.name}</p>
-                            <p className="text-[10px] sm:text-xs font-black text-red-400">${card.balance.toLocaleString('es-MX')}</p>
+                            <p className="text-[10px] font-bold text-white truncate flex-1 mr-2">{card.name}</p>
+                            <p className="text-[10px] font-black text-red-400 shrink-0">${card.balance.toLocaleString('es-MX')}</p>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <div className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden">
+                          <div className="flex items-center gap-1.5">
+                            <div className="flex-1 h-1 bg-white/20 rounded-full overflow-hidden">
                               <div 
                                 className="h-full bg-gradient-to-r from-red-500 to-orange-500 rounded-full transition-all"
                                 style={{ width: `${card.percentage}%` }}
                               />
                             </div>
-                            <p className="text-[8px] sm:text-[10px] text-white/80 font-semibold">{card.percentage}%</p>
+                            <p className="text-[8px] text-white/80 font-semibold">{card.percentage}%</p>
                           </div>
-                          <p className="text-[8px] sm:text-[10px] text-white/60 mt-1">Límite: ${card.limit.toLocaleString('es-MX')}</p>
+                          <p className="text-[8px] text-white/60 mt-0.5">Límite: ${card.limit.toLocaleString('es-MX')}</p>
                         </div>
                       ))}
                     </div>
