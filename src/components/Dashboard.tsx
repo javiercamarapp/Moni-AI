@@ -745,7 +745,7 @@ const Dashboard = () => {
             <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
               <div className="flex justify-between items-center mb-4">
                 <h4 className="text-sm sm:text-base font-semibold text-white">Movimientos Recientes</h4>
-                <Button variant="ghost" size="sm" className="text-xs text-white/80 hover:text-white hover:bg-white/10 hover:scale-105 transition-transform duration-200">
+                <Button variant="ghost" size="sm" className="text-xs text-white/80 hover:text-gray-900 hover:bg-white/10 hover:scale-105 transition-transform duration-200">
                   Ver todos
                 </Button>
               </div>
@@ -775,7 +775,7 @@ const Dashboard = () => {
                   <Trophy className="w-4 h-4 mr-2 text-white" />
                   Logros Recientes
                 </h4>
-                <Button variant="ghost" size="sm" className="text-xs text-white/80 hover:text-white hover:bg-white/10 hover:scale-105 transition-transform duration-200">
+                <Button variant="ghost" size="sm" className="text-xs text-white/80 hover:text-gray-900 hover:bg-white/10 hover:scale-105 transition-transform duration-200">
                   Ver todos
                 </Button>
               </div>
