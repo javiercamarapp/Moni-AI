@@ -637,8 +637,16 @@ const Dashboard = () => {
 
       {/* Score Moni - Compacto */}
       {scoreMoni !== null && <div className="mx-4 mb-4">
-          <Card className={`p-4 card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95 ${scoreMoni >= 70 ? 'bg-gradient-to-br from-success/90 to-success/70' : scoreMoni >= 40 ? 'bg-gradient-to-br from-warning/90 to-warning/70' : 'bg-gradient-to-br from-danger/90 to-danger/70'}`}>
-            <div className="flex items-center justify-between">
+          <Card className={`p-4 card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95 relative overflow-hidden ${scoreMoni >= 70 ? 'bg-gradient-to-br from-success/90 to-success/70' : scoreMoni >= 40 ? 'bg-gradient-to-br from-warning/90 to-warning/70' : 'bg-gradient-to-br from-danger/90 to-danger/70'}`}>
+            {/* Efecto brillante */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
+                 style={{
+                   backgroundSize: '200% 100%',
+                   animation: 'shimmer 3s ease-in-out infinite',
+                 }}
+            />
+            
+            <div className="relative z-10 flex items-center justify-between">
               <div>
                 <p className="text-xs text-white/90 mb-1">Score Moni</p>
                 <p className="text-3xl font-bold text-white">{scoreMoni}<span className="text-sm text-white/80">/100</span></p>
@@ -653,6 +661,13 @@ const Dashboard = () => {
                 </svg>
               </div>
             </div>
+            
+            <style>{`
+              @keyframes shimmer {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(200%); }
+              }
+            `}</style>
           </Card>
         </div>}
 
