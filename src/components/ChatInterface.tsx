@@ -4,8 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from "@/hooks/use-toast";
-import { Send, Plus, Mic, ArrowLeft, Circle } from 'lucide-react';
+import { Send, Plus, Mic, ArrowLeft, Circle, Paperclip, TrendingUp, Calculator, PiggyBank, Lightbulb, Target, Receipt, Sparkles } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import Autoplay from 'embla-carousel-autoplay';
 import moniLogo from '@/assets/moni-ai-logo.png';
 const ChatInterface = () => {
@@ -584,14 +585,108 @@ const ChatInterface = () => {
             onChange={handleFileUpload}
             className="hidden"
           />
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => fileInputRef.current?.click()}
-            className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex-shrink-0 h-7 w-7 sm:h-8 sm:w-8 p-0 transition-all hover:scale-110"
-          >
-            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex-shrink-0 h-7 w-7 sm:h-8 sm:w-8 p-0 transition-all hover:scale-110"
+              >
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent 
+              align="start" 
+              className="w-72 bg-card/95 backdrop-blur-md border-border/50 shadow-elegant"
+            >
+              <DropdownMenuItem 
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-3 py-3 cursor-pointer hover:bg-accent/50 transition-all"
+              >
+                <Paperclip className="w-5 h-5 text-primary" />
+                <span className="text-foreground font-medium">Adjuntar archivo o foto</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuSeparator className="bg-border/30" />
+              
+              <DropdownMenuItem 
+                onClick={() => {
+                  setMessage("Crea gráficas financieras de mis gastos e ingresos del último mes");
+                  setTimeout(() => handleSendMessage(), 100);
+                }}
+                className="flex items-center gap-3 py-3 cursor-pointer hover:bg-accent/50 transition-all"
+              >
+                <TrendingUp className="w-5 h-5 text-primary" />
+                <span className="text-foreground">Crea gráficas financieras</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem 
+                onClick={() => {
+                  setMessage("Ayúdame a crear un presupuesto mensual personalizado");
+                  setTimeout(() => handleSendMessage(), 100);
+                }}
+                className="flex items-center gap-3 py-3 cursor-pointer hover:bg-accent/50 transition-all"
+              >
+                <Calculator className="w-5 h-5 text-primary" />
+                <span className="text-foreground">Crea un presupuesto</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem 
+                onClick={() => {
+                  setMessage("Crea estimaciones de ahorro basadas en mis hábitos financieros");
+                  setTimeout(() => handleSendMessage(), 100);
+                }}
+                className="flex items-center gap-3 py-3 cursor-pointer hover:bg-accent/50 transition-all"
+              >
+                <PiggyBank className="w-5 h-5 text-primary" />
+                <span className="text-foreground">Crea estimaciones de ahorro</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem 
+                onClick={() => {
+                  setMessage("Analiza mis transacciones recientes y sugiere oportunidades de ahorro");
+                  setTimeout(() => handleSendMessage(), 100);
+                }}
+                className="flex items-center gap-3 py-3 cursor-pointer hover:bg-accent/50 transition-all"
+              >
+                <Lightbulb className="w-5 h-5 text-primary" />
+                <span className="text-foreground">Optimiza mis gastos</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem 
+                onClick={() => {
+                  setMessage("Ayúdame a definir metas financieras inteligentes y alcanzables");
+                  setTimeout(() => handleSendMessage(), 100);
+                }}
+                className="flex items-center gap-3 py-3 cursor-pointer hover:bg-accent/50 transition-all"
+              >
+                <Target className="w-5 h-5 text-primary" />
+                <span className="text-foreground">Define metas financieras</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem 
+                onClick={() => {
+                  setMessage("Detecta gastos innecesarios y patrones de gasto preocupantes");
+                  setTimeout(() => handleSendMessage(), 100);
+                }}
+                className="flex items-center gap-3 py-3 cursor-pointer hover:bg-accent/50 transition-all"
+              >
+                <Receipt className="w-5 h-5 text-primary" />
+                <span className="text-foreground">Detecta gastos innecesarios</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem 
+                onClick={() => {
+                  setMessage("Proyecta mi situación financiera a 6 meses basándote en mis hábitos actuales");
+                  setTimeout(() => handleSendMessage(), 100);
+                }}
+                className="flex items-center gap-3 py-3 cursor-pointer hover:bg-accent/50 transition-all"
+              >
+                <Sparkles className="w-5 h-5 text-primary" />
+                <span className="text-foreground">Proyecta mi futuro financiero</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <Input value={message} onChange={e => setMessage(e.target.value)} onKeyPress={handleKeyPress} placeholder="Pregunta..." className="flex-1 bg-transparent border-0 text-foreground text-sm sm:text-base placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 px-1.5 sm:px-3 h-7 sm:h-8" />
 
