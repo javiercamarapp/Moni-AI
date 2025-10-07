@@ -345,72 +345,67 @@ const Dashboard = () => {
         <AICoachInsightsWidget monthlyIncome={monthlyIncome} monthlyExpenses={monthlyExpenses} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} balance={monthlyIncome - monthlyExpenses} />
       </div>
 
-      {/* Bottom Navigation Menu - Fixed */}
-      
-
-      <div className="p-2 sm:p-4">
-      <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
-        
+      <div className="mx-4 space-y-4 sm:space-y-6">
         {/* Quick Stats - 4 botones horizontales en una línea */}
-        <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
-          <Card className="p-2 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
+        <div className="grid grid-cols-4 gap-2 sm:gap-3">
+          <Card className="p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
             animationDelay: '100ms'
           }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Wallet className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[8px] sm:text-[10px] text-white/80 leading-tight">Balance</p>
-                <p className="text-[10px] sm:text-sm font-bold text-white leading-tight">
+                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Balance</p>
+                <p className="text-xs sm:text-base font-bold text-white leading-tight">
                   ${(currentMonth.balance / 1000).toFixed(0)}k
                 </p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-2 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
+          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
             animationDelay: '200ms'
           }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-success/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-success/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+                <TrendingUp className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[8px] sm:text-[10px] text-white/80 leading-tight">Ahorrado</p>
-                <p className="text-[10px] sm:text-sm font-bold text-white leading-tight">
+                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Ahorrado</p>
+                <p className="text-xs sm:text-base font-bold text-white leading-tight">
                   ${(goals.reduce((sum, goal) => sum + Number(goal.current), 0) / 1000).toFixed(0)}k
                 </p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-2 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/gastos')} style={{
+          <Card className="p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/gastos')} style={{
             animationDelay: '300ms'
           }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-white rotate-180" />
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+                <TrendingUp className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white rotate-180" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[8px] sm:text-[10px] text-white/80 leading-tight">Gastos</p>
-                <p className="text-[10px] sm:text-sm font-bold text-white leading-tight">
+                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Gastos</p>
+                <p className="text-xs sm:text-base font-bold text-white leading-tight">
                   ${(monthlyExpenses / 1000).toFixed(0)}k
                 </p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-2 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
+          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
             animationDelay: '400ms'
           }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-warning/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Target className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-warning/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+                <Target className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[8px] sm:text-[10px] text-white/80 leading-tight">Metas</p>
-                <p className="text-[10px] sm:text-sm font-bold text-white leading-tight">{goals.length}</p>
+                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Metas</p>
+                <p className="text-xs sm:text-base font-bold text-white leading-tight">{goals.length}</p>
               </div>
             </div>
           </Card>
@@ -698,8 +693,44 @@ const Dashboard = () => {
           </div>
         </div>
 
-        </div>
       </div>
+
+      {/* Bottom Navigation Menu - Fixed */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-gradient-card/95 backdrop-blur-sm border-t border-white/10 z-50">
+        <div className="flex justify-around items-center py-3 px-4">
+          <button 
+            onClick={() => navigate('/dashboard')}
+            className="flex flex-col items-center gap-1 text-white hover:text-primary transition-colors"
+          >
+            <Home className="w-5 h-5" />
+            <span className="text-xs">Inicio</span>
+          </button>
+          
+          <button 
+            onClick={() => navigate('/analysis')}
+            className="flex flex-col items-center gap-1 text-white/70 hover:text-white transition-colors"
+          >
+            <BarChart3 className="w-5 h-5" />
+            <span className="text-xs">Análisis</span>
+          </button>
+          
+          <button 
+            onClick={() => navigate('/chat')}
+            className="flex flex-col items-center gap-1 text-white/70 hover:text-white transition-colors"
+          >
+            <MessageCircle className="w-5 h-5" />
+            <span className="text-xs">Chat IA</span>
+          </button>
+          
+          <button 
+            onClick={() => navigate('/profile')}
+            className="flex flex-col items-center gap-1 text-white/70 hover:text-white transition-colors"
+          >
+            <User className="w-5 h-5" />
+            <span className="text-xs">Perfil</span>
+          </button>
+        </div>
+      </nav>
     </div>;
 };
 export default Dashboard;
