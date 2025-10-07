@@ -463,7 +463,7 @@ const Balance = () => {
           <div className="mt-4 pt-4 border-t border-foreground/20">
             <Button 
               variant="ghost" 
-              className="w-full bg-card/40 backdrop-blur-sm border border-border/30 text-foreground hover:bg-card/60 transition-all duration-300"
+              className="w-full bg-card/40 backdrop-blur-sm border border-border/30 text-foreground hover:bg-card/60 transition-all duration-300 h-auto py-3 px-4 text-sm md:text-base"
               onClick={async () => {
                 try {
                   // Get current user
@@ -518,8 +518,8 @@ const Balance = () => {
                 }
               }}
             >
-              <Download className="h-5 w-5 mr-2" />
-              Descargar movimientos del {viewMode === 'mensual' ? 'mes' : 'año'} en PDF
+              <Download className="h-5 w-5 mr-2 flex-shrink-0" />
+              <span className="break-words">Descargar movimientos del {viewMode === 'mensual' ? 'mes' : 'año'} en PDF</span>
             </Button>
           </div>
         </Card>

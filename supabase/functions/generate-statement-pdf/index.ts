@@ -24,6 +24,9 @@ serve(async (req) => {
 
     console.log('Generating PDF for:', { viewMode, year, month, userId });
 
+    // Logo en base64 (MONI AI logo)
+    const logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABLAAAAEsCAYAAADHm4vGAAAACXBIWXMAAAsTAAALEwEAmpwYAAAKT2lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVNnVFPpFj333vRCS4iAlEtvUhUIIFJCi4AUkSYqIQkQSogMADIC4gAACIQCgAACBAAAgEQAOEQAaAAAMYAAgAPAA0AgQCAYA';
+
     // Fetch transactions based on viewMode
     let query = supabase
       .from('transactions')
@@ -51,9 +54,15 @@ serve(async (req) => {
       throw new Error(`Error fetching transactions: ${transError.message}`);
     }
 
+    console.log('Transactions found:', transactions?.length || 0);
+
     // Calculate totals
     const ingresos = transactions?.filter(t => t.type === 'income') || [];
     const gastos = transactions?.filter(t => t.type === 'expense') || [];
+    
+    console.log('Ingresos count:', ingresos.length);
+    console.log('Gastos count:', gastos.length);
+    
     const totalIngresos = ingresos.reduce((sum, t) => sum + parseFloat(t.amount), 0);
     const totalGastos = gastos.reduce((sum, t) => sum + parseFloat(t.amount), 0);
     const balance = totalIngresos - totalGastos;
@@ -153,14 +162,23 @@ Mantén el tono profesional. Limita tu respuesta a 250 palabras.`;
             align-items: center;
             margin-bottom: 30px;
             padding-bottom: 20px;
-            border-bottom: 3px solid #3b82f6;
+            border-bottom: 3px solid #000000;
           }
           
           .logo {
-            font-size: 28px;
-            font-weight: bold;
-            color: #3b82f6;
+            font-size: 32px;
+            font-weight: 900;
+            color: #000000;
             margin-right: 20px;
+            letter-spacing: -1px;
+          }
+          
+          .logo-subtitle {
+            font-size: 12px;
+            font-weight: 400;
+            color: #666666;
+            letter-spacing: 4px;
+            margin-top: -5px;
           }
           
           .header-info {
@@ -336,7 +354,10 @@ Mantén el tono profesional. Limita tu respuesta a 250 palabras.`;
         <div class="container">
           <!-- Header with Logo -->
           <div class="header">
-            <div class="logo">MONI AI</div>
+            <div style="margin-right: 20px;">
+              <div class="logo">MONI AI.</div>
+              <div class="logo-subtitle">Coach financiero</div>
+            </div>
             <div class="header-info">
               <h1>Reporte de Movimientos Financieros</h1>
               <p>Período: ${periodText} • Generado el ${new Date().toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
