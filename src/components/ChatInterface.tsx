@@ -379,8 +379,9 @@ const ChatInterface = () => {
           <ArrowLeft className="w-6 h-6" />
         </Button>
         <div className="flex items-center gap-3 fade-in-up">
-          
-          <span className="text-xl font-semibold text-foreground">MONI AI+</span>
+          <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden w-16 h-10">
+            <img src={moniLogo} alt="Moni" className="w-full h-full object-cover" />
+          </div>
         </div>
       </div>
 
