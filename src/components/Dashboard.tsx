@@ -551,42 +551,75 @@ const Dashboard = () => {
         <SafeToSpendWidget safeToSpend={monthlyIncome - fixedExpenses - goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} monthlyIncome={monthlyIncome} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} />
 
         {/* Presupuesto Mensual */}
-        <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
-          <div className="space-y-3">
+        <Card className="p-5 bg-gradient-to-br from-[hsl(220,45%,18%)] to-[hsl(240,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(220,50%,35%)]/40 relative overflow-hidden">
+          {/* Efecto brillante de fondo */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-[shimmer_3s_ease-in-out_infinite]" 
+               style={{
+                 backgroundSize: '200% 100%',
+                 animation: 'shimmer 3s ease-in-out infinite',
+               }}
+          />
+          
+          <div className="space-y-3 relative z-10">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-card-foreground">Presupuesto Mensual</h3>
-                <p className="text-xs text-card-foreground/70">
+                <h3 className="text-sm font-bold text-white drop-shadow-lg">💰 Presupuesto Mensual</h3>
+                <p className="text-xs text-white/80 font-medium">
                   Gastado: ${monthlyExpenses.toLocaleString('es-MX')} de ${(monthlyIncome * 0.8).toLocaleString('es-MX')}
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-lg font-bold text-card-foreground">
+                <p className="text-2xl font-black text-white drop-shadow-lg">
                   {monthlyIncome > 0 ? ((monthlyExpenses / (monthlyIncome * 0.8)) * 100).toFixed(0) : 0}%
                 </p>
-                <p className="text-xs text-card-foreground/70">del presupuesto</p>
+                <p className="text-xs text-white/70 font-semibold">del presupuesto</p>
               </div>
             </div>
             
             <div className="relative">
-              <Progress 
-                value={monthlyIncome > 0 ? Math.min((monthlyExpenses / (monthlyIncome * 0.8)) * 100, 100) : 0} 
-                className={`h-4 ${
-                  monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 90 
-                    ? 'bg-red-500/20' 
-                    : monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 75 
-                    ? 'bg-yellow-500/20' 
-                    : 'bg-green-500/20'
-                }`}
-              />
+              {/* Barra de fondo */}
+              <div className="h-6 rounded-full bg-gradient-to-r from-[hsl(220,60%,10%)] to-[hsl(240,55%,8%)] border border-white/10 overflow-hidden shadow-inner">
+                {/* Barra de progreso animada */}
+                <div 
+                  className={`h-full rounded-full relative overflow-hidden transition-all duration-1000 ease-out ${
+                    monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 90 
+                      ? 'bg-gradient-to-r from-red-600 via-red-500 to-red-600' 
+                      : monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 75 
+                      ? 'bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500' 
+                      : 'bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500'
+                  }`}
+                  style={{ 
+                    width: `${monthlyIncome > 0 ? Math.min((monthlyExpenses / (monthlyIncome * 0.8)) * 100, 100) : 0}%`,
+                    backgroundSize: '200% 100%',
+                    animation: 'shimmer 2s ease-in-out infinite',
+                    boxShadow: monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 90 
+                      ? '0 0 20px rgba(239, 68, 68, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)' 
+                      : monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 75 
+                      ? '0 0 20px rgba(251, 191, 36, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)' 
+                      : '0 0 20px rgba(16, 185, 129, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)'
+                  }}
+                >
+                  {/* Efecto de brillo superior */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-transparent" />
+                  {/* Animación de pulso/onda */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-[slide_1.5s_ease-in-out_infinite]" 
+                       style={{
+                         backgroundSize: '50% 100%',
+                         animation: 'slide 1.5s ease-in-out infinite',
+                       }}
+                  />
+                </div>
+              </div>
+              
+              {/* Texto sobre la barra */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-bold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                <span className="text-xs font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] px-2 py-0.5 rounded-full bg-black/30 backdrop-blur-sm">
                   ${(monthlyIncome > 0 ? (monthlyIncome * 0.8) - monthlyExpenses : 0).toLocaleString('es-MX')} restantes
                 </span>
               </div>
             </div>
             
-            <p className="text-xs text-card-foreground/60 text-center">
+            <p className="text-xs text-white/80 text-center font-semibold">
               {monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 90 
                 ? '⚠️ Cerca del límite del presupuesto' 
                 : monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 75 
@@ -595,6 +628,17 @@ const Dashboard = () => {
               }
             </p>
           </div>
+          
+          <style>{`
+            @keyframes shimmer {
+              0% { background-position: -200% 0; }
+              100% { background-position: 200% 0; }
+            }
+            @keyframes slide {
+              0% { transform: translateX(-100%); }
+              100% { transform: translateX(200%); }
+            }
+          `}</style>
         </Card>
 
         {/* Proyecciones Inteligentes */}
