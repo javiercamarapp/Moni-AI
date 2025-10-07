@@ -781,13 +781,6 @@ const Dashboard = () => {
                 >
                   {/* Efecto de brillo superior */}
                   <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-transparent" />
-                  {/* Animación de pulso/onda */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent" 
-                       style={{
-                         backgroundSize: '200% 100%',
-                         animation: 'slide 1.5s ease-in-out infinite',
-                       }}
-                  />
                 </div>
               </div>
               
