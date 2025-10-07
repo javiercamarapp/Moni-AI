@@ -569,14 +569,35 @@ const ChatInterface = () => {
         {uploadedFiles.length > 0 && (
           <div className="mb-2 flex flex-wrap gap-2">
             {uploadedFiles.map((file, idx) => (
-              <div key={idx} className="bg-card rounded-lg p-2 text-xs border border-border/30 flex items-center gap-2">
-                <span className="text-muted-foreground">📎 {file.name}</span>
-                <button 
-                  onClick={() => setUploadedFiles(prev => prev.filter((_, i) => i !== idx))}
-                  className="text-destructive hover:text-destructive/80"
-                >
-                  ✕
-                </button>
+              <div key={idx} className="bg-card rounded-lg overflow-hidden border border-border/30 relative group">
+                {file.type.startsWith('image/') ? (
+                  <div className="relative">
+                    <img 
+                      src={file.data} 
+                      alt={file.name} 
+                      className="max-w-[200px] max-h-[200px] object-cover rounded"
+                    />
+                    <button 
+                      onClick={() => setUploadedFiles(prev => prev.filter((_, i) => i !== idx))}
+                      className="absolute top-1 right-1 bg-destructive/90 text-destructive-foreground rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive"
+                    >
+                      ✕
+                    </button>
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm px-2 py-1">
+                      <p className="text-xs text-white truncate">{file.name}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 p-2">
+                    <span className="text-muted-foreground text-xs">📎 {file.name}</span>
+                    <button 
+                      onClick={() => setUploadedFiles(prev => prev.filter((_, i) => i !== idx))}
+                      className="text-destructive hover:text-destructive/80 text-sm"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
