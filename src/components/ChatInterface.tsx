@@ -501,6 +501,16 @@ const ChatInterface = () => {
           <Button
             variant="ghost"
             size="icon"
+            onClick={handleSendMessage}
+            disabled={!message.trim()}
+            className="text-gray-400 hover:text-white hover:bg-transparent flex-shrink-0 h-7 w-7 p-0 disabled:opacity-30"
+          >
+            <Send className="w-5 h-5" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={isRecording ? stopVoiceRecording : startVoiceRecording}
             className={`flex-shrink-0 h-7 w-7 p-0 ${isRecording ? 'text-red-500 hover:text-red-400' : 'text-gray-400 hover:text-white'} hover:bg-transparent`}
           >
