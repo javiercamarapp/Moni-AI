@@ -559,15 +559,15 @@ const Balance = () => {
           {ingresosByCategory.length === 0 ? (
             <p className="text-card-foreground/70 text-center py-4">No hay ingresos registrados</p>
           ) : (
-            <div className="w-full h-[300px] overflow-hidden">
+            <div className="w-full h-[280px] overflow-hidden">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={ingresosByCategory}
                     cx="50%"
-                    cy="35%"
+                    cy="32%"
                     labelLine={false}
-                    outerRadius={60}
+                    outerRadius={55}
                     fill="hsl(var(--primary))"
                     dataKey="total"
                   >
@@ -588,19 +588,18 @@ const Balance = () => {
                   />
                   <Legend 
                     verticalAlign="bottom" 
-                    height={60}
+                    height={80}
                     wrapperStyle={{ 
-                      fontSize: '12px', 
-                      paddingTop: '0px', 
-                      marginTop: '-10px',
-                      paddingLeft: '10px',
-                      paddingRight: '10px',
-                      width: '100%',
-                      maxWidth: '100%',
-                      overflow: 'hidden'
+                      fontSize: '11px', 
+                      paddingTop: '5px', 
+                      marginTop: '0px',
+                      paddingLeft: '8px',
+                      paddingRight: '8px',
+                      paddingBottom: '5px',
+                      lineHeight: '1.3'
                     }}
                     formatter={(value, entry: any) => (
-                      <span className="text-card-foreground text-xs font-medium block truncate">
+                      <span className="text-card-foreground text-[11px] font-medium">
                         {value} ({entry.payload.percentage.toFixed(1)}%)
                       </span>
                     )}
@@ -621,15 +620,15 @@ const Balance = () => {
           {gastosByCategory.length === 0 ? (
             <p className="text-card-foreground/70 text-center py-4">No hay gastos registrados</p>
           ) : (
-            <div className="w-full h-[300px] overflow-hidden">
+            <div className="w-full h-[280px] overflow-hidden">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={gastosByCategory}
                     cx="50%"
-                    cy="32%"
+                    cy="30%"
                     labelLine={false}
-                    outerRadius={60}
+                    outerRadius={55}
                     fill="hsl(var(--destructive))"
                     dataKey="total"
                   >
@@ -650,19 +649,18 @@ const Balance = () => {
                   />
                   <Legend 
                     verticalAlign="bottom" 
-                    height={65}
+                    height={85}
                     wrapperStyle={{ 
-                      fontSize: '12px', 
-                      paddingTop: '0px', 
-                      marginTop: '-10px',
-                      paddingLeft: '10px',
-                      paddingRight: '10px',
-                      width: '100%',
-                      maxWidth: '100%',
-                      overflow: 'hidden'
+                      fontSize: '11px', 
+                      paddingTop: '8px', 
+                      marginTop: '0px',
+                      paddingLeft: '8px',
+                      paddingRight: '8px',
+                      paddingBottom: '5px',
+                      lineHeight: '1.3'
                     }}
                     formatter={(value, entry: any) => (
-                      <span className="text-card-foreground text-xs font-medium block truncate">
+                      <span className="text-card-foreground text-[11px] font-medium">
                         {value} ({entry.payload.percentage.toFixed(1)}%)
                       </span>
                     )}
