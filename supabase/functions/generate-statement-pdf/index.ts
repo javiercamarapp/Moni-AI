@@ -56,9 +56,9 @@ serve(async (req) => {
 
     console.log('Transactions found:', transactions?.length || 0);
 
-    // Calculate totals
-    const ingresos = transactions?.filter(t => t.type === 'income') || [];
-    const gastos = transactions?.filter(t => t.type === 'expense') || [];
+    // Calculate totals - CRITICAL: usar 'ingreso' y 'gasto', no 'income' y 'expense'
+    const ingresos = transactions?.filter(t => t.type === 'ingreso') || [];
+    const gastos = transactions?.filter(t => t.type === 'gasto') || [];
     
     console.log('Ingresos count:', ingresos.length);
     console.log('Gastos count:', gastos.length);
