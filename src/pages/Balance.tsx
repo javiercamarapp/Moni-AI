@@ -505,33 +505,25 @@ const Balance = () => {
                     throw new Error('Datos incompletos en la respuesta');
                   }
 
-                  console.log('🔵 Creando data URL...', { htmlLength: data.html.length, filename: data.filename });
+                  console.log('🔵 Abriendo reporte en nueva pestaña...', { htmlLength: data.html.length });
 
-                  // Usar data URL en lugar de blob para mejor compatibilidad en iframes
-                  const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(data.html);
-                  console.log('🔵 Data URL creada, longitud:', dataUrl.length);
-
-                  const a = document.createElement('a');
-                  a.style.display = 'none';
-                  a.href = dataUrl;
-                  a.download = data.filename;
-                  a.target = '_blank'; // Intentar abrir en nueva pestaña si la descarga falla
+                  // Abrir en nueva ventana porque las descargas están bloqueadas en iframes
+                  const newWindow = window.open('', '_blank');
                   
-                  document.body.appendChild(a);
-                  console.log('🔵 Anchor añadido al DOM, ejecutando click...');
-                  
-                  a.click();
-                  console.log('🔵 Click ejecutado');
-
-                  // Limpiar después de un breve delay
-                  setTimeout(() => {
-                    document.body.removeChild(a);
-                    console.log('🔵 Limpieza completada');
-                  }, 100);
+                  if (newWindow) {
+                    newWindow.document.write(data.html);
+                    newWindow.document.close();
+                    console.log('✅ Reporte abierto en nueva pestaña');
+                  } else {
+                    console.log('⚠️ Popup bloqueado, intentando con data URL...');
+                    // Fallback: intentar con data URL
+                    const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(data.html);
+                    window.open(dataUrl, '_blank');
+                  }
 
                   toast({
-                    title: "Reporte descargado",
-                    description: "Abre el archivo y usa Imprimir > Guardar como PDF en tu navegador",
+                    title: "Reporte generado",
+                    description: "Se abrió en una nueva pestaña. Usa Ctrl+P (Cmd+P) para guardar como PDF",
                   });
                 } catch (error: any) {
                   console.error('🔴 Error al generar reporte:', error);
