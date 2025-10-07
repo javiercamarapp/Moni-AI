@@ -356,48 +356,54 @@ const ChatInterface = () => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    const newFiles: Array<{name: string; type: string; data: string}> = [];
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      
-      // Limit file size to 10MB
+    const fileArray = Array.from(files);
+    const validFiles = fileArray.filter(file => {
       if (file.size > 10 * 1024 * 1024) {
         toast({
           title: "Archivo muy grande",
           description: `${file.name} supera el límite de 10MB`,
           variant: "destructive"
         });
-        continue;
+        return false;
       }
+      return true;
+    });
 
-      try {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64 = reader.result as string;
-          newFiles.push({
-            name: file.name,
-            type: file.type,
-            data: base64
-          });
+    if (validFiles.length === 0) {
+      e.target.value = '';
+      return;
+    }
 
-          if (newFiles.length === files.length) {
-            setUploadedFiles(prev => [...prev, ...newFiles]);
-            toast({
-              title: "Archivos cargados",
-              description: `${newFiles.length} archivo(s) listo(s) para enviar`
+    try {
+      const filePromises = validFiles.map(file => {
+        return new Promise<{name: string; type: string; data: string}>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64 = reader.result as string;
+            resolve({
+              name: file.name,
+              type: file.type,
+              data: base64
             });
-          }
-        };
-        reader.readAsDataURL(file);
-      } catch (error) {
-        console.error('Error reading file:', error);
-        toast({
-          title: "Error",
-          description: `No se pudo cargar ${file.name}`,
-          variant: "destructive"
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
         });
-      }
+      });
+
+      const loadedFiles = await Promise.all(filePromises);
+      setUploadedFiles(prev => [...prev, ...loadedFiles]);
+      toast({
+        title: "Archivos cargados",
+        description: `${loadedFiles.length} archivo(s) listo(s) para enviar`
+      });
+    } catch (error) {
+      console.error('Error reading files:', error);
+      toast({
+        title: "Error",
+        description: "No se pudieron cargar algunos archivos",
+        variant: "destructive"
+      });
     }
 
     // Reset input
@@ -600,7 +606,10 @@ const ChatInterface = () => {
               className="w-72 z-50 bg-popover backdrop-blur-md border-border/50 shadow-elegant"
             >
               <DropdownMenuItem 
-                onClick={() => fileInputRef.current?.click()}
+                onSelect={(e) => {
+                  e.preventDefault();
+                  fileInputRef.current?.click();
+                }}
                 className="flex items-center gap-3 py-3 cursor-pointer"
               >
                 <Paperclip className="w-5 h-5" />
