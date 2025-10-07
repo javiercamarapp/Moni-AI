@@ -476,11 +476,57 @@ const Gastos = () => {
             <Button 
               variant="ghost" 
               className="w-full bg-card/40 backdrop-blur-sm border border-border/30 text-white hover:bg-card/60 transition-all duration-300 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight"
-              onClick={() => {
-                toast({
-                  title: "Próximamente",
-                  description: "Esta función estará disponible pronto",
-                });
+              onClick={async () => {
+                try {
+                  const { data: { user } } = await supabase.auth.getUser();
+                  if (!user) {
+                    toast({
+                      title: "Error",
+                      description: "Debes iniciar sesión para descargar el PDF",
+                      variant: "destructive"
+                    });
+                    return;
+                  }
+
+                  toast({
+                    title: "Generando PDF",
+                    description: "Por favor espera...",
+                  });
+
+                  const { data, error } = await supabase.functions.invoke('generate-statement-pdf', {
+                    body: {
+                      userId: user.id,
+                      month: currentMonth.getMonth() + 1,
+                      year: currentMonth.getFullYear(),
+                      type: 'gasto'
+                    }
+                  });
+
+                  if (error) throw error;
+
+                  // Convertir base64 a blob y descargar
+                  const pdfBlob = await fetch(`data:application/pdf;base64,${data.pdf}`).then(r => r.blob());
+                  const url = window.URL.createObjectURL(pdfBlob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `gastos_${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}.pdf`;
+                  document.body.appendChild(a);
+                  a.click();
+                  window.URL.revokeObjectURL(url);
+                  document.body.removeChild(a);
+
+                  toast({
+                    title: "PDF generado",
+                    description: "El archivo se ha descargado correctamente",
+                  });
+                } catch (error) {
+                  console.error('Error al generar PDF:', error);
+                  toast({
+                    title: "Error",
+                    description: "No se pudo generar el PDF",
+                    variant: "destructive"
+                  });
+                }
               }}
             >
               <Download className="h-4 w-4 mr-1.5 flex-shrink-0" />
