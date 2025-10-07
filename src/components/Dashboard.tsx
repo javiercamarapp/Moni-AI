@@ -351,12 +351,77 @@ const Dashboard = () => {
       <div className="p-2 sm:p-4">
       <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
         
+        {/* Quick Stats - 4 botones horizontales más largos y menos altos */}
+        <div className="grid grid-cols-4 gap-2">
+          <Card className="p-2 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
+            animationDelay: '100ms'
+          }}>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
+                <Wallet className="w-3 h-3 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[9px] text-white/70">Balance</p>
+                <p className="text-xs font-semibold text-white truncate">
+                  ${currentMonth.balance.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+                </p>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-2 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
+            animationDelay: '200ms'
+          }}>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-lg bg-success/20 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-3 h-3 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[9px] text-white/70">Ahorrado</p>
+                <p className="text-xs font-semibold text-white truncate">
+                  ${goals.reduce((sum, goal) => sum + Number(goal.current), 0).toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+                </p>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-2 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/gastos')} style={{
+            animationDelay: '300ms'
+          }}>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-3 h-3 text-white rotate-180" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[9px] text-white/70">Gastos</p>
+                <p className="text-xs font-semibold text-white truncate">
+                  ${monthlyExpenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+                </p>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-2 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
+            animationDelay: '400ms'
+          }}>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-lg bg-warning/20 flex items-center justify-center flex-shrink-0">
+                <Target className="w-3 h-3 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[9px] text-white/70">Metas</p>
+                <p className="text-xs font-semibold text-white">{goals.length}</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+
         {/* Safe to Spend Widget */}
         <SafeToSpendWidget safeToSpend={monthlyIncome - fixedExpenses - goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} monthlyIncome={monthlyIncome} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} />
 
         {/* WhatsApp Banner */}
         <Card className="p-3 sm:p-4 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
-          animationDelay: '100ms'
+          animationDelay: '500ms'
         }}>
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
@@ -373,63 +438,6 @@ const Dashboard = () => {
             </div>
           </div>
         </Card>
-
-        {/* Quick Stats - 4 botones horizontales */}
-        <div className="grid grid-cols-4 gap-2">
-          <Card className="p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
-            animationDelay: '200ms'
-          }}>
-            <div className="flex flex-col items-center">
-              <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center mb-2">
-                <Wallet className="w-4 h-4 text-white" />
-              </div>
-              <p className="text-[10px] text-white/80 mb-1">Balance</p>
-              <p className="text-sm font-semibold text-white truncate w-full text-center">
-                ${currentMonth.balance.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
-              </p>
-            </div>
-          </Card>
-
-          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
-            animationDelay: '300ms'
-          }}>
-            <div className="flex flex-col items-center">
-              <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center mb-2">
-                <TrendingUp className="w-4 h-4 text-white" />
-              </div>
-              <p className="text-[10px] text-white/80 mb-1">Ahorrado</p>
-              <p className="text-sm font-semibold text-white truncate w-full text-center">
-                ${goals.reduce((sum, goal) => sum + Number(goal.current), 0).toLocaleString('es-MX', { maximumFractionDigits: 0 })}
-              </p>
-            </div>
-          </Card>
-
-          <Card className="p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/gastos')} style={{
-            animationDelay: '400ms'
-          }}>
-            <div className="flex flex-col items-center">
-              <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center mb-2">
-                <TrendingUp className="w-4 h-4 text-white rotate-180" />
-              </div>
-              <p className="text-[10px] text-white/80 mb-1">Gastos</p>
-              <p className="text-sm font-semibold text-white truncate w-full text-center">
-                ${monthlyExpenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
-              </p>
-            </div>
-          </Card>
-
-          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
-            animationDelay: '500ms'
-          }}>
-            <div className="flex flex-col items-center">
-              <div className="w-8 h-8 rounded-lg bg-warning/20 flex items-center justify-center mb-2">
-                <Target className="w-4 h-4 text-white" />
-              </div>
-              <p className="text-[10px] text-white/80 mb-1">Metas</p>
-              <p className="text-sm font-semibold text-white">{goals.length}</p>
-            </div>
-          </Card>
-        </div>
 
         {/* Banner Publicitario - Carrusel */}
         <Carousel className="w-full" setApi={setApi} opts={{
