@@ -951,23 +951,38 @@ const Dashboard = () => {
         </div>
 
         {/* WhatsApp Banner */}
-        <Card className="p-3 sm:p-4 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+        <Card className="p-3 sm:p-4 bg-gradient-to-br from-[hsl(142,60%,25%)] to-[hsl(142,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(142,70%,45%)]/40 relative overflow-hidden animate-fade-in hover:scale-105 transition-transform duration-200 cursor-pointer" style={{
         animationDelay: '500ms'
       }}>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
+          {/* Efecto brillante */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
+               style={{
+                 backgroundSize: '200% 100%',
+                 animation: 'shimmer 3s ease-in-out infinite',
+               }}
+          />
+          
+          <div className="flex items-center gap-2 sm:gap-3 relative z-10">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center p-2">
               <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-white mb-2 leading-relaxed">
+              <p className="text-xs text-white mb-2 leading-relaxed drop-shadow-lg">
                 Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
               </p>
-              <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white border-0 text-xs h-8" onClick={() => navigate('/whatsapp')}>
+              <Button size="sm" className="bg-white/20 hover:bg-white/30 text-white border border-white/30 text-xs h-8 font-semibold" onClick={() => navigate('/whatsapp')}>
                 <MessageCircle className="w-3 h-3 mr-1" />
                 Conectar WhatsApp
               </Button>
             </div>
           </div>
+          
+          <style>{`
+            @keyframes shimmer {
+              0% { transform: translateX(-100%); }
+              100% { transform: translateX(200%); }
+            }
+          `}</style>
         </Card>
 
 
