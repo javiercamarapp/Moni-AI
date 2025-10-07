@@ -68,6 +68,14 @@ serve(async (req) => {
     const balance = totalIngresos - totalGastos;
     const tasaAhorro = totalIngresos > 0 ? ((balance / totalIngresos) * 100) : 0;
 
+    console.log('=== PDF REPORT CALCULATIONS ===');
+    console.log('Date range:', { startDate: query, endDate: query });
+    console.log('Total Ingresos:', totalIngresos);
+    console.log('Total Gastos:', totalGastos);
+    console.log('Balance:', balance);
+    console.log('Tasa Ahorro:', tasaAhorro);
+    console.log('================================');
+
     // Agrupar ingresos por categoría
     const ingresosMap = new Map<string, { name: string; total: number; color: string }>();
     const incomeCategoryColors = [

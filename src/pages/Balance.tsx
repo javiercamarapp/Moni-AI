@@ -271,10 +271,18 @@ const Balance = () => {
 
       if (!transactions) return;
 
+      console.log('=== BALANCE PAGE CALCULATIONS ===');
+      console.log('View mode:', viewMode);
+      console.log('Date range:', { startDate: startDate.toISOString().split('T')[0], endDate: endDate.toISOString().split('T')[0] });
+      console.log('Total transactions fetched:', transactions.length);
+
       // Process ingresos
       const ingresosData = transactions.filter(t => t.type === 'ingreso');
       const totalIng = ingresosData.reduce((sum, t) => sum + Number(t.amount), 0);
       setTotalIngresos(totalIng);
+
+      console.log('Ingresos count:', ingresosData.length);
+      console.log('Total Ingresos:', totalIng);
 
       const ingresosCategoryMap = new Map<string, { name: string; color: string; total: number }>();
       ingresosData.forEach(t => {
@@ -303,6 +311,12 @@ const Balance = () => {
       const gastosData = transactions.filter(t => t.type === 'gasto');
       const totalGast = gastosData.reduce((sum, t) => sum + Number(t.amount), 0);
       setTotalGastos(totalGast);
+
+      console.log('Gastos count:', gastosData.length);
+      console.log('Total Gastos:', totalGast);
+      console.log('Balance:', totalIng - totalGast);
+      console.log('Tasa Ahorro:', totalIng > 0 ? ((totalIng - totalGast) / totalIng) * 100 : 0);
+      console.log('==================================');
 
       const gastosGroupMap = new Map<string, { name: string; color: string; total: number }>();
       gastosData.forEach(t => {
