@@ -577,17 +577,6 @@ const Dashboard = () => {
                 </div>
               )}
 
-              {currentMonth.balance >= 0 && (
-                <div className="bg-emerald-500/20 rounded-lg p-3 border border-emerald-400/40 animate-fade-in" key={currentTipIndex}>
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">{successTips[currentTipIndex].emoji}</span>
-                    <div>
-                      <p className="text-xs font-semibold text-emerald-200">{successTips[currentTipIndex].title}</p>
-                      <p className="text-xs text-white/80">{successTips[currentTipIndex].message}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
 
               <div className="pt-3 border-t border-white/10">
                 <p className="text-xs font-medium text-white/80 mb-2">Balance del mes</p>
