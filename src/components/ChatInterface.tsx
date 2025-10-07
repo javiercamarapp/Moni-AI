@@ -597,27 +597,27 @@ const ChatInterface = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent 
               align="start" 
-              className="w-72 bg-card/95 backdrop-blur-md border-border/50 shadow-elegant"
+              className="w-72 z-50 bg-popover backdrop-blur-md border-border/50 shadow-elegant"
             >
               <DropdownMenuItem 
                 onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-3 py-3 cursor-pointer hover:bg-accent/50 transition-all"
+                className="flex items-center gap-3 py-3 cursor-pointer"
               >
-                <Paperclip className="w-5 h-5 text-primary" />
-                <span className="text-foreground font-medium">Adjuntar archivo o foto</span>
+                <Paperclip className="w-5 h-5" />
+                <span className="font-medium">Adjuntar archivo o foto</span>
               </DropdownMenuItem>
               
-              <DropdownMenuSeparator className="bg-border/30" />
+              <DropdownMenuSeparator />
               
               <DropdownMenuItem 
                 onClick={() => {
                   setMessage("Crea gráficas financieras de mis gastos e ingresos del último mes");
                   setTimeout(() => handleSendMessage(), 100);
                 }}
-                className="flex items-center gap-3 py-3 cursor-pointer hover:bg-accent/50 transition-all"
+                className="flex items-center gap-3 py-3 cursor-pointer"
               >
-                <TrendingUp className="w-5 h-5 text-primary" />
-                <span className="text-foreground">Crea gráficas financieras</span>
+                <TrendingUp className="w-5 h-5" />
+                <span>Crea gráficas financieras</span>
               </DropdownMenuItem>
               
               <DropdownMenuItem 
@@ -625,10 +625,10 @@ const ChatInterface = () => {
                   setMessage("Ayúdame a crear un presupuesto mensual personalizado");
                   setTimeout(() => handleSendMessage(), 100);
                 }}
-                className="flex items-center gap-3 py-3 cursor-pointer hover:bg-accent/50 transition-all"
+                className="flex items-center gap-3 py-3 cursor-pointer"
               >
-                <Calculator className="w-5 h-5 text-primary" />
-                <span className="text-foreground">Crea un presupuesto</span>
+                <Calculator className="w-5 h-5" />
+                <span>Crea un presupuesto</span>
               </DropdownMenuItem>
               
               <DropdownMenuItem 
@@ -636,10 +636,10 @@ const ChatInterface = () => {
                   setMessage("Crea estimaciones de ahorro basadas en mis hábitos financieros");
                   setTimeout(() => handleSendMessage(), 100);
                 }}
-                className="flex items-center gap-3 py-3 cursor-pointer hover:bg-accent/50 transition-all"
+                className="flex items-center gap-3 py-3 cursor-pointer"
               >
-                <PiggyBank className="w-5 h-5 text-primary" />
-                <span className="text-foreground">Crea estimaciones de ahorro</span>
+                <PiggyBank className="w-5 h-5" />
+                <span>Crea estimaciones de ahorro</span>
               </DropdownMenuItem>
               
               <DropdownMenuItem 
@@ -647,10 +647,10 @@ const ChatInterface = () => {
                   setMessage("Analiza mis transacciones recientes y sugiere oportunidades de ahorro");
                   setTimeout(() => handleSendMessage(), 100);
                 }}
-                className="flex items-center gap-3 py-3 cursor-pointer hover:bg-accent/50 transition-all"
+                className="flex items-center gap-3 py-3 cursor-pointer"
               >
-                <Lightbulb className="w-5 h-5 text-primary" />
-                <span className="text-foreground">Optimiza mis gastos</span>
+                <Lightbulb className="w-5 h-5" />
+                <span>Optimiza mis gastos</span>
               </DropdownMenuItem>
               
               <DropdownMenuItem 
@@ -658,10 +658,10 @@ const ChatInterface = () => {
                   setMessage("Ayúdame a definir metas financieras inteligentes y alcanzables");
                   setTimeout(() => handleSendMessage(), 100);
                 }}
-                className="flex items-center gap-3 py-3 cursor-pointer hover:bg-accent/50 transition-all"
+                className="flex items-center gap-3 py-3 cursor-pointer"
               >
-                <Target className="w-5 h-5 text-primary" />
-                <span className="text-foreground">Define metas financieras</span>
+                <Target className="w-5 h-5" />
+                <span>Define metas financieras</span>
               </DropdownMenuItem>
               
               <DropdownMenuItem 
@@ -669,10 +669,10 @@ const ChatInterface = () => {
                   setMessage("Detecta gastos innecesarios y patrones de gasto preocupantes");
                   setTimeout(() => handleSendMessage(), 100);
                 }}
-                className="flex items-center gap-3 py-3 cursor-pointer hover:bg-accent/50 transition-all"
+                className="flex items-center gap-3 py-3 cursor-pointer"
               >
-                <Receipt className="w-5 h-5 text-primary" />
-                <span className="text-foreground">Detecta gastos innecesarios</span>
+                <Receipt className="w-5 h-5" />
+                <span>Detecta gastos innecesarios</span>
               </DropdownMenuItem>
               
               <DropdownMenuItem 
@@ -680,10 +680,10 @@ const ChatInterface = () => {
                   setMessage("Proyecta mi situación financiera a 6 meses basándote en mis hábitos actuales");
                   setTimeout(() => handleSendMessage(), 100);
                 }}
-                className="flex items-center gap-3 py-3 cursor-pointer hover:bg-accent/50 transition-all"
+                className="flex items-center gap-3 py-3 cursor-pointer"
               >
-                <Sparkles className="w-5 h-5 text-primary" />
-                <span className="text-foreground">Proyecta mi futuro financiero</span>
+                <Sparkles className="w-5 h-5" />
+                <span>Proyecta mi futuro financiero</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
