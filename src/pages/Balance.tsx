@@ -471,14 +471,14 @@ const Balance = () => {
                   if (!user) {
                     toast({
                       title: "Error",
-                      description: "Debes iniciar sesión para descargar el PDF",
+                      description: "Debes iniciar sesión para descargar el reporte",
                       variant: "destructive",
                     });
                     return;
                   }
 
                   toast({
-                    title: "Generando PDF",
+                    title: "Generando reporte",
                     description: "Preparando tu reporte de movimientos...",
                   });
 
@@ -493,8 +493,8 @@ const Balance = () => {
 
                   if (error) throw error;
 
-                  // Descargar el PDF
-                  const blob = new Blob([Uint8Array.from(atob(data.pdf), c => c.charCodeAt(0))], { type: 'application/pdf' });
+                  // Crear y descargar el archivo HTML
+                  const blob = new Blob([data.html], { type: 'text/html' });
                   const url = window.URL.createObjectURL(blob);
                   const a = document.createElement('a');
                   a.href = url;
@@ -505,14 +505,14 @@ const Balance = () => {
                   document.body.removeChild(a);
 
                   toast({
-                    title: "PDF descargado",
-                    description: "Tu reporte de movimientos se ha descargado correctamente.",
+                    title: "Reporte descargado",
+                    description: "Abre el archivo y usa Imprimir > Guardar como PDF en tu navegador",
                   });
                 } catch (error: any) {
-                  console.error('Error al generar PDF:', error);
+                  console.error('Error al generar reporte:', error);
                   toast({
                     title: "Error",
-                    description: error.message || "No se pudo generar el PDF",
+                    description: error.message || "No se pudo generar el reporte",
                     variant: "destructive",
                   });
                 }

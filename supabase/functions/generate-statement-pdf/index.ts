@@ -377,40 +377,12 @@ Mantén el tono profesional pero amigable. Limita tu respuesta a 200 palabras.`;
       </html>
     `;
 
-    // Use PDFShift API
-    const pdfShiftApiKey = Deno.env.get('PDFSHIFT_API_KEY');
-    
-    if (!pdfShiftApiKey) {
-      throw new Error('PDFSHIFT_API_KEY not configured');
-    }
-
-    const pdfResponse = await fetch('https://api.pdfshift.io/v3/convert/pdf', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${btoa(pdfShiftApiKey + ':')}`,
-      },
-      body: JSON.stringify({
-        source: html,
-        landscape: false,
-        use_print: false,
-      }),
-    });
-
-    if (!pdfResponse.ok) {
-      const errorText = await pdfResponse.text();
-      console.error('PDFShift error:', errorText);
-      throw new Error('Failed to generate PDF');
-    }
-
-    const pdfBuffer = await pdfResponse.arrayBuffer();
-    const pdfBase64 = btoa(String.fromCharCode(...new Uint8Array(pdfBuffer)));
-
-    const filename = `Movimientos_${viewMode === 'mensual' ? 'Mes' : 'Anual'}_${periodText.replace(/ /g, '_')}.pdf`;
+    // Generate downloadable HTML instead of PDF
+    const filename = `Movimientos_${viewMode === 'mensual' ? 'Mes' : 'Anual'}_${periodText.replace(/ /g, '_')}.html`;
 
     return new Response(
       JSON.stringify({ 
-        pdf: pdfBase64,
+        html: html,
         filename 
       }),
       {
