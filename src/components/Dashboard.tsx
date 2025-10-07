@@ -347,8 +347,8 @@ const Dashboard = () => {
       </div>
 
       <div className="mx-4 space-y-4 sm:space-y-6">
-        {/* Quick Stats - 5 botones horizontales en una línea */}
-        <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+        {/* Quick Stats - 4 botones horizontales en una línea */}
+        <div className="grid grid-cols-4 gap-2 sm:gap-3">
           <Card className="p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
             animationDelay: '100ms'
           }}>
@@ -377,20 +377,6 @@ const Dashboard = () => {
                 <p className="text-xs sm:text-base font-bold text-white leading-tight">
                   ${(goals.reduce((sum, goal) => sum + Number(goal.current), 0) / 1000).toFixed(0)}k
                 </p>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
-            animationDelay: '250ms'
-          }}>
-            <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Users className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
-              </div>
-              <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Social</p>
-                <p className="text-xs sm:text-base font-bold text-white leading-tight">0</p>
               </div>
             </div>
           </Card>
