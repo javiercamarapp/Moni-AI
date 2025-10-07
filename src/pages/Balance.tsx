@@ -73,15 +73,15 @@ const categoryGroupMapping: Record<string, string> = {
   'taxi': 'Auto',
 };
 
-// Colores metálicos profundos para grupos
+// Colores vibrantes y distintos para grupos
 const groupColors: Record<string, string> = {
-  'Comidas': 'hsl(215, 50%, 28%)',
-  'Entretenimiento': 'hsl(200, 45%, 30%)',
-  'Salidas Nocturnas': 'hsl(260, 40%, 28%)',
-  'Servicios': 'hsl(180, 42%, 25%)',
-  'Streaming': 'hsl(280, 45%, 32%)',
-  'Auto': 'hsl(30, 50%, 28%)',
-  'Otros': 'hsl(220, 35%, 24%)',
+  'Comidas': 'hsl(25, 85%, 55%)',        // Naranja vibrante
+  'Entretenimiento': 'hsl(280, 75%, 60%)', // Morado
+  'Salidas Nocturnas': 'hsl(340, 82%, 55%)', // Rosa fuerte
+  'Servicios': 'hsl(200, 75%, 50%)',     // Azul cielo
+  'Streaming': 'hsl(145, 65%, 45%)',     // Verde
+  'Auto': 'hsl(45, 90%, 55%)',           // Amarillo
+  'Otros': 'hsl(0, 70%, 55%)',           // Rojo
 };
 
 const getCategoryGroup = (categoryName: string): string => {
