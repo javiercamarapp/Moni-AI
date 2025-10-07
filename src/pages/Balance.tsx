@@ -520,25 +520,28 @@ const Balance = () => {
                     throw new Error('Datos incompletos en la respuesta');
                   }
 
-                  console.log('🔵 Abriendo reporte en nueva pestaña...', { htmlLength: data.html.length });
+                  console.log('🔵 Creando blob y descargando...', { htmlLength: data.html.length });
 
-                  // Abrir en nueva ventana porque las descargas están bloqueadas en iframes
-                  const newWindow = window.open('', '_blank');
+                  // Crear blob con el HTML
+                  const blob = new Blob([data.html], { type: 'text/html' });
+                  const url = URL.createObjectURL(blob);
                   
-                  if (newWindow) {
-                    newWindow.document.write(data.html);
-                    newWindow.document.close();
-                    console.log('✅ Reporte abierto en nueva pestaña');
-                  } else {
-                    console.log('⚠️ Popup bloqueado, intentando con data URL...');
-                    // Fallback: intentar con data URL
-                    const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(data.html);
-                    window.open(dataUrl, '_blank');
-                  }
+                  // Crear link temporal y hacer click
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = data.filename.replace('.pdf', '.html');
+                  document.body.appendChild(link);
+                  link.click();
+                  
+                  // Limpiar
+                  document.body.removeChild(link);
+                  URL.revokeObjectURL(url);
+                  
+                  console.log('✅ Descarga iniciada');
 
                   toast({
-                    title: "Reporte generado",
-                    description: "Se abrió en una nueva pestaña. Usa Ctrl+P (Cmd+P) para guardar como PDF",
+                    title: "Reporte descargado",
+                    description: "Abre el archivo HTML descargado y usa Ctrl+P (Cmd+P en Mac) para guardarlo como PDF.",
                   });
                 } catch (error: any) {
                   console.error('🔴 Error al generar reporte:', error);
