@@ -637,7 +637,7 @@ const Dashboard = () => {
 
       {/* Score Moni - Compacto */}
       {scoreMoni !== null && <div className="mx-4 mb-4">
-          <Card className={`p-4 card-glow border-white/20 hover:scale-105 transition-transform duration-200 ${scoreMoni >= 70 ? 'bg-gradient-to-br from-success/90 to-success/70' : scoreMoni >= 40 ? 'bg-gradient-to-br from-warning/90 to-warning/70' : 'bg-gradient-to-br from-danger/90 to-danger/70'}`}>
+          <Card className={`p-4 card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95 ${scoreMoni >= 70 ? 'bg-gradient-to-br from-success/90 to-success/70' : scoreMoni >= 40 ? 'bg-gradient-to-br from-warning/90 to-warning/70' : 'bg-gradient-to-br from-danger/90 to-danger/70'}`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-white/90 mb-1">Score Moni</p>
