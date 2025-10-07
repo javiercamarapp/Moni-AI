@@ -250,7 +250,7 @@ const Dashboard = () => {
             error: recentError
           } = await supabase.from('transactions').select('*, categories(name, color)').eq('user_id', user.id).order('transaction_date', {
             ascending: false
-          }).limit(5);
+          }).limit(20);
           if (recentError) throw recentError;
           setRecentTransactions(recentData || []);
         }
@@ -545,7 +545,7 @@ const Dashboard = () => {
             error
           } = await supabase.from('transactions').select('*, categories(name, color)').eq('user_id', user.id).order('transaction_date', {
             ascending: false
-          }).limit(5);
+          }).limit(20);
           if (error) throw error;
           setRecentTransactions(data || []);
         } catch (error) {
