@@ -321,7 +321,7 @@ const Profile = () => {
           </div>
 
           {/* Plan Section */}
-          <Card className="bg-primary/10 border-primary/30 p-4 hover:scale-105 transition-transform duration-200">
+          <Card className="bg-gradient-card border-border/50 p-4 hover:scale-105 transition-transform duration-200 shadow-card hover:shadow-glow">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-white/70 mb-1">Tu plan</p>
