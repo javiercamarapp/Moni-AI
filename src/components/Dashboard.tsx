@@ -695,9 +695,10 @@ const Dashboard = () => {
             </div>
           </Card>
 
-          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
-          animationDelay: '200ms'
-        }}>
+          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer" 
+            style={{ animationDelay: '200ms' }}
+            onClick={() => navigate('/net-worth')}
+          >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-success/30 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
                 <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-success-foreground" />
