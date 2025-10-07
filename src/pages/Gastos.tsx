@@ -496,9 +496,9 @@ const Gastos = () => {
                   const { data, error } = await supabase.functions.invoke('generate-statement-pdf', {
                     body: {
                       userId: user.id,
+                      viewMode: 'mensual',
                       month: currentMonth.getMonth() + 1,
-                      year: currentMonth.getFullYear(),
-                      type: 'gasto'
+                      year: currentMonth.getFullYear()
                     }
                   });
 
@@ -509,7 +509,7 @@ const Gastos = () => {
                   const url = window.URL.createObjectURL(pdfBlob);
                   const a = document.createElement('a');
                   a.href = url;
-                  a.download = `gastos_${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}.pdf`;
+                  a.download = `movimientos_${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}.pdf`;
                   document.body.appendChild(a);
                   a.click();
                   window.URL.revokeObjectURL(url);
