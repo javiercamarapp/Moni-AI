@@ -390,7 +390,7 @@ const ChatInterface = () => {
       <div className="flex-1 overflow-y-auto px-4">
         {messages.length === 0 ? <div className="h-full flex flex-col items-center justify-center pb-32">
             <div className="w-20 h-20 rounded-full bg-gradient-card flex items-center justify-center mb-6 shadow-glow border border-border/50 bounce-in pulse-subtle overflow-hidden">
-              <img src={moniLogo} alt="MONI AI+" className="w-full h-full object-cover scale-110" />
+              <img src={moniLogo} alt="MONI AI+" className="w-full h-full object-cover scale-[0.95]" />
             </div>
             <h1 className="text-3xl font-normal text-foreground text-center fade-in-up">¿En qué puedo ayudarte hoy?</h1>
           </div> : <div className="py-6 space-y-6">
