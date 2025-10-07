@@ -611,7 +611,8 @@ Sé profesional pero cercano. Usa las razones financieras como un médico usa an
     const projectedIncome = avgDailyIncome * projectionDays;
     const projectedBalance = projectedIncome - projectedExpenses;
 
-    return new Response(JSON.stringify({
+    // Construir objeto de respuesta
+    const responseData = {
       analysis,
       metrics,
       topCategories,
@@ -622,7 +623,6 @@ Sé profesional pero cercano. Usa las razones financieras como un médico usa an
         period: projectionDays === 365 ? 'Anual' : 'Mensual'
       },
       dailyCashFlow,
-      // Nuevos datos para widgets mejorados
       safeToSpend: {
         amount: safeToSpend,
         monthlyIncome: totalIncome,
@@ -665,9 +665,9 @@ Sé profesional pero cercano. Usa las razones financieras como un médico usa an
         subscriptions,
         totalMonthly: totalSubscriptions
       }
-    });
+    };
 
-    // Save score to database for instant loading on next visit
+    // Guardar score en la base de datos para carga instantánea
     if (scoreMoni !== undefined) {
       await supabase
         .from('user_scores')

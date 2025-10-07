@@ -126,7 +126,7 @@ const Dashboard = () => {
           .from('user_scores')
           .select('score_moni')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
         
         if (cachedScore) {
           setScoreMoni(cachedScore.score_moni);
