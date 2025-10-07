@@ -770,8 +770,6 @@ const Dashboard = () => {
                   }`}
                   style={{ 
                     width: `${monthlyIncome > 0 ? Math.min((monthlyExpenses / (monthlyIncome * 0.8)) * 100, 100) : 0}%`,
-                    backgroundSize: '200% 100%',
-                    animation: 'shimmer 2s ease-in-out infinite',
                     boxShadow: monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 90 
                       ? '0 0 20px rgba(239, 68, 68, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)' 
                       : monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 75 
