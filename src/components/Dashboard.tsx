@@ -351,19 +351,19 @@ const Dashboard = () => {
       <div className="p-2 sm:p-4">
       <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
         
-        {/* Quick Stats - 4 botones horizontales más largos y menos altos */}
-        <div className="grid grid-cols-4 gap-2">
+        {/* Quick Stats - 4 botones horizontales */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           <Card className="p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
             animationDelay: '100ms'
           }}>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
-                <Wallet className="w-4 h-4 text-white" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
+                <Wallet className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] text-white/80 mb-0.5">Balance</p>
-                <p className="text-sm font-bold text-white">
-                  ${(currentMonth.balance / 1000).toFixed(0)}k
+                <p className="text-[10px] sm:text-xs text-white/80 mb-1">Balance</p>
+                <p className="text-sm sm:text-base font-bold text-white">
+                  ${currentMonth.balance.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
                 </p>
               </div>
             </div>
@@ -372,14 +372,14 @@ const Dashboard = () => {
           <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
             animationDelay: '200ms'
           }}>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="w-4 h-4 text-white" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-success/20 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] text-white/80 mb-0.5">Ahorrado</p>
-                <p className="text-sm font-bold text-white">
-                  ${(goals.reduce((sum, goal) => sum + Number(goal.current), 0) / 1000).toFixed(0)}k
+                <p className="text-[10px] sm:text-xs text-white/80 mb-1">Ahorrado</p>
+                <p className="text-sm sm:text-base font-bold text-white">
+                  ${goals.reduce((sum, goal) => sum + Number(goal.current), 0).toLocaleString('es-MX', { maximumFractionDigits: 0 })}
                 </p>
               </div>
             </div>
@@ -388,14 +388,14 @@ const Dashboard = () => {
           <Card className="p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/gastos')} style={{
             animationDelay: '300ms'
           }}>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="w-4 h-4 text-white rotate-180" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-white rotate-180" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] text-white/80 mb-0.5">Gastos</p>
-                <p className="text-sm font-bold text-white">
-                  ${(monthlyExpenses / 1000).toFixed(0)}k
+                <p className="text-[10px] sm:text-xs text-white/80 mb-1">Gastos</p>
+                <p className="text-sm sm:text-base font-bold text-white">
+                  ${monthlyExpenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
                 </p>
               </div>
             </div>
@@ -404,13 +404,13 @@ const Dashboard = () => {
           <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
             animationDelay: '400ms'
           }}>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-warning/20 flex items-center justify-center flex-shrink-0">
-                <Target className="w-4 h-4 text-white" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-warning/20 flex items-center justify-center flex-shrink-0">
+                <Target className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] text-white/80 mb-0.5">Metas</p>
-                <p className="text-sm font-bold text-white">{goals.length}</p>
+                <p className="text-[10px] sm:text-xs text-white/80 mb-1">Metas</p>
+                <p className="text-sm sm:text-base font-bold text-white">{goals.length}</p>
               </div>
             </div>
           </Card>
