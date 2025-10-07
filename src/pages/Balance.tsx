@@ -20,6 +20,80 @@ interface CategoryBalance {
   percentage: number;
 }
 
+// Mapeo de categorías a grupos
+const categoryGroupMapping: Record<string, string> = {
+  // Comidas
+  'restaurante': 'Comidas',
+  'restaurantes': 'Comidas',
+  'comida': 'Comidas',
+  'alimentos': 'Comidas',
+  'supermercado': 'Comidas',
+  'despensa': 'Comidas',
+  'cafetería': 'Comidas',
+  
+  // Entretenimiento
+  'entretenimiento': 'Entretenimiento',
+  'cine': 'Entretenimiento',
+  'teatro': 'Entretenimiento',
+  'concierto': 'Entretenimiento',
+  'museo': 'Entretenimiento',
+  'videojuegos': 'Entretenimiento',
+  
+  // Salidas nocturnas
+  'bar': 'Salidas Nocturnas',
+  'bares': 'Salidas Nocturnas',
+  'antro': 'Salidas Nocturnas',
+  'discoteca': 'Salidas Nocturnas',
+  'fiesta': 'Salidas Nocturnas',
+  
+  // Servicios
+  'servicios': 'Servicios',
+  'electricidad': 'Servicios',
+  'agua': 'Servicios',
+  'gas': 'Servicios',
+  'internet': 'Servicios',
+  'teléfono': 'Servicios',
+  
+  // Streaming
+  'streaming': 'Streaming',
+  'netflix': 'Streaming',
+  'spotify': 'Streaming',
+  'disney': 'Streaming',
+  'prime': 'Streaming',
+  'hbo': 'Streaming',
+  
+  // Auto
+  'auto': 'Auto',
+  'gasolina': 'Auto',
+  'combustible': 'Auto',
+  'mecánico': 'Auto',
+  'reparación': 'Auto',
+  'estacionamiento': 'Auto',
+  'uber': 'Auto',
+  'taxi': 'Auto',
+};
+
+// Colores metálicos para grupos
+const groupColors: Record<string, string> = {
+  'Comidas': 'hsl(215, 45%, 35%)',
+  'Entretenimiento': 'hsl(200, 40%, 38%)',
+  'Salidas Nocturnas': 'hsl(260, 35%, 35%)',
+  'Servicios': 'hsl(180, 38%, 32%)',
+  'Streaming': 'hsl(280, 40%, 40%)',
+  'Auto': 'hsl(30, 45%, 35%)',
+  'Otros': 'hsl(220, 30%, 30%)',
+};
+
+const getCategoryGroup = (categoryName: string): string => {
+  const lowerName = categoryName.toLowerCase();
+  for (const [key, group] of Object.entries(categoryGroupMapping)) {
+    if (lowerName.includes(key)) {
+      return group;
+    }
+  }
+  return 'Otros';
+};
+
 const Balance = () => {
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<'mensual' | 'anual'>('mensual');
@@ -184,25 +258,28 @@ const Balance = () => {
 
       setIngresosByCategory(ingresosWithPercentage);
 
-      // Process gastos
+      // Process gastos with grouping
       const gastosData = transactions.filter(t => t.type === 'gasto');
       const totalGast = gastosData.reduce((sum, t) => sum + Number(t.amount), 0);
       setTotalGastos(totalGast);
 
-      const gastosCategoryMap = new Map<string, { name: string; color: string; total: number }>();
+      const gastosGroupMap = new Map<string, { name: string; color: string; total: number }>();
       gastosData.forEach(t => {
         if (t.categories) {
-          const existing = gastosCategoryMap.get(t.categories.id) || { 
-            name: t.categories.name, 
-            color: t.categories.color, 
+          const groupName = getCategoryGroup(t.categories.name);
+          const groupColor = groupColors[groupName] || groupColors['Otros'];
+          
+          const existing = gastosGroupMap.get(groupName) || { 
+            name: groupName, 
+            color: groupColor, 
             total: 0 
           };
           existing.total += Number(t.amount);
-          gastosCategoryMap.set(t.categories.id, existing);
+          gastosGroupMap.set(groupName, existing);
         }
       });
 
-      const gastosWithPercentage: CategoryBalance[] = Array.from(gastosCategoryMap.entries()).map(([id, data]) => ({
+      const gastosWithPercentage: CategoryBalance[] = Array.from(gastosGroupMap.entries()).map(([id, data]) => ({
         id,
         name: data.name,
         color: data.color,
@@ -251,21 +328,21 @@ const Balance = () => {
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="p-4 flex items-center justify-between">
+      <div className="p-4 flex items-center justify-between border-b border-border/30 bg-card/50 backdrop-blur-sm">
         <div className="flex items-center gap-4">
           <Button 
             variant="ghost" 
             size="icon"
             onClick={() => navigate('/dashboard')}
-            className="text-white hover:bg-white/10"
+            className="text-foreground hover:bg-accent/50 transition-all hover:scale-105"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-white">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
               Balance Financiero
             </h1>
-            <p className="text-sm text-white/80">Análisis de ingresos y gastos</p>
+            <p className="text-sm text-muted-foreground">Análisis de ingresos y gastos</p>
           </div>
         </div>
       </div>
@@ -273,11 +350,11 @@ const Balance = () => {
       {/* Toggle Mensual/Anual */}
       <div className="px-4 mb-4">
         <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'mensual' | 'anual')} className="w-full">
-          <TabsList className="w-full bg-white/10 backdrop-blur-sm">
-            <TabsTrigger value="mensual" className="flex-1 data-[state=active]:bg-white/20 text-white">
+          <TabsList className="w-full bg-card/70 backdrop-blur-sm border border-border/30">
+            <TabsTrigger value="mensual" className="flex-1 data-[state=active]:bg-accent text-foreground transition-all">
               Mensual
             </TabsTrigger>
-            <TabsTrigger value="anual" className="flex-1 data-[state=active]:bg-white/20 text-white">
+            <TabsTrigger value="anual" className="flex-1 data-[state=active]:bg-accent text-foreground transition-all">
               Anual
             </TabsTrigger>
           </TabsList>
@@ -291,13 +368,13 @@ const Balance = () => {
             variant="ghost"
             size="icon"
             onClick={handlePreviousPeriod}
-            className="text-white hover:bg-white/10"
+            className="text-foreground hover:bg-accent/50 transition-all hover:scale-105"
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
           
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
-            <p className="text-white font-medium capitalize text-center">
+          <div className="bg-card/70 backdrop-blur-sm rounded-lg px-4 py-2 border border-border/30 shadow-card">
+            <p className="text-foreground font-medium capitalize text-center">
               {getPeriodLabel()}
             </p>
           </div>
@@ -306,7 +383,7 @@ const Balance = () => {
             variant="ghost"
             size="icon"
             onClick={handleNextPeriod}
-            className="text-white hover:bg-white/10"
+            className="text-foreground hover:bg-accent/50 transition-all hover:scale-105"
           >
             <ChevronRight className="h-5 w-5" />
           </Button>
@@ -315,78 +392,78 @@ const Balance = () => {
 
       <div className="px-4 space-y-4">
         {/* Ahorro destacado */}
-        <Card className={`p-6 card-glow animate-fade-in ${
+        <Card className={`p-6 card-glow animate-fade-in shadow-elegant border ${
           ahorro >= 0 
-            ? 'bg-gradient-to-br from-green-600/90 to-green-800/90 border-green-500/30' 
-            : 'bg-gradient-to-br from-red-600/90 to-red-800/90 border-red-500/30'
+            ? 'bg-gradient-to-br from-success/80 to-success/60 border-success/30' 
+            : 'bg-gradient-to-br from-destructive/80 to-destructive/60 border-destructive/30'
         }`} style={{ animationDelay: '0ms' }}>
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-3 bg-white/20 backdrop-blur-sm rounded-full">
-              <Wallet className="h-6 w-6 text-white" />
+            <div className="p-3 bg-card/40 backdrop-blur-sm rounded-full border border-border/30">
+              <Wallet className="h-6 w-6 text-foreground" />
             </div>
             <div>
-              <p className="text-sm text-white/90">
+              <p className="text-sm text-foreground/90">
                 Ahorro {viewMode === 'mensual' ? 'Mensual' : 'Anual'}
               </p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white">
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
                 ${ahorro.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
               </h2>
             </div>
           </div>
           <div className="space-y-2">
-            <div className="flex justify-between text-sm text-white/90">
+            <div className="flex justify-between text-sm text-foreground/90">
               <span>Tasa de ahorro:</span>
               <span className="font-semibold">{tasaAhorro.toFixed(1)}%</span>
             </div>
-            <Progress value={tasaAhorro} className="h-2 bg-white/20" />
+            <Progress value={tasaAhorro} className="h-2 bg-card/30" />
           </div>
         </Card>
 
         {/* Balance Summary */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card 
-            className="p-4 bg-gradient-card card-glow text-center hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer" 
+            className="p-4 bg-gradient-card card-glow text-center hover-lift shadow-card border border-border/30 animate-fade-in cursor-pointer" 
             style={{ animationDelay: '100ms' }}
             onClick={() => navigate('/ingresos')}
           >
             <div className="flex items-center justify-center gap-2 mb-2">
-              <TrendingUp className="h-5 w-5 text-green-400" />
-              <p className="text-sm text-white/70">Ingresos</p>
+              <TrendingUp className="h-5 w-5 text-success" />
+              <p className="text-sm text-muted-foreground">Ingresos</p>
             </div>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-2xl font-bold text-foreground">
               ${totalIngresos.toLocaleString('es-MX')}
             </p>
           </Card>
 
           <Card 
-            className="p-4 bg-gradient-card card-glow text-center hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer" 
+            className="p-4 bg-gradient-card card-glow text-center hover-lift shadow-card border border-border/30 animate-fade-in cursor-pointer" 
             style={{ animationDelay: '200ms' }}
             onClick={() => navigate('/gastos')}
           >
             <div className="flex items-center justify-center gap-2 mb-2">
-              <TrendingDown className="h-5 w-5 text-red-400" />
-              <p className="text-sm text-white/70">Gastos</p>
+              <TrendingDown className="h-5 w-5 text-destructive" />
+              <p className="text-sm text-muted-foreground">Gastos</p>
             </div>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-2xl font-bold text-foreground">
               ${totalGastos.toLocaleString('es-MX')}
             </p>
           </Card>
 
-          <Card className="p-4 bg-gradient-card card-glow text-center hover:scale-105 transition-transform duration-200 animate-fade-in" style={{ animationDelay: '300ms' }}>
+          <Card className="p-4 bg-gradient-card card-glow text-center hover-lift shadow-card border border-border/30 animate-fade-in" style={{ animationDelay: '300ms' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
-              <Wallet className="h-5 w-5 text-blue-400" />
-              <p className="text-sm text-white/70">Balance</p>
+              <Wallet className="h-5 w-5 text-accent" />
+              <p className="text-sm text-muted-foreground">Balance</p>
             </div>
-            <p className={`text-2xl font-bold ${balance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+            <p className={`text-2xl font-bold ${balance >= 0 ? 'text-success' : 'text-destructive'}`}>
               ${balance.toLocaleString('es-MX')}
             </p>
           </Card>
         </div>
 
         {/* Proyecciones con IA */}
-        <Card className="p-5 bg-gradient-card card-glow">
+        <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-white">Proyecciones Inteligentes</h3>
+            <h3 className="text-lg font-semibold text-foreground">Proyecciones Inteligentes</h3>
             {proyecciones && (
               <Badge className={`whitespace-nowrap px-3 ${
                 proyecciones.confianza === 'sin-datos' || proyecciones.proyeccionAnual <= 0
@@ -405,25 +482,25 @@ const Balance = () => {
 
           {loadingProyecciones ? (
             <div className="text-center py-8">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-              <p className="text-white/70 mt-2 text-sm">Analizando patrones financieros...</p>
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-foreground"></div>
+              <p className="text-muted-foreground mt-2 text-sm">Analizando patrones financieros...</p>
             </div>
           ) : proyecciones ? (
             <>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <p className="text-xs text-white/70 mb-1">
+                  <p className="text-xs text-muted-foreground mb-1">
                     Proyección Anual
                   </p>
-                  <p className="text-xl font-bold text-white">
+                  <p className="text-xl font-bold text-foreground">
                     ${proyecciones.proyeccionAnual.toLocaleString('es-MX')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-white/70 mb-1">
+                  <p className="text-xs text-muted-foreground mb-1">
                     Proyección Semestral
                   </p>
-                  <p className="text-xl font-bold text-white">
+                  <p className="text-xl font-bold text-foreground">
                     ${proyecciones.proyeccionSemestral.toLocaleString('es-MX')}
                   </p>
                 </div>
@@ -445,19 +522,19 @@ const Balance = () => {
                   <CarouselContent>
                     {proyecciones.insights.map((insight, index) => (
                       <CarouselItem key={index}>
-                        <div className={`bg-white/5 rounded-lg p-4 border ${
+                        <div className={`bg-card/30 rounded-lg p-4 border ${
                           insight.tipo === 'positivo' 
-                            ? 'border-green-500/30 bg-green-500/5'
+                            ? 'border-success/30 bg-success/5'
                             : insight.tipo === 'negativo'
-                            ? 'border-red-500/30 bg-red-500/5'
+                            ? 'border-destructive/30 bg-destructive/5'
                             : insight.tipo === 'consejo'
-                            ? 'border-blue-500/30 bg-blue-500/5'
-                            : 'border-white/10'
+                            ? 'border-accent/30 bg-accent/5'
+                            : 'border-border/20'
                         }`}>
                           <div className="mb-2">
-                            <h4 className="text-base font-semibold text-white">{insight.titulo}</h4>
+                            <h4 className="text-base font-semibold text-foreground">{insight.titulo}</h4>
                           </div>
-                          <p className="text-sm text-white/80 leading-relaxed">{insight.descripcion}</p>
+                          <p className="text-sm text-muted-foreground leading-relaxed">{insight.descripcion}</p>
                         </div>
                       </CarouselItem>
                     ))}
@@ -466,21 +543,21 @@ const Balance = () => {
               )}
             </>
           ) : (
-            <p className="text-white/70 text-center py-4">
+            <p className="text-muted-foreground text-center py-4">
               Cargando proyecciones...
             </p>
           )}
         </Card>
 
         {/* Ingresos por categoría */}
-        <Card className="p-5 bg-gradient-card card-glow">
+        <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
           <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="h-5 w-5 text-green-400" />
-            <h3 className="text-lg font-semibold text-white">Ingresos por Categoría</h3>
+            <TrendingUp className="h-5 w-5 text-success" />
+            <h3 className="text-lg font-semibold text-foreground">Ingresos por Categoría</h3>
           </div>
           
           {ingresosByCategory.length === 0 ? (
-            <p className="text-white/70 text-center py-4">No hay ingresos registrados</p>
+            <p className="text-muted-foreground text-center py-4">No hay ingresos registrados</p>
           ) : (
             <div className="w-full h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -492,27 +569,27 @@ const Balance = () => {
                     labelLine={false}
                     label={({ name, percentage }) => `${name}: ${percentage.toFixed(1)}%`}
                     outerRadius={80}
-                    fill="#8884d8"
+                    fill="hsl(var(--primary))"
                     dataKey="total"
                   >
                     {ingresosByCategory.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={`hsl(${120 + index * 30}, 70%, 50%)`} />
+                      <Cell key={`cell-${index}`} fill={`hsl(${150 + index * 35}, 45%, 40%)`} />
                     ))}
                   </Pie>
                   <Tooltip 
                     formatter={(value: number) => `$${value.toLocaleString('es-MX')}`}
                     contentStyle={{ 
-                      backgroundColor: 'rgba(0, 0, 0, 0.8)', 
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      backgroundColor: 'hsl(var(--card))', 
+                      border: '1px solid hsl(var(--border))',
                       borderRadius: '8px',
-                      color: 'white'
+                      color: 'hsl(var(--foreground))'
                     }}
                   />
                   <Legend 
                     verticalAlign="bottom" 
                     height={36}
                     formatter={(value, entry: any) => (
-                      <span className="text-white text-xs">
+                      <span className="text-foreground text-xs">
                         {value}: ${entry.payload.total.toLocaleString('es-MX')}
                       </span>
                     )}
@@ -524,14 +601,14 @@ const Balance = () => {
         </Card>
 
         {/* Gastos por categoría */}
-        <Card className="p-5 bg-gradient-card card-glow">
+        <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
           <div className="flex items-center gap-2 mb-4">
-            <TrendingDown className="h-5 w-5 text-red-400" />
-            <h3 className="text-lg font-semibold text-white">Gastos por Categoría</h3>
+            <TrendingDown className="h-5 w-5 text-destructive" />
+            <h3 className="text-lg font-semibold text-foreground">Gastos Agrupados</h3>
           </div>
           
           {gastosByCategory.length === 0 ? (
-            <p className="text-white/70 text-center py-4">No hay gastos registrados</p>
+            <p className="text-muted-foreground text-center py-4">No hay gastos registrados</p>
           ) : (
             <div className="w-full h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -543,27 +620,27 @@ const Balance = () => {
                     labelLine={false}
                     label={({ name, percentage }) => `${name}: ${percentage.toFixed(1)}%`}
                     outerRadius={80}
-                    fill="#8884d8"
+                    fill="hsl(var(--destructive))"
                     dataKey="total"
                   >
-                    {gastosByCategory.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={`hsl(${0 + index * 30}, 70%, 50%)`} />
+                    {gastosByCategory.map((entry) => (
+                      <Cell key={`cell-${entry.id}`} fill={entry.color} />
                     ))}
                   </Pie>
                   <Tooltip 
                     formatter={(value: number) => `$${value.toLocaleString('es-MX')}`}
                     contentStyle={{ 
-                      backgroundColor: 'rgba(0, 0, 0, 0.8)', 
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      backgroundColor: 'hsl(var(--card))', 
+                      border: '1px solid hsl(var(--border))',
                       borderRadius: '8px',
-                      color: 'white'
+                      color: 'hsl(var(--foreground))'
                     }}
                   />
                   <Legend 
                     verticalAlign="bottom" 
                     height={36}
                     formatter={(value, entry: any) => (
-                      <span className="text-white text-xs">
+                      <span className="text-foreground text-xs">
                         {value}: ${entry.payload.total.toLocaleString('es-MX')}
                       </span>
                     )}
@@ -575,25 +652,25 @@ const Balance = () => {
         </Card>
 
         {/* Resumen del balance */}
-        <Card className="p-5 bg-gradient-card card-glow">
-          <h3 className="text-lg font-semibold text-white mb-4">Resumen</h3>
+        <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Resumen</h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-white/70">Total Ingresos:</span>
-              <span className="text-white font-semibold text-lg">
+              <span className="text-muted-foreground">Total Ingresos:</span>
+              <span className="text-foreground font-semibold text-lg">
                 ${totalIngresos.toLocaleString('es-MX')}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-white/70">Total Gastos:</span>
-              <span className="text-white font-semibold text-lg">
+              <span className="text-muted-foreground">Total Gastos:</span>
+              <span className="text-foreground font-semibold text-lg">
                 -${totalGastos.toLocaleString('es-MX')}
               </span>
             </div>
-            <div className="border-t border-white/20 pt-3">
+            <div className="border-t border-border pt-3">
               <div className="flex justify-between items-center">
-                <span className="text-white font-semibold">Balance Final:</span>
-                <span className={`font-bold text-xl ${balance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                <span className="text-foreground font-semibold">Balance Final:</span>
+                <span className={`font-bold text-xl ${balance >= 0 ? 'text-success' : 'text-destructive'}`}>
                   ${balance.toLocaleString('es-MX')}
                 </span>
               </div>
