@@ -373,7 +373,7 @@ const Dashboard = () => {
                 <TrendingUp className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Ahorrado</p>
+                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Ahorros</p>
                 <p className="text-xs sm:text-base font-bold text-white leading-tight">
                   ${(goals.reduce((sum, goal) => sum + Number(goal.current), 0) / 1000).toFixed(0)}k
                 </p>
@@ -381,24 +381,8 @@ const Dashboard = () => {
             </div>
           </Card>
 
-          <Card className="p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/gastos')} style={{
-            animationDelay: '300ms'
-          }}>
-            <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <TrendingUp className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white rotate-180" />
-              </div>
-              <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Gastos</p>
-                <p className="text-xs sm:text-base font-bold text-white leading-tight">
-                  ${(monthlyExpenses / 1000).toFixed(0)}k
-                </p>
-              </div>
-            </div>
-          </Card>
-
           <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
-            animationDelay: '400ms'
+            animationDelay: '300ms'
           }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-warning/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
@@ -407,6 +391,22 @@ const Dashboard = () => {
               <div className="flex-1 min-w-0 text-center sm:text-left">
                 <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Metas</p>
                 <p className="text-xs sm:text-base font-bold text-white leading-tight">{goals.length}</p>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
+            animationDelay: '400ms'
+          }}>
+            <div className="flex flex-col sm:flex-row items-center sm:gap-2">
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0 text-center sm:text-left">
+                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Presupuestos</p>
+                <p className="text-xs sm:text-base font-bold text-white leading-tight">
+                  ${(monthlyIncome / 1000).toFixed(0)}k
+                </p>
               </div>
             </div>
           </Card>
