@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, MessageCircle, Home, Target, BarChart3, User } from 'lucide-react';
+import { ArrowLeft, MessageCircle } from 'lucide-react';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
+import BottomNav from '@/components/BottomNav';
 
 const FinancialChat = () => {
   const navigate = useNavigate();
@@ -120,37 +121,7 @@ const FinancialChat = () => {
         </div>
       </div>
 
-      {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 animated-wave-bg border-t border-white/20 shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-around h-16">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/dashboard")}>
-              <Home className="w-5 h-5 text-white" />
-              <span className="text-xs text-white">Home</span>
-            </Button>
-
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/analysis")}>
-              <BarChart3 className="w-5 h-5 text-white" />
-              <span className="text-xs text-white">Análisis</span>
-            </Button>
-
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/goals")}>
-              <Target className="w-5 h-5 text-white" />
-              <span className="text-xs text-white">Metas</span>
-            </Button>
-
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-purple-400 hover:bg-white/10" onClick={() => navigate("/chat")}>
-              <MessageCircle className="w-5 h-5 text-purple-400" />
-              <span className="text-xs text-purple-400">Chat AI</span>
-            </Button>
-
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-white/10" onClick={() => navigate("/profile")}>
-              <User className="w-5 h-5 text-white" />
-              <span className="text-xs text-white">Perfil</span>
-            </Button>
-          </div>
-        </div>
-      </nav>
+      <BottomNav />
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, ChevronRight, Crown, LogOut, Trash2 } from 'lucide-react';
+import BottomNav from '@/components/BottomNav';
 import {
   Popover,
   PopoverContent,
@@ -286,7 +287,7 @@ const Profile = () => {
   const userEmail = user?.email || '';
 
   return (
-    <div className="min-h-screen animated-wave-bg">
+    <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
       <div className="p-4 flex items-center justify-between">
         <Button
@@ -534,6 +535,8 @@ const Profile = () => {
           </Card>
         </div>
       </div>
+      
+      <BottomNav />
     </div>
   );
 };

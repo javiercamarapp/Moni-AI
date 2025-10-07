@@ -17,6 +17,7 @@ import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings
 import moniLogo from '/moni-logo.png';
 import SafeToSpendWidget from '@/components/analysis/SafeToSpendWidget';
 import AICoachInsightsWidget from '@/components/analysis/AICoachInsightsWidget';
+import BottomNav from '@/components/BottomNav';
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false); // Changed to false for instant load
@@ -709,49 +710,7 @@ const Dashboard = () => {
 
       </div>
 
-      {/* Bottom Navigation Menu - Fixed */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-gradient-card/95 backdrop-blur-sm border-t border-white/10 z-50">
-        <div className="flex justify-around items-center py-3 px-4">
-          <button 
-            onClick={() => navigate('/dashboard')}
-            className="flex flex-col items-center gap-1 text-white hover:text-primary transition-colors"
-          >
-            <Home className="w-5 h-5" />
-            <span className="text-xs">Inicio</span>
-          </button>
-          
-          <button 
-            onClick={() => navigate('/analysis')}
-            className="flex flex-col items-center gap-1 text-white/70 hover:text-white transition-colors"
-          >
-            <BarChart3 className="w-5 h-5" />
-            <span className="text-xs">Análisis</span>
-          </button>
-          
-          <button 
-            className="flex flex-col items-center gap-1 text-white/70 hover:text-white transition-colors"
-          >
-            <Users className="w-5 h-5" />
-            <span className="text-xs">Social</span>
-          </button>
-          
-          <button 
-            onClick={() => navigate('/chat')}
-            className="flex flex-col items-center gap-1 text-white/70 hover:text-white transition-colors"
-          >
-            <MessageCircle className="w-5 h-5" />
-            <span className="text-xs">Chat IA</span>
-          </button>
-          
-          <button 
-            onClick={() => navigate('/profile')}
-            className="flex flex-col items-center gap-1 text-white/70 hover:text-white transition-colors"
-          >
-            <User className="w-5 h-5" />
-            <span className="text-xs">Perfil</span>
-          </button>
-        </div>
-      </nav>
+      <BottomNav />
     </div>;
 };
 export default Dashboard;

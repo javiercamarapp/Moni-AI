@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, TrendingUp, TrendingDown, Wallet, ChevronLeft, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import BottomNav from '@/components/BottomNav';
 import { Progress } from '@/components/ui/progress';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
@@ -248,7 +249,7 @@ const Balance = () => {
   }
 
   return (
-    <div className="min-h-screen animated-wave-bg">
+    <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
       <div className="p-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -600,6 +601,8 @@ const Balance = () => {
           </div>
         </Card>
       </div>
+      
+      <BottomNav />
     </div>
   );
 };

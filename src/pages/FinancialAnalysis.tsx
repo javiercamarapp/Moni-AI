@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { addDays, addWeeks, addMonths, addYears, isBefore, startOfDay } from "date-fns";
 import { TrendingUp, TrendingDown, DollarSign, PiggyBank, Home, Target, MessageSquare, User, RefreshCw, Droplets, AlertCircle, Zap, Activity, BarChart3, Shield, Trophy, Heart } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import BottomNav from '@/components/BottomNav';
 import SafeToSpendWidget from "@/components/analysis/SafeToSpendWidget";
 import TopActionsWidget from "@/components/analysis/TopActionsWidget";
 import ScoreBreakdownWidget from "@/components/analysis/ScoreBreakdownWidget";
@@ -252,7 +253,7 @@ export default function FinancialAnalysis() {
         </div>
       </div>;
   }
-  return <div className="min-h-screen animated-wave-bg p-3 pb-20">
+  return <div className="min-h-screen animated-wave-bg p-3 pb-24">
       <div className="max-w-5xl mx-auto space-y-3">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
@@ -761,5 +762,7 @@ export default function FinancialAnalysis() {
           </div>
         </div>
       </nav>
+      
+      <BottomNav />
     </div>;
 }
