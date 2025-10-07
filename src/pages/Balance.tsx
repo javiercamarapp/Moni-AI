@@ -261,13 +261,31 @@ const Balance = () => {
         endDate = new Date(currentMonth.getFullYear(), 11, 31);
       }
 
-      // Fetch all transactions in range (no limit for accurate calculations)
-      const { data: transactions } = await supabase
-        .from('transactions')
-        .select('*, categories(id, name, color, type)')
-        .eq('user_id', user.id)
-        .gte('transaction_date', startDate.toISOString().split('T')[0])
-        .lte('transaction_date', endDate.toISOString().split('T')[0]);
+      // Fetch ALL transactions using pagination (Supabase has 1000 record default limit)
+      let allTransactions: any[] = [];
+      let page = 0;
+      const pageSize = 1000;
+      let hasMore = true;
+
+      while (hasMore) {
+        const { data: pageData } = await supabase
+          .from('transactions')
+          .select('*, categories(id, name, color, type)')
+          .eq('user_id', user.id)
+          .gte('transaction_date', startDate.toISOString().split('T')[0])
+          .lte('transaction_date', endDate.toISOString().split('T')[0])
+          .range(page * pageSize, (page + 1) * pageSize - 1);
+
+        if (pageData && pageData.length > 0) {
+          allTransactions = [...allTransactions, ...pageData];
+          hasMore = pageData.length === pageSize;
+          page++;
+        } else {
+          hasMore = false;
+        }
+      }
+
+      const transactions = allTransactions;
 
       if (!transactions) return;
 

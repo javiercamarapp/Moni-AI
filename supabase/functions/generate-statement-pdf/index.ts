@@ -39,13 +39,37 @@ serve(async (req) => {
       endDate = new Date(year, 11, 31);
     }
 
-    const { data: transactions, error: transError } = await supabase
-      .from('transactions')
-      .select('*, categories(*)')
-      .eq('user_id', userId)
-      .gte('transaction_date', startDate.toISOString().split('T')[0])
-      .lte('transaction_date', endDate.toISOString().split('T')[0])
-      .order('transaction_date', { ascending: false });
+    // Fetch ALL transactions using pagination (Supabase has 1000 record default limit)
+    let allTransactions: any[] = [];
+    let page = 0;
+    const pageSize = 1000;
+    let hasMore = true;
+
+    while (hasMore) {
+      const { data: pageData, error: pageError } = await supabase
+        .from('transactions')
+        .select('*, categories(*)')
+        .eq('user_id', userId)
+        .gte('transaction_date', startDate.toISOString().split('T')[0])
+        .lte('transaction_date', endDate.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false })
+        .range(page * pageSize, (page + 1) * pageSize - 1);
+
+      if (pageError) {
+        throw new Error(`Error fetching transactions: ${pageError.message}`);
+      }
+
+      if (pageData && pageData.length > 0) {
+        allTransactions = [...allTransactions, ...pageData];
+        hasMore = pageData.length === pageSize;
+        page++;
+      } else {
+        hasMore = false;
+      }
+    }
+
+    const transactions = allTransactions;
+    const transError = null;
 
     if (transError) {
       throw new Error(`Error fetching transactions: ${transError.message}`);
