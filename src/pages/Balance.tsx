@@ -618,7 +618,7 @@ const Balance = () => {
                   <Pie
                     data={gastosByCategory}
                     cx="50%"
-                    cy="40%"
+                    cy="35%"
                     labelLine={false}
                     outerRadius={70}
                     fill="hsl(var(--destructive))"
@@ -641,8 +641,8 @@ const Balance = () => {
                   />
                   <Legend 
                     verticalAlign="bottom" 
-                    height={90}
-                    wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
+                    height={100}
+                    wrapperStyle={{ fontSize: '11px', paddingTop: '15px' }}
                     formatter={(value, entry: any) => (
                       <span className="text-foreground text-[10px] sm:text-xs block">
                         {value} ({entry.payload.percentage.toFixed(1)}%)
