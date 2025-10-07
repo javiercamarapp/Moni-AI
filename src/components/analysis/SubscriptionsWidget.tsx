@@ -22,7 +22,7 @@ export default function SubscriptionsWidget({ subscriptions, totalMonthly }: Sub
   const increasedSubs = subscriptions.filter(s => s.priceChange && s.priceChange > 0);
 
   return (
-    <Card className="p-4 bg-white/5 backdrop-blur border-white/20">
+    <Card className="p-4 bg-gradient-card card-glow border-white/20">
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div>

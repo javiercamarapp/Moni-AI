@@ -16,7 +16,7 @@ interface BudgetProgressProps {
 
 export default function BudgetProgressWidget({ categories }: BudgetProgressProps) {
   return (
-    <Card className="p-4 bg-white/5 backdrop-blur border-white/20">
+    <Card className="p-4 bg-gradient-card card-glow border-white/20">
       <div className="space-y-3">
         <div>
           <p className="text-xs font-medium text-white/80 mb-1">Presupuesto por Categoría</p>
