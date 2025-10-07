@@ -138,35 +138,32 @@ const Dashboard = () => {
     const calculateScoreMoni = () => {
       // Simple instant calculation based on available data
       let score = 40; // Base score
-      
+
       // Income factor (up to +20 points)
       if (monthlyIncome > 0) {
         score += 10;
         if (monthlyIncome > 50000) score += 10;
       }
-      
+
       // Balance factor (up to +20 points)
       const balance = monthlyIncome - monthlyExpenses;
       if (balance > 0) {
         score += 10;
-        const savingsRate = (balance / monthlyIncome) * 100;
+        const savingsRate = balance / monthlyIncome * 100;
         if (savingsRate > 20) score += 10;
       }
-      
+
       // Goals factor (up to +10 points)
       if (goals.length > 0) score += 5;
       if (goals.some(g => Number(g.current) > 0)) score += 5;
-      
+
       // Fixed expenses control (up to +10 points)
       if (monthlyIncome > 0) {
-        const fixedRatio = (fixedExpenses / monthlyIncome) * 100;
-        if (fixedRatio < 50) score += 10;
-        else if (fixedRatio < 70) score += 5;
+        const fixedRatio = fixedExpenses / monthlyIncome * 100;
+        if (fixedRatio < 50) score += 10;else if (fixedRatio < 70) score += 5;
       }
-      
       setScoreMoni(Math.min(100, Math.max(0, score)));
     };
-    
     calculateScoreMoni();
   }, [monthlyIncome, monthlyExpenses, fixedExpenses, goals]);
 
@@ -246,41 +243,35 @@ const Dashboard = () => {
 
   // Actualización en tiempo real de transacciones
   useEffect(() => {
-    const channel = supabase
-      .channel('schema-db-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*', // INSERT, UPDATE, DELETE
-          schema: 'public',
-          table: 'transactions'
-        },
-        () => {
-          // Recargar transacciones cuando haya cambios
-          const fetchRecentTransactions = async () => {
-            try {
-              const { data: { user } } = await supabase.auth.getUser();
-              if (!user) return;
-
-              const { data, error } = await supabase
-                .from('transactions')
-                .select('*, categories(name, color)')
-                .eq('user_id', user.id)
-                .order('transaction_date', { ascending: false })
-                .limit(5);
-
-              if (error) throw error;
-              setRecentTransactions(data || []);
-            } catch (error) {
-              console.error('Error fetching recent transactions:', error);
+    const channel = supabase.channel('schema-db-changes').on('postgres_changes', {
+      event: '*',
+      // INSERT, UPDATE, DELETE
+      schema: 'public',
+      table: 'transactions'
+    }, () => {
+      // Recargar transacciones cuando haya cambios
+      const fetchRecentTransactions = async () => {
+        try {
+          const {
+            data: {
+              user
             }
-          };
-          
-          fetchRecentTransactions();
+          } = await supabase.auth.getUser();
+          if (!user) return;
+          const {
+            data,
+            error
+          } = await supabase.from('transactions').select('*, categories(name, color)').eq('user_id', user.id).order('transaction_date', {
+            ascending: false
+          }).limit(5);
+          if (error) throw error;
+          setRecentTransactions(data || []);
+        } catch (error) {
+          console.error('Error fetching recent transactions:', error);
         }
-      )
-      .subscribe();
-
+      };
+      fetchRecentTransactions();
+    }).subscribe();
     return () => {
       supabase.removeChannel(channel);
     };
@@ -392,8 +383,8 @@ const Dashboard = () => {
         {/* Quick Stats - 4 botones horizontales en una línea */}
         <div className="grid grid-cols-4 gap-2 sm:gap-3">
           <Card className="p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
-            animationDelay: '100ms'
-          }}>
+          animationDelay: '100ms'
+        }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
                 <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
@@ -408,8 +399,8 @@ const Dashboard = () => {
           </Card>
 
           <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
-            animationDelay: '200ms'
-          }}>
+          animationDelay: '200ms'
+        }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-success/30 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
                 <TrendingUp className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-success-foreground" />
@@ -424,8 +415,8 @@ const Dashboard = () => {
           </Card>
 
           <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
-            animationDelay: '300ms'
-          }}>
+          animationDelay: '300ms'
+        }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-warning/30 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
                 <Target className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-warning-foreground" />
@@ -438,8 +429,8 @@ const Dashboard = () => {
           </Card>
 
           <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
-            animationDelay: '400ms'
-          }}>
+          animationDelay: '400ms'
+        }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
                 <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
@@ -459,9 +450,9 @@ const Dashboard = () => {
 
         {/* Banner Publicitario - Carrusel */}
         <Carousel className="w-full" setApi={setApi} opts={{
-          loop: true,
-          align: "center"
-        }}>
+        loop: true,
+        align: "center"
+      }}>
           <CarouselContent className="-ml-2 md:-ml-4">
             <CarouselItem className="pl-2 md:pl-4 basis-[85%] md:basis-[80%]">
               <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
@@ -536,8 +527,8 @@ const Dashboard = () => {
 
         {/* WhatsApp Banner */}
         <Card className="p-3 sm:p-4 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
-          animationDelay: '500ms'
-        }}>
+        animationDelay: '500ms'
+      }}>
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
               <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
@@ -576,8 +567,8 @@ const Dashboard = () => {
                       Crear tu primera meta
                     </Button>
                   </Card> : goals.map(goal => {
-                  const goalProgress = goal.current / goal.target * 100;
-                  return <Card key={goal.id} className="p-4 sm:p-6 bg-gradient-card card-glow hover-lift">
+                const goalProgress = goal.current / goal.target * 100;
+                return <Card key={goal.id} className="p-4 sm:p-6 bg-gradient-card card-glow hover-lift">
                         <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-4">
                           <div className="flex-1">
                             <div className="flex items-center flex-wrap space-x-2 mb-2 gap-1">
@@ -607,7 +598,7 @@ const Dashboard = () => {
                           </span>
                         </div>
                       </Card>;
-                })}
+              })}
               </div>
             </div>
           </div>
@@ -684,16 +675,9 @@ const Dashboard = () => {
                 </Button>
               </div>
               <div className="space-y-2 max-h-64 overflow-y-auto">
-                {recentTransactions.length === 0 ? (
-                  <p className="text-white/70 text-sm text-center py-4">
+                {recentTransactions.length === 0 ? <p className="text-white/70 text-sm text-center py-4">
                     No hay transacciones registradas aún
-                  </p>
-                ) : (
-                  recentTransactions.map((transaction) => (
-                    <div 
-                      key={transaction.id}
-                      className="p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
-                    >
+                  </p> : recentTransactions.map(transaction => <div key={transaction.id} className="p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
@@ -706,55 +690,25 @@ const Dashboard = () => {
                           </div>
                           <div className="flex items-center gap-2 text-[10px] text-white/60">
                             <span>{new Date(transaction.transaction_date).toLocaleDateString('es-MX')}</span>
-                            {transaction.categories?.name && (
-                              <>
+                            {transaction.categories?.name && <>
                                 <span>•</span>
                                 <span>{transaction.categories.name}</span>
-                              </>
-                            )}
+                              </>}
                           </div>
                         </div>
                         <p className={`text-sm font-bold ${transaction.type === 'ingreso' ? 'text-green-500' : 'text-red-500'}`}>
-                          {transaction.type === 'ingreso' ? '+' : '-'}${Number(transaction.amount).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          {transaction.type === 'ingreso' ? '+' : '-'}${Number(transaction.amount).toLocaleString('es-MX', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    })}
                         </p>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </Card>
-
-            {/* Achievements */}
-            <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
-              <div className="flex justify-between items-center mb-4">
-                <h4 className="text-sm sm:text-base font-semibold text-white flex items-center">
-                  <Trophy className="w-4 h-4 mr-2 text-white" />
-                  Logros Recientes
-                </h4>
-                <Button variant="ghost" size="sm" className="text-xs text-white hover:bg-white/10 hover:scale-105 transition-transform duration-200">
-                  Ver todos
-                </Button>
-              </div>
-              <div className="space-y-3">
-                {achievements.length === 0 ? <p className="text-white/70 text-sm text-center py-4">
-                    No hay logros aún. ¡Empieza a usar la app para desbloquearlos!
-                  </p> : achievements.map(achievement => <div key={achievement.id} className={`p-3 rounded-lg border ${achievement.earned ? 'border-white/30 bg-white/10' : 'border-white/20 bg-white/5'}`}>
-                      <div className="flex items-start space-x-2">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${achievement.earned ? 'bg-white text-black' : 'bg-gray-600'}`}>
-                          {achievement.earned ? <Zap className="w-3 h-3" /> : <Target className="w-3 h-3" />}
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-white">
-                            {achievement.title}
-                          </p>
-                          <p className="text-xs text-white">
-                            {achievement.description}
-                          </p>
-                        </div>
                       </div>
                     </div>)}
               </div>
             </Card>
+
+            {/* Achievements */}
+            
           </div>
         </div>
 
