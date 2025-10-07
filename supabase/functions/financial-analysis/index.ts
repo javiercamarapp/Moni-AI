@@ -12,13 +12,128 @@ serve(async (req) => {
   }
 
   try {
-    const { userId, period = 'month' } = await req.json();
+    const { userId, period = 'month', type } = await req.json();
     
-    console.log('Generating financial analysis for user:', userId);
+    console.log('Request type:', type, 'for user:', userId);
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Handle suggestions request
+    if (type === 'suggestions') {
+      const { data: transactions } = await supabase
+        .from('transactions')
+        .select('*, categories(name, type)')
+        .eq('user_id', userId)
+        .order('transaction_date', { ascending: false })
+        .limit(50);
+
+      const { data: goals } = await supabase
+        .from('goals')
+        .select('*')
+        .eq('user_id', userId);
+
+      const totalIncome = transactions
+        ?.filter(t => t.type === 'income' || t.type === 'ingreso')
+        .reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+      
+      const totalExpenses = transactions
+        ?.filter(t => t.type === 'expense' || t.type === 'gasto')
+        .reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+
+      const balance = totalIncome - totalExpenses;
+      const savingsRate = totalIncome > 0 ? ((balance / totalIncome) * 100) : 0;
+
+      // Categorías principales
+      const expensesByCategory: Record<string, number> = {};
+      transactions?.filter(t => t.type === 'expense' || t.type === 'gasto').forEach(t => {
+        const category = t.categories?.name || 'Sin categoría';
+        expensesByCategory[category] = (expensesByCategory[category] || 0) + Number(t.amount);
+      });
+
+      const topCategory = Object.entries(expensesByCategory)
+        .sort((a, b) => b[1] - a[1])[0];
+
+      const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+      if (!LOVABLE_API_KEY) {
+        throw new Error('LOVABLE_API_KEY not configured');
+      }
+
+      const suggestionsPrompt = `Basándote en estos datos financieros del usuario, genera 4 sugerencias personalizadas para preguntas de chat:
+
+DATOS DEL USUARIO:
+- Balance: $${balance.toLocaleString()}
+- Tasa de ahorro: ${savingsRate.toFixed(1)}%
+- Categoría con más gasto: ${topCategory ? topCategory[0] : 'N/A'} ($${topCategory ? topCategory[1].toLocaleString() : '0'})
+- Número de metas: ${goals?.length || 0}
+- Transacciones recientes: ${transactions?.length || 0}
+
+Genera sugerencias relevantes y personalizadas como:
+- Si tiene baja tasa de ahorro: "Cómo ahorrar más dinero"
+- Si gasta mucho en una categoría: "Analizar gastos en [categoría]"
+- Si tiene metas: "Revisar progreso de mis metas"
+- Si tiene balance negativo: "Plan para mejorar mis finanzas"
+
+IMPORTANTE: Responde SOLO con un JSON array. Cada sugerencia debe tener:
+- title: pregunta corta y directa (máximo 35 caracteres)
+- subtitle: descripción breve (máximo 25 caracteres)
+
+Ejemplo formato:
+[
+  {"title": "Analizar gastos en comida", "subtitle": "optimiza tu presupuesto"},
+  {"title": "Crear meta de ahorro", "subtitle": "para tu objetivo"}
+]`;
+
+      const suggestionsResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-flash',
+          messages: [
+            {
+              role: 'system',
+              content: 'Eres un asistente financiero que genera sugerencias personalizadas. Responde SOLO con JSON válido.'
+            },
+            {
+              role: 'user',
+              content: suggestionsPrompt
+            }
+          ]
+        })
+      });
+
+      if (suggestionsResponse.ok) {
+        try {
+          const suggestionsData = await suggestionsResponse.json();
+          const suggestionsContent = suggestionsData.choices[0].message.content;
+          const jsonMatch = suggestionsContent.match(/\[[\s\S]*\]/);
+          if (jsonMatch) {
+            const suggestions = JSON.parse(jsonMatch[0]);
+            return new Response(JSON.stringify({ suggestions }), {
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+          }
+        } catch (e) {
+          console.error('Error parsing suggestions:', e);
+        }
+      }
+
+      // Fallback suggestions
+      return new Response(JSON.stringify({
+        suggestions: [
+          { title: "Analizar mis gastos", subtitle: "del mes actual" },
+          { title: "Ver mi progreso", subtitle: "de ahorro" },
+          { title: "Crear una meta", subtitle: "de ahorro" },
+          { title: "Revisar presupuesto", subtitle: "mensual" }
+        ]
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     // Calcular fechas según el período
     const now = new Date();

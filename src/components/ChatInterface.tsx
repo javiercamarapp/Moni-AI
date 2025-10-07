@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from "@/hooks/use-toast";
 import { Send, Plus, Menu, Mic, ChevronRight } from 'lucide-react';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
 import moniLogo from '@/assets/moni-ai-logo.png';
 
 const ChatInterface = () => {
@@ -18,7 +20,15 @@ const ChatInterface = () => {
     content: string;
   }>>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [suggestionCards, setSuggestionCards] = useState<Array<{
+    title: string;
+    subtitle: string;
+  }>>([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const autoplayPlugin = useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: true })
+  );
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -46,6 +56,48 @@ const ChatInterface = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  useEffect(() => {
+    if (user && messages.length === 0) {
+      loadPersonalizedSuggestions();
+    }
+  }, [user, messages.length]);
+
+  const loadPersonalizedSuggestions = async () => {
+    setIsLoadingSuggestions(true);
+    try {
+      const { data: functionData, error: functionError } = await supabase.functions.invoke('financial-analysis', {
+        body: { 
+          type: 'suggestions',
+          userId: user?.id 
+        }
+      });
+
+      if (functionError) throw functionError;
+
+      if (functionData?.suggestions) {
+        setSuggestionCards(functionData.suggestions);
+      } else {
+        // Fallback suggestions
+        setSuggestionCards([
+          { title: "Analizar mis gastos", subtitle: "del mes actual" },
+          { title: "Ver mi progreso", subtitle: "de ahorro" },
+          { title: "Crear una meta", subtitle: "de ahorro" },
+          { title: "Revisar mi presupuesto", subtitle: "mensual" }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error loading suggestions:', error);
+      setSuggestionCards([
+        { title: "Analizar mis gastos", subtitle: "del mes actual" },
+        { title: "Ver mi progreso", subtitle: "de ahorro" },
+        { title: "Crear una meta", subtitle: "de ahorro" },
+        { title: "Revisar mi presupuesto", subtitle: "mensual" }
+      ]);
+    } finally {
+      setIsLoadingSuggestions(false);
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
@@ -170,16 +222,10 @@ const ChatInterface = () => {
     }
   };
 
-  const suggestionCards = [
-    {
-      title: "Analizar gastos",
-      subtitle: "del mes actual"
-    },
-    {
-      title: "Crear meta de ahorro",
-      subtitle: "para tu objetivo"
-    }
-  ];
+  const handleSuggestionClick = (title: string) => {
+    setMessage(title);
+    setTimeout(() => handleSendMessage(), 100);
+  };
 
   return (
     <div className="flex flex-col h-screen bg-black text-white">
@@ -204,26 +250,11 @@ const ChatInterface = () => {
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto px-4">
         {messages.length === 0 ? (
-          <div className="h-full flex items-end pb-6">
-            <div className="w-full space-y-3">
-              {suggestionCards.map((card, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setMessage(card.title);
-                    setTimeout(() => handleSendMessage(), 100);
-                  }}
-                  className="w-full bg-gray-900/50 backdrop-blur-sm rounded-2xl p-4 text-left hover:bg-gray-900/70 transition-all"
-                >
-                  <h3 className="text-white font-medium text-base mb-1">
-                    {card.title}
-                  </h3>
-                  <p className="text-gray-400 text-sm">
-                    {card.subtitle}
-                  </p>
-                </button>
-              ))}
+          <div className="h-full flex flex-col items-center justify-center pb-32">
+            <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-8">
+              <img src={moniLogo} alt="MONI AI+" className="w-12 h-12" />
             </div>
+            <h1 className="text-4xl font-semibold text-white mb-2">¿En qué puedo ayudarte hoy?</h1>
           </div>
         ) : (
           <div className="py-6 space-y-6">
@@ -276,33 +307,44 @@ const ChatInterface = () => {
 
       {/* Input Area */}
       <div className="px-4 pb-8 pt-4">
-        {messages.length === 0 && (
-          <div className="flex gap-2 mb-3 overflow-x-auto pb-2">
-            {suggestionCards.map((card, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  setMessage(card.title);
-                  setTimeout(() => handleSendMessage(), 100);
-                }}
-                className="flex-shrink-0 bg-gray-900/50 backdrop-blur-sm rounded-2xl px-4 py-3 text-left hover:bg-gray-900/70 transition-all min-w-[280px]"
-              >
-                <h3 className="text-white font-medium text-sm mb-0.5">
-                  {card.title}
-                </h3>
-                <p className="text-gray-400 text-xs">
-                  {card.subtitle}
-                </p>
-              </button>
-            ))}
+        {messages.length === 0 && suggestionCards.length > 0 && (
+          <div className="mb-4 relative">
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              plugins={[autoplayPlugin.current]}
+              className="w-full max-w-full"
+              onMouseEnter={() => autoplayPlugin.current.stop()}
+              onMouseLeave={() => autoplayPlugin.current.play()}
+            >
+              <CarouselContent className="-ml-2">
+                {suggestionCards.map((card, index) => (
+                  <CarouselItem key={index} className="pl-2 basis-[85%] sm:basis-[45%]">
+                    <button
+                      onClick={() => handleSuggestionClick(card.title)}
+                      className="w-full bg-[#2f2f2f] hover:bg-[#3f3f3f] rounded-2xl p-4 text-left transition-all border border-[#565869]/30"
+                    >
+                      <h3 className="text-white font-medium text-sm mb-1">
+                        {card.title}
+                      </h3>
+                      <p className="text-gray-400 text-xs">
+                        {card.subtitle}
+                      </p>
+                    </button>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
           </div>
         )}
 
-        <div className="flex items-center gap-2 bg-gray-900/80 rounded-full px-2 py-2">
+        <div className="flex items-center gap-2 bg-[#2f2f2f] rounded-[26px] px-4 py-3 shadow-lg">
           <Button
             variant="ghost"
             size="icon"
-            className="text-gray-400 hover:text-white hover:bg-transparent flex-shrink-0"
+            className="text-gray-400 hover:text-white hover:bg-transparent flex-shrink-0 h-6 w-6 p-0"
           >
             <Plus className="w-5 h-5" />
           </Button>
@@ -311,8 +353,8 @@ const ChatInterface = () => {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Pregunta lo que quieras"
-            className="flex-1 bg-transparent border-0 text-white placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 px-2"
+            placeholder="Enviar mensaje a MONI AI+"
+            className="flex-1 bg-transparent border-0 text-white placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 h-6"
           />
 
           {message.trim() ? (
@@ -320,7 +362,7 @@ const ChatInterface = () => {
               onClick={handleSendMessage}
               disabled={isTyping}
               size="icon"
-              className="bg-white text-black hover:bg-gray-200 rounded-full flex-shrink-0 w-9 h-9"
+              className="bg-white text-black hover:bg-gray-200 rounded-full flex-shrink-0 w-8 h-8 p-0"
             >
               <Send className="w-4 h-4" />
             </Button>
@@ -328,12 +370,16 @@ const ChatInterface = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="text-gray-400 hover:text-white hover:bg-transparent flex-shrink-0"
+              className="text-gray-400 hover:text-white hover:bg-transparent flex-shrink-0 h-6 w-6 p-0"
             >
               <Mic className="w-5 h-5" />
             </Button>
           )}
         </div>
+        
+        <p className="text-center text-xs text-gray-500 mt-3">
+          MONI AI+ puede cometer errores. Verifica la información importante.
+        </p>
       </div>
     </div>
   );
