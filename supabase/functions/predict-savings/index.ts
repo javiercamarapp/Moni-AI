@@ -17,7 +17,7 @@ serve(async (req) => {
   }
 
   try {
-    const { userId, transactions, totalIngresos, totalGastos, balance, viewMode } = await req.json();
+    const { userId, transactions, totalIngresos, totalGastos, balance, viewMode, periodLabel } = await req.json();
     
     // Input validation
     if (!userId || typeof userId !== 'string' || !isValidUUID(userId)) {
@@ -55,21 +55,32 @@ serve(async (req) => {
       category: t.categories?.name
     })) || [];
 
-    const prompt = `Analiza los siguientes datos financieros y genera un análisis detallado con métricas y recomendaciones:
+    const periodoAnalisis = viewMode === 'mensual' 
+      ? `mes específico (${periodLabel || 'mes actual'})`
+      : `año específico (${periodLabel || 'año actual'})`;
 
-Datos actuales (${viewMode}):
+    const prompt = `Analiza los siguientes datos financieros de UN ${viewMode === 'mensual' ? 'MES' : 'AÑO'} ESPECÍFICO y genera un análisis detallado:
+
+PERÍODO DE ANÁLISIS: ${periodoAnalisis}
+IMPORTANTE: Todos los análisis, proyecciones e insights deben estar basados ÚNICAMENTE en este período específico.
+
+Datos del período (${viewMode}):
 - Ingresos totales: $${totalIngresos}
 - Gastos totales: $${totalGastos}
 - Balance: $${balance}
 
-Historial reciente de transacciones:
+Transacciones del período:
 ${JSON.stringify(transactionSummary, null, 2)}
 
-Genera un análisis completo con:
-1. Proyecciones de ahorro (anual y semestral)
-2. Métricas clave (tasa de ahorro, tendencia, categorías más gastadas)
-3. Análisis de patrones de consumo
-4. Recomendaciones específicas y accionables
+${viewMode === 'mensual' 
+  ? `Genera proyecciones basadas en este MES:
+- Proyección Anual: Multiplica las métricas del mes por 12
+- Proyección Semestral: Multiplica las métricas del mes por 6
+- Insights: Deben hablar del comportamiento EN ESTE MES específico`
+  : `Genera proyecciones basadas en este AÑO:
+- Proyección Anual: Usa los datos del año completo
+- Proyección Semestral: Divide los datos del año entre 2
+- Insights: Deben hablar del comportamiento EN ESTE AÑO específico`}
 
 Devuelve SOLO un JSON con este formato exacto:
 {
@@ -78,27 +89,20 @@ Devuelve SOLO un JSON con este formato exacto:
   "confianza": "alta",
   "insights": [
     {
-      "titulo": "Proyección de Ahorro",
-      "metrica": "35%",
-      "descripcion": "Descripción detallada",
+      "titulo": "Título del insight",
+      "metrica": "Métrica relevante",
+      "descripcion": "Descripción que mencione explícitamente el período analizado (${periodLabel})",
       "tipo": "positivo"
-    },
-    {
-      "titulo": "Análisis de Gastos",
-      "metrica": "$15,000",
-      "descripcion": "Análisis de patrones",
-      "tipo": "neutral"
-    },
-    {
-      "titulo": "Recomendación Principal",
-      "metrica": "3 acciones",
-      "descripcion": "Recomendaciones específicas",
-      "tipo": "consejo"
     }
   ]
 }
 
-IMPORTANTE: Genera entre 3-5 insights. Tipos válidos: "positivo", "negativo", "neutral", "consejo"`;
+CRÍTICO: 
+- Los insights DEBEN mencionar el período específico analizado
+- ${viewMode === 'mensual' ? 'Habla de "este mes" o "en este mes"' : 'Habla de "este año" o "en este año"'}
+- NO generalices, sé específico sobre el período
+- Genera entre 3-5 insights
+- Tipos válidos: "positivo", "negativo", "neutral", "consejo"`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -115,7 +119,6 @@ IMPORTANTE: Genera entre 3-5 insights. Tipos válidos: "positivo", "negativo", "
           },
           { role: "user", content: prompt }
         ],
-        temperature: 0.7,
       }),
     });
 

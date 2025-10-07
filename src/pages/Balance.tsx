@@ -185,6 +185,8 @@ const Balance = () => {
         .lte('transaction_date', endDate.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
 
+      const periodLabel = getPeriodLabel();
+
       const { data, error } = await supabase.functions.invoke('predict-savings', {
         body: {
           userId: user.id,
@@ -192,7 +194,8 @@ const Balance = () => {
           totalIngresos,
           totalGastos,
           balance,
-          viewMode
+          viewMode,
+          periodLabel
         }
       });
 
