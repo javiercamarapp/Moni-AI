@@ -301,15 +301,33 @@ const Dashboard = () => {
             console.log('🤖 Resultado de IA:', aiResult);
             console.log('❌ Error de IA:', aiError);
 
-            const detectedSubs = (aiResult?.subscriptions || []).map((sub: any, index: number) => ({
+            // Agrupar por nombre de concepto para mostrar solo UNO por tipo
+            const uniqueSubs = new Map();
+            (aiResult?.subscriptions || []).forEach((sub: any) => {
+              const normalizedName = sub.description.toLowerCase()
+                .replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '')
+                .replace(/\s*\d{4}$/g, '')
+                .trim();
+              
+              if (!uniqueSubs.has(normalizedName)) {
+                uniqueSubs.set(normalizedName, {
+                  name: sub.description.replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '').trim(),
+                  amount: Number(sub.amount),
+                  icon: getSubscriptionIcon(sub.description),
+                  frequency: sub.frequency || 'mensual',
+                });
+              }
+            });
+
+            const detectedSubs = Array.from(uniqueSubs.values()).map((sub: any, index: number) => ({
               id: `ai-sub-${index}`,
-              name: sub.description,
-              amount: Number(sub.amount),
-              icon: getSubscriptionIcon(sub.description),
-              dueDate: calculateNextDueDate(sub.frequency || 'mensual'),
+              name: sub.name,
+              amount: sub.amount,
+              icon: sub.icon,
+              dueDate: calculateNextDueDate(sub.frequency),
             }));
 
-            console.log('✅ Suscripciones detectadas:', detectedSubs.length);
+            console.log('✅ Suscripciones únicas detectadas:', detectedSubs.length);
             setUpcomingSubscriptions(detectedSubs);
           } catch (aiError) {
             console.error('Error calling AI:', aiError);
@@ -819,7 +837,7 @@ const Dashboard = () => {
             
             <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
               <div className="flex items-center justify-between flex-shrink-0">
-                <h3 className="text-xs font-bold text-white drop-shadow-lg">📅 Suscripciones</h3>
+                <h3 className="text-xs font-bold text-white drop-shadow-lg">📅 Pagos Recurrentes</h3>
                 <span className="text-[10px] text-white/70 font-semibold">{upcomingSubscriptions.length}</span>
               </div>
 

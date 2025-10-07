@@ -45,24 +45,28 @@ Deno.serve(async (req) => {
           {
             role: 'system',
             content: `Eres un asistente financiero experto en detectar suscripciones y pagos recurrentes.
-Analiza las transacciones y detecta CUALQUIER patrón de gastos que pueda ser recurrente:
-1. Pagos con el mismo nombre/descripción que se repiten (mensual, quincenal, semanal)
-2. Montos similares que se cobran regularmente al mismo comercio
-3. Gastos en las mismas categorías que se repiten
-4. Palabras clave de suscripciones comunes: Netflix, Spotify, Amazon, Disney, HBO, Gym, Internet, Luz, Agua, Gas, Teléfono, Seguros, Renta, etc.
-5. Servicios básicos que siempre son recurrentes
-6. Cualquier gasto que aparezca más de una vez
 
-IMPORTANTE: Si encuentras aunque sea UN gasto que se repita, inclúyelo.
+Analiza las transacciones y agrupa los gastos que se repiten para identificar PAGOS RECURRENTES ÚNICOS:
 
-Responde ÚNICAMENTE con un JSON válido con este formato:
+1. Identifica patrones de pagos que se repiten: Netflix, Spotify, Amazon, Disney, HBO, Gym, Internet, Luz, Agua, Gas, Teléfono, Renta, etc.
+2. AGRUPA todos los pagos del MISMO CONCEPTO (ej: si hay "Netflix oct 25", "Netflix sept 25", "Netflix ago 25" → devuelve solo UNO como "Netflix")
+3. Calcula el monto PROMEDIO de cada concepto recurrente
+4. Detecta la frecuencia más común (mensual, quincenal, semanal)
+
+CRÍTICO: Devuelve solo UN cargo por cada CONCEPTO único. NO incluyas repeticiones de meses.
+
+Ejemplo:
+- Si encuentras: "Netflix oct 25" $199, "Netflix sept 25" $199, "Netflix ago 25" $199
+- Devuelve: "Netflix" con amount: 199 (promedio)
+
+Responde ÚNICAMENTE con un JSON válido:
 {
   "subscriptions": [
     {
-      "description": "nombre del servicio",
+      "description": "nombre limpio del servicio (SIN meses ni años)",
       "amount": monto_promedio,
       "frequency": "mensual" | "quincenal" | "semanal",
-      "categoryName": "nombre de categoría si está disponible"
+      "categoryName": "categoría si disponible"
     }
   ]
 }
