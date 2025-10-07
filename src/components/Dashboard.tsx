@@ -277,30 +277,36 @@ const Dashboard = () => {
         
         setHasBankConnections((bankData?.length || 0) > 0);
 
-        // Fetch recurring transactions (subscriptions)
-        const nextMonthStart = new Date();
-        nextMonthStart.setMonth(nextMonthStart.getMonth() + 1, 1);
-        const nextMonthEnd = new Date(nextMonthStart);
-        nextMonthEnd.setMonth(nextMonthEnd.getMonth() + 1, 0);
+        // Fetch all expense transactions from last 6 months for AI analysis
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-        const { data: subscriptions } = await supabase
+        const { data: allExpenses } = await supabase
           .from('transactions')
           .select('*, categories(name)')
           .eq('user_id', user.id)
           .eq('type', 'gasto')
-          .in('frequency', ['mensual', 'quincenal', 'semanal'])
-          .order('amount', { ascending: false })
-          .limit(10);
+          .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
+          .order('transaction_date', { ascending: false });
 
-        const subs = (subscriptions || []).map((sub, index) => ({
-          id: sub.id,
-          name: sub.description,
-          amount: Number(sub.amount),
-          icon: getSubscriptionIcon(sub.description),
-          dueDate: calculateNextDueDate(sub.frequency),
-        }));
+        if (allExpenses && allExpenses.length > 0) {
+          // Use AI to detect subscriptions
+          const { data: aiResult } = await supabase.functions.invoke('detect-subscriptions', {
+            body: { transactions: allExpenses }
+          });
 
-        setUpcomingSubscriptions(subs);
+          const detectedSubs = (aiResult?.subscriptions || []).map((sub: any, index: number) => ({
+            id: `ai-sub-${index}`,
+            name: sub.description,
+            amount: Number(sub.amount),
+            icon: getSubscriptionIcon(sub.description),
+            dueDate: calculateNextDueDate(sub.frequency || 'mensual'),
+          }));
+
+          setUpcomingSubscriptions(detectedSubs);
+        } else {
+          setUpcomingSubscriptions([]);
+        }
 
         // Mock credit card debts (esto se obtendría de la conexión bancaria real)
         if (bankData && bankData.length > 0) {
