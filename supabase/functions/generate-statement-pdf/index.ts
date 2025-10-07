@@ -45,8 +45,7 @@ serve(async (req) => {
       .eq('user_id', userId)
       .gte('transaction_date', startDate.toISOString().split('T')[0])
       .lte('transaction_date', endDate.toISOString().split('T')[0])
-      .order('transaction_date', { ascending: false })
-      .limit(10000);
+      .order('transaction_date', { ascending: false });
 
     if (transError) {
       throw new Error(`Error fetching transactions: ${transError.message}`);

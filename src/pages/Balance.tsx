@@ -261,14 +261,13 @@ const Balance = () => {
         endDate = new Date(currentMonth.getFullYear(), 11, 31);
       }
 
-      // Fetch all transactions in range
+      // Fetch all transactions in range (no limit for accurate calculations)
       const { data: transactions } = await supabase
         .from('transactions')
         .select('*, categories(id, name, color, type)')
         .eq('user_id', user.id)
         .gte('transaction_date', startDate.toISOString().split('T')[0])
-        .lte('transaction_date', endDate.toISOString().split('T')[0])
-        .limit(10000);
+        .lte('transaction_date', endDate.toISOString().split('T')[0]);
 
       if (!transactions) return;
 
