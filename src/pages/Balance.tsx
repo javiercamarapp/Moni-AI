@@ -559,13 +559,13 @@ const Balance = () => {
           {ingresosByCategory.length === 0 ? (
             <p className="text-muted-foreground text-center py-4">No hay ingresos registrados</p>
           ) : (
-            <div className="w-full h-[320px]">
+            <div className="w-full h-[360px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={ingresosByCategory}
                     cx="50%"
-                    cy="45%"
+                    cy="40%"
                     labelLine={false}
                     outerRadius={70}
                     fill="hsl(var(--primary))"
@@ -588,8 +588,8 @@ const Balance = () => {
                   />
                   <Legend 
                     verticalAlign="bottom" 
-                    height={70}
-                    wrapperStyle={{ fontSize: '11px' }}
+                    height={90}
+                    wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
                     formatter={(value, entry: any) => (
                       <span className="text-foreground text-[10px] sm:text-xs block">
                         {value} ({entry.payload.percentage.toFixed(1)}%)
@@ -612,13 +612,13 @@ const Balance = () => {
           {gastosByCategory.length === 0 ? (
             <p className="text-muted-foreground text-center py-4">No hay gastos registrados</p>
           ) : (
-            <div className="w-full h-[320px]">
+            <div className="w-full h-[360px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={gastosByCategory}
                     cx="50%"
-                    cy="45%"
+                    cy="40%"
                     labelLine={false}
                     outerRadius={70}
                     fill="hsl(var(--destructive))"
@@ -641,8 +641,8 @@ const Balance = () => {
                   />
                   <Legend 
                     verticalAlign="bottom" 
-                    height={70}
-                    wrapperStyle={{ fontSize: '11px' }}
+                    height={90}
+                    wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
                     formatter={(value, entry: any) => (
                       <span className="text-foreground text-[10px] sm:text-xs block">
                         {value} ({entry.payload.percentage.toFixed(1)}%)
