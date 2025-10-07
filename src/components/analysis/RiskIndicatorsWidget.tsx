@@ -1,5 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { AlertCircle, AlertTriangle, CheckCircle, Sparkles } from "lucide-react";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 
 interface RiskIndicator {
   level: "critical" | "warning" | "good";
@@ -46,7 +48,7 @@ export default function RiskIndicatorsWidget({ indicators, hasIssues }: RiskIndi
       </div>
       
       {!hasIssues ? (
-        <Card className="p-4 bg-gradient-to-br from-emerald-600/90 to-emerald-800/90 card-glow border-emerald-500/30 hover:scale-105 transition-transform duration-200">
+        <Card className="p-4 bg-gradient-to-br from-emerald-600/90 to-emerald-800/90 card-glow border-emerald-500/30 animate-fade-in">
           <div className="flex items-start gap-3">
             <CheckCircle className="h-5 w-5 text-emerald-200 flex-shrink-0 mt-0.5" />
             <div>
@@ -61,21 +63,44 @@ export default function RiskIndicatorsWidget({ indicators, hasIssues }: RiskIndi
           </div>
         </Card>
       ) : (
-        <div className="space-y-2">
-          {indicators.map((indicator, index) => (
-            <Card 
-              key={index}
-              className={`p-3 card-glow hover:scale-105 transition-transform duration-200 ${getIndicatorStyle(indicator.level)}`}
-            >
-              <div className="flex items-center gap-2">
-                {getIcon(indicator.level)}
-                <p className="text-xs text-white leading-snug flex-1">
-                  {indicator.message}
-                </p>
-              </div>
-            </Card>
-          ))}
-        </div>
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          plugins={[
+            Autoplay({
+              delay: 3000,
+            }),
+          ]}
+          className="w-full"
+        >
+          <CarouselContent>
+            {indicators.map((indicator, index) => (
+              <CarouselItem key={index} className="basis-full">
+                <Card 
+                  className={`p-4 card-glow transition-all duration-500 ${getIndicatorStyle(indicator.level)}`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 mt-0.5">
+                      {getIcon(indicator.level)}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-white mb-1">
+                        {indicator.level === "critical" && "🚨 Alerta Crítica"}
+                        {indicator.level === "warning" && "⚠️ Advertencia"}
+                        {indicator.level === "good" && "✅ Métrica Positiva"}
+                      </p>
+                      <p className="text-xs text-white/90 leading-relaxed">
+                        {indicator.message}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
       )}
     </div>
   );
