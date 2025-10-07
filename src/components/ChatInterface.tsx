@@ -27,8 +27,10 @@ const ChatInterface = () => {
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isVoiceActive, setIsVoiceActive] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const autoplayPlugin = useRef(
     Autoplay({ delay: 3000, stopOnInteraction: true })
@@ -208,6 +210,11 @@ const ChatInterface = () => {
       }
 
       setIsTyping(false);
+
+      // Si el modo de voz está activo, convertir la respuesta a audio
+      if (isVoiceActive && assistantMessage) {
+        await speakText(assistantMessage);
+      }
     } catch (error) {
       console.error('Error sending message:', error);
       toast({
@@ -303,6 +310,61 @@ const ChatInterface = () => {
     setIsVoiceActive(!isVoiceActive);
     if (isVoiceActive) {
       stopVoiceRecording();
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      setIsSpeaking(false);
+    } else {
+      toast({
+        title: "Modo de voz activado",
+        description: "Tus respuestas serán leídas en voz alta",
+      });
+    }
+  };
+
+  const speakText = async (text: string) => {
+    try {
+      setIsSpeaking(true);
+
+      const { data, error } = await supabase.functions.invoke('text-to-speech', {
+        body: { text, voice: 'nova' }
+      });
+
+      if (error) throw error;
+
+      if (data?.audioContent) {
+        const audioBlob = new Blob(
+          [Uint8Array.from(atob(data.audioContent), c => c.charCodeAt(0))],
+          { type: 'audio/mpeg' }
+        );
+        const audioUrl = URL.createObjectURL(audioBlob);
+        
+        const audio = new Audio(audioUrl);
+        audioRef.current = audio;
+        
+        audio.onended = () => {
+          setIsSpeaking(false);
+          URL.revokeObjectURL(audioUrl);
+          audioRef.current = null;
+        };
+
+        audio.onerror = () => {
+          setIsSpeaking(false);
+          URL.revokeObjectURL(audioUrl);
+          audioRef.current = null;
+        };
+
+        await audio.play();
+      }
+    } catch (error) {
+      console.error('Error speaking text:', error);
+      setIsSpeaking(false);
+      toast({
+        title: "Error",
+        description: "No se pudo reproducir el audio",
+        variant: "destructive"
+      });
     }
   };
 
@@ -447,9 +509,14 @@ const ChatInterface = () => {
             variant="ghost"
             size="icon"
             onClick={toggleVoiceMode}
-            className={`flex-shrink-0 h-7 w-7 p-0 rounded-full ${isVoiceActive ? 'bg-white text-black' : 'text-gray-400 hover:text-white'} hover:bg-white/90`}
+            disabled={isSpeaking}
+            className={`flex-shrink-0 h-7 w-7 p-0 rounded-full transition-all ${
+              isVoiceActive 
+                ? 'bg-white text-black hover:bg-white/90' 
+                : 'text-gray-400 hover:text-white hover:bg-transparent'
+            } ${isSpeaking ? 'animate-pulse' : ''}`}
           >
-            <Circle className="w-5 h-5 fill-current" />
+            <Circle className={`w-5 h-5 ${isVoiceActive ? 'fill-current' : ''}`} />
           </Button>
         </div>
         
