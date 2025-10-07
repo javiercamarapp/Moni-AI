@@ -5,7 +5,13 @@ const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    // Para dashboard, también considerar la ruta raíz
+    if (path === '/dashboard' && (location.pathname === '/' || location.pathname === '/dashboard')) {
+      return true;
+    }
+    return location.pathname === path;
+  };
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-gradient-card/95 backdrop-blur-sm border-t border-white/10 z-50">
