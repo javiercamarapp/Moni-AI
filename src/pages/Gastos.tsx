@@ -489,7 +489,7 @@ const Gastos = () => {
                   }
 
                   toast({
-                    title: "Generando PDF",
+                    title: "Generando reporte",
                     description: "Por favor espera...",
                   });
 
@@ -504,26 +504,26 @@ const Gastos = () => {
 
                   if (error) throw error;
 
-                  // Convertir base64 a blob y descargar
-                  const pdfBlob = await fetch(`data:application/pdf;base64,${data.pdf}`).then(r => r.blob());
-                  const url = window.URL.createObjectURL(pdfBlob);
+                  // Crear blob del HTML y descargar
+                  const blob = new Blob([data.html], { type: 'text/html' });
+                  const url = window.URL.createObjectURL(blob);
                   const a = document.createElement('a');
                   a.href = url;
-                  a.download = `movimientos_${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}.pdf`;
+                  a.download = data.filename || `movimientos_${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}.html`;
                   document.body.appendChild(a);
                   a.click();
                   window.URL.revokeObjectURL(url);
                   document.body.removeChild(a);
 
                   toast({
-                    title: "PDF generado",
-                    description: "El archivo se ha descargado correctamente",
+                    title: "Reporte generado",
+                    description: "Abre el archivo y usa Ctrl+P para guardar como PDF",
                   });
                 } catch (error) {
-                  console.error('Error al generar PDF:', error);
+                  console.error('Error al generar reporte:', error);
                   toast({
                     title: "Error",
-                    description: "No se pudo generar el PDF",
+                    description: "No se pudo generar el reporte",
                     variant: "destructive"
                   });
                 }
