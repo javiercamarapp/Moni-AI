@@ -465,26 +465,22 @@ const Balance = () => {
 
       <div className="px-4 space-y-4">
         {/* Ahorro destacado */}
-        <Card className={`p-6 card-glow animate-fade-in shadow-elegant border ${
-          ahorro >= 0 
-            ? 'bg-gradient-to-br from-success/80 to-success/60 border-success/30' 
-            : 'bg-gradient-to-br from-destructive/80 to-destructive/60 border-destructive/30'
-        }`} style={{ animationDelay: '0ms' }}>
+        <Card className="p-6 bg-gradient-to-br from-[hsl(145,45%,30%)] to-[hsl(145,55%,25%)] border-[hsl(145,50%,35%)]/50 card-glow animate-fade-in shadow-elegant" style={{ animationDelay: '0ms' }}>
           <div className="flex items-center gap-3 mb-3">
             <div className="p-3 bg-card/40 backdrop-blur-sm rounded-full border border-border/30">
-              <Wallet className="h-6 w-6 text-foreground" />
+              <Wallet className="h-6 w-6 text-white" />
             </div>
             <div>
-              <p className="text-sm text-foreground/90">
+              <p className="text-sm text-white/90">
                 Ahorro {viewMode === 'mensual' ? 'Mensual' : 'Anual'}
               </p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
+              <h2 className="text-3xl sm:text-4xl font-bold text-white">
                 ${ahorro.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
               </h2>
             </div>
           </div>
           <div className="space-y-2">
-            <div className="flex justify-between text-sm text-foreground/90">
+            <div className="flex justify-between text-sm text-white/90">
               <span>Tasa de ahorro:</span>
               <span className="font-semibold">{tasaAhorro.toFixed(1)}%</span>
             </div>
@@ -492,10 +488,10 @@ const Balance = () => {
           </div>
           
           {/* Botón de descarga de PDF */}
-          <div className="mt-4 pt-4 border-t border-foreground/20">
+          <div className="mt-4 pt-4 border-t border-white/20">
             <Button 
               variant="ghost" 
-              className="w-full bg-card/40 backdrop-blur-sm border border-border/30 text-foreground hover:bg-card/60 transition-all duration-300 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight"
+              className="w-full bg-card/40 backdrop-blur-sm border border-border/30 text-white hover:bg-card/60 transition-all duration-300 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight"
               onClick={async () => {
                 try {
                   // Get current user
@@ -761,33 +757,6 @@ const Balance = () => {
               </div>
             </div>
           )}
-        </Card>
-
-        {/* Resumen del balance */}
-        <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
-          <h3 className="text-lg font-semibold text-card-foreground mb-3">Resumen</h3>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-card-foreground/80">Total Ingresos:</span>
-              <span className="text-card-foreground font-semibold text-lg">
-                ${totalIngresos.toLocaleString('es-MX')}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-card-foreground/80">Total Gastos:</span>
-              <span className="text-card-foreground font-semibold text-lg">
-                -${totalGastos.toLocaleString('es-MX')}
-              </span>
-            </div>
-            <div className="border-t border-border pt-3">
-              <div className="flex justify-between items-center">
-                <span className="text-card-foreground font-semibold">Balance Final:</span>
-                <span className={`font-bold text-xl ${balance >= 0 ? 'text-success' : 'text-destructive'}`}>
-                  ${balance.toLocaleString('es-MX')}
-                </span>
-              </div>
-            </div>
-          </div>
         </Card>
       </div>
       
