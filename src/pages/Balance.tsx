@@ -267,7 +267,8 @@ const Balance = () => {
         .select('*, categories(id, name, color, type)')
         .eq('user_id', user.id)
         .gte('transaction_date', startDate.toISOString().split('T')[0])
-        .lte('transaction_date', endDate.toISOString().split('T')[0]);
+        .lte('transaction_date', endDate.toISOString().split('T')[0])
+        .limit(10000);
 
       if (!transactions) return;
 
