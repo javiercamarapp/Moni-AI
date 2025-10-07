@@ -389,8 +389,21 @@ const ChatInterface = () => {
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto px-4">
         {messages.length === 0 ? <div className="h-full flex flex-col items-center justify-center pb-32">
-            <div className="w-20 h-20 rounded-full bg-gradient-card flex items-center justify-center mb-6 shadow-glow border border-border/50 bounce-in pulse-subtle p-3">
-              <img src={moniLogo} alt="MONI AI+" className="w-full h-full object-contain" />
+            <div className="relative mb-8 bounce-in">
+              {/* Texto circular arriba */}
+              <svg className="absolute -top-8 left-1/2 -translate-x-1/2" width="200" height="50" viewBox="0 0 200 50">
+                <path id="curve" d="M 20,45 Q 100,5 180,45" fill="transparent" />
+                <text className="fill-foreground text-sm font-semibold tracking-wider">
+                  <textPath href="#curve" startOffset="50%" textAnchor="middle">
+                    MONI AI
+                  </textPath>
+                </text>
+              </svg>
+              
+              {/* Logo */}
+              <div className="w-32 h-32 rounded-full bg-gradient-card flex items-center justify-center shadow-glow border border-border/50 pulse-subtle p-4">
+                <img src={moniLogo} alt="MONI AI+" className="w-full h-full object-contain" />
+              </div>
             </div>
             <h1 className="text-3xl font-normal text-foreground text-center fade-in-up">¿En qué puedo ayudarte hoy?</h1>
           </div> : <div className="py-6 space-y-6">
