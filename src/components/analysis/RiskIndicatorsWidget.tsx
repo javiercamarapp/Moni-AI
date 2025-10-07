@@ -70,7 +70,7 @@ export default function RiskIndicatorsWidget({ indicators, hasIssues }: RiskIndi
           }}
           plugins={[
             Autoplay({
-              delay: 3000,
+              delay: 3500,
             }),
           ]}
           className="w-full"
@@ -79,22 +79,15 @@ export default function RiskIndicatorsWidget({ indicators, hasIssues }: RiskIndi
             {indicators.map((indicator, index) => (
               <CarouselItem key={index} className="basis-full">
                 <Card 
-                  className={`p-4 card-glow transition-all duration-500 ${getIndicatorStyle(indicator.level)}`}
+                  className={`p-3 card-glow transition-all duration-500 ${getIndicatorStyle(indicator.level)}`}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 mt-0.5">
+                  <div className="flex items-center gap-2">
+                    <div className="flex-shrink-0">
                       {getIcon(indicator.level)}
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-white mb-1">
-                        {indicator.level === "critical" && "🚨 Alerta Crítica"}
-                        {indicator.level === "warning" && "⚠️ Advertencia"}
-                        {indicator.level === "good" && "✅ Métrica Positiva"}
-                      </p>
-                      <p className="text-xs text-white/90 leading-relaxed">
-                        {indicator.message}
-                      </p>
-                    </div>
+                    <p className="text-xs text-white/90 leading-snug flex-1">
+                      {indicator.message}
+                    </p>
                   </div>
                 </Card>
               </CarouselItem>

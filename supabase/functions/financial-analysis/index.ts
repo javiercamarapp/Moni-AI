@@ -606,6 +606,67 @@ Sé profesional pero cercano. Usa las razones financieras como un médico usa an
     const aiData = await aiResponse.json();
     const analysis = aiData.choices[0].message.content;
 
+    // Generar indicadores de riesgo con IA
+    const riskPrompt = `Basándote en estas métricas financieras, genera 3-5 indicadores de riesgo o felicitaciones:
+
+MÉTRICAS:
+- Tasa de ahorro: ${savingsRate.toFixed(1)}% (Ideal ≥ 20%)
+- Liquidez: ${liquidityMonths.toFixed(1)} meses (Ideal ≥ 3)
+- Carga financiera: ${financialBurden.toFixed(1)}% (Ideal < 30%)
+- Gastos fijos: ${fixedExpensesPercentage.toFixed(1)}% (Ideal < 60%)
+- Gastos hormiga: ${antExpensesPercentage.toFixed(1)}% (Ideal < 5%)
+- Score Moni: ${scoreMoni}/100
+- Compras impulsivas: ${impulsivePurchasesPercentage.toFixed(1)}% (Ideal < 10%)
+
+Genera un JSON array con indicadores. Cada indicador debe tener:
+- level: "critical" (problemas graves), "warning" (áreas de mejora), o "good" (felicitaciones)
+- message: mensaje corto (máximo 100 caracteres) con datos específicos
+
+IMPORTANTE: 
+- Usa "critical" para métricas MUY por debajo del ideal
+- Usa "warning" para áreas que necesitan atención  
+- Usa "good" para métricas que superan el ideal
+- Incluye números específicos en cada mensaje
+- Sé directo y útil
+
+Responde SOLO con el JSON array, sin texto adicional.`;
+
+    const riskResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash',
+        messages: [
+          {
+            role: 'system',
+            content: 'Eres un analista financiero experto. Responde SOLO con JSON válido.'
+          },
+          {
+            role: 'user',
+            content: riskPrompt
+          }
+        ]
+      })
+    });
+
+    let riskIndicators = [];
+    if (riskResponse.ok) {
+      try {
+        const riskData = await riskResponse.json();
+        const riskContent = riskData.choices[0].message.content;
+        // Extraer JSON del contenido (por si viene con markdown)
+        const jsonMatch = riskContent.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+          riskIndicators = JSON.parse(jsonMatch[0]);
+        }
+      } catch (e) {
+        console.error('Error parsing risk indicators:', e);
+      }
+    }
+
     // Calcular proyecciones
     const daysElapsed = Math.max(1, Math.ceil((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
     const avgDailyExpenses = totalExpenses / daysElapsed;
@@ -621,6 +682,7 @@ Sé profesional pero cercano. Usa las razones financieras como un médico usa an
       analysis,
       metrics,
       topCategories,
+      riskIndicators,
       projections: {
         expenses: Math.round(projectedExpenses),
         income: Math.round(projectedIncome),
