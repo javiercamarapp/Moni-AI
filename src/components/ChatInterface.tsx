@@ -457,12 +457,12 @@ const ChatInterface = () => {
             </Carousel>
           </div>}
 
-        <div className="flex items-center gap-1 sm:gap-2 bg-card rounded-[30px] px-2 sm:px-4 py-3 shadow-elegant border border-border/30 hover:border-border/50 transition-all">
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex-shrink-0 h-8 w-8 p-0 transition-all hover:scale-110 hidden sm:flex">
-            <Plus className="w-5 h-5" />
+        <div className="flex items-center gap-1 sm:gap-2 bg-card rounded-[30px] px-2 sm:px-4 py-2.5 sm:py-3 shadow-elegant border border-border/30 hover:border-border/50 transition-all">
+          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex-shrink-0 h-7 w-7 sm:h-8 sm:w-8 p-0 transition-all hover:scale-110">
+            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
 
-          <Input value={message} onChange={e => setMessage(e.target.value)} onKeyPress={handleKeyPress} placeholder="Pregunta..." className="flex-1 bg-transparent border-0 text-foreground text-sm sm:text-base placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 px-2 sm:px-3 h-8" />
+          <Input value={message} onChange={e => setMessage(e.target.value)} onKeyPress={handleKeyPress} placeholder="Pregunta..." className="flex-1 bg-transparent border-0 text-foreground text-sm sm:text-base placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 px-1.5 sm:px-3 h-7 sm:h-8" />
 
           <Button variant="ghost" size="icon" onClick={handleSendMessage} disabled={!message.trim()} className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex-shrink-0 h-8 w-8 p-0 disabled:opacity-30 transition-all hover:scale-110">
             <Send className="w-4 h-4 sm:w-5 sm:h-5" />
