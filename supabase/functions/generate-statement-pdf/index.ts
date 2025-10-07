@@ -165,34 +165,39 @@ Mantén el tono profesional pero amigable. Limita tu respuesta a 200 palabras.`;
           }
           .summary-item {
             text-align: center;
-            padding: 20px;
+            padding: 15px;
             background: rgba(51, 65, 85, 0.4);
             border-radius: 12px;
             border: 1px solid rgba(71, 85, 105, 0.3);
+            overflow: hidden;
           }
           .summary-item h3 {
-            font-size: 14px;
+            font-size: 12px;
             color: #94a3b8;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            white-space: nowrap;
           }
           .summary-item p {
-            font-size: 28px;
+            font-size: 22px;
             font-weight: bold;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            line-height: 1.2;
           }
           .income { color: #10b981; }
           .expense { color: #ef4444; }
           .balance { color: ${balance >= 0 ? '#10b981' : '#ef4444'}; }
           
           .ai-insights {
-            padding: 30px;
+            padding: 25px;
             background: rgba(30, 41, 59, 0.4);
             border-bottom: 1px solid rgba(71, 85, 105, 0.3);
           }
           .ai-insights h2 {
-            font-size: 22px;
-            margin-bottom: 16px;
+            font-size: 20px;
+            margin-bottom: 14px;
             color: #60a5fa;
             display: flex;
             align-items: center;
@@ -200,55 +205,67 @@ Mantén el tono profesional pero amigable. Limita tu respuesta a 200 palabras.`;
           }
           .ai-insights .content {
             background: rgba(51, 65, 85, 0.3);
-            padding: 20px;
+            padding: 18px;
             border-radius: 12px;
             border-left: 4px solid #3b82f6;
-            line-height: 1.7;
-            font-size: 14px;
+            line-height: 1.6;
+            font-size: 13px;
             color: #cbd5e1;
-            white-space: pre-line;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
           }
           
           .transactions {
-            padding: 30px;
+            padding: 25px;
           }
           .transactions h2 {
-            font-size: 22px;
-            margin-bottom: 20px;
+            font-size: 20px;
+            margin-bottom: 16px;
             color: #e0e6ed;
             border-bottom: 2px solid rgba(71, 85, 105, 0.3);
-            padding-bottom: 12px;
+            padding-bottom: 10px;
           }
           .transaction-table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed;
           }
           .transaction-table th {
             background: rgba(51, 65, 85, 0.6);
-            padding: 12px;
+            padding: 10px 8px;
             text-align: left;
-            font-size: 13px;
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: #94a3b8;
             border-bottom: 2px solid rgba(71, 85, 105, 0.5);
           }
+          .transaction-table th:nth-child(1) { width: 18%; }
+          .transaction-table th:nth-child(2) { width: 35%; }
+          .transaction-table th:nth-child(3) { width: 25%; }
+          .transaction-table th:nth-child(4) { width: 22%; }
           .transaction-table td {
-            padding: 14px 12px;
+            padding: 10px 8px;
             border-bottom: 1px solid rgba(71, 85, 105, 0.2);
-            font-size: 14px;
+            font-size: 12px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            vertical-align: top;
           }
           .transaction-table tr:hover {
             background: rgba(51, 65, 85, 0.3);
           }
           .category-badge {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 3px 10px;
             background: rgba(59, 130, 246, 0.2);
             border: 1px solid rgba(59, 130, 246, 0.3);
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             color: #93c5fd;
+            word-wrap: break-word;
+            max-width: 100%;
           }
           .footer {
             padding: 20px 30px;
