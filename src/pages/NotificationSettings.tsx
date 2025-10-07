@@ -110,211 +110,249 @@ export default function NotificationSettings() {
   };
 
   return (
-    <div className="min-h-screen animated-wave-bg p-4 pb-20">
-      <div className="max-w-2xl mx-auto space-y-3">
-        <div className="flex items-center gap-3 mb-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/dashboard")}
-            className="text-white hover:bg-white/10"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-white">Notificaciones</h1>
-            <p className="text-sm text-white/70">Configura tus alertas de WhatsApp</p>
-          </div>
-          {autoSaveStatus !== 'idle' && (
-            <div className="flex items-center gap-2 text-sm text-white animate-fade-in">
-              {autoSaveStatus === 'saving' && (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Guardando...</span>
-                </>
-              )}
-              {autoSaveStatus === 'saved' && (
-                <>
-                  <Check className="w-4 h-4 text-green-400" />
-                  <span>Guardado</span>
-                </>
-              )}
+    <div className="min-h-screen animated-wave-bg pb-24">
+      <div className="max-w-2xl mx-auto">
+        {/* Header with gradient background */}
+        <div className="sticky top-0 z-10 bg-gradient-card/95 backdrop-blur-md border-b border-border/30 shadow-card">
+          <div className="flex items-center gap-3 px-4 py-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/dashboard")}
+              className="text-foreground hover:bg-accent/50 hover-lift"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold text-foreground">Notificaciones</h1>
+              <p className="text-sm text-muted-foreground">Configura tus alertas inteligentes</p>
             </div>
-          )}
+            {autoSaveStatus !== 'idle' && (
+              <div className="flex items-center gap-2 text-sm text-foreground animate-fade-in">
+                {autoSaveStatus === 'saving' && (
+                  <>
+                    <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    <span className="hidden sm:inline">Guardando...</span>
+                  </>
+                )}
+                {autoSaveStatus === 'saved' && (
+                  <>
+                    <Check className="w-4 h-4 text-success" />
+                    <span className="hidden sm:inline text-success">Guardado</span>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Tipos de notificaciones */}
-        <Card className="p-4 bg-card/80 backdrop-blur border-border/50">
-          <div className="flex items-center gap-2 mb-3">
-            <Bell className="h-4 w-4 text-white" />
-            <h3 className="font-bold text-base text-white">Tipos de Notificaciones</h3>
-          </div>
+        <div className="p-4 space-y-4">
 
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label className="text-white text-sm">Resumen Diario</Label>
-                <p className="text-xs text-white/70">
-                  Recibe un resumen de tus finanzas cada día
-                </p>
-              </div>
-              <Switch
-                checked={settings.daily_summary}
-                onCheckedChange={(checked) => updateSetting('daily_summary', checked)}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <Label className="text-white text-sm">Análisis Semanal</Label>
-                <p className="text-xs text-white/70">
-                  Análisis detallado cada lunes
-                </p>
-              </div>
-              <Switch
-                checked={settings.weekly_analysis}
-                onCheckedChange={(checked) => updateSetting('weekly_analysis', checked)}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <Label className="text-white text-sm">Alertas de Gasto</Label>
-                <p className="text-xs text-white/70">
-                  Notificaciones cuando gastes más de lo normal
-                </p>
-              </div>
-              <Switch
-                checked={settings.spending_alerts}
-                onCheckedChange={(checked) => updateSetting('spending_alerts', checked)}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <Label className="text-white text-sm">Tips de Ahorro</Label>
-                <p className="text-xs text-white/70">
-                  Consejos personalizados para ahorrar
-                </p>
-              </div>
-              <Switch
-                checked={settings.savings_tips}
-                onCheckedChange={(checked) => updateSetting('savings_tips', checked)}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <Label className="text-white text-sm">Recordatorios de Metas</Label>
-                <p className="text-xs text-white/70">
-                  Progreso de tus metas de ahorro
-                </p>
-              </div>
-              <Switch
-                checked={settings.goal_reminders}
-                onCheckedChange={(checked) => updateSetting('goal_reminders', checked)}
-              />
-            </div>
-          </div>
-        </Card>
-
-        {/* Umbrales */}
-        <Card className="p-4 bg-card/80 backdrop-blur border-border/50">
-          <div className="flex items-center gap-2 mb-3">
-            <DollarSign className="h-4 w-4 text-white" />
-            <h3 className="font-bold text-base text-white">Umbrales de Alerta</h3>
-          </div>
-
-          <div className="space-y-3">
-            <div>
-              <Label htmlFor="daily_limit" className="text-white text-sm">
-                Límite de Gasto Diario
-              </Label>
-              <Input
-                id="daily_limit"
-                type="number"
-                value={settings.daily_spending_limit}
-                onChange={(e) => updateSetting('daily_spending_limit', Number(e.target.value))}
-                className="mt-1 bg-white/10 border-white/20 text-white"
-              />
-              <p className="text-[10px] text-white/70 mt-1">
-                Te alertaremos si gastas más de este monto en un día
-              </p>
-            </div>
-
-            <div>
-              <Label htmlFor="transaction_threshold" className="text-white text-sm">
-                Alerta por Transacción Mayor a
-              </Label>
-              <Input
-                id="transaction_threshold"
-                type="number"
-                value={settings.transaction_alert_threshold}
-                onChange={(e) => updateSetting('transaction_alert_threshold', Number(e.target.value))}
-                className="mt-1 bg-white/10 border-white/20 text-white"
-              />
-              <p className="text-[10px] text-white/70 mt-1">
-                Recibirás notificación de transacciones mayores a este monto
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        {/* Horarios */}
-        <Card className="p-4 bg-card/80 backdrop-blur border-border/50">
-          <div className="flex items-center gap-2 mb-3">
-            <Clock className="h-4 w-4 text-white" />
-            <h3 className="font-bold text-base text-white">Horarios</h3>
-          </div>
-
-          <div className="space-y-3">
-            <div>
-              <Label htmlFor="preferred_time" className="text-white text-sm">
-                Hora Preferida para Resumen Diario
-              </Label>
-              <Input
-                id="preferred_time"
-                type="time"
-                value={settings.preferred_notification_time}
-                onChange={(e) => updateSetting('preferred_notification_time', e.target.value)}
-                className="mt-1 bg-white/10 border-white/20 text-white"
-              />
-            </div>
-
-            <div>
-              <Label className="text-white text-sm">Horario Silencioso</Label>
-              <p className="text-[10px] text-white/70 mb-2">
-                No recibirás notificaciones durante estas horas
-              </p>
-              <div className="flex gap-2">
-                <div className="flex-1">
-                  <Label htmlFor="quiet_start" className="text-[10px] text-white/70">
-                    Inicio
-                  </Label>
-                  <Input
-                    id="quiet_start"
-                    type="time"
-                    value={settings.quiet_hours_start}
-                    onChange={(e) => updateSetting('quiet_hours_start', e.target.value)}
-                    className="mt-1 bg-white/10 border-white/20 text-white text-sm"
-                  />
+          {/* Tipos de notificaciones */}
+          <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
+            <div className="bg-gradient-primary/30 px-5 py-4 border-b border-border/30">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-accent/20">
+                  <Bell className="h-5 w-5 text-primary" />
                 </div>
-                <div className="flex-1">
-                  <Label htmlFor="quiet_end" className="text-[10px] text-white/70">
-                    Fin
-                  </Label>
-                  <Input
-                    id="quiet_end"
-                    type="time"
-                    value={settings.quiet_hours_end}
-                    onChange={(e) => updateSetting('quiet_hours_end', e.target.value)}
-                    className="mt-1 bg-white/10 border-white/20 text-white text-sm"
-                  />
+                <div>
+                  <h3 className="font-bold text-lg text-foreground">Tipos de Notificaciones</h3>
+                  <p className="text-xs text-muted-foreground">Personaliza tus alertas de WhatsApp</p>
                 </div>
               </div>
             </div>
-          </div>
-        </Card>
+
+            <div className="p-5 space-y-4">
+              <div className="flex items-center justify-between p-3 rounded-lg hover:bg-accent/20 transition-all">
+                <div className="flex-1">
+                  <Label className="text-foreground text-sm font-medium cursor-pointer">Resumen Diario</Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Recibe un resumen de tus finanzas cada día
+                  </p>
+                </div>
+                <Switch
+                  checked={settings.daily_summary}
+                  onCheckedChange={(checked) => updateSetting('daily_summary', checked)}
+                  className="ml-4"
+                />
+              </div>
+
+              <div className="flex items-center justify-between p-3 rounded-lg hover:bg-accent/20 transition-all">
+                <div className="flex-1">
+                  <Label className="text-foreground text-sm font-medium cursor-pointer">Análisis Semanal</Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Análisis detallado cada lunes
+                  </p>
+                </div>
+                <Switch
+                  checked={settings.weekly_analysis}
+                  onCheckedChange={(checked) => updateSetting('weekly_analysis', checked)}
+                  className="ml-4"
+                />
+              </div>
+
+              <div className="flex items-center justify-between p-3 rounded-lg hover:bg-accent/20 transition-all">
+                <div className="flex-1">
+                  <Label className="text-foreground text-sm font-medium cursor-pointer">Alertas de Gasto</Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Notificaciones cuando gastes más de lo normal
+                  </p>
+                </div>
+                <Switch
+                  checked={settings.spending_alerts}
+                  onCheckedChange={(checked) => updateSetting('spending_alerts', checked)}
+                  className="ml-4"
+                />
+              </div>
+
+              <div className="flex items-center justify-between p-3 rounded-lg hover:bg-accent/20 transition-all">
+                <div className="flex-1">
+                  <Label className="text-foreground text-sm font-medium cursor-pointer">Tips de Ahorro</Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Consejos personalizados para ahorrar
+                  </p>
+                </div>
+                <Switch
+                  checked={settings.savings_tips}
+                  onCheckedChange={(checked) => updateSetting('savings_tips', checked)}
+                  className="ml-4"
+                />
+              </div>
+
+              <div className="flex items-center justify-between p-3 rounded-lg hover:bg-accent/20 transition-all">
+                <div className="flex-1">
+                  <Label className="text-foreground text-sm font-medium cursor-pointer">Recordatorios de Metas</Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Progreso de tus metas de ahorro
+                  </p>
+                </div>
+                <Switch
+                  checked={settings.goal_reminders}
+                  onCheckedChange={(checked) => updateSetting('goal_reminders', checked)}
+                  className="ml-4"
+                />
+              </div>
+            </div>
+          </Card>
+
+          {/* Umbrales */}
+          <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
+            <div className="bg-gradient-primary/30 px-5 py-4 border-b border-border/30">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-accent/20">
+                  <DollarSign className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-foreground">Umbrales de Alerta</h3>
+                  <p className="text-xs text-muted-foreground">Define límites personalizados</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-5 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="daily_limit" className="text-foreground text-sm font-medium">
+                  Límite de Gasto Diario
+                </Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                  <Input
+                    id="daily_limit"
+                    type="number"
+                    value={settings.daily_spending_limit}
+                    onChange={(e) => updateSetting('daily_spending_limit', Number(e.target.value))}
+                    className="pl-7 bg-card border-border/30 text-foreground focus:border-primary transition-all"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Te alertaremos si gastas más de este monto en un día
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="transaction_threshold" className="text-foreground text-sm font-medium">
+                  Alerta por Transacción Mayor a
+                </Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                  <Input
+                    id="transaction_threshold"
+                    type="number"
+                    value={settings.transaction_alert_threshold}
+                    onChange={(e) => updateSetting('transaction_alert_threshold', Number(e.target.value))}
+                    className="pl-7 bg-card border-border/30 text-foreground focus:border-primary transition-all"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Recibirás notificación de transacciones mayores a este monto
+                </p>
+              </div>
+            </div>
+          </Card>
+
+          {/* Horarios */}
+          <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
+            <div className="bg-gradient-primary/30 px-5 py-4 border-b border-border/30">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-accent/20">
+                  <Clock className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-foreground">Horarios</h3>
+                  <p className="text-xs text-muted-foreground">Configura cuándo recibir notificaciones</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-5 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="preferred_time" className="text-foreground text-sm font-medium">
+                  Hora Preferida para Resumen Diario
+                </Label>
+                <Input
+                  id="preferred_time"
+                  type="time"
+                  value={settings.preferred_notification_time}
+                  onChange={(e) => updateSetting('preferred_notification_time', e.target.value)}
+                  className="bg-card border-border/30 text-foreground focus:border-primary transition-all"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-foreground text-sm font-medium">Horario Silencioso</Label>
+                <p className="text-xs text-muted-foreground mb-3">
+                  No recibirás notificaciones durante estas horas
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="quiet_start" className="text-xs text-muted-foreground">
+                      Inicio
+                    </Label>
+                    <Input
+                      id="quiet_start"
+                      type="time"
+                      value={settings.quiet_hours_start}
+                      onChange={(e) => updateSetting('quiet_hours_start', e.target.value)}
+                      className="bg-card border-border/30 text-foreground focus:border-primary transition-all"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="quiet_end" className="text-xs text-muted-foreground">
+                      Fin
+                    </Label>
+                    <Input
+                      id="quiet_end"
+                      type="time"
+                      value={settings.quiet_hours_end}
+                      onChange={(e) => updateSetting('quiet_hours_end', e.target.value)}
+                      className="bg-card border-border/30 text-foreground focus:border-primary transition-all"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
       </div>
     </div>
   );
