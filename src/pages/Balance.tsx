@@ -559,7 +559,7 @@ const Balance = () => {
           {ingresosByCategory.length === 0 ? (
             <p className="text-card-foreground/70 text-center py-4">No hay ingresos registrados</p>
           ) : (
-            <div className="w-full h-[280px] overflow-hidden">
+            <div className="w-full h-[280px] md:h-[400px] overflow-hidden">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -570,36 +570,43 @@ const Balance = () => {
                     outerRadius={55}
                     fill="hsl(var(--primary))"
                     dataKey="total"
+                    className="md:!scale-[1.4]"
                   >
                     {ingresosByCategory.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={`hsl(${150 + index * 35}, 50%, 32%)`} />
+                      <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
                   <Tooltip 
-                    formatter={(value: number) => `$${value.toLocaleString('es-MX')}`}
-                    contentStyle={{ 
-                      backgroundColor: 'hsl(220, 25%, 10%)', 
-                      border: '1px solid hsl(215, 20%, 25%)',
-                      borderRadius: '8px',
-                      color: 'hsl(210, 15%, 90%)'
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-popover border border-border rounded-lg p-3 shadow-lg">
+                            <p className="font-semibold text-popover-foreground">{data.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              ${data.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })} ({data.percentage.toFixed(1)}%)
+                            </p>
+                          </div>
+                        );
+                      }
+                      return null;
                     }}
-                    labelStyle={{ color: 'hsl(210, 15%, 90%)' }}
-                    itemStyle={{ color: 'hsl(210, 15%, 90%)' }}
                   />
                   <Legend 
                     verticalAlign="bottom" 
                     height={80}
                     wrapperStyle={{ 
                       fontSize: '11px', 
-                      paddingTop: '5px', 
+                      paddingTop: '2px', 
                       marginTop: '0px',
                       paddingLeft: '8px',
                       paddingRight: '8px',
                       paddingBottom: '5px',
                       lineHeight: '1.3'
                     }}
+                    className="md:!text-sm"
                     formatter={(value, entry: any) => (
-                      <span className="text-card-foreground text-[11px] font-medium">
+                      <span className="text-card-foreground text-[11px] md:text-sm font-medium">
                         {value} ({entry.payload.percentage.toFixed(1)}%)
                       </span>
                     )}
@@ -620,7 +627,7 @@ const Balance = () => {
           {gastosByCategory.length === 0 ? (
             <p className="text-card-foreground/70 text-center py-4">No hay gastos registrados</p>
           ) : (
-            <div className="w-full h-[280px] overflow-hidden">
+            <div className="w-full h-[280px] md:h-[400px] overflow-hidden">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -631,36 +638,43 @@ const Balance = () => {
                     outerRadius={55}
                     fill="hsl(var(--destructive))"
                     dataKey="total"
+                    className="md:!scale-[1.4]"
                   >
-                    {gastosByCategory.map((entry) => (
-                      <Cell key={`cell-${entry.id}`} fill={entry.color} />
+                    {gastosByCategory.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
                   <Tooltip 
-                    formatter={(value: number) => `$${value.toLocaleString('es-MX')}`}
-                    contentStyle={{ 
-                      backgroundColor: 'hsl(220, 25%, 10%)', 
-                      border: '1px solid hsl(215, 20%, 25%)',
-                      borderRadius: '8px',
-                      color: 'hsl(210, 15%, 90%)'
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-popover border border-border rounded-lg p-3 shadow-lg">
+                            <p className="font-semibold text-popover-foreground">{data.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              ${data.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })} ({data.percentage.toFixed(1)}%)
+                            </p>
+                          </div>
+                        );
+                      }
+                      return null;
                     }}
-                    labelStyle={{ color: 'hsl(210, 15%, 90%)' }}
-                    itemStyle={{ color: 'hsl(210, 15%, 90%)' }}
                   />
                   <Legend 
                     verticalAlign="bottom" 
                     height={85}
                     wrapperStyle={{ 
                       fontSize: '11px', 
-                      paddingTop: '8px', 
+                      paddingTop: '3px', 
                       marginTop: '0px',
                       paddingLeft: '8px',
                       paddingRight: '8px',
                       paddingBottom: '5px',
                       lineHeight: '1.3'
                     }}
+                    className="md:!text-sm"
                     formatter={(value, entry: any) => (
-                      <span className="text-card-foreground text-[11px] font-medium">
+                      <span className="text-card-foreground text-[11px] md:text-sm font-medium">
                         {value} ({entry.payload.percentage.toFixed(1)}%)
                       </span>
                     )}
