@@ -6,6 +6,11 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+function isValidUUID(uuid: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(uuid);
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -13,6 +18,29 @@ serve(async (req) => {
 
   try {
     const { userId, transactions, totalIngresos, totalGastos, balance, viewMode } = await req.json();
+    
+    // Input validation
+    if (!userId || typeof userId !== 'string' || !isValidUUID(userId)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid userId format' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    if (!Array.isArray(transactions)) {
+      return new Response(
+        JSON.stringify({ error: 'Transactions must be an array' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    if (typeof totalIngresos !== 'number' || totalIngresos < 0 || 
+        typeof totalGastos !== 'number' || totalGastos < 0) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid income or expense values' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {

@@ -90,6 +90,32 @@ const Auth = () => {
           return;
         }
 
+        // Validate password strength
+        if (password.length < 12) {
+          toast({
+            title: "Error",
+            description: "La contraseña debe tener al menos 12 caracteres",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+        
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        
+        if (!hasUpperCase || !hasLowerCase || !hasNumber || !hasSpecialChar) {
+          toast({
+            title: "Error",
+            description: "La contraseña debe incluir mayúsculas, minúsculas, números y caracteres especiales",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -215,12 +241,12 @@ const Auth = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
+                minLength={12}
                 className="text-sm md:text-base h-9 md:h-10"
               />
               {!isLogin && (
                 <p className="text-[10px] md:text-xs text-gray-600">
-                  Mínimo 6 caracteres
+                  Mínimo 12 caracteres con mayúsculas, minúsculas, números y símbolos
                 </p>
               )}
             </div>
