@@ -114,8 +114,16 @@ const getCategoryGroup = (categoryName: string): string => {
 const Balance = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [viewMode, setViewMode] = useState<'mensual' | 'anual'>('mensual');
+  const [viewMode, setViewMode] = useState<'mensual' | 'anual'>(() => {
+    const saved = localStorage.getItem('balanceViewMode');
+    return (saved as 'mensual' | 'anual') || 'mensual';
+  });
   const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  // Guardar viewMode en localStorage cuando cambie
+  useEffect(() => {
+    localStorage.setItem('balanceViewMode', viewMode);
+  }, [viewMode]);
   const [ingresosByCategory, setIngresosByCategory] = useState<CategoryBalance[]>([]);
   const [gastosByCategory, setGastosByCategory] = useState<CategoryBalance[]>([]);
   const [totalIngresos, setTotalIngresos] = useState(0);

@@ -36,6 +36,10 @@ import {
 const Ingresos = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [viewMode, setViewMode] = useState<'mensual' | 'anual'>(() => {
+    const saved = localStorage.getItem('balanceViewMode');
+    return (saved as 'mensual' | 'anual') || 'mensual';
+  });
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [amount, setAmount] = useState('');
@@ -51,7 +55,7 @@ const Ingresos = () => {
 
   useEffect(() => {
     fetchData();
-  }, [currentMonth]);
+  }, [currentMonth, viewMode]);
 
   const fetchData = async () => {
     try {
@@ -69,16 +73,24 @@ const Ingresos = () => {
 
       setCategories(categoriesData || []);
 
-      const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-      const endOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+      // Calcular rango de fechas según el modo de vista
+      let startDate: Date, endDate: Date;
+      
+      if (viewMode === 'mensual') {
+        startDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+        endDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+      } else {
+        startDate = new Date(currentMonth.getFullYear(), 0, 1);
+        endDate = new Date(currentMonth.getFullYear(), 11, 31);
+      }
 
       const { data: transactionsData } = await supabase
         .from('transactions')
         .select('*, categories(name, color)')
         .eq('user_id', user.id)
         .eq('type', 'ingreso')
-        .gte('transaction_date', startOfMonth.toISOString().split('T')[0])
-        .lte('transaction_date', endOfMonth.toISOString().split('T')[0])
+        .gte('transaction_date', startDate.toISOString().split('T')[0])
+        .lte('transaction_date', endDate.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
 
       setTransactions(transactionsData || []);
@@ -91,12 +103,20 @@ const Ingresos = () => {
 
   const totalIngresos = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
 
-  const handlePreviousMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+  const handlePreviousPeriod = () => {
+    if (viewMode === 'mensual') {
+      setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+    } else {
+      setCurrentMonth(new Date(currentMonth.getFullYear() - 1, currentMonth.getMonth()));
+    }
   };
 
-  const handleNextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+  const handleNextPeriod = () => {
+    if (viewMode === 'mensual') {
+      setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+    } else {
+      setCurrentMonth(new Date(currentMonth.getFullYear() + 1, currentMonth.getMonth()));
+    }
   };
 
   const handleWhatsAppRegister = () => {
@@ -105,7 +125,10 @@ const Ingresos = () => {
   };
 
   const getPeriodLabel = () => {
-    return currentMonth.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
+    if (viewMode === 'mensual') {
+      return currentMonth.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
+    }
+    return currentMonth.getFullYear().toString();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -377,7 +400,7 @@ const Ingresos = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={handlePreviousMonth}
+            onClick={handlePreviousPeriod}
             className="text-foreground hover:bg-accent/50 transition-all hover:scale-105"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -392,7 +415,7 @@ const Ingresos = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={handleNextMonth}
+            onClick={handleNextPeriod}
             className="text-foreground hover:bg-accent/50 transition-all hover:scale-105"
           >
             <ChevronRight className="h-5 w-5" />
@@ -409,7 +432,7 @@ const Ingresos = () => {
             </div>
             <div>
               <p className="text-sm text-white/90">
-                Total de Ingresos
+                Total de Ingresos {viewMode === 'mensual' ? 'Mensuales' : 'Anuales'}
               </p>
               <h2 className="text-3xl sm:text-4xl font-bold text-white">
                 ${totalIngresos.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
@@ -448,7 +471,7 @@ const Ingresos = () => {
                   const { data, error } = await supabase.functions.invoke('generate-statement-pdf', {
                     body: {
                       userId: user.id,
-                      viewMode: 'mensual',
+                      viewMode: viewMode,
                       month: currentMonth.getMonth() + 1,
                       year: currentMonth.getFullYear(),
                       type: 'ingreso'
@@ -462,7 +485,7 @@ const Ingresos = () => {
                   const url = window.URL.createObjectURL(blob);
                   const a = document.createElement('a');
                   a.href = url;
-                  a.download = data.filename || `ingresos_${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}.html`;
+                  a.download = data.filename || `ingresos_${viewMode === 'mensual' ? `${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}` : currentMonth.getFullYear()}.html`;
                   document.body.appendChild(a);
                   a.click();
                   window.URL.revokeObjectURL(url);
