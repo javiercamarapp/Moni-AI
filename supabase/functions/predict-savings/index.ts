@@ -59,50 +59,85 @@ serve(async (req) => {
       ? `mes específico (${periodLabel || 'mes actual'})`
       : `año específico (${periodLabel || 'año actual'})`;
 
-    const prompt = `Analiza los siguientes datos financieros de UN ${viewMode === 'mensual' ? 'MES' : 'AÑO'} ESPECÍFICO y genera un análisis detallado:
+    const prompt = `Analiza los siguientes datos financieros de UN ${viewMode === 'mensual' ? 'MES' : 'AÑO'} ESPECÍFICO y genera proyecciones inteligentes:
 
 PERÍODO DE ANÁLISIS: ${periodoAnalisis}
-IMPORTANTE: Todos los análisis, proyecciones e insights deben estar basados ÚNICAMENTE en este período específico.
 
-Datos del período (${viewMode}):
-- Ingresos totales: $${totalIngresos}
-- Gastos totales: $${totalGastos}
-- Balance: $${balance}
+Datos del período:
+- Ingresos totales: $${totalIngresos.toFixed(2)}
+- Gastos totales: $${totalGastos.toFixed(2)}
+- Balance (ahorro): $${balance.toFixed(2)}
 
-Transacciones del período:
+Transacciones del período (primeras 50):
 ${JSON.stringify(transactionSummary, null, 2)}
 
 ${viewMode === 'mensual' 
-  ? `Genera proyecciones basadas en este MES:
-- Proyección Anual: Multiplica las métricas del mes por 12
-- Proyección Semestral: Multiplica las métricas del mes por 6
-- Insights: Deben hablar del comportamiento EN ESTE MES específico`
-  : `Genera proyecciones basadas en este AÑO:
-- Proyección Anual: Usa los datos del año completo
-- Proyección Semestral: Divide los datos del año entre 2
-- Insights: Deben hablar del comportamiento EN ESTE AÑO específico`}
+  ? `MODO MENSUAL - PROYECCIONES:
+  
+1. Proyección Anual de Ahorro:
+   - Toma el balance de este mes: $${balance.toFixed(2)}
+   - Multiplícalo por 12 meses: $${balance.toFixed(2)} × 12 = $${(balance * 12).toFixed(2)}
+   - Este es tu proyeccionAnual
 
-Devuelve SOLO un JSON con este formato exacto:
+2. Proyección Semestral de Ahorro:
+   - Toma el balance de este mes: $${balance.toFixed(2)}
+   - Multiplícalo por 6 meses: $${balance.toFixed(2)} × 6 = $${(balance * 6).toFixed(2)}
+   - Este es tu proyeccionSemestral
+
+3. Confianza: Evalúa la consistencia de los ingresos y gastos:
+   - "alta" si hay regularidad en las transacciones
+   - "media" si hay alguna variabilidad
+   - "baja" si hay mucha variabilidad o pocos datos
+
+4. Insights: Analiza el comportamiento EN ESTE MES (${periodLabel}):
+   - Patrones de gasto este mes
+   - Categorías más gastadas este mes
+   - Consejos basados en el comportamiento de este mes`
+  : `MODO ANUAL - PROYECCIONES:
+  
+1. Proyección Anual (año siguiente):
+   - Analiza el patrón de ahorro del año actual: $${balance.toFixed(2)}
+   - Considera tendencias: ¿está mejorando o empeorando?
+   - Si la tendencia es positiva, incrementa 5-15%
+   - Si es estable, usa un valor similar
+   - Si es negativa, reduce 5-15%
+   - Este es tu proyeccionAnual para el próximo año
+
+2. Proyección Semestral (próximos 6 meses):
+   - Toma la proyección anual y divídela entre 2
+   - Este es tu proyeccionSemestral
+
+3. Confianza: Evalúa la consistencia del año:
+   - "alta" si hay consistencia en los patrones anuales
+   - "media" si hay variabilidad moderada
+   - "baja" si hay mucha volatilidad
+
+4. Insights: Analiza el comportamiento DEL AÑO ${periodLabel}:
+   - Patrones anuales de ahorro
+   - Tendencias durante el año
+   - Proyecciones para el próximo año basadas en este año`}
+
+Devuelve SOLO un JSON válido sin texto adicional:
 {
-  "proyeccionAnual": 50000,
-  "proyeccionSemestral": 25000,
-  "confianza": "alta",
+  "proyeccionAnual": [número calculado según las instrucciones],
+  "proyeccionSemestral": [número calculado según las instrucciones],
+  "confianza": "alta" | "media" | "baja",
   "insights": [
     {
-      "titulo": "Título del insight",
-      "metrica": "Métrica relevante",
-      "descripcion": "Descripción que mencione explícitamente el período analizado (${periodLabel})",
-      "tipo": "positivo"
+      "titulo": "Título descriptivo",
+      "metrica": "Valor o porcentaje relevante",
+      "descripcion": "Análisis específico del período ${periodLabel}",
+      "tipo": "positivo" | "negativo" | "neutral" | "consejo"
     }
   ]
 }
 
-CRÍTICO: 
-- Los insights DEBEN mencionar el período específico analizado
-- ${viewMode === 'mensual' ? 'Habla de "este mes" o "en este mes"' : 'Habla de "este año" o "en este año"'}
-- NO generalices, sé específico sobre el período
-- Genera entre 3-5 insights
-- Tipos válidos: "positivo", "negativo", "neutral", "consejo"`;
+REGLAS CRÍTICAS:
+1. Los números deben ser exactos según los cálculos mostrados
+2. La confianza debe ser EXACTAMENTE: "alta", "media" o "baja" (minúsculas)
+3. Genera 3-5 insights
+4. Los insights DEBEN mencionar el período específico
+5. NO inventes cifras, usa los cálculos proporcionados`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
