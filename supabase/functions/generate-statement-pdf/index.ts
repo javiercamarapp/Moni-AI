@@ -32,7 +32,8 @@ serve(async (req) => {
       .from('transactions')
       .select('*, categories(*)')
       .eq('user_id', userId)
-      .order('transaction_date', { ascending: false });
+      .order('transaction_date', { ascending: false })
+      .limit(10000);
 
     if (viewMode === 'mensual') {
       const startDate = new Date(year, month - 1, 1);
