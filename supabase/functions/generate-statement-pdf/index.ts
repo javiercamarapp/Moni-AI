@@ -68,6 +68,121 @@ serve(async (req) => {
     const balance = totalIngresos - totalGastos;
     const tasaAhorro = totalIngresos > 0 ? ((balance / totalIngresos) * 100) : 0;
 
+    // Agrupar ingresos por categoría
+    const ingresosMap = new Map<string, { name: string; total: number; color: string }>();
+    const incomeCategoryColors = [
+      'hsl(210, 55%, 35%)', 'hsl(150, 50%, 32%)', 'hsl(280, 52%, 33%)',
+      'hsl(30, 58%, 36%)', 'hsl(190, 53%, 34%)', 'hsl(45, 55%, 38%)'
+    ];
+    
+    ingresos.forEach(t => {
+      if (t.categories) {
+        const existing = ingresosMap.get(t.categories.id) || {
+          name: t.categories.name,
+          total: 0,
+          color: incomeCategoryColors[ingresosMap.size % incomeCategoryColors.length]
+        };
+        existing.total += parseFloat(t.amount);
+        ingresosMap.set(t.categories.id, existing);
+      }
+    });
+
+    const ingresosByCategory = Array.from(ingresosMap.values())
+      .map(cat => ({
+        ...cat,
+        percentage: totalIngresos > 0 ? (cat.total / totalIngresos) * 100 : 0
+      }))
+      .sort((a, b) => b.total - a.total);
+
+    // Mapeo de categorías a grupos para gastos
+    const categoryGroupMapping: Record<string, string> = {
+      'restaurante': 'Comidas', 'restaurantes': 'Comidas', 'comida': 'Comidas',
+      'alimentos': 'Comidas', 'supermercado': 'Comidas', 'despensa': 'Comidas',
+      'entretenimiento': 'Entretenimiento', 'cine': 'Entretenimiento',
+      'bar': 'Salidas Nocturnas', 'bares': 'Salidas Nocturnas', 'antro': 'Salidas Nocturnas',
+      'servicios': 'Servicios', 'electricidad': 'Servicios', 'internet': 'Servicios',
+      'streaming': 'Streaming', 'netflix': 'Streaming', 'spotify': 'Streaming',
+      'auto': 'Auto', 'gasolina': 'Auto', 'uber': 'Auto', 'taxi': 'Auto'
+    };
+
+    const groupColors: Record<string, string> = {
+      'Comidas': 'hsl(25, 60%, 35%)',
+      'Entretenimiento': 'hsl(280, 50%, 32%)',
+      'Salidas Nocturnas': 'hsl(340, 55%, 30%)',
+      'Servicios': 'hsl(200, 55%, 32%)',
+      'Streaming': 'hsl(145, 45%, 30%)',
+      'Auto': 'hsl(45, 60%, 35%)',
+      'Otros': 'hsl(220, 45%, 28%)'
+    };
+
+    const getCategoryGroup = (categoryName: string): string => {
+      const lowerName = categoryName.toLowerCase();
+      for (const [key, group] of Object.entries(categoryGroupMapping)) {
+        if (lowerName.includes(key)) return group;
+      }
+      return 'Otros';
+    };
+
+    const gastosGroupMap = new Map<string, { name: string; total: number; color: string }>();
+    gastos.forEach(t => {
+      if (t.categories) {
+        const groupName = getCategoryGroup(t.categories.name);
+        const groupColor = groupColors[groupName] || groupColors['Otros'];
+        const existing = gastosGroupMap.get(groupName) || {
+          name: groupName,
+          total: 0,
+          color: groupColor
+        };
+        existing.total += parseFloat(t.amount);
+        gastosGroupMap.set(groupName, existing);
+      }
+    });
+
+    const gastosByCategory = Array.from(gastosGroupMap.values())
+      .map(cat => ({
+        ...cat,
+        percentage: totalGastos > 0 ? (cat.total / totalGastos) * 100 : 0
+      }))
+      .sort((a, b) => b.total - a.total);
+
+    // Función para generar SVG de gráfica de pastel
+    const generatePieChartSVG = (data: Array<{ name: string; total: number; percentage: number; color: string }>, title: string): string => {
+      if (data.length === 0) {
+        return `<div style="text-align: center; padding: 40px; color: #9ca3af;">No hay datos para mostrar</div>`;
+      }
+
+      let currentAngle = -90; // Empezar desde arriba
+      const radius = 80;
+      const centerX = 100;
+      const centerY = 100;
+
+      const paths = data.map(item => {
+        const angle = (item.percentage / 100) * 360;
+        const startAngle = currentAngle;
+        const endAngle = currentAngle + angle;
+        
+        const startX = centerX + radius * Math.cos((startAngle * Math.PI) / 180);
+        const startY = centerY + radius * Math.sin((startAngle * Math.PI) / 180);
+        const endX = centerX + radius * Math.cos((endAngle * Math.PI) / 180);
+        const endY = centerY + radius * Math.sin((endAngle * Math.PI) / 180);
+        
+        const largeArc = angle > 180 ? 1 : 0;
+        
+        const path = `M ${centerX} ${centerY} L ${startX} ${startY} A ${radius} ${radius} 0 ${largeArc} 1 ${endX} ${endY} Z`;
+        
+        currentAngle = endAngle;
+        return { path, color: item.color };
+      });
+
+      const svgPaths = paths.map(p => `<path d="${p.path}" fill="${p.color}" stroke="white" stroke-width="2"/>`).join('');
+      
+      return `
+        <svg width="200" height="200" viewBox="0 0 200 200" style="margin: 0 auto; display: block;">
+          ${svgPaths}
+        </svg>
+      `;
+    };
+
     // Generate AI insights
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     let aiInsights = '';
@@ -384,7 +499,7 @@ Mantén el tono profesional. Limita tu respuesta a 250 palabras.`;
                       <tr>
                         <td>${new Date(t.transaction_date).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })}</td>
                         <td>${t.description || 'Sin descripción'}</td>
-                        <td>${t.description || 'General'}</td>
+                        <td>${t.categories?.name || 'General'}</td>
                         <td style="text-align: right;" class="amount-positive">
                           +$${parseFloat(t.amount).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                         </td>
@@ -397,6 +512,31 @@ Mantén el tono profesional. Limita tu respuesta a 250 palabras.`;
                 <span class="label">Total Ingresos:</span>
                 <span class="value amount-positive">$${totalIngresos.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>
               </div>
+              
+              <!-- Gráfica de Ingresos por Categoría -->
+              ${ingresosByCategory.length > 0 ? `
+                <div style="margin-top: 30px; page-break-inside: avoid;">
+                  <h3 style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 20px; text-align: center;">Ingresos por Categoría</h3>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center;">
+                    <!-- Gráfica -->
+                    <div style="display: flex; justify-content: center;">
+                      ${generatePieChartSVG(ingresosByCategory, 'Ingresos')}
+                    </div>
+                    <!-- Leyenda -->
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                      ${ingresosByCategory.map(cat => `
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                          <div style="width: 16px; height: 16px; border-radius: 4px; background: ${cat.color}; flex-shrink: 0;"></div>
+                          <div style="flex: 1; min-width: 0;">
+                            <div style="font-size: 13px; font-weight: 600; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${cat.name}</div>
+                            <div style="font-size: 12px; color: #6b7280;">$${cat.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })} (${cat.percentage.toFixed(1)}%)</div>
+                          </div>
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
+                </div>
+              ` : ''}
             ` : '<p style="color: #9ca3af; text-align: center; padding: 20px;">No hay ingresos registrados en este período</p>'}
           </div>
 
@@ -419,7 +559,7 @@ Mantén el tono profesional. Limita tu respuesta a 250 palabras.`;
                       <tr>
                         <td>${new Date(t.transaction_date).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })}</td>
                         <td>${t.description || 'Sin descripción'}</td>
-                        <td>${t.description || 'General'}</td>
+                        <td>${t.categories?.name || 'General'}</td>
                         <td style="text-align: right;" class="amount-negative">
                           -$${parseFloat(t.amount).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                         </td>
@@ -432,7 +572,33 @@ Mantén el tono profesional. Limita tu respuesta a 250 palabras.`;
                 <span class="label">Total Gastos:</span>
                 <span class="value amount-negative">$${totalGastos.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>
               </div>
+              
+              <!-- Gráfica de Gastos por Categoría -->
+              ${gastosByCategory.length > 0 ? `
+                <div style="margin-top: 30px; page-break-inside: avoid;">
+                  <h3 style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 20px; text-align: center;">Gastos por Categoría</h3>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center;">
+                    <!-- Gráfica -->
+                    <div style="display: flex; justify-content: center;">
+                      ${generatePieChartSVG(gastosByCategory, 'Gastos')}
+                    </div>
+                    <!-- Leyenda -->
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                      ${gastosByCategory.map(cat => `
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                          <div style="width: 16px; height: 16px; border-radius: 4px; background: ${cat.color}; flex-shrink: 0;"></div>
+                          <div style="flex: 1; min-width: 0;">
+                            <div style="font-size: 13px; font-weight: 600; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${cat.name}</div>
+                            <div style="font-size: 12px; color: #6b7280;">$${cat.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })} (${cat.percentage.toFixed(1)}%)</div>
+                          </div>
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
+                </div>
+              ` : ''}
             ` : '<p style="color: #9ca3af; text-align: center; padding: 20px;">No hay gastos registrados en este período</p>'}
+          </div>
           </div>
 
           <!-- Métricas de Ahorro -->
