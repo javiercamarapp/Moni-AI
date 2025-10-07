@@ -33,6 +33,7 @@ const Dashboard = () => {
   const [selectedMonthOffset, setSelectedMonthOffset] = useState(0); // 0 = mes actual, 1 = mes anterior, etc.
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const [scoreMoni, setScoreMoni] = useState<number | null>(null);
+  const [loadingScore, setLoadingScore] = useState(false);
   const navigate = useNavigate();
   const {
     toast
@@ -63,19 +64,36 @@ const Dashboard = () => {
   };
 
   // Success tips rotation
-  const successTips = [
-    { emoji: "✅", title: "¡Vas excelente!", message: "Tus finanzas están saludables este mes" },
-    { emoji: "💪", title: "¡Sigue así!", message: "Has gastado 15% menos en delivery este mes" },
-    { emoji: "🎯", title: "¡Bien hecho!", message: "Llevas 3 días sin gastos hormiga" },
-    { emoji: "📊", title: "¡Gran progreso!", message: "Este mes ahorraste más que el anterior" },
-    { emoji: "🌟", title: "¡Increíble!", message: "Has reducido gastos en el Oxxo un 20%" },
-    { emoji: "💰", title: "¡Excelente control!", message: "Tus gastos fijos están dentro del presupuesto" },
-  ];
+  const successTips = [{
+    emoji: "✅",
+    title: "¡Vas excelente!",
+    message: "Tus finanzas están saludables este mes"
+  }, {
+    emoji: "💪",
+    title: "¡Sigue así!",
+    message: "Has gastado 15% menos en delivery este mes"
+  }, {
+    emoji: "🎯",
+    title: "¡Bien hecho!",
+    message: "Llevas 3 días sin gastos hormiga"
+  }, {
+    emoji: "📊",
+    title: "¡Gran progreso!",
+    message: "Este mes ahorraste más que el anterior"
+  }, {
+    emoji: "🌟",
+    title: "¡Increíble!",
+    message: "Has reducido gastos en el Oxxo un 20%"
+  }, {
+    emoji: "💰",
+    title: "¡Excelente control!",
+    message: "Tus gastos fijos están dentro del presupuesto"
+  }];
 
   // Auto-rotate success tips
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentTipIndex((prev) => (prev + 1) % successTips.length);
+      setCurrentTipIndex(prev => (prev + 1) % successTips.length);
     }, 4000);
     return () => clearInterval(interval);
   }, []);
@@ -114,39 +132,36 @@ const Dashboard = () => {
     fetchGoals();
   }, []);
 
-  // Fetch Score Moni - Load instantly from DB, then update in background
+  // Fetch Score Moni
   useEffect(() => {
     const fetchScoreMoni = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        // 1. Load cached score instantly from database
-        const { data: cachedScore } = await supabase
-          .from('user_scores')
-          .select('score_moni')
-          .eq('user_id', user.id)
-          .maybeSingle();
-        
-        if (cachedScore) {
-          setScoreMoni(cachedScore.score_moni);
-        }
-
-        // 2. Calculate fresh score in background (don't await)
-        supabase.functions.invoke('financial-analysis', {
-          body: { userId: user.id, period: 'month' }
-        }).then(({ data }) => {
-          if (data?.metrics?.scoreMoni != null) {
-            setScoreMoni(data.metrics.scoreMoni);
+        const {
+          data: {
+            user
           }
-        }).catch(error => {
-          console.error('Error calculating Score Moni:', error);
+        } = await supabase.auth.getUser();
+        if (!user) return;
+        setLoadingScore(true);
+        const {
+          data,
+          error
+        } = await supabase.functions.invoke('financial-analysis', {
+          body: {
+            userId: user.id,
+            period: 'month'
+          }
         });
+        if (error) throw error;
+        if (data?.metrics?.scoreMoni != null) {
+          setScoreMoni(data.metrics.scoreMoni);
+        }
       } catch (error) {
         console.error('Error fetching Score Moni:', error);
+      } finally {
+        setLoadingScore(false);
       }
     };
-    
     fetchScoreMoni();
   }, []);
 
@@ -177,27 +192,31 @@ const Dashboard = () => {
         // Calculate monthly totals
         const income = allTransactions?.filter(t => t.type === 'ingreso').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
         const expenses = allTransactions?.filter(t => t.type === 'gasto').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
-        
+
         // Calculate fixed expenses (rent, utilities, subscriptions, etc.)
-        const fixedExpensesCategories = [
-          '22cecde3-c7c8-437e-9b9d-d73bc7f3bdfe', // Luz
-          'c88f9517-ba61-4420-bc49-ba6261c37e9c', // Agua
-          '4675137c-d5b5-4679-b308-6259762ea100', // Internet
-          'c4d8514f-54be-4fba-8300-b18164d78790', // Teléfono
-          '77bc7935-51b3-418b-9945-7028c27d47ec', // Gas
-          '8544dcaa-4114-4893-aa38-c4372c46a821', // Netflix
-          'eba3ecce-a824-41d3-8209-175902e66cb9', // Spotify
-          '94c263d1-aed5-4399-b5af-da3dfe758b58', // Amazon Prime
-          'd81abe12-0879-49bc-9d94-ebf7c3e9e315', // Disney+
-          'd9251ee1-749f-4cc7-94a2-ceb19a16fd8c', // HBO Max
-          'e50cbb0b-6f45-4afd-bf09-218e413a3086', // Gym
+        const fixedExpensesCategories = ['22cecde3-c7c8-437e-9b9d-d73bc7f3bdfe',
+        // Luz
+        'c88f9517-ba61-4420-bc49-ba6261c37e9c',
+        // Agua
+        '4675137c-d5b5-4679-b308-6259762ea100',
+        // Internet
+        'c4d8514f-54be-4fba-8300-b18164d78790',
+        // Teléfono
+        '77bc7935-51b3-418b-9945-7028c27d47ec',
+        // Gas
+        '8544dcaa-4114-4893-aa38-c4372c46a821',
+        // Netflix
+        'eba3ecce-a824-41d3-8209-175902e66cb9',
+        // Spotify
+        '94c263d1-aed5-4399-b5af-da3dfe758b58',
+        // Amazon Prime
+        'd81abe12-0879-49bc-9d94-ebf7c3e9e315',
+        // Disney+
+        'd9251ee1-749f-4cc7-94a2-ceb19a16fd8c',
+        // HBO Max
+        'e50cbb0b-6f45-4afd-bf09-218e413a3086' // Gym
         ];
-        
-        const fixed = allTransactions?.filter(t => 
-          t.type === 'gasto' && 
-          (fixedExpensesCategories.includes(t.category_id) || t.description?.toLowerCase().includes('renta'))
-        ).reduce((sum, t) => sum + Number(t.amount), 0) || 0;
-        
+        const fixed = allTransactions?.filter(t => t.type === 'gasto' && (fixedExpensesCategories.includes(t.category_id) || t.description?.toLowerCase().includes('renta'))).reduce((sum, t) => sum + Number(t.amount), 0) || 0;
         setMonthlyIncome(income);
         setMonthlyExpenses(expenses);
         setFixedExpenses(fixed);
@@ -274,13 +293,13 @@ const Dashboard = () => {
         {/* Puntos y nivel + Notificaciones */}
         <div className="flex gap-2 items-center">
           {/* Botón de puntos y nivel */}
-          <Button variant="ghost" className="bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white h-10 px-3 gap-2 hover:scale-105 transition-transform duration-200">
+          <Button variant="ghost" className="bg-gradient-card card-glow hover:bg-white/20 text-white h-10 px-3 gap-2 hover:scale-105 transition-transform duration-200">
             <span className="text-sm font-bold">{currentXP} pts</span>
             <span className="text-xs opacity-80">Nivel {level}</span>
           </Button>
           
           {/* Botón de notificaciones */}
-          <Button variant="ghost" size="icon" className="bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white h-10 w-10 hover:scale-105 transition-transform duration-200">
+          <Button variant="ghost" size="icon" className="bg-gradient-card card-glow hover:bg-white/20 text-white h-10 w-10 hover:scale-105 transition-transform duration-200">
             <Bell className="h-5 w-5" />
           </Button>
         </div>
@@ -297,120 +316,34 @@ const Dashboard = () => {
       </div>
 
       {/* Score Moni - Compacto */}
-      <div className="mx-4 mb-4">
-        <Card className={`p-4 card-glow border-white/20 hover:scale-105 transition-transform duration-200 bg-gradient-to-br ${
-          (scoreMoni ?? 40) >= 70 ? 'from-emerald-500/90 to-emerald-600/90' : 
-          (scoreMoni ?? 40) >= 40 ? 'from-yellow-500/90 to-yellow-600/90' : 
-          'from-red-500/90 to-red-600/90'
-        }`}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-white/90 mb-1">Score Moni</p>
-              <p className="text-3xl font-bold text-white">{scoreMoni ?? 40}<span className="text-sm text-white/80">/100</span></p>
-              <p className="text-xs text-white/90 mt-1">
-                {(scoreMoni ?? 40) >= 70 ? '✅ Excelente' : 
-                  (scoreMoni ?? 40) >= 40 ? '⚠️ Mejorable' : '❌ Crítico'}
-              </p>
+      {scoreMoni !== null && <div className="mx-4 mb-4">
+          <Card className={`p-4 card-glow border-white/20 hover:scale-105 transition-transform duration-200 bg-gradient-to-br ${scoreMoni >= 70 ? 'from-emerald-500/90 to-emerald-600/90' : scoreMoni >= 40 ? 'from-yellow-500/90 to-yellow-600/90' : 'from-red-500/90 to-red-600/90'}`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-white/90 mb-1">Score Moni</p>
+                <p className="text-3xl font-bold text-white">{scoreMoni}<span className="text-sm text-white/80">/100</span></p>
+                <p className="text-xs text-white/90 mt-1">
+                  {scoreMoni >= 70 ? '✅ Excelente' : scoreMoni >= 40 ? '⚠️ Mejorable' : '❌ Crítico'}
+                </p>
+              </div>
+              <div className="relative">
+                <svg className="w-20 h-20 transform -rotate-90">
+                  <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" className="text-white/30" />
+                  <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" strokeDasharray={`${2 * Math.PI * 34}`} strokeDashoffset={`${2 * Math.PI * 34 * (1 - scoreMoni / 100)}`} className="text-white transition-all" strokeLinecap="round" />
+                </svg>
+              </div>
             </div>
-            <div className="relative">
-              <svg className="w-20 h-20 transform -rotate-90">
-                <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" className="text-white/30" />
-                <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" 
-                  strokeDasharray={`${2 * Math.PI * 34}`} 
-                  strokeDashoffset={`${2 * Math.PI * 34 * (1 - (scoreMoni ?? 40) / 100)}`} 
-                  className="text-white transition-all" 
-                  strokeLinecap="round" 
-                />
-              </svg>
-            </div>
-          </div>
-        </Card>
-      </div>
+          </Card>
+        </div>}
 
       {/* AI Coach Insights - Carousel de recomendaciones */}
       <div className="mx-4 mb-4">
-        <AICoachInsightsWidget 
-          monthlyIncome={monthlyIncome}
-          monthlyExpenses={monthlyExpenses}
-          fixedExpenses={fixedExpenses}
-          savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12}
-          balance={monthlyIncome - monthlyExpenses}
-        />
-      </div>
-
-      {/* Sección de Quick Stats - 4 botones */}
-      <div className="mx-4 mb-4">
-        <div className="grid grid-cols-4 gap-1.5">
-          <Card className="p-1.5 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
-            animationDelay: '100ms'
-          }}>
-            <div className="flex flex-col items-center gap-1">
-              <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center">
-                <Wallet className="w-3.5 h-3.5 text-white" />
-              </div>
-              <div className="text-center w-full">
-                <p className="text-[8px] text-white/80 leading-tight">Balance</p>
-                <p className="text-[10px] font-semibold text-white truncate">
-                  ${(currentMonth.balance / 1000).toFixed(0)}k
-                </p>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-1.5 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
-            animationDelay: '200ms'
-          }}>
-            <div className="flex flex-col items-center gap-1">
-              <div className="w-7 h-7 rounded-lg bg-success/20 flex items-center justify-center">
-                <TrendingUp className="w-3.5 h-3.5 text-white" />
-              </div>
-              <div className="text-center w-full">
-                <p className="text-[8px] text-white/80 leading-tight">Ahorrado</p>
-                <p className="text-[10px] font-semibold text-white truncate">
-                  ${(goals.reduce((sum, goal) => sum + Number(goal.current), 0) / 1000).toFixed(0)}k
-                </p>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-1.5 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
-            animationDelay: '300ms'
-          }}>
-            <div className="flex flex-col items-center gap-1">
-              <div className="w-7 h-7 rounded-lg bg-warning/20 flex items-center justify-center">
-                <Target className="w-3.5 h-3.5 text-white" />
-              </div>
-              <div className="text-center w-full">
-                <p className="text-[8px] text-white/80 leading-tight">Metas</p>
-                <p className="text-[10px] font-semibold text-white">{goals.length}</p>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-1.5 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
-            animationDelay: '400ms'
-          }}>
-            <div className="flex flex-col items-center gap-1">
-              <div className="w-7 h-7 rounded-lg bg-info/20 flex items-center justify-center">
-                <Users className="w-3.5 h-3.5 text-white" />
-              </div>
-              <div className="text-center w-full">
-                <p className="text-[8px] text-white/80 leading-tight">Social</p>
-                <p className="text-[10px] font-semibold text-white">Pronto</p>
-              </div>
-            </div>
-          </Card>
-        </div>
+        <AICoachInsightsWidget monthlyIncome={monthlyIncome} monthlyExpenses={monthlyExpenses} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} balance={monthlyIncome - monthlyExpenses} />
       </div>
 
       {/* Safe to Spend Widget */}
       <div className="mx-4 mb-4">
-        <SafeToSpendWidget 
-          safeToSpend={monthlyIncome - fixedExpenses - (goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12)}
-          monthlyIncome={monthlyIncome}
-          fixedExpenses={fixedExpenses}
-          savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12}
-        />
+        <SafeToSpendWidget safeToSpend={monthlyIncome - fixedExpenses - goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} monthlyIncome={monthlyIncome} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} />
       </div>
 
       {/* Banner Publicitario - Carrusel */}
@@ -419,13 +352,211 @@ const Dashboard = () => {
         loop: true,
         align: "center"
       }}>
-...
+          <CarouselContent className="-ml-2 md:-ml-4">
+            <CarouselItem className="pl-2 md:pl-4 basis-[85%] md:basis-[80%]">
+              <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
+                <img src={bannerHalloween} alt="Halloween Special Sale" className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
+                <div className="relative p-6 h-full flex flex-col justify-center">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                      <Zap className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className="text-base sm:text-lg font-semibold text-white">
+                      Oferta Especial Halloween
+                    </h3>
+                  </div>
+                  <p className="text-sm text-white/90 mb-3">
+                    Descuentos exclusivos por tiempo limitado
+                  </p>
+                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
+                    Comprar Ahora
+                  </Button>
+                </div>
+              </Card>
+            </CarouselItem>
+            
+            <CarouselItem className="pl-2 md:pl-4 basis-[85%] md:basis-[80%]">
+              <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
+                <img src={bannerGoals} alt="Banner de metas" className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
+                <div className="relative p-6 h-full flex flex-col justify-center">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                      <Target className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className="text-base sm:text-lg font-semibold text-white">
+                      Alcanza tus Metas
+                    </h3>
+                  </div>
+                  <p className="text-sm text-white/90 mb-3">
+                    Planifica y ahorra para cumplir tus objetivos
+                  </p>
+                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
+                    Comenzar
+                  </Button>
+                </div>
+              </Card>
+            </CarouselItem>
+            
+            <CarouselItem className="pl-2 md:pl-4 basis-[85%] md:basis-[80%]">
+              <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
+                <img src={bannerGroups} alt="Banner de ahorro grupal" className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
+                <div className="relative p-6 h-full flex flex-col justify-center">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                      <Users className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className="text-base sm:text-lg font-semibold text-white">
+                      Ahorro en Grupo
+                    </h3>
+                  </div>
+                  <p className="text-sm text-white/90 mb-3">
+                    Únete a grupos y multiplica tus ahorros
+                  </p>
+                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-white/20 w-fit hover:scale-105 transition-transform duration-200">
+                    Explorar
+                  </Button>
+                </div>
+              </Card>
+            </CarouselItem>
+          </CarouselContent>
         </Carousel>
       </div>
+      
+      {/* Bottom Navigation Menu - Fixed */}
+      
 
-      {/* WhatsApp Banner */}
-      <div className="mx-4 mb-4">
-        <Card className="p-3 sm:p-4 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+      <div className="p-2 sm:p-4">
+      <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
+        
+        {/* Balance Overview y Quick Stats en la misma fila */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
+          {/* Sección 1: Balance Overview - Más grande */}
+          <Card className={`sm:col-span-2 p-4 backdrop-blur border-2 animate-fade-in ${currentMonth.balance >= 0 ? 'bg-emerald-600/20 border-emerald-400/40' : 'bg-red-600/20 border-red-400/40'}`} style={{
+            animationDelay: '0ms'
+          }}>
+            <div className="space-y-3">
+              <div>
+                <p className="text-xs font-medium text-white/80 mb-1">Disponible para gastar</p>
+                <div className="flex items-baseline gap-2">
+                  <p className={`text-4xl sm:text-5xl font-bold ${currentMonth.balance >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
+                    ${(currentMonth.balance * 0.7).toLocaleString('es-MX', {
+                      maximumFractionDigits: 0
+                    })}
+                  </p>
+                  <span className="text-sm text-white/60">MXN</span>
+                </div>
+                <p className="text-xs text-white/70 mt-2">
+                  Disponible hoy = Ingresos - Gastos Fijos - Apartados del mes
+                </p>
+              </div>
+
+              {currentMonth.balance < 0 && <div className="bg-red-500/20 rounded-lg p-3 border border-red-400/40">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="h-4 w-4 text-red-300 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs font-semibold text-red-200 mb-2">⚠️ Balance en Rojo</p>
+                      <div className="space-y-1.5">
+                        <p className="text-xs text-white/90">💡 <span className="font-medium">Empieza a presupuestar:</span> Define límites por categoría</p>
+                        <p className="text-xs text-white/90">💰 <span className="font-medium">Reduce gastos hormiga:</span> Cafés, apps, delivery</p>
+                        <p className="text-xs text-white/90">📊 <span className="font-medium">Revisa suscripciones:</span> Cancela las que no uses</p>
+                        <p className="text-xs text-white/90">🎯 <span className="font-medium">Crea un fondo de emergencia:</span> Aunque sea $500/mes</p>
+                      </div>
+                      <Button size="sm" className="mt-3 w-full bg-red-600 hover:bg-red-700 text-white border-0 text-xs h-8" onClick={() => navigate('/analysis')}>
+                        Ver plan de ahorro personalizado
+                      </Button>
+                    </div>
+                  </div>
+                </div>}
+
+              {currentMonth.balance >= 0 && <div className="bg-emerald-500/20 rounded-lg p-3 border border-emerald-400/40 animate-fade-in" key={currentTipIndex}>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">{successTips[currentTipIndex].emoji}</span>
+                    <div>
+                      <p className="text-xs font-semibold text-emerald-200">{successTips[currentTipIndex].title}</p>
+                      <p className="text-xs text-white/80">{successTips[currentTipIndex].message}</p>
+                    </div>
+                  </div>
+                </div>}
+
+              <div className="pt-3 border-t border-white/10">
+                <p className="text-xs font-medium text-white/80 mb-2">Balance del mes</p>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <p className="text-[10px] text-white/60">Ingresos</p>
+                    <p className="text-sm font-semibold text-emerald-400">
+                      +${currentMonth.income.toLocaleString('es-MX')}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-white/60">Gastos</p>
+                    <p className="text-sm font-semibold text-red-400">
+                      -${currentMonth.expenses.toLocaleString('es-MX')}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-white/60">Balance</p>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Sección 2: Quick Stats - 3 estadísticas */}
+          <div className="sm:col-span-1 grid grid-cols-3 sm:grid-cols-1 gap-2">
+            <Card className="p-2 sm:p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
+              animationDelay: '100ms'
+            }}>
+              <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-primary/20 flex items-center justify-center mb-1 sm:mb-0">
+                  <Wallet className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
+                </div>
+                <div className="text-center sm:text-left">
+                  <p className="text-[9px] sm:text-[10px] text-white">Balance</p>
+                  <p className="text-xs sm:text-sm lg:text-base font-semibold text-white">
+                    ${currentMonth.balance.toLocaleString('es-MX')}
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-2 sm:p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+              animationDelay: '200ms'
+            }}>
+              <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-success/20 flex items-center justify-center mb-1 sm:mb-0">
+                  <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
+                </div>
+                <div className="text-center sm:text-left">
+                  <p className="text-[9px] sm:text-[10px] text-white">Ahorrado</p>
+                  <p className="text-xs sm:text-sm lg:text-base font-semibold text-white">
+                    ${goals.reduce((sum, goal) => sum + Number(goal.current), 0).toLocaleString('es-MX')}
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-2 sm:p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+              animationDelay: '300ms'
+            }}>
+              <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-warning/20 flex items-center justify-center mb-1 sm:mb-0">
+                  <Target className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
+                </div>
+                <div className="text-center sm:text-left">
+                  <p className="text-[9px] sm:text-[10px] text-white">Metas</p>
+                  <p className="text-xs sm:text-sm lg:text-base font-semibold text-white">{goals.length}</p>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+
+        {/* WhatsApp Banner */}
+        <Card className="p-3 sm:p-4 bg-gradient-card card-glow mb-4 animate-fade-in hover:scale-105 transition-transform duration-200" style={{
           animationDelay: '400ms'
         }}>
           <div className="flex items-center gap-2 sm:gap-3">
@@ -437,50 +568,13 @@ const Dashboard = () => {
             <p className="text-xs text-white mb-2 leading-relaxed">
               Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
             </p>
-              <Button size="sm" className="bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white border-white/30 text-xs h-8 hover:scale-105 transition-transform duration-200" onClick={() => navigate('/whatsapp')}>
+              <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white border-0 text-xs h-8" onClick={() => navigate('/whatsapp')}>
                 <MessageCircle className="w-3 h-3 mr-1" />
                 Conectar WhatsApp
               </Button>
             </div>
           </div>
         </Card>
-      </div>
-      
-      {/* Bottom Navigation Menu - Fixed */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 animated-wave-bg border-t border-white/20 shadow-lg">
-        <div className="container mx-auto px-2">
-          <div className="flex items-center justify-around h-16">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-purple-400 hover:bg-black hover:text-gray-900 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/dashboard")}>
-              <Home className="w-5 h-5" />
-              <span className="text-xs">Home</span>
-            </Button>
-
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-black hover:text-gray-900 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/analysis")}>
-              <BarChart3 className="w-5 h-5" />
-              <span className="text-xs">Análisis</span>
-            </Button>
-
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-black hover:text-gray-900 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/goals")}>
-              <Target className="w-5 h-5" />
-              <span className="text-xs">Metas</span>
-            </Button>
-
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-black hover:text-gray-900 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/chat")}>
-              <MessageCircle className="w-5 h-5" />
-              <span className="text-xs">Chat AI</span>
-            </Button>
-
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-black hover:text-gray-900 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/profile")}>
-              <User className="w-5 h-5" />
-              <span className="text-xs">Perfil</span>
-            </Button>
-          </div>
-        </div>
-      </nav>
-
-      <div className="p-2 sm:p-4">
-      <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
-        
 
         <div className="grid lg:grid-cols-3 gap-6">
           
@@ -489,7 +583,7 @@ const Dashboard = () => {
             <div>
               <div className="flex flex-row justify-between items-center mb-4">
                 <h3 className="text-lg sm:text-xl font-semibold text-white">Tus Metas</h3>
-                <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white border-white/30 text-xs sm:text-sm hover:scale-105 transition-transform duration-200">
+                <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-gradient-card card-glow hover:bg-white/30 text-white border-white/30 text-xs sm:text-sm hover:scale-105 transition-transform duration-200">
                   <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   Nueva Meta
                 </Button>
@@ -498,7 +592,7 @@ const Dashboard = () => {
               <div className="space-y-3 sm:space-y-4">
                 {goals.length === 0 ? <Card className="p-6 bg-gradient-card card-glow text-center">
                     <p className="text-white/70 mb-4">No tienes metas creadas aún</p>
-                    <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white hover:scale-105 transition-transform duration-200">
+                    <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-gradient-card card-glow hover:bg-white/30 text-white hover:scale-105 transition-transform duration-200">
                       <Plus className="w-4 h-4 mr-2" />
                       Crear tu primera meta
                     </Button>
@@ -564,7 +658,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <Button size="sm" className="w-full bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white border-white/30 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/chat")}>
+              <Button size="sm" className="w-full bg-gradient-card card-glow hover:bg-white/30 text-white border-white/30 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/chat")}>
                 <MessageCircle className="w-4 h-4 mr-2" />
                 Chatear con Moni AI
               </Button>
@@ -596,7 +690,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <Button size="sm" className="w-full bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white border-white/30 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/analysis")}>
+              <Button size="sm" className="w-full bg-gradient-card card-glow hover:bg-white/30 text-white border-white/30 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/analysis")}>
                 <TrendingUp className="w-4 h-4 mr-2" />
                 Ver Análisis
               </Button>
@@ -606,7 +700,7 @@ const Dashboard = () => {
             <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
               <div className="flex justify-between items-center mb-4">
                 <h4 className="text-sm sm:text-base font-semibold text-white">Movimientos Recientes</h4>
-                <Button variant="ghost" size="sm" className="text-xs text-white/80 hover:text-gray-900 hover:bg-white/10 hover:scale-105 transition-transform duration-200">
+                <Button variant="ghost" size="sm" className="text-xs text-white hover:bg-white/10 hover:scale-105 transition-transform duration-200">
                   Ver todos
                 </Button>
               </div>
@@ -636,7 +730,7 @@ const Dashboard = () => {
                   <Trophy className="w-4 h-4 mr-2 text-white" />
                   Logros Recientes
                 </h4>
-                <Button variant="ghost" size="sm" className="text-xs text-white/80 hover:text-gray-900 hover:bg-white/10 hover:scale-105 transition-transform duration-200">
+                <Button variant="ghost" size="sm" className="text-xs text-white hover:bg-white/10 hover:scale-105 transition-transform duration-200">
                   Ver todos
                 </Button>
               </div>
