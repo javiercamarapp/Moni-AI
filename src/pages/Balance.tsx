@@ -168,7 +168,7 @@ const Balance = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Get recent transactions for AI analysis
+      // Get transactions for the specific period (for insights)
       const startDate = viewMode === 'mensual' 
         ? new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1)
         : new Date(currentMonth.getFullYear(), 0, 1);
@@ -185,12 +185,20 @@ const Balance = () => {
         .lte('transaction_date', endDate.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
 
+      // Get ALL historical transactions (for projections)
+      const { data: allTransactions } = await supabase
+        .from('transactions')
+        .select('*, categories(name)')
+        .eq('user_id', user.id)
+        .order('transaction_date', { ascending: false });
+
       const periodLabel = getPeriodLabel();
 
       const { data, error } = await supabase.functions.invoke('predict-savings', {
         body: {
           userId: user.id,
-          transactions,
+          transactions, // Período específico para insights
+          allTransactions, // Todo el historial para proyecciones
           totalIngresos,
           totalGastos,
           balance,

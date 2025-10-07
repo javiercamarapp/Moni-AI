@@ -17,7 +17,7 @@ serve(async (req) => {
   }
 
   try {
-    const { userId, transactions, totalIngresos, totalGastos, balance, viewMode, periodLabel } = await req.json();
+    const { userId, transactions, totalIngresos, totalGastos, balance, viewMode, periodLabel, allTransactions } = await req.json();
     
     // Input validation
     if (!userId || typeof userId !== 'string' || !isValidUUID(userId)) {
@@ -47,7 +47,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Prepare data summary for AI
+    // Prepare data summary for AI - período específico para insights
     const transactionSummary = transactions?.slice(0, 50).map((t: any) => ({
       type: t.type,
       amount: t.amount,
@@ -55,89 +55,87 @@ serve(async (req) => {
       category: t.categories?.name
     })) || [];
 
+    // Preparar resumen de TODOS los datos históricos para proyecciones
+    const allTransactionsSummary = allTransactions?.map((t: any) => ({
+      type: t.type,
+      amount: t.amount,
+      date: t.transaction_date,
+      category: t.categories?.name
+    })) || [];
+
+    // Calcular métricas históricas
+    const historicalIngresos = allTransactions?.filter((t: any) => t.type === 'ingreso')
+      .reduce((sum: number, t: any) => sum + Number(t.amount), 0) || 0;
+    const historicalGastos = allTransactions?.filter((t: any) => t.type === 'gasto')
+      .reduce((sum: number, t: any) => sum + Number(t.amount), 0) || 0;
+    const historicalBalance = historicalIngresos - historicalGastos;
+
     const periodoAnalisis = viewMode === 'mensual' 
       ? `mes específico (${periodLabel || 'mes actual'})`
       : `año específico (${periodLabel || 'año actual'})`;
 
-    const prompt = `Analiza los siguientes datos financieros de UN ${viewMode === 'mensual' ? 'MES' : 'AÑO'} ESPECÍFICO y genera proyecciones inteligentes:
+    const prompt = `Eres un analista financiero experto. Analiza estos datos y genera proyecciones precisas.
 
-PERÍODO DE ANÁLISIS: ${periodoAnalisis}
+=== DATOS PARA PROYECCIONES (USAR TODO EL HISTORIAL) ===
+Historial completo del usuario:
+- Total transacciones históricas: ${allTransactions?.length || 0}
+- Ingresos históricos totales: $${historicalIngresos.toFixed(2)}
+- Gastos históricos totales: $${historicalGastos.toFixed(2)}
+- Balance histórico: $${historicalBalance.toFixed(2)}
 
-Datos del período:
-- Ingresos totales: $${totalIngresos.toFixed(2)}
-- Gastos totales: $${totalGastos.toFixed(2)}
-- Balance (ahorro): $${balance.toFixed(2)}
+Transacciones históricas (muestra):
+${JSON.stringify(allTransactionsSummary.slice(0, 100), null, 2)}
 
-Transacciones del período (primeras 50):
+=== DATOS PARA INSIGHTS (PERÍODO ESPECÍFICO: ${periodoAnalisis}) ===
+Datos del período seleccionado:
+- Ingresos del período: $${totalIngresos.toFixed(2)}
+- Gastos del período: $${totalGastos.toFixed(2)}
+- Balance del período: $${balance.toFixed(2)}
+
+Transacciones del período (muestra):
 ${JSON.stringify(transactionSummary, null, 2)}
 
-${viewMode === 'mensual' 
-  ? `MODO MENSUAL - PROYECCIONES:
-  
-1. Proyección Anual de Ahorro:
-   - Toma el balance de este mes: $${balance.toFixed(2)}
-   - Multiplícalo por 12 meses: $${balance.toFixed(2)} × 12 = $${(balance * 12).toFixed(2)}
-   - Este es tu proyeccionAnual
+=== INSTRUCCIONES ===
 
-2. Proyección Semestral de Ahorro:
-   - Toma el balance de este mes: $${balance.toFixed(2)}
-   - Multiplícalo por 6 meses: $${balance.toFixed(2)} × 6 = $${(balance * 6).toFixed(2)}
-   - Este es tu proyeccionSemestral
+1. PROYECCIONES (usar TODO el historial):
+   - Analiza TODOS los datos históricos del usuario
+   - Calcula el promedio mensual de ahorro de todo el historial
+   - Proyección Anual = promedio mensual × 12
+   - Proyección Semestral = promedio mensual × 6
+   - Ajusta según tendencias (si está mejorando +10%, si empeora -10%)
+   - Nivel de confianza basado en consistencia histórica
 
-3. Confianza: Evalúa la consistencia de los ingresos y gastos:
-   - "alta" si hay regularidad en las transacciones
-   - "media" si hay alguna variabilidad
-   - "baja" si hay mucha variabilidad o pocos datos
+2. INSIGHTS (específicos del período ${periodoAnalisis}):
+   ${viewMode === 'mensual' 
+     ? `- Habla sobre el comportamiento EN ESTE MES (${periodLabel})
+   - Analiza las categorías más gastadas este mes
+   - Compara este mes con el promedio histórico
+   - Da consejos basados en lo que pasó este mes`
+     : `- Habla sobre el comportamiento EN ESTE AÑO (${periodLabel})
+   - Analiza las tendencias del año completo
+   - Compara este año con años anteriores si hay datos
+   - Da consejos basados en los patrones del año`}
 
-4. Insights: Analiza el comportamiento EN ESTE MES (${periodLabel}):
-   - Patrones de gasto este mes
-   - Categorías más gastadas este mes
-   - Consejos basados en el comportamiento de este mes`
-  : `MODO ANUAL - PROYECCIONES:
-  
-1. Proyección Anual (año siguiente):
-   - Analiza el patrón de ahorro del año actual: $${balance.toFixed(2)}
-   - Considera tendencias: ¿está mejorando o empeorando?
-   - Si la tendencia es positiva, incrementa 5-15%
-   - Si es estable, usa un valor similar
-   - Si es negativa, reduce 5-15%
-   - Este es tu proyeccionAnual para el próximo año
-
-2. Proyección Semestral (próximos 6 meses):
-   - Toma la proyección anual y divídela entre 2
-   - Este es tu proyeccionSemestral
-
-3. Confianza: Evalúa la consistencia del año:
-   - "alta" si hay consistencia en los patrones anuales
-   - "media" si hay variabilidad moderada
-   - "baja" si hay mucha volatilidad
-
-4. Insights: Analiza el comportamiento DEL AÑO ${periodLabel}:
-   - Patrones anuales de ahorro
-   - Tendencias durante el año
-   - Proyecciones para el próximo año basadas en este año`}
-
-Devuelve SOLO un JSON válido sin texto adicional:
+Devuelve SOLO este JSON (sin texto adicional):
 {
-  "proyeccionAnual": [número calculado según las instrucciones],
-  "proyeccionSemestral": [número calculado según las instrucciones],
+  "proyeccionAnual": [número basado en TODO el historial],
+  "proyeccionSemestral": [número basado en TODO el historial],
   "confianza": "alta" | "media" | "baja",
   "insights": [
     {
-      "titulo": "Título descriptivo",
-      "metrica": "Valor o porcentaje relevante",
+      "titulo": "Título del insight",
+      "metrica": "Métrica del período",
       "descripcion": "Análisis específico del período ${periodLabel}",
       "tipo": "positivo" | "negativo" | "neutral" | "consejo"
     }
   ]
 }
 
-REGLAS CRÍTICAS:
-1. Los números deben ser exactos según los cálculos mostrados
-2. La confianza debe ser EXACTAMENTE: "alta", "media" o "baja" (minúsculas)
-3. Genera 3-5 insights
-4. Los insights DEBEN mencionar el período específico
-5. NO inventes cifras, usa los cálculos proporcionados`;
+REGLAS:
+- Proyecciones: usa TODO el historial para predecir
+- Insights: usa SOLO el período ${periodoAnalisis}
+- Confianza en minúsculas: "alta", "media" o "baja"
+- Genera 3-5 insights específicos del período`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
