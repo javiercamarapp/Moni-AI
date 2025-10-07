@@ -340,63 +340,63 @@ const Dashboard = () => {
 
       {/* Sección de Quick Stats - 4 botones */}
       <div className="mx-4 mb-4">
-        <div className="grid grid-cols-4 gap-2">
-          <Card className="p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
+        <div className="grid grid-cols-4 gap-1.5">
+          <Card className="p-1.5 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
             animationDelay: '100ms'
           }}>
-            <div className="flex flex-col items-center justify-center h-full min-h-[80px]">
-              <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center mb-2">
-                <Wallet className="w-4 h-4 text-white" />
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center">
+                <Wallet className="w-3.5 h-3.5 text-white" />
               </div>
               <div className="text-center w-full">
-                <p className="text-[9px] text-white/70 mb-1">Balance</p>
-                <p className="text-sm font-bold text-white truncate">
+                <p className="text-[8px] text-white/80 leading-tight">Balance</p>
+                <p className="text-[10px] font-semibold text-white truncate">
                   ${(currentMonth.balance / 1000).toFixed(0)}k
                 </p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+          <Card className="p-1.5 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
             animationDelay: '200ms'
           }}>
-            <div className="flex flex-col items-center justify-center h-full min-h-[80px]">
-              <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center mb-2">
-                <TrendingUp className="w-4 h-4 text-white" />
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-7 h-7 rounded-lg bg-success/20 flex items-center justify-center">
+                <TrendingUp className="w-3.5 h-3.5 text-white" />
               </div>
               <div className="text-center w-full">
-                <p className="text-[9px] text-white/70 mb-1">Ahorrado</p>
-                <p className="text-sm font-bold text-white truncate">
+                <p className="text-[8px] text-white/80 leading-tight">Ahorrado</p>
+                <p className="text-[10px] font-semibold text-white truncate">
                   ${(goals.reduce((sum, goal) => sum + Number(goal.current), 0) / 1000).toFixed(0)}k
                 </p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+          <Card className="p-1.5 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
             animationDelay: '300ms'
           }}>
-            <div className="flex flex-col items-center justify-center h-full min-h-[80px]">
-              <div className="w-8 h-8 rounded-lg bg-warning/20 flex items-center justify-center mb-2">
-                <Target className="w-4 h-4 text-white" />
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-7 h-7 rounded-lg bg-warning/20 flex items-center justify-center">
+                <Target className="w-3.5 h-3.5 text-white" />
               </div>
               <div className="text-center w-full">
-                <p className="text-[9px] text-white/70 mb-1">Metas</p>
-                <p className="text-sm font-bold text-white">{goals.length}</p>
+                <p className="text-[8px] text-white/80 leading-tight">Metas</p>
+                <p className="text-[10px] font-semibold text-white">{goals.length}</p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+          <Card className="p-1.5 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
             animationDelay: '400ms'
           }}>
-            <div className="flex flex-col items-center justify-center h-full min-h-[80px]">
-              <div className="w-8 h-8 rounded-lg bg-info/20 flex items-center justify-center mb-2">
-                <Users className="w-4 h-4 text-white" />
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-7 h-7 rounded-lg bg-info/20 flex items-center justify-center">
+                <Users className="w-3.5 h-3.5 text-white" />
               </div>
               <div className="text-center w-full">
-                <p className="text-[9px] text-white/70 mb-1">Social</p>
-                <p className="text-sm font-bold text-white">Pronto</p>
+                <p className="text-[8px] text-white/80 leading-tight">Social</p>
+                <p className="text-[10px] font-semibold text-white">Pronto</p>
               </div>
             </div>
           </Card>
@@ -529,25 +529,27 @@ const Dashboard = () => {
         
 
         {/* WhatsApp Banner */}
-        <Card className="p-3 sm:p-4 bg-gradient-card card-glow mb-4 animate-fade-in hover:scale-105 transition-transform duration-200" style={{
-          animationDelay: '400ms'
-        }}>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
-              <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
+        <div className="mx-4">
+          <Card className="p-3 sm:p-4 bg-gradient-card card-glow mb-4 animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+            animationDelay: '400ms'
+          }}>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
+                <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
+              </div>
+              <div className="flex-1 min-w-0">
+                
+              <p className="text-xs text-white mb-2 leading-relaxed">
+                Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
+              </p>
+                <Button size="sm" className="bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white border-white/30 text-xs h-8 hover:scale-105 transition-transform duration-200" onClick={() => navigate('/whatsapp')}>
+                  <MessageCircle className="w-3 h-3 mr-1" />
+                  Conectar WhatsApp
+                </Button>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              
-            <p className="text-xs text-white mb-2 leading-relaxed">
-              Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
-            </p>
-              <Button size="sm" className="bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white border-white/30 text-xs h-8 hover:scale-105 transition-transform duration-200" onClick={() => navigate('/whatsapp')}>
-                <MessageCircle className="w-3 h-3 mr-1" />
-                Conectar WhatsApp
-              </Button>
-            </div>
-          </div>
-        </Card>
+          </Card>
+        </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
           
