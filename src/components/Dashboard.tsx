@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from '@/components/ui/carousel';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import Autoplay from 'embla-carousel-autoplay';
 import { useToast } from "@/hooks/use-toast";
 import bannerInvestment from '@/assets/banner-investment.jpg';
@@ -786,10 +787,10 @@ const Dashboard = () => {
           `}</style>
         </Card>
 
-        {/* Grid de 2 columnas: Suscripciones y Deudas */}
+        {/* Grid de 2 columnas: Suscripciones y Deudas - Alineados horizontalmente */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Widget de Suscripciones Próximas */}
-          <Card className="p-5 bg-gradient-to-br from-[hsl(280,45%,18%)] to-[hsl(300,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(280,50%,35%)]/40 relative overflow-hidden">
+          <Card className="p-5 bg-gradient-to-br from-[hsl(280,45%,18%)] to-[hsl(300,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(280,50%,35%)]/40 relative overflow-hidden h-full flex flex-col">
             {/* Efecto brillante */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
                  style={{
@@ -798,66 +799,58 @@ const Dashboard = () => {
                  }}
             />
             
-            <div className="space-y-3 relative z-10">
+            <div className="space-y-3 relative z-10 flex-1 flex flex-col">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-white drop-shadow-lg">📅 Próximas Suscripciones</h3>
                 <span className="text-xs text-white/70 font-semibold">{upcomingSubscriptions.length} activas</span>
               </div>
               
               {upcomingSubscriptions.length === 0 ? (
-                <div className="text-center py-6">
+                <div className="text-center py-6 flex-1 flex flex-col justify-center">
                   <p className="text-xs text-white/70 mb-3">No hay suscripciones registradas</p>
                   <p className="text-xs text-white/50">Registra tus gastos recurrentes para verlos aquí</p>
                 </div>
               ) : (
-                <div className="relative">
-                  <Carousel 
-                    className="w-full"
-                    opts={{
-                      align: "start",
-                      loop: true,
-                    }}
-                    plugins={[
-                      Autoplay({
-                        delay: 3000,
-                      }),
-                    ]}
-                  >
-                    <CarouselContent>
+                <>
+                  <ScrollArea className="flex-1 pr-2">
+                    <div className="space-y-2">
                       {upcomingSubscriptions.map((sub) => (
-                        <CarouselItem key={sub.id} className="basis-1/3 md:basis-1/4">
-                          <div className="flex flex-col items-center gap-2 p-3 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all">
-                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-2xl shadow-lg">
-                              {sub.icon}
-                            </div>
-                            <div className="text-center">
-                              <p className="text-xs font-bold text-white truncate w-16">{sub.name}</p>
-                              <p className="text-xs text-white/80 font-semibold">${sub.amount.toFixed(0)}</p>
-                              <p className="text-[10px] text-white/60">
-                                {sub.dueDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
-                              </p>
-                            </div>
+                        <div 
+                          key={sub.id} 
+                          className="flex items-center gap-3 p-2.5 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all"
+                        >
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-xl shadow-lg shrink-0">
+                            {sub.icon}
                           </div>
-                        </CarouselItem>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-bold text-white truncate">{sub.name}</p>
+                            <p className="text-[10px] text-white/60">
+                              Vence: {sub.dueDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
+                            </p>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <p className="text-sm font-black text-white">${sub.amount.toFixed(0)}</p>
+                          </div>
+                        </div>
                       ))}
-                    </CarouselContent>
-                  </Carousel>
-                </div>
+                    </div>
+                  </ScrollArea>
+                  
+                  <div className="pt-2 border-t border-white/20 mt-auto">
+                    <div className="flex justify-between items-center">
+                      <p className="text-xs text-white/70">Total mensual estimado</p>
+                      <p className="text-base font-black text-white drop-shadow-lg">
+                        ${upcomingSubscriptions.reduce((sum, s) => sum + s.amount, 0).toLocaleString('es-MX')}
+                      </p>
+                    </div>
+                  </div>
+                </>
               )}
-              
-              <div className="pt-2 border-t border-white/20">
-                <div className="flex justify-between items-center">
-                  <p className="text-xs text-white/70">Total mensual estimado</p>
-                  <p className="text-base font-black text-white drop-shadow-lg">
-                    ${upcomingSubscriptions.reduce((sum, s) => sum + s.amount, 0).toLocaleString('es-MX')}
-                  </p>
-                </div>
-              </div>
             </div>
           </Card>
 
           {/* Widget de Deudas de Tarjetas */}
-          <Card className="p-5 bg-gradient-to-br from-[hsl(0,45%,18%)] to-[hsl(15,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(0,50%,35%)]/40 relative overflow-hidden">
+          <Card className="p-5 bg-gradient-to-br from-[hsl(0,45%,18%)] to-[hsl(15,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(0,50%,35%)]/40 relative overflow-hidden h-full flex flex-col">
             {/* Efecto brillante */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
                  style={{
@@ -866,13 +859,13 @@ const Dashboard = () => {
                  }}
             />
             
-            <div className="space-y-3 relative z-10">
+            <div className="space-y-3 relative z-10 flex-1 flex flex-col">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-white drop-shadow-lg">💳 Deudas de Tarjetas</h3>
               </div>
               
               {!hasBankConnections ? (
-                <div className="text-center py-6">
+                <div className="text-center py-6 flex-1 flex flex-col justify-center">
                   <div className="mb-4">
                     <div className="w-16 h-16 mx-auto rounded-full bg-white/10 flex items-center justify-center mb-3">
                       <span className="text-3xl">🏦</span>
@@ -888,7 +881,7 @@ const Dashboard = () => {
                   </Button>
                 </div>
               ) : creditCardDebts.length === 0 ? (
-                <div className="text-center py-6">
+                <div className="text-center py-6 flex-1 flex flex-col justify-center">
                   <p className="text-base font-bold text-green-400 drop-shadow-lg">✅ Sin deudas</p>
                   <p className="text-xs text-white/70 mt-1">¡Excelente manejo financiero!</p>
                 </div>
@@ -901,26 +894,28 @@ const Dashboard = () => {
                     </p>
                   </div>
                   
-                  <div className="space-y-2 max-h-32 overflow-y-auto">
-                    {creditCardDebts.map((card, index) => (
-                      <div key={index} className="bg-white/10 rounded-lg p-2 backdrop-blur-sm border border-white/20">
-                        <div className="flex items-center justify-between mb-1">
-                          <p className="text-xs font-bold text-white">{card.name}</p>
-                          <p className="text-xs font-black text-red-400">${card.balance.toLocaleString('es-MX')}</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden">
-                            <div 
-                              className="h-full bg-gradient-to-r from-red-500 to-orange-500 rounded-full transition-all"
-                              style={{ width: `${card.percentage}%` }}
-                            />
+                  <ScrollArea className="flex-1 pr-2">
+                    <div className="space-y-2">
+                      {creditCardDebts.map((card, index) => (
+                        <div key={index} className="bg-white/10 rounded-lg p-2 backdrop-blur-sm border border-white/20">
+                          <div className="flex items-center justify-between mb-1">
+                            <p className="text-xs font-bold text-white">{card.name}</p>
+                            <p className="text-xs font-black text-red-400">${card.balance.toLocaleString('es-MX')}</p>
                           </div>
-                          <p className="text-[10px] text-white/80 font-semibold">{card.percentage}%</p>
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-gradient-to-r from-red-500 to-orange-500 rounded-full transition-all"
+                                style={{ width: `${card.percentage}%` }}
+                              />
+                            </div>
+                            <p className="text-[10px] text-white/80 font-semibold">{card.percentage}%</p>
+                          </div>
+                          <p className="text-[10px] text-white/60 mt-1">Límite: ${card.limit.toLocaleString('es-MX')}</p>
                         </div>
-                        <p className="text-[10px] text-white/60 mt-1">Límite: ${card.limit.toLocaleString('es-MX')}</p>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
                 </>
               )}
             </div>
