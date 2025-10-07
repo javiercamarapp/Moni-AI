@@ -559,60 +559,63 @@ const Balance = () => {
           {ingresosByCategory.length === 0 ? (
             <p className="text-card-foreground/70 text-center py-4">No hay ingresos registrados</p>
           ) : (
-            <div className="w-full h-[280px] md:h-[400px] overflow-hidden">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={ingresosByCategory}
-                    cx="50%"
-                    cy="32%"
-                    labelLine={false}
-                    outerRadius={55}
-                    fill="hsl(var(--primary))"
-                    dataKey="total"
-                    className="md:!scale-[1.4]"
-                  >
-                    {ingresosByCategory.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        const data = payload[0].payload;
-                        return (
-                          <div className="bg-popover border border-border rounded-lg p-3 shadow-lg">
-                            <p className="font-semibold text-popover-foreground">{data.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              ${data.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })} ({data.percentage.toFixed(1)}%)
-                            </p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Legend 
-                    verticalAlign="bottom" 
-                    height={80}
-                    wrapperStyle={{ 
-                      fontSize: '11px', 
-                      paddingTop: '2px', 
-                      marginTop: '0px',
-                      paddingLeft: '8px',
-                      paddingRight: '8px',
-                      paddingBottom: '5px',
-                      lineHeight: '1.3'
-                    }}
-                    className="md:!text-sm"
-                    formatter={(value, entry: any) => (
-                      <span className="text-card-foreground text-[11px] md:text-sm font-medium">
-                        {value} ({entry.payload.percentage.toFixed(1)}%)
-                      </span>
-                    )}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Gráfica */}
+              <div className="w-full h-[280px] md:h-[320px] flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={ingresosByCategory}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="hsl(var(--primary))"
+                      dataKey="total"
+                    >
+                      {ingresosByCategory.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="bg-popover border border-border rounded-lg p-3 shadow-lg">
+                              <p className="font-semibold text-popover-foreground">{data.name}</p>
+                              <p className="text-sm text-muted-foreground">
+                                ${data.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })} ({data.percentage.toFixed(1)}%)
+                              </p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              
+              {/* Categorías */}
+              <div className="flex flex-col justify-center space-y-3 py-2">
+                {ingresosByCategory.map((category, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <div 
+                      className="w-4 h-4 rounded-full flex-shrink-0" 
+                      style={{ backgroundColor: category.color }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-card-foreground truncate">
+                        {category.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        ${category.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })} ({category.percentage.toFixed(1)}%)
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </Card>
@@ -627,60 +630,63 @@ const Balance = () => {
           {gastosByCategory.length === 0 ? (
             <p className="text-card-foreground/70 text-center py-4">No hay gastos registrados</p>
           ) : (
-            <div className="w-full h-[280px] md:h-[400px] overflow-hidden">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={gastosByCategory}
-                    cx="50%"
-                    cy="30%"
-                    labelLine={false}
-                    outerRadius={55}
-                    fill="hsl(var(--destructive))"
-                    dataKey="total"
-                    className="md:!scale-[1.4]"
-                  >
-                    {gastosByCategory.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        const data = payload[0].payload;
-                        return (
-                          <div className="bg-popover border border-border rounded-lg p-3 shadow-lg">
-                            <p className="font-semibold text-popover-foreground">{data.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              ${data.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })} ({data.percentage.toFixed(1)}%)
-                            </p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Legend 
-                    verticalAlign="bottom" 
-                    height={85}
-                    wrapperStyle={{ 
-                      fontSize: '11px', 
-                      paddingTop: '3px', 
-                      marginTop: '0px',
-                      paddingLeft: '8px',
-                      paddingRight: '8px',
-                      paddingBottom: '5px',
-                      lineHeight: '1.3'
-                    }}
-                    className="md:!text-sm"
-                    formatter={(value, entry: any) => (
-                      <span className="text-card-foreground text-[11px] md:text-sm font-medium">
-                        {value} ({entry.payload.percentage.toFixed(1)}%)
-                      </span>
-                    )}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Gráfica */}
+              <div className="w-full h-[280px] md:h-[320px] flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={gastosByCategory}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="hsl(var(--destructive))"
+                      dataKey="total"
+                    >
+                      {gastosByCategory.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="bg-popover border border-border rounded-lg p-3 shadow-lg">
+                              <p className="font-semibold text-popover-foreground">{data.name}</p>
+                              <p className="text-sm text-muted-foreground">
+                                ${data.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })} ({data.percentage.toFixed(1)}%)
+                              </p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              
+              {/* Categorías */}
+              <div className="flex flex-col justify-center space-y-3 py-2">
+                {gastosByCategory.map((category, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <div 
+                      className="w-4 h-4 rounded-full flex-shrink-0" 
+                      style={{ backgroundColor: category.color }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-card-foreground truncate">
+                        {category.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        ${category.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })} ({category.percentage.toFixed(1)}%)
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </Card>
