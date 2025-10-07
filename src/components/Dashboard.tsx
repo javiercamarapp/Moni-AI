@@ -340,63 +340,63 @@ const Dashboard = () => {
 
       {/* Sección de Quick Stats - 4 botones */}
       <div className="mx-4 mb-4">
-        <div className="grid grid-cols-4 gap-2">
-          <Card className="p-2 sm:p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
+        <div className="grid grid-cols-4 gap-1.5">
+          <Card className="p-1.5 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
             animationDelay: '100ms'
           }}>
-            <div className="flex flex-col items-center">
-              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-primary/20 flex items-center justify-center mb-1">
-                <Wallet className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center">
+                <Wallet className="w-3.5 h-3.5 text-white" />
               </div>
-              <div className="text-center">
-                <p className="text-[9px] sm:text-[10px] text-white">Balance</p>
-                <p className="text-xs sm:text-sm font-semibold text-white">
-                  ${currentMonth.balance.toLocaleString('es-MX')}
+              <div className="text-center w-full">
+                <p className="text-[8px] text-white/80 leading-tight">Balance</p>
+                <p className="text-[10px] font-semibold text-white truncate">
+                  ${(currentMonth.balance / 1000).toFixed(0)}k
                 </p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-2 sm:p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+          <Card className="p-1.5 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
             animationDelay: '200ms'
           }}>
-            <div className="flex flex-col items-center">
-              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-success/20 flex items-center justify-center mb-1">
-                <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-7 h-7 rounded-lg bg-success/20 flex items-center justify-center">
+                <TrendingUp className="w-3.5 h-3.5 text-white" />
               </div>
-              <div className="text-center">
-                <p className="text-[9px] sm:text-[10px] text-white">Ahorrado</p>
-                <p className="text-xs sm:text-sm font-semibold text-white">
-                  ${goals.reduce((sum, goal) => sum + Number(goal.current), 0).toLocaleString('es-MX')}
+              <div className="text-center w-full">
+                <p className="text-[8px] text-white/80 leading-tight">Ahorrado</p>
+                <p className="text-[10px] font-semibold text-white truncate">
+                  ${(goals.reduce((sum, goal) => sum + Number(goal.current), 0) / 1000).toFixed(0)}k
                 </p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-2 sm:p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+          <Card className="p-1.5 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
             animationDelay: '300ms'
           }}>
-            <div className="flex flex-col items-center">
-              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-warning/20 flex items-center justify-center mb-1">
-                <Target className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-7 h-7 rounded-lg bg-warning/20 flex items-center justify-center">
+                <Target className="w-3.5 h-3.5 text-white" />
               </div>
-              <div className="text-center">
-                <p className="text-[9px] sm:text-[10px] text-white">Metas</p>
-                <p className="text-xs sm:text-sm font-semibold text-white">{goals.length}</p>
+              <div className="text-center w-full">
+                <p className="text-[8px] text-white/80 leading-tight">Metas</p>
+                <p className="text-[10px] font-semibold text-white">{goals.length}</p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-2 sm:p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+          <Card className="p-1.5 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
             animationDelay: '400ms'
           }}>
-            <div className="flex flex-col items-center">
-              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-info/20 flex items-center justify-center mb-1">
-                <Users className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-7 h-7 rounded-lg bg-info/20 flex items-center justify-center">
+                <Users className="w-3.5 h-3.5 text-white" />
               </div>
-              <div className="text-center">
-                <p className="text-[9px] sm:text-[10px] text-white">Social</p>
-                <p className="text-xs sm:text-sm font-semibold text-white">Próximamente</p>
+              <div className="text-center w-full">
+                <p className="text-[8px] text-white/80 leading-tight">Social</p>
+                <p className="text-[10px] font-semibold text-white">Pronto</p>
               </div>
             </div>
           </Card>
