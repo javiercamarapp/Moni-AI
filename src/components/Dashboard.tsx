@@ -613,7 +613,7 @@ const Dashboard = () => {
             <p className="text-xs text-white mb-2 leading-relaxed">
               Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
             </p>
-              <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white border-0 text-xs h-8" onClick={() => navigate('/whatsapp')}>
+              <Button size="sm" className="bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white border-white/30 text-xs h-8 hover:scale-105 transition-transform duration-200" onClick={() => navigate('/whatsapp')}>
                 <MessageCircle className="w-3 h-3 mr-1" />
                 Conectar WhatsApp
               </Button>
