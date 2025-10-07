@@ -35,3 +35,9 @@ verify_jwt = true
 
 [functions.text-to-speech]
 verify_jwt = true
+
+[functions.predict-savings]
+verify_jwt = true
+
+[functions.generate-statement-pdf]
+verify_jwt = true
