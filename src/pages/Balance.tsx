@@ -131,6 +131,7 @@ const Balance = () => {
     }>;
   } | null>(null);
   const [loadingProyecciones, setLoadingProyecciones] = useState(false);
+  const [isUpdatingProjections, setIsUpdatingProjections] = useState(false);
 
   // Calculate balance from state
   const balance = totalIngresos - totalGastos;
@@ -141,8 +142,11 @@ const Balance = () => {
     fetchBalanceData();
   }, [currentMonth, viewMode]);
 
-  // Fetch AI predictions when balance data changes
+  // Fetch AI predictions ONCE when component loads or when actual data changes
+  // Prevent multiple simultaneous calls
   useEffect(() => {
+    if (isUpdatingProjections) return; // Prevent concurrent calls
+    
     if (totalIngresos > 0 || totalGastos > 0) {
       fetchAIProjections();
     } else {
@@ -160,10 +164,13 @@ const Balance = () => {
       });
       setLoadingProyecciones(false);
     }
-  }, [totalIngresos, totalGastos, balance, viewMode]);
+  }, [totalIngresos, totalGastos]);
 
   const fetchAIProjections = async () => {
+    if (isUpdatingProjections) return; // Prevent concurrent calls
+    
     try {
+      setIsUpdatingProjections(true);
       setLoadingProyecciones(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -211,10 +218,10 @@ const Balance = () => {
       setProyecciones(data);
     } catch (error) {
       console.error('Error fetching AI projections:', error);
-      // Fallback to simple calculation
+      // Fallback: calculate based on all historical data, not current period
       setProyecciones({
-        proyeccionAnual: viewMode === 'mensual' ? balance * 12 : balance,
-        proyeccionSemestral: viewMode === 'mensual' ? balance * 6 : balance / 2,
+        proyeccionAnual: balance * 12,
+        proyeccionSemestral: balance * 6,
         confianza: 'baja',
         insights: [{
           titulo: 'Proyección Simple',
@@ -225,6 +232,7 @@ const Balance = () => {
       });
     } finally {
       setLoadingProyecciones(false);
+      setIsUpdatingProjections(false);
     }
   };
 
