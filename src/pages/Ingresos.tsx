@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
@@ -17,7 +18,8 @@ import {
   ChevronRight, 
   Plus,
   Sliders,
-  Download
+  Download,
+  TrendingUp
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -89,9 +91,6 @@ const Ingresos = () => {
 
   const totalIngresos = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
 
-  const monthNames = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-  const monthNamesFull = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-
   const handlePreviousMonth = () => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
   };
@@ -103,6 +102,10 @@ const Ingresos = () => {
   const handleWhatsAppRegister = () => {
     const message = encodeURIComponent('Hola Moni, quiero registrar un ingreso');
     window.open(`https://wa.me/?text=${message}`, '_blank');
+  };
+
+  const getPeriodLabel = () => {
+    return currentMonth.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -173,300 +176,342 @@ const Ingresos = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
+        <p className="text-foreground text-lg">Cargando ingresos...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header con mes y navegación */}
-      <div className="bg-gradient-to-br from-primary via-primary/95 to-primary/90 text-white px-4 py-6">
-        <div className="flex items-center justify-between mb-4">
+    <div className="min-h-screen animated-wave-bg pb-20">
+      {/* Header */}
+      <div className="p-4 flex items-center justify-between border-b border-border/30 bg-card/50 backdrop-blur-sm">
+        <div className="flex items-center gap-4">
           <Button 
             variant="ghost" 
             size="icon"
             onClick={() => navigate('/balance')}
-            className="text-white hover:bg-white/10 -ml-2"
+            className="text-foreground hover:bg-accent/50 transition-all hover:scale-105"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handlePreviousMonth}
-              className="text-white hover:bg-white/10"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            
-            <h1 className="text-base font-medium min-w-[140px] text-center">
-              {monthNamesFull[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+              Tus Ingresos
             </h1>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleNextMonth}
-              className="text-white hover:bg-white/10"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
+            <p className="text-sm text-muted-foreground">Gestiona tus entradas</p>
           </div>
+        </div>
 
+        <div className="flex gap-2">
           <Button
-            variant="ghost"
-            className="text-primary hover:bg-white/10 text-sm -mr-2"
+            size="icon"
+            onClick={handleWhatsAppRegister}
+            className="bg-card/70 hover:bg-card/90 border border-border/30 transition-all hover:scale-105"
           >
-            Filtrar
+            <img src={whatsappLogo} alt="WhatsApp" className="w-5 h-5 object-contain" />
+          </Button>
+          
+          <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+            <DialogTrigger asChild>
+              <Button
+                size="icon"
+                className="bg-card/70 hover:bg-card/90 border border-border/30 transition-all hover:scale-105"
+              >
+                <Plus className="h-5 w-5 text-foreground" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-gradient-card border-border/30 max-h-[85vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold text-card-foreground">
+                  Registrar Ingreso
+                </DialogTitle>
+              </DialogHeader>
+              
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="space-y-2">
+                  <Label htmlFor="amount" className="text-card-foreground/90 text-base">
+                    ¿Cuál es el monto de tu ingreso?
+                  </Label>
+                  <Input
+                    id="amount"
+                    type="number"
+                    step="0.01"
+                    placeholder="$0.00"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    required
+                    className="bg-card/50 border-border/30 text-card-foreground placeholder:text-muted-foreground h-14 text-lg"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description" className="text-card-foreground/90 text-base">
+                    ¿Qué nombre le quieres dar?
+                  </Label>
+                  <Input
+                    id="description"
+                    placeholder="Nombre de tu ingreso"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    required
+                    className="bg-card/50 border-border/30 text-card-foreground placeholder:text-muted-foreground h-14"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-card-foreground/90 text-base">
+                    ¿El ingreso lo recibiste en?
+                  </Label>
+                  <Select value={paymentMethod} onValueChange={setPaymentMethod} required>
+                    <SelectTrigger className="bg-card/50 border-border/30 text-card-foreground h-14">
+                      <SelectValue placeholder="Selecciona método de pago" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border/30 z-50">
+                      <SelectItem value="debito" className="text-card-foreground">Débito</SelectItem>
+                      <SelectItem value="credito" className="text-card-foreground">Crédito</SelectItem>
+                      <SelectItem value="efectivo" className="text-card-foreground">Efectivo</SelectItem>
+                      <SelectItem value="transferencia" className="text-card-foreground">Transferencia</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-card-foreground/90 text-base">
+                    ¿En cuál tarjeta/cuenta recibiste el ingreso?
+                  </Label>
+                  <Select value={account} onValueChange={setAccount} required>
+                    <SelectTrigger className="bg-card/50 border-border/30 text-card-foreground h-14">
+                      <SelectValue placeholder="Escoge o agrega tu tarjeta/cuenta" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border/30 z-50">
+                      <SelectItem value="banco1" className="text-card-foreground">Cuenta Principal</SelectItem>
+                      <SelectItem value="banco2" className="text-card-foreground">Cuenta de Ahorros</SelectItem>
+                      <SelectItem value="banco3" className="text-card-foreground">Tarjeta Nómina</SelectItem>
+                      <SelectItem value="otro" className="text-card-foreground">Otra cuenta</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-card-foreground/90 text-base">
+                    Categoría de tu ingreso
+                  </Label>
+                  <Select value={category} onValueChange={setCategory} required>
+                    <SelectTrigger className="bg-card/50 border-border/30 text-card-foreground h-14">
+                      <SelectValue placeholder="Categorías" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border/30 z-50">
+                      {categories.length === 0 ? (
+                        <SelectItem value="none" className="text-card-foreground" disabled>
+                          No hay categorías. Créalas en Gestionar Categorías
+                        </SelectItem>
+                      ) : (
+                        categories.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id} className="text-card-foreground">
+                            {cat.name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-card-foreground/90 text-base">
+                    ¿Cada cuánto te llega este ingreso?
+                  </Label>
+                  <Select value={frequency} onValueChange={setFrequency} required>
+                    <SelectTrigger className="bg-card/50 border-border/30 text-card-foreground h-14">
+                      <SelectValue placeholder="Sin frecuencia" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border/30 z-50">
+                      <SelectItem value="unico" className="text-card-foreground">Sin frecuencia</SelectItem>
+                      <SelectItem value="semanal" className="text-card-foreground">Semanal</SelectItem>
+                      <SelectItem value="quincenal" className="text-card-foreground">Quincenal</SelectItem>
+                      <SelectItem value="mensual" className="text-card-foreground">Mensual</SelectItem>
+                      <SelectItem value="anual" className="text-card-foreground">Anual</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="date" className="text-card-foreground/90 text-base">
+                    Fecha de tu ingreso
+                  </Label>
+                  <Input
+                    id="date"
+                    type="date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    required
+                    className="bg-card/50 border-border/30 text-card-foreground h-14"
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg font-semibold"
+                >
+                  Agregar Ingreso
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+          
+          <Button
+            size="icon"
+            onClick={() => navigate('/categorias')}
+            className="bg-card/70 hover:bg-card/90 border border-border/30 transition-all hover:scale-105"
+          >
+            <Sliders className="h-5 w-5 text-foreground" />
           </Button>
         </div>
       </div>
 
-      {/* Card de total */}
-      <div className="px-4 -mt-4 mb-4">
-        <Card className="bg-card border-border shadow-lg rounded-3xl overflow-hidden">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-1">
-              <p className="text-sm text-muted-foreground">Total de Ingresos</p>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-primary hover:bg-primary/10"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+      {/* Período selector */}
+      <div className="px-4 mt-4 mb-4">
+        <div className="flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handlePreviousMonth}
+            className="text-foreground hover:bg-accent/50 transition-all hover:scale-105"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          
+          <div className="bg-card/70 backdrop-blur-sm rounded-lg px-4 py-2 border border-border/30 shadow-card">
+            <p className="text-foreground font-medium capitalize text-center">
+              {getPeriodLabel()}
+            </p>
+          </div>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleNextMonth}
+            className="text-foreground hover:bg-accent/50 transition-all hover:scale-105"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </Button>
+        </div>
+      </div>
+
+      <div className="px-4 space-y-4">
+        {/* Total de ingresos destacado */}
+        <Card className="p-6 bg-gradient-to-br from-[hsl(145,45%,30%)] to-[hsl(145,55%,25%)] border-[hsl(145,50%,35%)]/50 card-glow animate-fade-in shadow-elegant" style={{ animationDelay: '0ms' }}>
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-3 bg-card/40 backdrop-blur-sm rounded-full border border-border/30">
+              <TrendingUp className="h-6 w-6 text-green-200" />
             </div>
-            <h2 className="text-4xl font-bold text-foreground mb-3">
-              ${totalIngresos.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
-            </h2>
-            <p className="text-sm text-muted-foreground mb-4">{transactions.length} Transacciones</p>
-            
+            <div>
+              <p className="text-sm text-white/90">
+                Total de Ingresos
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-bold text-white">
+                ${totalIngresos.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+              </h2>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm text-white/90">
+              <span>Transacciones:</span>
+              <span className="font-semibold">{transactions.length}</span>
+            </div>
+          </div>
+          
+          {/* Botón de descarga de PDF */}
+          <div className="mt-4 pt-4 border-t border-white/20">
             <Button 
-              variant="ghost"
-              className="w-full justify-start text-primary hover:bg-primary/10 gap-2"
+              variant="ghost" 
+              className="w-full bg-card/40 backdrop-blur-sm border border-border/30 text-white hover:bg-card/60 transition-all duration-300 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight"
+              onClick={() => {
+                toast({
+                  title: "Próximamente",
+                  description: "Esta función estará disponible pronto",
+                });
+              }}
             >
-              <Download className="h-4 w-4" />
-              <span className="text-sm">Descargar Estado de Cuenta en PDF</span>
+              <Download className="h-4 w-4 mr-1.5 flex-shrink-0" />
+              <span className="break-words whitespace-normal">Descargar movimientos del mes en PDF</span>
             </Button>
           </div>
         </Card>
-      </div>
 
-      {/* Botones de acción flotantes */}
-      <div className="fixed top-[180px] right-4 flex flex-col gap-2 z-10">
-        <Button
-          size="icon"
-          onClick={handleWhatsAppRegister}
-          className="h-12 w-12 rounded-full bg-primary hover:bg-primary/90 shadow-lg"
-        >
-          <img src={whatsappLogo} alt="WhatsApp" className="w-5 h-5 object-contain" />
-        </Button>
-        
-        <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-          <DialogTrigger asChild>
-            <Button
-              size="icon"
-              className="h-12 w-12 rounded-full bg-primary hover:bg-primary/90 shadow-lg"
-            >
-              <Plus className="h-5 w-5" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="bg-gradient-card border-white/20 max-h-[85vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-bold text-white">
-                Registrar Ingreso
-              </DialogTitle>
-            </DialogHeader>
-            
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="amount" className="text-white/90 text-base">
-                  ¿Cuál es el monto de tu ingreso?
-                </Label>
-                <Input
-                  id="amount"
-                  type="number"
-                  step="0.01"
-                  placeholder="$0.00"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  required
-                  className="bg-white/10 border-white/30 text-white placeholder:text-white/40 h-14 text-lg"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description" className="text-white/90 text-base">
-                  ¿Qué nombre le quieres dar?
-                </Label>
-                <Input
-                  id="description"
-                  placeholder="Nombre de tu ingreso"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  required
-                  className="bg-white/10 border-white/30 text-white placeholder:text-white/40 h-14"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-white/90 text-base">
-                  ¿El ingreso lo recibiste en?
-                </Label>
-                <Select value={paymentMethod} onValueChange={setPaymentMethod} required>
-                  <SelectTrigger className="bg-white/10 border-white/30 text-white h-14">
-                    <SelectValue placeholder="Selecciona método de pago" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-white/20 z-50">
-                    <SelectItem value="debito" className="text-white">Débito</SelectItem>
-                    <SelectItem value="credito" className="text-white">Crédito</SelectItem>
-                    <SelectItem value="efectivo" className="text-white">Efectivo</SelectItem>
-                    <SelectItem value="transferencia" className="text-white">Transferencia</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-white/90 text-base">
-                  ¿En cuál tarjeta/cuenta recibiste el ingreso?
-                </Label>
-                <Select value={account} onValueChange={setAccount} required>
-                  <SelectTrigger className="bg-white/10 border-white/30 text-white h-14">
-                    <SelectValue placeholder="Escoge o agrega tu tarjeta/cuenta" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-white/20 z-50">
-                    <SelectItem value="banco1" className="text-white">Cuenta Principal</SelectItem>
-                    <SelectItem value="banco2" className="text-white">Cuenta de Ahorros</SelectItem>
-                    <SelectItem value="banco3" className="text-white">Tarjeta Nómina</SelectItem>
-                    <SelectItem value="otro" className="text-white">Otra cuenta</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-white/90 text-base">
-                  Categoría de tu ingreso
-                </Label>
-                <Select value={category} onValueChange={setCategory} required>
-                  <SelectTrigger className="bg-white/10 border-white/30 text-white h-14">
-                    <SelectValue placeholder="Categorías" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-white/20 z-50">
-                    {categories.length === 0 ? (
-                      <SelectItem value="none" className="text-white" disabled>
-                        No hay categorías. Créalas en Gestionar Categorías
-                      </SelectItem>
-                    ) : (
-                      categories.map((cat) => (
-                        <SelectItem key={cat.id} value={cat.id} className="text-white">
-                          {cat.name}
-                        </SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-white/90 text-base">
-                  ¿Cada cuánto te llega este ingreso?
-                </Label>
-                <Select value={frequency} onValueChange={setFrequency} required>
-                  <SelectTrigger className="bg-white/10 border-white/30 text-white h-14">
-                    <SelectValue placeholder="Sin frecuencia" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-white/20 z-50">
-                    <SelectItem value="unico" className="text-white">Sin frecuencia</SelectItem>
-                    <SelectItem value="semanal" className="text-white">Semanal</SelectItem>
-                    <SelectItem value="quincenal" className="text-white">Quincenal</SelectItem>
-                    <SelectItem value="mensual" className="text-white">Mensual</SelectItem>
-                    <SelectItem value="anual" className="text-white">Anual</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="date" className="text-white/90 text-base">
-                  Fecha de tu ingreso
-                </Label>
-                <Input
-                  id="date"
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  required
-                  className="bg-white/10 border-white/30 text-white h-14"
-                />
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full bg-primary hover:bg-primary/90 text-white h-14 text-lg font-semibold"
-              >
-                Agregar Ingreso
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
-        
-        <Button
-          size="icon"
-          onClick={() => navigate('/categorias')}
-          className="h-12 w-12 rounded-full bg-primary hover:bg-primary/90 shadow-lg"
-        >
-          <Sliders className="h-5 w-5" />
-        </Button>
-      </div>
-
-      {/* Ordenar por */}
-      <div className="px-4 mb-4">
-        <p className="text-primary text-center text-sm">Ordenar por: <span className="font-medium">Más reciente</span></p>
-      </div>
-
-      {/* Lista de transacciones */}
-      <div className="px-4 space-y-2">
-        {loading ? (
-          <p className="text-center text-muted-foreground">Cargando...</p>
-        ) : transactions.length === 0 ? (
-          <Card className="p-6 bg-card text-center">
-            <p className="text-muted-foreground">No hay ingresos registrados este mes</p>
-          </Card>
-        ) : (
-          transactions.map((item) => {
-            const transactionDate = new Date(item.transaction_date);
-            const day = transactionDate.getDate();
-            const month = monthNames[transactionDate.getMonth()];
-            const year = transactionDate.getFullYear();
-            
-            return (
-              <Card key={item.id} className="bg-card border-border rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
-                <div className="p-4">
-                  <div className="flex items-start gap-3">
+        {/* Lista de transacciones */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-success" />
+            Historial de Ingresos
+          </h3>
+          
+          {transactions.length === 0 ? (
+            <Card className="p-6 bg-gradient-card card-glow text-center shadow-card border border-border/30">
+              <p className="text-muted-foreground">No hay ingresos registrados este mes</p>
+            </Card>
+          ) : (
+            transactions.map((item, index) => {
+              const transactionDate = new Date(item.transaction_date);
+              
+              return (
+                <Card 
+                  key={item.id} 
+                  className="p-4 bg-gradient-card card-glow hover-lift shadow-card border border-border/30 animate-fade-in transition-all duration-300"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <div className="flex items-start gap-4">
                     {/* Logo del banco */}
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <span className="text-lg">🏦</span>
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[hsl(145,45%,30%)] to-[hsl(145,55%,25%)] flex items-center justify-center flex-shrink-0 border border-[hsl(145,50%,35%)]/50">
+                      <span className="text-xl">🏦</span>
                     </div>
                     
                     {/* Información */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-foreground truncate text-sm">
-                        {item.description.toUpperCase()}
-                      </h3>
-                      <p className="text-xs text-muted-foreground">
-                        {day} {month} {year}
+                      <h4 className="font-semibold text-card-foreground text-sm mb-1">
+                        {item.description}
+                      </h4>
+                      <p className="text-xs text-muted-foreground mb-2">
+                        {transactionDate.toLocaleDateString('es-MX', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
+                        })}
                       </p>
+                      <div className="flex gap-2 flex-wrap">
+                        {item.categories && (
+                          <Badge 
+                            variant="outline" 
+                            className="text-xs border-[hsl(145,50%,35%)]/50 text-card-foreground"
+                          >
+                            {item.categories.name}
+                          </Badge>
+                        )}
+                        {item.payment_method && (
+                          <Badge 
+                            variant="outline" 
+                            className="text-xs border-border/30 text-muted-foreground"
+                          >
+                            {item.payment_method}
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                     
                     {/* Monto */}
                     <div className="text-right flex-shrink-0">
-                      <p className="font-semibold text-foreground">
-                        ${Number(item.amount).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                      <p className="text-xl font-bold text-success">
+                        +${Number(item.amount).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                       </p>
                     </div>
                   </div>
-                </div>
-              </Card>
-            );
-          })
-        )}
+                </Card>
+              );
+            })
+          )}
+        </div>
       </div>
     </div>
   );
