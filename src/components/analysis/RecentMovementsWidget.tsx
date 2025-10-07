@@ -74,25 +74,41 @@ export default function RecentMovementsWidget() {
           Ver todos
         </Button>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-2 max-h-64 overflow-y-auto">
         {recentTransactions.length === 0 ? (
           <p className="text-white/70 text-sm text-center py-4">
             No hay transacciones registradas aún
           </p>
         ) : (
           recentTransactions.map((transaction) => (
-            <div key={transaction.id} className="flex justify-between items-center">
-              <div>
-                <p className="text-sm font-medium text-white">
-                  {transaction.description}
-                </p>
-                <p className="text-xs text-white">
-                  {transaction.categories?.name || 'Sin categoría'} • {new Date(transaction.transaction_date).toLocaleDateString('es-MX')}
+            <div 
+              key={transaction.id}
+              className="p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-base">
+                      {transaction.type === 'ingreso' ? '💰' : '💳'}
+                    </span>
+                    <p className="text-xs font-medium text-white">
+                      {transaction.description}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px] text-white/60">
+                    <span>{new Date(transaction.transaction_date).toLocaleDateString('es-MX')}</span>
+                    {transaction.categories?.name && (
+                      <>
+                        <span>•</span>
+                        <span>{transaction.categories.name}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <p className={`text-sm font-bold ${transaction.type === 'ingreso' ? 'text-green-500' : 'text-red-500'}`}>
+                  {transaction.type === 'ingreso' ? '+' : '-'}${Number(transaction.amount).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>
-              <span className={`text-sm font-semibold ${transaction.type === 'ingreso' ? 'text-green-500' : 'text-red-500'}`}>
-                {transaction.type === 'ingreso' ? '+' : '-'}${Math.abs(Number(transaction.amount))}
-              </span>
             </div>
           ))
         )}
