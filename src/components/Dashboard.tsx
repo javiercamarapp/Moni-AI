@@ -598,41 +598,102 @@ const Dashboard = () => {
                 </div>
               </div>
               
-              {proyecciones.insights && proyecciones.insights.length > 0 && (
-                <Carousel 
-                  className="w-full"
-                  opts={{
-                    align: "start",
-                    loop: true,
-                  }}
-                  plugins={[
-                    Autoplay({
-                      delay: 6000,
-                    }),
-                  ]}
-                >
-                  <CarouselContent>
-                    {proyecciones.insights.map((insight, index) => (
-                      <CarouselItem key={index}>
-                        <div className={`bg-card/30 rounded-lg p-4 border ${
-                          insight.tipo === 'positivo' 
-                            ? 'border-success/30 bg-success/5'
-                            : insight.tipo === 'negativo'
-                            ? 'border-destructive/30 bg-destructive/5'
-                            : insight.tipo === 'consejo'
-                            ? 'border-accent/30 bg-accent/5'
-                           : 'border-border/20'
-                        }`}>
-                          <div className="mb-2">
-                            <h4 className="text-base font-semibold text-card-foreground">{insight.titulo}</h4>
+              {(() => {
+                // Generar insights dinámicos basados en métricas reales
+                const dynamicInsights = [];
+                
+                // Insight mensual - Gastos
+                const gastosMensuales = currentMonth.expenses;
+                const ingresosMensuales = currentMonth.income;
+                const ahorroMensual = ingresosMensuales - gastosMensuales;
+                const porcentajeAhorro = ingresosMensuales > 0 ? (ahorroMensual / ingresosMensuales) * 100 : 0;
+                
+                dynamicInsights.push({
+                  titulo: `💰 Resumen Mensual`,
+                  descripcion: `Este mes has gastado $${gastosMensuales.toLocaleString('es-MX')} de $${ingresosMensuales.toLocaleString('es-MX')} de ingresos. ${porcentajeAhorro >= 20 ? `¡Excelente! Estás ahorrando ${porcentajeAhorro.toFixed(0)}% 🎉` : porcentajeAhorro >= 10 ? `Estás ahorrando ${porcentajeAhorro.toFixed(0)}% 👍` : `Intenta ahorrar más, actualmente ${porcentajeAhorro.toFixed(0)}% 📊`}`,
+                  tipo: porcentajeAhorro >= 20 ? 'positivo' : porcentajeAhorro >= 10 ? 'consejo' : 'negativo'
+                });
+
+                // Insight anual - Proyección
+                if (proyecciones.proyeccionAnual > 0) {
+                  dynamicInsights.push({
+                    titulo: `📈 Proyección Anual`,
+                    descripcion: `Si mantienes tu ritmo actual, podrías ahorrar $${proyecciones.proyeccionAnual.toLocaleString('es-MX')} este año. ${proyecciones.proyeccionAnual > 50000 ? '¡Vas muy bien!' : proyecciones.proyeccionAnual > 20000 ? 'Buen progreso.' : 'Puedes mejorar tus ahorros.'}`,
+                    tipo: proyecciones.proyeccionAnual > 50000 ? 'positivo' : 'consejo'
+                  });
+                }
+
+                // Insight de metas
+                const metasProgress = goals.length > 0 
+                  ? goals.reduce((sum, g) => sum + (Number(g.current) / Number(g.target) * 100), 0) / goals.length 
+                  : 0;
+                
+                if (goals.length > 0) {
+                  dynamicInsights.push({
+                    titulo: `🎯 Progreso de Metas`,
+                    descripcion: `Tienes ${goals.length} meta${goals.length > 1 ? 's' : ''} activa${goals.length > 1 ? 's' : ''} con un promedio de ${metasProgress.toFixed(0)}% completado. ${metasProgress >= 60 ? '¡Estás cerca de lograrlas! 🌟' : metasProgress >= 30 ? 'Sigue avanzando poco a poco 💪' : 'Dale más impulso a tus objetivos 🚀'}`,
+                    tipo: metasProgress >= 60 ? 'positivo' : 'consejo'
+                  });
+                }
+
+                // Insight de balance
+                const balanceActual = currentMonth.balance;
+                dynamicInsights.push({
+                  titulo: `💳 Balance Actual`,
+                  descripcion: `Tu balance es de $${balanceActual.toLocaleString('es-MX')}. ${balanceActual > 10000 ? '¡Tienes un colchón financiero sólido! 💪' : balanceActual > 5000 ? 'Mantén un buen control de gastos 👍' : balanceActual > 0 ? 'Considera aumentar tu ahorro de emergencia 📋' : 'Trabaja en generar más ingresos o reducir gastos 🎯'}`,
+                  tipo: balanceActual > 5000 ? 'positivo' : balanceActual > 0 ? 'consejo' : 'negativo'
+                });
+
+                // Insight de gastos fijos
+                const porcentajeGastosFijos = ingresosMensuales > 0 ? (fixedExpenses / ingresosMensuales) * 100 : 0;
+                dynamicInsights.push({
+                  titulo: `🏠 Gastos Fijos`,
+                  descripcion: `Tus gastos fijos representan ${porcentajeGastosFijos.toFixed(0)}% de tus ingresos ($${fixedExpenses.toLocaleString('es-MX')}). ${porcentajeGastosFijos <= 50 ? '¡Excelente control! 🎉' : porcentajeGastosFijos <= 70 ? 'Dentro de un rango aceptable 📊' : 'Intenta reducir gastos fijos para mayor flexibilidad ⚠️'}`,
+                  tipo: porcentajeGastosFijos <= 50 ? 'positivo' : porcentajeGastosFijos <= 70 ? 'consejo' : 'negativo'
+                });
+
+                // Combinar insights dinámicos con insights de AI
+                const allInsights = [
+                  ...dynamicInsights,
+                  ...(proyecciones.insights || [])
+                ];
+
+                return allInsights.length > 0 ? (
+                  <Carousel 
+                    className="w-full"
+                    opts={{
+                      align: "start",
+                      loop: true,
+                    }}
+                    plugins={[
+                      Autoplay({
+                        delay: 5000,
+                      }),
+                    ]}
+                  >
+                    <CarouselContent>
+                      {allInsights.map((insight, index) => (
+                        <CarouselItem key={index}>
+                          <div className={`bg-card/30 rounded-lg p-4 border transition-all duration-300 ${
+                            insight.tipo === 'positivo' 
+                              ? 'border-success/30 bg-success/5 hover:border-success/50'
+                              : insight.tipo === 'negativo'
+                              ? 'border-destructive/30 bg-destructive/5 hover:border-destructive/50'
+                              : insight.tipo === 'consejo'
+                              ? 'border-accent/30 bg-accent/5 hover:border-accent/50'
+                             : 'border-border/20 hover:border-border/40'
+                          }`}>
+                            <div className="mb-2">
+                              <h4 className="text-base font-semibold text-card-foreground">{insight.titulo}</h4>
+                            </div>
+                            <p className="text-sm text-card-foreground/80 leading-relaxed">{insight.descripcion}</p>
                           </div>
-                          <p className="text-sm text-card-foreground/80 leading-relaxed">{insight.descripcion}</p>
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                </Carousel>
-              )}
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                  </Carousel>
+                ) : null;
+              })()}
             </>
           ) : (
             <p className="text-card-foreground/70 text-center py-4">
