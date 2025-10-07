@@ -477,6 +477,8 @@ const Balance = () => {
                     return;
                   }
 
+                  console.log('🔵 Iniciando descarga de reporte...');
+
                   toast({
                     title: "Generando reporte",
                     description: "Preparando tu reporte de movimientos...",
@@ -491,25 +493,51 @@ const Balance = () => {
                     }
                   });
 
-                  if (error) throw error;
+                  console.log('🔵 Respuesta recibida:', { hasData: !!data, hasError: !!error, dataKeys: data ? Object.keys(data) : [] });
 
-                  // Crear y descargar el archivo HTML
-                  const blob = new Blob([data.html], { type: 'text/html' });
+                  if (error) {
+                    console.error('🔴 Error del edge function:', error);
+                    throw error;
+                  }
+
+                  if (!data || !data.html || !data.filename) {
+                    console.error('🔴 Datos incompletos:', { hasData: !!data, hasHtml: !!data?.html, hasFilename: !!data?.filename });
+                    throw new Error('Datos incompletos en la respuesta');
+                  }
+
+                  console.log('🔵 Creando blob...', { htmlLength: data.html.length, filename: data.filename });
+
+                  // Crear y descargar el archivo HTML con charset explícito
+                  const blob = new Blob([data.html], { type: 'text/html; charset=utf-8' });
+                  console.log('🔵 Blob creado:', { size: blob.size, type: blob.type });
+
                   const url = window.URL.createObjectURL(blob);
+                  console.log('🔵 URL del blob creada:', url);
+
                   const a = document.createElement('a');
+                  a.style.display = 'none';
                   a.href = url;
                   a.download = data.filename;
+                  
                   document.body.appendChild(a);
+                  console.log('🔵 Anchor añadido al DOM, ejecutando click...');
+                  
                   a.click();
-                  window.URL.revokeObjectURL(url);
-                  document.body.removeChild(a);
+                  console.log('🔵 Click ejecutado');
+
+                  // Limpiar después de un breve delay
+                  setTimeout(() => {
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    console.log('🔵 Limpieza completada');
+                  }, 100);
 
                   toast({
                     title: "Reporte descargado",
                     description: "Abre el archivo y usa Imprimir > Guardar como PDF en tu navegador",
                   });
                 } catch (error: any) {
-                  console.error('Error al generar reporte:', error);
+                  console.error('🔴 Error al generar reporte:', error);
                   toast({
                     title: "Error",
                     description: error.message || "No se pudo generar el reporte",
