@@ -419,77 +419,31 @@ const Dashboard = () => {
         loop: true,
         align: "center"
       }}>
-          <CarouselContent className="-ml-2 md:-ml-4">
-            <CarouselItem className="pl-2 md:pl-4 basis-[85%] md:basis-[80%]">
-              <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
-                <img src={bannerHalloween} alt="Halloween Special Sale" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
-                <div className="relative p-6 h-full flex flex-col justify-center">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                      <Zap className="w-4 h-4 text-white" />
-                    </div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      Oferta Especial Halloween
-                    </h3>
-                  </div>
-                  <p className="text-sm text-white/90 mb-3">
-                    Descuentos exclusivos por tiempo limitado
-                  </p>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-black hover:text-gray-900 w-fit hover:scale-105 transition-transform duration-200">
-                    Comprar Ahora
-                  </Button>
-                </div>
-              </Card>
-            </CarouselItem>
-            
-            <CarouselItem className="pl-2 md:pl-4 basis-[85%] md:basis-[80%]">
-              <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
-                <img src={bannerGoals} alt="Banner de metas" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
-                <div className="relative p-6 h-full flex flex-col justify-center">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                      <Target className="w-4 h-4 text-white" />
-                    </div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      Alcanza tus Metas
-                    </h3>
-                  </div>
-                  <p className="text-sm text-white/90 mb-3">
-                    Planifica y ahorra para cumplir tus objetivos
-                  </p>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-black hover:text-gray-900 w-fit hover:scale-105 transition-transform duration-200">
-                    Comenzar
-                  </Button>
-                </div>
-              </Card>
-            </CarouselItem>
-            
-            <CarouselItem className="pl-2 md:pl-4 basis-[85%] md:basis-[80%]">
-              <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
-                <img src={bannerGroups} alt="Banner de ahorro grupal" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
-                <div className="relative p-6 h-full flex flex-col justify-center">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                      <Users className="w-4 h-4 text-white" />
-                    </div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      Ahorro en Grupo
-                    </h3>
-                  </div>
-                  <p className="text-sm text-white/90 mb-3">
-                    Únete a grupos y multiplica tus ahorros
-                  </p>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-black hover:text-gray-900 w-fit hover:scale-105 transition-transform duration-200">
-                    Explorar
-                  </Button>
-                </div>
-              </Card>
-            </CarouselItem>
-          </CarouselContent>
+...
         </Carousel>
+      </div>
+
+      {/* WhatsApp Banner */}
+      <div className="mx-4 mb-4">
+        <Card className="p-3 sm:p-4 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+          animationDelay: '400ms'
+        }}>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
+              <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
+            </div>
+            <div className="flex-1 min-w-0">
+              
+            <p className="text-xs text-white mb-2 leading-relaxed">
+              Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
+            </p>
+              <Button size="sm" className="bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white border-white/30 text-xs h-8 hover:scale-105 transition-transform duration-200" onClick={() => navigate('/whatsapp')}>
+                <MessageCircle className="w-3 h-3 mr-1" />
+                Conectar WhatsApp
+              </Button>
+            </div>
+          </div>
+        </Card>
       </div>
       
       {/* Bottom Navigation Menu - Fixed */}
@@ -527,29 +481,6 @@ const Dashboard = () => {
       <div className="p-2 sm:p-4">
       <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
         
-
-        {/* WhatsApp Banner */}
-        <div className="mx-4">
-          <Card className="p-3 sm:p-4 bg-gradient-card card-glow mb-4 animate-fade-in hover:scale-105 transition-transform duration-200" style={{
-            animationDelay: '400ms'
-          }}>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
-                <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
-              </div>
-              <div className="flex-1 min-w-0">
-                
-              <p className="text-xs text-white mb-2 leading-relaxed">
-                Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
-              </p>
-                <Button size="sm" className="bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white border-white/30 text-xs h-8 hover:scale-105 transition-transform duration-200" onClick={() => navigate('/whatsapp')}>
-                  <MessageCircle className="w-3 h-3 mr-1" />
-                  Conectar WhatsApp
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
           
