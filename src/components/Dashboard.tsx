@@ -700,10 +700,10 @@ const Dashboard = () => {
         }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-success/30 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <TrendingUp className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-success-foreground" />
+                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-success-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Ahorros</p>
+                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Net Worth</p>
                 <p className="text-xs sm:text-base font-bold text-white leading-tight">
                   ${(goals.reduce((sum, goal) => sum + Number(goal.current), 0) / 1000).toFixed(0)}k
                 </p>
