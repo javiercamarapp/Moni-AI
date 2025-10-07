@@ -28,28 +28,25 @@ serve(async (req) => {
     const logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABLAAAAEsCAYAAADHm4vGAAAACXBIWXMAAAsTAAALEwEAmpwYAAAKT2lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVNnVFPpFj333vRCS4iAlEtvUhUIIFJCi4AUkSYqIQkQSogMADIC4gAACIQCgAACBAAAgEQAOEQAaAAAMYAAgAPAA0AgQCAYA';
 
     // Fetch transactions based on viewMode
-    let query = supabase
+    let startDate: Date;
+    let endDate: Date;
+
+    if (viewMode === 'mensual') {
+      startDate = new Date(year, month - 1, 1);
+      endDate = new Date(year, month, 0);
+    } else {
+      startDate = new Date(year, 0, 1);
+      endDate = new Date(year, 11, 31);
+    }
+
+    const { data: transactions, error: transError } = await supabase
       .from('transactions')
       .select('*, categories(*)')
       .eq('user_id', userId)
+      .gte('transaction_date', startDate.toISOString().split('T')[0])
+      .lte('transaction_date', endDate.toISOString().split('T')[0])
       .order('transaction_date', { ascending: false })
       .limit(10000);
-
-    if (viewMode === 'mensual') {
-      const startDate = new Date(year, month - 1, 1);
-      const endDate = new Date(year, month, 0);
-      query = query
-        .gte('transaction_date', startDate.toISOString().split('T')[0])
-        .lte('transaction_date', endDate.toISOString().split('T')[0]);
-    } else {
-      const startDate = new Date(year, 0, 1);
-      const endDate = new Date(year, 11, 31);
-      query = query
-        .gte('transaction_date', startDate.toISOString().split('T')[0])
-        .lte('transaction_date', endDate.toISOString().split('T')[0]);
-    }
-
-    const { data: transactions, error: transError } = await query;
 
     if (transError) {
       throw new Error(`Error fetching transactions: ${transError.message}`);
@@ -70,7 +67,7 @@ serve(async (req) => {
     const tasaAhorro = totalIngresos > 0 ? ((balance / totalIngresos) * 100) : 0;
 
     console.log('=== PDF REPORT CALCULATIONS ===');
-    console.log('Date range:', { startDate: query, endDate: query });
+    console.log('Date range:', { startDate: startDate.toISOString().split('T')[0], endDate: endDate.toISOString().split('T')[0] });
     console.log('Total Ingresos:', totalIngresos);
     console.log('Total Gastos:', totalGastos);
     console.log('Balance:', balance);
