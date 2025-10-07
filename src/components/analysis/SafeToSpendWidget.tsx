@@ -21,7 +21,11 @@ export default function SafeToSpendWidget({
   const percentageOfIncome = safeMonthlyIncome > 0 ? safeSafeToSpend / safeMonthlyIncome * 100 : 0;
   
   return (
-    <Card className="p-4 bg-gradient-card card-glow border-white/20 hover:scale-105 transition-transform duration-200">
+    <Card className={`p-4 card-glow border-white/20 hover:scale-105 transition-transform duration-200 ${
+      safeSafeToSpend >= 0 
+        ? 'bg-gradient-to-br from-emerald-900/80 to-emerald-950/80' 
+        : 'bg-gradient-to-br from-red-900/80 to-red-950/80'
+    }`}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
