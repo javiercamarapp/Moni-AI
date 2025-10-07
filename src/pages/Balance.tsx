@@ -73,15 +73,15 @@ const categoryGroupMapping: Record<string, string> = {
   'taxi': 'Auto',
 };
 
-// Colores metálicos para grupos
+// Colores metálicos profundos para grupos
 const groupColors: Record<string, string> = {
-  'Comidas': 'hsl(215, 45%, 35%)',
-  'Entretenimiento': 'hsl(200, 40%, 38%)',
-  'Salidas Nocturnas': 'hsl(260, 35%, 35%)',
-  'Servicios': 'hsl(180, 38%, 32%)',
-  'Streaming': 'hsl(280, 40%, 40%)',
-  'Auto': 'hsl(30, 45%, 35%)',
-  'Otros': 'hsl(220, 30%, 30%)',
+  'Comidas': 'hsl(215, 50%, 28%)',
+  'Entretenimiento': 'hsl(200, 45%, 30%)',
+  'Salidas Nocturnas': 'hsl(260, 40%, 28%)',
+  'Servicios': 'hsl(180, 42%, 25%)',
+  'Streaming': 'hsl(280, 45%, 32%)',
+  'Auto': 'hsl(30, 50%, 28%)',
+  'Otros': 'hsl(220, 35%, 24%)',
 };
 
 const getCategoryGroup = (categoryName: string): string => {
@@ -559,21 +559,20 @@ const Balance = () => {
           {ingresosByCategory.length === 0 ? (
             <p className="text-muted-foreground text-center py-4">No hay ingresos registrados</p>
           ) : (
-            <div className="w-full h-[300px]">
+            <div className="w-full h-[320px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={ingresosByCategory}
                     cx="50%"
-                    cy="50%"
+                    cy="45%"
                     labelLine={false}
-                    label={({ name, percentage }) => `${name}: ${percentage.toFixed(1)}%`}
-                    outerRadius={80}
+                    outerRadius={70}
                     fill="hsl(var(--primary))"
                     dataKey="total"
                   >
                     {ingresosByCategory.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={`hsl(${150 + index * 35}, 45%, 40%)`} />
+                      <Cell key={`cell-${index}`} fill={`hsl(${150 + index * 35}, 50%, 32%)`} />
                     ))}
                   </Pie>
                   <Tooltip 
@@ -587,10 +586,11 @@ const Balance = () => {
                   />
                   <Legend 
                     verticalAlign="bottom" 
-                    height={36}
+                    height={70}
+                    wrapperStyle={{ fontSize: '11px' }}
                     formatter={(value, entry: any) => (
-                      <span className="text-foreground text-xs">
-                        {value}: ${entry.payload.total.toLocaleString('es-MX')}
+                      <span className="text-foreground text-[10px] sm:text-xs block">
+                        {value}
                       </span>
                     )}
                   />
@@ -604,22 +604,21 @@ const Balance = () => {
         <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
           <div className="flex items-center gap-2 mb-4">
             <TrendingDown className="h-5 w-5 text-destructive" />
-            <h3 className="text-lg font-semibold text-foreground">Gastos Agrupados</h3>
+            <h3 className="text-lg font-semibold text-foreground">Gastos por Categoría</h3>
           </div>
           
           {gastosByCategory.length === 0 ? (
             <p className="text-muted-foreground text-center py-4">No hay gastos registrados</p>
           ) : (
-            <div className="w-full h-[300px]">
+            <div className="w-full h-[320px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={gastosByCategory}
                     cx="50%"
-                    cy="50%"
+                    cy="45%"
                     labelLine={false}
-                    label={({ name, percentage }) => `${name}: ${percentage.toFixed(1)}%`}
-                    outerRadius={80}
+                    outerRadius={70}
                     fill="hsl(var(--destructive))"
                     dataKey="total"
                   >
@@ -638,10 +637,11 @@ const Balance = () => {
                   />
                   <Legend 
                     verticalAlign="bottom" 
-                    height={36}
+                    height={70}
+                    wrapperStyle={{ fontSize: '11px' }}
                     formatter={(value, entry: any) => (
-                      <span className="text-foreground text-xs">
-                        {value}: ${entry.payload.total.toLocaleString('es-MX')}
+                      <span className="text-foreground text-[10px] sm:text-xs block">
+                        {value}
                       </span>
                     )}
                   />
