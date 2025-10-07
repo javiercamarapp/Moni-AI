@@ -4,13 +4,14 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, TrendingUp, TrendingDown, Wallet, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, Wallet, ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import BottomNav from '@/components/BottomNav';
 import { Progress } from '@/components/ui/progress';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { useToast } from '@/hooks/use-toast';
 
 interface CategoryBalance {
   id: string;
@@ -112,6 +113,7 @@ const getCategoryGroup = (categoryName: string): string => {
 
 const Balance = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [viewMode, setViewMode] = useState<'mensual' | 'anual'>('mensual');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [ingresosByCategory, setIngresosByCategory] = useState<CategoryBalance[]>([]);
@@ -132,6 +134,10 @@ const Balance = () => {
   } | null>(null);
   const [loadingProyecciones, setLoadingProyecciones] = useState(false);
   const [isUpdatingProjections, setIsUpdatingProjections] = useState(false);
+
+  // Extract year and month for PDF generation
+  const selectedYear = currentMonth.getFullYear();
+  const selectedMonth = currentMonth.getMonth() + 1;
 
   // Calculate balance from state
   const balance = totalIngresos - totalGastos;
@@ -451,6 +457,58 @@ const Balance = () => {
               <span className="font-semibold">{tasaAhorro.toFixed(1)}%</span>
             </div>
             <Progress value={tasaAhorro} className="h-2 bg-card/30" />
+          </div>
+          
+          {/* Botón de descarga de PDF */}
+          <div className="mt-4 pt-4 border-t border-foreground/20">
+            <Button 
+              variant="ghost" 
+              className="w-full bg-card/40 backdrop-blur-sm border border-border/30 text-foreground hover:bg-card/60 transition-all duration-300"
+              onClick={async () => {
+                try {
+                  toast({
+                    title: "Generando PDF",
+                    description: "Preparando tu estado de cuenta...",
+                  });
+
+                  const { data, error } = await supabase.functions.invoke('generate-statement-pdf', {
+                    body: {
+                      viewMode,
+                      year: selectedYear,
+                      month: selectedMonth,
+                    }
+                  });
+
+                  if (error) throw error;
+
+                  // Descargar el PDF
+                  const blob = new Blob([Uint8Array.from(atob(data.pdf), c => c.charCodeAt(0))], { type: 'application/pdf' });
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = data.filename;
+                  document.body.appendChild(a);
+                  a.click();
+                  window.URL.revokeObjectURL(url);
+                  document.body.removeChild(a);
+
+                  toast({
+                    title: "PDF descargado",
+                    description: "Tu estado de cuenta se ha descargado correctamente.",
+                  });
+                } catch (error: any) {
+                  console.error('Error al generar PDF:', error);
+                  toast({
+                    title: "Error",
+                    description: error.message || "No se pudo generar el PDF",
+                    variant: "destructive",
+                  });
+                }
+              }}
+            >
+              <Download className="h-5 w-5 mr-2" />
+              Descargar Estado de Cuenta en PDF
+            </Button>
           </div>
         </Card>
 
