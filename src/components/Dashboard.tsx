@@ -1333,7 +1333,14 @@ const Dashboard = () => {
               <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
                 <div className="flex items-center justify-between flex-shrink-0">
                   <h3 className="text-sm sm:text-xs font-bold text-white drop-shadow-lg">📊 Movimientos Recientes</h3>
-                  <span className="text-xs sm:text-[10px] text-white/70 font-semibold">{recentTransactions.length}</span>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-[10px] sm:text-[9px] text-white hover:bg-white/10 hover:scale-105 transition-transform duration-200 h-6 px-2"
+                    onClick={() => navigate('/gastos')}
+                  >
+                    Ver todas
+                  </Button>
                 </div>
 
                 {recentTransactions.length === 0 ? (
