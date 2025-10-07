@@ -288,31 +288,41 @@ const Dashboard = () => {
       </div>
 
       {/* Score Moni - Compacto */}
-      {scoreMoni !== null && (
-        <div className="mx-4 mb-4">
-          <Card className={`p-4 card-glow border-white/20 hover:scale-105 transition-transform duration-200 bg-gradient-to-br ${
-            scoreMoni >= 70 ? 'from-emerald-500/90 to-emerald-600/90' : 
-            scoreMoni >= 40 ? 'from-yellow-500/90 to-yellow-600/90' : 
-            'from-red-500/90 to-red-600/90'
-          }`}>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-white/90 mb-1">Score Moni</p>
-                <p className="text-3xl font-bold text-white">{scoreMoni}<span className="text-sm text-white/80">/100</span></p>
-                <p className="text-xs text-white/90 mt-1">
-                  {scoreMoni >= 70 ? '✅ Excelente' : scoreMoni >= 40 ? '⚠️ Mejorable' : '❌ Crítico'}
-                </p>
-              </div>
-              <div className="relative">
-                <svg className="w-20 h-20 transform -rotate-90">
-                  <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" className="text-white/30" />
-                  <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" strokeDasharray={`${2 * Math.PI * 34}`} strokeDashoffset={`${2 * Math.PI * 34 * (1 - scoreMoni / 100)}`} className="text-white transition-all" strokeLinecap="round" />
-                </svg>
-              </div>
+      <div className="mx-4 mb-4">
+        <Card className={`p-4 card-glow border-white/20 hover:scale-105 transition-transform duration-200 bg-gradient-to-br ${
+          loadingScore ? 'from-gray-500/90 to-gray-600/90' :
+          (scoreMoni ?? 0) >= 70 ? 'from-emerald-500/90 to-emerald-600/90' : 
+          (scoreMoni ?? 0) >= 40 ? 'from-yellow-500/90 to-yellow-600/90' : 
+          'from-red-500/90 to-red-600/90'
+        }`}>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs text-white/90 mb-1">Score Moni</p>
+              {loadingScore ? (
+                <div className="h-9 w-20 bg-white/20 rounded animate-pulse" />
+              ) : (
+                <p className="text-3xl font-bold text-white">{scoreMoni ?? 40}<span className="text-sm text-white/80">/100</span></p>
+              )}
+              <p className="text-xs text-white/90 mt-1">
+                {loadingScore ? 'Calculando...' : 
+                  (scoreMoni ?? 40) >= 70 ? '✅ Excelente' : 
+                  (scoreMoni ?? 40) >= 40 ? '⚠️ Mejorable' : '❌ Crítico'}
+              </p>
             </div>
-          </Card>
-        </div>
-      )}
+            <div className="relative">
+              <svg className="w-20 h-20 transform -rotate-90">
+                <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" className="text-white/30" />
+                <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" 
+                  strokeDasharray={`${2 * Math.PI * 34}`} 
+                  strokeDashoffset={`${2 * Math.PI * 34 * (1 - (scoreMoni ?? 40) / 100)}`} 
+                  className="text-white transition-all" 
+                  strokeLinecap="round" 
+                />
+              </svg>
+            </div>
+          </div>
+        </Card>
+      </div>
 
       {/* AI Coach Insights - Carousel de recomendaciones */}
       <div className="mx-4 mb-4">
