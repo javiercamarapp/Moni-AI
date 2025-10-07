@@ -1,6 +1,36 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+// Rate limiting map
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+
+// Clean up old entries every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of rateLimitMap.entries()) {
+    if (now > entry.resetTime) {
+      rateLimitMap.delete(key);
+    }
+  }
+}, 5 * 60 * 1000);
+
+function checkRateLimit(identifier: string, maxRequests = 100, windowMs = 60000): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(identifier);
+  
+  if (!entry || now > entry.resetTime) {
+    rateLimitMap.set(identifier, { count: 1, resetTime: now + windowMs });
+    return true;
+  }
+  
+  if (entry.count >= maxRequests) {
+    return false;
+  }
+  
+  entry.count++;
+  return true;
+}
+
 // Input validation functions
 const isValidPhoneNumber = (phone: string): boolean => {
   const phoneRegex = /^\+?[1-9]\d{1,14}$/;
@@ -15,9 +45,44 @@ const isValidVerifyToken = (token: string): boolean => {
   return typeof token === 'string' && token.length > 0 && token.length <= 100;
 };
 
+// Verify WhatsApp signature
+async function verifySignature(payload: string, signature: string | null, secret: string): Promise<boolean> {
+  if (!signature || !signature.startsWith('sha256=')) return false;
+  
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  
+  const signed = await crypto.subtle.sign('HMAC', key, encoder.encode(payload));
+  const expectedSignature = 'sha256=' + Array.from(new Uint8Array(signed))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+  
+  return signature === expectedSignature;
+}
+
+async function logWebhookAttempt(supabase: any, phoneNumber: string, status: string, metadata: any) {
+  try {
+    await supabase.from('security_audit_log').insert({
+      user_id: null,
+      action: 'whatsapp_webhook_received',
+      timestamp: new Date().toISOString(),
+      metadata: { phone_number: phoneNumber, ...metadata },
+      status
+    });
+  } catch (error) {
+    console.error('Failed to log webhook attempt:', error);
+  }
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-hub-signature-256',
 };
 
 serve(async (req) => {
@@ -29,6 +94,7 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
+    const whatsappSecret = Deno.env.get('WHATSAPP_APP_SECRET') || '';
 
     // Verificación de webhook de WhatsApp (GET)
     if (req.method === 'GET') {
@@ -72,7 +138,24 @@ serve(async (req) => {
     }
 
     // Recepción de mensajes de WhatsApp (POST)
-    const body = await req.json();
+    const rawBody = await req.text();
+    
+    // Verify webhook signature if secret is configured
+    if (whatsappSecret) {
+      const signature = req.headers.get('x-hub-signature-256');
+      const isValid = await verifySignature(rawBody, signature, whatsappSecret);
+      
+      if (!isValid) {
+        console.error('Invalid webhook signature');
+        await logWebhookAttempt(supabase, 'unknown', 'error', { reason: 'invalid_signature' });
+        return new Response(JSON.stringify({ error: 'Invalid signature' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+    }
+    
+    const body = JSON.parse(rawBody);
     console.log('Webhook received:', JSON.stringify(body, null, 2));
 
     // Extraer mensaje y número de teléfono
@@ -123,7 +206,18 @@ serve(async (req) => {
     const sanitizedPhone = sanitizeString(phoneNumber, 20);
     const sanitizedMessage = sanitizeString(messageText, 1000);
 
+    // Rate limiting - 100 requests per minute per phone number
+    if (!checkRateLimit(sanitizedPhone, 100, 60000)) {
+      console.error('Rate limit exceeded for:', sanitizedPhone);
+      await logWebhookAttempt(supabase, sanitizedPhone, 'error', { reason: 'rate_limit_exceeded' });
+      return new Response(JSON.stringify({ error: 'Rate limit exceeded' }), {
+        status: 429,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     console.log(`Message from ${sanitizedPhone}: ${sanitizedMessage}`);
+    await logWebhookAttempt(supabase, sanitizedPhone, 'success', { message_length: sanitizedMessage.length });
 
     // Buscar si el usuario está registrado
     const { data: whatsappUser } = await supabase

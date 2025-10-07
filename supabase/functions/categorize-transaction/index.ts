@@ -6,6 +6,16 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Validation functions
+function sanitizeString(str: string, maxLength: number): string {
+  return str.trim().slice(0, maxLength);
+}
+
+function isValidUUID(uuid: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(uuid);
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -13,6 +23,24 @@ serve(async (req) => {
 
   try {
     const { description, amount, type, userId, merchantName } = await req.json();
+    
+    // Validate inputs
+    if (!description || typeof description !== 'string') {
+      throw new Error('Invalid description');
+    }
+    if (!amount || typeof amount !== 'number' || amount <= 0 || amount > 999999.99) {
+      throw new Error('Invalid amount');
+    }
+    if (!type || !['ingreso', 'gasto', 'income', 'expense'].includes(type)) {
+      throw new Error('Invalid transaction type');
+    }
+    if (!userId || !isValidUUID(userId)) {
+      throw new Error('Invalid user ID');
+    }
+    
+    // Sanitize inputs
+    const cleanDescription = sanitizeString(description, 200);
+    const cleanMerchantName = merchantName ? sanitizeString(merchantName, 100) : '';
     
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -60,7 +88,7 @@ Responde SOLO con un JSON:
           },
           {
             role: 'user',
-            content: `Transacción: "${description}"${merchantName ? `\nComerciante: "${merchantName}"` : ''}\nMonto: $${amount}`
+            content: `Transacción: "${cleanDescription}"${cleanMerchantName ? `\nComerciante: "${cleanMerchantName}"` : ''}\nMonto: $${amount}`
           }
         ],
         temperature: 0.2
@@ -80,6 +108,21 @@ Responde SOLO con un JSON:
     }
     
     const categorization = JSON.parse(jsonMatch[0]);
+    
+    // Validate AI response structure
+    if (!categorization.category || typeof categorization.category !== 'string' || 
+        categorization.category.length > 50) {
+      throw new Error('Invalid category in AI response');
+    }
+    if (!['high', 'medium', 'low'].includes(categorization.confidence)) {
+      categorization.confidence = 'low';
+    }
+    if (categorization.reason && categorization.reason.length > 200) {
+      categorization.reason = categorization.reason.slice(0, 200);
+    }
+    
+    // Sanitize AI response
+    categorization.category = sanitizeString(categorization.category, 50);
 
     // Buscar categoría existente
     let categoryId = null;

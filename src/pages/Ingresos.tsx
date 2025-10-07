@@ -24,6 +24,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
+import { TransactionSchema } from '@/lib/validation';
 import {
   Dialog,
   DialogContent,
@@ -122,18 +123,40 @@ const Ingresos = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      // Validate input with Zod
+      const validationResult = TransactionSchema.safeParse({
+        amount: parseFloat(amount),
+        description,
+        payment_method: paymentMethod,
+        account,
+        category_id: category || null,
+        frequency,
+        transaction_date: date,
+        type: 'ingreso'
+      });
+
+      if (!validationResult.success) {
+        const firstError = validationResult.error.errors[0];
+        toast({
+          title: "Datos inválidos",
+          description: firstError.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
       const { error } = await supabase
         .from('transactions')
         .insert({
           user_id: user.id,
-          amount: parseFloat(amount),
-          description,
-          category_id: category || null,
-          payment_method: paymentMethod,
-          account,
-          frequency,
-          transaction_date: date,
-          type: 'ingreso',
+          amount: validationResult.data.amount,
+          description: validationResult.data.description,
+          payment_method: validationResult.data.payment_method,
+          account: validationResult.data.account,
+          category_id: validationResult.data.category_id,
+          frequency: validationResult.data.frequency,
+          transaction_date: validationResult.data.transaction_date,
+          type: validationResult.data.type,
         });
 
       if (error) throw error;
