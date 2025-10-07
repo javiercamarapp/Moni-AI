@@ -30,7 +30,7 @@ serve(async (req) => {
     // Fetch transactions based on viewMode
     let query = supabase
       .from('transactions')
-      .select('*')
+      .select('*, categories(*)')
       .eq('user_id', userId)
       .order('transaction_date', { ascending: false });
 
