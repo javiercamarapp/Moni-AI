@@ -296,14 +296,14 @@ export default function FinancialAnalysis() {
                     </div>
                   </div>
                   <p className="text-xl font-bold text-green-400">
-                    ${formatK(analysis.metrics.income)}k
+                    ${formatK(analysis.metrics.totalIncome)}k
                   </p>
                 </div>
                 <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
                   <div 
                     className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-600 to-green-400 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.5)]"
                     style={{ 
-                      width: `${Math.min((analysis.metrics.income / Math.max(analysis.metrics.income, analysis.metrics.expenses)) * 100, 100)}%`,
+                      width: `${Math.min((analysis.metrics.totalIncome / Math.max(analysis.metrics.totalIncome, analysis.metrics.totalExpenses)) * 100, 100)}%`,
                       animation: 'slideIn 1.5s ease-out'
                     }}
                   />
@@ -323,14 +323,14 @@ export default function FinancialAnalysis() {
                     </div>
                   </div>
                   <p className="text-xl font-bold text-red-400">
-                    ${formatK(analysis.metrics.expenses)}k
+                    ${formatK(analysis.metrics.totalExpenses)}k
                   </p>
                 </div>
                 <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
                   <div 
                     className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)]"
                     style={{ 
-                      width: `${Math.min((analysis.metrics.expenses / Math.max(analysis.metrics.income, analysis.metrics.expenses)) * 100, 100)}%`,
+                      width: `${Math.min((analysis.metrics.totalExpenses / Math.max(analysis.metrics.totalIncome, analysis.metrics.totalExpenses)) * 100, 100)}%`,
                       animation: 'slideIn 1.5s ease-out 0.3s both'
                     }}
                   />
