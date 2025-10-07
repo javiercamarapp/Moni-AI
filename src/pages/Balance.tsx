@@ -466,9 +466,20 @@ const Balance = () => {
               className="w-full bg-card/40 backdrop-blur-sm border border-border/30 text-foreground hover:bg-card/60 transition-all duration-300"
               onClick={async () => {
                 try {
+                  // Get current user
+                  const { data: { user } } = await supabase.auth.getUser();
+                  if (!user) {
+                    toast({
+                      title: "Error",
+                      description: "Debes iniciar sesión para descargar el PDF",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+
                   toast({
                     title: "Generando PDF",
-                    description: "Preparando tu estado de cuenta...",
+                    description: "Preparando tu reporte de movimientos...",
                   });
 
                   const { data, error } = await supabase.functions.invoke('generate-statement-pdf', {
@@ -476,6 +487,7 @@ const Balance = () => {
                       viewMode,
                       year: selectedYear,
                       month: selectedMonth,
+                      userId: user.id,
                     }
                   });
 
@@ -494,7 +506,7 @@ const Balance = () => {
 
                   toast({
                     title: "PDF descargado",
-                    description: "Tu estado de cuenta se ha descargado correctamente.",
+                    description: "Tu reporte de movimientos se ha descargado correctamente.",
                   });
                 } catch (error: any) {
                   console.error('Error al generar PDF:', error);
@@ -507,7 +519,7 @@ const Balance = () => {
               }}
             >
               <Download className="h-5 w-5 mr-2" />
-              Descargar Estado de Cuenta en PDF
+              Descargar movimientos del {viewMode === 'mensual' ? 'mes' : 'año'} en PDF
             </Button>
           </div>
         </Card>
