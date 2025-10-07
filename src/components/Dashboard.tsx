@@ -364,7 +364,7 @@ const Dashboard = () => {
 
       {/* Score Moni - Compacto */}
       {scoreMoni !== null && <div className="mx-4 mb-4">
-          <Card className={`p-4 card-glow border-white/20 hover:scale-105 transition-transform duration-200 bg-gradient-to-br ${scoreMoni >= 70 ? 'from-emerald-500/90 to-emerald-600/90' : scoreMoni >= 40 ? 'from-yellow-500/90 to-yellow-600/90' : 'from-red-500/90 to-red-600/90'}`}>
+          <Card className={`p-4 card-glow border-white/20 hover:scale-105 transition-transform duration-200 ${scoreMoni >= 70 ? 'bg-gradient-to-br from-success/90 to-success/70' : scoreMoni >= 40 ? 'bg-gradient-to-br from-warning/90 to-warning/70' : 'bg-gradient-to-br from-danger/90 to-danger/70'}`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-white/90 mb-1">Score Moni</p>
@@ -411,8 +411,8 @@ const Dashboard = () => {
             animationDelay: '200ms'
           }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-success/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <TrendingUp className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-success/30 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+                <TrendingUp className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-success-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
                 <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Ahorros</p>
@@ -427,8 +427,8 @@ const Dashboard = () => {
             animationDelay: '300ms'
           }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-warning/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Target className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-warning/30 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+                <Target className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-warning-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
                 <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Metas</p>

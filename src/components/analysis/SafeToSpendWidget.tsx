@@ -23,8 +23,8 @@ export default function SafeToSpendWidget({
   return (
     <Card className={`p-4 card-glow border-white/20 hover:scale-105 transition-transform duration-200 ${
       safeSafeToSpend >= 0 
-        ? 'bg-gradient-to-br from-emerald-900/80 to-emerald-950/80' 
-        : 'bg-gradient-to-br from-red-900/80 to-red-950/80'
+        ? 'bg-gradient-to-br from-success/90 to-success/70' 
+        : 'bg-gradient-to-br from-danger/90 to-danger/70'
     }`}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
@@ -57,7 +57,7 @@ export default function SafeToSpendWidget({
         </div>
         <div className="border-t border-white/20 pt-2 flex justify-between font-semibold">
           <span className="text-white">Disponible</span>
-          <span className={`${safeSafeToSpend >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+          <span className="text-white font-bold">
             ${safeSafeToSpend.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
           </span>
         </div>

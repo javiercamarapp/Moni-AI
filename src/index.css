@@ -34,11 +34,15 @@
     --accent: 0 0% 96%;
     --accent-foreground: 0 0% 9%;
 
-    /* Status colors */
+    /* Status colors - Metallic dark tones */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --success: 0 0% 20%;
-    --warning: 0 0% 30%;
+    --success: 150 40% 25%;
+    --success-foreground: 0 0% 98%;
+    --danger: 0 45% 30%;
+    --danger-foreground: 0 0% 98%;
+    --warning: 38 50% 35%;
+    --warning-foreground: 0 0% 98%;
 
     /* Interactive elements */
     --border: 0 0% 30%;
@@ -95,6 +99,13 @@
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
+
+    --success: 150 40% 25%;
+    --success-foreground: 0 0% 98%;
+    --danger: 0 45% 30%;
+    --danger-foreground: 0 0% 98%;
+    --warning: 38 50% 35%;
+    --warning-foreground: 0 0% 98%;
 
     --border: 0 0% 30%;
     --input: 0 0% 96%;
