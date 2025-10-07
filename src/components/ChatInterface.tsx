@@ -4,31 +4,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from "@/hooks/use-toast";
-import { Send, Plus, MessageSquare, Trash2, Edit3, MoreVertical, User, LogOut, Menu, X } from 'lucide-react';
+import { Send, Plus, Menu, Mic, ChevronRight } from 'lucide-react';
 import moniLogo from '@/assets/moni-ai-logo.png';
 
 const ChatInterface = () => {
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const [message, setMessage] = useState('');
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [conversations, setConversations] = useState([
-    { id: 1, title: 'Conversación Nueva', date: 'Hoy' }
-  ]);
-  const [activeConversation, setActiveConversation] = useState(1);
   const [messages, setMessages] = useState<Array<{
     id: number;
     type: string;
     content: string;
-  }>>([
-    {
-      id: 1,
-      type: 'ai',
-      content: "¡Hola! Soy MONI AI+, tu asistente financiero inteligente. ¿En qué puedo ayudarte hoy?"
-    }
-  ]);
+  }>>([]);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -58,15 +46,6 @@ const ChatInterface = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    toast({
-      title: "Sesión cerrada",
-      description: "Hasta pronto!"
-    });
-    navigate("/");
-  };
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
@@ -191,144 +170,97 @@ const ChatInterface = () => {
     }
   };
 
-  const handleNewChat = () => {
-    const newId = conversations.length + 1;
-    setConversations(prev => [
-      { id: newId, title: 'Conversación Nueva', date: 'Hoy' },
-      ...prev
-    ]);
-    setActiveConversation(newId);
-    setMessages([{
-      id: 1,
-      type: 'ai',
-      content: "¡Hola! Soy MONI AI+, tu asistente financiero inteligente. ¿En qué puedo ayudarte hoy?"
-    }]);
-  };
+  const suggestionCards = [
+    {
+      title: "Analizar gastos",
+      subtitle: "del mes actual"
+    },
+    {
+      title: "Crear meta de ahorro",
+      subtitle: "para tu objetivo"
+    }
+  ];
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-64' : 'w-0'} bg-gray-900 text-white transition-all duration-300 flex flex-col overflow-hidden`}>
-        {/* Sidebar Header */}
-        <div className="p-4 border-b border-gray-800">
+    <div className="flex flex-col h-screen bg-black text-white">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-4">
+        <div className="flex items-center gap-3">
           <Button
-            onClick={handleNewChat}
-            className="w-full bg-transparent border border-gray-700 hover:bg-gray-800 text-white justify-start"
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/dashboard")}
+            className="text-white hover:bg-gray-900 p-2"
           >
-            <Plus className="w-4 h-4 mr-2" />
-            Nueva conversación
+            <Menu className="w-6 h-6" />
           </Button>
-        </div>
-
-        {/* Conversations List */}
-        <div className="flex-1 overflow-y-auto p-2">
-          {conversations.map((conv) => (
-            <button
-              key={conv.id}
-              onClick={() => setActiveConversation(conv.id)}
-              className={`w-full text-left p-3 rounded-lg mb-1 hover:bg-gray-800 transition-colors group ${
-                activeConversation === conv.id ? 'bg-gray-800' : ''
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 flex-1 min-w-0">
-                  <MessageSquare className="w-4 h-4 flex-shrink-0" />
-                  <span className="text-sm truncate">{conv.title}</span>
-                </div>
-                <div className="opacity-0 group-hover:opacity-100 flex gap-1">
-                  <button className="p-1 hover:bg-gray-700 rounded">
-                    <Edit3 className="w-3 h-3" />
-                  </button>
-                  <button className="p-1 hover:bg-gray-700 rounded">
-                    <Trash2 className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-              <span className="text-xs text-gray-500 mt-1 block">{conv.date}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* User Section */}
-        <div className="p-4 border-t border-gray-800">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
-                <User className="w-4 h-4" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{user?.email?.split('@')[0]}</p>
-                <p className="text-xs text-gray-400 truncate">{user?.email}</p>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-medium">MONI AI+</span>
+            <ChevronRight className="w-5 h-5 text-gray-400" />
           </div>
         </div>
       </div>
 
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <div className="h-14 border-b border-gray-200 bg-white flex items-center justify-between px-4">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="text-gray-600 hover:bg-gray-100"
-            >
-              {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </Button>
-            <div className="flex items-center gap-2">
-              <img src={moniLogo} alt="MONI AI+" className="h-8 w-8" />
-              <h1 className="text-xl font-semibold text-gray-900">MONI AI+</h1>
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto px-4">
+        {messages.length === 0 ? (
+          <div className="h-full flex items-end pb-6">
+            <div className="w-full space-y-3">
+              {suggestionCards.map((card, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setMessage(card.title);
+                    setTimeout(() => handleSendMessage(), 100);
+                  }}
+                  className="w-full bg-gray-900/50 backdrop-blur-sm rounded-2xl p-4 text-left hover:bg-gray-900/70 transition-all"
+                >
+                  <h3 className="text-white font-medium text-base mb-1">
+                    {card.title}
+                  </h3>
+                  <p className="text-gray-400 text-sm">
+                    {card.subtitle}
+                  </p>
+                </button>
+              ))}
             </div>
           </div>
-          <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-gray-100">
-            <MoreVertical className="w-5 h-5" />
-          </Button>
-        </div>
-
-        {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="max-w-3xl mx-auto px-4 py-8">
+        ) : (
+          <div className="py-6 space-y-6">
             {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`mb-8 flex gap-4 ${msg.type === 'user' ? 'justify-end' : ''}`}
-              >
-                {msg.type === 'ai' && (
-                  <div className="w-8 h-8 rounded-sm bg-purple-600 flex items-center justify-center flex-shrink-0">
-                    <img src={moniLogo} alt="AI" className="w-6 h-6" />
-                  </div>
-                )}
-                <div className={`flex-1 ${msg.type === 'user' ? 'max-w-2xl' : ''}`}>
-                  <div className={`${msg.type === 'user' ? 'bg-gray-100 rounded-2xl px-4 py-3 inline-block' : ''}`}>
-                    <p className="text-gray-900 whitespace-pre-wrap leading-relaxed">
-                      {msg.content}
-                    </p>
-                  </div>
+              <div key={msg.id} className="space-y-2">
+                <div className="flex items-center gap-2">
+                  {msg.type === 'ai' ? (
+                    <div className="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center">
+                      <img src={moniLogo} alt="AI" className="w-4 h-4" />
+                    </div>
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center">
+                      <span className="text-xs font-medium">Tú</span>
+                    </div>
+                  )}
+                  <span className="text-sm font-medium text-gray-400">
+                    {msg.type === 'ai' ? 'MONI AI+' : 'Tú'}
+                  </span>
                 </div>
-                {msg.type === 'user' && (
-                  <div className="w-8 h-8 rounded-sm bg-purple-600 flex items-center justify-center flex-shrink-0">
-                    <User className="w-5 h-5 text-white" />
-                  </div>
-                )}
+                <div className="pl-8">
+                  <p className="text-white text-base leading-relaxed whitespace-pre-wrap">
+                    {msg.content}
+                  </p>
+                </div>
               </div>
             ))}
 
             {isTyping && (
-              <div className="mb-8 flex gap-4">
-                <div className="w-8 h-8 rounded-sm bg-purple-600 flex items-center justify-center flex-shrink-0">
-                  <img src={moniLogo} alt="AI" className="w-6 h-6" />
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center">
+                    <img src={moniLogo} alt="AI" className="w-4 h-4" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-400">MONI AI+</span>
                 </div>
-                <div className="flex-1">
-                  <div className="flex gap-1 items-center">
+                <div className="pl-8">
+                  <div className="flex gap-1">
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }} />
@@ -339,32 +271,68 @@ const ChatInterface = () => {
 
             <div ref={messagesEndRef} />
           </div>
-        </div>
+        )}
+      </div>
 
-        {/* Input Area */}
-        <div className="border-t border-gray-200 bg-white p-4">
-          <div className="max-w-3xl mx-auto">
-            <div className="relative flex items-center bg-white border border-gray-300 rounded-xl shadow-sm focus-within:border-gray-400 focus-within:shadow-md transition-all">
-              <Input
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Envía un mensaje a MONI AI+"
-                className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-4 py-3"
-              />
-              <Button
-                onClick={handleSendMessage}
-                disabled={!message.trim() || isTyping}
-                size="icon"
-                className="mr-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+      {/* Input Area */}
+      <div className="px-4 pb-8 pt-4">
+        {messages.length === 0 && (
+          <div className="flex gap-2 mb-3 overflow-x-auto pb-2">
+            {suggestionCards.map((card, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setMessage(card.title);
+                  setTimeout(() => handleSendMessage(), 100);
+                }}
+                className="flex-shrink-0 bg-gray-900/50 backdrop-blur-sm rounded-2xl px-4 py-3 text-left hover:bg-gray-900/70 transition-all min-w-[280px]"
               >
-                <Send className="w-4 h-4" />
-              </Button>
-            </div>
-            <p className="text-xs text-gray-500 text-center mt-3">
-              MONI AI+ puede cometer errores. Considera verificar información importante.
-            </p>
+                <h3 className="text-white font-medium text-sm mb-0.5">
+                  {card.title}
+                </h3>
+                <p className="text-gray-400 text-xs">
+                  {card.subtitle}
+                </p>
+              </button>
+            ))}
           </div>
+        )}
+
+        <div className="flex items-center gap-2 bg-gray-900/80 rounded-full px-2 py-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-gray-400 hover:text-white hover:bg-transparent flex-shrink-0"
+          >
+            <Plus className="w-5 h-5" />
+          </Button>
+
+          <Input
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Pregunta lo que quieras"
+            className="flex-1 bg-transparent border-0 text-white placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 px-2"
+          />
+
+          {message.trim() ? (
+            <Button
+              onClick={handleSendMessage}
+              disabled={isTyping}
+              size="icon"
+              className="bg-white text-black hover:bg-gray-200 rounded-full flex-shrink-0 w-9 h-9"
+            >
+              <Send className="w-4 h-4" />
+            </Button>
+          ) : (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-gray-400 hover:text-white hover:bg-transparent flex-shrink-0"
+            >
+              <Mic className="w-5 h-5" />
+            </Button>
+          )}
         </div>
       </div>
     </div>
