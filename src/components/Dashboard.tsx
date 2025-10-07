@@ -639,10 +639,10 @@ const Dashboard = () => {
       {scoreMoni !== null && <div className="mx-4 mb-4">
           <Card className={`p-4 card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95 relative overflow-hidden ${scoreMoni >= 70 ? 'bg-gradient-to-br from-success/90 to-success/70' : scoreMoni >= 40 ? 'bg-gradient-to-br from-warning/90 to-warning/70' : 'bg-gradient-to-br from-danger/90 to-danger/70'}`}>
             {/* Efecto brillante */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent" 
                  style={{
                    backgroundSize: '200% 100%',
-                   animation: 'shimmer 3s ease-in-out infinite',
+                   animation: 'shimmer 2s ease-in-out infinite',
                  }}
             />
             
