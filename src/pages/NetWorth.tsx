@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, TrendingUp, TrendingDown, RefreshCw, Menu } from "lucide-react";
 import { LineChart, Line, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import BottomNav from "@/components/BottomNav";
+
 
 interface NetWorthDataPoint {
   date: string;
@@ -369,8 +369,6 @@ export default function NetWorth() {
           </div>
         </div>
       </div>
-
-      <BottomNav />
     </div>
   );
 }
