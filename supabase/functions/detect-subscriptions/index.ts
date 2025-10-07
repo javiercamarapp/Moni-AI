@@ -28,7 +28,7 @@ Deno.serve(async (req) => {
     const aiResponse = await fetch('https://api.lovable.app/v1/ai/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${supabaseKey}`,
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -37,11 +37,15 @@ Deno.serve(async (req) => {
           {
             role: 'system',
             content: `Eres un asistente financiero experto en detectar suscripciones y pagos recurrentes.
-Analiza las transacciones y detecta:
-1. Pagos con el mismo nombre/descripción que se repiten mensualmente
-2. Montos similares que se cobran regularmente
-3. Palabras clave de suscripciones comunes: Netflix, Spotify, Amazon, Disney, HBO, Gym, Internet, Luz, Agua, Gas, Teléfono, Seguros, etc.
-4. Categorías típicas de gastos recurrentes
+Analiza las transacciones y detecta CUALQUIER patrón de gastos que pueda ser recurrente:
+1. Pagos con el mismo nombre/descripción que se repiten (mensual, quincenal, semanal)
+2. Montos similares que se cobran regularmente al mismo comercio
+3. Gastos en las mismas categorías que se repiten
+4. Palabras clave de suscripciones comunes: Netflix, Spotify, Amazon, Disney, HBO, Gym, Internet, Luz, Agua, Gas, Teléfono, Seguros, Renta, etc.
+5. Servicios básicos que siempre son recurrentes
+6. Cualquier gasto que aparezca más de una vez
+
+IMPORTANTE: Si encuentras aunque sea UN gasto que se repita, inclúyelo.
 
 Responde ÚNICAMENTE con un JSON válido con este formato:
 {
@@ -72,19 +76,25 @@ Si no detectas suscripciones, responde: {"subscriptions": []}`
     });
 
     if (!aiResponse.ok) {
-      console.error('AI API error:', await aiResponse.text());
+      const errorText = await aiResponse.text();
+      console.error('❌ AI API error:', aiResponse.status, errorText);
       return new Response(
-        JSON.stringify({ subscriptions: [] }),
+        JSON.stringify({ subscriptions: [], error: `AI API error: ${aiResponse.status}` }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     const aiData = await aiResponse.json();
+    console.log('🤖 AI Response:', JSON.stringify(aiData, null, 2));
+    
     const content = aiData.choices?.[0]?.message?.content || '{"subscriptions": []}';
+    console.log('📝 AI Content:', content);
     
     // Limpiar la respuesta para extraer solo el JSON
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     const jsonResponse = jsonMatch ? JSON.parse(jsonMatch[0]) : { subscriptions: [] };
+    
+    console.log('✅ Parsed subscriptions:', jsonResponse.subscriptions?.length || 0);
 
     return new Response(
       JSON.stringify(jsonResponse),

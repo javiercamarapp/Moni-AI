@@ -281,7 +281,7 @@ const Dashboard = () => {
         const sixMonthsAgo = new Date();
         sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-        const { data: allExpenses } = await supabase
+        const { data: allExpenses, error: expensesError } = await supabase
           .from('transactions')
           .select('*, categories(name)')
           .eq('user_id', user.id)
@@ -289,22 +289,34 @@ const Dashboard = () => {
           .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
           .order('transaction_date', { ascending: false });
 
+        console.log('📊 Gastos encontrados para análisis:', allExpenses?.length || 0);
+
         if (allExpenses && allExpenses.length > 0) {
-          // Use AI to detect subscriptions
-          const { data: aiResult } = await supabase.functions.invoke('detect-subscriptions', {
-            body: { transactions: allExpenses }
-          });
+          try {
+            // Use AI to detect subscriptions
+            const { data: aiResult, error: aiError } = await supabase.functions.invoke('detect-subscriptions', {
+              body: { transactions: allExpenses }
+            });
 
-          const detectedSubs = (aiResult?.subscriptions || []).map((sub: any, index: number) => ({
-            id: `ai-sub-${index}`,
-            name: sub.description,
-            amount: Number(sub.amount),
-            icon: getSubscriptionIcon(sub.description),
-            dueDate: calculateNextDueDate(sub.frequency || 'mensual'),
-          }));
+            console.log('🤖 Resultado de IA:', aiResult);
+            console.log('❌ Error de IA:', aiError);
 
-          setUpcomingSubscriptions(detectedSubs);
+            const detectedSubs = (aiResult?.subscriptions || []).map((sub: any, index: number) => ({
+              id: `ai-sub-${index}`,
+              name: sub.description,
+              amount: Number(sub.amount),
+              icon: getSubscriptionIcon(sub.description),
+              dueDate: calculateNextDueDate(sub.frequency || 'mensual'),
+            }));
+
+            console.log('✅ Suscripciones detectadas:', detectedSubs.length);
+            setUpcomingSubscriptions(detectedSubs);
+          } catch (aiError) {
+            console.error('Error calling AI:', aiError);
+            setUpcomingSubscriptions([]);
+          }
         } else {
+          console.log('⚠️ No hay gastos para analizar');
           setUpcomingSubscriptions([]);
         }
 
