@@ -243,6 +243,48 @@ const Dashboard = () => {
     };
     fetchTransactions();
   }, [selectedMonthOffset]);
+
+  // Actualización en tiempo real de transacciones
+  useEffect(() => {
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // INSERT, UPDATE, DELETE
+          schema: 'public',
+          table: 'transactions'
+        },
+        () => {
+          // Recargar transacciones cuando haya cambios
+          const fetchRecentTransactions = async () => {
+            try {
+              const { data: { user } } = await supabase.auth.getUser();
+              if (!user) return;
+
+              const { data, error } = await supabase
+                .from('transactions')
+                .select('*, categories(name, color)')
+                .eq('user_id', user.id)
+                .order('transaction_date', { ascending: false })
+                .limit(5);
+
+              if (error) throw error;
+              setRecentTransactions(data || []);
+            } catch (error) {
+              console.error('Error fetching recent transactions:', error);
+            }
+          };
+          
+          fetchRecentTransactions();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
   useEffect(() => {
     // Check authentication in background - no loading screen
     const checkAuth = async () => {
@@ -641,22 +683,44 @@ const Dashboard = () => {
                   Ver todos
                 </Button>
               </div>
-              <div className="space-y-3">
-                {recentTransactions.length === 0 ? <p className="text-white/70 text-sm text-center py-4">
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {recentTransactions.length === 0 ? (
+                  <p className="text-white/70 text-sm text-center py-4">
                     No hay transacciones registradas aún
-                  </p> : recentTransactions.map(transaction => <div key={transaction.id} className="flex justify-between items-center">
-                      <div>
-                        <p className="text-sm font-medium text-white">
-                          {transaction.description}
-                        </p>
-                        <p className="text-xs text-white">
-                          {transaction.categories?.name || 'Sin categoría'} • {new Date(transaction.transaction_date).toLocaleDateString('es-MX')}
+                  </p>
+                ) : (
+                  recentTransactions.map((transaction) => (
+                    <div 
+                      key={transaction.id}
+                      className="p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-base">
+                              {transaction.type === 'ingreso' ? '💰' : '💳'}
+                            </span>
+                            <p className="text-xs font-medium text-white">
+                              {transaction.description}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2 text-[10px] text-white/60">
+                            <span>{new Date(transaction.transaction_date).toLocaleDateString('es-MX')}</span>
+                            {transaction.categories?.name && (
+                              <>
+                                <span>•</span>
+                                <span>{transaction.categories.name}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        <p className={`text-sm font-bold ${transaction.type === 'ingreso' ? 'text-green-500' : 'text-red-500'}`}>
+                          {transaction.type === 'ingreso' ? '+' : '-'}${Number(transaction.amount).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </p>
                       </div>
-                      <span className={`text-sm font-semibold ${transaction.type === 'ingreso' ? 'text-green-500' : 'text-red-500'}`}>
-                        {transaction.type === 'ingreso' ? '+' : '-'}${Math.abs(Number(transaction.amount))}
-                      </span>
-                    </div>)}
+                    </div>
+                  ))
+                )}
               </div>
             </Card>
 
