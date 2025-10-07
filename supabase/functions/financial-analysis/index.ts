@@ -35,12 +35,15 @@ serve(async (req) => {
     }
 
     // Obtener transacciones del período
-    const { data: transactions } = await supabase
+    const { data: transactions, error: txError } = await supabase
       .from('transactions')
       .select('*, categories(name, type)')
       .eq('user_id', userId)
       .gte('transaction_date', startDate.toISOString().split('T')[0])
       .order('transaction_date', { ascending: false });
+
+    console.log('Transactions found:', transactions?.length || 0);
+    if (txError) console.error('Transaction query error:', txError);
 
     if (!transactions || transactions.length === 0) {
       return new Response(JSON.stringify({
@@ -87,11 +90,11 @@ serve(async (req) => {
 
     // 1. LIQUIDEZ Y ESTABILIDAD
     const totalIncome = transactions
-      .filter(t => t.type === 'income')
+      .filter(t => t.type === 'income' || t.type === 'ingreso')
       .reduce((sum, t) => sum + Number(t.amount), 0);
     
     const totalExpenses = transactions
-      .filter(t => t.type === 'expense')
+      .filter(t => t.type === 'expense' || t.type === 'gasto')
       .reduce((sum, t) => sum + Number(t.amount), 0);
     
     const balance = totalIncome - totalExpenses;
@@ -131,7 +134,7 @@ serve(async (req) => {
     
     // 3. GASTOS Y CONSUMO
     const fixedExpenses = transactions
-      .filter(t => t.type === 'expense' && t.frequency && t.frequency !== 'once')
+      .filter(t => (t.type === 'expense' || t.type === 'gasto') && t.frequency && t.frequency !== 'once')
       .reduce((sum, t) => sum + Number(t.amount), 0);
     
     const variableExpenses = totalExpenses - fixedExpenses;
@@ -139,7 +142,7 @@ serve(async (req) => {
     const variableExpensesPercentage = totalExpenses > 0 ? (variableExpenses / totalExpenses * 100) : 0;
     const variableExpensesOnIncome = monthlyIncome > 0 ? (variableExpenses / monthlyIncome) * 100 : 0;
     
-    const expenseTransactions = transactions.filter(t => t.type === 'expense');
+    const expenseTransactions = transactions.filter(t => t.type === 'expense' || t.type === 'gasto');
     const daysInPeriod = 30;
     const avgDailyExpense = totalExpenses / daysInPeriod;
     
@@ -277,7 +280,7 @@ serve(async (req) => {
       if (!dailyCashFlowMap[date]) {
         dailyCashFlowMap[date] = { income: 0, expenses: 0, balance: 0 };
       }
-      if (t.type === 'income') {
+      if (t.type === 'income' || t.type === 'ingreso') {
         dailyCashFlowMap[date].income += Number(t.amount);
       } else {
         dailyCashFlowMap[date].expenses += Number(t.amount);
@@ -456,7 +459,7 @@ serve(async (req) => {
     
     // Suscripciones (detectar transacciones recurrentes)
     const subscriptions = transactions
-      .filter(t => t.frequency && t.frequency !== 'once' && t.type === 'expense')
+      .filter(t => t.frequency && t.frequency !== 'once' && (t.type === 'expense' || t.type === 'gasto'))
       .slice(0, 5)
       .map(t => ({
         name: t.description || 'Suscripción',
