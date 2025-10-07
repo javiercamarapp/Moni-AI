@@ -99,6 +99,7 @@ const Gastos = () => {
   const [categories, setCategories] = useState<Array<{ id: string; name: string; color: string }>>([]);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [sortBy, setSortBy] = useState<'recent' | 'highest' | 'lowest'>('recent');
 
   useEffect(() => {
     fetchData();
@@ -561,17 +562,38 @@ const Gastos = () => {
 
         {/* Lista de transacciones */}
         <div className="space-y-3">
-          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-            <TrendingDown className="h-5 w-5 text-destructive" />
-            Historial de Gastos
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <TrendingDown className="h-5 w-5 text-destructive" />
+              Historial de Gastos
+            </h3>
+            
+            <Select value={sortBy} onValueChange={(value: 'recent' | 'highest' | 'lowest') => setSortBy(value)}>
+              <SelectTrigger className="w-[160px] bg-card/70 border-border/30 text-foreground h-9 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-card border-border/30 z-[100]">
+                <SelectItem value="recent" className="text-foreground text-xs">Más recientes</SelectItem>
+                <SelectItem value="highest" className="text-foreground text-xs">Mayor a menor</SelectItem>
+                <SelectItem value="lowest" className="text-foreground text-xs">Menor a mayor</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           
           {transactions.length === 0 ? (
             <Card className="p-6 bg-gradient-card card-glow text-center shadow-card border border-border/30">
               <p className="text-muted-foreground">No hay gastos registrados este mes</p>
             </Card>
           ) : (
-            transactions.map((item, index) => {
+            [...transactions].sort((a, b) => {
+              if (sortBy === 'recent') {
+                return new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime();
+              } else if (sortBy === 'highest') {
+                return Number(b.amount) - Number(a.amount);
+              } else {
+                return Number(a.amount) - Number(b.amount);
+              }
+            }).map((item, index) => {
               const transactionDate = new Date(item.transaction_date);
               const categoryEmoji = item.categories ? getCategoryEmoji(item.categories.name) : '💸';
               
