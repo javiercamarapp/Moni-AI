@@ -107,7 +107,8 @@ Mantén el tono profesional. Limita tu respuesta a 250 palabras.`;
 
         if (aiResponse.ok) {
           const aiData = await aiResponse.json();
-          aiInsights = aiData.choices?.[0]?.message?.content || '';
+          // Limpiar asteriscos del contenido
+          aiInsights = (aiData.choices?.[0]?.message?.content || '').replace(/\*/g, '');
         }
       } catch (aiError) {
         console.error('Error generating AI insights:', aiError);
