@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, TrendingUp, TrendingDown, RefreshCw, Menu } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { LineChart, Line, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import BottomNav from "@/components/BottomNav";
 
 interface NetWorthDataPoint {
@@ -241,6 +241,10 @@ export default function NetWorth() {
                   <stop offset="0%" stopColor="#ffffff" stopOpacity={0.6}/>
                   <stop offset="100%" stopColor="#ffffff" stopOpacity={0.9}/>
                 </linearGradient>
+                <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity={0.3}/>
+                  <stop offset="100%" stopColor="#ffffff" stopOpacity={0}/>
+                </linearGradient>
               </defs>
               <XAxis 
                 dataKey="displayDate" 
@@ -248,6 +252,12 @@ export default function NetWorth() {
               />
               <YAxis hide />
               <Tooltip content={<CustomTooltip />} />
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke="none"
+                fill="url(#areaGradient)"
+              />
               <Line
                 type="monotone"
                 dataKey="value"
