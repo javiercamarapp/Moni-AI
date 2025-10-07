@@ -729,6 +729,13 @@ const Dashboard = () => {
           </button>
           
           <button 
+            className="flex flex-col items-center gap-1 text-white/70 hover:text-white transition-colors"
+          >
+            <Users className="w-5 h-5" />
+            <span className="text-xs">Social</span>
+          </button>
+          
+          <button 
             onClick={() => navigate('/chat')}
             className="flex flex-col items-center gap-1 text-white/70 hover:text-white transition-colors"
           >
