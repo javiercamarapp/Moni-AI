@@ -253,10 +253,12 @@ export default function FinancialAnalysis() {
         </div>
       </div>;
   }
-  return <div className="min-h-screen animated-wave-bg p-3 pb-24">
-      <div className="max-w-5xl mx-auto space-y-3">
+  
+  return (
+    <div className="min-h-screen animated-wave-bg pb-24">
+      <div className="mx-4 space-y-4">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between pt-4 mb-4">
           <div>
             <h1 className="text-xl font-bold text-white">Análisis Financiero</h1>
             <p className="text-xs text-white/70">Tu salud financiera</p>
@@ -280,26 +282,26 @@ export default function FinancialAnalysis() {
 
         {analysis && <>
             {/* Animated Income & Expense Lines */}
-            <Card className="p-4 bg-gradient-card card-glow space-y-4">
+            <Card className="p-4 bg-gradient-card card-glow space-y-4 animate-fade-in hover:scale-[1.02] transition-transform duration-200" style={{ animationDelay: '0ms' }}>
               {/* Ingresos */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                      <TrendingUp className="w-4 h-4 text-green-400" />
+                    <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-green-400" />
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-white">Ingresos</p>
                       <p className="text-xs text-white/70">Total del período</p>
                     </div>
                   </div>
-                  <p className="text-lg font-bold text-green-400">
+                  <p className="text-xl font-bold text-green-400">
                     ${formatK(analysis.metrics.income)}k
                   </p>
                 </div>
                 <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
                   <div 
-                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full animate-[slideIn_1.5s_ease-out]"
+                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-600 to-green-400 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.5)]"
                     style={{ 
                       width: `${Math.min((analysis.metrics.income / Math.max(analysis.metrics.income, analysis.metrics.expenses)) * 100, 100)}%`,
                       animation: 'slideIn 1.5s ease-out'
@@ -312,21 +314,21 @@ export default function FinancialAnalysis() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center">
-                      <TrendingDown className="w-4 h-4 text-red-400" />
+                    <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
+                      <TrendingDown className="w-5 h-5 text-red-400" />
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-white">Gastos</p>
                       <p className="text-xs text-white/70">Total del período</p>
                     </div>
                   </div>
-                  <p className="text-lg font-bold text-red-400">
+                  <p className="text-xl font-bold text-red-400">
                     ${formatK(analysis.metrics.expenses)}k
                   </p>
                 </div>
                 <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
                   <div 
-                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-500 to-red-400 rounded-full"
+                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)]"
                     style={{ 
                       width: `${Math.min((analysis.metrics.expenses / Math.max(analysis.metrics.income, analysis.metrics.expenses)) * 100, 100)}%`,
                       animation: 'slideIn 1.5s ease-out 0.3s both'
@@ -339,7 +341,7 @@ export default function FinancialAnalysis() {
               <div className="pt-2 border-t border-white/10">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-white">Balance</p>
-                  <p className={`text-lg font-bold ${analysis.metrics.balance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                  <p className={`text-xl font-bold ${analysis.metrics.balance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                     {analysis.metrics.balance >= 0 ? '+' : ''}${formatK(analysis.metrics.balance)}k
                   </p>
                 </div>
@@ -799,5 +801,6 @@ export default function FinancialAnalysis() {
       </div>
       
       <BottomNav />
-    </div>;
+    </div>
+  );
 }
