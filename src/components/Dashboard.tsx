@@ -274,13 +274,13 @@ const Dashboard = () => {
         {/* Puntos y nivel + Notificaciones */}
         <div className="flex gap-2 items-center">
           {/* Botón de puntos y nivel */}
-          <Button variant="ghost" className="bg-gradient-card card-glow hover:bg-black/60 text-white h-10 px-3 gap-2 hover:scale-105 transition-transform duration-200">
+          <Button variant="ghost" className="bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white h-10 px-3 gap-2 hover:scale-105 transition-transform duration-200">
             <span className="text-sm font-bold">{currentXP} pts</span>
             <span className="text-xs opacity-80">Nivel {level}</span>
           </Button>
           
           {/* Botón de notificaciones */}
-          <Button variant="ghost" size="icon" className="bg-gradient-card card-glow hover:bg-black/60 text-white h-10 w-10 hover:scale-105 transition-transform duration-200">
+          <Button variant="ghost" size="icon" className="bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white h-10 w-10 hover:scale-105 transition-transform duration-200">
             <Bell className="h-5 w-5" />
           </Button>
         </div>
@@ -371,7 +371,7 @@ const Dashboard = () => {
                   <p className="text-sm text-white/90 mb-3">
                     Descuentos exclusivos por tiempo limitado
                   </p>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-black/60 w-fit hover:scale-105 transition-transform duration-200">
+                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-black hover:text-gray-900 w-fit hover:scale-105 transition-transform duration-200">
                     Comprar Ahora
                   </Button>
                 </div>
@@ -394,7 +394,7 @@ const Dashboard = () => {
                   <p className="text-sm text-white/90 mb-3">
                     Planifica y ahorra para cumplir tus objetivos
                   </p>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-black/60 w-fit hover:scale-105 transition-transform duration-200">
+                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-black hover:text-gray-900 w-fit hover:scale-105 transition-transform duration-200">
                     Comenzar
                   </Button>
                 </div>
@@ -417,7 +417,7 @@ const Dashboard = () => {
                   <p className="text-sm text-white/90 mb-3">
                     Únete a grupos y multiplica tus ahorros
                   </p>
-                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-black/60 w-fit hover:scale-105 transition-transform duration-200">
+                  <Button variant="outline" size="sm" className="text-xs sm:text-sm bg-gradient-card card-glow text-white border-white/30 hover:bg-black hover:text-gray-900 w-fit hover:scale-105 transition-transform duration-200">
                     Explorar
                   </Button>
                 </div>
@@ -431,27 +431,27 @@ const Dashboard = () => {
       <nav className="fixed bottom-0 left-0 right-0 z-50 animated-wave-bg border-t border-white/20 shadow-lg">
         <div className="container mx-auto px-2">
           <div className="flex items-center justify-around h-16">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-purple-400 hover:bg-black/60 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/dashboard")}>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-purple-400 hover:bg-black hover:text-gray-900 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/dashboard")}>
               <Home className="w-5 h-5" />
               <span className="text-xs">Home</span>
             </Button>
 
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-black/60 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/analysis")}>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-black hover:text-gray-900 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/analysis")}>
               <BarChart3 className="w-5 h-5" />
               <span className="text-xs">Análisis</span>
             </Button>
 
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-black/60 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/goals")}>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-black hover:text-gray-900 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/goals")}>
               <Target className="w-5 h-5" />
               <span className="text-xs">Metas</span>
             </Button>
 
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-black/60 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/chat")}>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-black hover:text-gray-900 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/chat")}>
               <MessageCircle className="w-5 h-5" />
               <span className="text-xs">Chat AI</span>
             </Button>
 
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-black/60 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/profile")}>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2 px-3 text-white hover:bg-black hover:text-gray-900 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/profile")}>
               <User className="w-5 h-5" />
               <span className="text-xs">Perfil</span>
             </Button>
@@ -628,7 +628,7 @@ const Dashboard = () => {
             <div>
               <div className="flex flex-row justify-between items-center mb-4">
                 <h3 className="text-lg sm:text-xl font-semibold text-white">Tus Metas</h3>
-                <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-gradient-card card-glow hover:bg-black/60 text-white border-white/30 text-xs sm:text-sm hover:scale-105 transition-transform duration-200">
+                <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white border-white/30 text-xs sm:text-sm hover:scale-105 transition-transform duration-200">
                   <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   Nueva Meta
                 </Button>
@@ -637,7 +637,7 @@ const Dashboard = () => {
               <div className="space-y-3 sm:space-y-4">
                 {goals.length === 0 ? <Card className="p-6 bg-gradient-card card-glow text-center">
                     <p className="text-white/70 mb-4">No tienes metas creadas aún</p>
-                    <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-gradient-card card-glow hover:bg-black/60 text-white hover:scale-105 transition-transform duration-200">
+                    <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white hover:scale-105 transition-transform duration-200">
                       <Plus className="w-4 h-4 mr-2" />
                       Crear tu primera meta
                     </Button>
@@ -703,7 +703,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <Button size="sm" className="w-full bg-gradient-card card-glow hover:bg-black/60 text-white border-white/30 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/chat")}>
+              <Button size="sm" className="w-full bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white border-white/30 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/chat")}>
                 <MessageCircle className="w-4 h-4 mr-2" />
                 Chatear con Moni AI
               </Button>
@@ -735,7 +735,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <Button size="sm" className="w-full bg-gradient-card card-glow hover:bg-black/60 text-white border-white/30 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/analysis")}>
+              <Button size="sm" className="w-full bg-gradient-card card-glow hover:bg-black hover:text-gray-900 text-white border-white/30 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/analysis")}>
                 <TrendingUp className="w-4 h-4 mr-2" />
                 Ver Análisis
               </Button>
@@ -745,7 +745,7 @@ const Dashboard = () => {
             <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
               <div className="flex justify-between items-center mb-4">
                 <h4 className="text-sm sm:text-base font-semibold text-white">Movimientos Recientes</h4>
-                <Button variant="ghost" size="sm" className="text-xs text-white hover:bg-black/60 hover:scale-105 transition-transform duration-200">
+                <Button variant="ghost" size="sm" className="text-xs text-white hover:bg-black hover:text-gray-900 hover:scale-105 transition-transform duration-200">
                   Ver todos
                 </Button>
               </div>
@@ -775,7 +775,7 @@ const Dashboard = () => {
                   <Trophy className="w-4 h-4 mr-2 text-white" />
                   Logros Recientes
                 </h4>
-                <Button variant="ghost" size="sm" className="text-xs text-white hover:bg-black/60 hover:scale-105 transition-transform duration-200">
+                <Button variant="ghost" size="sm" className="text-xs text-white hover:bg-black hover:text-gray-900 hover:scale-105 transition-transform duration-200">
                   Ver todos
                 </Button>
               </div>
