@@ -281,67 +281,71 @@ export default function FinancialAnalysis() {
         </div>
 
         {analysis && <>
-            {/* Animated Income & Expense Lines */}
-            <Card className="p-4 bg-gradient-card card-glow space-y-4 animate-fade-in hover:scale-[1.02] transition-transform duration-200" style={{ animationDelay: '0ms' }}>
+            {/* Animated Income & Expense Lines - Metallic Effect */}
+            <Card className="p-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-2 border-white/20 space-y-5 animate-fade-in hover:scale-[1.02] transition-all duration-300 shadow-[0_0_40px_rgba(255,255,255,0.1)]" style={{ animationDelay: '0ms' }}>
               {/* Ingresos */}
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-                      <TrendingUp className="w-5 h-5 text-green-400" />
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-[0_0_20px_rgba(34,197,94,0.6)]">
+                      <TrendingUp className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-white">Ingresos</p>
-                      <p className="text-xs text-white/70">Total del período</p>
+                      <p className="text-base font-bold text-white">Ingresos</p>
+                      <p className="text-xs text-emerald-300/80">Total del período</p>
                     </div>
                   </div>
-                  <p className="text-xl font-bold text-green-400">
+                  <p className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-300">
                     ${formatK(analysis.metrics.totalIncome)}k
                   </p>
                 </div>
-                <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
+                <div className="relative h-4 bg-gradient-to-r from-slate-800 to-slate-700 rounded-full overflow-hidden border border-white/10 shadow-inner">
                   <div 
-                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-600 to-green-400 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.5)]"
+                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-600 via-green-500 to-emerald-400 rounded-full shadow-[0_0_25px_rgba(34,197,94,0.8),inset_0_1px_2px_rgba(255,255,255,0.3)]"
                     style={{ 
                       width: `${Math.min((analysis.metrics.totalIncome / Math.max(analysis.metrics.totalIncome, analysis.metrics.totalExpenses)) * 100, 100)}%`,
-                      animation: 'slideIn 1.5s ease-out'
+                      animation: 'slideIn 1.5s ease-out',
+                      background: 'linear-gradient(90deg, #059669 0%, #10b981 50%, #34d399 100%)',
+                      boxShadow: '0 0 30px rgba(34,197,94,0.8), inset 0 2px 4px rgba(255,255,255,0.4), inset 0 -2px 4px rgba(0,0,0,0.3)'
                     }}
                   />
                 </div>
               </div>
 
               {/* Gastos */}
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
-                      <TrendingDown className="w-5 h-5 text-red-400" />
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center shadow-[0_0_20px_rgba(239,68,68,0.6)]">
+                      <TrendingDown className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-white">Gastos</p>
-                      <p className="text-xs text-white/70">Total del período</p>
+                      <p className="text-base font-bold text-white">Gastos</p>
+                      <p className="text-xs text-rose-300/80">Total del período</p>
                     </div>
                   </div>
-                  <p className="text-xl font-bold text-red-400">
+                  <p className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-red-300">
                     ${formatK(analysis.metrics.totalExpenses)}k
                   </p>
                 </div>
-                <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
+                <div className="relative h-4 bg-gradient-to-r from-slate-800 to-slate-700 rounded-full overflow-hidden border border-white/10 shadow-inner">
                   <div 
-                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)]"
+                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-rose-600 via-red-500 to-rose-400 rounded-full"
                     style={{ 
                       width: `${Math.min((analysis.metrics.totalExpenses / Math.max(analysis.metrics.totalIncome, analysis.metrics.totalExpenses)) * 100, 100)}%`,
-                      animation: 'slideIn 1.5s ease-out 0.3s both'
+                      animation: 'slideIn 1.5s ease-out 0.3s both',
+                      background: 'linear-gradient(90deg, #dc2626 0%, #ef4444 50%, #f87171 100%)',
+                      boxShadow: '0 0 30px rgba(239,68,68,0.8), inset 0 2px 4px rgba(255,255,255,0.4), inset 0 -2px 4px rgba(0,0,0,0.3)'
                     }}
                   />
                 </div>
               </div>
 
               {/* Balance */}
-              <div className="pt-2 border-t border-white/10">
+              <div className="pt-3 border-t-2 border-white/20">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-white">Balance</p>
-                  <p className={`text-xl font-bold ${analysis.metrics.balance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                  <p className="text-base font-bold text-white">Balance</p>
+                  <p className={`text-2xl font-black ${analysis.metrics.balance >= 0 ? 'text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-300' : 'text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-red-300'}`}>
                     {analysis.metrics.balance >= 0 ? '+' : ''}${formatK(analysis.metrics.balance)}k
                   </p>
                 </div>
