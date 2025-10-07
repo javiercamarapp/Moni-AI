@@ -19,6 +19,12 @@ serve(async (req) => {
   try {
     const { userId, transactions, totalIngresos, totalGastos, balance, viewMode, periodLabel, allTransactions } = await req.json();
     
+    console.log('=== PREDICT SAVINGS DEBUG ===');
+    console.log('Period:', viewMode, periodLabel);
+    console.log('Period data - Ingresos:', totalIngresos, 'Gastos:', totalGastos, 'Balance:', balance);
+    console.log('Period transactions:', transactions?.length || 0);
+    console.log('All historical transactions:', allTransactions?.length || 0);
+    
     // Input validation
     if (!userId || typeof userId !== 'string' || !isValidUUID(userId)) {
       return new Response(
@@ -70,72 +76,91 @@ serve(async (req) => {
       .reduce((sum: number, t: any) => sum + Number(t.amount), 0) || 0;
     const historicalBalance = historicalIngresos - historicalGastos;
 
+    console.log('Historical data - Ingresos:', historicalIngresos, 'Gastos:', historicalGastos, 'Balance:', historicalBalance);
+
+    // Calcular promedio mensual de ahorro basado en todo el historial
+    const oldestDate = allTransactions?.length > 0 
+      ? new Date(Math.min(...allTransactions.map((t: any) => new Date(t.transaction_date).getTime())))
+      : new Date();
+    const monthsOfHistory = Math.max(1, Math.ceil((Date.now() - oldestDate.getTime()) / (1000 * 60 * 60 * 24 * 30)));
+    const averageMonthlySavings = historicalBalance / monthsOfHistory;
+
+    console.log('Months of history:', monthsOfHistory);
+    console.log('Average monthly savings:', averageMonthlySavings);
+
+    // Calcular proyecciones base
+    const baseAnualProjection = averageMonthlySavings * 12;
+    const baseSemestralProjection = averageMonthlySavings * 6;
+
+    console.log('Base projections - Anual:', baseAnualProjection, 'Semestral:', baseSemestralProjection);
+
     const periodoAnalisis = viewMode === 'mensual' 
       ? `mes específico (${periodLabel || 'mes actual'})`
       : `año específico (${periodLabel || 'año actual'})`;
 
-    const prompt = `Eres un analista financiero experto. Analiza estos datos y genera proyecciones precisas.
+    const prompt = `Eres un analista financiero experto. Genera proyecciones y análisis financieros.
 
-=== DATOS PARA PROYECCIONES (USAR TODO EL HISTORIAL) ===
-Historial completo del usuario:
-- Total transacciones históricas: ${allTransactions?.length || 0}
+=== CÁLCULOS BASE (YA REALIZADOS) ===
+Promedio mensual de ahorro histórico: $${averageMonthlySavings.toFixed(2)}
+Proyección Anual Base: $${baseAnualProjection.toFixed(2)}
+Proyección Semestral Base: $${baseSemestralProjection.toFixed(2)}
+
+=== DATOS HISTÓRICOS COMPLETOS ===
+- Total transacciones: ${allTransactions?.length || 0}
+- Meses de historial: ${monthsOfHistory}
 - Ingresos históricos totales: $${historicalIngresos.toFixed(2)}
 - Gastos históricos totales: $${historicalGastos.toFixed(2)}
-- Balance histórico: $${historicalBalance.toFixed(2)}
+- Balance/ahorro histórico: $${historicalBalance.toFixed(2)}
 
-Transacciones históricas (muestra):
-${JSON.stringify(allTransactionsSummary.slice(0, 100), null, 2)}
-
-=== DATOS PARA INSIGHTS (PERÍODO ESPECÍFICO: ${periodoAnalisis}) ===
-Datos del período seleccionado:
-- Ingresos del período: $${totalIngresos.toFixed(2)}
-- Gastos del período: $${totalGastos.toFixed(2)}
-- Balance del período: $${balance.toFixed(2)}
-
-Transacciones del período (muestra):
-${JSON.stringify(transactionSummary, null, 2)}
+=== DATOS DEL PERÍODO ACTUAL (${periodoAnalisis}) ===
+- Ingresos: $${totalIngresos.toFixed(2)}
+- Gastos: $${totalGastos.toFixed(2)}
+- Balance: $${balance.toFixed(2)}
 
 === INSTRUCCIONES ===
 
-1. PROYECCIONES (usar TODO el historial):
-   - Analiza TODOS los datos históricos del usuario
-   - Calcula el promedio mensual de ahorro de todo el historial
-   - Proyección Anual = promedio mensual × 12
-   - Proyección Semestral = promedio mensual × 6
-   - Ajusta según tendencias (si está mejorando +10%, si empeora -10%)
-   - Nivel de confianza basado en consistencia histórica
+1. PROYECCIONES:
+   - Usa las proyecciones base calculadas: Anual=$${baseAnualProjection.toFixed(2)}, Semestral=$${baseSemestralProjection.toFixed(2)}
+   - Ajusta según tendencia reciente:
+     * Si el balance del período actual es mucho mayor que el promedio histórico → aumenta 10-20%
+     * Si es similar → usa las proyecciones base
+     * Si es menor → reduce 10-20%
+   - IMPORTANTE: Si el usuario ahorró mucho en un mes reciente, la proyección anual debe reflejarlo
 
-2. INSIGHTS (específicos del período ${periodoAnalisis}):
-   ${viewMode === 'mensual' 
-     ? `- Habla sobre el comportamiento EN ESTE MES (${periodLabel})
-   - Analiza las categorías más gastadas este mes
-   - Compara este mes con el promedio histórico
-   - Da consejos basados en lo que pasó este mes`
-     : `- Habla sobre el comportamiento EN ESTE AÑO (${periodLabel})
-   - Analiza las tendencias del año completo
-   - Compara este año con años anteriores si hay datos
-   - Da consejos basados en los patrones del año`}
+2. CONFIANZA:
+   - "alta": Si hay ${monthsOfHistory} meses o más de datos consistentes
+   - "media": Si hay datos pero con variabilidad
+   - "baja": Si hay pocos datos (menos de 3 meses)
 
-Devuelve SOLO este JSON (sin texto adicional):
+3. INSIGHTS (específicos de ${periodLabel}):
+${viewMode === 'mensual' 
+  ? `   - Analiza el comportamiento de ESTE MES
+   - Compara este mes ($${balance.toFixed(2)}) con el promedio mensual histórico ($${averageMonthlySavings.toFixed(2)})
+   - Menciona si fue un mes mejor o peor que el promedio`
+  : `   - Analiza el comportamiento de ESTE AÑO
+   - Compara con el promedio histórico
+   - Identifica tendencias del año`}
+
+Devuelve SOLO este JSON:
 {
-  "proyeccionAnual": [número basado en TODO el historial],
-  "proyeccionSemestral": [número basado en TODO el historial],
+  "proyeccionAnual": [número ajustado de ${baseAnualProjection.toFixed(2)}],
+  "proyeccionSemestral": [número ajustado de ${baseSemestralProjection.toFixed(2)}],
   "confianza": "alta" | "media" | "baja",
   "insights": [
     {
-      "titulo": "Título del insight",
-      "metrica": "Métrica del período",
-      "descripcion": "Análisis específico del período ${periodLabel}",
+      "titulo": "string",
+      "metrica": "string",
+      "descripcion": "Análisis del período ${periodLabel}",
       "tipo": "positivo" | "negativo" | "neutral" | "consejo"
     }
   ]
 }
 
 REGLAS:
-- Proyecciones: usa TODO el historial para predecir
-- Insights: usa SOLO el período ${periodoAnalisis}
-- Confianza en minúsculas: "alta", "media" o "baja"
-- Genera 3-5 insights específicos del período`;
+- Las proyecciones deben tener sentido matemático
+- Si el usuario ahorra $400k/mes, la proyección anual debe ser cercana a $4.8M
+- Confianza en minúsculas
+- 3-5 insights`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -178,6 +203,8 @@ REGLAS:
 
     const data = await response.json();
     const aiResponse = data.choices[0].message.content;
+    
+    console.log('AI Response:', aiResponse);
 
     // Parse AI response
     let predictions;
@@ -191,21 +218,23 @@ REGLAS:
       }
     } catch (e) {
       console.error("Error parsing AI response:", e, "Response:", aiResponse);
-      // Fallback to simple calculation
+      // Fallback to calculated projections
       predictions = {
-        proyeccionAnual: viewMode === 'mensual' ? balance * 12 : balance,
-        proyeccionSemestral: viewMode === 'mensual' ? balance * 6 : balance / 2,
-        confianza: "baja",
+        proyeccionAnual: baseAnualProjection,
+        proyeccionSemestral: baseSemestralProjection,
+        confianza: monthsOfHistory >= 6 ? "media" : "baja",
         insights: [
           {
-            titulo: "Proyección Básica",
-            metrica: "Calculada",
-            descripcion: "Proyección simple basada en balance actual sin análisis de patrones históricos",
+            titulo: "Proyección Calculada",
+            metrica: `${monthsOfHistory} meses de datos`,
+            descripcion: `Proyección basada en promedio mensual de ahorro ($${averageMonthlySavings.toFixed(2)}) calculado de ${monthsOfHistory} meses de historial`,
             tipo: "neutral"
           }
         ]
       };
     }
+
+    console.log('Final predictions:', predictions);
 
     return new Response(
       JSON.stringify(predictions),
