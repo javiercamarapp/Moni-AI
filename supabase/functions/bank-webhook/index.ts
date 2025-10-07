@@ -41,12 +41,12 @@ serve(async (req) => {
           });
         }
 
-        // Sincronizar transacciones
+        // Sincronizar transacciones (access_token ya está encriptado)
         await supabase.functions.invoke('sync-bank-transactions', {
           body: {
             userId: bankConnection.user_id,
             itemId: item_id,
-            accessToken: bankConnection.access_token
+            accessToken: bankConnection.access_token // Encriptado
           }
         });
 

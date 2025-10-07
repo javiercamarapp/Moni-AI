@@ -12,13 +12,24 @@ serve(async (req) => {
   }
 
   try {
-    const { userId, itemId, accessToken } = await req.json();
+    const { userId, itemId, accessToken: encryptedToken } = await req.json();
     
     console.log('Syncing bank transactions for user:', userId);
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Desencriptar token
+    const { data: decryptResult } = await supabase.functions.invoke('encrypt-bank-token', {
+      body: { token: encryptedToken, action: 'decrypt' }
+    });
+
+    if (!decryptResult?.decrypted) {
+      throw new Error('Failed to decrypt access token');
+    }
+
+    const accessToken = decryptResult.decrypted;
 
     const PLAID_CLIENT_ID = Deno.env.get('PLAID_CLIENT_ID');
     const PLAID_SECRET = Deno.env.get('PLAID_SECRET');
