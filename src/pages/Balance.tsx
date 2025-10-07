@@ -462,8 +462,8 @@ const Balance = () => {
 
         {/* Proyecciones con IA */}
         <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-foreground">Proyecciones Inteligentes</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-semibold text-card-foreground">Proyecciones Inteligentes</h3>
             {proyecciones && (
               <Badge className={`whitespace-nowrap px-3 ${
                 proyecciones.confianza === 'sin-datos' || proyecciones.proyeccionAnual <= 0
@@ -481,26 +481,26 @@ const Balance = () => {
           </div>
 
           {loadingProyecciones ? (
-            <div className="text-center py-8">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-foreground"></div>
-              <p className="text-muted-foreground mt-2 text-sm">Analizando patrones financieros...</p>
+            <div className="text-center py-6">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-card-foreground"></div>
+              <p className="text-card-foreground/70 mt-2 text-sm">Analizando patrones financieros...</p>
             </div>
           ) : proyecciones ? (
             <>
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-2 gap-4 mb-3">
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">
+                  <p className="text-xs text-card-foreground/70 mb-1">
                     Proyección Anual
                   </p>
-                  <p className="text-xl font-bold text-foreground">
+                  <p className="text-xl font-bold text-card-foreground">
                     ${proyecciones.proyeccionAnual.toLocaleString('es-MX')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">
+                  <p className="text-xs text-card-foreground/70 mb-1">
                     Proyección Semestral
                   </p>
-                  <p className="text-xl font-bold text-foreground">
+                  <p className="text-xl font-bold text-card-foreground">
                     ${proyecciones.proyeccionSemestral.toLocaleString('es-MX')}
                   </p>
                 </div>
@@ -529,12 +529,12 @@ const Balance = () => {
                             ? 'border-destructive/30 bg-destructive/5'
                             : insight.tipo === 'consejo'
                             ? 'border-accent/30 bg-accent/5'
-                            : 'border-border/20'
+                           : 'border-border/20'
                         }`}>
                           <div className="mb-2">
-                            <h4 className="text-base font-semibold text-foreground">{insight.titulo}</h4>
+                            <h4 className="text-base font-semibold text-card-foreground">{insight.titulo}</h4>
                           </div>
-                          <p className="text-sm text-muted-foreground leading-relaxed">{insight.descripcion}</p>
+                          <p className="text-sm text-card-foreground/80 leading-relaxed">{insight.descripcion}</p>
                         </div>
                       </CarouselItem>
                     ))}
@@ -543,7 +543,7 @@ const Balance = () => {
               )}
             </>
           ) : (
-            <p className="text-muted-foreground text-center py-4">
+            <p className="text-card-foreground/70 text-center py-4">
               Cargando proyecciones...
             </p>
           )}
@@ -551,23 +551,23 @@ const Balance = () => {
 
         {/* Ingresos por categoría */}
         <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="h-5 w-5 text-success" />
-            <h3 className="text-lg font-semibold text-foreground">Ingresos por Categoría</h3>
+            <h3 className="text-lg font-semibold text-card-foreground">Ingresos por Categoría</h3>
           </div>
           
           {ingresosByCategory.length === 0 ? (
-            <p className="text-muted-foreground text-center py-4">No hay ingresos registrados</p>
+            <p className="text-card-foreground/70 text-center py-4">No hay ingresos registrados</p>
           ) : (
-            <div className="w-full h-[360px]">
+            <div className="w-full h-[320px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={ingresosByCategory}
                     cx="50%"
-                    cy="40%"
+                    cy="38%"
                     labelLine={false}
-                    outerRadius={70}
+                    outerRadius={65}
                     fill="hsl(var(--primary))"
                     dataKey="total"
                   >
@@ -588,10 +588,10 @@ const Balance = () => {
                   />
                   <Legend 
                     verticalAlign="bottom" 
-                    height={90}
-                    wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
+                    height={75}
+                    wrapperStyle={{ fontSize: '12px', paddingTop: '5px' }}
                     formatter={(value, entry: any) => (
-                      <span className="text-foreground text-[10px] sm:text-xs block">
+                      <span className="text-card-foreground text-xs font-medium block">
                         {value} ({entry.payload.percentage.toFixed(1)}%)
                       </span>
                     )}
@@ -604,23 +604,23 @@ const Balance = () => {
 
         {/* Gastos por categoría */}
         <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-2">
             <TrendingDown className="h-5 w-5 text-destructive" />
-            <h3 className="text-lg font-semibold text-foreground">Gastos por Categoría</h3>
+            <h3 className="text-lg font-semibold text-card-foreground">Gastos por Categoría</h3>
           </div>
           
           {gastosByCategory.length === 0 ? (
-            <p className="text-muted-foreground text-center py-4">No hay gastos registrados</p>
+            <p className="text-card-foreground/70 text-center py-4">No hay gastos registrados</p>
           ) : (
-            <div className="w-full h-[360px]">
+            <div className="w-full h-[320px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={gastosByCategory}
                     cx="50%"
-                    cy="35%"
+                    cy="33%"
                     labelLine={false}
-                    outerRadius={70}
+                    outerRadius={65}
                     fill="hsl(var(--destructive))"
                     dataKey="total"
                   >
@@ -641,10 +641,10 @@ const Balance = () => {
                   />
                   <Legend 
                     verticalAlign="bottom" 
-                    height={100}
-                    wrapperStyle={{ fontSize: '11px', paddingTop: '15px' }}
+                    height={80}
+                    wrapperStyle={{ fontSize: '12px', paddingTop: '5px' }}
                     formatter={(value, entry: any) => (
-                      <span className="text-foreground text-[10px] sm:text-xs block">
+                      <span className="text-card-foreground text-xs font-medium block">
                         {value} ({entry.payload.percentage.toFixed(1)}%)
                       </span>
                     )}
@@ -657,23 +657,23 @@ const Balance = () => {
 
         {/* Resumen del balance */}
         <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Resumen</h3>
+          <h3 className="text-lg font-semibold text-card-foreground mb-3">Resumen</h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Total Ingresos:</span>
-              <span className="text-foreground font-semibold text-lg">
+              <span className="text-card-foreground/80">Total Ingresos:</span>
+              <span className="text-card-foreground font-semibold text-lg">
                 ${totalIngresos.toLocaleString('es-MX')}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Total Gastos:</span>
-              <span className="text-foreground font-semibold text-lg">
+              <span className="text-card-foreground/80">Total Gastos:</span>
+              <span className="text-card-foreground font-semibold text-lg">
                 -${totalGastos.toLocaleString('es-MX')}
               </span>
             </div>
             <div className="border-t border-border pt-3">
               <div className="flex justify-between items-center">
-                <span className="text-foreground font-semibold">Balance Final:</span>
+                <span className="text-card-foreground font-semibold">Balance Final:</span>
                 <span className={`font-bold text-xl ${balance >= 0 ? 'text-success' : 'text-destructive'}`}>
                   ${balance.toLocaleString('es-MX')}
                 </span>
