@@ -415,26 +415,6 @@ const Dashboard = () => {
         {/* Safe to Spend Widget */}
         <SafeToSpendWidget safeToSpend={monthlyIncome - fixedExpenses - goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} monthlyIncome={monthlyIncome} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} />
 
-        {/* WhatsApp Banner */}
-        <Card className="p-3 sm:p-4 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
-          animationDelay: '500ms'
-        }}>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
-              <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-white mb-2 leading-relaxed">
-                Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
-              </p>
-              <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white border-0 text-xs h-8" onClick={() => navigate('/whatsapp')}>
-                <MessageCircle className="w-3 h-3 mr-1" />
-                Conectar WhatsApp
-              </Button>
-            </div>
-          </div>
-        </Card>
-
         {/* Banner Publicitario - Carrusel */}
         <Carousel className="w-full" setApi={setApi} opts={{
           loop: true,
@@ -511,6 +491,26 @@ const Dashboard = () => {
             </CarouselItem>
           </CarouselContent>
         </Carousel>
+
+        {/* WhatsApp Banner */}
+        <Card className="p-3 sm:p-4 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+          animationDelay: '500ms'
+        }}>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
+              <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-white mb-2 leading-relaxed">
+                Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
+              </p>
+              <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white border-0 text-xs h-8" onClick={() => navigate('/whatsapp')}>
+                <MessageCircle className="w-3 h-3 mr-1" />
+                Conectar WhatsApp
+              </Button>
+            </div>
+          </div>
+        </Card>
 
 
         <div className="grid lg:grid-cols-3 gap-6">
