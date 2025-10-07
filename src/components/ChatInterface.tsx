@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from "@/hooks/use-toast";
-import { Send, Plus, Menu, Mic, ChevronRight } from 'lucide-react';
+import { Send, Plus, Mic, ArrowLeft, Circle } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import moniLogo from '@/assets/moni-ai-logo.png';
@@ -25,6 +25,10 @@ const ChatInterface = () => {
     subtitle: string;
   }>>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isVoiceActive, setIsVoiceActive] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const autoplayPlugin = useRef(
     Autoplay({ delay: 3000, stopOnInteraction: true })
@@ -227,23 +231,96 @@ const ChatInterface = () => {
     setTimeout(() => handleSendMessage(), 100);
   };
 
+  const startVoiceRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        await processVoiceInput(audioBlob);
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo acceder al micrófono",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const stopVoiceRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const processVoiceInput = async (audioBlob: Blob) => {
+    try {
+      const reader = new FileReader();
+      reader.readAsDataURL(audioBlob);
+      reader.onloadend = async () => {
+        const base64Audio = reader.result?.toString().split(',')[1];
+        
+        if (!base64Audio) return;
+
+        const { data, error } = await supabase.functions.invoke('transcribe-audio', {
+          body: { audio: base64Audio }
+        });
+
+        if (error) throw error;
+
+        if (data?.text) {
+          setMessage(data.text);
+          setTimeout(() => handleSendMessage(), 100);
+        }
+      };
+    } catch (error) {
+      console.error('Error processing voice:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo procesar el audio",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const toggleVoiceMode = () => {
+    setIsVoiceActive(!isVoiceActive);
+    if (isVoiceActive) {
+      stopVoiceRecording();
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-black text-white">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-4">
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/dashboard")}
-            className="text-white hover:bg-gray-900 p-2"
-          >
-            <Menu className="w-6 h-6" />
-          </Button>
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-medium">MONI AI+</span>
-            <ChevronRight className="w-5 h-5 text-gray-400" />
-          </div>
+      <div className="flex items-center justify-center px-4 py-4 relative">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate("/dashboard")}
+          className="absolute left-4 text-white hover:bg-gray-900 p-2"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </Button>
+        <div className="flex items-center gap-2">
+          <img src={moniLogo} alt="MONI AI+" className="w-8 h-8" />
+          <span className="text-lg font-medium">MONI AI+</span>
         </div>
       </div>
 
@@ -251,10 +328,10 @@ const ChatInterface = () => {
       <div className="flex-1 overflow-y-auto px-4">
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center pb-32">
-            <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-8">
-              <img src={moniLogo} alt="MONI AI+" className="w-12 h-12" />
+            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-6">
+              <img src={moniLogo} alt="MONI AI+" className="w-10 h-10" />
             </div>
-            <h1 className="text-4xl font-semibold text-white mb-2">¿En qué puedo ayudarte hoy?</h1>
+            <h1 className="text-3xl font-normal text-white text-center">¿En qué puedo ayudarte hoy?</h1>
           </div>
         ) : (
           <div className="py-6 space-y-6">
@@ -340,41 +417,40 @@ const ChatInterface = () => {
           </div>
         )}
 
-        <div className="flex items-center gap-2 bg-[#2f2f2f] rounded-[26px] px-4 py-3 shadow-lg">
+        <div className="flex items-center gap-3 bg-[#2f2f2f] rounded-[30px] px-4 py-3.5 shadow-lg">
           <Button
             variant="ghost"
             size="icon"
-            className="text-gray-400 hover:text-white hover:bg-transparent flex-shrink-0 h-6 w-6 p-0"
+            className="text-gray-400 hover:text-white hover:bg-transparent flex-shrink-0 h-7 w-7 p-0"
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="w-6 h-6" />
           </Button>
 
           <Input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Enviar mensaje a MONI AI+"
-            className="flex-1 bg-transparent border-0 text-white placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 h-6"
+            placeholder="Pregunta lo que quieras"
+            className="flex-1 bg-transparent border-0 text-white text-base placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 h-7"
           />
 
-          {message.trim() ? (
-            <Button
-              onClick={handleSendMessage}
-              disabled={isTyping}
-              size="icon"
-              className="bg-white text-black hover:bg-gray-200 rounded-full flex-shrink-0 w-8 h-8 p-0"
-            >
-              <Send className="w-4 h-4" />
-            </Button>
-          ) : (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-gray-400 hover:text-white hover:bg-transparent flex-shrink-0 h-6 w-6 p-0"
-            >
-              <Mic className="w-5 h-5" />
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={isRecording ? stopVoiceRecording : startVoiceRecording}
+            className={`flex-shrink-0 h-7 w-7 p-0 ${isRecording ? 'text-red-500 hover:text-red-400' : 'text-gray-400 hover:text-white'} hover:bg-transparent`}
+          >
+            <Mic className="w-6 h-6" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleVoiceMode}
+            className={`flex-shrink-0 h-7 w-7 p-0 rounded-full ${isVoiceActive ? 'bg-white text-black' : 'text-gray-400 hover:text-white'} hover:bg-white/90`}
+          >
+            <Circle className="w-5 h-5 fill-current" />
+          </Button>
         </div>
         
         <p className="text-center text-xs text-gray-500 mt-3">

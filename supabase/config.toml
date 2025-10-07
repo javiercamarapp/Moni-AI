@@ -29,3 +29,6 @@ verify_jwt = false
 
 [functions.sync-bank-transactions]
 verify_jwt = false
+
+[functions.transcribe-audio]
+verify_jwt = true
