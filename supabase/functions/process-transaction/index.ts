@@ -1,6 +1,37 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+// Input validation functions
+const isValidUUID = (uuid: string): boolean => {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(uuid);
+};
+
+const isValidPhoneNumber = (phone: string): boolean => {
+  const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+  return phoneRegex.test(phone);
+};
+
+const sanitizeString = (str: string, maxLength: number): string => {
+  return str.trim().slice(0, maxLength);
+};
+
+const validateInput = (messageText: unknown, userId: unknown, phoneNumber: unknown): { valid: boolean; error?: string } => {
+  if (typeof messageText !== 'string' || messageText.trim().length === 0) {
+    return { valid: false, error: 'messageText must be a non-empty string' };
+  }
+  if (messageText.length > 500) {
+    return { valid: false, error: 'messageText exceeds maximum length of 500 characters' };
+  }
+  if (typeof userId !== 'string' || !isValidUUID(userId)) {
+    return { valid: false, error: 'userId must be a valid UUID' };
+  }
+  if (typeof phoneNumber !== 'string' || !isValidPhoneNumber(phoneNumber)) {
+    return { valid: false, error: 'phoneNumber must be a valid phone number' };
+  }
+  return { valid: true };
+};
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -12,9 +43,24 @@ serve(async (req) => {
   }
 
   try {
-    const { messageText, userId, phoneNumber } = await req.json();
+    const body = await req.json();
+    const { messageText, userId, phoneNumber } = body;
+
+    // Validate input
+    const validation = validateInput(messageText, userId, phoneNumber);
+    if (!validation.valid) {
+      console.error('Input validation failed:', validation.error);
+      return new Response(
+        JSON.stringify({ success: false, error: validation.error }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Sanitize inputs
+    const sanitizedMessage = sanitizeString(messageText, 500);
+    const sanitizedPhone = sanitizeString(phoneNumber, 20);
     
-    console.log('Processing transaction:', { messageText, userId, phoneNumber });
+    console.log('Processing transaction:', { sanitizedMessage, userId, sanitizedPhone });
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -66,7 +112,7 @@ Si no puedes interpretar el mensaje como una transacción, responde:
           },
           {
             role: 'user',
-            content: messageText
+            content: sanitizedMessage
           }
         ],
         temperature: 0.3
@@ -164,8 +210,8 @@ Si no puedes interpretar el mensaje como una transacción, responde:
         ai_interpretation: interpretation
       })
       .eq('user_id', userId)
-      .eq('phone_number', phoneNumber)
-      .eq('message_text', messageText);
+      .eq('phone_number', sanitizedPhone)
+      .eq('message_text', sanitizedMessage);
 
     // Verificar preferencias de notificación del usuario
     const { data: settings } = await supabase
