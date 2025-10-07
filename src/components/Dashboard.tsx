@@ -35,6 +35,9 @@ const Dashboard = () => {
   const [budgetMessage, setBudgetMessage] = useState<string>("✅ Dentro del presupuesto del mes");
   const [loadingBudgetMessage, setLoadingBudgetMessage] = useState(false);
   const [selectedMonthOffset, setSelectedMonthOffset] = useState(0); // 0 = mes actual, 1 = mes anterior, etc.
+  const [upcomingSubscriptions, setUpcomingSubscriptions] = useState<any[]>([]);
+  const [creditCardDebts, setCreditCardDebts] = useState<any[]>([]);
+  const [hasBankConnections, setHasBankConnections] = useState(false);
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const [scoreMoni, setScoreMoni] = useState<number | null>(null);
   const [loadingScore, setLoadingScore] = useState(false);
@@ -256,6 +259,92 @@ const Dashboard = () => {
     };
     fetchTransactions();
   }, [selectedMonthOffset]);
+
+  // Fetch upcoming subscriptions and bank connections
+  useEffect(() => {
+    const fetchSubscriptionsAndDebts = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Check for bank connections
+        const { data: bankData } = await supabase
+          .from('bank_connections')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('is_active', true);
+        
+        setHasBankConnections((bankData?.length || 0) > 0);
+
+        // Fetch recurring transactions (subscriptions)
+        const nextMonthStart = new Date();
+        nextMonthStart.setMonth(nextMonthStart.getMonth() + 1, 1);
+        const nextMonthEnd = new Date(nextMonthStart);
+        nextMonthEnd.setMonth(nextMonthEnd.getMonth() + 1, 0);
+
+        const { data: subscriptions } = await supabase
+          .from('transactions')
+          .select('*, categories(name)')
+          .eq('user_id', user.id)
+          .eq('type', 'gasto')
+          .in('frequency', ['mensual', 'quincenal', 'semanal'])
+          .order('amount', { ascending: false })
+          .limit(10);
+
+        const subs = (subscriptions || []).map((sub, index) => ({
+          id: sub.id,
+          name: sub.description,
+          amount: Number(sub.amount),
+          icon: getSubscriptionIcon(sub.description),
+          dueDate: calculateNextDueDate(sub.frequency),
+        }));
+
+        setUpcomingSubscriptions(subs);
+
+        // Mock credit card debts (esto se obtendría de la conexión bancaria real)
+        if (bankData && bankData.length > 0) {
+          setCreditCardDebts([
+            { name: 'Tarjeta Principal', balance: 15420.50, limit: 30000, percentage: 51.4 },
+            { name: 'Tarjeta Oro', balance: 8250.00, limit: 20000, percentage: 41.3 },
+            { name: 'Tarjeta Platino', balance: 3100.00, limit: 15000, percentage: 20.7 },
+          ]);
+        } else {
+          setCreditCardDebts([]);
+        }
+      } catch (error) {
+        console.error('Error fetching subscriptions:', error);
+      }
+    };
+
+    fetchSubscriptionsAndDebts();
+  }, []);
+
+  const getSubscriptionIcon = (description: string): string => {
+    const lower = description.toLowerCase();
+    if (lower.includes('netflix')) return '🎬';
+    if (lower.includes('spotify')) return '🎵';
+    if (lower.includes('amazon') || lower.includes('prime')) return '📦';
+    if (lower.includes('disney')) return '🏰';
+    if (lower.includes('hbo')) return '🎭';
+    if (lower.includes('gym') || lower.includes('gimnasio')) return '💪';
+    if (lower.includes('internet')) return '📡';
+    if (lower.includes('luz') || lower.includes('electricidad')) return '💡';
+    if (lower.includes('agua')) return '💧';
+    if (lower.includes('gas')) return '🔥';
+    return '💳';
+  };
+
+  const calculateNextDueDate = (frequency: string): Date => {
+    const now = new Date();
+    if (frequency === 'semanal') {
+      now.setDate(now.getDate() + 7);
+    } else if (frequency === 'quincenal') {
+      now.setDate(now.getDate() + 15);
+    } else {
+      now.setMonth(now.getMonth() + 1);
+    }
+    return now;
+  };
 
   // Fetch AI budget analysis whenever expenses change
   useEffect(() => {
@@ -696,6 +785,147 @@ const Dashboard = () => {
             }
           `}</style>
         </Card>
+
+        {/* Grid de 2 columnas: Suscripciones y Deudas */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Widget de Suscripciones Próximas */}
+          <Card className="p-5 bg-gradient-to-br from-[hsl(280,45%,18%)] to-[hsl(300,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(280,50%,35%)]/40 relative overflow-hidden">
+            {/* Efecto brillante */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
+                 style={{
+                   backgroundSize: '200% 100%',
+                   animation: 'shimmer 3s ease-in-out infinite',
+                 }}
+            />
+            
+            <div className="space-y-3 relative z-10">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-white drop-shadow-lg">📅 Próximas Suscripciones</h3>
+                <span className="text-xs text-white/70 font-semibold">{upcomingSubscriptions.length} activas</span>
+              </div>
+              
+              {upcomingSubscriptions.length === 0 ? (
+                <div className="text-center py-6">
+                  <p className="text-xs text-white/70 mb-3">No hay suscripciones registradas</p>
+                  <p className="text-xs text-white/50">Registra tus gastos recurrentes para verlos aquí</p>
+                </div>
+              ) : (
+                <div className="relative">
+                  <Carousel 
+                    className="w-full"
+                    opts={{
+                      align: "start",
+                      loop: true,
+                    }}
+                    plugins={[
+                      Autoplay({
+                        delay: 3000,
+                      }),
+                    ]}
+                  >
+                    <CarouselContent>
+                      {upcomingSubscriptions.map((sub) => (
+                        <CarouselItem key={sub.id} className="basis-1/3 md:basis-1/4">
+                          <div className="flex flex-col items-center gap-2 p-3 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-2xl shadow-lg">
+                              {sub.icon}
+                            </div>
+                            <div className="text-center">
+                              <p className="text-xs font-bold text-white truncate w-16">{sub.name}</p>
+                              <p className="text-xs text-white/80 font-semibold">${sub.amount.toFixed(0)}</p>
+                              <p className="text-[10px] text-white/60">
+                                {sub.dueDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
+                              </p>
+                            </div>
+                          </div>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                  </Carousel>
+                </div>
+              )}
+              
+              <div className="pt-2 border-t border-white/20">
+                <div className="flex justify-between items-center">
+                  <p className="text-xs text-white/70">Total mensual estimado</p>
+                  <p className="text-base font-black text-white drop-shadow-lg">
+                    ${upcomingSubscriptions.reduce((sum, s) => sum + s.amount, 0).toLocaleString('es-MX')}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Widget de Deudas de Tarjetas */}
+          <Card className="p-5 bg-gradient-to-br from-[hsl(0,45%,18%)] to-[hsl(15,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(0,50%,35%)]/40 relative overflow-hidden">
+            {/* Efecto brillante */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
+                 style={{
+                   backgroundSize: '200% 100%',
+                   animation: 'shimmer 3s ease-in-out infinite',
+                 }}
+            />
+            
+            <div className="space-y-3 relative z-10">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-white drop-shadow-lg">💳 Deudas de Tarjetas</h3>
+              </div>
+              
+              {!hasBankConnections ? (
+                <div className="text-center py-6">
+                  <div className="mb-4">
+                    <div className="w-16 h-16 mx-auto rounded-full bg-white/10 flex items-center justify-center mb-3">
+                      <span className="text-3xl">🏦</span>
+                    </div>
+                    <p className="text-xs text-white/80 mb-2 font-semibold">Conecta tus cuentas</p>
+                    <p className="text-xs text-white/60 mb-4">Monitorea tu salud financiera en tiempo real</p>
+                  </div>
+                  <Button 
+                    onClick={() => navigate('/bank-connection')}
+                    className="bg-white/20 hover:bg-white/30 text-white border border-white/30 font-semibold text-xs px-4 py-2 h-auto"
+                  >
+                    Conectar Cuentas
+                  </Button>
+                </div>
+              ) : creditCardDebts.length === 0 ? (
+                <div className="text-center py-6">
+                  <p className="text-base font-bold text-green-400 drop-shadow-lg">✅ Sin deudas</p>
+                  <p className="text-xs text-white/70 mt-1">¡Excelente manejo financiero!</p>
+                </div>
+              ) : (
+                <>
+                  <div className="text-center py-3">
+                    <p className="text-xs text-white/70 mb-1">Total adeudado</p>
+                    <p className="text-3xl font-black text-red-400 drop-shadow-lg">
+                      ${creditCardDebts.reduce((sum, card) => sum + card.balance, 0).toLocaleString('es-MX')}
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {creditCardDebts.map((card, index) => (
+                      <div key={index} className="bg-white/10 rounded-lg p-2 backdrop-blur-sm border border-white/20">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-xs font-bold text-white">{card.name}</p>
+                          <p className="text-xs font-black text-red-400">${card.balance.toLocaleString('es-MX')}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-red-500 to-orange-500 rounded-full transition-all"
+                              style={{ width: `${card.percentage}%` }}
+                            />
+                          </div>
+                          <p className="text-[10px] text-white/80 font-semibold">{card.percentage}%</p>
+                        </div>
+                        <p className="text-[10px] text-white/60 mt-1">Límite: ${card.limit.toLocaleString('es-MX')}</p>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </Card>
+        </div>
 
         {/* Proyecciones Inteligentes */}
         <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
