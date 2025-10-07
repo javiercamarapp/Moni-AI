@@ -826,7 +826,7 @@ const Dashboard = () => {
         {/* Grid de 2 columnas: Suscripciones y Deudas - Alineados horizontalmente siempre */}
         <div className="grid grid-cols-2 gap-2 sm:gap-4">
           {/* Widget de Suscripciones Próximas */}
-          <Card className="p-3 bg-gradient-to-br from-[hsl(280,45%,18%)] to-[hsl(300,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(280,50%,35%)]/40 relative overflow-hidden h-[220px] flex flex-col">
+          <Card className="p-3 bg-gradient-to-br from-[hsl(280,45%,18%)] to-[hsl(300,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(280,50%,35%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
             {/* Efecto brillante */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
                  style={{
@@ -879,7 +879,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Widget de Deudas de Tarjetas */}
-          <Card className="p-3 bg-gradient-to-br from-[hsl(0,45%,18%)] to-[hsl(15,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(0,50%,35%)]/40 relative overflow-hidden h-[220px] flex flex-col">
+          <Card className="p-3 bg-gradient-to-br from-[hsl(0,45%,18%)] to-[hsl(15,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(0,50%,35%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
             {/* Efecto brillante */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
                  style={{
