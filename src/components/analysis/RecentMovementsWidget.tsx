@@ -63,7 +63,7 @@ export default function RecentMovementsWidget() {
   };
 
   return (
-    <Card className="p-3 bg-gradient-to-br from-[hsl(210,20%,15%)] to-[hsl(220,18%,10%)] card-glow shadow-2xl border-2 border-[hsl(210,25%,30%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
+    <Card className="p-3 bg-gradient-to-br from-[hsl(45,45%,18%)] to-[hsl(50,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(48,50%,35%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
       {/* Efecto brillante */}
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
            style={{
@@ -91,7 +91,7 @@ export default function RecentMovementsWidget() {
                   key={transaction.id}
                   className="flex items-center gap-0.5 sm:gap-2 py-0.5 sm:py-2 px-1 sm:px-3 bg-white/10 rounded backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all min-h-[18px] sm:min-h-[40px]"
                 >
-                  <div className="w-3 h-3 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-slate-400 to-slate-600 flex items-center justify-center text-[6px] sm:text-base shadow-lg shrink-0">
+                  <div className="w-3 h-3 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-yellow-500 to-amber-600 flex items-center justify-center text-[6px] sm:text-base shadow-lg shrink-0">
                     {transaction.type === 'ingreso' ? '💰' : '💳'}
                   </div>
                   <div className="flex-1 min-w-0">
