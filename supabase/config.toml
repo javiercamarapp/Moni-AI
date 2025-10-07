@@ -41,3 +41,9 @@ verify_jwt = true
 
 [functions.generate-statement-pdf]
 verify_jwt = true
+
+[functions.analyze-budget]
+verify_jwt = true
+
+[functions.detect-subscriptions]
+verify_jwt = true

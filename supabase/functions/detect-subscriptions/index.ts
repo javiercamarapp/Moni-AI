@@ -1,5 +1,3 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -11,13 +9,12 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
     const { transactions } = await req.json();
 
+    console.log('📥 Received transactions:', transactions?.length || 0);
+
     if (!transactions || transactions.length === 0) {
+      console.log('⚠️ No transactions to analyze');
       return new Response(
         JSON.stringify({ subscriptions: [] }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -25,7 +22,18 @@ Deno.serve(async (req) => {
     }
 
     // Usar Lovable AI para detectar suscripciones
-    const aiResponse = await fetch('https://api.lovable.app/v1/ai/completions', {
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    console.log('🔑 API Key present:', !!LOVABLE_API_KEY);
+
+    if (!LOVABLE_API_KEY) {
+      console.error('❌ LOVABLE_API_KEY not found in environment');
+      return new Response(
+        JSON.stringify({ subscriptions: [], error: 'API key not configured' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${LOVABLE_API_KEY}`,
