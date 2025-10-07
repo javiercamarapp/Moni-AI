@@ -371,20 +371,20 @@ const ChatInterface = () => {
   return (
     <div className="flex flex-col h-screen animated-wave-bg text-white">
       {/* Header */}
-      <div className="flex items-center justify-center px-4 py-4 relative border-b border-white/10">
+      <div className="flex items-center justify-center px-4 py-4 relative border-b border-border/30 bg-card/50 backdrop-blur-sm">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => navigate("/dashboard")}
-          className="absolute left-4 text-white hover:bg-white/10 p-2"
+          className="absolute left-4 text-foreground hover:bg-accent/50 p-2 transition-all hover:scale-105"
         >
           <ArrowLeft className="w-6 h-6" />
         </Button>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+        <div className="flex items-center gap-3 fade-in-up">
+          <div className="w-10 h-10 rounded-full bg-gradient-card flex items-center justify-center shadow-glow border border-border/50">
             <img src={moniLogo} alt="MONI AI+" className="w-7 h-7 object-contain" />
           </div>
-          <span className="text-xl font-semibold text-white">MONI AI+</span>
+          <span className="text-xl font-semibold text-foreground">MONI AI+</span>
         </div>
       </div>
 
@@ -392,31 +392,31 @@ const ChatInterface = () => {
       <div className="flex-1 overflow-y-auto px-4">
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center pb-32">
-            <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-6 shadow-lg">
+            <div className="w-20 h-20 rounded-full bg-gradient-card flex items-center justify-center mb-6 shadow-glow border border-border/50 bounce-in pulse-subtle">
               <img src={moniLogo} alt="MONI AI+" className="w-14 h-14 object-contain" />
             </div>
-            <h1 className="text-3xl font-normal text-white text-center">¿En qué puedo ayudarte hoy?</h1>
+            <h1 className="text-3xl font-normal text-foreground text-center fade-in-up">¿En qué puedo ayudarte hoy?</h1>
           </div>
         ) : (
           <div className="py-6 space-y-6">
-            {messages.map((msg) => (
-              <div key={msg.id} className="space-y-2">
+            {messages.map((msg, index) => (
+              <div key={msg.id} className="space-y-2 fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
                 <div className="flex items-center gap-2">
                   {msg.type === 'ai' ? (
-                    <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-gradient-card flex items-center justify-center flex-shrink-0 shadow-glow border border-border/50 hover-lift">
                       <img src={moniLogo} alt="AI" className="w-5 h-5 object-contain" />
                     </div>
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0">
-                      <span className="text-xs font-medium">Tú</span>
+                    <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center flex-shrink-0 border border-border/50 hover-lift">
+                      <span className="text-xs font-medium text-foreground">Tú</span>
                     </div>
                   )}
-                  <span className="text-sm font-medium text-gray-400">
+                  <span className="text-sm font-medium text-muted-foreground">
                     {msg.type === 'ai' ? 'MONI AI+' : 'Tú'}
                   </span>
                 </div>
                 <div className="pl-9">
-                  <p className="text-white text-base leading-relaxed whitespace-pre-wrap">
+                  <p className="text-foreground text-base leading-relaxed whitespace-pre-wrap">
                     {msg.content}
                   </p>
                 </div>
@@ -424,18 +424,18 @@ const ChatInterface = () => {
             ))}
 
             {isTyping && (
-              <div className="space-y-2">
+              <div className="space-y-2 fade-in-up">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-gradient-card flex items-center justify-center flex-shrink-0 shadow-glow border border-border/50 pulse-subtle">
                     <img src={moniLogo} alt="AI" className="w-5 h-5 object-contain" />
                   </div>
-                  <span className="text-sm font-medium text-gray-400">MONI AI+</span>
+                  <span className="text-sm font-medium text-muted-foreground">MONI AI+</span>
                 </div>
                 <div className="pl-9">
                   <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }} />
+                    <div className="w-2 h-2 bg-accent rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                    <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '0.4s' }} />
                   </div>
                 </div>
               </div>
@@ -465,12 +465,12 @@ const ChatInterface = () => {
                   <CarouselItem key={index} className="pl-2 basis-[85%] sm:basis-[45%]">
                     <button
                       onClick={() => handleSuggestionClick(card.title)}
-                      className="w-full bg-[#2f2f2f] hover:bg-[#3f3f3f] rounded-2xl p-4 text-left transition-all border border-[#565869]/30"
+                      className="w-full bg-card hover:bg-card/80 rounded-2xl p-4 text-left transition-all border border-border/30 hover-lift shadow-card hover:shadow-glow"
                     >
-                      <h3 className="text-white font-medium text-sm mb-1">
+                      <h3 className="text-foreground font-medium text-sm mb-1">
                         {card.title}
                       </h3>
-                      <p className="text-gray-400 text-xs">
+                      <p className="text-muted-foreground text-xs">
                         {card.subtitle}
                       </p>
                     </button>
@@ -481,13 +481,13 @@ const ChatInterface = () => {
           </div>
         )}
 
-        <div className="flex items-center gap-3 bg-[#2f2f2f] rounded-[30px] px-4 py-3.5 shadow-lg">
+        <div className="flex items-center gap-2 bg-card rounded-[30px] px-4 py-3 shadow-elegant border border-border/30 hover:border-border/50 transition-all">
           <Button
             variant="ghost"
             size="icon"
-            className="text-gray-400 hover:text-white hover:bg-transparent flex-shrink-0 h-7 w-7 p-0"
+            className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex-shrink-0 h-8 w-8 p-0 transition-all hover:scale-110"
           >
-            <Plus className="w-6 h-6" />
+            <Plus className="w-5 h-5" />
           </Button>
 
           <Input
@@ -495,7 +495,7 @@ const ChatInterface = () => {
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Pregunta lo que quieras"
-            className="flex-1 bg-transparent border-0 text-white text-base placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 h-7"
+            className="flex-1 bg-transparent border-0 text-foreground text-base placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 px-2 h-8"
           />
 
           <Button
@@ -503,7 +503,7 @@ const ChatInterface = () => {
             size="icon"
             onClick={handleSendMessage}
             disabled={!message.trim()}
-            className="text-gray-400 hover:text-white hover:bg-transparent flex-shrink-0 h-7 w-7 p-0 disabled:opacity-30"
+            className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex-shrink-0 h-8 w-8 p-0 disabled:opacity-30 transition-all hover:scale-110"
           >
             <Send className="w-5 h-5" />
           </Button>
@@ -512,9 +512,13 @@ const ChatInterface = () => {
             variant="ghost"
             size="icon"
             onClick={isRecording ? stopVoiceRecording : startVoiceRecording}
-            className={`flex-shrink-0 h-7 w-7 p-0 ${isRecording ? 'text-red-500 hover:text-red-400' : 'text-gray-400 hover:text-white'} hover:bg-transparent`}
+            className={`flex-shrink-0 h-8 w-8 p-0 transition-all hover:scale-110 ${
+              isRecording 
+                ? 'text-destructive hover:text-destructive/80 animate-pulse' 
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+            }`}
           >
-            <Mic className="w-6 h-6" />
+            <Mic className="w-5 h-5" />
           </Button>
 
           <Button
@@ -522,17 +526,17 @@ const ChatInterface = () => {
             size="icon"
             onClick={toggleVoiceMode}
             disabled={isSpeaking}
-            className={`flex-shrink-0 h-7 w-7 p-0 rounded-full transition-all ${
+            className={`flex-shrink-0 h-8 w-8 p-0 rounded-full transition-all hover:scale-110 ${
               isVoiceActive 
-                ? 'bg-white text-black hover:bg-white/90' 
-                : 'text-gray-400 hover:text-white hover:bg-transparent'
+                ? 'bg-gradient-primary text-foreground shadow-glow hover:shadow-elegant' 
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
             } ${isSpeaking ? 'animate-pulse' : ''}`}
           >
-            <Circle className={`w-5 h-5 ${isVoiceActive ? 'fill-current' : ''}`} />
+            <Circle className={`w-4 h-4 ${isVoiceActive ? 'fill-current' : ''}`} />
           </Button>
         </div>
         
-        <p className="text-center text-xs text-gray-500 mt-3">
+        <p className="text-center text-xs text-muted-foreground mt-3">
           MONI AI+ puede cometer errores. Verifica la información importante.
         </p>
       </div>
