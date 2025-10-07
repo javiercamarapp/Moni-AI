@@ -748,13 +748,6 @@ const Dashboard = () => {
 
         {/* Presupuesto Mensual */}
         <Card className="p-5 bg-gradient-to-br from-[hsl(220,45%,18%)] to-[hsl(240,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(220,50%,35%)]/40 relative overflow-hidden">
-          {/* Efecto brillante de fondo */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-[shimmer_3s_ease-in-out_infinite]" 
-               style={{
-                 backgroundSize: '200% 100%',
-                 animation: 'shimmer 3s ease-in-out infinite',
-               }}
-          />
           
           <div className="space-y-3 relative z-10">
             <div className="flex items-center justify-between">
@@ -834,13 +827,6 @@ const Dashboard = () => {
         <div className="grid grid-cols-2 gap-2 sm:gap-4">
           {/* Widget de Suscripciones Próximas */}
           <Card className="p-3 bg-gradient-to-br from-[hsl(280,45%,18%)] to-[hsl(300,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(280,50%,35%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
-            {/* Efecto brillante */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
-                 style={{
-                   backgroundSize: '200% 100%',
-                   animation: 'shimmer 3s ease-in-out infinite',
-                 }}
-            />
             
             <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
               <div className="flex items-center justify-between flex-shrink-0">
@@ -887,13 +873,6 @@ const Dashboard = () => {
 
           {/* Widget de Deudas de Tarjetas */}
           <Card className="p-3 bg-gradient-to-br from-[hsl(0,45%,18%)] to-[hsl(15,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(0,50%,35%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
-            {/* Efecto brillante */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
-                 style={{
-                   backgroundSize: '200% 100%',
-                   animation: 'shimmer 3s ease-in-out infinite',
-                 }}
-            />
             
             <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
               <div className="flex items-center justify-between flex-shrink-0">
@@ -961,13 +940,6 @@ const Dashboard = () => {
         <Card className="p-3 sm:p-4 bg-gradient-to-br from-[hsl(142,60%,25%)] to-[hsl(142,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(142,70%,45%)]/40 relative overflow-hidden animate-fade-in hover:scale-105 transition-transform duration-200 cursor-pointer" style={{
         animationDelay: '500ms'
       }}>
-          {/* Efecto brillante */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
-               style={{
-                 backgroundSize: '200% 100%',
-                 animation: 'shimmer 3s ease-in-out infinite',
-               }}
-          />
           
           <div className="flex items-center gap-2 sm:gap-3 relative z-10">
             <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center p-2">
@@ -983,13 +955,6 @@ const Dashboard = () => {
               </Button>
             </div>
           </div>
-          
-          <style>{`
-            @keyframes shimmer {
-              0% { transform: translateX(-100%); }
-              100% { transform: translateX(200%); }
-            }
-          `}</style>
         </Card>
 
 
@@ -1055,13 +1020,6 @@ const Dashboard = () => {
             
             {/* Recent Transactions */}
             <Card className="p-3 bg-gradient-to-br from-[hsl(45,60%,25%)] to-[hsl(38,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(45,70%,45%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
-              {/* Efecto brillante */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
-                   style={{
-                     backgroundSize: '200% 100%',
-                     animation: 'shimmer 3s ease-in-out infinite',
-                   }}
-              />
               
               <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
                 <div className="flex items-center justify-between flex-shrink-0">

@@ -21,20 +21,11 @@ export default function SafeToSpendWidget({
   const percentageOfIncome = safeMonthlyIncome > 0 ? safeSafeToSpend / safeMonthlyIncome * 100 : 0;
   
   return (
-    <Card className={`p-4 card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95 relative overflow-hidden ${
+    <Card className={`p-4 card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95 ${
       safeSafeToSpend >= 0 
         ? 'bg-gradient-to-br from-success/90 to-success/70' 
         : 'bg-gradient-to-br from-danger/90 to-danger/70'
     }`}>
-      {/* Efecto brillante */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" 
-           style={{
-             backgroundSize: '200% 100%',
-             animation: 'shimmer 3s ease-in-out infinite',
-           }}
-      />
-      
-      <div className="relative z-10">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
@@ -71,14 +62,6 @@ export default function SafeToSpendWidget({
           </span>
         </div>
       </div>
-      </div>
-      
-      <style>{`
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(200%); }
-        }
-      `}</style>
     </Card>
   );
 }
