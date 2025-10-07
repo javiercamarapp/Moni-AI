@@ -648,20 +648,8 @@ export default function FinancialAnalysis() {
               </Card>
             )}
 
-            {/* Movimientos Recientes */}
-            {loadingTransactions ? (
-              <Card className="p-4 bg-gradient-card card-glow border-white/20">
-                <div className="text-center text-white/60 py-4">Cargando transacciones...</div>
-              </Card>
-            ) : recentTransactions.length > 0 ? (
-              <RecentMovementsWidget transactions={recentTransactions} />
-            ) : (
-              <Card className="p-4 bg-gradient-card card-glow border-white/20">
-                <div className="text-center text-white/60 py-4">
-                  No hay transacciones recientes
-                </div>
-              </Card>
-            )}
+            {/* Movimientos Recientes - Actualización en tiempo real */}
+            <RecentMovementsWidget />
 
             {/* Gráficas adicionales */}
             <Card className="p-3 bg-gradient-card card-glow border-white/20">
