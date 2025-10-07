@@ -434,7 +434,7 @@ const Ingresos = () => {
                   if (!user) {
                     toast({
                       title: "Error",
-                      description: "Debes iniciar sesión para descargar el PDF",
+                      description: "Debes iniciar sesión para descargar el reporte",
                       variant: "destructive"
                     });
                     return;
@@ -450,7 +450,8 @@ const Ingresos = () => {
                       userId: user.id,
                       viewMode: 'mensual',
                       month: currentMonth.getMonth() + 1,
-                      year: currentMonth.getFullYear()
+                      year: currentMonth.getFullYear(),
+                      type: 'ingreso'
                     }
                   });
 
@@ -461,7 +462,7 @@ const Ingresos = () => {
                   const url = window.URL.createObjectURL(blob);
                   const a = document.createElement('a');
                   a.href = url;
-                  a.download = data.filename || `movimientos_${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}.html`;
+                  a.download = data.filename || `ingresos_${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}.html`;
                   document.body.appendChild(a);
                   a.click();
                   window.URL.revokeObjectURL(url);
@@ -482,7 +483,7 @@ const Ingresos = () => {
               }}
             >
               <Download className="h-4 w-4 mr-1.5 flex-shrink-0" />
-              <span className="break-words whitespace-normal">Descargar movimientos del mes en PDF</span>
+              <span className="break-words whitespace-normal">Descargar reporte de ingresos en PDF</span>
             </Button>
           </div>
         </Card>
