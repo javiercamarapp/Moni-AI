@@ -132,38 +132,42 @@ const Dashboard = () => {
     fetchGoals();
   }, []);
 
-  // Fetch Score Moni
+  // Calculate Score Moni instantly based on local data
   useEffect(() => {
-    const fetchScoreMoni = async () => {
-      try {
-        const {
-          data: {
-            user
-          }
-        } = await supabase.auth.getUser();
-        if (!user) return;
-        setLoadingScore(true);
-        const {
-          data,
-          error
-        } = await supabase.functions.invoke('financial-analysis', {
-          body: {
-            userId: user.id,
-            period: 'month'
-          }
-        });
-        if (error) throw error;
-        if (data?.metrics?.scoreMoni != null) {
-          setScoreMoni(data.metrics.scoreMoni);
-        }
-      } catch (error) {
-        console.error('Error fetching Score Moni:', error);
-      } finally {
-        setLoadingScore(false);
+    const calculateScoreMoni = () => {
+      // Simple instant calculation based on available data
+      let score = 40; // Base score
+      
+      // Income factor (up to +20 points)
+      if (monthlyIncome > 0) {
+        score += 10;
+        if (monthlyIncome > 50000) score += 10;
       }
+      
+      // Balance factor (up to +20 points)
+      const balance = monthlyIncome - monthlyExpenses;
+      if (balance > 0) {
+        score += 10;
+        const savingsRate = (balance / monthlyIncome) * 100;
+        if (savingsRate > 20) score += 10;
+      }
+      
+      // Goals factor (up to +10 points)
+      if (goals.length > 0) score += 5;
+      if (goals.some(g => Number(g.current) > 0)) score += 5;
+      
+      // Fixed expenses control (up to +10 points)
+      if (monthlyIncome > 0) {
+        const fixedRatio = (fixedExpenses / monthlyIncome) * 100;
+        if (fixedRatio < 50) score += 10;
+        else if (fixedRatio < 70) score += 5;
+      }
+      
+      setScoreMoni(Math.min(100, Math.max(0, score)));
     };
-    fetchScoreMoni();
-  }, []);
+    
+    calculateScoreMoni();
+  }, [monthlyIncome, monthlyExpenses, fixedExpenses, goals]);
 
   // Fetch recent transactions and calculate monthly totals
   useEffect(() => {
@@ -341,11 +345,6 @@ const Dashboard = () => {
         <AICoachInsightsWidget monthlyIncome={monthlyIncome} monthlyExpenses={monthlyExpenses} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} balance={monthlyIncome - monthlyExpenses} />
       </div>
 
-      {/* Safe to Spend Widget */}
-      <div className="mx-4 mb-4">
-        <SafeToSpendWidget safeToSpend={monthlyIncome - fixedExpenses - goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} monthlyIncome={monthlyIncome} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} />
-      </div>
-
       {/* Banner Publicitario - Carrusel */}
       <div className="mx-4 mb-4">
         <Carousel className="w-full" setApi={setApi} opts={{
@@ -431,26 +430,46 @@ const Dashboard = () => {
       <div className="p-2 sm:p-4">
       <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
         
+        {/* Safe to Spend Widget */}
+        <SafeToSpendWidget safeToSpend={monthlyIncome - fixedExpenses - goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} monthlyIncome={monthlyIncome} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} />
+
+        {/* WhatsApp Banner */}
+        <Card className="p-3 sm:p-4 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+          animationDelay: '100ms'
+        }}>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
+              <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-white mb-2 leading-relaxed">
+                Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
+              </p>
+              <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white border-0 text-xs h-8" onClick={() => navigate('/whatsapp')}>
+                <MessageCircle className="w-3 h-3 mr-1" />
+                Conectar WhatsApp
+              </Button>
+            </div>
+          </div>
+        </Card>
+        
         {/* Balance Overview y Quick Stats en la misma fila */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
           {/* Sección 1: Balance Overview - Más grande */}
           <Card className={`sm:col-span-2 p-4 backdrop-blur border-2 animate-fade-in ${currentMonth.balance >= 0 ? 'bg-emerald-600/20 border-emerald-400/40' : 'bg-red-600/20 border-red-400/40'}`} style={{
-            animationDelay: '0ms'
+            animationDelay: '200ms'
           }}>
             <div className="space-y-3">
               <div>
-                <p className="text-xs font-medium text-white/80 mb-1">Disponible para gastar</p>
+                <p className="text-xs font-medium text-white/80 mb-1">Balance del mes</p>
                 <div className="flex items-baseline gap-2">
                   <p className={`text-4xl sm:text-5xl font-bold ${currentMonth.balance >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
-                    ${(currentMonth.balance * 0.7).toLocaleString('es-MX', {
+                    ${currentMonth.balance.toLocaleString('es-MX', {
                       maximumFractionDigits: 0
                     })}
                   </p>
                   <span className="text-sm text-white/60">MXN</span>
                 </div>
-                <p className="text-xs text-white/70 mt-2">
-                  Disponible hoy = Ingresos - Gastos Fijos - Apartados del mes
-                </p>
               </div>
 
               {currentMonth.balance < 0 && <div className="bg-red-500/20 rounded-lg p-3 border border-red-400/40">
@@ -505,10 +524,10 @@ const Dashboard = () => {
             </div>
           </Card>
 
-          {/* Sección 2: Quick Stats - 3 estadísticas */}
-          <div className="sm:col-span-1 grid grid-cols-3 sm:grid-cols-1 gap-2">
+          {/* Sección 2: Quick Stats - 4 estadísticas */}
+          <div className="sm:col-span-1 grid grid-cols-2 sm:grid-cols-1 gap-2">
             <Card className="p-2 sm:p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
-              animationDelay: '100ms'
+              animationDelay: '300ms'
             }}>
               <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
                 <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-primary/20 flex items-center justify-center mb-1 sm:mb-0">
@@ -524,7 +543,7 @@ const Dashboard = () => {
             </Card>
 
             <Card className="p-2 sm:p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
-              animationDelay: '200ms'
+              animationDelay: '400ms'
             }}>
               <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
                 <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-success/20 flex items-center justify-center mb-1 sm:mb-0">
@@ -539,8 +558,24 @@ const Dashboard = () => {
               </div>
             </Card>
 
+            <Card className="p-2 sm:p-3 bg-gradient-card card-glow cursor-pointer animate-fade-in hover:scale-105 transition-transform duration-200" onClick={() => navigate('/gastos')} style={{
+              animationDelay: '500ms'
+            }}>
+              <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-red-500/20 flex items-center justify-center mb-1 sm:mb-0">
+                  <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white rotate-180" />
+                </div>
+                <div className="text-center sm:text-left">
+                  <p className="text-[9px] sm:text-[10px] text-white">Gastos</p>
+                  <p className="text-xs sm:text-sm lg:text-base font-semibold text-white">
+                    ${monthlyExpenses.toLocaleString('es-MX')}
+                  </p>
+                </div>
+              </div>
+            </Card>
+
             <Card className="p-2 sm:p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
-              animationDelay: '300ms'
+              animationDelay: '600ms'
             }}>
               <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
                 <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-warning/20 flex items-center justify-center mb-1 sm:mb-0">
@@ -555,26 +590,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* WhatsApp Banner */}
-        <Card className="p-3 sm:p-4 bg-gradient-card card-glow mb-4 animate-fade-in hover:scale-105 transition-transform duration-200" style={{
-          animationDelay: '400ms'
-        }}>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
-              <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
-            </div>
-            <div className="flex-1 min-w-0">
-              
-            <p className="text-xs text-white mb-2 leading-relaxed">
-              Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
-            </p>
-              <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white border-0 text-xs h-8" onClick={() => navigate('/whatsapp')}>
-                <MessageCircle className="w-3 h-3 mr-1" />
-                Conectar WhatsApp
-              </Button>
-            </div>
-          </div>
-        </Card>
 
         <div className="grid lg:grid-cols-3 gap-6">
           
