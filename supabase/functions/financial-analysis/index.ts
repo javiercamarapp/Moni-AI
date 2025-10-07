@@ -665,7 +665,22 @@ Sé profesional pero cercano. Usa las razones financieras como un médico usa an
         subscriptions,
         totalMonthly: totalSubscriptions
       }
-    }), {
+    });
+
+    // Save score to database for instant loading on next visit
+    if (scoreMoni !== undefined) {
+      await supabase
+        .from('user_scores')
+        .upsert({
+          user_id: userId,
+          score_moni: Math.round(scoreMoni),
+          last_calculated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id'
+        });
+    }
+
+    return new Response(JSON.stringify(responseData), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 

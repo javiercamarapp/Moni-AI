@@ -33,7 +33,6 @@ const Dashboard = () => {
   const [selectedMonthOffset, setSelectedMonthOffset] = useState(0); // 0 = mes actual, 1 = mes anterior, etc.
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const [scoreMoni, setScoreMoni] = useState<number | null>(null);
-  const [loadingScore, setLoadingScore] = useState(false);
   const navigate = useNavigate();
   const {
     toast
@@ -115,26 +114,36 @@ const Dashboard = () => {
     fetchGoals();
   }, []);
 
-  // Fetch Score Moni
+  // Fetch Score Moni - Load instantly from DB, then update in background
   useEffect(() => {
     const fetchScoreMoni = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        setLoadingScore(true);
-        const { data, error } = await supabase.functions.invoke('financial-analysis', {
-          body: { userId: user.id, period: 'month' }
-        });
+        // 1. Load cached score instantly from database
+        const { data: cachedScore } = await supabase
+          .from('user_scores')
+          .select('score_moni')
+          .eq('user_id', user.id)
+          .single();
         
-        if (error) throw error;
-        if (data?.metrics?.scoreMoni != null) {
-          setScoreMoni(data.metrics.scoreMoni);
+        if (cachedScore) {
+          setScoreMoni(cachedScore.score_moni);
         }
+
+        // 2. Calculate fresh score in background (don't await)
+        supabase.functions.invoke('financial-analysis', {
+          body: { userId: user.id, period: 'month' }
+        }).then(({ data }) => {
+          if (data?.metrics?.scoreMoni != null) {
+            setScoreMoni(data.metrics.scoreMoni);
+          }
+        }).catch(error => {
+          console.error('Error calculating Score Moni:', error);
+        });
       } catch (error) {
         console.error('Error fetching Score Moni:', error);
-      } finally {
-        setLoadingScore(false);
       }
     };
     
@@ -290,22 +299,16 @@ const Dashboard = () => {
       {/* Score Moni - Compacto */}
       <div className="mx-4 mb-4">
         <Card className={`p-4 card-glow border-white/20 hover:scale-105 transition-transform duration-200 bg-gradient-to-br ${
-          loadingScore ? 'from-gray-500/90 to-gray-600/90' :
-          (scoreMoni ?? 0) >= 70 ? 'from-emerald-500/90 to-emerald-600/90' : 
-          (scoreMoni ?? 0) >= 40 ? 'from-yellow-500/90 to-yellow-600/90' : 
+          (scoreMoni ?? 40) >= 70 ? 'from-emerald-500/90 to-emerald-600/90' : 
+          (scoreMoni ?? 40) >= 40 ? 'from-yellow-500/90 to-yellow-600/90' : 
           'from-red-500/90 to-red-600/90'
         }`}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-white/90 mb-1">Score Moni</p>
-              {loadingScore ? (
-                <div className="h-9 w-20 bg-white/20 rounded animate-pulse" />
-              ) : (
-                <p className="text-3xl font-bold text-white">{scoreMoni ?? 40}<span className="text-sm text-white/80">/100</span></p>
-              )}
+              <p className="text-3xl font-bold text-white">{scoreMoni ?? 40}<span className="text-sm text-white/80">/100</span></p>
               <p className="text-xs text-white/90 mt-1">
-                {loadingScore ? 'Calculando...' : 
-                  (scoreMoni ?? 40) >= 70 ? '✅ Excelente' : 
+                {(scoreMoni ?? 40) >= 70 ? '✅ Excelente' : 
                   (scoreMoni ?? 40) >= 40 ? '⚠️ Mejorable' : '❌ Crítico'}
               </p>
             </div>

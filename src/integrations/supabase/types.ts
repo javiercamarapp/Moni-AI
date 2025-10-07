@@ -286,6 +286,27 @@ export type Database = {
           },
         ]
       }
+      user_scores: {
+        Row: {
+          last_calculated_at: string | null
+          score_moni: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          last_calculated_at?: string | null
+          score_moni?: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          last_calculated_at?: string | null
+          score_moni?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       whatsapp_messages: {
         Row: {
           ai_interpretation: Json | null
