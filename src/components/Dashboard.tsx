@@ -835,20 +835,18 @@ const Dashboard = () => {
                       {upcomingSubscriptions.map((sub) => (
                         <div 
                           key={sub.id} 
-                          className="flex items-center gap-1 py-0.5 px-1 bg-white/10 rounded backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all h-8"
+                          className="flex items-center gap-1 py-1 px-1.5 bg-white/10 rounded backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all min-h-[24px]"
                         >
-                          <div className="w-4 h-4 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-[8px] shadow-lg shrink-0">
+                          <div className="w-3.5 h-3.5 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-[7px] shadow-lg shrink-0">
                             {sub.icon}
                           </div>
-                          <div className="flex-1 min-w-0 flex items-center justify-between gap-1">
-                            <div className="flex-1 min-w-0">
-                              <p className="text-[8px] font-bold text-white truncate leading-none">{sub.name}</p>
-                              <p className="text-[6px] text-white/60 leading-none mt-0.5">
-                                {sub.dueDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
-                              </p>
-                            </div>
-                            <p className="text-[9px] font-black text-white shrink-0">${sub.amount.toFixed(0)}</p>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[7px] font-bold text-white truncate leading-tight">{sub.name}</p>
+                            <p className="text-[6px] text-white/60 leading-tight">
+                              {sub.dueDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
+                            </p>
                           </div>
+                          <p className="text-[8px] font-black text-white shrink-0">${sub.amount.toFixed(0)}</p>
                         </div>
                       ))}
                     </div>
@@ -915,13 +913,13 @@ const Dashboard = () => {
                   <ScrollArea className="flex-1 min-h-0 pr-1">
                     <div className="space-y-0.5">
                       {creditCardDebts.map((card, index) => (
-                        <div key={index} className="bg-white/10 rounded py-0.5 px-1 backdrop-blur-sm border border-white/20 h-[30px]">
+                        <div key={index} className="bg-white/10 rounded py-1 px-1.5 backdrop-blur-sm border border-white/20 min-h-[24px]">
                           <div className="flex items-center justify-between">
-                            <p className="text-[8px] font-bold text-white truncate flex-1 mr-1">{card.name}</p>
-                            <p className="text-[8px] font-black text-red-400 shrink-0">${card.balance.toLocaleString('es-MX')}</p>
+                            <p className="text-[7px] font-bold text-white truncate flex-1 mr-1">{card.name}</p>
+                            <p className="text-[7px] font-black text-red-400 shrink-0">${card.balance.toLocaleString('es-MX')}</p>
                           </div>
                           <div className="flex items-center gap-0.5 mt-0.5">
-                            <div className="flex-1 h-0.5 bg-white/20 rounded-full overflow-hidden">
+                            <div className="flex-1 h-[2px] bg-white/20 rounded-full overflow-hidden">
                               <div 
                                 className="h-full bg-gradient-to-r from-red-500 to-orange-500 rounded-full transition-all"
                                 style={{ width: `${card.percentage}%` }}
@@ -929,7 +927,7 @@ const Dashboard = () => {
                             </div>
                             <p className="text-[6px] text-white/80 font-semibold">{card.percentage}%</p>
                           </div>
-                          <p className="text-[6px] text-white/60 leading-none">Límite: ${card.limit.toLocaleString('es-MX')}</p>
+                          <p className="text-[6px] text-white/60 leading-tight">Límite: ${card.limit.toLocaleString('es-MX')}</p>
                         </div>
                       ))}
                     </div>
