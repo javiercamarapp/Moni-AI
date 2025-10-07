@@ -32,6 +32,8 @@ const Dashboard = () => {
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [monthlyExpenses, setMonthlyExpenses] = useState(0);
   const [fixedExpenses, setFixedExpenses] = useState(0);
+  const [budgetMessage, setBudgetMessage] = useState<string>("✅ Dentro del presupuesto del mes");
+  const [loadingBudgetMessage, setLoadingBudgetMessage] = useState(false);
   const [selectedMonthOffset, setSelectedMonthOffset] = useState(0); // 0 = mes actual, 1 = mes anterior, etc.
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const [scoreMoni, setScoreMoni] = useState<number | null>(null);
@@ -254,6 +256,58 @@ const Dashboard = () => {
     };
     fetchTransactions();
   }, [selectedMonthOffset]);
+
+  // Fetch AI budget analysis whenever expenses change
+  useEffect(() => {
+    if (selectedMonthOffset !== 0) return; // Solo analizar el mes actual
+    
+    const fetchBudgetAnalysis = async () => {
+      if (monthlyIncome === 0) {
+        setBudgetMessage("✅ Dentro del presupuesto del mes");
+        return;
+      }
+
+      try {
+        setLoadingBudgetMessage(true);
+        
+        const now = new Date();
+        const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+        const daysIntoMonth = now.getDate();
+
+        const { data, error } = await supabase.functions.invoke('analyze-budget', {
+          body: {
+            monthlyIncome,
+            monthlyExpenses,
+            daysIntoMonth,
+            daysInMonth
+          }
+        });
+
+        if (error) {
+          console.error('Error analyzing budget:', error);
+          // Fallback a lógica simple
+          const budget = monthlyIncome * 0.8;
+          const percentageSpent = (monthlyExpenses / budget) * 100;
+          if (percentageSpent > 90) {
+            setBudgetMessage("⚠️ Hay que mejorar o no lograremos el presupuesto del mensual");
+          } else if (percentageSpent > 75) {
+            setBudgetMessage("⚡ Se debe de ahorrar un poco más");
+          } else {
+            setBudgetMessage("✅ Dentro del presupuesto del mes");
+          }
+        } else {
+          setBudgetMessage(data?.message || "✅ Dentro del presupuesto del mes");
+        }
+      } catch (error) {
+        console.error('Error calling budget analysis:', error);
+        setBudgetMessage("✅ Dentro del presupuesto del mes");
+      } finally {
+        setLoadingBudgetMessage(false);
+      }
+    };
+
+    fetchBudgetAnalysis();
+  }, [monthlyIncome, monthlyExpenses, selectedMonthOffset]);
 
   // Fetch AI projections
   useEffect(() => {
@@ -619,13 +673,15 @@ const Dashboard = () => {
               </div>
             </div>
             
-            <p className="text-xs text-white/80 text-center font-semibold">
-              {monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 90 
-                ? '⚠️ Cerca del límite del presupuesto' 
-                : monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 75 
-                ? '⚡ Acercándote al límite' 
-                : '✅ Dentro del presupuesto'
-              }
+            <p className="text-xs text-white/80 text-center font-semibold min-h-[32px] flex items-center justify-center">
+              {loadingBudgetMessage ? (
+                <span className="inline-flex items-center gap-2">
+                  <span className="inline-block animate-spin rounded-full h-3 w-3 border-b-2 border-white"></span>
+                  Analizando patrón...
+                </span>
+              ) : (
+                budgetMessage
+              )}
             </p>
           </div>
           
