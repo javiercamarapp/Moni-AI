@@ -1260,34 +1260,6 @@ const Dashboard = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             
-            {/* Chat with AI */}
-            <Card className="p-4 sm:p-6 bg-gradient-card card-glow">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                  <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                </div>
-                <div>
-                  <h4 className="text-sm sm:text-base font-semibold text-white">Moni AI Coach</h4>
-                  <p className="text-xs text-white">En línea</p>
-                </div>
-              </div>
-              
-              <div className="space-y-3 mb-4">
-                 <div className="bg-gradient-card card-glow rounded-2xl rounded-bl-md p-2 sm:p-3">
-                  <p className="text-xs sm:text-sm text-white">
-                    ¡Hola! 👋 Soy tu coach financiero personal.
-                    <br /><br />
-                    Estoy aquí para ayudarte a mejorar tus finanzas, crear metas de ahorro y darte consejos personalizados. ¿Empezamos? 💰
-                  </p>
-                </div>
-              </div>
-
-              <Button size="sm" className="w-full bg-gradient-card card-glow hover:bg-white/30 text-white border-white/30 hover:scale-105 transition-transform duration-200" onClick={() => navigate("/chat")}>
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Chatear con Moni AI
-              </Button>
-            </Card>
-
             {/* Recent Transactions */}
             <Card className="p-3 bg-gradient-to-br from-[hsl(45,60%,25%)] to-[hsl(38,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(45,70%,45%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
               {/* Efecto brillante */}
