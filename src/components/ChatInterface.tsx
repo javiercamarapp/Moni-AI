@@ -369,20 +369,22 @@ const ChatInterface = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-black text-white">
+    <div className="flex flex-col h-screen animated-wave-bg text-white">
       {/* Header */}
-      <div className="flex items-center justify-center px-4 py-4 relative">
+      <div className="flex items-center justify-center px-4 py-4 relative border-b border-white/10">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => navigate("/dashboard")}
-          className="absolute left-4 text-white hover:bg-gray-900 p-2"
+          className="absolute left-4 text-white hover:bg-white/10 p-2"
         >
           <ArrowLeft className="w-6 h-6" />
         </Button>
-        <div className="flex items-center gap-2">
-          <img src={moniLogo} alt="MONI AI+" className="w-8 h-8" />
-          <span className="text-lg font-medium">MONI AI+</span>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+            <img src={moniLogo} alt="MONI AI+" className="w-7 h-7 object-contain" />
+          </div>
+          <span className="text-xl font-semibold text-white">MONI AI+</span>
         </div>
       </div>
 
@@ -390,8 +392,8 @@ const ChatInterface = () => {
       <div className="flex-1 overflow-y-auto px-4">
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center pb-32">
-            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-6">
-              <img src={moniLogo} alt="MONI AI+" className="w-10 h-10" />
+            <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-6 shadow-lg">
+              <img src={moniLogo} alt="MONI AI+" className="w-14 h-14 object-contain" />
             </div>
             <h1 className="text-3xl font-normal text-white text-center">¿En qué puedo ayudarte hoy?</h1>
           </div>
@@ -401,11 +403,11 @@ const ChatInterface = () => {
               <div key={msg.id} className="space-y-2">
                 <div className="flex items-center gap-2">
                   {msg.type === 'ai' ? (
-                    <div className="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center">
-                      <img src={moniLogo} alt="AI" className="w-4 h-4" />
+                    <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+                      <img src={moniLogo} alt="AI" className="w-5 h-5 object-contain" />
                     </div>
                   ) : (
-                    <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center">
+                    <div className="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0">
                       <span className="text-xs font-medium">Tú</span>
                     </div>
                   )}
@@ -413,7 +415,7 @@ const ChatInterface = () => {
                     {msg.type === 'ai' ? 'MONI AI+' : 'Tú'}
                   </span>
                 </div>
-                <div className="pl-8">
+                <div className="pl-9">
                   <p className="text-white text-base leading-relaxed whitespace-pre-wrap">
                     {msg.content}
                   </p>
@@ -424,12 +426,12 @@ const ChatInterface = () => {
             {isTyping && (
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center">
-                    <img src={moniLogo} alt="AI" className="w-4 h-4" />
+                  <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+                    <img src={moniLogo} alt="AI" className="w-5 h-5 object-contain" />
                   </div>
                   <span className="text-sm font-medium text-gray-400">MONI AI+</span>
                 </div>
-                <div className="pl-8">
+                <div className="pl-9">
                   <div className="flex gap-1">
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
