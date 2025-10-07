@@ -550,6 +550,53 @@ const Dashboard = () => {
         {/* Safe to Spend Widget */}
         <SafeToSpendWidget safeToSpend={monthlyIncome - fixedExpenses - goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} monthlyIncome={monthlyIncome} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} />
 
+        {/* Presupuesto Mensual */}
+        <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-card-foreground">Presupuesto Mensual</h3>
+                <p className="text-xs text-card-foreground/70">
+                  Gastado: ${monthlyExpenses.toLocaleString('es-MX')} de ${(monthlyIncome * 0.8).toLocaleString('es-MX')}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-lg font-bold text-card-foreground">
+                  {monthlyIncome > 0 ? ((monthlyExpenses / (monthlyIncome * 0.8)) * 100).toFixed(0) : 0}%
+                </p>
+                <p className="text-xs text-card-foreground/70">del presupuesto</p>
+              </div>
+            </div>
+            
+            <div className="relative">
+              <Progress 
+                value={monthlyIncome > 0 ? Math.min((monthlyExpenses / (monthlyIncome * 0.8)) * 100, 100) : 0} 
+                className={`h-4 ${
+                  monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 90 
+                    ? 'bg-red-500/20' 
+                    : monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 75 
+                    ? 'bg-yellow-500/20' 
+                    : 'bg-green-500/20'
+                }`}
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xs font-bold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                  ${(monthlyIncome > 0 ? (monthlyIncome * 0.8) - monthlyExpenses : 0).toLocaleString('es-MX')} restantes
+                </span>
+              </div>
+            </div>
+            
+            <p className="text-xs text-card-foreground/60 text-center">
+              {monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 90 
+                ? '⚠️ Cerca del límite del presupuesto' 
+                : monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 75 
+                ? '⚡ Acercándote al límite' 
+                : '✅ Dentro del presupuesto'
+              }
+            </p>
+          </div>
+        </Card>
+
         {/* Proyecciones Inteligentes */}
         <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30">
           <div className="flex items-center justify-between mb-3">
