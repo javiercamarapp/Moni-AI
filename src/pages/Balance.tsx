@@ -559,15 +559,15 @@ const Balance = () => {
           {ingresosByCategory.length === 0 ? (
             <p className="text-card-foreground/70 text-center py-4">No hay ingresos registrados</p>
           ) : (
-            <div className="w-full h-[320px]">
+            <div className="w-full h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={ingresosByCategory}
                     cx="50%"
-                    cy="38%"
+                    cy="35%"
                     labelLine={false}
-                    outerRadius={65}
+                    outerRadius={60}
                     fill="hsl(var(--primary))"
                     dataKey="total"
                   >
@@ -588,8 +588,8 @@ const Balance = () => {
                   />
                   <Legend 
                     verticalAlign="bottom" 
-                    height={75}
-                    wrapperStyle={{ fontSize: '12px', paddingTop: '5px' }}
+                    height={60}
+                    wrapperStyle={{ fontSize: '12px', paddingTop: '0px', marginTop: '-10px' }}
                     formatter={(value, entry: any) => (
                       <span className="text-card-foreground text-xs font-medium block">
                         {value} ({entry.payload.percentage.toFixed(1)}%)
@@ -612,15 +612,15 @@ const Balance = () => {
           {gastosByCategory.length === 0 ? (
             <p className="text-card-foreground/70 text-center py-4">No hay gastos registrados</p>
           ) : (
-            <div className="w-full h-[320px]">
+            <div className="w-full h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={gastosByCategory}
                     cx="50%"
-                    cy="33%"
+                    cy="32%"
                     labelLine={false}
-                    outerRadius={65}
+                    outerRadius={60}
                     fill="hsl(var(--destructive))"
                     dataKey="total"
                   >
@@ -641,8 +641,8 @@ const Balance = () => {
                   />
                   <Legend 
                     verticalAlign="bottom" 
-                    height={80}
-                    wrapperStyle={{ fontSize: '12px', paddingTop: '5px' }}
+                    height={65}
+                    wrapperStyle={{ fontSize: '12px', paddingTop: '0px', marginTop: '-10px' }}
                     formatter={(value, entry: any) => (
                       <span className="text-card-foreground text-xs font-medium block">
                         {value} ({entry.payload.percentage.toFixed(1)}%)
