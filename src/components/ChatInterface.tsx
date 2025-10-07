@@ -482,60 +482,74 @@ const ChatInterface = () => {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto px-4">
+      <div className="flex-1 overflow-y-auto px-3 sm:px-4">
         {messages.length === 0 ? <div className="h-full flex flex-col items-center justify-center pb-32">
             
-            <h1 className="text-3xl font-normal text-foreground text-center fade-in-up">¿En qué puedo ayudarte hoy?</h1>
-          </div> : <div className="py-6 space-y-6">
-            {messages.map((msg, index) => <div key={msg.id} className="space-y-2 fade-in-up" style={{
+            <h1 className="text-2xl sm:text-3xl font-normal text-foreground text-center fade-in-up px-4">¿En qué puedo ayudarte hoy?</h1>
+          </div> : <div className="py-4 sm:py-6 space-y-4 sm:space-y-6 max-w-4xl mx-auto">
+            {messages.map((msg, index) => <div key={msg.id} className="fade-in-up" style={{
           animationDelay: `${index * 0.1}s`
         }}>
-                <div className="flex items-center gap-2">
-                  {msg.type === 'ai' ? <div className="w-7 h-7 rounded-full bg-gradient-card flex items-center justify-center flex-shrink-0 shadow-glow border border-border/50 hover-lift p-1">
+                <div className="flex items-start gap-2 sm:gap-3 mb-2">
+                  {msg.type === 'ai' ? <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-card flex items-center justify-center flex-shrink-0 shadow-glow border border-border/50 hover-lift p-1 mt-0.5">
                       <img src={moniLogo} alt="AI" className="w-full h-full object-contain" />
-                    </div> : <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center flex-shrink-0 border border-border/50 hover-lift">
+                    </div> : <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-muted flex items-center justify-center flex-shrink-0 border border-border/50 hover-lift mt-0.5">
                       <span className="text-xs font-medium text-foreground">Tú</span>
                     </div>}
-                  <span className="text-sm font-medium text-muted-foreground">
-                    {msg.type === 'ai' ? 'MONI AI+' : 'Tú'}
-                  </span>
-                </div>
-                <div className="pl-9">
-                  {msg.files && msg.files.length > 0 && (
-                    <div className="mb-2 flex flex-wrap gap-2">
-                      {msg.files.map((file, idx) => (
-                        <div key={idx} className="bg-muted rounded-lg p-2 text-xs">
-                          {file.type.startsWith('image/') ? (
-                            <img src={file.data} alt={file.name} className="max-w-xs rounded" />
-                          ) : (
-                            <span className="text-muted-foreground">📎 {file.name}</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <p className="text-foreground text-base leading-relaxed whitespace-pre-wrap">
-                    {msg.content}
-                  </p>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-xs sm:text-sm font-medium text-muted-foreground block mb-1.5">
+                      {msg.type === 'ai' ? 'MONI AI+' : 'Tú'}
+                    </span>
+                    
+                    {msg.files && msg.files.length > 0 && (
+                      <div className="mb-2 flex flex-wrap gap-2">
+                        {msg.files.map((file, idx) => (
+                          <div key={idx} className="bg-muted/50 rounded-lg overflow-hidden border border-border/30">
+                            {file.type.startsWith('image/') ? (
+                              <img 
+                                src={file.data} 
+                                alt={file.name} 
+                                className="max-w-full w-auto h-auto max-h-[200px] sm:max-h-[300px] rounded object-contain"
+                              />
+                            ) : (
+                              <div className="p-2">
+                                <span className="text-muted-foreground text-xs">📎 {file.name}</span>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    
+                    {msg.content && (
+                      <div className="bg-card/30 rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 border border-border/20">
+                        <p className="text-foreground text-sm sm:text-base leading-relaxed whitespace-pre-wrap break-words">
+                          {msg.content}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>)}
 
-            {isTyping && <div className="space-y-2 fade-in-up">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-gradient-card flex items-center justify-center flex-shrink-0 shadow-glow border border-border/50 pulse-subtle p-1">
+            {isTyping && <div className="fade-in-up">
+                <div className="flex items-start gap-2 sm:gap-3 mb-2">
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-card flex items-center justify-center flex-shrink-0 shadow-glow border border-border/50 pulse-subtle p-1 mt-0.5">
                     <img src={moniLogo} alt="AI" className="w-full h-full object-contain" />
                   </div>
-                  <span className="text-sm font-medium text-muted-foreground">MONI AI+</span>
-                </div>
-                <div className="pl-9">
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-accent rounded-full animate-bounce" />
-                    <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{
-                animationDelay: '0.2s'
-              }} />
-                    <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{
-                animationDelay: '0.4s'
-              }} />
+                  <div className="flex-1 min-w-0">
+                    <span className="text-xs sm:text-sm font-medium text-muted-foreground block mb-1.5">MONI AI+</span>
+                    <div className="bg-card/30 rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 border border-border/20 inline-block">
+                      <div className="flex gap-1">
+                        <div className="w-2 h-2 bg-accent rounded-full animate-bounce" />
+                        <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{
+                    animationDelay: '0.2s'
+                  }} />
+                        <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{
+                    animationDelay: '0.4s'
+                  }} />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>}
