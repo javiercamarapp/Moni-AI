@@ -484,7 +484,7 @@ const Balance = () => {
             </p>
           </Card>
 
-          <Card className={`p-4 card-glow text-center hover-lift shadow-elegant border animate-fade-in ${
+          <Card className={`p-4 card-glow text-center hover-lift shadow-elegant border animate-fade-in transition-all duration-300 ${
             balance >= 0 
               ? 'bg-gradient-to-br from-[hsl(145,45%,30%)] to-[hsl(145,55%,25%)] border-[hsl(145,50%,35%)]/50' 
               : 'bg-gradient-to-br from-[hsl(0,50%,30%)] to-[hsl(0,55%,25%)] border-[hsl(0,50%,35%)]/50'
