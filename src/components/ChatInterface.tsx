@@ -19,6 +19,7 @@ const ChatInterface = () => {
     id: number;
     type: string;
     content: string;
+    files?: Array<{name: string; type: string; data: string}>;
   }>>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [suggestionCards, setSuggestionCards] = useState<Array<{
@@ -33,6 +34,8 @@ const ChatInterface = () => {
   const audioChunksRef = useRef<Blob[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<Array<{name: string; type: string; data: string}>>([]);
   const autoplayPlugin = useRef(Autoplay({
     delay: 3000,
     stopOnInteraction: true
@@ -125,21 +128,55 @@ const ChatInterface = () => {
     }
   };
   const handleSendMessage = async () => {
-    if (!message.trim()) return;
+    if (!message.trim() && uploadedFiles.length === 0) return;
+    
     const userMessage = {
       id: Date.now(),
       type: 'user',
-      content: message.trim()
+      content: message.trim() || "Analiza este archivo",
+      files: uploadedFiles.length > 0 ? uploadedFiles : undefined
     };
     setMessages(prev => [...prev, userMessage]);
     setMessage('');
+    setUploadedFiles([]);
     setIsTyping(true);
     try {
       const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`;
-      const conversationHistory = [...messages, userMessage].map(msg => ({
-        role: msg.type === 'user' ? 'user' : 'assistant',
-        content: msg.content
-      }));
+      const conversationHistory = [...messages, userMessage].map(msg => {
+        const messageContent: any = { 
+          role: msg.type === 'user' ? 'user' : 'assistant',
+          content: []
+        };
+        
+        // Add text content
+        if (msg.content) {
+          messageContent.content.push({
+            type: 'text',
+            text: msg.content
+          });
+        }
+        
+        // Add files if present
+        if (msg.files && msg.files.length > 0) {
+          msg.files.forEach(file => {
+            if (file.type.startsWith('image/')) {
+              messageContent.content.push({
+                type: 'image_url',
+                image_url: {
+                  url: file.data
+                }
+              });
+            } else {
+              messageContent.content.push({
+                type: 'text',
+                text: `[Archivo adjunto: ${file.name}]`
+              });
+            }
+          });
+        }
+        
+        return messageContent;
+      });
       const resp = await fetch(CHAT_URL, {
         method: 'POST',
         headers: {
@@ -314,6 +351,58 @@ const ChatInterface = () => {
       });
     }
   };
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const newFiles: Array<{name: string; type: string; data: string}> = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      
+      // Limit file size to 10MB
+      if (file.size > 10 * 1024 * 1024) {
+        toast({
+          title: "Archivo muy grande",
+          description: `${file.name} supera el límite de 10MB`,
+          variant: "destructive"
+        });
+        continue;
+      }
+
+      try {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64 = reader.result as string;
+          newFiles.push({
+            name: file.name,
+            type: file.type,
+            data: base64
+          });
+
+          if (newFiles.length === files.length) {
+            setUploadedFiles(prev => [...prev, ...newFiles]);
+            toast({
+              title: "Archivos cargados",
+              description: `${newFiles.length} archivo(s) listo(s) para enviar`
+            });
+          }
+        };
+        reader.readAsDataURL(file);
+      } catch (error) {
+        console.error('Error reading file:', error);
+        toast({
+          title: "Error",
+          description: `No se pudo cargar ${file.name}`,
+          variant: "destructive"
+        });
+      }
+    }
+
+    // Reset input
+    e.target.value = '';
+  };
+
   const toggleVoiceMode = () => {
     setIsVoiceActive(!isVoiceActive);
     if (isVoiceActive) {
@@ -405,6 +494,19 @@ const ChatInterface = () => {
                   </span>
                 </div>
                 <div className="pl-9">
+                  {msg.files && msg.files.length > 0 && (
+                    <div className="mb-2 flex flex-wrap gap-2">
+                      {msg.files.map((file, idx) => (
+                        <div key={idx} className="bg-muted rounded-lg p-2 text-xs">
+                          {file.type.startsWith('image/') ? (
+                            <img src={file.data} alt={file.name} className="max-w-xs rounded" />
+                          ) : (
+                            <span className="text-muted-foreground">📎 {file.name}</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   <p className="text-foreground text-base leading-relaxed whitespace-pre-wrap">
                     {msg.content}
                   </p>
@@ -457,14 +559,43 @@ const ChatInterface = () => {
             </Carousel>
           </div>}
 
+        {uploadedFiles.length > 0 && (
+          <div className="mb-2 flex flex-wrap gap-2">
+            {uploadedFiles.map((file, idx) => (
+              <div key={idx} className="bg-card rounded-lg p-2 text-xs border border-border/30 flex items-center gap-2">
+                <span className="text-muted-foreground">📎 {file.name}</span>
+                <button 
+                  onClick={() => setUploadedFiles(prev => prev.filter((_, i) => i !== idx))}
+                  className="text-destructive hover:text-destructive/80"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="flex items-center gap-1 sm:gap-2 bg-card rounded-[30px] px-2 sm:px-4 py-2.5 sm:py-3 shadow-elegant border border-border/30 hover:border-border/50 transition-all">
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex-shrink-0 h-7 w-7 sm:h-8 sm:w-8 p-0 transition-all hover:scale-110">
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*,video/*,.pdf,.doc,.docx,.txt"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => fileInputRef.current?.click()}
+            className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex-shrink-0 h-7 w-7 sm:h-8 sm:w-8 p-0 transition-all hover:scale-110"
+          >
             <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
 
           <Input value={message} onChange={e => setMessage(e.target.value)} onKeyPress={handleKeyPress} placeholder="Pregunta..." className="flex-1 bg-transparent border-0 text-foreground text-sm sm:text-base placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 px-1.5 sm:px-3 h-7 sm:h-8" />
 
-          <Button variant="ghost" size="icon" onClick={handleSendMessage} disabled={!message.trim()} className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex-shrink-0 h-8 w-8 p-0 disabled:opacity-30 transition-all hover:scale-110">
+          <Button variant="ghost" size="icon" onClick={handleSendMessage} disabled={!message.trim() && uploadedFiles.length === 0} className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex-shrink-0 h-8 w-8 p-0 disabled:opacity-30 transition-all hover:scale-110">
             <Send className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
 
