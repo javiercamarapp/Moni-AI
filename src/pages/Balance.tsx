@@ -505,19 +505,17 @@ const Balance = () => {
                     throw new Error('Datos incompletos en la respuesta');
                   }
 
-                  console.log('🔵 Creando blob...', { htmlLength: data.html.length, filename: data.filename });
+                  console.log('🔵 Creando data URL...', { htmlLength: data.html.length, filename: data.filename });
 
-                  // Crear y descargar el archivo HTML con charset explícito
-                  const blob = new Blob([data.html], { type: 'text/html; charset=utf-8' });
-                  console.log('🔵 Blob creado:', { size: blob.size, type: blob.type });
-
-                  const url = window.URL.createObjectURL(blob);
-                  console.log('🔵 URL del blob creada:', url);
+                  // Usar data URL en lugar de blob para mejor compatibilidad en iframes
+                  const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(data.html);
+                  console.log('🔵 Data URL creada, longitud:', dataUrl.length);
 
                   const a = document.createElement('a');
                   a.style.display = 'none';
-                  a.href = url;
+                  a.href = dataUrl;
                   a.download = data.filename;
+                  a.target = '_blank'; // Intentar abrir en nueva pestaña si la descarga falla
                   
                   document.body.appendChild(a);
                   console.log('🔵 Anchor añadido al DOM, ejecutando click...');
@@ -527,7 +525,6 @@ const Balance = () => {
 
                   // Limpiar después de un breve delay
                   setTimeout(() => {
-                    window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
                     console.log('🔵 Limpieza completada');
                   }, 100);
