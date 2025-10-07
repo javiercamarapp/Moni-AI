@@ -578,11 +578,13 @@ const Balance = () => {
                   <Tooltip 
                     formatter={(value: number) => `$${value.toLocaleString('es-MX')}`}
                     contentStyle={{ 
-                      backgroundColor: 'hsl(var(--card))', 
-                      border: '1px solid hsl(var(--border))',
+                      backgroundColor: 'hsl(220, 25%, 10%)', 
+                      border: '1px solid hsl(215, 20%, 25%)',
                       borderRadius: '8px',
-                      color: 'hsl(var(--foreground))'
+                      color: 'hsl(210, 15%, 90%)'
                     }}
+                    labelStyle={{ color: 'hsl(210, 15%, 90%)' }}
+                    itemStyle={{ color: 'hsl(210, 15%, 90%)' }}
                   />
                   <Legend 
                     verticalAlign="bottom" 
@@ -590,7 +592,7 @@ const Balance = () => {
                     wrapperStyle={{ fontSize: '11px' }}
                     formatter={(value, entry: any) => (
                       <span className="text-foreground text-[10px] sm:text-xs block">
-                        {value}
+                        {value} ({entry.payload.percentage.toFixed(1)}%)
                       </span>
                     )}
                   />
@@ -629,11 +631,13 @@ const Balance = () => {
                   <Tooltip 
                     formatter={(value: number) => `$${value.toLocaleString('es-MX')}`}
                     contentStyle={{ 
-                      backgroundColor: 'hsl(var(--card))', 
-                      border: '1px solid hsl(var(--border))',
+                      backgroundColor: 'hsl(220, 25%, 10%)', 
+                      border: '1px solid hsl(215, 20%, 25%)',
                       borderRadius: '8px',
-                      color: 'hsl(var(--foreground))'
+                      color: 'hsl(210, 15%, 90%)'
                     }}
+                    labelStyle={{ color: 'hsl(210, 15%, 90%)' }}
+                    itemStyle={{ color: 'hsl(210, 15%, 90%)' }}
                   />
                   <Legend 
                     verticalAlign="bottom" 
@@ -641,7 +645,7 @@ const Balance = () => {
                     wrapperStyle={{ fontSize: '11px' }}
                     formatter={(value, entry: any) => (
                       <span className="text-foreground text-[10px] sm:text-xs block">
-                        {value}
+                        {value} ({entry.payload.percentage.toFixed(1)}%)
                       </span>
                     )}
                   />
