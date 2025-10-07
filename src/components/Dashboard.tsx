@@ -345,12 +345,97 @@ const Dashboard = () => {
         <AICoachInsightsWidget monthlyIncome={monthlyIncome} monthlyExpenses={monthlyExpenses} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} balance={monthlyIncome - monthlyExpenses} />
       </div>
 
-      {/* Banner Publicitario - Carrusel */}
-      <div className="mx-4 mb-4">
+      {/* Bottom Navigation Menu - Fixed */}
+      
+
+      <div className="p-2 sm:p-4">
+      <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
+        
+        {/* Safe to Spend Widget */}
+        <SafeToSpendWidget safeToSpend={monthlyIncome - fixedExpenses - goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} monthlyIncome={monthlyIncome} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} />
+
+        {/* WhatsApp Banner */}
+        <Card className="p-3 sm:p-4 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
+          animationDelay: '100ms'
+        }}>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
+              <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-white mb-2 leading-relaxed">
+                Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
+              </p>
+              <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white border-0 text-xs h-8" onClick={() => navigate('/whatsapp')}>
+                <MessageCircle className="w-3 h-3 mr-1" />
+                Conectar WhatsApp
+              </Button>
+            </div>
+          </div>
+        </Card>
+
+        {/* Quick Stats - 4 botones horizontales */}
+        <div className="grid grid-cols-4 gap-2">
+          <Card className="p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
+            animationDelay: '200ms'
+          }}>
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center mb-2">
+                <Wallet className="w-4 h-4 text-white" />
+              </div>
+              <p className="text-[10px] text-white/80 mb-1">Balance</p>
+              <p className="text-sm font-semibold text-white truncate w-full text-center">
+                ${currentMonth.balance.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+              </p>
+            </div>
+          </Card>
+
+          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
+            animationDelay: '300ms'
+          }}>
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center mb-2">
+                <TrendingUp className="w-4 h-4 text-white" />
+              </div>
+              <p className="text-[10px] text-white/80 mb-1">Ahorrado</p>
+              <p className="text-sm font-semibold text-white truncate w-full text-center">
+                ${goals.reduce((sum, goal) => sum + Number(goal.current), 0).toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+              </p>
+            </div>
+          </Card>
+
+          <Card className="p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/gastos')} style={{
+            animationDelay: '400ms'
+          }}>
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center mb-2">
+                <TrendingUp className="w-4 h-4 text-white rotate-180" />
+              </div>
+              <p className="text-[10px] text-white/80 mb-1">Gastos</p>
+              <p className="text-sm font-semibold text-white truncate w-full text-center">
+                ${monthlyExpenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+              </p>
+            </div>
+          </Card>
+
+          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
+            animationDelay: '500ms'
+          }}>
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 rounded-lg bg-warning/20 flex items-center justify-center mb-2">
+                <Target className="w-4 h-4 text-white" />
+              </div>
+              <p className="text-[10px] text-white/80 mb-1">Metas</p>
+              <p className="text-sm font-semibold text-white">{goals.length}</p>
+            </div>
+          </Card>
+        </div>
+
+        {/* Banner Publicitario - Carrusel */}
         <Carousel className="w-full" setApi={setApi} opts={{
-        loop: true,
-        align: "center"
-      }}>
+          loop: true,
+          align: "center"
+        }}>
           <CarouselContent className="-ml-2 md:-ml-4">
             <CarouselItem className="pl-2 md:pl-4 basis-[85%] md:basis-[80%]">
               <Card className="relative overflow-hidden border border-border/50 h-[200px] sm:h-[240px]">
@@ -422,173 +507,6 @@ const Dashboard = () => {
             </CarouselItem>
           </CarouselContent>
         </Carousel>
-      </div>
-      
-      {/* Bottom Navigation Menu - Fixed */}
-      
-
-      <div className="p-2 sm:p-4">
-      <div className="container mx-auto max-w-7xl space-y-4 sm:space-y-6">
-        
-        {/* Safe to Spend Widget */}
-        <SafeToSpendWidget safeToSpend={monthlyIncome - fixedExpenses - goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} monthlyIncome={monthlyIncome} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} />
-
-        {/* WhatsApp Banner */}
-        <Card className="p-3 sm:p-4 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
-          animationDelay: '100ms'
-        }}>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
-              <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-white mb-2 leading-relaxed">
-                Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
-              </p>
-              <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white border-0 text-xs h-8" onClick={() => navigate('/whatsapp')}>
-                <MessageCircle className="w-3 h-3 mr-1" />
-                Conectar WhatsApp
-              </Button>
-            </div>
-          </div>
-        </Card>
-        
-        {/* Balance Overview y Quick Stats en la misma fila */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
-          {/* Sección 1: Balance Overview - Más grande */}
-          <Card className={`sm:col-span-2 p-4 backdrop-blur border-2 animate-fade-in ${currentMonth.balance >= 0 ? 'bg-emerald-600/20 border-emerald-400/40' : 'bg-red-600/20 border-red-400/40'}`} style={{
-            animationDelay: '200ms'
-          }}>
-            <div className="space-y-3">
-              <div>
-                <p className="text-xs font-medium text-white/80 mb-1">Balance del mes</p>
-                <div className="flex items-baseline gap-2">
-                  <p className={`text-4xl sm:text-5xl font-bold ${currentMonth.balance >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
-                    ${currentMonth.balance.toLocaleString('es-MX', {
-                      maximumFractionDigits: 0
-                    })}
-                  </p>
-                  <span className="text-sm text-white/60">MXN</span>
-                </div>
-              </div>
-
-              {currentMonth.balance < 0 && <div className="bg-red-500/20 rounded-lg p-3 border border-red-400/40">
-                  <div className="flex items-start gap-2">
-                    <AlertCircle className="h-4 w-4 text-red-300 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="text-xs font-semibold text-red-200 mb-2">⚠️ Balance en Rojo</p>
-                      <div className="space-y-1.5">
-                        <p className="text-xs text-white/90">💡 <span className="font-medium">Empieza a presupuestar:</span> Define límites por categoría</p>
-                        <p className="text-xs text-white/90">💰 <span className="font-medium">Reduce gastos hormiga:</span> Cafés, apps, delivery</p>
-                        <p className="text-xs text-white/90">📊 <span className="font-medium">Revisa suscripciones:</span> Cancela las que no uses</p>
-                        <p className="text-xs text-white/90">🎯 <span className="font-medium">Crea un fondo de emergencia:</span> Aunque sea $500/mes</p>
-                      </div>
-                      <Button size="sm" className="mt-3 w-full bg-red-600 hover:bg-red-700 text-white border-0 text-xs h-8" onClick={() => navigate('/analysis')}>
-                        Ver plan de ahorro personalizado
-                      </Button>
-                    </div>
-                  </div>
-                </div>}
-
-              {currentMonth.balance >= 0 && <div className="bg-emerald-500/20 rounded-lg p-3 border border-emerald-400/40 animate-fade-in" key={currentTipIndex}>
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">{successTips[currentTipIndex].emoji}</span>
-                    <div>
-                      <p className="text-xs font-semibold text-emerald-200">{successTips[currentTipIndex].title}</p>
-                      <p className="text-xs text-white/80">{successTips[currentTipIndex].message}</p>
-                    </div>
-                  </div>
-                </div>}
-
-              <div className="pt-3 border-t border-white/10">
-                <p className="text-xs font-medium text-white/80 mb-2">Balance del mes</p>
-                <div className="grid grid-cols-3 gap-3">
-                  <div>
-                    <p className="text-[10px] text-white/60">Ingresos</p>
-                    <p className="text-sm font-semibold text-emerald-400">
-                      +${currentMonth.income.toLocaleString('es-MX')}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-white/60">Gastos</p>
-                    <p className="text-sm font-semibold text-red-400">
-                      -${currentMonth.expenses.toLocaleString('es-MX')}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-white/60">Balance</p>
-                    
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          {/* Sección 2: Quick Stats - 4 estadísticas */}
-          <div className="sm:col-span-1 grid grid-cols-2 sm:grid-cols-1 gap-2">
-            <Card className="p-2 sm:p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
-              animationDelay: '300ms'
-            }}>
-              <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
-                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-primary/20 flex items-center justify-center mb-1 sm:mb-0">
-                  <Wallet className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
-                </div>
-                <div className="text-center sm:text-left">
-                  <p className="text-[9px] sm:text-[10px] text-white">Balance</p>
-                  <p className="text-xs sm:text-sm lg:text-base font-semibold text-white">
-                    ${currentMonth.balance.toLocaleString('es-MX')}
-                  </p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-2 sm:p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
-              animationDelay: '400ms'
-            }}>
-              <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
-                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-success/20 flex items-center justify-center mb-1 sm:mb-0">
-                  <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
-                </div>
-                <div className="text-center sm:text-left">
-                  <p className="text-[9px] sm:text-[10px] text-white">Ahorrado</p>
-                  <p className="text-xs sm:text-sm lg:text-base font-semibold text-white">
-                    ${goals.reduce((sum, goal) => sum + Number(goal.current), 0).toLocaleString('es-MX')}
-                  </p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-2 sm:p-3 bg-gradient-card card-glow cursor-pointer animate-fade-in hover:scale-105 transition-transform duration-200" onClick={() => navigate('/gastos')} style={{
-              animationDelay: '500ms'
-            }}>
-              <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
-                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-red-500/20 flex items-center justify-center mb-1 sm:mb-0">
-                  <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white rotate-180" />
-                </div>
-                <div className="text-center sm:text-left">
-                  <p className="text-[9px] sm:text-[10px] text-white">Gastos</p>
-                  <p className="text-xs sm:text-sm lg:text-base font-semibold text-white">
-                    ${monthlyExpenses.toLocaleString('es-MX')}
-                  </p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-2 sm:p-3 bg-gradient-card card-glow animate-fade-in hover:scale-105 transition-transform duration-200" style={{
-              animationDelay: '600ms'
-            }}>
-              <div className="flex flex-col sm:flex-row items-center sm:space-x-2">
-                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-warning/20 flex items-center justify-center mb-1 sm:mb-0">
-                  <Target className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
-                </div>
-                <div className="text-center sm:text-left">
-                  <p className="text-[9px] sm:text-[10px] text-white">Metas</p>
-                  <p className="text-xs sm:text-sm lg:text-base font-semibold text-white">{goals.length}</p>
-                </div>
-              </div>
-            </Card>
-          </div>
-        </div>
 
 
         <div className="grid lg:grid-cols-3 gap-6">
