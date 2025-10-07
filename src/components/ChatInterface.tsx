@@ -462,7 +462,7 @@ const ChatInterface = () => {
             <Plus className="w-5 h-5" />
           </Button>
 
-          <Input value={message} onChange={e => setMessage(e.target.value)} onKeyPress={handleKeyPress} placeholder="Pregunta lo que quieras" className="flex-1 bg-transparent border-0 text-foreground text-base placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 px-2 h-8" />
+          <Input value={message} onChange={e => setMessage(e.target.value)} onKeyPress={handleKeyPress} placeholder="Pregunta lo que quieras" className="flex-1 bg-transparent border-0 text-foreground text-base placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 px-3 h-8" />
 
           <Button variant="ghost" size="icon" onClick={handleSendMessage} disabled={!message.trim()} className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex-shrink-0 h-8 w-8 p-0 disabled:opacity-30 transition-all hover:scale-110">
             <Send className="w-5 h-5" />
