@@ -24,12 +24,14 @@ serve(async (req) => {
     const now = new Date();
     let startDate: Date;
     
+    // Para incluir todas las transacciones disponibles, usamos una fecha muy antigua
+    // Esto asegura que se analicen todas las transacciones sin importar su fecha
     if (period === 'month') {
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      startDate = new Date(2020, 0, 1); // Desde enero 2020
     } else if (period === 'year') {
-      startDate = new Date(now.getFullYear(), 0, 1);
+      startDate = new Date(2020, 0, 1);
     } else {
-      startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      startDate = new Date(2020, 0, 1);
     }
 
     // Obtener transacciones del período
