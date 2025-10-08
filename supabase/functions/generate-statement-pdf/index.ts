@@ -22,11 +22,12 @@ serve(async (req) => {
       throw new Error('User ID is required');
     }
 
-    if (!type || !['ingreso', 'gasto'].includes(type)) {
+    // Si type está definido, validar que sea válido
+    if (type && !['ingreso', 'gasto'].includes(type)) {
       throw new Error('Type must be either "ingreso" or "gasto"');
     }
 
-    console.log('Generating PDF for:', { viewMode, year, month, userId, type });
+    console.log('Generating PDF for:', { viewMode, year, month, userId, type: type || 'combined' });
 
     // Logo en base64 (MONI AI logo)
     const logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABLAAAAEsCAYAAADHm4vGAAAACXBIWXMAAAsTAAALEwEAmpwYAAAKT2lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVNnVFPpFj333vRCS4iAlEtvUhUIIFJCi4AUkSYqIQkQSogMADIC4gAACIQCgAACBAAAgEQAOEQAaAAAMYAAgAPAA0AgQCAYA';
@@ -81,17 +82,25 @@ serve(async (req) => {
 
     console.log('Transactions found:', transactions?.length || 0);
 
-    // Filter by type - ONLY show the requested type
-    const filteredTransactions = transactions?.filter(t => t.type === type) || [];
-    console.log(`Filtered ${type} transactions:`, filteredTransactions.length);
+    // Filter by type if specified
+    const filteredTransactions = type 
+      ? transactions?.filter(t => t.type === type) || []
+      : transactions || [];
+    
+    console.log(`Filtered transactions:`, filteredTransactions.length, type ? `(type: ${type})` : '(all types)');
 
-    // Calculate totals based on filtered transactions
-    const totalAmount = filteredTransactions.reduce((sum, t) => sum + parseFloat(t.amount), 0);
+    // Calculate totals
+    const ingresos = filteredTransactions.filter(t => t.type === 'ingreso').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+    const gastos = filteredTransactions.filter(t => t.type === 'gasto').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+    const balance = ingresos - gastos;
+    const totalAmount = type === 'ingreso' ? ingresos : type === 'gasto' ? gastos : balance;
 
     console.log('=== PDF REPORT CALCULATIONS ===');
-    console.log('Type:', type);
+    console.log('Type:', type || 'combined');
     console.log('Date range:', { startDate: startDate.toISOString().split('T')[0], endDate: endDate.toISOString().split('T')[0] });
-    console.log(`Total ${type}:`, totalAmount);
+    console.log('Ingresos:', ingresos);
+    console.log('Gastos:', gastos);
+    console.log('Balance:', balance);
     console.log('================================');
 
     // Group by category
@@ -452,67 +461,119 @@ Mantén el tono profesional. Limita tu respuesta a 250 palabras.`;
             </div>
           </div>
 
-          <!-- Sección del reporte específico por tipo -->
+          <!-- Reporte de movimientos -->
           <div class="section">
-            <h2 class="section-title">${type === 'ingreso' ? '📈 Ingresos' : '📉 Gastos'}</h2>
-            ${filteredTransactions.length > 0 ? `
-              <div class="table-container">
-                <table>
-                  <thead>
-                    <tr>
-                      <th style="width: 15%;">Fecha</th>
-                      <th style="width: 45%;">Descripción</th>
-                      <th style="width: 20%;">Categoría</th>
-                      <th style="width: 20%; text-align: right;">Monto</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${filteredTransactions.map(t => `
-                      <tr>
-                        <td>${new Date(t.transaction_date).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })}</td>
-                        <td>${t.description || 'Sin descripción'}</td>
-                        <td>${t.categories?.name || 'General'}</td>
-                        <td style="text-align: right;" class="${type === 'ingreso' ? 'amount-positive' : 'amount-negative'}">
-                          ${type === 'ingreso' ? '+' : '-'}$${parseFloat(t.amount).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
-                        </td>
-                      </tr>
-                    `).join('')}
-                  </tbody>
-                </table>
-              </div>
-              <div class="summary-row">
-                <span class="label">Total ${type === 'ingreso' ? 'Ingresos' : 'Gastos'}:</span>
-                <span class="value ${type === 'ingreso' ? 'amount-positive' : 'amount-negative'}">$${totalAmount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>
+            ${!type ? `
+              <!-- Reporte Combinado -->
+              <h2 class="section-title">💼 Estado de Cuenta Completo</h2>
+              
+              <!-- Métricas principales -->
+              <div class="metrics-grid">
+                <div class="metric-card">
+                  <div class="metric-label">Ingresos</div>
+                  <div class="metric-value positive">$${ingresos.toLocaleString('es-MX', { minimumFractionDigits: 0 })}</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-label">Gastos</div>
+                  <div class="metric-value negative">$${gastos.toLocaleString('es-MX', { minimumFractionDigits: 0 })}</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-label">Balance</div>
+                  <div class="metric-value ${balance >= 0 ? 'positive' : 'negative'}">$${balance.toLocaleString('es-MX', { minimumFractionDigits: 0 })}</div>
+                </div>
               </div>
               
-              <!-- Gráfica por Categoría -->
-              ${byCategory.length > 0 ? `
-                <div style="margin-top: 30px; page-break-inside: avoid;">
-                  <h3 style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 20px; text-align: center;">${type === 'ingreso' ? 'Ingresos' : 'Gastos'} por Categoría</h3>
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center;">
-                    <!-- Gráfica -->
-                    <div style="display: flex; justify-content: center;">
-                      ${generatePieChartSVG(byCategory, type === 'ingreso' ? 'Ingresos' : 'Gastos')}
-                    </div>
-                    <!-- Leyenda -->
-                    <div style="display: flex; flex-direction: column; gap: 12px;">
-                      ${byCategory.map(cat => `
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                          <div style="width: 16px; height: 16px; border-radius: 4px; background: ${cat.color}; flex-shrink: 0;"></div>
-                          <div style="flex: 1; min-width: 0;">
-                            <div style="font-size: 13px; font-weight: 600; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${cat.name}</div>
-                            <div style="font-size: 12px; color: #6b7280;">$${cat.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })} (${cat.percentage.toFixed(1)}%)</div>
-                          </div>
-                        </div>
+              ${filteredTransactions.length > 0 ? `
+                <div class="table-container" style="margin-top: 25px;">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th style="width: 15%;">Fecha</th>
+                        <th style="width: 10%;">Tipo</th>
+                        <th style="width: 35%;">Descripción</th>
+                        <th style="width: 20%;">Categoría</th>
+                        <th style="width: 20%; text-align: right;">Monto</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${filteredTransactions.map(t => `
+                        <tr>
+                          <td>${new Date(t.transaction_date).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })}</td>
+                          <td><span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; ${t.type === 'ingreso' ? 'background: #d1fae5; color: #065f46;' : 'background: #fee2e2; color: #991b1b;'}">${t.type === 'ingreso' ? 'Ingreso' : 'Gasto'}</span></td>
+                          <td>${t.description || 'Sin descripción'}</td>
+                          <td>${t.categories?.name || 'General'}</td>
+                          <td style="text-align: right;" class="${t.type === 'ingreso' ? 'amount-positive' : 'amount-negative'}">
+                            ${t.type === 'ingreso' ? '+' : '-'}$${parseFloat(t.amount).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                          </td>
+                        </tr>
                       `).join('')}
+                    </tbody>
+                  </table>
+                </div>
+              ` : `<p style="color: #9ca3af; text-align: center; padding: 20px;">No hay movimientos registrados en este período</p>`}
+            ` : `
+              <!-- Reporte por tipo específico -->
+              <h2 class="section-title">${type === 'ingreso' ? '📈 Ingresos' : '📉 Gastos'}</h2>
+              ${filteredTransactions.length > 0 ? `
+                <div class="table-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th style="width: 15%;">Fecha</th>
+                        <th style="width: 45%;">Descripción</th>
+                        <th style="width: 20%;">Categoría</th>
+                        <th style="width: 20%; text-align: right;">Monto</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${filteredTransactions.map(t => `
+                        <tr>
+                          <td>${new Date(t.transaction_date).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })}</td>
+                          <td>${t.description || 'Sin descripción'}</td>
+                          <td>${t.categories?.name || 'General'}</td>
+                          <td style="text-align: right;" class="${type === 'ingreso' ? 'amount-positive' : 'amount-negative'}">
+                            ${type === 'ingreso' ? '+' : '-'}$${parseFloat(t.amount).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                          </td>
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </div>
+                <div class="summary-row">
+                  <span class="label">Total ${type === 'ingreso' ? 'Ingresos' : 'Gastos'}:</span>
+                  <span class="value ${type === 'ingreso' ? 'amount-positive' : 'amount-negative'}">$${totalAmount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>
+                </div>
+                
+                <!-- Gráfica por Categoría -->
+                ${byCategory.length > 0 ? `
+                  <div style="margin-top: 30px; page-break-inside: avoid;">
+                    <h3 style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 20px; text-align: center;">${type === 'ingreso' ? 'Ingresos' : 'Gastos'} por Categoría</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center;">
+                      <!-- Gráfica -->
+                      <div style="display: flex; justify-content: center;">
+                        ${generatePieChartSVG(byCategory, type === 'ingreso' ? 'Ingresos' : 'Gastos')}
+                      </div>
+                      <!-- Leyenda -->
+                      <div style="display: flex; flex-direction: column; gap: 12px;">
+                        ${byCategory.map(cat => `
+                          <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 16px; height: 16px; border-radius: 4px; background: ${cat.color}; flex-shrink: 0;"></div>
+                            <div style="flex: 1; min-width: 0;">
+                              <div style="font-size: 13px; font-weight: 600; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${cat.name}</div>
+                              <div style="font-size: 12px; color: #6b7280;">$${cat.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })} (${cat.percentage.toFixed(1)}%)</div>
+                            </div>
+                          </div>
+                        `).join('')}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ` : ''}
-            ` : `<p style="color: #9ca3af; text-align: center; padding: 20px;">No hay ${type === 'ingreso' ? 'ingresos' : 'gastos'} registrados en este período</p>`}
+                ` : ''}
+              ` : `<p style="color: #9ca3af; text-align: center; padding: 20px;">No hay ${type === 'ingreso' ? 'ingresos' : 'gastos'} registrados en este período</p>`}
+            `}
           </div>
 
           <!-- Métricas -->
+          ${type ? `
           <div class="section">
             <h2 class="section-title">💰 Métricas</h2>
             <div class="metrics-grid">
@@ -530,6 +591,7 @@ Mantén el tono profesional. Limita tu respuesta a 250 palabras.`;
               </div>
             </div>
           </div>
+          ` : ''}
 
           <!-- Conclusiones e Insights -->
           ${aiInsights ? `
