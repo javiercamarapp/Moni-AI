@@ -8,6 +8,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { cn } from "@/lib/utils";
 import { useNetWorth, useHasNetWorthData, TimeRange } from "@/hooks/useNetWorth";
 import NetWorthSetupForm from "@/components/NetWorthSetupForm";
+import networthIntro from "@/assets/networth-intro.jpg";
 
 type CategoryFilter = 'All' | 'Checking' | 'Savings' | 'Credit' | 'Loans' | 'Investments' | 'Property' | 'Other' | 'Mortgage';
 
@@ -37,6 +38,7 @@ export default function NetWorth() {
   const [liabilitiesExpanded, setLiabilitiesExpanded] = useState(false);
   const [assetFilter, setAssetFilter] = useState<CategoryFilter>('All');
   const [liabilityFilter, setLiabilityFilter] = useState<CategoryFilter>('All');
+  const [showForm, setShowForm] = useState(false);
 
   const { data: hasData, isLoading: checkingData, refetch: refetchHasData } = useHasNetWorthData();
   const { data: netWorthData, isLoading: loadingData } = useNetWorth(timeRange);
@@ -50,6 +52,41 @@ export default function NetWorth() {
   }
 
   if (!hasData) {
+    if (!showForm) {
+      return (
+        <div className="min-h-screen bg-background flex flex-col">
+          {/* Hero Image */}
+          <div className="h-[50vh] relative overflow-hidden">
+            <img 
+              src={networthIntro} 
+              alt="Net Worth Intro" 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background"></div>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 flex flex-col items-center justify-center px-6 pb-12 -mt-20 relative z-10">
+            <div className="max-w-md text-center space-y-6">
+              <h1 className="text-4xl font-bold text-foreground">
+                Vamos a conocernos mejor
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                Nutre a tu Moni AI personal con tu información y empieza a ver la diferencia
+              </p>
+              <Button 
+                size="lg"
+                className="w-full mt-8 text-lg py-6 shadow-glow"
+                onClick={() => setShowForm(true)}
+              >
+                Responder preguntas
+              </Button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
     return <NetWorthSetupForm onComplete={() => refetchHasData()} />;
   }
 
