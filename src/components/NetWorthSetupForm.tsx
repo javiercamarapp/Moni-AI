@@ -500,40 +500,54 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
             <div className="bg-gradient-primary/30 px-5 py-4 border-b border-border/30">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-success/20 border border-success/30">
-                    <Plus className="h-5 w-5 text-success" />
+                  <div className="p-2 rounded-lg bg-accent/20 border border-accent/30">
+                    <Plus className="h-5 w-5 text-accent" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg text-card-foreground">✨ Activos Personalizados</h3>
-                    <p className="text-xs text-card-foreground/70">Crea tus propias categorías</p>
+                    <h3 className="font-bold text-lg text-card-foreground">💎 Activos Personalizados</h3>
                   </div>
                 </div>
                 <Button
                   type="button"
                   size="sm"
                   onClick={addCustomAsset}
-                  className="gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all"
+                  className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all hover:scale-105"
                 >
                   <Plus className="h-4 w-4" />
-                  Nuevo Activo
+                  <span className="hidden sm:inline">Nueva Categoría</span>
+                  <span className="sm:hidden">Nuevo</span>
                 </Button>
               </div>
             </div>
 
             <div className="p-5 space-y-6">
+              {customAssets.length === 0 && (
+                <div className="text-center py-8 space-y-2">
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted mb-2">
+                    <Plus className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm font-medium text-card-foreground">
+                    Crea tus propias categorías de activos
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Agrega categorías como colecciones, inversiones privadas o cualquier otro activo
+                  </p>
+                </div>
+              )}
+
               {customAssets.map((customAsset) => (
-                <div key={customAsset.id} className="space-y-3 p-4 rounded-lg bg-card/50 border border-border/30">
+                <div key={customAsset.id} className="space-y-3 p-4 rounded-lg bg-accent/5 border border-accent/20 hover:border-accent/30 transition-all">
                   <div className="flex gap-2 items-start">
                     <div className="flex-1">
-                      <Label className="text-card-foreground text-sm font-medium mb-2 block">
-                        Nombre del Activo
+                      <Label className="text-card-foreground text-sm font-semibold mb-2 block">
+                        📁 Categoría de Activo
                       </Label>
                       <Input
                         type="text"
-                        placeholder="Ej: Colección de Arte, Negocios Secundarios"
+                        placeholder="Ej: Colección de Arte, Negocios, Inversiones Privadas"
                         value={customAsset.name}
                         onChange={(e) => updateCustomAssetName(customAsset.id, e.target.value)}
-                        className="bg-card border-border/30 text-card-foreground font-semibold"
+                        className="bg-card border-border/30 text-card-foreground font-semibold text-base"
                       />
                     </div>
                     <Button
@@ -541,37 +555,45 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                       variant="ghost"
                       size="icon"
                       onClick={() => removeCustomAsset(customAsset.id)}
-                      className="mt-7 h-8 w-8 text-danger hover:bg-danger/10"
+                      className="mt-7 h-9 w-9 text-danger hover:bg-danger/10 hover:scale-110 transition-all"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-5 w-5" />
                     </Button>
                   </div>
 
-                  <div className="pl-4 border-l-2 border-border/30 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-card-foreground/70 text-xs font-medium">
-                        Cuentas
+                  <div className="pl-4 border-l-2 border-accent/30 space-y-3 mt-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-card-foreground text-xs font-semibold uppercase tracking-wide">
+                        Cuentas dentro de esta categoría
                       </Label>
                       <Button
                         type="button"
                         size="sm"
                         onClick={() => addCustomAssetAccount(customAsset.id)}
-                        className="h-7 text-xs gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all"
+                        className="h-7 text-xs gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all hover:scale-105"
                       >
                         <Plus className="h-3 w-3" />
                         Agregar Cuenta
                       </Button>
                     </div>
 
+                    {customAsset.accounts.length === 0 && (
+                      <div className="text-center py-4 px-3 bg-muted/30 rounded-md border border-dashed border-border">
+                        <p className="text-xs text-muted-foreground">
+                          Agrega cuentas específicas dentro de esta categoría
+                        </p>
+                      </div>
+                    )}
+
                     {customAsset.accounts.map((account) => (
-                      <div key={account.id} className="flex gap-2 items-start">
+                      <div key={account.id} className="flex gap-2 items-start p-3 rounded-md bg-card/50 border border-border/20">
                         <div className="flex-1 space-y-2">
                           <Input
                             type="text"
-                            placeholder="Nombre de cuenta (ej: Pintura Picasso)"
+                            placeholder="Nombre específico (ej: Pintura Picasso, Local Centro)"
                             value={account.name}
                             onChange={(e) => updateCustomAssetAccount(customAsset.id, account.id, 'name', e.target.value)}
-                            className="bg-card border-border/30 text-card-foreground text-sm"
+                            className="bg-card border-border/30 text-card-foreground"
                           />
                           <div className="relative">
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-card-foreground/70 font-semibold">$</span>
@@ -591,27 +613,15 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                           variant="ghost"
                           size="icon"
                           onClick={() => removeCustomAssetAccount(customAsset.id, account.id)}
-                          className="mt-1 h-8 w-8 text-danger hover:bg-danger/10"
+                          className="mt-1 h-8 w-8 text-danger hover:bg-danger/10 hover:scale-110 transition-all"
                         >
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
                     ))}
-
-                    {customAsset.accounts.length === 0 && (
-                      <p className="text-xs text-muted-foreground italic">
-                        No hay cuentas. Haz clic en "Agregar Cuenta" para comenzar.
-                      </p>
-                    )}
                   </div>
                 </div>
               ))}
-
-              {customAssets.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-4 italic">
-                  No hay activos personalizados. Haz clic en "Nuevo Activo" para crear uno.
-                </p>
-              )}
             </div>
           </Card>
 
@@ -698,36 +708,50 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                     <Plus className="h-5 w-5 text-danger" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg text-card-foreground">✨ Pasivos Personalizados</h3>
-                    <p className="text-xs text-card-foreground/70">Crea tus propias categorías</p>
+                    <h3 className="font-bold text-lg text-card-foreground">💎 Pasivos Personalizados</h3>
                   </div>
                 </div>
                 <Button
                   type="button"
                   size="sm"
                   onClick={addCustomLiability}
-                  className="gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all"
+                  className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all hover:scale-105"
                 >
                   <Plus className="h-4 w-4" />
-                  Nuevo Pasivo
+                  <span className="hidden sm:inline">Nueva Categoría</span>
+                  <span className="sm:hidden">Nuevo</span>
                 </Button>
               </div>
             </div>
 
             <div className="p-5 space-y-6">
+              {customLiabilities.length === 0 && (
+                <div className="text-center py-8 space-y-2">
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted mb-2">
+                    <Plus className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm font-medium text-card-foreground">
+                    Crea tus propias categorías de pasivos
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Agrega categorías como compromisos personales, deudas informales o cualquier otro pasivo
+                  </p>
+                </div>
+              )}
+
               {customLiabilities.map((customLiability) => (
-                <div key={customLiability.id} className="space-y-3 p-4 rounded-lg bg-card/50 border border-border/30">
+                <div key={customLiability.id} className="space-y-3 p-4 rounded-lg bg-danger/5 border border-danger/20 hover:border-danger/30 transition-all">
                   <div className="flex gap-2 items-start">
                     <div className="flex-1">
-                      <Label className="text-card-foreground text-sm font-medium mb-2 block">
-                        Nombre del Pasivo
+                      <Label className="text-card-foreground text-sm font-semibold mb-2 block">
+                        📁 Categoría de Pasivo
                       </Label>
                       <Input
                         type="text"
-                        placeholder="Ej: Deudas Familiares, Compromisos Personales"
+                        placeholder="Ej: Deudas Familiares, Compromisos Personales, Otros"
                         value={customLiability.name}
                         onChange={(e) => updateCustomLiabilityName(customLiability.id, e.target.value)}
-                        className="bg-card border-border/30 text-card-foreground font-semibold"
+                        className="bg-card border-border/30 text-card-foreground font-semibold text-base"
                       />
                     </div>
                     <Button
@@ -735,37 +759,45 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                       variant="ghost"
                       size="icon"
                       onClick={() => removeCustomLiability(customLiability.id)}
-                      className="mt-7 h-8 w-8 text-danger hover:bg-danger/10"
+                      className="mt-7 h-9 w-9 text-danger hover:bg-danger/10 hover:scale-110 transition-all"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-5 w-5" />
                     </Button>
                   </div>
 
-                  <div className="pl-4 border-l-2 border-border/30 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-card-foreground/70 text-xs font-medium">
-                        Cuentas
+                  <div className="pl-4 border-l-2 border-danger/30 space-y-3 mt-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-card-foreground text-xs font-semibold uppercase tracking-wide">
+                        Cuentas dentro de esta categoría
                       </Label>
                       <Button
                         type="button"
                         size="sm"
                         onClick={() => addCustomLiabilityAccount(customLiability.id)}
-                        className="h-7 text-xs gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all"
+                        className="h-7 text-xs gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all hover:scale-105"
                       >
                         <Plus className="h-3 w-3" />
                         Agregar Cuenta
                       </Button>
                     </div>
 
+                    {customLiability.accounts.length === 0 && (
+                      <div className="text-center py-4 px-3 bg-muted/30 rounded-md border border-dashed border-border">
+                        <p className="text-xs text-muted-foreground">
+                          Agrega cuentas específicas dentro de esta categoría
+                        </p>
+                      </div>
+                    )}
+
                     {customLiability.accounts.map((account) => (
-                      <div key={account.id} className="flex gap-2 items-start">
+                      <div key={account.id} className="flex gap-2 items-start p-3 rounded-md bg-card/50 border border-border/20">
                         <div className="flex-1 space-y-2">
                           <Input
                             type="text"
-                            placeholder="Nombre de cuenta (ej: Préstamo Mamá)"
+                            placeholder="Nombre específico (ej: Préstamo Mamá, Deuda Tienda)"
                             value={account.name}
                             onChange={(e) => updateCustomLiabilityAccount(customLiability.id, account.id, 'name', e.target.value)}
-                            className="bg-card border-border/30 text-card-foreground text-sm"
+                            className="bg-card border-border/30 text-card-foreground"
                           />
                           <div className="relative">
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-card-foreground/70 font-semibold">$</span>
@@ -785,27 +817,15 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                           variant="ghost"
                           size="icon"
                           onClick={() => removeCustomLiabilityAccount(customLiability.id, account.id)}
-                          className="mt-1 h-8 w-8 text-danger hover:bg-danger/10"
+                          className="mt-1 h-8 w-8 text-danger hover:bg-danger/10 hover:scale-110 transition-all"
                         >
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
                     ))}
-
-                    {customLiability.accounts.length === 0 && (
-                      <p className="text-xs text-muted-foreground italic">
-                        No hay cuentas. Haz clic en "Agregar Cuenta" para comenzar.
-                      </p>
-                    )}
                   </div>
                 </div>
               ))}
-
-              {customLiabilities.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-4 italic">
-                  No hay pasivos personalizados. Haz clic en "Nuevo Pasivo" para crear uno.
-                </p>
-              )}
             </div>
           </Card>
 
