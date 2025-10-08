@@ -113,6 +113,60 @@ export type Database = {
         }
         Relationships: []
       }
+      challenges: {
+        Row: {
+          category: string
+          created_at: string
+          current_amount: number
+          days_status: Json | null
+          description: string | null
+          end_date: string
+          id: string
+          is_ai_generated: boolean | null
+          period: string
+          start_date: string
+          status: string
+          target_amount: number
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          current_amount?: number
+          days_status?: Json | null
+          description?: string | null
+          end_date: string
+          id?: string
+          is_ai_generated?: boolean | null
+          period?: string
+          start_date: string
+          status?: string
+          target_amount: number
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          current_amount?: number
+          days_status?: Json | null
+          description?: string | null
+          end_date?: string
+          id?: string
+          is_ai_generated?: boolean | null
+          period?: string
+          start_date?: string
+          status?: string
+          target_amount?: number
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       goals: {
         Row: {
           color: string

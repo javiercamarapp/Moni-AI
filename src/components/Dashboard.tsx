@@ -55,6 +55,8 @@ const Dashboard = () => {
   } | null>(null);
   const [loadingProyecciones, setLoadingProyecciones] = useState(false);
   const [isUpdatingProjections, setIsUpdatingProjections] = useState(false);
+  const [challenges, setChallenges] = useState<any[]>([]);
+  const [loadingChallenges, setLoadingChallenges] = useState(false);
   const navigate = useNavigate();
   const {
     toast
@@ -586,6 +588,64 @@ const Dashboard = () => {
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  // Fetch challenges
+  useEffect(() => {
+    const fetchChallenges = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data, error } = await supabase
+          .from('challenges')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('status', 'active')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        setChallenges(data || []);
+      } catch (error) {
+        console.error('Error fetching challenges:', error);
+      }
+    };
+    fetchChallenges();
+  }, []);
+
+  const handleGenerateChallenges = async () => {
+    try {
+      setLoadingChallenges(true);
+      const { data, error } = await supabase.functions.invoke('generate-challenges');
+      
+      if (error) {
+        if (error.message?.includes('429')) {
+          toast({
+            title: "Límite alcanzado",
+            description: "Demasiadas solicitudes. Intenta más tarde.",
+            variant: "destructive"
+          });
+          return;
+        }
+        throw error;
+      }
+
+      setChallenges(data.challenges || []);
+      toast({
+        title: "Retos generados",
+        description: "La IA ha creado retos personalizados para ti"
+      });
+    } catch (error: any) {
+      console.error('Error generating challenges:', error);
+      toast({
+        title: "Error",
+        description: "No se pudieron generar los retos",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingChallenges(false);
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
@@ -1053,6 +1113,127 @@ const Dashboard = () => {
                         </div>
                       </Card>;
               })}
+              </div>
+            </div>
+
+            {/* Tus Retos Section */}
+            <div>
+              <div className="flex flex-row justify-between items-center mb-4">
+                <h3 className="text-lg sm:text-xl font-semibold text-white">Tus Retos</h3>
+                {challenges.length > 0 && (
+                  <Button 
+                    size="sm" 
+                    onClick={handleGenerateChallenges} 
+                    disabled={loadingChallenges}
+                    className="bg-gradient-card card-glow hover:bg-white/30 text-white border-white/30 text-xs sm:text-sm hover:scale-105 transition-transform duration-200"
+                  >
+                    <Zap className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                    Generar nuevos
+                  </Button>
+                )}
+              </div>
+
+              <div className="space-y-3 sm:space-y-4">
+                {challenges.length === 0 ? (
+                  <Card className="p-6 bg-gradient-to-br from-[hsl(280,60%,25%)] to-[hsl(280,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(280,70%,45%)]/40 relative overflow-hidden text-center animate-fade-in">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
+                    <p className="text-white/90 mb-4 relative z-10 drop-shadow-lg">
+                      {loadingChallenges ? "Generando retos personalizados..." : "Aún no tienes retos activos"}
+                    </p>
+                    <Button 
+                      size="sm" 
+                      onClick={handleGenerateChallenges} 
+                      disabled={loadingChallenges}
+                      className="bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:scale-105 transition-transform duration-200 relative z-10"
+                    >
+                      <Zap className="w-4 h-4 mr-2" />
+                      {loadingChallenges ? "Generando..." : "Crear tu primer reto"}
+                    </Button>
+                  </Card>
+                ) : (
+                  challenges.map((challenge, index) => {
+                    const progress = (challenge.current_amount / challenge.target_amount) * 100;
+                    const daysStatus = JSON.parse(challenge.days_status || '[]');
+                    const dayNames = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
+                    
+                    const gradients = [
+                      'from-[hsl(45,60%,35%)] to-[hsl(38,55%,25%)] border-[hsl(45,70%,45%)]/40',
+                      'from-[hsl(200,60%,25%)] to-[hsl(200,55%,15%)] border-[hsl(200,70%,45%)]/40',
+                      'from-[hsl(280,60%,25%)] to-[hsl(280,55%,15%)] border-[hsl(280,70%,45%)]/40',
+                    ];
+                    const gradient = gradients[index % gradients.length];
+                    
+                    return (
+                      <Card 
+                        key={challenge.id} 
+                        className={`p-4 sm:p-6 bg-gradient-to-br ${gradient} card-glow shadow-2xl border-2 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in`}
+                        style={{ animationDelay: `${index * 100}ms` }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
+                        
+                        <div className="relative z-10">
+                          <div className="flex justify-between items-start mb-3">
+                            <div className="flex-1">
+                              <h4 className="text-base sm:text-lg font-bold text-white drop-shadow-lg mb-1">
+                                {challenge.title}
+                              </h4>
+                              <p className="text-xs sm:text-sm text-white/80 drop-shadow">
+                                {challenge.description}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="mb-3">
+                            <div className="flex justify-between items-baseline mb-1">
+                              <span className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg">
+                                ${challenge.current_amount.toFixed(2)}
+                              </span>
+                              <span className="text-sm text-white/80 drop-shadow">
+                                de ${challenge.target_amount} límite
+                              </span>
+                            </div>
+                            
+                            <div className="relative h-2 bg-black/20 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-black/60 rounded-full transition-all duration-1000 ease-out"
+                                style={{ width: `${Math.min(progress, 100)}%` }}
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+                            <p className="text-xs text-white/80 mb-2 drop-shadow">
+                              Día {daysStatus.filter((d: any) => d.status !== 'pending').length + 1} de 7
+                            </p>
+                            <div className="flex justify-between gap-1">
+                              {daysStatus.map((day: any, dayIndex: number) => (
+                                <div 
+                                  key={dayIndex} 
+                                  className="flex flex-col items-center flex-1"
+                                >
+                                  <span className="text-[10px] text-white/70 mb-1">
+                                    {dayNames[day.day]}
+                                  </span>
+                                  <div 
+                                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
+                                      day.status === 'completed' 
+                                        ? 'bg-white/90 text-green-600' 
+                                        : day.status === 'failed'
+                                        ? 'bg-white/90 text-red-600'
+                                        : 'bg-white/20 text-white/40'
+                                    }`}
+                                  >
+                                    {day.status === 'completed' ? '✓' : day.status === 'failed' ? '✗' : ''}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
+                    );
+                  })
+                )}
               </div>
             </div>
           </div>
