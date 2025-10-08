@@ -497,8 +497,10 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
             </div>
           </Card>
 
-          {/* Activos Personalizados Card */}
-          <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
+          {/* Activos y Pasivos Personalizados - En fila */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Activos Personalizados Card */}
+            <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
             <div className="bg-gradient-primary/30 px-5 py-4 border-b border-border/30">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -624,8 +626,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               ))}
             </div>
           </Card>
+          </div>
 
-          {/* Pasivos Card */}
+          {/* Pasivos Esenciales Card - Debajo del grid */}
           <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
             <div className="bg-gradient-primary/30 px-5 py-4 border-b border-border/30">
               <div className="flex items-center gap-3">
