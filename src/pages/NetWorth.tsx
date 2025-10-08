@@ -103,6 +103,7 @@ export default function NetWorth() {
           break;
       }
 
+      // Calcular el patrimonio acumulado día por día
       const netWorthMap = new Map<string, number>();
       let runningTotal = 0;
 
@@ -110,26 +111,46 @@ export default function NetWorth() {
         new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime()
       );
 
-      // Calcular el balance acumulado para cada transacción
+      // Si no hay transacciones, empezar con 0
+      if (sortedTransactions.length === 0) {
+        netWorthMap.set(now.toISOString().split('T')[0], 0);
+      }
+
+      // Calcular el balance acumulado para cada fecha
       sortedTransactions.forEach(transaction => {
         const amount = Number(transaction.amount);
+        const date = transaction.transaction_date;
         
+        // Sumar ingresos, restar gastos
         if (transaction.type === 'ingreso') {
           runningTotal += amount;
         } else {
           runningTotal -= amount;
         }
         
-        netWorthMap.set(transaction.transaction_date, runningTotal);
+        // Guardar el valor acumulado para esta fecha
+        netWorthMap.set(date, runningTotal);
       });
 
-      // Agrupar datos según el intervalo
+      // Crear puntos de datos para la gráfica
       const dataPoints: NetWorthDataPoint[] = [];
       const dates = Array.from(netWorthMap.keys()).sort();
       
       if (dates.length > 0) {
+        // Agregar punto inicial con valor 0 si no existe
+        const firstDate = new Date(dates[0]);
+        const dayBefore = new Date(firstDate);
+        dayBefore.setDate(dayBefore.getDate() - 1);
+        
+        dataPoints.push({
+          date: dayBefore.toISOString().split('T')[0],
+          value: 0,
+          displayDate: dayBefore.toLocaleDateString('es-MX', dateFormat)
+        });
+
+        // Agrupar datos según el intervalo seleccionado
         let currentGroupStart = new Date(dates[0]);
-        let lastValue = netWorthMap.get(dates[0]) || 0;
+        let lastValue = 0;
         
         dates.forEach((date, index) => {
           const currentDate = new Date(date);
@@ -138,7 +159,7 @@ export default function NetWorth() {
           const value = netWorthMap.get(date) || lastValue;
           lastValue = value;
           
-          // Agregar punto si es el primer elemento, si alcanzamos el intervalo, o si es el último
+          // Agregar punto si es el primer elemento, alcanzamos el intervalo, o es el último
           if (index === 0 || daysDiff >= groupByDays || index === dates.length - 1) {
             dataPoints.push({
               date,
@@ -148,9 +169,8 @@ export default function NetWorth() {
             currentGroupStart = currentDate;
           }
         });
-      }
-
-      if (dataPoints.length === 0) {
+      } else {
+        // Si no hay transacciones, mostrar punto en 0
         dataPoints.push({
           date: now.toISOString().split('T')[0],
           value: 0,
