@@ -170,7 +170,7 @@ export default function NetWorthSetupForm({ onComplete }: { onComplete: () => vo
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate('/net-worth')}
+              onClick={() => navigate(-1)}
               className="text-foreground hover:bg-accent/50 hover-lift"
             >
               <ArrowLeft className="h-5 w-5" />
