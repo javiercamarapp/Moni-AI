@@ -349,12 +349,11 @@ export default function NetWorth() {
         </div>
 
         {/* Chart Container - Simplified */}
-        <div className="relative h-80 w-full rounded-2xl overflow-hidden border-2 border-red-500 bg-[#1a1a1a]">
-          {/* Chart */}
+        <div className="relative h-80 w-full rounded-2xl overflow-hidden bg-gray-900 p-4">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart 
               data={netWorthData}
-              margin={{ top: 30, right: 30, left: 50, bottom: 30 }}
+              margin={{ top: 20, right: 20, left: 60, bottom: 20 }}
             >
               <defs>
                 <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
@@ -367,14 +366,18 @@ export default function NetWorth() {
               
               <XAxis 
                 dataKey="displayDate"
-                stroke="#fff"
-                tick={{ fill: '#fff' }}
+                stroke="#999"
+                tick={{ fill: '#999', fontSize: 12 }}
               />
               
               <YAxis 
-                stroke="#fff"
-                tick={{ fill: '#fff' }}
-                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                stroke="#999"
+                tick={{ fill: '#999', fontSize: 12 }}
+                tickFormatter={(value) => {
+                  const absValue = Math.abs(value);
+                  return `${value < 0 ? '-' : ''}$${(absValue / 1000).toFixed(0)}k`;
+                }}
+                domain={['auto', 'auto']}
               />
               
               <Tooltip content={<CustomTooltip />} />
@@ -383,9 +386,10 @@ export default function NetWorth() {
                 type="monotone"
                 dataKey="value"
                 stroke="#ef4444"
-                strokeWidth={3}
+                strokeWidth={4}
                 fill="url(#colorValue)"
-                dot={{ fill: '#ef4444', r: 5 }}
+                dot={{ fill: '#ef4444', r: 6, stroke: '#fff', strokeWidth: 2 }}
+                activeDot={{ r: 8, fill: '#ef4444', stroke: '#fff', strokeWidth: 3 }}
               />
             </LineChart>
           </ResponsiveContainer>
