@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      assets: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+          value?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: []
+      }
       bank_connections: {
         Row: {
           access_token: string
@@ -121,6 +151,66 @@ export type Database = {
           title?: string
           type?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      liabilities: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+          value?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: []
+      }
+      net_worth_snapshots: {
+        Row: {
+          created_at: string
+          id: string
+          net_worth: number
+          snapshot_date: string
+          total_assets: number
+          total_liabilities: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          net_worth?: number
+          snapshot_date: string
+          total_assets?: number
+          total_liabilities?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          net_worth?: number
+          snapshot_date?: string
+          total_assets?: number
+          total_liabilities?: number
           user_id?: string
         }
         Relationships: []

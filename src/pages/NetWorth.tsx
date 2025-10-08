@@ -6,54 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { cn } from "@/lib/utils";
+import { useNetWorth, useHasNetWorthData, TimeRange } from "@/hooks/useNetWorth";
+import NetWorthSetupForm from "@/components/NetWorthSetupForm";
 
-type TimeRange = '1M' | '3M' | '6M' | '1Y' | 'All';
-type CategoryFilter = 'All' | 'Checking' | 'Savings' | 'Credit' | 'Loans' | 'Investments' | 'Property';
-
-interface Account {
-  id: string;
-  name: string;
-  value: number;
-  category: CategoryFilter;
-  icon: string;
-}
-
-// Mock data - replace with real data from your backend
-const generateChartData = (range: TimeRange) => {
-  const baseData = [
-    { date: 'Ene', value: 45000, high: 47000, low: 43000 },
-    { date: 'Feb', value: 48000, high: 50000, low: 46000 },
-    { date: 'Mar', value: 52000, high: 54000, low: 50000 },
-    { date: 'Abr', value: 49000, high: 52000, low: 47000 },
-    { date: 'May', value: 55000, high: 57000, low: 53000 },
-    { date: 'Jun', value: 58000, high: 60000, low: 56000 },
-    { date: 'Jul', value: 62000, high: 64000, low: 60000 },
-    { date: 'Ago', value: 59000, high: 62000, low: 57000 },
-    { date: 'Sep', value: 65000, high: 67000, low: 63000 },
-    { date: 'Oct', value: 68000, high: 70000, low: 66000 },
-    { date: 'Nov', value: 71000, high: 73000, low: 69000 },
-    { date: 'Dic', value: 75000, high: 77000, low: 73000 },
-  ];
-  
-  if (range === '1M') return baseData.slice(-1);
-  if (range === '3M') return baseData.slice(-3);
-  if (range === '6M') return baseData.slice(-6);
-  if (range === '1Y') return baseData;
-  return baseData;
-};
-
-const mockAssets: Account[] = [
-  { id: '1', name: 'Cuenta de Cheques BBVA', value: 25000, category: 'Checking', icon: 'Building2' },
-  { id: '2', name: 'Cuenta de Ahorros Santander', value: 50000, category: 'Savings', icon: 'Wallet' },
-  { id: '3', name: 'Inversiones CETES', value: 80000, category: 'Investments', icon: 'TrendingUp' },
-  { id: '4', name: 'Casa (Estimado)', value: 2500000, category: 'Property', icon: 'Home' },
-];
-
-const mockLiabilities: Account[] = [
-  { id: '5', name: 'Tarjeta de Crédito AMEX', value: 15000, category: 'Credit', icon: 'CreditCard' },
-  { id: '6', name: 'Préstamo Automotriz', value: 180000, category: 'Loans', icon: 'Building2' },
-  { id: '7', name: 'Hipoteca Casa', value: 1200000, category: 'Loans', icon: 'Home' },
-];
+type CategoryFilter = 'All' | 'Checking' | 'Savings' | 'Credit' | 'Loans' | 'Investments' | 'Property' | 'Other' | 'Mortgage';
 
 const iconMap: Record<string, any> = {
   Building2,
@@ -61,6 +17,17 @@ const iconMap: Record<string, any> = {
   Home,
   Wallet,
   TrendingUp,
+};
+
+const getIconForCategory = (category: string) => {
+  const lowerCategory = category.toLowerCase();
+  if (lowerCategory.includes('check')) return 'Building2';
+  if (lowerCategory.includes('saving')) return 'Wallet';
+  if (lowerCategory.includes('investment')) return 'TrendingUp';
+  if (lowerCategory.includes('property') || lowerCategory.includes('mortgage')) return 'Home';
+  if (lowerCategory.includes('credit')) return 'CreditCard';
+  if (lowerCategory.includes('loan')) return 'Building2';
+  return 'Wallet';
 };
 
 export default function NetWorth() {
@@ -71,23 +38,53 @@ export default function NetWorth() {
   const [assetFilter, setAssetFilter] = useState<CategoryFilter>('All');
   const [liabilityFilter, setLiabilityFilter] = useState<CategoryFilter>('All');
 
-  const chartData = generateChartData(timeRange);
-  const currentNetWorth = 75000;
-  const totalAssets = mockAssets.reduce((sum, a) => sum + a.value, 0);
-  const totalLiabilities = mockLiabilities.reduce((sum, l) => sum + l.value, 0);
-  const netWorthChange = 12.5;
-  const isPositiveChange = netWorthChange >= 0;
+  const { data: hasData, isLoading: checkingData, refetch: refetchHasData } = useHasNetWorthData();
+  const { data: netWorthData, isLoading: loadingData } = useNetWorth(timeRange);
+
+  if (checkingData || loadingData) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Cargando...</p>
+      </div>
+    );
+  }
+
+  if (!hasData) {
+    return <NetWorthSetupForm onComplete={() => refetchHasData()} />;
+  }
+
+  if (!netWorthData) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Error cargando datos</p>
+      </div>
+    );
+  }
+
+  const { 
+    currentNetWorth, 
+    totalAssets, 
+    totalLiabilities, 
+    assets, 
+    liabilities, 
+    chartData, 
+    percentageChange,
+    highPoint,
+    lowPoint
+  } = netWorthData;
+
+  const isPositiveChange = percentageChange >= 0;
 
   const filteredAssets = assetFilter === 'All' 
-    ? mockAssets 
-    : mockAssets.filter(a => a.category === assetFilter);
+    ? assets 
+    : assets.filter(a => a.category === assetFilter);
 
   const filteredLiabilities = liabilityFilter === 'All'
-    ? mockLiabilities
-    : mockLiabilities.filter(l => l.category === liabilityFilter);
+    ? liabilities
+    : liabilities.filter(l => l.category === liabilityFilter);
 
-  const highPoint = Math.max(...chartData.map(d => d.high));
-  const lowPoint = Math.min(...chartData.map(d => d.low));
+  const assetCategories = ['All', ...Array.from(new Set(assets.map(a => a.category)))];
+  const liabilityCategories = ['All', ...Array.from(new Set(liabilities.map(l => l.category)))];
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -118,7 +115,7 @@ export default function NetWorth() {
             <div>
               <p className="text-sm text-muted-foreground mb-1">Patrimonio Total</p>
               <h2 className="text-4xl font-bold text-foreground">
-                ${currentNetWorth.toLocaleString()}
+                ${currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </h2>
               <div className="flex items-center gap-2 mt-2">
                 {isPositiveChange ? (
@@ -130,9 +127,15 @@ export default function NetWorth() {
                   "text-sm font-medium",
                   isPositiveChange ? "text-success" : "text-danger"
                 )}>
-                  {isPositiveChange ? '+' : ''}{netWorthChange}%
+                  {isPositiveChange ? '+' : ''}{percentageChange.toFixed(2)}%
                 </span>
-                <span className="text-sm text-muted-foreground">vs mes anterior</span>
+                <span className="text-sm text-muted-foreground">
+                  {timeRange === '1M' ? 'vs mes anterior' : 
+                   timeRange === '3M' ? 'vs 3 meses' :
+                   timeRange === '6M' ? 'vs 6 meses' :
+                   timeRange === '1Y' ? 'vs 1 año' :
+                   'desde el inicio'}
+                </span>
               </div>
             </div>
             <div className="flex gap-2">
@@ -143,10 +146,10 @@ export default function NetWorth() {
                   size="sm"
                   onClick={() => setTimeRange(range)}
                   className={cn(
-                    "transition-all duration-200",
+                    "transition-all duration-300 hover:scale-105",
                     timeRange === range 
                       ? "bg-primary text-primary-foreground shadow-glow" 
-                      : "hover:bg-accent"
+                      : "hover:bg-accent hover:shadow-sm"
                   )}
                 >
                   {range}
@@ -186,7 +189,13 @@ export default function NetWorth() {
                     fontSize: '12px',
                     color: 'hsl(var(--card-foreground))'
                   }}
-                  formatter={(value: number) => [`$${value.toLocaleString()}`, 'Valor']}
+                  formatter={(value: number, name: string) => {
+                    if (name === 'value') {
+                      return [`$${value.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Patrimonio Neto'];
+                    }
+                    return [value, name];
+                  }}
+                  labelFormatter={(label) => `Fecha: ${label}`}
                 />
                 <Area 
                   type="monotone" 
@@ -202,14 +211,16 @@ export default function NetWorth() {
           </div>
 
           {/* High/Low Tags */}
-          <div className="flex justify-between mt-4">
-            <Badge variant="outline" className="bg-success/10 text-success border-success/30">
-              Máximo: ${highPoint.toLocaleString()}
-            </Badge>
-            <Badge variant="outline" className="bg-danger/10 text-danger border-danger/30">
-              Mínimo: ${lowPoint.toLocaleString()}
-            </Badge>
-          </div>
+          {chartData.length > 0 && (
+            <div className="flex justify-between mt-4">
+              <Badge variant="outline" className="bg-success/10 text-success border-success/30">
+                Máximo: ${highPoint.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+              </Badge>
+              <Badge variant="outline" className="bg-danger/10 text-danger border-danger/30">
+                Mínimo: ${lowPoint.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+              </Badge>
+            </div>
+          )}
         </Card>
 
         {/* Assets Card */}
@@ -225,7 +236,7 @@ export default function NetWorth() {
                   <h3 className="text-lg font-semibold text-foreground">Activos</h3>
                 </div>
                 <p className="text-3xl font-bold text-success">
-                  ${totalAssets.toLocaleString()}
+                  ${totalAssets.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                 </p>
               </div>
               {assetsExpanded ? (
@@ -240,12 +251,12 @@ export default function NetWorth() {
             <div className="px-6 pb-6 space-y-4 animate-accordion-down">
               {/* Category Filter */}
               <div className="flex gap-2 flex-wrap">
-                {(['All', 'Checking', 'Savings', 'Investments', 'Property'] as CategoryFilter[]).map((cat) => (
+                {assetCategories.map((cat) => (
                   <Button
                     key={cat}
                     variant={assetFilter === cat ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setAssetFilter(cat)}
+                    onClick={() => setAssetFilter(cat as CategoryFilter)}
                     className="text-xs"
                   >
                     {cat === 'All' ? 'Todos' : cat}
@@ -255,28 +266,35 @@ export default function NetWorth() {
 
               {/* Account List */}
               <div className="space-y-2">
-                {filteredAssets.map((account) => {
-                  const Icon = iconMap[account.icon];
-                  return (
-                    <div
-                      key={account.id}
-                      className="flex items-center justify-between p-4 rounded-lg bg-card/50 hover:bg-card transition-colors border border-border/30"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-full bg-success/10">
-                          <Icon className="h-5 w-5 text-success" />
+                {filteredAssets.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    No hay activos en esta categoría
+                  </p>
+                ) : (
+                  filteredAssets.map((account) => {
+                    const iconName = getIconForCategory(account.category);
+                    const Icon = iconMap[iconName];
+                    return (
+                      <div
+                        key={account.id}
+                        className="flex items-center justify-between p-4 rounded-lg bg-card/50 hover:bg-card transition-colors border border-border/30"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-full bg-success/10">
+                            <Icon className="h-5 w-5 text-success" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-foreground">{account.name}</p>
+                            <p className="text-xs text-muted-foreground">{account.category}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium text-foreground">{account.name}</p>
-                          <p className="text-xs text-muted-foreground">{account.category}</p>
-                        </div>
+                        <p className="text-lg font-semibold text-success">
+                          ${Number(account.value).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                        </p>
                       </div>
-                      <p className="text-lg font-semibold text-success">
-                        ${account.value.toLocaleString()}
-                      </p>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
             </div>
           )}
@@ -295,7 +313,7 @@ export default function NetWorth() {
                   <h3 className="text-lg font-semibold text-foreground">Pasivos</h3>
                 </div>
                 <p className="text-3xl font-bold text-danger">
-                  ${totalLiabilities.toLocaleString()}
+                  ${totalLiabilities.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                 </p>
               </div>
               {liabilitiesExpanded ? (
@@ -310,12 +328,12 @@ export default function NetWorth() {
             <div className="px-6 pb-6 space-y-4 animate-accordion-down">
               {/* Category Filter */}
               <div className="flex gap-2 flex-wrap">
-                {(['All', 'Credit', 'Loans'] as CategoryFilter[]).map((cat) => (
+                {liabilityCategories.map((cat) => (
                   <Button
                     key={cat}
                     variant={liabilityFilter === cat ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setLiabilityFilter(cat)}
+                    onClick={() => setLiabilityFilter(cat as CategoryFilter)}
                     className="text-xs"
                   >
                     {cat === 'All' ? 'Todos' : cat}
@@ -325,28 +343,35 @@ export default function NetWorth() {
 
               {/* Account List */}
               <div className="space-y-2">
-                {filteredLiabilities.map((account) => {
-                  const Icon = iconMap[account.icon];
-                  return (
-                    <div
-                      key={account.id}
-                      className="flex items-center justify-between p-4 rounded-lg bg-card/50 hover:bg-card transition-colors border border-border/30"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-full bg-danger/10">
-                          <Icon className="h-5 w-5 text-danger" />
+                {filteredLiabilities.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    No hay pasivos en esta categoría
+                  </p>
+                ) : (
+                  filteredLiabilities.map((account) => {
+                    const iconName = getIconForCategory(account.category);
+                    const Icon = iconMap[iconName];
+                    return (
+                      <div
+                        key={account.id}
+                        className="flex items-center justify-between p-4 rounded-lg bg-card/50 hover:bg-card transition-colors border border-border/30"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-full bg-danger/10">
+                            <Icon className="h-5 w-5 text-danger" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-foreground">{account.name}</p>
+                            <p className="text-xs text-muted-foreground">{account.category}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium text-foreground">{account.name}</p>
-                          <p className="text-xs text-muted-foreground">{account.category}</p>
-                        </div>
+                        <p className="text-lg font-semibold text-danger">
+                          ${Number(account.value).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                        </p>
                       </div>
-                      <p className="text-lg font-semibold text-danger">
-                        ${account.value.toLocaleString()}
-                      </p>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
             </div>
           )}
