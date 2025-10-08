@@ -406,6 +406,7 @@ const Balance = () => {
           </Button>
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-foreground">Análisis de Ingresos y Gastos</h1>
+            <p className="text-sm text-muted-foreground">Visualiza tu balance financiero y proyecciones</p>
           </div>
         </div>
       </div>
