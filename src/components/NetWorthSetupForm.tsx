@@ -50,41 +50,41 @@ type CustomLiability = {
 };
 
 const assetCategories = [
-  { name: 'Cuentas bancarias (ahorro + cheques)', category: 'Checking' },
-  { name: 'Inversiones financieras (fondos, CETES, bonos)', category: 'Investments' },
-  { name: 'Acciones o ETFs en bolsa', category: 'Investments' },
-  { name: 'Criptomonedas', category: 'Investments' },
-  { name: 'Propiedad principal (casa o departamento)', category: 'Property' },
-  { name: 'Propiedades adicionales (en renta o inversión)', category: 'Property' },
-  { name: 'Vehículos (auto o moto)', category: 'Other' },
-  { name: 'Ahorro para el retiro (Afore o plan privado)', category: 'Savings' },
-  { name: 'Seguros con valor de rescate / inversión', category: 'Savings' },
-  { name: 'Dinero prestado a terceros (por cobrar)', category: 'Other' },
-  { name: 'Participaciones en empresas o startups', category: 'Investments' },
-  { name: 'Propiedad intelectual (marca, royalties, licencias)', category: 'Other' },
-  { name: 'Saldos en apps fintech (MercadoPago, PayPal, Revolut)', category: 'Checking' },
-  { name: 'Inventario o mercancía para venta', category: 'Other' },
-  { name: 'Obras de arte / joyas / metales preciosos', category: 'Other' },
-  { name: 'Otros activos personalizados', category: 'Other' },
+  { name: 'Cuentas bancarias (ahorro + cheques)', category: 'Checking', examples: ['BBVA Cuenta Ahorro', 'Santander Nómina', 'Banorte Smart'] },
+  { name: 'Inversiones financieras (fondos, CETES, bonos)', category: 'Investments', examples: ['CETES 28 días', 'Fondo GBM+', 'Bonos HSBC'] },
+  { name: 'Acciones o ETFs en bolsa', category: 'Investments', examples: ['Apple (AAPL)', 'Tesla (TSLA)', 'VOO ETF'] },
+  { name: 'Criptomonedas', category: 'Investments', examples: ['Bitcoin (BTC)', 'Ethereum (ETH)', 'USDT Stablecoin'] },
+  { name: 'Propiedad principal (casa o departamento)', category: 'Property', examples: ['Casa Polanco', 'Depto Reforma', 'Casa Santa Fe'] },
+  { name: 'Propiedades adicionales (en renta o inversión)', category: 'Property', examples: ['Depto en Renta Centro', 'Local Comercial', 'Casa Playa'] },
+  { name: 'Vehículos (auto o moto)', category: 'Other', examples: ['Toyota Corolla 2020', 'Honda CRV', 'Moto Italika'] },
+  { name: 'Ahorro para el retiro (Afore o plan privado)', category: 'Savings', examples: ['Afore Sura', 'Plan Pensión', 'Afore XXI Banorte'] },
+  { name: 'Seguros con valor de rescate / inversión', category: 'Savings', examples: ['Seguro Vida GNP', 'Plan Metlife', 'AXA Inversión'] },
+  { name: 'Dinero prestado a terceros (por cobrar)', category: 'Other', examples: ['Préstamo a Juan', 'Deuda Socio', 'Préstamo Hermano'] },
+  { name: 'Participaciones en empresas o startups', category: 'Investments', examples: ['Startup Tech', 'Negocio Restaurante', 'Empresa Familiar'] },
+  { name: 'Propiedad intelectual (marca, royalties, licencias)', category: 'Other', examples: ['Marca Registrada', 'Royalties Libro', 'Patente Software'] },
+  { name: 'Saldos en apps fintech (MercadoPago, PayPal, Revolut)', category: 'Checking', examples: ['Mercado Pago', 'PayPal USD', 'Revolut EUR'] },
+  { name: 'Inventario o mercancía para venta', category: 'Other', examples: ['Inventario Tienda', 'Productos Bodega', 'Mercancía Online'] },
+  { name: 'Obras de arte / joyas / metales preciosos', category: 'Other', examples: ['Anillo Oro', 'Cuadro Arte', 'Monedas Plata'] },
+  { name: 'Otros activos personalizados', category: 'Other', examples: ['Otro Activo 1', 'Activo Diverso', 'Activo Personal'] },
 ];
 
 const liabilityCategories = [
-  { name: 'Deuda de tarjetas de crédito', category: 'Credit' },
-  { name: 'Préstamo personal bancario o fintech', category: 'Loans' },
-  { name: 'Crédito automotriz', category: 'Loans' },
-  { name: 'Hipoteca o préstamo hipotecario', category: 'Mortgage' },
-  { name: 'Créditos educativos / estudiantiles', category: 'Loans' },
-  { name: 'Préstamos con familiares o amigos', category: 'Other' },
-  { name: 'Créditos de nómina o payroll loans', category: 'Loans' },
-  { name: 'Deudas en tiendas departamentales (Liverpool, Coppel)', category: 'Credit' },
-  { name: 'Pagos diferidos / meses sin intereses', category: 'Credit' },
-  { name: 'Créditos empresariales / de negocio', category: 'Loans' },
-  { name: 'Cuotas de mantenimiento o servicios atrasados', category: 'Other' },
-  { name: 'Deudas con proveedores o socios', category: 'Other' },
-  { name: 'Créditos en moneda extranjera (USD/EUR)', category: 'Loans' },
-  { name: 'Impuestos o multas pendientes de pago', category: 'Other' },
-  { name: 'Arrendamientos financieros (leasing)', category: 'Loans' },
-  { name: 'Otros pasivos personalizados', category: 'Other' },
+  { name: 'Deuda de tarjetas de crédito', category: 'Credit', examples: ['Tarjeta Banamex', 'BBVA Azul', 'Liverpool Premium'] },
+  { name: 'Préstamo personal bancario o fintech', category: 'Loans', examples: ['Préstamo Personal HSBC', 'Kueski', 'Crédito Santander'] },
+  { name: 'Crédito automotriz', category: 'Loans', examples: ['Crédito Auto VW', 'Ford Credit', 'Santander Auto'] },
+  { name: 'Hipoteca o préstamo hipotecario', category: 'Mortgage', examples: ['Hipoteca Infonavit', 'HSBC Hipotecario', 'Scotiabank Casa'] },
+  { name: 'Créditos educativos / estudiantiles', category: 'Loans', examples: ['Crédito Universidad', 'Préstamo Maestría', 'Sofes Educativo'] },
+  { name: 'Préstamos con familiares o amigos', category: 'Other', examples: ['Préstamo Mamá', 'Deuda Hermano', 'Préstamo Amigo'] },
+  { name: 'Créditos de nómina o payroll loans', category: 'Loans', examples: ['Crédito Nómina', 'Adelanto Sueldo', 'Préstamo Empresa'] },
+  { name: 'Deudas en tiendas departamentales (Liverpool, Coppel)', category: 'Credit', examples: ['Liverpool', 'Coppel', 'Palacio de Hierro'] },
+  { name: 'Pagos diferidos / meses sin intereses', category: 'Credit', examples: ['iPhone 12 MSI', 'Laptop HP', 'Muebles 18 MSI'] },
+  { name: 'Créditos empresariales / de negocio', category: 'Loans', examples: ['Crédito Pyme', 'Capital Trabajo', 'Préstamo Negocio'] },
+  { name: 'Cuotas de mantenimiento o servicios atrasados', category: 'Other', examples: ['Mantenimiento Edificio', 'Luz CFE', 'Agua Pendiente'] },
+  { name: 'Deudas con proveedores o socios', category: 'Other', examples: ['Deuda Proveedor', 'Pago Socio', 'Factura Pendiente'] },
+  { name: 'Créditos en moneda extranjera (USD/EUR)', category: 'Loans', examples: ['Crédito USD', 'Préstamo EUR', 'Deuda Dólares'] },
+  { name: 'Impuestos o multas pendientes de pago', category: 'Other', examples: ['ISR Pendiente', 'Multa Tránsito', 'IVA por Pagar'] },
+  { name: 'Arrendamientos financieros (leasing)', category: 'Loans', examples: ['Leasing Auto', 'Renta Equipo', 'Arrendamiento Oficina'] },
+  { name: 'Otros pasivos personalizados', category: 'Other', examples: ['Otro Pasivo 1', 'Deuda Diversa', 'Compromiso Personal'] },
 ];
 
 export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: () => void; onBack?: () => void }) {
@@ -110,7 +110,8 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     setUser(user);
   };
 
-  const addAssetEntry = (categoryType: string, category: string) => {
+  const addAssetEntry = (categoryType: string, category: string, examples: string[]) => {
+    const randomExample = examples[Math.floor(Math.random() * examples.length)];
     const newEntry: AssetEntry = {
       id: Date.now().toString(),
       categoryType,
@@ -118,10 +119,11 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
       value: '',
       category
     };
-    setAssetEntries([...assetEntries, newEntry]);
+    setAssetEntries([...assetEntries, { ...newEntry, placeholder: randomExample }] as any);
   };
 
-  const addLiabilityEntry = (categoryType: string, category: string) => {
+  const addLiabilityEntry = (categoryType: string, category: string, examples: string[]) => {
+    const randomExample = examples[Math.floor(Math.random() * examples.length)];
     const newEntry: LiabilityEntry = {
       id: Date.now().toString(),
       categoryType,
@@ -129,7 +131,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
       value: '',
       category
     };
-    setLiabilityEntries([...liabilityEntries, newEntry]);
+    setLiabilityEntries([...liabilityEntries, { ...newEntry, placeholder: randomExample }] as any);
   };
 
   const removeAssetEntry = (id: string) => {
@@ -447,7 +449,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                       <Button
                         type="button"
                         size="sm"
-                        onClick={() => addAssetEntry(asset.name, asset.category)}
+                        onClick={() => addAssetEntry(asset.name, asset.category, asset.examples)}
                         className="h-7 text-xs gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all"
                       >
                         <Plus className="h-3 w-3" />
@@ -460,7 +462,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         <div className="flex-1 space-y-1.5">
                           <Input
                             type="text"
-                            placeholder="Nombre (ej: Cuenta Bancomer)"
+                            placeholder={(entry as any).placeholder || 'Nombre de la cuenta'}
                             value={entry.name}
                             onChange={(e) => updateAssetEntry(entry.id, 'name', e.target.value)}
                             className="bg-card border-border/30 text-card-foreground text-xs h-7"
@@ -649,7 +651,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                       <Button
                         type="button"
                         size="sm"
-                        onClick={() => addLiabilityEntry(liability.name, liability.category)}
+                        onClick={() => addLiabilityEntry(liability.name, liability.category, liability.examples)}
                         className="h-7 text-xs gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all"
                       >
                         <Plus className="h-3 w-3" />
@@ -662,7 +664,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         <div className="flex-1 space-y-1.5">
                           <Input
                             type="text"
-                            placeholder="Nombre (ej: Tarjeta Banamex)"
+                            placeholder={(entry as any).placeholder || 'Nombre de la deuda'}
                             value={entry.name}
                             onChange={(e) => updateLiabilityEntry(entry.id, 'name', e.target.value)}
                             className="bg-card border-border/30 text-card-foreground text-xs h-7"
