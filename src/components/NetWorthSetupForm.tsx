@@ -274,10 +274,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                       </Label>
                       <Button
                         type="button"
-                        variant="outline"
                         size="sm"
                         onClick={() => addAssetEntry(asset.name, asset.category)}
-                        className="h-7 text-xs gap-1"
+                        className="h-7 text-xs gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all"
                       >
                         <Plus className="h-3 w-3" />
                         Agregar
@@ -349,10 +348,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                       </Label>
                       <Button
                         type="button"
-                        variant="outline"
                         size="sm"
                         onClick={() => addLiabilityEntry(liability.name, liability.category)}
-                        className="h-7 text-xs gap-1"
+                        className="h-7 text-xs gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all"
                       >
                         <Plus className="h-3 w-3" />
                         Agregar
