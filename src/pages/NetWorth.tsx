@@ -322,11 +322,11 @@ export default function NetWorth() {
           </div>
 
           {/* Chart */}
-          <div className="relative h-full w-full p-6">
+          <div className="relative h-full w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart 
                 data={netWorthData}
-                margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
+                margin={{ top: 20, right: 20, left: 0, bottom: 20 }}
               >
                 <defs>
                   <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
