@@ -736,7 +736,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               )}
 
               {customLiabilities.map((customLiability) => (
-                <div key={customLiability.id} className="space-y-2 p-2 rounded-lg bg-danger/5 border border-danger/20 hover:border-danger/30 transition-all">
+                <div key={customLiability.id} className="space-y-2 p-2 rounded-lg bg-card/50 border border-border/30 hover:border-border/50 transition-all">
                   <div className="flex gap-2 items-start">
                     <div className="flex-1">
                       <Label className="text-card-foreground text-xs font-semibold mb-1 block">
@@ -761,7 +761,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                     </Button>
                   </div>
 
-                  <div className="pl-2 border-l-2 border-danger/30 space-y-2 mt-2">
+                  <div className="pl-2 border-l-2 border-border/30 space-y-2 mt-2">
                     <div className="flex items-center justify-between mb-1">
                       <Label className="text-card-foreground text-[10px] font-semibold uppercase tracking-wide">
                         Cuentas dentro de esta categoría
