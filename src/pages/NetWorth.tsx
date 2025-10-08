@@ -310,30 +310,14 @@ export default function NetWorth() {
               <YAxis hide />
               <Tooltip content={<CustomTooltip />} />
               <Area
-                type="monotone"
+                type="natural"
                 dataKey="value"
-                stroke="#dc2626"
-                strokeWidth={2}
+                stroke="#ef4444"
+                strokeWidth={3}
                 fill="url(#areaGradient)"
                 fillOpacity={1}
-                isAnimationActive={true}
-                animationDuration={2500}
-                animationBegin={0}
-                animationEasing="ease-out"
-              />
-              <Line
-                type="monotone"
-                dataKey="value"
-                stroke="url(#lineGradient)"
-                strokeWidth={3.5}
                 dot={false}
-                activeDot={{ 
-                  r: 7, 
-                  fill: '#ef4444', 
-                  stroke: '#ffffff', 
-                  strokeWidth: 2.5,
-                  filter: 'url(#glow)'
-                }}
+                activeDot={false}
                 isAnimationActive={true}
                 animationDuration={2500}
                 animationBegin={0}
