@@ -310,19 +310,21 @@ export default function NetWorth() {
               <YAxis hide />
               <Tooltip content={<CustomTooltip />} />
               <Area
-                type="natural"
+                type="monotone"
                 dataKey="value"
                 stroke="#ef4444"
-                strokeWidth={3}
+                strokeWidth={4}
                 fill="url(#areaGradient)"
-                fillOpacity={1}
+                fillOpacity={0.6}
                 dot={false}
-                activeDot={false}
+                activeDot={{ 
+                  r: 6, 
+                  fill: '#ef4444', 
+                  stroke: '#ffffff', 
+                  strokeWidth: 3
+                }}
                 isAnimationActive={true}
-                animationDuration={2500}
-                animationBegin={0}
-                animationEasing="ease-out"
-                filter="url(#glow)"
+                animationDuration={1500}
               />
             </LineChart>
           </ResponsiveContainer>
