@@ -290,66 +290,114 @@ export default function NetWorth() {
         </div>
       </div>
 
-      {/* Chart Section - Yahoo Finance Style */}
+      {/* Chart Section - Aesthetic Trading Style */}
       <div className="relative px-4 mb-6 z-10">
-        <div className="h-80 w-full bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 backdrop-blur-sm border border-white/20">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart 
-              data={netWorthData}
-              margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
+        {/* Period Buttons - Above Chart */}
+        <div className="mb-3 flex gap-2 justify-end">
+          {(['1M', '3M', '6M', '1Y', 'All'] as const).map((period) => (
+            <Button
+              key={period}
+              variant="ghost"
+              size="sm"
+              onClick={() => setSelectedPeriod(period)}
+              className={`rounded-lg text-xs h-8 px-3 transition-all duration-200 ${
+                selectedPeriod === period
+                  ? 'bg-[#ef4444] text-white font-semibold shadow-lg'
+                  : 'bg-white/10 text-white/70 hover:bg-white/20 hover:text-white'
+              }`}
             >
-              <defs>
-                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <XAxis 
-                dataKey="displayDate"
-                hide={true}
-              />
-              <YAxis 
-                hide={true}
-                domain={['dataMin - 5000', 'dataMax + 5000']}
-              />
-              <Tooltip 
-                content={<CustomTooltip />}
-                cursor={{ stroke: '#10b981', strokeWidth: 1, strokeDasharray: '3 3' }}
-                position={{ y: 0 }}
-              />
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="#10b981"
-                strokeWidth={2}
-                fill="url(#colorValue)"
-                fillOpacity={1}
-                dot={false}
-                activeDot={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+              {period}
+            </Button>
+          ))}
+        </div>
+
+        {/* Chart Container with Dark Pattern Background */}
+        <div className="relative h-80 w-full rounded-2xl overflow-hidden border border-white/10">
+          {/* Dark pattern background */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-[#111111] to-[#0a0a0a]">
+            <div className="absolute inset-0 opacity-20" style={{
+              backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)',
+              backgroundSize: '20px 20px'
+            }}></div>
+          </div>
+
+          {/* Chart */}
+          <div className="relative h-full w-full p-6">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart 
+                data={netWorthData}
+                margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
+              >
+                <defs>
+                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#ef4444" stopOpacity={0.4}/>
+                    <stop offset="50%" stopColor="#dc2626" stopOpacity={0.2}/>
+                    <stop offset="100%" stopColor="#991b1b" stopOpacity={0.05}/>
+                  </linearGradient>
+                </defs>
+                
+                {/* Horizontal grid lines */}
+                <CartesianGrid 
+                  strokeDasharray="0" 
+                  stroke="rgba(255,255,255,0.08)" 
+                  horizontal={true}
+                  vertical={false}
+                />
+                
+                <XAxis 
+                  dataKey="displayDate"
+                  stroke="rgba(255,255,255,0.3)"
+                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
+                  axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                  tickLine={false}
+                />
+                
+                <YAxis 
+                  stroke="rgba(255,255,255,0.3)"
+                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
+                  axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                  tickLine={false}
+                  tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                  domain={['dataMin - 5000', 'dataMax + 5000']}
+                />
+                
+                <Tooltip 
+                  content={<CustomTooltip />}
+                  cursor={{ stroke: '#ef4444', strokeWidth: 1, strokeDasharray: '3 3' }}
+                  animationDuration={200}
+                />
+                
+                {/* Average reference line */}
+                {currentNetWorth > 0 && (
+                  <line
+                    x1="0"
+                    y1="50%"
+                    x2="100%"
+                    y2="50%"
+                    stroke="rgba(255,255,255,0.2)"
+                    strokeWidth="1"
+                    strokeDasharray="5 5"
+                  />
+                )}
+                
+                <Area
+                  type="natural"
+                  dataKey="value"
+                  stroke="#ef4444"
+                  strokeWidth={2.5}
+                  fill="url(#colorValue)"
+                  fillOpacity={1}
+                  dot={false}
+                  activeDot={false}
+                  animationDuration={1000}
+                  animationEasing="ease-in-out"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 
-      {/* Period Buttons - Positioned over the chart */}
-      <div className="px-4 mb-4 flex gap-2 justify-end relative z-10">
-        {(['1M', '3M', '6M', '1Y', 'All'] as const).map((period) => (
-          <Button
-            key={period}
-            variant="ghost"
-            size="sm"
-            onClick={() => setSelectedPeriod(period)}
-            className={`rounded-full text-xs h-8 px-3 transition-all duration-200 ${
-              selectedPeriod === period
-                ? 'bg-white/90 text-[#4a5fc1] font-semibold shadow-lg scale-105'
-                : 'bg-white/20 text-white border-white/30 hover:bg-white/30'
-            }`}
-          >
-            {period}
-          </Button>
-        ))}
-      </div>
 
       {/* Assets and Liabilities Cards - Horizontal Layout */}
       <div className="px-4 mb-4 relative z-10">
