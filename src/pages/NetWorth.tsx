@@ -312,7 +312,8 @@ export default function NetWorth() {
               <Area
                 type="monotone"
                 dataKey="value"
-                stroke="none"
+                stroke="#dc2626"
+                strokeWidth={2}
                 fill="url(#areaGradient)"
                 fillOpacity={1}
                 isAnimationActive={true}
