@@ -55,6 +55,20 @@ export default function NetWorth() {
     if (!showForm) {
       return (
         <div className="min-h-screen bg-background flex flex-col">
+          {/* Header with back button */}
+          <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-background/80 to-transparent backdrop-blur-sm">
+            <div className="container mx-auto px-4 py-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('/dashboard')}
+                className="text-foreground hover:bg-white/5"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+
           {/* Hero Image */}
           <div className="h-[50vh] relative overflow-hidden">
             <img 
@@ -76,19 +90,10 @@ export default function NetWorth() {
               </p>
               <Button 
                 size="lg"
-                className="w-full mt-8 text-lg py-6 shadow-glow hover-scale"
+                className="w-full mt-8 text-lg py-6 bg-gradient-to-r from-primary via-primary to-accent shadow-glow hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.5)] transition-all duration-300 hover-scale font-semibold"
                 onClick={() => setShowForm(true)}
               >
                 Responder preguntas
-              </Button>
-              
-              <Button 
-                size="lg"
-                variant="outline"
-                className="w-full mt-4 text-lg py-6 bg-gradient-to-r from-slate-900/90 to-slate-800/90 border-primary/30 text-primary hover:border-primary/60 hover:shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)] transition-all duration-300 backdrop-blur-sm hover-scale"
-                onClick={() => navigate('/dashboard')}
-              >
-                Volver al Dashboard
               </Button>
             </div>
           </div>
