@@ -291,11 +291,11 @@ export default function NetWorth() {
                   <stop offset="100%" stopColor="#7f1d1d" stopOpacity={0.8}/>
                 </linearGradient>
                 <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#dc2626" stopOpacity={0.7}/>
-                  <stop offset="15%" stopColor="#ef4444" stopOpacity={0.6}/>
-                  <stop offset="30%" stopColor="#f87171" stopOpacity={0.45}/>
-                  <stop offset="50%" stopColor="#fca5a5" stopOpacity={0.3}/>
-                  <stop offset="70%" stopColor="#fecaca" stopOpacity={0.15}/>
+                  <stop offset="0%" stopColor="#dc2626" stopOpacity={0.85}/>
+                  <stop offset="20%" stopColor="#ef4444" stopOpacity={0.75}/>
+                  <stop offset="40%" stopColor="#f87171" stopOpacity={0.6}/>
+                  <stop offset="60%" stopColor="#fca5a5" stopOpacity={0.45}/>
+                  <stop offset="80%" stopColor="#fecaca" stopOpacity={0.25}/>
                   <stop offset="100%" stopColor="#fee2e2" stopOpacity={0}/>
                 </linearGradient>
                 <filter id="glow">
