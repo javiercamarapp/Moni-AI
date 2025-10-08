@@ -76,10 +76,19 @@ export default function NetWorth() {
               </p>
               <Button 
                 size="lg"
-                className="w-full mt-8 text-lg py-6 shadow-glow"
+                className="w-full mt-8 text-lg py-6 shadow-glow hover-scale"
                 onClick={() => setShowForm(true)}
               >
                 Responder preguntas
+              </Button>
+              
+              <Button 
+                size="lg"
+                variant="outline"
+                className="w-full mt-4 text-lg py-6 bg-gradient-to-r from-slate-900/90 to-slate-800/90 border-primary/30 text-primary hover:border-primary/60 hover:shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)] transition-all duration-300 backdrop-blur-sm hover-scale"
+                onClick={() => navigate('/dashboard')}
+              >
+                Volver al Dashboard
               </Button>
             </div>
           </div>
