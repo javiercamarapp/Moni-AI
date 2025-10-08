@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, TrendingUp, TrendingDown, RefreshCw, Menu } from "lucide-react";
-import { LineChart, Line, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { LineChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
 
 interface NetWorthDataPoint {
@@ -281,50 +281,41 @@ export default function NetWorth() {
         {/* Chart */}
         <div className="h-full w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={netWorthData}>
+            <LineChart 
+              data={netWorthData}
+              margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
+            >
               <defs>
-                <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#7f1d1d" stopOpacity={0.8}/>
-                  <stop offset="25%" stopColor="#dc2626" stopOpacity={1}/>
-                  <stop offset="50%" stopColor="#ef4444" stopOpacity={1}/>
-                  <stop offset="75%" stopColor="#dc2626" stopOpacity={1}/>
-                  <stop offset="100%" stopColor="#7f1d1d" stopOpacity={0.8}/>
-                </linearGradient>
                 <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#ef4444" stopOpacity={1}/>
-                  <stop offset="50%" stopColor="#dc2626" stopOpacity={0.8}/>
-                  <stop offset="100%" stopColor="#7f1d1d" stopOpacity={0.4}/>
+                  <stop offset="0%" stopColor="#ef4444" stopOpacity={0.8}/>
+                  <stop offset="100%" stopColor="#7f1d1d" stopOpacity={0.2}/>
                 </linearGradient>
-                <filter id="glow">
-                  <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                  <feMerge>
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
               </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
               <XAxis 
                 dataKey="displayDate" 
-                hide
+                stroke="rgba(255,255,255,0.5)"
+                tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 11 }}
               />
-              <YAxis hide />
+              <YAxis 
+                stroke="rgba(255,255,255,0.5)"
+                tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 11 }}
+                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+              />
               <Tooltip content={<CustomTooltip />} />
               <Area
                 type="monotone"
                 dataKey="value"
                 stroke="#ef4444"
-                strokeWidth={4}
+                strokeWidth={3}
                 fill="url(#areaGradient)"
-                fillOpacity={0.6}
                 dot={false}
                 activeDot={{ 
                   r: 6, 
                   fill: '#ef4444', 
                   stroke: '#ffffff', 
-                  strokeWidth: 3
+                  strokeWidth: 2
                 }}
-                isAnimationActive={true}
-                animationDuration={1500}
               />
             </LineChart>
           </ResponsiveContainer>
