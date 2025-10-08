@@ -501,14 +501,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Activos Personalizados Card */}
             <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
-            <div className="bg-gradient-primary/30 px-5 py-4 border-b border-border/30">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-accent/20 border border-accent/30">
-                    <Banknote className="h-5 w-5 text-accent" />
-                  </div>
-                  <h3 className="font-bold text-lg text-card-foreground whitespace-nowrap">Activos Personalizados</h3>
-                </div>
+            <div className="bg-gradient-primary/30 px-5 py-3 border-b border-border/30">
+              <div className="flex items-center justify-between gap-4">
+                <h3 className="font-bold text-lg text-card-foreground whitespace-nowrap">Activos Personalizados</h3>
                 <Button
                   type="button"
                   size="sm"
@@ -704,14 +699,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
 
           {/* Pasivos Personalizados Card */}
           <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
-            <div className="bg-gradient-primary/30 px-5 py-4 border-b border-border/30">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-danger/20 border border-danger/30">
-                    <Banknote className="h-5 w-5 text-danger" />
-                  </div>
-                  <h3 className="font-bold text-lg text-card-foreground whitespace-nowrap">Pasivos Personalizados</h3>
-                </div>
+            <div className="bg-gradient-primary/30 px-5 py-3 border-b border-border/30">
+              <div className="flex items-center justify-between gap-4">
+                <h3 className="font-bold text-lg text-card-foreground whitespace-nowrap">Pasivos Personalizados</h3>
                 <Button
                   type="button"
                   size="sm"
