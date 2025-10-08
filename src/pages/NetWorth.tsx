@@ -157,9 +157,13 @@ export default function NetWorth() {
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
+      const data = payload[0].payload;
       return (
-        <div className="bg-white rounded-lg px-3 py-1.5 shadow-lg">
-          <p className="text-gray-900 text-xs font-semibold">
+        <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg px-4 py-2 shadow-2xl border border-red-500/30">
+          <p className="text-red-400 text-[10px] font-medium mb-0.5">
+            {data.displayDate}
+          </p>
+          <p className="text-white text-sm font-bold">
             ${payload[0].value.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
           </p>
         </div>
@@ -241,16 +245,27 @@ export default function NetWorth() {
             <LineChart data={netWorthData}>
               <defs>
                 <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.9}/>
-                  <stop offset="50%" stopColor="#a78bfa" stopOpacity={1}/>
-                  <stop offset="100%" stopColor="#c4b5fd" stopOpacity={0.9}/>
+                  <stop offset="0%" stopColor="#7f1d1d" stopOpacity={0.8}/>
+                  <stop offset="25%" stopColor="#dc2626" stopOpacity={1}/>
+                  <stop offset="50%" stopColor="#ef4444" stopOpacity={1}/>
+                  <stop offset="75%" stopColor="#dc2626" stopOpacity={1}/>
+                  <stop offset="100%" stopColor="#7f1d1d" stopOpacity={0.8}/>
                 </linearGradient>
                 <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.6}/>
-                  <stop offset="30%" stopColor="#a78bfa" stopOpacity={0.4}/>
-                  <stop offset="60%" stopColor="#c4b5fd" stopOpacity={0.2}/>
-                  <stop offset="100%" stopColor="#ddd6fe" stopOpacity={0}/>
+                  <stop offset="0%" stopColor="#dc2626" stopOpacity={0.5}/>
+                  <stop offset="20%" stopColor="#ef4444" stopOpacity={0.35}/>
+                  <stop offset="40%" stopColor="#f87171" stopOpacity={0.25}/>
+                  <stop offset="60%" stopColor="#fca5a5" stopOpacity={0.15}/>
+                  <stop offset="80%" stopColor="#fecaca" stopOpacity={0.08}/>
+                  <stop offset="100%" stopColor="#fee2e2" stopOpacity={0}/>
                 </linearGradient>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
               </defs>
               <XAxis 
                 dataKey="displayDate" 
@@ -265,19 +280,28 @@ export default function NetWorth() {
                 fill="url(#areaGradient)"
                 fillOpacity={1}
                 isAnimationActive={true}
-                animationDuration={2000}
-                animationEasing="ease-in-out"
+                animationDuration={2500}
+                animationBegin={0}
+                animationEasing="ease-out"
               />
               <Line
                 type="monotone"
                 dataKey="value"
                 stroke="url(#lineGradient)"
-                strokeWidth={3}
+                strokeWidth={3.5}
                 dot={false}
-                activeDot={{ r: 6, fill: '#a78bfa', stroke: '#ffffff', strokeWidth: 2 }}
+                activeDot={{ 
+                  r: 7, 
+                  fill: '#ef4444', 
+                  stroke: '#ffffff', 
+                  strokeWidth: 2.5,
+                  filter: 'url(#glow)'
+                }}
                 isAnimationActive={true}
-                animationDuration={2000}
-                animationEasing="ease-in-out"
+                animationDuration={2500}
+                animationBegin={0}
+                animationEasing="ease-out"
+                filter="url(#glow)"
               />
             </LineChart>
           </ResponsiveContainer>
