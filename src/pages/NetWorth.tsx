@@ -310,26 +310,9 @@ export default function NetWorth() {
         </div>
       </div>
 
-      {/* Chart Section - Aesthetic Trading Style */}
+      {/* Chart Section - Nueva desde cero */}
       <div className="relative px-4 mb-6 z-10">
-        {/* Debug Info - Expanded */}
-        <div className="mb-4 p-4 bg-white/20 rounded-lg text-white text-sm space-y-2">
-          <p className="font-bold">Debug Info:</p>
-          <p>Estado loading: {loading ? 'Cargando...' : 'Listo'}</p>
-          <p>Puntos de datos: {netWorthData.length}</p>
-          <p>Patrimonio actual: ${currentNetWorth.toLocaleString('es-MX')}</p>
-          {netWorthData.length > 0 && (
-            <div className="text-xs">
-              <p>Primer punto: {netWorthData[0]?.displayDate} = ${netWorthData[0]?.value.toFixed(2)}</p>
-              <p>Último punto: {netWorthData[netWorthData.length - 1]?.displayDate} = ${netWorthData[netWorthData.length - 1]?.value.toFixed(2)}</p>
-              <p className="mt-2 font-mono bg-black/30 p-2 rounded">
-                {JSON.stringify(netWorthData.slice(0, 3), null, 2)}
-              </p>
-            </div>
-          )}
-        </div>
-        
-        {/* Period Buttons - Above Chart */}
+        {/* Period Buttons */}
         <div className="mb-3 flex gap-2 justify-end">
           {(['1M', '3M', '6M', '1Y', 'All'] as const).map((period) => (
             <Button
@@ -348,51 +331,10 @@ export default function NetWorth() {
           ))}
         </div>
 
-        {/* Chart Container - Simplified */}
-        <div className="relative h-80 w-full rounded-2xl overflow-hidden bg-gray-900 p-4">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart 
-              data={netWorthData}
-              margin={{ top: 20, right: 20, left: 60, bottom: 20 }}
-            >
-              <defs>
-                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1}/>
-                </linearGradient>
-              </defs>
-              
-              <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-              
-              <XAxis 
-                dataKey="displayDate"
-                stroke="#999"
-                tick={{ fill: '#999', fontSize: 12 }}
-              />
-              
-              <YAxis 
-                stroke="#999"
-                tick={{ fill: '#999', fontSize: 12 }}
-                tickFormatter={(value) => {
-                  const absValue = Math.abs(value);
-                  return `${value < 0 ? '-' : ''}$${(absValue / 1000).toFixed(0)}k`;
-                }}
-                domain={['auto', 'auto']}
-              />
-              
-              <Tooltip content={<CustomTooltip />} />
-              
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="#ef4444"
-                strokeWidth={4}
-                fill="url(#colorValue)"
-                dot={{ fill: '#ef4444', r: 6, stroke: '#fff', strokeWidth: 2 }}
-                activeDot={{ r: 8, fill: '#ef4444', stroke: '#fff', strokeWidth: 3 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+        {/* Chart Container - Placeholder */}
+        <div className="h-80 w-full rounded-2xl bg-white/5 border border-white/20 flex items-center justify-center">
+          <p className="text-white text-lg">Gráfica nueva aquí</p>
+          <p className="text-white/70 text-sm ml-2">({netWorthData.length} puntos de datos disponibles)</p>
         </div>
       </div>
 
