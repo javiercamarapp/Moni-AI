@@ -987,7 +987,7 @@ const Dashboard = () => {
               </div>
 
               <div className="space-y-3 sm:space-y-4">
-                {goals.length === 0 ? <Card className="p-6 bg-gradient-to-br from-[hsl(280,60%,25%)] to-[hsl(280,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(280,70%,45%)]/40 relative overflow-hidden text-center animate-fade-in">
+                {goals.length === 0 ? <Card className="p-6 bg-gradient-to-br from-[hsl(25,60%,25%)] to-[hsl(25,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(25,70%,45%)]/40 relative overflow-hidden text-center animate-fade-in">
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
                     <p className="text-white/90 mb-4 relative z-10 drop-shadow-lg">No tienes metas creadas aún</p>
                     <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:scale-105 transition-transform duration-200 relative z-10">
