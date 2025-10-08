@@ -1,75 +1,106 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Trash2, TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowLeft, Check } from "lucide-react";
 import { format } from "date-fns";
 
-interface AssetItem {
-  id: string;
-  name: string;
-  value: string;
-  category: string;
-}
+const assetCategories = [
+  { name: 'Cuentas bancarias (ahorro + cheques)', category: 'Checking' },
+  { name: 'Inversiones financieras (fondos, CETES, bonos)', category: 'Investments' },
+  { name: 'Acciones o ETFs en bolsa', category: 'Investments' },
+  { name: 'Criptomonedas', category: 'Investments' },
+  { name: 'Propiedad principal (casa o departamento)', category: 'Property' },
+  { name: 'Propiedades adicionales (en renta o inversión)', category: 'Property' },
+  { name: 'Vehículos (auto o moto)', category: 'Other' },
+  { name: 'Ahorro para el retiro (Afore o plan privado)', category: 'Savings' },
+  { name: 'Seguros con valor de rescate / inversión', category: 'Savings' },
+  { name: 'Dinero prestado a terceros (por cobrar)', category: 'Other' },
+  { name: 'Participaciones en empresas o startups', category: 'Investments' },
+  { name: 'Propiedad intelectual (marca, royalties, licencias)', category: 'Other' },
+  { name: 'Saldos en apps fintech (MercadoPago, PayPal, Revolut)', category: 'Checking' },
+  { name: 'Inventario o mercancía para venta', category: 'Other' },
+  { name: 'Obras de arte / joyas / metales preciosos', category: 'Other' },
+  { name: 'Otros activos personalizados', category: 'Other' },
+];
 
-interface LiabilityItem {
-  id: string;
-  name: string;
-  value: string;
-  category: string;
-}
-
-const assetCategories = ['Checking', 'Savings', 'Investments', 'Property', 'Other'];
-const liabilityCategories = ['Credit', 'Loans', 'Mortgage', 'Other'];
+const liabilityCategories = [
+  { name: 'Deuda de tarjetas de crédito', category: 'Credit' },
+  { name: 'Préstamo personal bancario o fintech', category: 'Loans' },
+  { name: 'Crédito automotriz', category: 'Loans' },
+  { name: 'Hipoteca o préstamo hipotecario', category: 'Mortgage' },
+  { name: 'Créditos educativos / estudiantiles', category: 'Loans' },
+  { name: 'Préstamos con familiares o amigos', category: 'Other' },
+  { name: 'Créditos de nómina o payroll loans', category: 'Loans' },
+  { name: 'Deudas en tiendas departamentales (Liverpool, Coppel)', category: 'Credit' },
+  { name: 'Pagos diferidos / meses sin intereses', category: 'Credit' },
+  { name: 'Créditos empresariales / de negocio', category: 'Loans' },
+  { name: 'Cuotas de mantenimiento o servicios atrasados', category: 'Other' },
+  { name: 'Deudas con proveedores o socios', category: 'Other' },
+  { name: 'Créditos en moneda extranjera (USD/EUR)', category: 'Loans' },
+  { name: 'Impuestos o multas pendientes de pago', category: 'Other' },
+  { name: 'Arrendamientos financieros (leasing)', category: 'Loans' },
+  { name: 'Otros pasivos personalizados', category: 'Other' },
+];
 
 export default function NetWorthSetupForm({ onComplete }: { onComplete: () => void }) {
-  const [assets, setAssets] = useState<AssetItem[]>([
-    { id: crypto.randomUUID(), name: '', value: '', category: 'Checking' }
-  ]);
-  const [liabilities, setLiabilities] = useState<LiabilityItem[]>([
-    { id: crypto.randomUUID(), name: '', value: '', category: 'Credit' }
-  ]);
+  const navigate = useNavigate();
+  const [assetValues, setAssetValues] = useState<Record<string, string>>({});
+  const [liabilityValues, setLiabilityValues] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
-  const addAsset = () => {
-    setAssets([...assets, { id: crypto.randomUUID(), name: '', value: '', category: 'Checking' }]);
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+    setUser(user);
   };
 
-  const removeAsset = (id: string) => {
-    setAssets(assets.filter(a => a.id !== id));
+  const updateAssetValue = (index: number, value: string) => {
+    setAssetValues(prev => ({ ...prev, [index]: value }));
   };
 
-  const updateAsset = (id: string, field: keyof AssetItem, value: string) => {
-    setAssets(assets.map(a => a.id === id ? { ...a, [field]: value } : a));
-  };
-
-  const addLiability = () => {
-    setLiabilities([...liabilities, { id: crypto.randomUUID(), name: '', value: '', category: 'Credit' }]);
-  };
-
-  const removeLiability = (id: string) => {
-    setLiabilities(liabilities.filter(l => l.id !== id));
-  };
-
-  const updateLiability = (id: string, field: keyof LiabilityItem, value: string) => {
-    setLiabilities(liabilities.map(l => l.id === id ? { ...l, [field]: value } : l));
+  const updateLiabilityValue = (index: number, value: string) => {
+    setLiabilityValues(prev => ({ ...prev, [index]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return;
+
     setLoading(true);
+    setSaveStatus('saving');
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
+      // Preparar activos válidos
+      const validAssets = assetCategories
+        .map((asset, index) => ({
+          name: asset.name,
+          value: parseFloat(assetValues[index] || '0'),
+          category: asset.category
+        }))
+        .filter(a => a.value > 0);
 
-      // Filter out empty entries
-      const validAssets = assets.filter(a => a.name && a.value);
-      const validLiabilities = liabilities.filter(l => l.name && l.value);
+      // Preparar pasivos válidos
+      const validLiabilities = liabilityCategories
+        .map((liability, index) => ({
+          name: liability.name,
+          value: parseFloat(liabilityValues[index] || '0'),
+          category: liability.category
+        }))
+        .filter(l => l.value > 0);
 
       // Insert assets
       if (validAssets.length > 0) {
@@ -78,7 +109,7 @@ export default function NetWorthSetupForm({ onComplete }: { onComplete: () => vo
           .insert(validAssets.map(a => ({
             user_id: user.id,
             name: a.name,
-            value: parseFloat(a.value),
+            value: a.value,
             category: a.category
           })));
 
@@ -92,7 +123,7 @@ export default function NetWorthSetupForm({ onComplete }: { onComplete: () => vo
           .insert(validLiabilities.map(l => ({
             user_id: user.id,
             name: l.name,
-            value: parseFloat(l.value),
+            value: l.value,
             category: l.category
           })));
 
@@ -100,8 +131,8 @@ export default function NetWorthSetupForm({ onComplete }: { onComplete: () => vo
       }
 
       // Create initial snapshot
-      const totalAssets = validAssets.reduce((sum, a) => sum + parseFloat(a.value), 0);
-      const totalLiabilities = validLiabilities.reduce((sum, l) => sum + parseFloat(l.value), 0);
+      const totalAssets = validAssets.reduce((sum, a) => sum + a.value, 0);
+      const totalLiabilities = validLiabilities.reduce((sum, l) => sum + l.value, 0);
       const netWorth = totalAssets - totalLiabilities;
 
       const { error: snapshotError } = await supabase
@@ -116,163 +147,144 @@ export default function NetWorthSetupForm({ onComplete }: { onComplete: () => vo
 
       if (snapshotError) throw snapshotError;
 
+      setSaveStatus('saved');
       toast.success('Patrimonio configurado exitosamente');
-      onComplete();
+      setTimeout(() => {
+        onComplete();
+      }, 1000);
     } catch (error: any) {
       console.error('Error setting up net worth:', error);
       toast.error('Error al configurar patrimonio: ' + error.message);
+      setSaveStatus('idle');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Card className="w-full max-w-4xl p-6 bg-gradient-card border-border/50">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Configura tu Patrimonio Neto</h1>
-          <p className="text-muted-foreground">
-            Completa este formulario inicial para comenzar a rastrear tu patrimonio neto.
-            Podrás actualizar estos valores más adelante.
-          </p>
+    <div className="min-h-screen animated-wave-bg pb-24">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="sticky top-0 z-10 bg-gradient-card/95 backdrop-blur-md border-b border-border/30 shadow-card">
+          <div className="flex items-center gap-3 px-4 py-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/net-worth')}
+              className="text-foreground hover:bg-accent/50 hover-lift"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold text-foreground">Configura tu Patrimonio</h1>
+              <p className="text-sm text-muted-foreground">Completa la información financiera</p>
+            </div>
+            {saveStatus !== 'idle' && (
+              <div className="flex items-center gap-2 text-sm text-foreground animate-fade-in">
+                {saveStatus === 'saving' && (
+                  <>
+                    <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    <span className="hidden sm:inline">Guardando...</span>
+                  </>
+                )}
+                {saveStatus === 'saved' && (
+                  <>
+                    <Check className="w-4 h-4 text-success" />
+                    <span className="hidden sm:inline text-success">Guardado</span>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Assets Section */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-success" />
-              <h2 className="text-xl font-semibold text-foreground">Activos</h2>
-            </div>
-            
-            {assets.map((asset, index) => (
-              <div key={asset.id} className="flex gap-3 items-end">
-                <div className="flex-1">
-                  <Label htmlFor={`asset-name-${asset.id}`}>Nombre</Label>
-                  <Input
-                    id={`asset-name-${asset.id}`}
-                    placeholder="ej. Cuenta de Ahorros"
-                    value={asset.name}
-                    onChange={(e) => updateAsset(asset.id, 'name', e.target.value)}
-                    required={index === 0}
-                  />
+        <form onSubmit={handleSubmit} className="p-4 space-y-4">
+          {/* Activos Card */}
+          <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
+            <div className="bg-gradient-primary/30 px-5 py-4 border-b border-border/30">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-success/20 border border-success/30">
+                  <TrendingUp className="h-5 w-5 text-success" />
                 </div>
-                <div className="w-40">
-                  <Label htmlFor={`asset-value-${asset.id}`}>Valor</Label>
-                  <Input
-                    id={`asset-value-${asset.id}`}
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    value={asset.value}
-                    onChange={(e) => updateAsset(asset.id, 'value', e.target.value)}
-                    required={index === 0}
-                  />
+                <div>
+                  <h3 className="font-bold text-lg text-card-foreground">💰 Activos Esenciales</h3>
+                  <p className="text-xs text-card-foreground/70">Lo que posees</p>
                 </div>
-                <div className="w-40">
-                  <Label htmlFor={`asset-category-${asset.id}`}>Categoría</Label>
-                  <Select
-                    value={asset.category}
-                    onValueChange={(value) => updateAsset(asset.id, 'category', value)}
-                  >
-                    <SelectTrigger id={`asset-category-${asset.id}`}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {assetCategories.map(cat => (
-                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                {assets.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeAsset(asset.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                )}
               </div>
-            ))}
-            
-            <Button type="button" variant="outline" onClick={addAsset} className="w-full">
-              <Plus className="h-4 w-4 mr-2" />
-              Agregar Activo
-            </Button>
-          </div>
-
-          {/* Liabilities Section */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <TrendingDown className="h-5 w-5 text-danger" />
-              <h2 className="text-xl font-semibold text-foreground">Pasivos</h2>
             </div>
-            
-            {liabilities.map((liability, index) => (
-              <div key={liability.id} className="flex gap-3 items-end">
-                <div className="flex-1">
-                  <Label htmlFor={`liability-name-${liability.id}`}>Nombre</Label>
-                  <Input
-                    id={`liability-name-${liability.id}`}
-                    placeholder="ej. Tarjeta de Crédito"
-                    value={liability.name}
-                    onChange={(e) => updateLiability(liability.id, 'name', e.target.value)}
-                  />
-                </div>
-                <div className="w-40">
-                  <Label htmlFor={`liability-value-${liability.id}`}>Valor</Label>
-                  <Input
-                    id={`liability-value-${liability.id}`}
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    value={liability.value}
-                    onChange={(e) => updateLiability(liability.id, 'value', e.target.value)}
-                  />
-                </div>
-                <div className="w-40">
-                  <Label htmlFor={`liability-category-${liability.id}`}>Categoría</Label>
-                  <Select
-                    value={liability.category}
-                    onValueChange={(value) => updateLiability(liability.id, 'category', value)}
-                  >
-                    <SelectTrigger id={`liability-category-${liability.id}`}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {liabilityCategories.map(cat => (
-                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                {liabilities.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeLiability(liability.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-            ))}
-            
-            <Button type="button" variant="outline" onClick={addLiability} className="w-full">
-              <Plus className="h-4 w-4 mr-2" />
-              Agregar Pasivo
-            </Button>
-          </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Guardando...' : 'Completar Configuración'}
+            <div className="p-5 space-y-3">
+              {assetCategories.map((asset, index) => (
+                <div key={index} className="space-y-2">
+                  <Label htmlFor={`asset-${index}`} className="text-card-foreground text-sm font-medium">
+                    {asset.name}
+                  </Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-card-foreground/70 font-semibold">$</span>
+                    <Input
+                      id={`asset-${index}`}
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="0.00"
+                      value={assetValues[index] || ''}
+                      onChange={(e) => updateAssetValue(index, e.target.value)}
+                      className="pl-7 bg-card border-border/30 text-card-foreground focus:border-success transition-all"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {/* Pasivos Card */}
+          <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
+            <div className="bg-gradient-primary/30 px-5 py-4 border-b border-border/30">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-danger/20 border border-danger/30">
+                  <TrendingDown className="h-5 w-5 text-danger" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-card-foreground">💸 Pasivos Esenciales</h3>
+                  <p className="text-xs text-card-foreground/70">Lo que debes</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-5 space-y-3">
+              {liabilityCategories.map((liability, index) => (
+                <div key={index} className="space-y-2">
+                  <Label htmlFor={`liability-${index}`} className="text-card-foreground text-sm font-medium">
+                    {liability.name}
+                  </Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-card-foreground/70 font-semibold">$</span>
+                    <Input
+                      id={`liability-${index}`}
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="0.00"
+                      value={liabilityValues[index] || ''}
+                      onChange={(e) => updateLiabilityValue(index, e.target.value)}
+                      className="pl-7 bg-card border-border/30 text-card-foreground focus:border-danger transition-all"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {/* Submit Button */}
+          <Button 
+            type="submit" 
+            className="w-full py-6 text-lg font-semibold shadow-glow hover:scale-105 transition-all"
+            disabled={loading}
+          >
+            {loading ? 'Guardando tu patrimonio...' : 'Completar Cuestionario'}
           </Button>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }
