@@ -25,6 +25,30 @@ type LiabilityEntry = {
   category: string;
 };
 
+type CustomAssetAccount = {
+  id: string;
+  name: string;
+  value: string;
+};
+
+type CustomAsset = {
+  id: string;
+  name: string;
+  accounts: CustomAssetAccount[];
+};
+
+type CustomLiabilityAccount = {
+  id: string;
+  name: string;
+  value: string;
+};
+
+type CustomLiability = {
+  id: string;
+  name: string;
+  accounts: CustomLiabilityAccount[];
+};
+
 const assetCategories = [
   { name: 'Cuentas bancarias (ahorro + cheques)', category: 'Checking' },
   { name: 'Inversiones financieras (fondos, CETES, bonos)', category: 'Investments' },
@@ -67,6 +91,8 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
   const navigate = useNavigate();
   const [assetEntries, setAssetEntries] = useState<AssetEntry[]>([]);
   const [liabilityEntries, setLiabilityEntries] = useState<LiabilityEntry[]>([]);
+  const [customAssets, setCustomAssets] = useState<CustomAsset[]>([]);
+  const [customLiabilities, setCustomLiabilities] = useState<CustomLiability[]>([]);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
@@ -126,6 +152,122 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     ));
   };
 
+  // Custom Assets functions
+  const addCustomAsset = () => {
+    const newAsset: CustomAsset = {
+      id: Date.now().toString(),
+      name: '',
+      accounts: []
+    };
+    setCustomAssets([...customAssets, newAsset]);
+  };
+
+  const removeCustomAsset = (id: string) => {
+    setCustomAssets(customAssets.filter(asset => asset.id !== id));
+  };
+
+  const updateCustomAssetName = (id: string, name: string) => {
+    setCustomAssets(customAssets.map(asset => 
+      asset.id === id ? { ...asset, name } : asset
+    ));
+  };
+
+  const addCustomAssetAccount = (assetId: string) => {
+    setCustomAssets(customAssets.map(asset => {
+      if (asset.id === assetId) {
+        return {
+          ...asset,
+          accounts: [...asset.accounts, { id: Date.now().toString(), name: '', value: '' }]
+        };
+      }
+      return asset;
+    }));
+  };
+
+  const removeCustomAssetAccount = (assetId: string, accountId: string) => {
+    setCustomAssets(customAssets.map(asset => {
+      if (asset.id === assetId) {
+        return {
+          ...asset,
+          accounts: asset.accounts.filter(acc => acc.id !== accountId)
+        };
+      }
+      return asset;
+    }));
+  };
+
+  const updateCustomAssetAccount = (assetId: string, accountId: string, field: 'name' | 'value', value: string) => {
+    setCustomAssets(customAssets.map(asset => {
+      if (asset.id === assetId) {
+        return {
+          ...asset,
+          accounts: asset.accounts.map(acc => 
+            acc.id === accountId ? { ...acc, [field]: value } : acc
+          )
+        };
+      }
+      return asset;
+    }));
+  };
+
+  // Custom Liabilities functions
+  const addCustomLiability = () => {
+    const newLiability: CustomLiability = {
+      id: Date.now().toString(),
+      name: '',
+      accounts: []
+    };
+    setCustomLiabilities([...customLiabilities, newLiability]);
+  };
+
+  const removeCustomLiability = (id: string) => {
+    setCustomLiabilities(customLiabilities.filter(liability => liability.id !== id));
+  };
+
+  const updateCustomLiabilityName = (id: string, name: string) => {
+    setCustomLiabilities(customLiabilities.map(liability => 
+      liability.id === id ? { ...liability, name } : liability
+    ));
+  };
+
+  const addCustomLiabilityAccount = (liabilityId: string) => {
+    setCustomLiabilities(customLiabilities.map(liability => {
+      if (liability.id === liabilityId) {
+        return {
+          ...liability,
+          accounts: [...liability.accounts, { id: Date.now().toString(), name: '', value: '' }]
+        };
+      }
+      return liability;
+    }));
+  };
+
+  const removeCustomLiabilityAccount = (liabilityId: string, accountId: string) => {
+    setCustomLiabilities(customLiabilities.map(liability => {
+      if (liability.id === liabilityId) {
+        return {
+          ...liability,
+          accounts: liability.accounts.filter(acc => acc.id !== accountId)
+        };
+      }
+      return liability;
+    }));
+  };
+
+  const updateCustomLiabilityAccount = (liabilityId: string, accountId: string, field: 'name' | 'value', value: string) => {
+    setCustomLiabilities(customLiabilities.map(liability => {
+      if (liability.id === liabilityId) {
+        return {
+          ...liability,
+          accounts: liability.accounts.map(acc => 
+            acc.id === accountId ? { ...acc, [field]: value } : acc
+          )
+        };
+      }
+      return liability;
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -143,6 +285,21 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
           category: entry.category
         }));
 
+      // Agregar activos personalizados
+      customAssets.forEach(customAsset => {
+        if (customAsset.name.trim()) {
+          customAsset.accounts.forEach(account => {
+            if (account.name.trim() && parseFloat(account.value) > 0) {
+              validAssets.push({
+                name: `${customAsset.name} - ${account.name}`,
+                value: parseFloat(account.value),
+                category: 'Other'
+              });
+            }
+          });
+        }
+      });
+
       // Preparar pasivos válidos
       const validLiabilities = liabilityEntries
         .filter(entry => entry.name.trim() && parseFloat(entry.value) > 0)
@@ -151,6 +308,21 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
           value: parseFloat(entry.value),
           category: entry.category
         }));
+
+      // Agregar pasivos personalizados
+      customLiabilities.forEach(customLiability => {
+        if (customLiability.name.trim()) {
+          customLiability.accounts.forEach(account => {
+            if (account.name.trim() && parseFloat(account.value) > 0) {
+              validLiabilities.push({
+                name: `${customLiability.name} - ${account.name}`,
+                value: parseFloat(account.value),
+                category: 'Other'
+              });
+            }
+          });
+        }
+      });
 
       // Insert assets
       if (validAssets.length > 0) {
@@ -323,6 +495,126 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
             </div>
           </Card>
 
+          {/* Activos Personalizados Card */}
+          <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
+            <div className="bg-gradient-primary/30 px-5 py-4 border-b border-border/30">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-success/20 border border-success/30">
+                    <Plus className="h-5 w-5 text-success" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-card-foreground">✨ Activos Personalizados</h3>
+                    <p className="text-xs text-card-foreground/70">Crea tus propias categorías</p>
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={addCustomAsset}
+                  className="gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all"
+                >
+                  <Plus className="h-4 w-4" />
+                  Nuevo Activo
+                </Button>
+              </div>
+            </div>
+
+            <div className="p-5 space-y-6">
+              {customAssets.map((customAsset) => (
+                <div key={customAsset.id} className="space-y-3 p-4 rounded-lg bg-card/50 border border-border/30">
+                  <div className="flex gap-2 items-start">
+                    <div className="flex-1">
+                      <Label className="text-card-foreground text-sm font-medium mb-2 block">
+                        Nombre del Activo
+                      </Label>
+                      <Input
+                        type="text"
+                        placeholder="Ej: Colección de Arte, Negocios Secundarios"
+                        value={customAsset.name}
+                        onChange={(e) => updateCustomAssetName(customAsset.id, e.target.value)}
+                        className="bg-card border-border/30 text-card-foreground font-semibold"
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeCustomAsset(customAsset.id)}
+                      className="mt-7 h-8 w-8 text-danger hover:bg-danger/10"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <div className="pl-4 border-l-2 border-border/30 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-card-foreground/70 text-xs font-medium">
+                        Cuentas
+                      </Label>
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => addCustomAssetAccount(customAsset.id)}
+                        className="h-7 text-xs gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all"
+                      >
+                        <Plus className="h-3 w-3" />
+                        Agregar Cuenta
+                      </Button>
+                    </div>
+
+                    {customAsset.accounts.map((account) => (
+                      <div key={account.id} className="flex gap-2 items-start">
+                        <div className="flex-1 space-y-2">
+                          <Input
+                            type="text"
+                            placeholder="Nombre de cuenta (ej: Pintura Picasso)"
+                            value={account.name}
+                            onChange={(e) => updateCustomAssetAccount(customAsset.id, account.id, 'name', e.target.value)}
+                            className="bg-card border-border/30 text-card-foreground text-sm"
+                          />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-card-foreground/70 font-semibold">$</span>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              placeholder="0.00"
+                              value={account.value}
+                              onChange={(e) => updateCustomAssetAccount(customAsset.id, account.id, 'value', e.target.value)}
+                              className="pl-7 bg-card border-border/30 text-card-foreground focus:border-success transition-all"
+                            />
+                          </div>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeCustomAssetAccount(customAsset.id, account.id)}
+                          className="mt-1 h-8 w-8 text-danger hover:bg-danger/10"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+
+                    {customAsset.accounts.length === 0 && (
+                      <p className="text-xs text-muted-foreground italic">
+                        No hay cuentas. Haz clic en "Agregar Cuenta" para comenzar.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {customAssets.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4 italic">
+                  No hay activos personalizados. Haz clic en "Nuevo Activo" para crear uno.
+                </p>
+              )}
+            </div>
+          </Card>
+
           {/* Pasivos Card */}
           <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
             <div className="bg-gradient-primary/30 px-5 py-4 border-b border-border/30">
@@ -397,8 +689,128 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
             </div>
           </Card>
 
+          {/* Pasivos Personalizados Card */}
+          <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
+            <div className="bg-gradient-primary/30 px-5 py-4 border-b border-border/30">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-danger/20 border border-danger/30">
+                    <Plus className="h-5 w-5 text-danger" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-card-foreground">✨ Pasivos Personalizados</h3>
+                    <p className="text-xs text-card-foreground/70">Crea tus propias categorías</p>
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={addCustomLiability}
+                  className="gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all"
+                >
+                  <Plus className="h-4 w-4" />
+                  Nuevo Pasivo
+                </Button>
+              </div>
+            </div>
+
+            <div className="p-5 space-y-6">
+              {customLiabilities.map((customLiability) => (
+                <div key={customLiability.id} className="space-y-3 p-4 rounded-lg bg-card/50 border border-border/30">
+                  <div className="flex gap-2 items-start">
+                    <div className="flex-1">
+                      <Label className="text-card-foreground text-sm font-medium mb-2 block">
+                        Nombre del Pasivo
+                      </Label>
+                      <Input
+                        type="text"
+                        placeholder="Ej: Deudas Familiares, Compromisos Personales"
+                        value={customLiability.name}
+                        onChange={(e) => updateCustomLiabilityName(customLiability.id, e.target.value)}
+                        className="bg-card border-border/30 text-card-foreground font-semibold"
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeCustomLiability(customLiability.id)}
+                      className="mt-7 h-8 w-8 text-danger hover:bg-danger/10"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <div className="pl-4 border-l-2 border-border/30 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-card-foreground/70 text-xs font-medium">
+                        Cuentas
+                      </Label>
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => addCustomLiabilityAccount(customLiability.id)}
+                        className="h-7 text-xs gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all"
+                      >
+                        <Plus className="h-3 w-3" />
+                        Agregar Cuenta
+                      </Button>
+                    </div>
+
+                    {customLiability.accounts.map((account) => (
+                      <div key={account.id} className="flex gap-2 items-start">
+                        <div className="flex-1 space-y-2">
+                          <Input
+                            type="text"
+                            placeholder="Nombre de cuenta (ej: Préstamo Mamá)"
+                            value={account.name}
+                            onChange={(e) => updateCustomLiabilityAccount(customLiability.id, account.id, 'name', e.target.value)}
+                            className="bg-card border-border/30 text-card-foreground text-sm"
+                          />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-card-foreground/70 font-semibold">$</span>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              placeholder="0.00"
+                              value={account.value}
+                              onChange={(e) => updateCustomLiabilityAccount(customLiability.id, account.id, 'value', e.target.value)}
+                              className="pl-7 bg-card border-border/30 text-card-foreground focus:border-danger transition-all"
+                            />
+                          </div>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeCustomLiabilityAccount(customLiability.id, account.id)}
+                          className="mt-1 h-8 w-8 text-danger hover:bg-danger/10"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+
+                    {customLiability.accounts.length === 0 && (
+                      <p className="text-xs text-muted-foreground italic">
+                        No hay cuentas. Haz clic en "Agregar Cuenta" para comenzar.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {customLiabilities.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4 italic">
+                  No hay pasivos personalizados. Haz clic en "Nuevo Pasivo" para crear uno.
+                </p>
+              )}
+            </div>
+          </Card>
+
           {/* Submit Button */}
-          <Button 
+          <Button
             type="submit" 
             className="w-full py-6 text-lg font-semibold shadow-glow hover:scale-105 transition-all"
             disabled={loading}
