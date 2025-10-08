@@ -90,7 +90,7 @@ export default function NetWorth() {
               </p>
               <Button 
                 size="lg"
-                className="w-full mt-8 text-lg py-6 bg-gradient-to-r from-primary via-primary to-accent shadow-glow hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.5)] transition-all duration-300 hover-scale font-semibold"
+                className="w-full mt-8 text-lg py-6 bg-gradient-to-r from-primary via-primary to-accent shadow-glow hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.5)] transition-all duration-300 hover:scale-105 font-semibold animate-fade-in"
                 onClick={() => setShowForm(true)}
               >
                 Responder preguntas
