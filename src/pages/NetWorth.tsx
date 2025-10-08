@@ -218,12 +218,12 @@ export default function NetWorth() {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg px-4 py-2 shadow-2xl border border-red-500/30">
-          <p className="text-red-400 text-[10px] font-medium mb-0.5">
+        <div className="bg-white rounded-lg px-3 py-2 shadow-xl border border-gray-200">
+          <p className="text-gray-600 text-xs font-medium mb-1">
             {data.displayDate}
           </p>
-          <p className="text-white text-sm font-bold">
-            ${payload[0].value.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+          <p className="text-gray-900 text-lg font-bold">
+            ${payload[0].value.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
         </div>
       );
@@ -290,62 +290,45 @@ export default function NetWorth() {
         </div>
       </div>
 
-      {/* Chart Section with overlay labels */}
-      <div className="relative h-64 px-4 mb-4 z-10">
-        {/* Chart */}
-        <div className="h-full w-full bg-white/5 rounded-xl p-4">
+      {/* Chart Section - Yahoo Finance Style */}
+      <div className="relative px-4 mb-6 z-10">
+        <div className="h-80 w-full bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 backdrop-blur-sm border border-white/20">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart 
               data={netWorthData}
-              margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
+              margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
             >
               <defs>
-                <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#ef4444" stopOpacity={0.8}/>
-                  <stop offset="100%" stopColor="#7f1d1d" stopOpacity={0.2}/>
+                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
               <XAxis 
-                dataKey="displayDate" 
-                stroke="rgba(255,255,255,0.5)"
-                tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 11 }}
+                dataKey="displayDate"
+                hide={true}
               />
               <YAxis 
-                stroke="rgba(255,255,255,0.5)"
-                tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 11 }}
-                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                domain={['dataMin - 1000', 'dataMax + 1000']}
+                hide={true}
+                domain={['dataMin - 5000', 'dataMax + 5000']}
               />
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip 
+                content={<CustomTooltip />}
+                cursor={{ stroke: '#10b981', strokeWidth: 1, strokeDasharray: '3 3' }}
+                position={{ y: 0 }}
+              />
               <Area
                 type="monotone"
                 dataKey="value"
-                stroke="#ef4444"
-                strokeWidth={3}
-                fill="url(#areaGradient)"
-                dot={{ fill: '#ef4444', r: 3 }}
-                activeDot={{ 
-                  r: 6, 
-                  fill: '#ef4444', 
-                  stroke: '#ffffff', 
-                  strokeWidth: 2
-                }}
+                stroke="#10b981"
+                strokeWidth={2}
+                fill="url(#colorValue)"
+                fillOpacity={1}
+                dot={false}
+                activeDot={false}
               />
             </LineChart>
           </ResponsiveContainer>
-        </div>
-
-        {/* High label */}
-        <div className="absolute top-6 right-8 z-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3 py-1 shadow-md">
-          <span className="text-[10px] text-white/70">high: </span>
-          <span className="text-xs text-white font-semibold">${highValue.toLocaleString('es-MX')}</span>
-        </div>
-
-        {/* Low label */}
-        <div className="absolute bottom-6 right-8 z-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3 py-1 shadow-md">
-          <span className="text-[10px] text-white/70">low: </span>
-          <span className="text-xs text-white font-semibold">${lowValue.toLocaleString('es-MX')}</span>
         </div>
       </div>
 
