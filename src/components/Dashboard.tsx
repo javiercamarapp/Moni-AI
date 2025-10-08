@@ -625,13 +625,24 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Header con saludo */}
+      {/* Header con saludo y botón de cuentas */}
       <div className="p-4 pt-2">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white">
-            ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
-          </h1>
-          <p className="text-sm text-white">Vas excelente con tus metas financieras</p>
+        <div className="flex items-center justify-between gap-4">
+          {/* Saludo - Izquierda */}
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-white">
+              ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
+            </h1>
+            <p className="text-sm text-white">Vas excelente con tus metas financieras</p>
+          </div>
+          
+          {/* Botón de cuentas - Derecha */}
+          <Button
+            onClick={() => navigate('/net-worth')}
+            className="bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-sm whitespace-nowrap"
+          >
+            Mis cuentas y tarjetas
+          </Button>
         </div>
       </div>
 
