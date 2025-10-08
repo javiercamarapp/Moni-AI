@@ -406,7 +406,6 @@ const Balance = () => {
           </Button>
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-foreground">Análisis de Ingresos y Gastos</h1>
-            <p className="text-sm text-muted-foreground">Análisis de ingresos y gastos</p>
           </div>
         </div>
       </div>
