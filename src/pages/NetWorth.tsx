@@ -312,13 +312,22 @@ export default function NetWorth() {
 
       {/* Chart Section - Aesthetic Trading Style */}
       <div className="relative px-4 mb-6 z-10">
-        {/* Debug Info */}
-        {netWorthData.length > 0 && (
-          <div className="mb-2 p-2 bg-white/10 rounded text-white text-xs">
-            <p>Puntos de datos: {netWorthData.length}</p>
-            <p>Rango: ${netWorthData[0]?.value.toFixed(2)} → ${netWorthData[netWorthData.length - 1]?.value.toFixed(2)}</p>
-          </div>
-        )}
+        {/* Debug Info - Expanded */}
+        <div className="mb-4 p-4 bg-white/20 rounded-lg text-white text-sm space-y-2">
+          <p className="font-bold">Debug Info:</p>
+          <p>Estado loading: {loading ? 'Cargando...' : 'Listo'}</p>
+          <p>Puntos de datos: {netWorthData.length}</p>
+          <p>Patrimonio actual: ${currentNetWorth.toLocaleString('es-MX')}</p>
+          {netWorthData.length > 0 && (
+            <div className="text-xs">
+              <p>Primer punto: {netWorthData[0]?.displayDate} = ${netWorthData[0]?.value.toFixed(2)}</p>
+              <p>Último punto: {netWorthData[netWorthData.length - 1]?.displayDate} = ${netWorthData[netWorthData.length - 1]?.value.toFixed(2)}</p>
+              <p className="mt-2 font-mono bg-black/30 p-2 rounded">
+                {JSON.stringify(netWorthData.slice(0, 3), null, 2)}
+              </p>
+            </div>
+          )}
+        </div>
         
         {/* Period Buttons - Above Chart */}
         <div className="mb-3 flex gap-2 justify-end">
