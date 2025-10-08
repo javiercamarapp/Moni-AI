@@ -405,7 +405,7 @@ const Balance = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-foreground">Analisís</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">Análisis de Ingresos y Gastos</h1>
             <p className="text-sm text-muted-foreground">Análisis de ingresos y gastos</p>
           </div>
         </div>
