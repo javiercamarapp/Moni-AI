@@ -367,37 +367,39 @@ export default function NetWorth() {
               >
                 <defs>
                   <linearGradient id="redGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#ef4444" stopOpacity={0.5}/>
-                    <stop offset="100%" stopColor="#991b1b" stopOpacity={0.1}/>
+                    <stop offset="0%" stopColor="#ff4444" stopOpacity={0.8}/>
+                    <stop offset="50%" stopColor="#ff4444" stopOpacity={0.4}/>
+                    <stop offset="100%" stopColor="#ff4444" stopOpacity={0.05}/>
                   </linearGradient>
                 </defs>
                 
                 {/* Grid horizontal sutil */}
                 <CartesianGrid 
                   strokeDasharray="0" 
-                  stroke="rgba(255,255,255,0.05)" 
+                  stroke="rgba(255,255,255,0.1)" 
                   horizontal={true}
                   vertical={false}
                 />
                 
                 <XAxis dataKey="displayDate" hide={true} />
-                <YAxis hide={true} domain={['dataMin', 'dataMax']} />
+                <YAxis hide={true} domain={['auto', 'auto']} />
                 
                 <Tooltip 
                   content={<CustomTooltip />}
-                  cursor={{ stroke: '#ef4444', strokeWidth: 1, strokeDasharray: '3 3' }}
+                  cursor={{ stroke: '#ff4444', strokeWidth: 2, strokeDasharray: '3 3' }}
                 />
                 
                 {/* Área sombreada roja */}
                 <Area
                   type="monotone"
                   dataKey="value"
-                  stroke="#ef4444"
-                  strokeWidth={2.5}
+                  stroke="#ff4444"
+                  strokeWidth={4}
                   fill="url(#redGradient)"
                   dot={false}
-                  activeDot={false}
-                  isAnimationActive={false}
+                  activeDot={{ r: 6, fill: '#ff4444', stroke: '#fff', strokeWidth: 2 }}
+                  isAnimationActive={true}
+                  animationDuration={1000}
                 />
               </LineChart>
             </ResponsiveContainer>
