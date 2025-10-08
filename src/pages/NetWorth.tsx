@@ -241,13 +241,15 @@ export default function NetWorth() {
             <LineChart data={netWorthData}>
               <defs>
                 <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#ffffff" stopOpacity={0.7}/>
-                  <stop offset="100%" stopColor="#ffffff" stopOpacity={1}/>
+                  <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.9}/>
+                  <stop offset="50%" stopColor="#a78bfa" stopOpacity={1}/>
+                  <stop offset="100%" stopColor="#c4b5fd" stopOpacity={0.9}/>
                 </linearGradient>
                 <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#ffffff" stopOpacity={0.4}/>
-                  <stop offset="50%" stopColor="#ffffff" stopOpacity={0.15}/>
-                  <stop offset="100%" stopColor="#ffffff" stopOpacity={0}/>
+                  <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.6}/>
+                  <stop offset="30%" stopColor="#a78bfa" stopOpacity={0.4}/>
+                  <stop offset="60%" stopColor="#c4b5fd" stopOpacity={0.2}/>
+                  <stop offset="100%" stopColor="#ddd6fe" stopOpacity={0}/>
                 </linearGradient>
               </defs>
               <XAxis 
@@ -257,23 +259,24 @@ export default function NetWorth() {
               <YAxis hide />
               <Tooltip content={<CustomTooltip />} />
               <Area
-                type="natural"
+                type="monotone"
                 dataKey="value"
                 stroke="none"
                 fill="url(#areaGradient)"
+                fillOpacity={1}
                 isAnimationActive={true}
-                animationDuration={1500}
+                animationDuration={2000}
                 animationEasing="ease-in-out"
               />
               <Line
-                type="natural"
+                type="monotone"
                 dataKey="value"
                 stroke="url(#lineGradient)"
-                strokeWidth={2}
+                strokeWidth={3}
                 dot={false}
-                activeDot={{ r: 4, fill: '#ffffff', strokeWidth: 2 }}
+                activeDot={{ r: 6, fill: '#a78bfa', stroke: '#ffffff', strokeWidth: 2 }}
                 isAnimationActive={true}
-                animationDuration={1500}
+                animationDuration={2000}
                 animationEasing="ease-in-out"
               />
             </LineChart>
