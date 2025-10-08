@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X, Banknote } from "lucide-react";
 import { format } from "date-fns";
 
 type AssetEntry = {
@@ -501,11 +501,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-accent/20 border border-accent/30">
-                    <Plus className="h-5 w-5 text-accent" />
+                    <Banknote className="h-5 w-5 text-accent" />
                   </div>
-                  <div>
-                    <h3 className="font-bold text-lg text-card-foreground">💎 Activos Personalizados</h3>
-                  </div>
+                  <h3 className="font-bold text-lg text-card-foreground whitespace-nowrap">Activos Personalizados</h3>
                 </div>
                 <Button
                   type="button"
@@ -705,11 +703,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-danger/20 border border-danger/30">
-                    <Plus className="h-5 w-5 text-danger" />
+                    <Banknote className="h-5 w-5 text-danger" />
                   </div>
-                  <div>
-                    <h3 className="font-bold text-lg text-card-foreground">💎 Pasivos Personalizados</h3>
-                  </div>
+                  <h3 className="font-bold text-lg text-card-foreground whitespace-nowrap">Pasivos Personalizados</h3>
                 </div>
                 <Button
                   type="button"
