@@ -43,15 +43,8 @@ export default function NetWorth() {
   const { data: hasData, isLoading: checkingData, refetch: refetchHasData } = useHasNetWorthData();
   const { data: netWorthData, isLoading: loadingData } = useNetWorth(timeRange);
 
-  if (checkingData || loadingData) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Cargando...</p>
-      </div>
-    );
-  }
-
-  if (!hasData) {
+  // Mostrar formulario si definitivamente no hay datos (no mientras está cargando)
+  if (!checkingData && hasData === false) {
     if (!showForm) {
       return (
         <div className="min-h-screen bg-background flex flex-col">
@@ -102,6 +95,40 @@ export default function NetWorth() {
     }
     
     return <NetWorthSetupForm onComplete={() => refetchHasData()} />;
+  }
+
+  // Mostrar skeleton/placeholder mientras carga pero solo si ya sabemos que hay datos
+  if ((checkingData || loadingData) && hasData !== false) {
+    return (
+      <div className="min-h-screen bg-background pb-20">
+        {/* Header */}
+        <div className="bg-gradient-card border-b border-border/50 sticky top-0 z-10 backdrop-blur-sm">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('/dashboard')}
+                className="text-foreground hover:bg-white/5"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">Patrimonio Neto</h1>
+                <p className="text-sm text-muted-foreground">Evolución de tu riqueza</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="container mx-auto px-4 py-6 space-y-6">
+          {/* Skeleton del contenido principal */}
+          <Card className="p-6 bg-gradient-card border-border/50 animate-pulse">
+            <div className="h-80 bg-muted/20 rounded"></div>
+          </Card>
+        </div>
+      </div>
+    );
   }
 
   if (!netWorthData) {
