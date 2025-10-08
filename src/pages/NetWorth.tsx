@@ -94,7 +94,7 @@ export default function NetWorth() {
       );
     }
     
-    return <NetWorthSetupForm onComplete={() => refetchHasData()} />;
+    return <NetWorthSetupForm onComplete={() => refetchHasData()} onBack={() => setShowForm(false)} />;
   }
 
   // Mostrar skeleton/placeholder mientras carga pero solo si ya sabemos que hay datos
