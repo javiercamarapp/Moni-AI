@@ -6,8 +6,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { TrendingUp, TrendingDown, ArrowLeft, Check } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X } from "lucide-react";
 import { format } from "date-fns";
+
+type AssetEntry = {
+  id: string;
+  categoryType: string;
+  name: string;
+  value: string;
+  category: string;
+};
+
+type LiabilityEntry = {
+  id: string;
+  categoryType: string;
+  name: string;
+  value: string;
+  category: string;
+};
 
 const assetCategories = [
   { name: 'Cuentas bancarias (ahorro + cheques)', category: 'Checking' },
@@ -49,8 +65,8 @@ const liabilityCategories = [
 
 export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: () => void; onBack?: () => void }) {
   const navigate = useNavigate();
-  const [assetValues, setAssetValues] = useState<Record<string, string>>({});
-  const [liabilityValues, setLiabilityValues] = useState<Record<string, string>>({});
+  const [assetEntries, setAssetEntries] = useState<AssetEntry[]>([]);
+  const [liabilityEntries, setLiabilityEntries] = useState<LiabilityEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
@@ -68,12 +84,46 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     setUser(user);
   };
 
-  const updateAssetValue = (index: number, value: string) => {
-    setAssetValues(prev => ({ ...prev, [index]: value }));
+  const addAssetEntry = (categoryType: string, category: string) => {
+    const newEntry: AssetEntry = {
+      id: Date.now().toString(),
+      categoryType,
+      name: '',
+      value: '',
+      category
+    };
+    setAssetEntries([...assetEntries, newEntry]);
   };
 
-  const updateLiabilityValue = (index: number, value: string) => {
-    setLiabilityValues(prev => ({ ...prev, [index]: value }));
+  const addLiabilityEntry = (categoryType: string, category: string) => {
+    const newEntry: LiabilityEntry = {
+      id: Date.now().toString(),
+      categoryType,
+      name: '',
+      value: '',
+      category
+    };
+    setLiabilityEntries([...liabilityEntries, newEntry]);
+  };
+
+  const removeAssetEntry = (id: string) => {
+    setAssetEntries(assetEntries.filter(entry => entry.id !== id));
+  };
+
+  const removeLiabilityEntry = (id: string) => {
+    setLiabilityEntries(liabilityEntries.filter(entry => entry.id !== id));
+  };
+
+  const updateAssetEntry = (id: string, field: 'name' | 'value', value: string) => {
+    setAssetEntries(assetEntries.map(entry => 
+      entry.id === id ? { ...entry, [field]: value } : entry
+    ));
+  };
+
+  const updateLiabilityEntry = (id: string, field: 'name' | 'value', value: string) => {
+    setLiabilityEntries(liabilityEntries.map(entry => 
+      entry.id === id ? { ...entry, [field]: value } : entry
+    ));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -85,22 +135,22 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
 
     try {
       // Preparar activos válidos
-      const validAssets = assetCategories
-        .map((asset, index) => ({
-          name: asset.name,
-          value: parseFloat(assetValues[index] || '0'),
-          category: asset.category
-        }))
-        .filter(a => a.value > 0);
+      const validAssets = assetEntries
+        .filter(entry => entry.name.trim() && parseFloat(entry.value) > 0)
+        .map(entry => ({
+          name: entry.name.trim(),
+          value: parseFloat(entry.value),
+          category: entry.category
+        }));
 
       // Preparar pasivos válidos
-      const validLiabilities = liabilityCategories
-        .map((liability, index) => ({
-          name: liability.name,
-          value: parseFloat(liabilityValues[index] || '0'),
-          category: liability.category
-        }))
-        .filter(l => l.value > 0);
+      const validLiabilities = liabilityEntries
+        .filter(entry => entry.name.trim() && parseFloat(entry.value) > 0)
+        .map(entry => ({
+          name: entry.name.trim(),
+          value: parseFloat(entry.value),
+          category: entry.category
+        }));
 
       // Insert assets
       if (validAssets.length > 0) {
@@ -213,27 +263,64 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               </div>
             </div>
 
-            <div className="p-5 space-y-3">
-              {assetCategories.map((asset, index) => (
-                <div key={index} className="space-y-2">
-                  <Label htmlFor={`asset-${index}`} className="text-card-foreground text-sm font-medium">
-                    {asset.name}
-                  </Label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-card-foreground/70 font-semibold">$</span>
-                    <Input
-                      id={`asset-${index}`}
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      placeholder="0.00"
-                      value={assetValues[index] || ''}
-                      onChange={(e) => updateAssetValue(index, e.target.value)}
-                      className="pl-7 bg-card border-border/30 text-card-foreground focus:border-success transition-all"
-                    />
+            <div className="p-5 space-y-4">
+              {assetCategories.map((asset, index) => {
+                const entriesForCategory = assetEntries.filter(e => e.categoryType === asset.name);
+                return (
+                  <div key={index} className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-card-foreground text-sm font-medium">
+                        {asset.name}
+                      </Label>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => addAssetEntry(asset.name, asset.category)}
+                        className="h-7 text-xs gap-1"
+                      >
+                        <Plus className="h-3 w-3" />
+                        Agregar
+                      </Button>
+                    </div>
+                    
+                    {entriesForCategory.map((entry) => (
+                      <div key={entry.id} className="flex gap-2 items-start">
+                        <div className="flex-1 space-y-2">
+                          <Input
+                            type="text"
+                            placeholder="Nombre (ej: Cuenta Bancomer)"
+                            value={entry.name}
+                            onChange={(e) => updateAssetEntry(entry.id, 'name', e.target.value)}
+                            className="bg-card border-border/30 text-card-foreground"
+                          />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-card-foreground/70 font-semibold">$</span>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              placeholder="0.00"
+                              value={entry.value}
+                              onChange={(e) => updateAssetEntry(entry.id, 'value', e.target.value)}
+                              className="pl-7 bg-card border-border/30 text-card-foreground focus:border-success transition-all"
+                            />
+                          </div>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeAssetEntry(entry.id)}
+                          className="mt-1 h-8 w-8 text-danger hover:bg-danger/10"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </Card>
 
@@ -251,27 +338,64 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               </div>
             </div>
 
-            <div className="p-5 space-y-3">
-              {liabilityCategories.map((liability, index) => (
-                <div key={index} className="space-y-2">
-                  <Label htmlFor={`liability-${index}`} className="text-card-foreground text-sm font-medium">
-                    {liability.name}
-                  </Label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-card-foreground/70 font-semibold">$</span>
-                    <Input
-                      id={`liability-${index}`}
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      placeholder="0.00"
-                      value={liabilityValues[index] || ''}
-                      onChange={(e) => updateLiabilityValue(index, e.target.value)}
-                      className="pl-7 bg-card border-border/30 text-card-foreground focus:border-danger transition-all"
-                    />
+            <div className="p-5 space-y-4">
+              {liabilityCategories.map((liability, index) => {
+                const entriesForCategory = liabilityEntries.filter(e => e.categoryType === liability.name);
+                return (
+                  <div key={index} className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-card-foreground text-sm font-medium">
+                        {liability.name}
+                      </Label>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => addLiabilityEntry(liability.name, liability.category)}
+                        className="h-7 text-xs gap-1"
+                      >
+                        <Plus className="h-3 w-3" />
+                        Agregar
+                      </Button>
+                    </div>
+                    
+                    {entriesForCategory.map((entry) => (
+                      <div key={entry.id} className="flex gap-2 items-start">
+                        <div className="flex-1 space-y-2">
+                          <Input
+                            type="text"
+                            placeholder="Nombre (ej: Tarjeta Banamex)"
+                            value={entry.name}
+                            onChange={(e) => updateLiabilityEntry(entry.id, 'name', e.target.value)}
+                            className="bg-card border-border/30 text-card-foreground"
+                          />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-card-foreground/70 font-semibold">$</span>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              placeholder="0.00"
+                              value={entry.value}
+                              onChange={(e) => updateLiabilityEntry(entry.id, 'value', e.target.value)}
+                              className="pl-7 bg-card border-border/30 text-card-foreground focus:border-danger transition-all"
+                            />
+                          </div>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeLiabilityEntry(entry.id)}
+                          className="mt-1 h-8 w-8 text-danger hover:bg-danger/10"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </Card>
 
