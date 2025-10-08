@@ -292,18 +292,12 @@ export default function NetWorth() {
 
       {/* Chart Section with overlay labels */}
       <div className="relative h-64 px-4 mb-4 z-10">
-        {/* High label */}
-        <div className="absolute top-2 right-8 z-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3 py-1 shadow-md">
-          <span className="text-[10px] text-white/70">high: </span>
-          <span className="text-xs text-white font-semibold">${highValue.toLocaleString('es-MX')}</span>
-        </div>
-
         {/* Chart */}
-        <div className="h-full w-full">
+        <div className="h-full w-full bg-white/5 rounded-xl p-4">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart 
               data={netWorthData}
-              margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
+              margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
             >
               <defs>
                 <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
@@ -321,6 +315,7 @@ export default function NetWorth() {
                 stroke="rgba(255,255,255,0.5)"
                 tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 11 }}
                 tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                domain={['dataMin - 1000', 'dataMax + 1000']}
               />
               <Tooltip content={<CustomTooltip />} />
               <Area
@@ -329,7 +324,7 @@ export default function NetWorth() {
                 stroke="#ef4444"
                 strokeWidth={3}
                 fill="url(#areaGradient)"
-                dot={false}
+                dot={{ fill: '#ef4444', r: 3 }}
                 activeDot={{ 
                   r: 6, 
                   fill: '#ef4444', 
@@ -341,8 +336,14 @@ export default function NetWorth() {
           </ResponsiveContainer>
         </div>
 
+        {/* High label */}
+        <div className="absolute top-6 right-8 z-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3 py-1 shadow-md">
+          <span className="text-[10px] text-white/70">high: </span>
+          <span className="text-xs text-white font-semibold">${highValue.toLocaleString('es-MX')}</span>
+        </div>
+
         {/* Low label */}
-        <div className="absolute bottom-2 right-8 z-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3 py-1 shadow-md">
+        <div className="absolute bottom-6 right-8 z-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3 py-1 shadow-md">
           <span className="text-[10px] text-white/70">low: </span>
           <span className="text-xs text-white font-semibold">${lowValue.toLocaleString('es-MX')}</span>
         </div>
