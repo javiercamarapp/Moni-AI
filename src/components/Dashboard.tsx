@@ -588,7 +588,6 @@ const Dashboard = () => {
   }, [navigate]);
   const handleLogout = async () => {
     try {
-      localStorage.removeItem('sb-gfojxewccmjwdzdmdfxv-auth-token');
       await supabase.auth.signOut();
       toast({
         title: "Sesión cerrada",

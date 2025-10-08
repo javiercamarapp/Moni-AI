@@ -80,7 +80,6 @@ const Index = () => {
                   size="lg" 
                   className="px-8 py-4 text-lg text-white hover:bg-white/10"
                   onClick={async () => {
-                    localStorage.removeItem('sb-gfojxewccmjwdzdmdfxv-auth-token');
                     await supabase.auth.signOut();
                     navigate("/auth");
                   }}
