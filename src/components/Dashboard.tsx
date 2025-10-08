@@ -15,7 +15,7 @@ import bannerGroups from '@/assets/banner-groups.jpg';
 import bannerHalloween from '@/assets/banner-halloween.png';
 import heroAuth from '@/assets/moni-ai-logo.png';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
-import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User, BarChart3, AlertCircle } from 'lucide-react';
+import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User, BarChart3, AlertCircle, CreditCard } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
 import SafeToSpendWidget from '@/components/analysis/SafeToSpendWidget';
 import AICoachInsightsWidget from '@/components/analysis/AICoachInsightsWidget';
@@ -625,25 +625,30 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Header con saludo y botón de cuentas */}
-      <div className="p-4 pt-2">
-        <div className="flex items-center justify-between gap-4">
-          {/* Saludo - Izquierda */}
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-white">
-              ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
-            </h1>
-            <p className="text-sm text-white">Vas excelente con tus metas financieras</p>
-          </div>
-          
-          {/* Botón de cuentas - Derecha */}
-          <Button
-            onClick={() => navigate('/net-worth')}
-            className="bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-sm whitespace-nowrap"
-          >
-            Mis cuentas y tarjetas
-          </Button>
+      {/* Header con saludo */}
+      <div className="p-4 pt-2 flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-white">
+            ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
+          </h1>
+          <p className="text-sm text-white">Vas excelente con tus metas financieras</p>
         </div>
+        
+        {/* Botón de cuentas y tarjetas */}
+        <Card 
+          className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 cursor-pointer flex-shrink-0"
+          onClick={() => navigate('/net-worth')}
+        >
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-purple-500/30 flex items-center justify-center flex-shrink-0">
+              <CreditCard className="w-4 h-4 text-white" />
+            </div>
+            <div className="text-left">
+              <p className="text-xs text-white/80 leading-tight whitespace-nowrap">Mis cuentas</p>
+              <p className="text-xs font-bold text-white leading-tight whitespace-nowrap">y tarjetas</p>
+            </div>
+          </div>
+        </Card>
       </div>
 
       {/* Score Moni - Compacto */}
