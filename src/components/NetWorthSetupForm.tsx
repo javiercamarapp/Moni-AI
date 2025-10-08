@@ -520,7 +520,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               </div>
             </div>
 
-            <div className="p-5 space-y-6">
+            <div className="p-3 space-y-3">
               {customAssets.length === 0 && (
                 <div className="text-center py-8 space-y-2">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted mb-2">
