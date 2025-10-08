@@ -27,7 +27,7 @@ export default function NetWorth() {
   const [currentNetWorth, setCurrentNetWorth] = useState(0);
   const [netWorthChange, setNetWorthChange] = useState(0);
   const [netWorthChangePercent, setNetWorthChangePercent] = useState(0);
-  const [selectedPeriod, setSelectedPeriod] = useState<'1D' | '1M' | '3M' | '6M' | '1Y' | 'All'>('1M');
+  const [selectedPeriod, setSelectedPeriod] = useState<'1M' | '3M' | '6M' | '1Y' | 'All'>('1M');
   const [highValue, setHighValue] = useState(0);
   const [lowValue, setLowValue] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -50,9 +50,6 @@ export default function NetWorth() {
       const startDate = new Date();
       
       switch (selectedPeriod) {
-        case '1D':
-          startDate.setDate(now.getDate() - 1);
-          break;
         case '1M':
           startDate.setMonth(now.getMonth() - 1);
           break;
@@ -84,10 +81,6 @@ export default function NetWorth() {
       let dateFormat: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
       
       switch (selectedPeriod) {
-        case '1D':
-          groupByDays = 1; // Cada día
-          dateFormat = { hour: '2-digit', minute: '2-digit' };
-          break;
         case '1M':
           groupByDays = 3; // Cada 3 días
           dateFormat = { month: 'short', day: 'numeric' };
@@ -363,7 +356,7 @@ export default function NetWorth() {
 
       {/* Period Buttons - Positioned over the chart */}
       <div className="px-4 mb-4 flex gap-2 justify-end relative z-10">
-        {(['1D', '1M', '3M', '6M', '1Y', 'All'] as const).map((period) => (
+        {(['1M', '3M', '6M', '1Y', 'All'] as const).map((period) => (
           <Button
             key={period}
             variant="ghost"
