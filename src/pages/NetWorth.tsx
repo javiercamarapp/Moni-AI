@@ -74,6 +74,13 @@ export default function NetWorth() {
         .gte('transaction_date', startDate.toISOString().split('T')[0])
         .order('transaction_date', { ascending: true });
 
+      console.log('📥 Transacciones obtenidas:', {
+        count: transactions?.length || 0,
+        startDate: startDate.toISOString().split('T')[0],
+        period: selectedPeriod,
+        error: error?.message
+      });
+
       if (error) throw error;
 
       // Determinar el intervalo de agrupación según el período
@@ -171,6 +178,7 @@ export default function NetWorth() {
         });
       } else {
         // Si no hay transacciones, mostrar punto en 0
+        console.log('⚠️ No hay transacciones, creando punto inicial en 0');
         dataPoints.push({
           date: now.toISOString().split('T')[0],
           value: 0,
@@ -178,12 +186,24 @@ export default function NetWorth() {
         });
       }
 
+      console.log('📊 Puntos de datos generados:', {
+        totalPoints: dataPoints.length,
+        points: dataPoints
+      });
+
       setNetWorthData(dataPoints);
 
       const current = dataPoints[dataPoints.length - 1]?.value || 0;
       const previous = dataPoints[0]?.value || 0;
       const change = current - previous;
       const changePercent = previous !== 0 ? (change / Math.abs(previous)) * 100 : 0;
+
+      console.log('💰 Patrimonio calculado:', {
+        current,
+        previous,
+        change,
+        changePercent: changePercent.toFixed(2) + '%'
+      });
 
       setCurrentNetWorth(current);
       setNetWorthChange(change);
