@@ -291,9 +291,9 @@ export default function NetWorth() {
                   <stop offset="100%" stopColor="#7f1d1d" stopOpacity={0.8}/>
                 </linearGradient>
                 <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#b91c1c" stopOpacity={0.9}/>
-                  <stop offset="50%" stopColor="#991b1b" stopOpacity={0.6}/>
-                  <stop offset="100%" stopColor="#7f1d1d" stopOpacity={0.2}/>
+                  <stop offset="0%" stopColor="#ef4444" stopOpacity={1}/>
+                  <stop offset="50%" stopColor="#dc2626" stopOpacity={0.8}/>
+                  <stop offset="100%" stopColor="#7f1d1d" stopOpacity={0.4}/>
                 </linearGradient>
                 <filter id="glow">
                   <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
