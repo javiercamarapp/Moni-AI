@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, TrendingUp, TrendingDown, RefreshCw, Menu } from "lucide-react";
-import { LineChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { LineChart, Line, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
 
 interface NetWorthDataPoint {
@@ -328,6 +328,16 @@ export default function NetWorth() {
 
       {/* Chart Section - Net Worth Real */}
       <div className="relative px-4 mb-6 z-10">
+        {/* Debug visible */}
+        <div className="mb-4 p-3 bg-green-500/20 rounded-lg text-white">
+          <p className="text-sm font-bold">Datos disponibles:</p>
+          <p className="text-xs">Puntos: {netWorthData.length}</p>
+          <p className="text-xs">Net Worth actual: ${currentNetWorth.toLocaleString()}</p>
+          {netWorthData.length > 0 && (
+            <p className="text-xs">Rango: ${netWorthData[0]?.value.toFixed(0)} → ${netWorthData[netWorthData.length - 1]?.value.toFixed(0)}</p>
+          )}
+        </div>
+
         {/* Period Buttons */}
         <div className="mb-3 flex gap-2 justify-end">
           {(['1M', '3M', '6M', '1Y', 'All'] as const).map((period) => (
@@ -347,64 +357,37 @@ export default function NetWorth() {
           ))}
         </div>
 
-        {/* Chart Container */}
-        <div className="h-96 w-full rounded-2xl overflow-hidden" style={{
-          background: 'linear-gradient(to bottom, #1a1a2e 0%, #16213e 100%)'
-        }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart 
-              data={netWorthData}
-              margin={{ top: 30, right: 30, left: 60, bottom: 30 }}
-            >
-              <defs>
-                <linearGradient id="netWorthGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#10b981" stopOpacity={0.6}/>
-                  <stop offset="100%" stopColor="#10b981" stopOpacity={0.05}/>
-                </linearGradient>
-              </defs>
-              
-              <CartesianGrid 
-                strokeDasharray="3 3" 
-                stroke="rgba(255,255,255,0.1)" 
-                vertical={false}
-              />
-              
-              <XAxis 
-                dataKey="displayDate"
-                stroke="rgba(255,255,255,0.4)"
-                tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 11 }}
-                tickLine={false}
-              />
-              
-              <YAxis 
-                stroke="rgba(255,255,255,0.4)"
-                tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 11 }}
-                tickFormatter={(value) => {
-                  if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-                  if (value >= 1000) return `$${(value / 1000).toFixed(0)}k`;
-                  return `$${value}`;
-                }}
-                tickLine={false}
-              />
-              
-              <Tooltip content={<CustomTooltip />} />
-              
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="#10b981"
-                strokeWidth={3}
-                fill="url(#netWorthGradient)"
-                dot={false}
-                activeDot={{ 
-                  r: 6, 
-                  fill: '#10b981', 
-                  stroke: '#fff', 
-                  strokeWidth: 2 
-                }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+        {/* Chart Container - Muy simple */}
+        <div className="h-96 w-full rounded-2xl bg-gray-900 p-6">
+          {netWorthData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={netWorthData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                <XAxis 
+                  dataKey="displayDate"
+                  stroke="#999"
+                  style={{ fontSize: '12px' }}
+                />
+                <YAxis 
+                  stroke="#999"
+                  style={{ fontSize: '12px' }}
+                  tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#10b981"
+                  strokeWidth={3}
+                  dot={{ fill: '#10b981', r: 5 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-full flex items-center justify-center text-white">
+              <p>No hay datos para mostrar</p>
+            </div>
+          )}
         </div>
       </div>
 
