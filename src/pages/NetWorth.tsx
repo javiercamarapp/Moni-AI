@@ -312,6 +312,14 @@ export default function NetWorth() {
 
       {/* Chart Section - Aesthetic Trading Style */}
       <div className="relative px-4 mb-6 z-10">
+        {/* Debug Info */}
+        {netWorthData.length > 0 && (
+          <div className="mb-2 p-2 bg-white/10 rounded text-white text-xs">
+            <p>Puntos de datos: {netWorthData.length}</p>
+            <p>Rango: ${netWorthData[0]?.value.toFixed(2)} → ${netWorthData[netWorthData.length - 1]?.value.toFixed(2)}</p>
+          </div>
+        )}
+        
         {/* Period Buttons - Above Chart */}
         <div className="mb-3 flex gap-2 justify-end">
           {(['1M', '3M', '6M', '1Y', 'All'] as const).map((period) => (
@@ -378,7 +386,7 @@ export default function NetWorth() {
                   axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
                   tickLine={false}
                   tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                  domain={['dataMin - 5000', 'dataMax + 5000']}
+                  domain={[0, 'dataMax + 10000']}
                 />
                 
                 <Tooltip 
@@ -401,16 +409,16 @@ export default function NetWorth() {
                 )}
                 
                 <Area
-                  type="natural"
+                  type="monotone"
                   dataKey="value"
                   stroke="#ef4444"
-                  strokeWidth={2.5}
+                  strokeWidth={3}
                   fill="url(#colorValue)"
                   fillOpacity={1}
-                  dot={false}
-                  activeDot={false}
-                  animationDuration={1000}
-                  animationEasing="ease-in-out"
+                  dot={{ fill: '#ef4444', r: 4, strokeWidth: 2, stroke: '#fff' }}
+                  activeDot={{ r: 6, fill: '#ef4444', stroke: '#fff', strokeWidth: 2 }}
+                  isAnimationActive={true}
+                  animationDuration={800}
                 />
               </LineChart>
             </ResponsiveContainer>
