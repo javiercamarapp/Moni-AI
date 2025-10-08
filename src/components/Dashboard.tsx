@@ -987,42 +987,69 @@ const Dashboard = () => {
               </div>
 
               <div className="space-y-3 sm:space-y-4">
-                {goals.length === 0 ? <Card className="p-6 bg-gradient-card card-glow text-center">
-                    <p className="text-white/70 mb-4">No tienes metas creadas aún</p>
-                    <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-gradient-card card-glow hover:bg-white/30 text-white hover:scale-105 transition-transform duration-200">
+                {goals.length === 0 ? <Card className="p-6 bg-gradient-to-br from-[hsl(280,60%,25%)] to-[hsl(280,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(280,70%,45%)]/40 relative overflow-hidden text-center animate-fade-in">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
+                    <p className="text-white/90 mb-4 relative z-10 drop-shadow-lg">No tienes metas creadas aún</p>
+                    <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:scale-105 transition-transform duration-200 relative z-10">
                       <Plus className="w-4 h-4 mr-2" />
                       Crear tu primera meta
                     </Button>
-                  </Card> : goals.map(goal => {
+                  </Card> : goals.map((goal, index) => {
                 const goalProgress = goal.current / goal.target * 100;
-                return <Card key={goal.id} className="p-4 sm:p-6 bg-gradient-card card-glow hover-lift">
-                        <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-4">
+                const gradients = [
+                  'from-[hsl(280,60%,25%)] to-[hsl(280,55%,15%)] border-[hsl(280,70%,45%)]/40',
+                  'from-[hsl(200,60%,25%)] to-[hsl(200,55%,15%)] border-[hsl(200,70%,45%)]/40',
+                  'from-[hsl(340,60%,25%)] to-[hsl(340,55%,15%)] border-[hsl(340,70%,45%)]/40',
+                  'from-[hsl(145,60%,25%)] to-[hsl(145,55%,15%)] border-[hsl(145,70%,45%)]/40',
+                ];
+                const gradient = gradients[index % gradients.length];
+                return <Card key={goal.id} className={`p-4 sm:p-6 bg-gradient-to-br ${gradient} card-glow shadow-2xl border-2 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in`} style={{
+                  animationDelay: `${index * 100}ms`
+                }}>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
+                        
+                        <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-4 relative z-10">
                           <div className="flex-1">
                             <div className="flex items-center flex-wrap space-x-2 mb-2 gap-1">
-                              <h4 className="text-base sm:text-lg font-semibold text-white">{goal.title}</h4>
-                              {goal.type === 'group' && <Badge variant="outline" className="text-xs text-white border-white/30">
+                              <h4 className="text-base sm:text-lg font-semibold text-white drop-shadow-lg">{goal.title}</h4>
+                              {goal.type === 'group' && <Badge variant="outline" className="text-xs text-white border-white/30 bg-white/10 backdrop-blur-sm">
                                   <Users className="w-3 h-3 mr-1" />
                                   {goal.members} personas
                                 </Badge>}
                             </div>
-                            <p className="text-xs sm:text-sm text-white">Meta: {goal.deadline}</p>
+                            <p className="text-xs sm:text-sm text-white/90 drop-shadow">Meta: {goal.deadline}</p>
                           </div>
                           <div className="text-left sm:text-right">
-                            <p className="text-base sm:text-lg font-semibold text-white">
+                            <p className="text-base sm:text-lg font-semibold text-white drop-shadow-lg">
                               ${Number(goal.current).toLocaleString()}
                             </p>
-                            <p className="text-xs sm:text-sm text-white">
+                            <p className="text-xs sm:text-sm text-white/90 drop-shadow">
                               de ${Number(goal.target).toLocaleString()}
                             </p>
                           </div>
                         </div>
                         
-                        <Progress value={goalProgress} className="h-2 sm:h-3 mb-2" />
-                        <div className="flex justify-between text-xs sm:text-sm">
-                          <span className="text-white">{Math.round(goalProgress)}% completado</span>
-                          <span className="text-white font-medium">
-                            ${(Number(goal.target) - Number(goal.current)).toLocaleString()} restante
-                          </span>
+                        <div className="relative z-10">
+                          <div className="relative h-3 bg-white/10 rounded-full overflow-hidden backdrop-blur-sm border border-white/20 mb-2">
+                            <div 
+                              className="h-full bg-gradient-to-r from-white/60 to-white/90 rounded-full transition-all duration-1000 ease-out relative"
+                              style={{ 
+                                width: `${Math.min(goalProgress, 100)}%`,
+                                animation: 'slide-in-right 1s ease-out'
+                              }}
+                            >
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
+                            </div>
+                          </div>
+                          
+                          <div className="flex justify-between items-center text-xs sm:text-sm">
+                            <span className="text-white/90 drop-shadow">
+                              ${(Number(goal.target) - Number(goal.current)).toLocaleString()} restante
+                            </span>
+                            <span className="text-white font-bold text-sm sm:text-base drop-shadow-lg">
+                              {Math.round(goalProgress)}%
+                            </span>
+                          </div>
                         </div>
                       </Card>;
               })}
