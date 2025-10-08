@@ -27,7 +27,7 @@ export default function NetWorth() {
   const [currentNetWorth, setCurrentNetWorth] = useState(0);
   const [netWorthChange, setNetWorthChange] = useState(0);
   const [netWorthChangePercent, setNetWorthChangePercent] = useState(0);
-  const [selectedPeriod, setSelectedPeriod] = useState<'1M' | '3M' | '6M' | '1Y' | 'All'>('1M');
+  const [selectedPeriod, setSelectedPeriod] = useState<'1D' | '1M' | '3M' | '6M' | '1Y' | 'All'>('1M');
   const [highValue, setHighValue] = useState(0);
   const [lowValue, setLowValue] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -50,6 +50,9 @@ export default function NetWorth() {
       const startDate = new Date();
       
       switch (selectedPeriod) {
+        case '1D':
+          startDate.setDate(now.getDate() - 1);
+          break;
         case '1M':
           startDate.setMonth(now.getMonth() - 1);
           break;
@@ -258,6 +261,9 @@ export default function NetWorth() {
                 dataKey="value"
                 stroke="none"
                 fill="url(#areaGradient)"
+                isAnimationActive={true}
+                animationDuration={1500}
+                animationEasing="ease-in-out"
               />
               <Line
                 type="natural"
@@ -266,6 +272,9 @@ export default function NetWorth() {
                 strokeWidth={2}
                 dot={false}
                 activeDot={{ r: 4, fill: '#ffffff', strokeWidth: 2 }}
+                isAnimationActive={true}
+                animationDuration={1500}
+                animationEasing="ease-in-out"
               />
             </LineChart>
           </ResponsiveContainer>
@@ -280,15 +289,15 @@ export default function NetWorth() {
 
       {/* Period Buttons - Positioned over the chart */}
       <div className="px-4 mb-4 flex gap-2 justify-end relative z-10">
-        {(['1M', '3M', '6M', '1Y', 'All'] as const).map((period) => (
+        {(['1D', '1M', '3M', '6M', '1Y', 'All'] as const).map((period) => (
           <Button
             key={period}
             variant="ghost"
             size="sm"
             onClick={() => setSelectedPeriod(period)}
-            className={`rounded-full text-xs h-8 px-3 ${
+            className={`rounded-full text-xs h-8 px-3 transition-all duration-200 ${
               selectedPeriod === period
-                ? 'bg-white/90 text-[#4a5fc1] font-semibold'
+                ? 'bg-white/90 text-[#4a5fc1] font-semibold shadow-lg scale-105'
                 : 'bg-white/20 text-white border-white/30 hover:bg-white/30'
             }`}
           >
