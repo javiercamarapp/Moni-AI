@@ -348,90 +348,47 @@ export default function NetWorth() {
           ))}
         </div>
 
-        {/* Chart Container with Dark Pattern Background */}
-        <div className="relative h-80 w-full rounded-2xl overflow-hidden border border-white/10">
-          {/* Dark pattern background */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-[#111111] to-[#0a0a0a]">
-            <div className="absolute inset-0 opacity-20" style={{
-              backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)',
-              backgroundSize: '20px 20px'
-            }}></div>
-          </div>
-
+        {/* Chart Container - Simplified */}
+        <div className="relative h-80 w-full rounded-2xl overflow-hidden border-2 border-red-500 bg-[#1a1a1a]">
           {/* Chart */}
-          <div className="relative h-full w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart 
-                data={netWorthData}
-                margin={{ top: 20, right: 20, left: 0, bottom: 20 }}
-              >
-                <defs>
-                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#ef4444" stopOpacity={0.4}/>
-                    <stop offset="50%" stopColor="#dc2626" stopOpacity={0.2}/>
-                    <stop offset="100%" stopColor="#991b1b" stopOpacity={0.05}/>
-                  </linearGradient>
-                </defs>
-                
-                {/* Horizontal grid lines */}
-                <CartesianGrid 
-                  strokeDasharray="0" 
-                  stroke="rgba(255,255,255,0.08)" 
-                  horizontal={true}
-                  vertical={false}
-                />
-                
-                <XAxis 
-                  dataKey="displayDate"
-                  stroke="rgba(255,255,255,0.3)"
-                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
-                  axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-                  tickLine={false}
-                />
-                
-                <YAxis 
-                  stroke="rgba(255,255,255,0.3)"
-                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
-                  axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-                  tickLine={false}
-                  tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                  domain={[0, 'dataMax + 10000']}
-                />
-                
-                <Tooltip 
-                  content={<CustomTooltip />}
-                  cursor={{ stroke: '#ef4444', strokeWidth: 1, strokeDasharray: '3 3' }}
-                  animationDuration={200}
-                />
-                
-                {/* Average reference line */}
-                {currentNetWorth > 0 && (
-                  <line
-                    x1="0"
-                    y1="50%"
-                    x2="100%"
-                    y2="50%"
-                    stroke="rgba(255,255,255,0.2)"
-                    strokeWidth="1"
-                    strokeDasharray="5 5"
-                  />
-                )}
-                
-                <Area
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#ef4444"
-                  strokeWidth={3}
-                  fill="url(#colorValue)"
-                  fillOpacity={1}
-                  dot={{ fill: '#ef4444', r: 4, strokeWidth: 2, stroke: '#fff' }}
-                  activeDot={{ r: 6, fill: '#ef4444', stroke: '#fff', strokeWidth: 2 }}
-                  isAnimationActive={true}
-                  animationDuration={800}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart 
+              data={netWorthData}
+              margin={{ top: 30, right: 30, left: 50, bottom: 30 }}
+            >
+              <defs>
+                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1}/>
+                </linearGradient>
+              </defs>
+              
+              <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+              
+              <XAxis 
+                dataKey="displayDate"
+                stroke="#fff"
+                tick={{ fill: '#fff' }}
+              />
+              
+              <YAxis 
+                stroke="#fff"
+                tick={{ fill: '#fff' }}
+                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+              />
+              
+              <Tooltip content={<CustomTooltip />} />
+              
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke="#ef4444"
+                strokeWidth={3}
+                fill="url(#colorValue)"
+                dot={{ fill: '#ef4444', r: 5 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
