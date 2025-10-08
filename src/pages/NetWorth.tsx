@@ -83,78 +83,77 @@ export default function NetWorth() {
 
       if (error) throw error;
 
+      // Calcular el Net Worth real día por día basado en saldos de cuentas
+      const accountBalances = new Map<string, number>(); // account -> balance
+      const netWorthByDate = new Map<string, number>(); // date -> net worth
+      
+      const sortedTransactions = (transactions || []).sort((a, b) => 
+        new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime()
+      );
+
+      // Procesar cada transacción para actualizar saldos de cuentas
+      sortedTransactions.forEach(transaction => {
+        const account = transaction.account || 'Sin cuenta';
+        const amount = Number(transaction.amount);
+        const date = transaction.transaction_date;
+        
+        // Obtener saldo actual de la cuenta
+        const currentBalance = accountBalances.get(account) || 0;
+        
+        // Actualizar saldo según tipo de transacción
+        let newBalance = currentBalance;
+        if (transaction.type === 'ingreso') {
+          newBalance = currentBalance + amount;
+        } else {
+          newBalance = currentBalance - amount;
+        }
+        
+        accountBalances.set(account, newBalance);
+        
+        // Calcular Net Worth total (suma de todos los saldos de cuentas)
+        let totalNetWorth = 0;
+        accountBalances.forEach(balance => {
+          totalNetWorth += balance;
+        });
+        
+        netWorthByDate.set(date, totalNetWorth);
+      });
+
+      console.log('💼 Saldos por cuenta:', Object.fromEntries(accountBalances));
+      console.log('📈 Net Worth por fecha:', Object.fromEntries(netWorthByDate));
+
       // Determinar el intervalo de agrupación según el período
       let groupByDays = 1;
       let dateFormat: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
       
       switch (selectedPeriod) {
         case '1M':
-          groupByDays = 3; // Cada 3 días
+          groupByDays = 3;
           dateFormat = { month: 'short', day: 'numeric' };
           break;
         case '3M':
-          groupByDays = 7; // Cada semana
+          groupByDays = 7;
           dateFormat = { month: 'short', day: 'numeric' };
           break;
         case '6M':
-          groupByDays = 15; // Cada 15 días
+          groupByDays = 15;
           dateFormat = { month: 'short', day: 'numeric' };
           break;
         case '1Y':
-          groupByDays = 30; // Cada mes
+          groupByDays = 30;
           dateFormat = { month: 'short' };
           break;
         case 'All':
-          groupByDays = 90; // Cada 3 meses
+          groupByDays = 90;
           dateFormat = { year: 'numeric', month: 'short' };
           break;
       }
 
-      // Calcular el patrimonio acumulado día por día
-      const netWorthMap = new Map<string, number>();
-      let runningTotal = 0;
-
-      const sortedTransactions = (transactions || []).sort((a, b) => 
-        new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime()
-      );
-
-      // Si no hay transacciones, empezar con 0
-      if (sortedTransactions.length === 0) {
-        netWorthMap.set(now.toISOString().split('T')[0], 0);
-      }
-
-      // Calcular el balance acumulado para cada fecha
-      sortedTransactions.forEach(transaction => {
-        const amount = Number(transaction.amount);
-        const date = transaction.transaction_date;
-        
-        // Sumar ingresos, restar gastos
-        if (transaction.type === 'ingreso') {
-          runningTotal += amount;
-        } else {
-          runningTotal -= amount;
-        }
-        
-        // Guardar el valor acumulado para esta fecha
-        netWorthMap.set(date, runningTotal);
-      });
-
       // Crear puntos de datos para la gráfica
       const dataPoints: NetWorthDataPoint[] = [];
-      const dates = Array.from(netWorthMap.keys()).sort();
+      const dates = Array.from(netWorthByDate.keys()).sort();
       
       if (dates.length > 0) {
-        // Agregar punto inicial con valor 0 si no existe
-        const firstDate = new Date(dates[0]);
-        const dayBefore = new Date(firstDate);
-        dayBefore.setDate(dayBefore.getDate() - 1);
-        
-        dataPoints.push({
-          date: dayBefore.toISOString().split('T')[0],
-          value: 0,
-          displayDate: dayBefore.toLocaleDateString('es-MX', dateFormat)
-        });
-
         // Agrupar datos según el intervalo seleccionado
         let currentGroupStart = new Date(dates[0]);
         let lastValue = 0;
@@ -163,7 +162,7 @@ export default function NetWorth() {
           const currentDate = new Date(date);
           const daysDiff = Math.floor((currentDate.getTime() - currentGroupStart.getTime()) / (1000 * 60 * 60 * 24));
           
-          const value = netWorthMap.get(date) || lastValue;
+          const value = netWorthByDate.get(date) || lastValue;
           lastValue = value;
           
           // Agregar punto si es el primer elemento, alcanzamos el intervalo, o es el último
@@ -213,19 +212,36 @@ export default function NetWorth() {
       setHighValue(Math.max(...values));
       setLowValue(Math.min(...values));
 
-      // Calculate assets and liabilities
-      const assets = Math.max(current, 0);
-      const liabilities = Math.abs(Math.min(current, 0));
-      setTotalAssets(assets);
-      setTotalLiabilities(liabilities);
+      // Calcular activos y pasivos basados en saldos de cuentas
+      let totalAssets = 0;
+      let totalLiabilities = 0;
+      
+      accountBalances.forEach(balance => {
+        if (balance > 0) {
+          totalAssets += balance;
+        } else {
+          totalLiabilities += Math.abs(balance);
+        }
+      });
+      
+      setTotalAssets(totalAssets);
+      setTotalLiabilities(totalLiabilities);
 
-      // Mock accounts data - en producción vendría de la base de datos
-      setAccounts([
-        { id: '1', name: 'TOTAL CHECKING', type: 'Checking', balance: 7401.77, lastUpdate: 'less than a minute ago' },
-        { id: '2', name: 'Checking 0951', type: 'Checking', balance: 4796.94, lastUpdate: 'less than a minute ago' },
-        { id: '3', name: '360 Checking', type: 'Checking', balance: 2604.80, lastUpdate: '2 months ago' },
-        { id: '4', name: 'EVERYDAY SA...', type: 'Savings', balance: 0.03, lastUpdate: '2 months ago' },
-      ]);
+      // Generar lista de cuentas con sus saldos
+      const accountsList: Account[] = [];
+      accountBalances.forEach((balance, accountName) => {
+        if (accountName !== 'Sin cuenta') {
+          accountsList.push({
+            id: accountName,
+            name: accountName,
+            type: balance > 0 ? 'Asset' : 'Liability',
+            balance: Math.abs(balance),
+            lastUpdate: 'Actualizado ahora'
+          });
+        }
+      });
+      
+      setAccounts(accountsList);
 
     } catch (error) {
       console.error('Error fetching net worth data:', error);
@@ -310,7 +326,7 @@ export default function NetWorth() {
         </div>
       </div>
 
-      {/* Chart Section - Nueva desde cero */}
+      {/* Chart Section - Net Worth Real */}
       <div className="relative px-4 mb-6 z-10">
         {/* Period Buttons */}
         <div className="mb-3 flex gap-2 justify-end">
@@ -331,10 +347,64 @@ export default function NetWorth() {
           ))}
         </div>
 
-        {/* Chart Container - Placeholder */}
-        <div className="h-80 w-full rounded-2xl bg-white/5 border border-white/20 flex items-center justify-center">
-          <p className="text-white text-lg">Gráfica nueva aquí</p>
-          <p className="text-white/70 text-sm ml-2">({netWorthData.length} puntos de datos disponibles)</p>
+        {/* Chart Container */}
+        <div className="h-96 w-full rounded-2xl overflow-hidden" style={{
+          background: 'linear-gradient(to bottom, #1a1a2e 0%, #16213e 100%)'
+        }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart 
+              data={netWorthData}
+              margin={{ top: 30, right: 30, left: 60, bottom: 30 }}
+            >
+              <defs>
+                <linearGradient id="netWorthGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#10b981" stopOpacity={0.6}/>
+                  <stop offset="100%" stopColor="#10b981" stopOpacity={0.05}/>
+                </linearGradient>
+              </defs>
+              
+              <CartesianGrid 
+                strokeDasharray="3 3" 
+                stroke="rgba(255,255,255,0.1)" 
+                vertical={false}
+              />
+              
+              <XAxis 
+                dataKey="displayDate"
+                stroke="rgba(255,255,255,0.4)"
+                tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 11 }}
+                tickLine={false}
+              />
+              
+              <YAxis 
+                stroke="rgba(255,255,255,0.4)"
+                tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 11 }}
+                tickFormatter={(value) => {
+                  if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
+                  if (value >= 1000) return `$${(value / 1000).toFixed(0)}k`;
+                  return `$${value}`;
+                }}
+                tickLine={false}
+              />
+              
+              <Tooltip content={<CustomTooltip />} />
+              
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke="#10b981"
+                strokeWidth={3}
+                fill="url(#netWorthGradient)"
+                dot={false}
+                activeDot={{ 
+                  r: 6, 
+                  fill: '#10b981', 
+                  stroke: '#fff', 
+                  strokeWidth: 2 
+                }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
