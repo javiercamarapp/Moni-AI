@@ -1135,21 +1135,105 @@ const Dashboard = () => {
 
               <div className="space-y-3 sm:space-y-4">
                 {challenges.length === 0 ? (
-                  <Card className="p-6 bg-gradient-to-br from-[hsl(280,60%,25%)] to-[hsl(280,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(280,70%,45%)]/40 relative overflow-hidden text-center animate-fade-in">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
-                    <p className="text-white/90 mb-4 relative z-10 drop-shadow-lg">
-                      {loadingChallenges ? "Generando retos personalizados..." : "Aún no tienes retos activos"}
-                    </p>
-                    <Button 
-                      size="sm" 
-                      onClick={handleGenerateChallenges} 
-                      disabled={loadingChallenges}
-                      className="bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:scale-105 transition-transform duration-200 relative z-10"
-                    >
-                      <Zap className="w-4 h-4 mr-2" />
-                      {loadingChallenges ? "Generando..." : "Crear tu primer reto"}
-                    </Button>
-                  </Card>
+                  <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                      {/* Reto 1: Sin Café */}
+                      <Card className="p-4 bg-gradient-to-br from-[hsl(25,70%,40%)] to-[hsl(25,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(25,80%,50%)]/40 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer"
+                        onClick={handleGenerateChallenges}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
+                        
+                        <div className="relative z-10">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="text-3xl">☕</div>
+                            <h4 className="text-lg font-bold text-white drop-shadow-lg">
+                              Reto Café
+                            </h4>
+                          </div>
+                          
+                          <p className="text-sm text-white/90 mb-4 drop-shadow">
+                            Una semana sin comprar café. ¡Ahorra y cuida tu salud!
+                          </p>
+                          
+                          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20 mb-3">
+                            <p className="text-xs text-white/80 mb-2">Esta semana</p>
+                            <div className="flex justify-between gap-1">
+                              {['D', 'L', 'M', 'M', 'J', 'V', 'S'].map((day, i) => (
+                                <div key={i} className="flex flex-col items-center flex-1">
+                                  <span className="text-[10px] text-white/70 mb-1">{day}</span>
+                                  <div className="w-7 h-7 rounded-full bg-white/20 text-white/40 flex items-center justify-center text-xs" />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          <Button 
+                            size="sm" 
+                            className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30"
+                            onClick={handleGenerateChallenges}
+                            disabled={loadingChallenges}
+                          >
+                            {loadingChallenges ? "Generando..." : "Aceptar reto"}
+                          </Button>
+                        </div>
+                      </Card>
+
+                      {/* Reto 2: Sin Delivery */}
+                      <Card className="p-4 bg-gradient-to-br from-[hsl(340,70%,40%)] to-[hsl(340,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(340,80%,50%)]/40 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer"
+                        style={{ animationDelay: '100ms' }}
+                        onClick={handleGenerateChallenges}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
+                        
+                        <div className="relative z-10">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="text-3xl">🍔</div>
+                            <h4 className="text-lg font-bold text-white drop-shadow-lg">
+                              Reto Delivery
+                            </h4>
+                          </div>
+                          
+                          <p className="text-sm text-white/90 mb-4 drop-shadow">
+                            Una semana sin pedir comida a domicilio. ¡Cocina en casa!
+                          </p>
+                          
+                          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20 mb-3">
+                            <p className="text-xs text-white/80 mb-2">Esta semana</p>
+                            <div className="flex justify-between gap-1">
+                              {['D', 'L', 'M', 'M', 'J', 'V', 'S'].map((day, i) => (
+                                <div key={i} className="flex flex-col items-center flex-1">
+                                  <span className="text-[10px] text-white/70 mb-1">{day}</span>
+                                  <div className="w-7 h-7 rounded-full bg-white/20 text-white/40 flex items-center justify-center text-xs" />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          <Button 
+                            size="sm" 
+                            className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30"
+                            onClick={handleGenerateChallenges}
+                            disabled={loadingChallenges}
+                          >
+                            {loadingChallenges ? "Generando..." : "Aceptar reto"}
+                          </Button>
+                        </div>
+                      </Card>
+                    </div>
+                    
+                    <div className="text-center">
+                      <p className="text-sm text-white/70 mb-2">o genera retos personalizados con IA</p>
+                      <Button 
+                        size="sm" 
+                        onClick={handleGenerateChallenges} 
+                        disabled={loadingChallenges}
+                        className="bg-gradient-card card-glow hover:bg-white/30 text-white border-white/30"
+                      >
+                        <Zap className="w-4 h-4 mr-2" />
+                        {loadingChallenges ? "Generando..." : "Generar retos con IA"}
+                      </Button>
+                    </div>
+                  </>
                 ) : (
                   challenges.map((challenge, index) => {
                     const progress = (challenge.current_amount / challenge.target_amount) * 100;
