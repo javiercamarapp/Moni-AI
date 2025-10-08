@@ -79,6 +79,37 @@ export default function NetWorth() {
 
       if (error) throw error;
 
+      // Determinar el intervalo de agrupación según el período
+      let groupByDays = 1;
+      let dateFormat: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
+      
+      switch (selectedPeriod) {
+        case '1D':
+          groupByDays = 1; // Cada día
+          dateFormat = { hour: '2-digit', minute: '2-digit' };
+          break;
+        case '1M':
+          groupByDays = 3; // Cada 3 días
+          dateFormat = { month: 'short', day: 'numeric' };
+          break;
+        case '3M':
+          groupByDays = 7; // Cada semana
+          dateFormat = { month: 'short', day: 'numeric' };
+          break;
+        case '6M':
+          groupByDays = 15; // Cada 15 días
+          dateFormat = { month: 'short', day: 'numeric' };
+          break;
+        case '1Y':
+          groupByDays = 30; // Cada mes
+          dateFormat = { month: 'short' };
+          break;
+        case 'All':
+          groupByDays = 90; // Cada 3 meses
+          dateFormat = { year: 'numeric', month: 'short' };
+          break;
+      }
+
       const netWorthMap = new Map<string, number>();
       let runningTotal = 0;
 
@@ -86,8 +117,8 @@ export default function NetWorth() {
         new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime()
       );
 
+      // Calcular el balance acumulado para cada transacción
       sortedTransactions.forEach(transaction => {
-        const dateKey = transaction.transaction_date;
         const amount = Number(transaction.amount);
         
         if (transaction.type === 'ingreso') {
@@ -96,20 +127,35 @@ export default function NetWorth() {
           runningTotal -= amount;
         }
         
-        netWorthMap.set(dateKey, runningTotal);
+        netWorthMap.set(transaction.transaction_date, runningTotal);
       });
 
+      // Agrupar datos según el intervalo
       const dataPoints: NetWorthDataPoint[] = [];
       const dates = Array.from(netWorthMap.keys()).sort();
       
-      dates.forEach(date => {
-        const value = netWorthMap.get(date) || 0;
-        dataPoints.push({
-          date,
-          value,
-          displayDate: new Date(date).toLocaleDateString('es-MX', { month: 'short', day: 'numeric' })
+      if (dates.length > 0) {
+        let currentGroupStart = new Date(dates[0]);
+        let lastValue = netWorthMap.get(dates[0]) || 0;
+        
+        dates.forEach((date, index) => {
+          const currentDate = new Date(date);
+          const daysDiff = Math.floor((currentDate.getTime() - currentGroupStart.getTime()) / (1000 * 60 * 60 * 24));
+          
+          const value = netWorthMap.get(date) || lastValue;
+          lastValue = value;
+          
+          // Agregar punto si es el primer elemento, si alcanzamos el intervalo, o si es el último
+          if (index === 0 || daysDiff >= groupByDays || index === dates.length - 1) {
+            dataPoints.push({
+              date,
+              value,
+              displayDate: currentDate.toLocaleDateString('es-MX', dateFormat)
+            });
+            currentGroupStart = currentDate;
+          }
         });
-      });
+      }
 
       if (dataPoints.length === 0) {
         dataPoints.push({
