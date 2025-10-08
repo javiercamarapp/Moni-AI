@@ -628,7 +628,7 @@ const Dashboard = () => {
       {/* Header con saludo */}
       <div className="p-4 pt-2 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white">
+          <h1 className="text-base sm:text-lg font-bold text-white leading-tight">
             ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
           </h1>
           <p className="text-sm text-white">Vas excelente con tus metas financieras</p>
