@@ -357,29 +357,47 @@ export default function NetWorth() {
           ))}
         </div>
 
-        {/* Chart Container - Muy simple */}
-        <div className="h-96 w-full rounded-2xl bg-gray-900 p-6">
+        {/* Chart Container - Minimalista */}
+        <div className="h-96 w-full rounded-2xl bg-gradient-to-b from-[#0a0a0a] via-[#111111] to-[#0a0a0a] p-4">
           {netWorthData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={netWorthData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+              <LineChart data={netWorthData} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
+                <defs>
+                  <linearGradient id="redGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#ef4444" stopOpacity={0.6}/>
+                    <stop offset="50%" stopColor="#dc2626" stopOpacity={0.3}/>
+                    <stop offset="100%" stopColor="#991b1b" stopOpacity={0.05}/>
+                  </linearGradient>
+                </defs>
+                
+                {/* Grid mínimo - solo líneas básicas */}
+                <CartesianGrid 
+                  strokeDasharray="0" 
+                  stroke="rgba(255,255,255,0.05)" 
+                  horizontal={true}
+                  vertical={false}
+                />
+                
+                {/* Ejes ocultos */}
                 <XAxis 
                   dataKey="displayDate"
-                  stroke="#999"
-                  style={{ fontSize: '12px' }}
+                  hide={true}
                 />
-                <YAxis 
-                  stroke="#999"
-                  style={{ fontSize: '12px' }}
-                  tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                />
+                
+                <YAxis hide={true} />
+                
                 <Tooltip content={<CustomTooltip />} />
-                <Line
-                  type="monotone"
+                
+                {/* Área sombreada */}
+                <Area
+                  type="natural"
                   dataKey="value"
-                  stroke="#10b981"
+                  stroke="#ef4444"
                   strokeWidth={3}
-                  dot={{ fill: '#10b981', r: 5 }}
+                  fill="url(#redGradient)"
+                  fillOpacity={1}
+                  dot={false}
+                  activeDot={false}
                 />
               </LineChart>
             </ResponsiveContainer>
