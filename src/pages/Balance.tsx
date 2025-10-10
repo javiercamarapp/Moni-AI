@@ -136,10 +136,26 @@ const Balance = () => {
   useEffect(() => {
     localStorage.setItem('balanceViewMode', viewMode);
   }, [viewMode]);
-  const [ingresosByCategory, setIngresosByCategory] = useState<CategoryBalance[]>([]);
-  const [gastosByCategory, setGastosByCategory] = useState<CategoryBalance[]>([]);
-  const [totalIngresos, setTotalIngresos] = useState(0);
-  const [totalGastos, setTotalGastos] = useState(0);
+  const [ingresosByCategory, setIngresosByCategory] = useState<CategoryBalance[]>(() => {
+    try {
+      const cached = localStorage.getItem('balance_ingresos');
+      return cached ? JSON.parse(cached) : [];
+    } catch { return []; }
+  });
+  const [gastosByCategory, setGastosByCategory] = useState<CategoryBalance[]>(() => {
+    try {
+      const cached = localStorage.getItem('balance_gastos');
+      return cached ? JSON.parse(cached) : [];
+    } catch { return []; }
+  });
+  const [totalIngresos, setTotalIngresos] = useState(() => {
+    const cached = localStorage.getItem('balance_totalIngresos');
+    return cached ? parseFloat(cached) : 0;
+  });
+  const [totalGastos, setTotalGastos] = useState(() => {
+    const cached = localStorage.getItem('balance_totalGastos');
+    return cached ? parseFloat(cached) : 0;
+  });
   const [loading, setLoading] = useState(false);
   const [proyecciones, setProyecciones] = useState<{
     proyeccionAnual: number;
@@ -151,7 +167,12 @@ const Balance = () => {
       descripcion: string;
       tipo: 'positivo' | 'negativo' | 'neutral' | 'consejo';
     }>;
-  } | null>(null);
+  } | null>(() => {
+    try {
+      const cached = localStorage.getItem('balance_proyecciones');
+      return cached ? JSON.parse(cached) : null;
+    } catch { return null; }
+  });
   const [loadingProyecciones, setLoadingProyecciones] = useState(false);
   const [isUpdatingProjections, setIsUpdatingProjections] = useState(false);
 
@@ -192,6 +213,17 @@ const Balance = () => {
   }, [totalIngresos, totalGastos]);
   const fetchAIProjections = async () => {
     if (isUpdatingProjections) return; // Prevent concurrent calls
+
+    // Verificar caché primero - usar datos de hasta 10 minutos
+    const cacheKey = `balance_proyecciones_${viewMode}_${currentMonth.toISOString()}`;
+    const cacheTimeKey = `${cacheKey}_time`;
+    const cachedTime = localStorage.getItem(cacheTimeKey);
+    const now = Date.now();
+    
+    if (cachedTime && (now - parseInt(cachedTime)) < 10 * 60 * 1000) {
+      console.log('✅ Using cached projections');
+      return; // Ya tenemos datos frescos en caché
+    }
 
     try {
       setIsUpdatingProjections(true);
@@ -239,6 +271,11 @@ const Balance = () => {
       });
       if (error) throw error;
       setProyecciones(data);
+      // Guardar en caché con timestamp
+      localStorage.setItem('balance_proyecciones', JSON.stringify(data));
+      localStorage.setItem(cacheKey, JSON.stringify(data));
+      localStorage.setItem(cacheTimeKey, now.toString());
+      console.log('✅ Projections cached successfully');
     } catch (error) {
       console.error('Error fetching AI projections:', error);
       // Fallback: calculate based on all historical data, not current period
@@ -259,6 +296,7 @@ const Balance = () => {
     }
   };
   const fetchBalanceData = async () => {
+    setLoading(true);
     try {
       const {
         data: {
@@ -311,6 +349,8 @@ const Balance = () => {
       const ingresosData = transactions.filter(t => t.type === 'ingreso');
       const totalIng = ingresosData.reduce((sum, t) => sum + Number(t.amount), 0);
       setTotalIngresos(totalIng);
+      localStorage.setItem('balance_totalIngresos', totalIng.toString());
+      
       console.log('Ingresos count:', ingresosData.length);
       console.log('Total Ingresos:', totalIng);
       const ingresosCategoryMap = new Map<string, {
@@ -337,11 +377,14 @@ const Balance = () => {
         percentage: totalIng > 0 ? data.total / totalIng * 100 : 0
       })).sort((a, b) => b.total - a.total);
       setIngresosByCategory(ingresosWithPercentage);
+      localStorage.setItem('balance_ingresos', JSON.stringify(ingresosWithPercentage));
 
       // Process gastos with grouping
       const gastosData = transactions.filter(t => t.type === 'gasto');
       const totalGast = gastosData.reduce((sum, t) => sum + Number(t.amount), 0);
       setTotalGastos(totalGast);
+      localStorage.setItem('balance_totalGastos', totalGast.toString());
+      
       console.log('Gastos count:', gastosData.length);
       console.log('Total Gastos:', totalGast);
       console.log('Balance:', totalIng - totalGast);
@@ -373,6 +416,7 @@ const Balance = () => {
         percentage: totalGast > 0 ? data.total / totalGast * 100 : 0
       })).sort((a, b) => b.total - a.total);
       setGastosByCategory(gastosWithPercentage);
+      localStorage.setItem('balance_gastos', JSON.stringify(gastosWithPercentage));
     } finally {
       setLoading(false);
     }

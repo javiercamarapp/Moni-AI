@@ -88,12 +88,14 @@ export default function FinancialAnalysis() {
 
   useEffect(() => {
     if (user) {
-      // 1. Calcular métricas básicas inmediatamente
-      calculateQuickMetrics();
-      // 2. Cargar transacciones
-      fetchTransactionsData();
-      // 3. Cargar análisis IA en background (no bloquea UI)
-      loadAnalysis();
+      // Ejecutar todas las cargas en paralelo para máxima velocidad
+      Promise.all([
+        calculateQuickMetrics(),
+        fetchTransactionsData(),
+        loadAnalysis()
+      ]).catch(error => {
+        console.error('Error loading data:', error);
+      });
     }
   }, [user, period]);
 
@@ -436,6 +438,26 @@ export default function FinancialAnalysis() {
       return;
     }
     
+    // Verificar caché primero - usar datos de hasta 5 minutos
+    const cacheKey = `financialAnalysis_full_${period}_${user.id}`;
+    const cacheTimeKey = `${cacheKey}_time`;
+    const cachedTime = localStorage.getItem(cacheTimeKey);
+    const now = Date.now();
+    
+    if (cachedTime && (now - parseInt(cachedTime)) < 5 * 60 * 1000) {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        try {
+          const data = JSON.parse(cached);
+          setAnalysis(data);
+          console.log('✅ Using cached analysis data');
+          return;
+        } catch (e) {
+          console.error('Cache parse error:', e);
+        }
+      }
+    }
+    
     setLoading(true);
     try {
       console.log('Calling financial-analysis function with:', { userId: user.id, period });
@@ -449,8 +471,6 @@ export default function FinancialAnalysis() {
         }
       });
       
-      console.log('Financial analysis response:', { data, error });
-      
       if (error) {
         console.error('Financial analysis error:', error);
         throw error;
@@ -458,12 +478,18 @@ export default function FinancialAnalysis() {
       
       if (data) {
         setAnalysis(data);
+        // Guardar con timestamp
+        localStorage.setItem(cacheKey, JSON.stringify(data));
+        localStorage.setItem(cacheTimeKey, now.toString());
         localStorage.setItem('financialAnalysis_analysis', JSON.stringify(data));
-        console.log('Analysis data set successfully');
+        console.log('✅ Analysis data cached successfully');
       }
     } catch (error: any) {
       console.error("Error loading analysis:", error);
-      toast.error(`No se pudo cargar el análisis: ${error.message || 'Error desconocido'}`);
+      // No mostrar toast si tenemos datos en caché
+      if (!analysis) {
+        toast.error(`No se pudo cargar el análisis`);
+      }
     } finally {
       setLoading(false);
     }
