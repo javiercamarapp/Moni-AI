@@ -901,18 +901,6 @@ const Dashboard = () => {
   const progressPercentage = currentXP / nextLevelXP * 100;
   const achievements: any[] = []; // Los logros se implementarán en el futuro basados en la actividad del usuario
   
-  // Show content immediately - no auth check blocking
-  if (!user) {
-    return (
-      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
-        <div className="text-center">
-          <img src={moniLogo} alt="Moni" className="w-20 h-20 mx-auto mb-4 animate-pulse" />
-          <p className="text-white">Cargando...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header superior con logo y notificaciones */}
