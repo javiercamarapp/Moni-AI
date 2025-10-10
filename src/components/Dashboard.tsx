@@ -598,12 +598,14 @@ const Dashboard = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
+        // Fetch only pending challenges (not yet accepted)
         const { data, error } = await supabase
           .from('challenges')
           .select('*')
           .eq('user_id', user.id)
-          .eq('status', 'active')
-          .order('created_at', { ascending: false });
+          .eq('status', 'pending')
+          .order('created_at', { ascending: false })
+          .limit(2);
 
         if (error) throw error;
         setChallenges(data || []);
@@ -614,10 +616,42 @@ const Dashboard = () => {
     fetchChallenges();
   }, []);
 
+  const handleAcceptChallenge = async (challengeId: string) => {
+    try {
+      const { error } = await supabase
+        .from('challenges')
+        .update({ status: 'active' })
+        .eq('id', challengeId);
+
+      if (error) throw error;
+
+      // Remove from pending list
+      setChallenges(prev => prev.filter(c => c.id !== challengeId));
+      
+      toast({
+        title: "¡Reto aceptado!",
+        description: "Empieza hoy mismo tu reto"
+      });
+    } catch (error) {
+      console.error('Error accepting challenge:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo aceptar el reto",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleGenerateChallenges = async () => {
     try {
       setLoadingChallenges(true);
-      const { data, error } = await supabase.functions.invoke('generate-challenges');
+      
+      // Calculate how many challenges to generate
+      const challengesToGenerate = 2 - challenges.length;
+      
+      const { data, error } = await supabase.functions.invoke('generate-challenges', {
+        body: { count: challengesToGenerate }
+      });
       
       if (error) {
         if (error.message?.includes('429')) {
@@ -631,10 +665,19 @@ const Dashboard = () => {
         throw error;
       }
 
-      setChallenges(data.challenges || []);
+      // Refresh challenges list
+      const { data: updatedChallenges } = await supabase
+        .from('challenges')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false })
+        .limit(2);
+
+      setChallenges(updatedChallenges || []);
       toast({
         title: "Retos generados",
-        description: "La IA ha creado retos personalizados para ti"
+        description: challengesToGenerate === 1 ? "Se generó 1 nuevo reto" : "Se generaron 2 nuevos retos"
       });
     } catch (error: any) {
       console.error('Error generating challenges:', error);
@@ -1197,7 +1240,7 @@ const Dashboard = () => {
                             </div>
                           </div>
                           
-                          <div className="bg-white/10 backdrop-blur-sm rounded p-2 border border-white/20">
+                          <div className="bg-white/10 backdrop-blur-sm rounded p-2 border border-white/20 mb-2">
                             <div className="flex justify-between gap-1">
                               {daysStatus.map((day: any, dayIndex: number) => (
                                 <div 
@@ -1205,23 +1248,24 @@ const Dashboard = () => {
                                   className="flex flex-col items-center"
                                 >
                                   <span className="text-[9px] text-white/70 mb-1">
-                                    {dayNames[day.day]}
+                                    {dayNames[dayIndex]}
                                   </span>
                                   <div 
-                                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
-                                      day.status === 'completed' 
-                                        ? 'bg-white/90 text-green-600' 
-                                        : day.status === 'failed'
-                                        ? 'bg-white/90 text-red-600'
-                                        : 'bg-white/20 text-white/40'
-                                    }`}
+                                    className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold bg-white/20 text-white/40"
                                   >
-                                    {day.status === 'completed' ? '✓' : day.status === 'failed' ? '✗' : ''}
                                   </div>
                                 </div>
                               ))}
                             </div>
                           </div>
+                          
+                          <Button 
+                            size="sm" 
+                            className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30"
+                            onClick={() => handleAcceptChallenge(challenge.id)}
+                          >
+                            Aceptar reto
+                          </Button>
                         </div>
                       </Card>
                     );

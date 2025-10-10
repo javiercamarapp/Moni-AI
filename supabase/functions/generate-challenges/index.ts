@@ -27,6 +27,9 @@ serve(async (req) => {
       });
     }
 
+    // Get how many challenges to generate (default: 2)
+    const { count = 2 } = await req.json().catch(() => ({ count: 2 }));
+
     // Get user's recent transactions (last 3 months)
     const threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
@@ -60,7 +63,7 @@ serve(async (req) => {
     // Find categories with high spending
     const spendingArray = Object.values(categorySpending)
       .sort((a, b) => b.total - a.total)
-      .slice(0, 3);
+      .slice(0, Math.max(count, 3));
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
@@ -68,7 +71,7 @@ serve(async (req) => {
     }
 
     // Generate challenges using AI
-    const prompt = `Analiza estos patrones de gasto y genera 3 retos semanales específicos y motivadores:
+    const prompt = `Analiza estos patrones de gasto y genera ${count} retos semanales específicos y motivadores:
 
 ${spendingArray.map(s => `- ${s.name}: $${s.total.toFixed(2)} en ${s.count} transacciones (últimos 3 meses)`).join('\n')}
 
@@ -146,7 +149,7 @@ Formato: título corto y motivador, descripción breve, y la meta de gasto seman
       throw new Error("No se pudo generar retos");
     }
 
-    const generatedChallenges = JSON.parse(toolCall.function.arguments).challenges;
+    const generatedChallenges = JSON.parse(toolCall.function.arguments).challenges.slice(0, count);
 
     // Create challenge records
     const now = new Date();
@@ -174,7 +177,7 @@ Formato: título corto y motivador, descripción breve, y la meta de gasto seman
         { day: 5, status: 'pending' }, // Friday
         { day: 6, status: 'pending' }  // Saturday
       ]),
-      status: 'active',
+      status: 'pending', // Changed from 'active' to 'pending'
       is_ai_generated: true
     }));
 
