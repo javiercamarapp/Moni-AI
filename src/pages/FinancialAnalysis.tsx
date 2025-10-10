@@ -409,33 +409,33 @@ export default function FinancialAnalysis() {
             {/* Risk Indicators */}
             <RiskIndicatorsWidget
               hasIssues={
-                analysis?.riskIndicators && analysis.riskIndicators.length > 0 &&
-                analysis.riskIndicators.some((i: any) => i.level === 'critical' || i.level === 'warning')
+                analysis?.riskIndicators && analysis?.riskIndicators.length > 0 &&
+                analysis?.riskIndicators.some((i: any) => i.level === 'critical' || i.level === 'warning')
               }
               indicators={analysis?.riskIndicators || []}
             />
 
-            {analysis.upcomingTransactions && <UpcomingTransactionsWidget {...analysis.upcomingTransactions} />}
+            {analysis?.upcomingTransactions && <UpcomingTransactionsWidget {...analysis?.upcomingTransactions} />}
 
-            {analysis.topActions && analysis.topActions.length > 0 && <TopActionsWidget actions={analysis.topActions} />}
+            {analysis?.topActions && analysis?.topActions.length > 0 && <TopActionsWidget actions={analysis?.topActions} />}
 
             {/* 2. EXPLICABILIDAD DEL SCORE */}
-            {analysis.scoreBreakdown && <ScoreBreakdownWidget {...analysis.scoreBreakdown} />}
+            {analysis?.scoreBreakdown && <ScoreBreakdownWidget {...analysis?.scoreBreakdown} />}
 
             {/* 3. PATRIMONIO Y RUNWAY */}
-            {analysis.netWorth && <NetWorthWidget {...analysis.netWorth} />}
+            {analysis?.netWorth && <NetWorthWidget {...analysis?.netWorth} />}
 
             {/* 4. PROYECCIONES CON ESCENARIOS */}
-            {analysis.forecast && <ForecastWidget {...analysis.forecast} />}
+            {analysis?.forecast && <ForecastWidget {...analysis?.forecast} />}
 
             {/* 5. PRESUPUESTO VIVO */}
-            {analysis.budgetProgress && analysis.budgetProgress.categories && <BudgetProgressWidget {...analysis.budgetProgress} />}
+            {analysis?.budgetProgress && analysis?.budgetProgress.categories && <BudgetProgressWidget {...analysis?.budgetProgress} />}
 
             {/* 6. DEUDA INTELIGENTE */}
-            {analysis.debtPlan && analysis.debtPlan.debts && analysis.debtPlan.debts.length > 0 && <DebtPaymentPlanWidget {...analysis.debtPlan} />}
+            {analysis?.debtPlan && analysis?.debtPlan.debts && analysis?.debtPlan.debts.length > 0 && <DebtPaymentPlanWidget {...analysis?.debtPlan} />}
 
             {/* 7. SUSCRIPCIONES */}
-            {analysis.subscriptions && analysis.subscriptions.subscriptions && analysis.subscriptions.subscriptions.length > 0 && <SubscriptionsWidget {...analysis.subscriptions} />}
+            {analysis?.subscriptions && analysis?.subscriptions.subscriptions && analysis?.subscriptions.subscriptions.length > 0 && <SubscriptionsWidget {...analysis?.subscriptions} />}
 
             {/* Llamados a la Acción */}
             <div className="space-y-2">
@@ -467,11 +467,11 @@ export default function FinancialAnalysis() {
                     <span className="text-xs text-white/70">Balance</span>
                     <div className="flex items-center gap-1">
                       <DollarSign className="h-3 w-3 text-emerald-400" />
-                      {analysis.metrics.balance >= 0 ? <span className="text-emerald-400 text-xs">↑</span> : <span className="text-red-400 text-xs">↓</span>}
+                      {(analysis?.metrics?.balance ?? 0) >= 0 ? <span className="text-emerald-400 text-xs">↑</span> : <span className="text-red-400 text-xs">↓</span>}
                     </div>
                   </div>
-                  <p className={`text-lg font-bold ${analysis.metrics.balance >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                    ${formatK(analysis.metrics.balance)}k
+                  <p className={`text-lg font-bold ${(analysis?.metrics?.balance ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                    ${formatK(analysis?.metrics?.balance)}k
                   </p>
                   <p className="text-[10px] text-white/60">MoM: +2.3%</p>
                 </Card>
@@ -481,23 +481,23 @@ export default function FinancialAnalysis() {
                     <span className="text-xs text-white/70">Ahorro</span>
                     <PiggyBank className="h-3 w-3 text-purple-400" />
                   </div>
-                  <p className="text-lg font-bold text-purple-300">{analysis.metrics.savingsRate}%</p>
+                  <p className="text-lg font-bold text-purple-300">{analysis?.metrics?.savingsRate ?? 0}%</p>
                   <p className="text-[10px] text-white/60">
-                    meta: {analysis.metrics.liquidityMonths >= 3 ? '22%' : '20%'} 
-                    {analysis.metrics.savingsRate >= 20 && ' 🎯'}
+                    meta: {(analysis?.metrics?.liquidityMonths ?? 0) >= 3 ? '22%' : '20%'} 
+                    {(analysis?.metrics?.savingsRate ?? 0) >= 20 && ' 🎯'}
                   </p>
                 </Card>
 
-                <Card className={`p-3 card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200 ${(analysis.metrics.liquidityMonths || 0) >= 3 ? 'bg-gradient-to-br from-emerald-600/90 to-emerald-800/90' : (analysis.metrics.liquidityMonths || 0) >= 1.5 ? 'bg-gradient-to-br from-yellow-600/90 to-yellow-800/90' : 'bg-gradient-to-br from-red-600/90 to-red-800/90'}`}>
+                <Card className={`p-3 card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200 ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'bg-gradient-to-br from-emerald-600/90 to-emerald-800/90' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'bg-gradient-to-br from-yellow-600/90 to-yellow-800/90' : 'bg-gradient-to-br from-red-600/90 to-red-800/90'}`}>
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs text-white/70">Liquidez</span>
-                    <Droplets className={`h-3 w-3 ${(analysis.metrics.liquidityMonths || 0) >= 3 ? 'text-emerald-400' : (analysis.metrics.liquidityMonths || 0) >= 1.5 ? 'text-yellow-400' : 'text-red-400'}`} />
+                    <Droplets className={`h-3 w-3 ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'text-emerald-400' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'text-yellow-400' : 'text-red-400'}`} />
                   </div>
-                  <p className={`text-lg font-bold ${(analysis.metrics.liquidityMonths || 0) >= 3 ? 'text-emerald-300' : (analysis.metrics.liquidityMonths || 0) >= 1.5 ? 'text-yellow-300' : 'text-red-300'}`}>
-                    {(analysis.metrics.liquidityMonths || 0).toFixed(1)} m
+                  <p className={`text-lg font-bold ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'text-emerald-300' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'text-yellow-300' : 'text-red-300'}`}>
+                    {(analysis?.metrics?.liquidityMonths || 0).toFixed(1)} m
                   </p>
                   <p className="text-[10px] text-white/60">
-                    {(analysis.metrics.liquidityMonths || 0) >= 3 ? '✅ Seguro' : (analysis.metrics.liquidityMonths || 0) >= 1.5 ? '⚠️ Regular' : '🚨 Crítico'}
+                    {(analysis?.metrics?.liquidityMonths || 0) >= 3 ? '✅ Seguro' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? '⚠️ Regular' : '🚨 Crítico'}
                   </p>
                 </Card>
 
@@ -507,7 +507,7 @@ export default function FinancialAnalysis() {
                     <TrendingUp className="h-3 w-3 text-teal-400" />
                   </div>
                   <p className="text-lg font-bold text-teal-300">
-                    ${formatK(analysis.metrics.cashFlowAccumulated)}k
+                    ${formatK(analysis?.metrics?.cashFlowAccumulated)}k
                   </p>
                   <Button variant="ghost" size="sm" className="text-[10px] text-white/60 hover:text-white p-0 h-auto hover-lift">
                     ver por semana →
@@ -528,10 +528,10 @@ export default function FinancialAnalysis() {
                     <AlertCircle className="h-3 w-3 text-orange-400" />
                   </div>
                   <p className="text-lg font-bold text-orange-300">
-                    ${formatK(analysis.metrics.fixedExpenses)}k
+                    ${formatK(analysis?.metrics?.fixedExpenses)}k
                   </p>
                   <div className="flex items-center justify-between text-[10px]">
-                    <span className="text-white/60">{(analysis.metrics.fixedExpensesPercentage || 0).toFixed(0)}% del gasto</span>
+                    <span className="text-white/60">{(analysis?.metrics?.fixedExpensesPercentage || 0).toFixed(0)}% del gasto</span>
                     <span className="text-emerald-400">↓ -3%</span>
                   </div>
                 </Card>
@@ -542,9 +542,9 @@ export default function FinancialAnalysis() {
                     <Zap className="h-3 w-3 text-violet-400" />
                   </div>
                   <p className="text-lg font-bold text-violet-300">
-                    ${formatK(analysis.metrics.variableExpenses)}k
+                    ${formatK(analysis?.metrics?.variableExpenses)}k
                   </p>
-                  <p className="text-[10px] text-white/60">{(analysis.metrics.variableExpensesPercentage || 0).toFixed(0)}%</p>
+                  <p className="text-[10px] text-white/60">{(analysis?.metrics?.variableExpensesPercentage || 0).toFixed(0)}%</p>
                 </Card>
 
                 <Card className="p-3 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
@@ -553,10 +553,10 @@ export default function FinancialAnalysis() {
                     <span className="text-lg">🐜</span>
                   </div>
                   <p className="text-lg font-bold text-yellow-300">
-                    ${formatK(analysis.metrics.antExpenses)}k
+                    ${formatK(analysis?.metrics?.antExpenses)}k
                   </p>
                   <div className="flex items-center justify-between text-[10px]">
-                    <span className="text-white/60">{(analysis.metrics.antExpensesPercentage || 0).toFixed(1)}% ingreso</span>
+                    <span className="text-white/60">{(analysis?.metrics?.antExpensesPercentage || 0).toFixed(1)}% ingreso</span>
                     <span className="text-yellow-400">↑ +5%</span>
                   </div>
                 </Card>
@@ -566,7 +566,7 @@ export default function FinancialAnalysis() {
                     <span className="text-xs text-white/70">Impulsivos</span>
                     <AlertCircle className="h-3 w-3 text-rose-400" />
                   </div>
-                  <p className="text-lg font-bold text-rose-300">{analysis.metrics.impulsivePurchases}</p>
+                  <p className="text-lg font-bold text-rose-300">{analysis?.metrics?.impulsivePurchases ?? 0}</p>
                   <div className="flex items-center justify-between text-[10px]">
                     <span className="text-white/60">compras</span>
                     <span className="text-rose-400">↑ +2</span>
@@ -580,23 +580,23 @@ export default function FinancialAnalysis() {
               <p className="text-xs font-medium text-white/80 flex items-center gap-1">
                 <Shield className="h-3 w-3" /> Endeudamiento
               </p>
-              {analysis.metrics.totalDebt > 0 ? <>
+              {(analysis?.metrics?.totalDebt ?? 0) > 0 ? <>
                   <div className="grid grid-cols-4 gap-2">
                     <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
                       <span className="text-[10px] text-white/60">Razón</span>
-                      <p className="text-sm font-bold text-red-300">{(analysis.metrics.debtRatio || 0).toFixed(1)}%</p>
+                      <p className="text-sm font-bold text-red-300">{(analysis?.metrics?.debtRatio || 0).toFixed(1)}%</p>
                     </Card>
                     <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
                       <span className="text-[10px] text-white/60">Carga</span>
-                      <p className="text-sm font-bold text-orange-300">{(analysis.metrics.financialBurden || 0).toFixed(1)}%</p>
+                      <p className="text-sm font-bold text-orange-300">{(analysis?.metrics?.financialBurden || 0).toFixed(1)}%</p>
                     </Card>
                     <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
                       <span className="text-[10px] text-white/60">D/I</span>
-                      <p className="text-sm font-bold text-yellow-300">{(analysis.metrics.debtToIncomeRatio || 0).toFixed(2)}</p>
+                      <p className="text-sm font-bold text-yellow-300">{(analysis?.metrics?.debtToIncomeRatio || 0).toFixed(2)}</p>
                     </Card>
                     <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
                       <span className="text-[10px] text-white/60">Int.</span>
-                      <p className="text-sm font-bold text-rose-300">{(analysis.metrics.interestOnIncome || 0).toFixed(1)}%</p>
+                      <p className="text-sm font-bold text-rose-300">{(analysis?.metrics?.interestOnIncome || 0).toFixed(1)}%</p>
                     </Card>
                   </div>
                   <div className="bg-gradient-to-br from-purple-600/90 to-purple-800/90 card-glow rounded-lg p-2 border border-purple-500/30">
@@ -619,22 +619,22 @@ export default function FinancialAnalysis() {
               <div className="grid grid-cols-4 gap-2">
                 <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <span className="text-[10px] text-white/60">Inv.</span>
-                  <p className="text-sm font-bold text-emerald-300">{(analysis.metrics.investmentRate || 0).toFixed(1)}%</p>
+                  <p className="text-sm font-bold text-emerald-300">{(analysis?.metrics?.investmentRate || 0).toFixed(1)}%</p>
                   <span className="text-[9px] text-white/50">🟢 Bajo</span>
                 </Card>
                 <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <span className="text-[10px] text-white/60">ROE</span>
-                  <p className="text-sm font-bold text-teal-300">{(analysis.metrics.personalROE || 0).toFixed(1)}%</p>
+                  <p className="text-sm font-bold text-teal-300">{(analysis?.metrics?.personalROE || 0).toFixed(1)}%</p>
                   <span className="text-[9px] text-white/50">12M</span>
                 </Card>
                 <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <span className="text-[10px] text-white/60">Crec.</span>
-                  <p className="text-sm font-bold text-green-300">{(analysis.metrics.equityGrowth || 0).toFixed(1)}%</p>
+                  <p className="text-sm font-bold text-green-300">{(analysis?.metrics?.equityGrowth || 0).toFixed(1)}%</p>
                   <span className="text-[9px] text-white/50">🟡 Med</span>
                 </Card>
                 <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <span className="text-[10px] text-white/60">ROI</span>
-                  <p className="text-sm font-bold text-lime-300">{(analysis.metrics.personalROI || 0).toFixed(1)}%</p>
+                  <p className="text-sm font-bold text-lime-300">{(analysis?.metrics?.personalROI || 0).toFixed(1)}%</p>
                   <span className="text-[9px] text-white/50">36M</span>
                 </Card>
               </div>
@@ -651,28 +651,28 @@ export default function FinancialAnalysis() {
                     <span className="text-[10px] text-white/60">Metas</span>
                     <Trophy className="h-3 w-3 text-yellow-400" />
                   </div>
-                  <p className="text-sm font-bold text-indigo-300">{analysis.metrics.avgGoalCompletion}%</p>
+                  <p className="text-sm font-bold text-indigo-300">{analysis?.metrics?.avgGoalCompletion ?? 0}%</p>
                 </Card>
                 <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] text-white/60">Consist.</span>
                     <Activity className="h-3 w-3 text-lime-400" />
                   </div>
-                  <p className="text-sm font-bold text-lime-300">{analysis.metrics.consistencyScore}</p>
+                  <p className="text-sm font-bold text-lime-300">{analysis?.metrics?.consistencyScore ?? 0}</p>
                 </Card>
                 <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] text-white/60">Proy.</span>
                     <TrendingUp className="h-3 w-3 text-amber-400" />
                   </div>
-                  <p className="text-sm font-bold text-amber-300">${formatK(analysis.metrics.projectedAnnualSavings)}k</p>
+                  <p className="text-sm font-bold text-amber-300">${formatK(analysis?.metrics?.projectedAnnualSavings)}k</p>
                 </Card>
                 <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-[10px] text-white/60">Bienestar</span>
                     <Heart className="h-3 w-3 text-pink-400" />
                   </div>
-                  <p className="text-sm font-bold text-green-300">{analysis.metrics.mindfulSpendingIndex}</p>
+                  <p className="text-sm font-bold text-green-300">{analysis?.metrics?.mindfulSpendingIndex}</p>
                   <p className="text-[9px] text-white/50">Califícalo 1-10 →</p>
                 </Card>
               </div>
@@ -687,7 +687,7 @@ export default function FinancialAnalysis() {
                 <BarChart3 className="h-3 w-3" /> Análisis Moni AI
               </p>
               <div className="text-xs text-white/80 leading-relaxed whitespace-pre-line max-h-60 overflow-y-auto">
-                {analysis.analysis}
+                {analysis?.analysis}
               </div>
             </Card>
 
@@ -782,33 +782,33 @@ export default function FinancialAnalysis() {
             {/* Additional Financial Health Charts */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <IncomeExpensePieWidget 
-                income={analysis.metrics.totalIncome}
-                expenses={analysis.metrics.totalExpenses}
+                income={analysis?.metrics?.totalIncome ?? 0}
+                expenses={analysis?.metrics?.totalExpenses ?? 0}
               />
               
               <FinancialHealthPieWidget 
-                savings={analysis.metrics.balance > 0 ? analysis.metrics.balance : 0}
-                fixedExpenses={analysis.metrics.totalExpenses * 0.6}
-                variableExpenses={analysis.metrics.totalExpenses * 0.4}
+                savings={(analysis?.metrics?.balance ?? 0) > 0 ? (analysis?.metrics?.balance ?? 0) : 0}
+                fixedExpenses={(analysis?.metrics?.totalExpenses ?? 0) * 0.6}
+                variableExpenses={(analysis?.metrics?.totalExpenses ?? 0) * 0.4}
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <CategoryBreakdownWidget 
                 categories={[
-                  { name: 'Vivienda', value: analysis.metrics.totalExpenses * 0.3, color: '#8b5cf6' },
-                  { name: 'Alimentación', value: analysis.metrics.totalExpenses * 0.25, color: '#ec4899' },
-                  { name: 'Transporte', value: analysis.metrics.totalExpenses * 0.15, color: '#f59e0b' },
-                  { name: 'Servicios', value: analysis.metrics.totalExpenses * 0.12, color: '#10b981' },
-                  { name: 'Entretenimiento', value: analysis.metrics.totalExpenses * 0.10, color: '#3b82f6' },
-                  { name: 'Otros', value: analysis.metrics.totalExpenses * 0.08, color: '#ef4444' },
+                  { name: 'Vivienda', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.3, color: '#8b5cf6' },
+                  { name: 'Alimentación', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.25, color: '#ec4899' },
+                  { name: 'Transporte', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.15, color: '#f59e0b' },
+                  { name: 'Servicios', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.12, color: '#10b981' },
+                  { name: 'Entretenimiento', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.10, color: '#3b82f6' },
+                  { name: 'Otros', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.08, color: '#ef4444' },
                 ]}
               />
               
               <LiquidityGaugeWidget 
-                months={analysis.metrics.liquidityMonths || 0}
-                currentBalance={analysis.metrics.balance}
-                monthlyExpenses={analysis.metrics.totalExpenses}
+                months={analysis?.metrics?.liquidityMonths || 0}
+                currentBalance={analysis?.metrics?.balance ?? 0}
+                monthlyExpenses={analysis?.metrics?.totalExpenses ?? 0}
               />
             </div>
           </>}
