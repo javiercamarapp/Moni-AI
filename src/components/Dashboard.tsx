@@ -1132,7 +1132,7 @@ const Dashboard = () => {
                     className="bg-gradient-card card-glow hover:bg-white/30 text-white border-white/30 text-xs sm:text-sm"
                   >
                     <Zap className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                    {loadingChallenges ? "Generando..." : "Generar reto"}
+                    {loadingChallenges ? "Generando..." : challenges.length === 1 ? "Generar 1 reto" : "Generar retos"}
                   </Button>
                 )}
               </div>
@@ -1152,7 +1152,7 @@ const Dashboard = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                  {challenges.map((challenge, index) => {
+                  {challenges.slice(0, 2).map((challenge, index) => {
                     const progress = (challenge.current_amount / challenge.target_amount) * 100;
                     const daysStatus = JSON.parse(challenge.days_status || '[]');
                     const dayNames = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
