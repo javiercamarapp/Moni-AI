@@ -11,8 +11,8 @@ export default function NetWorthWidget() {
 
   if (isLoading || !netWorthData) {
     return (
-      <div className="px-4 py-8 animate-pulse">
-        <div className="space-y-6">
+      <div className="min-h-screen animated-wave-bg px-4 py-8">
+        <div className="space-y-6 animate-pulse">
           <div className="h-32 bg-white/5 rounded"></div>
           <div className="h-[400px] bg-white/5 rounded"></div>
         </div>
