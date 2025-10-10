@@ -316,61 +316,70 @@ const Dashboard = () => {
         
         setHasBankConnections((bankData?.length || 0) > 0);
 
-        // Fetch all expense transactions for AI analysis
-        const { data: allExpenses, error: expensesError } = await supabase
-          .from('transactions')
-          .select('*, categories(name)')
-          .eq('user_id', user.id)
-          .eq('type', 'gasto')
-          .order('transaction_date', { ascending: false });
+        // Load cached subscriptions immediately for instant display
+        const cachedSubs = localStorage.getItem('cachedSubscriptions');
+        const lastUpdate = localStorage.getItem('subscriptionsLastUpdate');
+        
+        if (cachedSubs) {
+          setUpcomingSubscriptions(JSON.parse(cachedSubs));
+        }
 
-        console.log('📊 Gastos encontrados para análisis:', allExpenses?.length || 0);
+        // Check if we need to update (once per day)
+        const now = Date.now();
+        const ONE_DAY = 24 * 60 * 60 * 1000;
+        const shouldUpdate = !lastUpdate || (now - parseInt(lastUpdate)) > ONE_DAY;
 
-        if (allExpenses && allExpenses.length > 0) {
-          try {
-            // Use AI to detect subscriptions
-            const { data: aiResult, error: aiError } = await supabase.functions.invoke('detect-subscriptions', {
-              body: { transactions: allExpenses }
-            });
+        if (shouldUpdate) {
+          // Fetch last 100 expense transactions for AI analysis (instead of all)
+          const { data: allExpenses } = await supabase
+            .from('transactions')
+            .select('*, categories(name)')
+            .eq('user_id', user.id)
+            .eq('type', 'gasto')
+            .order('transaction_date', { ascending: false })
+            .limit(100);
 
-            console.log('🤖 Resultado de IA:', aiResult);
-            console.log('❌ Error de IA:', aiError);
+          if (allExpenses && allExpenses.length > 0) {
+            try {
+              // Use AI to detect subscriptions
+              const { data: aiResult } = await supabase.functions.invoke('detect-subscriptions', {
+                body: { transactions: allExpenses }
+              });
 
-            // Agrupar por nombre de concepto para mostrar solo UNO por tipo
-            const uniqueSubs = new Map();
-            (aiResult?.subscriptions || []).forEach((sub: any) => {
-              const normalizedName = sub.description.toLowerCase()
-                .replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '')
-                .replace(/\s*\d{4}$/g, '')
-                .trim();
-              
-              if (!uniqueSubs.has(normalizedName)) {
-                uniqueSubs.set(normalizedName, {
-                  name: sub.description.replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '').trim(),
-                  amount: Number(sub.amount),
-                  icon: getSubscriptionIcon(sub.description),
-                  frequency: sub.frequency || 'mensual',
-                });
-              }
-            });
+              // Agrupar por nombre de concepto para mostrar solo UNO por tipo
+              const uniqueSubs = new Map();
+              (aiResult?.subscriptions || []).forEach((sub: any) => {
+                const normalizedName = sub.description.toLowerCase()
+                  .replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '')
+                  .replace(/\s*\d{4}$/g, '')
+                  .trim();
+                
+                if (!uniqueSubs.has(normalizedName)) {
+                  uniqueSubs.set(normalizedName, {
+                    name: sub.description.replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '').trim(),
+                    amount: Number(sub.amount),
+                    icon: getSubscriptionIcon(sub.description),
+                    frequency: sub.frequency || 'mensual',
+                  });
+                }
+              });
 
-            const detectedSubs = Array.from(uniqueSubs.values()).map((sub: any, index: number) => ({
-              id: `ai-sub-${index}`,
-              name: sub.name,
-              amount: sub.amount,
-              icon: sub.icon,
-              dueDate: calculateNextDueDate(sub.frequency),
-            }));
+              const detectedSubs = Array.from(uniqueSubs.values()).map((sub: any, index: number) => ({
+                id: `ai-sub-${index}`,
+                name: sub.name,
+                amount: sub.amount,
+                icon: sub.icon,
+                dueDate: calculateNextDueDate(sub.frequency),
+              }));
 
-            console.log('✅ Suscripciones únicas detectadas:', detectedSubs.length);
-            setUpcomingSubscriptions(detectedSubs);
-          } catch (aiError) {
-            console.error('Error calling AI:', aiError);
-            setUpcomingSubscriptions([]);
+              setUpcomingSubscriptions(detectedSubs);
+              // Cache the results
+              localStorage.setItem('cachedSubscriptions', JSON.stringify(detectedSubs));
+              localStorage.setItem('subscriptionsLastUpdate', now.toString());
+            } catch (aiError) {
+              console.error('Error calling AI:', aiError);
+            }
           }
-        } else {
-          console.log('⚠️ No hay gastos para analizar');
-          setUpcomingSubscriptions([]);
         }
 
         // Mock credit card debts (esto se obtendría de la conexión bancaria real)
