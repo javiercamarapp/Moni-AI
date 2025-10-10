@@ -52,9 +52,6 @@ export default function NetWorth() {
     const cat = category.toLowerCase();
     const accountName = name?.toLowerCase() || '';
     
-    // Log para debugging
-    console.log('Checking asset:', { category: cat, name: accountName });
-    
     // Activos NO líquidos (tienen prioridad en la exclusión)
     const illiquidKeywords = [
       'retirement', 'pension', 'retiro', 'pensión', '401k', 'ira', 'roth',
@@ -70,7 +67,6 @@ export default function NetWorth() {
     );
     
     if (hasIlliquidKeyword) {
-      console.log('❌ Excluded as illiquid:', category);
       return false;
     }
     
@@ -83,9 +79,7 @@ export default function NetWorth() {
       'deposit', 'depósito', 'depósito a la vista'
     ];
     
-    const isLiquid = liquidKeywords.some(keyword => cat.includes(keyword));
-    console.log(isLiquid ? '✅ Included as liquid:' : '⚠️ Not liquid:', category);
-    return isLiquid;
+    return liquidKeywords.some(keyword => cat.includes(keyword));
   };
 
   // Mostrar formulario si definitivamente no hay datos (no mientras está cargando)
