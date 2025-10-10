@@ -29,19 +29,6 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
 
   return (
     <div className="space-y-3">
-      <div>
-        <p className="text-xs font-medium text-white/80 mb-1">Desglose Score Moni</p>
-        <div className="flex items-baseline gap-2">
-          <p className="text-3xl font-bold text-white">{scoreMoni}</p>
-          <span className="text-sm text-white/60">/100</span>
-          {scoreChange !== 0 && (
-            <span className={`text-xs font-medium ${scoreChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-              {scoreChange > 0 ? '↑' : '↓'} {Math.abs(scoreChange)} pts
-            </span>
-          )}
-        </div>
-      </div>
-
       <div className="h-[200px]">
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart data={radarData}>
