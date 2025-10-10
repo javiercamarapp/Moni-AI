@@ -89,6 +89,7 @@ export default function NetWorthWidget() {
                 <stop offset="95%" stopColor="#10b981" stopOpacity={0.05}/>
               </linearGradient>
             </defs>
+            <YAxis hide={true} />
             <XAxis 
               dataKey="date" 
               tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 10 }}
