@@ -118,7 +118,7 @@ export default function NotificationSettings() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate(-1)}
               className="text-foreground hover:bg-accent/50 hover-lift"
             >
               <ArrowLeft className="h-5 w-5" />
