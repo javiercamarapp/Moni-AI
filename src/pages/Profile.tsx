@@ -6,7 +6,8 @@ import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { ArrowLeft, ChevronRight, Crown, LogOut, Trash2 } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Crown, LogOut, Trash2, Fingerprint } from 'lucide-react';
+import { useBiometricAuth } from '@/hooks/useBiometricAuth';
 import {
   Popover,
   PopoverContent,
@@ -32,6 +33,14 @@ const Profile = () => {
   const [audioAlerts, setAudioAlerts] = useState(true);
   const [selectedCurrency, setSelectedCurrency] = useState('MXN');
   const [selectedCountry, setSelectedCountry] = useState('México');
+  const { isAvailable: biometricAvailable, biometryType } = useBiometricAuth();
+  const [faceIdEnabled, setFaceIdEnabled] = useState(false);
+
+  // Cargar el estado de Face ID al montar
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('biometric_email');
+    setFaceIdEnabled(!!savedEmail && biometricAvailable);
+  }, [biometricAvailable]);
 
   const currencies = [
     { code: 'USD', name: 'Dólar estadounidense' },
@@ -423,6 +432,36 @@ const Profile = () => {
               <span className="text-white/70">Alertas de audio</span>
               <Switch checked={audioAlerts} onCheckedChange={setAudioAlerts} />
             </div>
+
+            {biometricAvailable && (
+              <div className="flex items-center justify-between py-4 px-4">
+                <div className="flex items-center gap-2">
+                  <Fingerprint className="h-5 w-5 text-white/70" />
+                  <span className="text-white/70">{biometryType || 'Autenticación biométrica'}</span>
+                </div>
+                <Switch 
+                  checked={faceIdEnabled} 
+                  onCheckedChange={(checked) => {
+                    if (!checked) {
+                      // Desactivar Face ID - limpiar credenciales guardadas
+                      localStorage.removeItem('biometric_email');
+                      localStorage.removeItem('biometric_password');
+                      setFaceIdEnabled(false);
+                      toast({
+                        title: "Desactivado",
+                        description: "La autenticación biométrica ha sido desactivada",
+                      });
+                    } else {
+                      setFaceIdEnabled(true);
+                      toast({
+                        title: "Activado",
+                        description: "La autenticación biométrica se activará en tu próximo inicio de sesión",
+                      });
+                    }
+                  }} 
+                />
+              </div>
+            )}
           </Card>
         </div>
 
