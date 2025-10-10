@@ -395,7 +395,11 @@ export default function FinancialAnalysis() {
         ) : (quickMetrics || analysis) ? (
           <>
             {/* Animated Income & Expense Lines */}
-            <Card className="p-4 bg-gradient-card card-glow space-y-4 animate-fade-in hover:scale-[1.02] transition-transform duration-200" style={{ animationDelay: '0ms' }}>
+            <Card 
+              className="p-4 bg-gradient-card card-glow space-y-4 animate-fade-in hover:scale-[1.02] transition-transform duration-200 cursor-pointer" 
+              style={{ animationDelay: '0ms' }}
+              onClick={() => navigate('/gastos')}
+            >
               {/* Ingresos */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
