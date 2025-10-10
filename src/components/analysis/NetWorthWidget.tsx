@@ -58,24 +58,28 @@ export default function NetWorthWidget() {
         )}
       </div>
 
-      {/* Assets and Liabilities */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-emerald-500/10 backdrop-blur-sm rounded-2xl p-4 border border-emerald-500/20">
-          <p className="text-xs text-white/70 mb-1">Activos</p>
-          <p className="text-2xl font-bold text-emerald-300">
-            ${(totalAssets / 1000).toFixed(1)}k
-          </p>
-        </div>
-        <div className="bg-red-500/10 backdrop-blur-sm rounded-2xl p-4 border border-red-500/20">
-          <p className="text-xs text-white/70 mb-1">Pasivos</p>
-          <p className="text-2xl font-bold text-red-300">
-            ${(totalLiabilities / 1000).toFixed(1)}k
-          </p>
-        </div>
-      </div>
-
-      {/* Chart */}
+      {/* Chart with high/low indicators */}
       <div className="relative h-[400px]">
+        {/* High Point Label */}
+        {highPoint && highPoint !== lowPoint && (
+          <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/30 shadow-lg z-10">
+            <p className="text-[9px] text-gray-600 font-medium">high</p>
+            <p className="text-sm font-bold text-emerald-600">
+              ${highPoint.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+            </p>
+          </div>
+        )}
+        
+        {/* Low Point Label */}
+        {lowPoint && highPoint !== lowPoint && (
+          <div className="absolute bottom-20 right-4 bg-white/95 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/30 shadow-lg z-10">
+            <p className="text-[9px] text-gray-600 font-medium">low</p>
+            <p className="text-sm font-bold text-red-600">
+              ${lowPoint.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+            </p>
+          </div>
+        )}
+        
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData} margin={{ top: 20, right: 20, bottom: 20, left: 0 }}>
             <defs>
@@ -118,6 +122,22 @@ export default function NetWorthWidget() {
             />
           </AreaChart>
         </ResponsiveContainer>
+      </div>
+
+      {/* Assets and Liabilities - Moved below chart and closer */}
+      <div className="grid grid-cols-2 gap-3 -mt-2">
+        <div className="bg-emerald-500/10 backdrop-blur-sm rounded-xl p-3 border border-emerald-500/20">
+          <p className="text-[10px] text-white/70 mb-0.5">Activos</p>
+          <p className="text-xl font-bold text-emerald-300">
+            ${(totalAssets / 1000).toFixed(1)}k
+          </p>
+        </div>
+        <div className="bg-red-500/10 backdrop-blur-sm rounded-xl p-3 border border-red-500/20">
+          <p className="text-[10px] text-white/70 mb-0.5">Pasivos</p>
+          <p className="text-xl font-bold text-red-300">
+            ${(totalLiabilities / 1000).toFixed(1)}k
+          </p>
+        </div>
       </div>
 
       {/* Time Range Buttons */}
