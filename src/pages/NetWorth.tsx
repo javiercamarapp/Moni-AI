@@ -196,6 +196,71 @@ export default function NetWorth() {
         <NetWorthWidget />
       </div>
 
+      {/* Liquidez Section */}
+      <div className="px-4 mt-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-white">Liquidez</h2>
+          <button className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors">
+            <div className="flex flex-col gap-0.5">
+              <div className="h-0.5 w-4 bg-white/70"></div>
+              <div className="h-0.5 w-4 bg-white/70"></div>
+            </div>
+            Sort by institution
+          </button>
+        </div>
+
+        <div className="space-y-0 bg-white rounded-2xl overflow-hidden">
+          {assets
+            .filter(account => 
+              account.category.toLowerCase().includes('check') || 
+              account.category.toLowerCase().includes('saving')
+            )
+            .map((account, index) => {
+              const iconName = getIconForCategory(account.category);
+              const Icon = iconMap[iconName];
+              const isLast = index === assets.filter(a => 
+                a.category.toLowerCase().includes('check') || 
+                a.category.toLowerCase().includes('saving')
+              ).length - 1;
+              
+              return (
+                <div
+                  key={account.id}
+                  className={cn(
+                    "flex items-center justify-between p-4 hover:bg-gray-50 transition-colors",
+                    !isLast && "border-b border-gray-100"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                      <Icon className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900">{account.name}</p>
+                      <p className="text-sm text-gray-500">{account.category}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-gray-900">
+                      ${Number(account.value).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                    </p>
+                    <p className="text-xs text-gray-400">Actualizado</p>
+                  </div>
+                </div>
+              );
+            })}
+            
+          {assets.filter(a => 
+            a.category.toLowerCase().includes('check') || 
+            a.category.toLowerCase().includes('saving')
+          ).length === 0 && (
+            <div className="p-8 text-center text-gray-500">
+              No hay cuentas líquidas registradas
+            </div>
+          )}
+        </div>
+      </div>
+
       <BottomNav />
     </div>
   );
