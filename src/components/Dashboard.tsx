@@ -1128,7 +1128,7 @@ const Dashboard = () => {
                     className="bg-gradient-card card-glow hover:bg-white/30 text-white border-white/30 text-xs sm:text-sm hover:scale-105 transition-transform duration-200"
                   >
                     <Zap className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                    Generar nuevos
+                    Ver mis retos
                   </Button>
                 )}
               </div>
@@ -1235,7 +1235,7 @@ const Dashboard = () => {
                     </div>
                   </>
                 ) : (
-                  challenges.map((challenge, index) => {
+                  challenges.slice(0, 2).map((challenge, index) => {
                     const progress = (challenge.current_amount / challenge.target_amount) * 100;
                     const daysStatus = JSON.parse(challenge.days_status || '[]');
                     const dayNames = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
