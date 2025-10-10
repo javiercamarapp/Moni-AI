@@ -34,6 +34,8 @@ const ScoreMoni = () => {
 
         if (data && !error) {
           setScore(data.score_moni);
+          // Update cache for Dashboard
+          localStorage.setItem('scoreMoni', data.score_moni.toString());
           
           // Calculate component breakdown (simulated based on score)
           const basePercentage = data.score_moni / 100;

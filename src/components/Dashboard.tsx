@@ -155,10 +155,17 @@ const Dashboard = () => {
     fetchGoals();
   }, []);
 
-  // Fetch Score Moni from database
+  // Fetch Score Moni from database with instant display using cache
   useEffect(() => {
     const fetchScoreMoni = async () => {
       try {
+        // Load cached score immediately for instant display
+        const cachedScore = localStorage.getItem('scoreMoni');
+        if (cachedScore) {
+          setScoreMoni(Number(cachedScore));
+        }
+
+        // Fetch fresh score in background
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
@@ -170,13 +177,19 @@ const Dashboard = () => {
 
         if (data && !error) {
           setScoreMoni(data.score_moni);
-        } else {
-          // If no score exists, set a default
+          // Update cache for next time
+          localStorage.setItem('scoreMoni', data.score_moni.toString());
+        } else if (!cachedScore) {
+          // If no score exists and no cache, set a default
           setScoreMoni(40);
+          localStorage.setItem('scoreMoni', '40');
         }
       } catch (error) {
         console.error('Error fetching score:', error);
-        setScoreMoni(40);
+        const cachedScore = localStorage.getItem('scoreMoni');
+        if (!cachedScore) {
+          setScoreMoni(40);
+        }
       }
     };
     fetchScoreMoni();
