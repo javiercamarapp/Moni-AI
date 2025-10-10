@@ -35,21 +35,23 @@ export default function NetWorthWidget() {
           <p className={`text-5xl font-bold ${isPositive ? 'text-white' : 'text-red-300'}`}>
             ${(currentNetWorth / 1000).toFixed(1)}k
           </p>
-          <div className="flex items-center gap-2 mt-2">
-            <span className={cn(
-              "text-sm font-medium",
-              isPositiveChange ? "text-emerald-300" : "text-red-300"
-            )}>
-              {isPositiveChange ? '+' : ''}{percentageChange.toFixed(2)}%
-            </span>
-            <span className="text-sm text-white/60">
-              {timeRange === '1M' ? 'último mes' : 
-               timeRange === '3M' ? 'últimos 3M' :
-               timeRange === '6M' ? 'últimos 6M' :
-               timeRange === '1Y' ? 'último año' :
-               'total'}
-            </span>
-          </div>
+          {percentageChange !== 0 && (
+            <div className="flex items-center gap-2 mt-2">
+              <span className={cn(
+                "text-sm font-medium",
+                isPositiveChange ? "text-emerald-300" : "text-red-300"
+              )}>
+                {isPositiveChange ? '+' : ''}{percentageChange.toFixed(2)}%
+              </span>
+              <span className="text-sm text-white/60">
+                {timeRange === '1M' ? 'último mes' : 
+                 timeRange === '3M' ? 'últimos 3M' :
+                 timeRange === '6M' ? 'últimos 6M' :
+                 timeRange === '1Y' ? 'último año' :
+                 'total'}
+              </span>
+            </div>
+          )}
         </div>
         {isPositiveChange ? (
           <TrendingUp className="h-8 w-8 text-emerald-400" />
@@ -62,20 +64,20 @@ export default function NetWorthWidget() {
       <div className="relative h-[400px]">
         {/* High Point Label */}
         {highPoint && highPoint !== lowPoint && (
-          <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/30 shadow-lg z-10">
-            <p className="text-[9px] text-gray-600 font-medium">high</p>
-            <p className="text-sm font-bold text-emerald-600">
-              ${highPoint.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+          <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/30 z-10">
+            <p className="text-[8px] text-white/70 font-medium">high:</p>
+            <p className="text-[11px] font-bold text-emerald-300">
+              ${(highPoint / 1000).toFixed(1)}k
             </p>
           </div>
         )}
         
         {/* Low Point Label */}
         {lowPoint && highPoint !== lowPoint && (
-          <div className="absolute bottom-20 right-4 bg-white/95 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/30 shadow-lg z-10">
-            <p className="text-[9px] text-gray-600 font-medium">low</p>
-            <p className="text-sm font-bold text-red-600">
-              ${lowPoint.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+          <div className="absolute bottom-20 right-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/30 z-10">
+            <p className="text-[8px] text-white/70 font-medium">low:</p>
+            <p className="text-[11px] font-bold text-red-300">
+              ${(lowPoint / 1000).toFixed(1)}k
             </p>
           </div>
         )}
