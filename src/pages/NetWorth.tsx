@@ -197,7 +197,30 @@ export default function NetWorth() {
       </div>
 
       {/* Liquidez Section */}
-      <div className="px-4 mt-8">
+      <div className="px-4 mt-4">
+        {/* Total Líquido */}
+        <div className="mb-4 bg-gradient-to-br from-blue-500/20 to-blue-700/20 backdrop-blur-sm rounded-2xl p-4 border border-blue-500/30">
+          <p className="text-sm text-white/80 mb-1">Efectivo Disponible</p>
+          <p className="text-3xl font-bold text-white break-words">
+            ${assets
+              .filter(a => 
+                a.category.toLowerCase().includes('check') || 
+                a.category.toLowerCase().includes('saving')
+              )
+              .reduce((sum, a) => sum + Number(a.value), 0)
+              .toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </p>
+          <p className="text-xs text-white/60 mt-1">
+            {assets.filter(a => 
+              a.category.toLowerCase().includes('check') || 
+              a.category.toLowerCase().includes('saving')
+            ).length} cuenta{assets.filter(a => 
+              a.category.toLowerCase().includes('check') || 
+              a.category.toLowerCase().includes('saving')
+            ).length !== 1 ? 's' : ''}
+          </p>
+        </div>
+
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-white">Liquidez</h2>
           <button className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors">
@@ -241,8 +264,8 @@ export default function NetWorth() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-gray-900">
-                      ${Number(account.value).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                    <p className="font-bold text-gray-900 break-words">
+                      ${Number(account.value).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
                     <p className="text-xs text-gray-400">Actualizado</p>
                   </div>
