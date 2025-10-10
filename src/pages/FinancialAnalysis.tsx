@@ -11,7 +11,6 @@ import moniAiLogo from "@/assets/moni-ai-horizontal.png";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import BottomNav from '@/components/BottomNav';
 import SafeToSpendWidget from "@/components/analysis/SafeToSpendWidget";
-import TopActionsWidget from "@/components/analysis/TopActionsWidget";
 import NetWorthWidget from "@/components/analysis/NetWorthWidget";
 import ForecastWidget from "@/components/analysis/ForecastWidget";
 import BudgetProgressWidget from "@/components/analysis/BudgetProgressWidget";
@@ -583,8 +582,6 @@ export default function FinancialAnalysis() {
             />
 
             {/* Proyección Anual removida - se moverá a página de proyecciones */}
-
-            {analysis?.topActions && analysis?.topActions.length > 0 && <TopActionsWidget actions={analysis?.topActions} />}
 
             {/* 3. PATRIMONIO Y RUNWAY */}
             {analysis?.netWorth && <NetWorthWidget {...analysis?.netWorth} />}
