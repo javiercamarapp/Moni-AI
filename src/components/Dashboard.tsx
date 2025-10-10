@@ -1138,30 +1138,29 @@ const Dashboard = () => {
                   <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       {/* Reto 1: Sin Café */}
-                      <Card className="p-4 bg-gradient-to-br from-[hsl(25,70%,40%)] to-[hsl(25,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(25,80%,50%)]/40 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer"
+                      <Card className="p-2 bg-gradient-to-br from-[hsl(25,70%,40%)] to-[hsl(25,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(25,80%,50%)]/40 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer"
                         onClick={handleGenerateChallenges}
                       >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
                         
                         <div className="relative z-10">
-                          <div className="flex items-center gap-2 mb-3">
-                            <div className="text-3xl">☕</div>
-                            <h4 className="text-lg font-bold text-white drop-shadow-lg">
+                          <div className="flex items-center gap-1 mb-1">
+                            <div className="text-lg">☕</div>
+                            <h4 className="text-sm font-bold text-white drop-shadow-lg">
                               Reto Café
                             </h4>
                           </div>
                           
-                          <p className="text-sm text-white/90 mb-4 drop-shadow">
-                            Una semana sin comprar café. ¡Ahorra y cuida tu salud!
+                          <p className="text-[10px] text-white/90 mb-2 drop-shadow">
+                            Una semana sin café
                           </p>
                           
-                          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20 mb-3">
-                            <p className="text-xs text-white/80 mb-2">Esta semana</p>
-                            <div className="flex justify-between gap-1">
+                          <div className="bg-white/10 backdrop-blur-sm rounded p-1.5 border border-white/20 mb-2">
+                            <div className="flex justify-between gap-0.5">
                               {['D', 'L', 'M', 'M', 'J', 'V', 'S'].map((day, i) => (
-                                <div key={i} className="flex flex-col items-center flex-1">
-                                  <span className="text-[10px] text-white/70 mb-1">{day}</span>
-                                  <div className="w-7 h-7 rounded-full bg-white/20 text-white/40 flex items-center justify-center text-xs" />
+                                <div key={i} className="flex flex-col items-center">
+                                  <span className="text-[8px] text-white/70 mb-0.5">{day}</span>
+                                  <div className="w-4 h-4 rounded-full bg-white/20 text-white/40 flex items-center justify-center text-[8px]" />
                                 </div>
                               ))}
                             </div>
@@ -1169,41 +1168,40 @@ const Dashboard = () => {
                           
                           <Button 
                             size="sm" 
-                            className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30"
+                            className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 h-7 text-[10px]"
                             onClick={handleGenerateChallenges}
                             disabled={loadingChallenges}
                           >
-                            {loadingChallenges ? "Generando..." : "Aceptar reto"}
+                            {loadingChallenges ? "..." : "Aceptar"}
                           </Button>
                         </div>
                       </Card>
 
                       {/* Reto 2: Sin Delivery */}
-                      <Card className="p-4 bg-gradient-to-br from-[hsl(340,70%,40%)] to-[hsl(340,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(340,80%,50%)]/40 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer"
+                      <Card className="p-2 bg-gradient-to-br from-[hsl(340,70%,40%)] to-[hsl(340,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(340,80%,50%)]/40 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer"
                         style={{ animationDelay: '100ms' }}
                         onClick={handleGenerateChallenges}
                       >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
                         
                         <div className="relative z-10">
-                          <div className="flex items-center gap-2 mb-3">
-                            <div className="text-3xl">🍔</div>
-                            <h4 className="text-lg font-bold text-white drop-shadow-lg">
+                          <div className="flex items-center gap-1 mb-1">
+                            <div className="text-lg">🍔</div>
+                            <h4 className="text-sm font-bold text-white drop-shadow-lg">
                               Reto Delivery
                             </h4>
                           </div>
                           
-                          <p className="text-sm text-white/90 mb-4 drop-shadow">
-                            Una semana sin pedir comida a domicilio. ¡Cocina en casa!
+                          <p className="text-[10px] text-white/90 mb-2 drop-shadow">
+                            Una semana sin delivery
                           </p>
                           
-                          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20 mb-3">
-                            <p className="text-xs text-white/80 mb-2">Esta semana</p>
-                            <div className="flex justify-between gap-1">
+                          <div className="bg-white/10 backdrop-blur-sm rounded p-1.5 border border-white/20 mb-2">
+                            <div className="flex justify-between gap-0.5">
                               {['D', 'L', 'M', 'M', 'J', 'V', 'S'].map((day, i) => (
-                                <div key={i} className="flex flex-col items-center flex-1">
-                                  <span className="text-[10px] text-white/70 mb-1">{day}</span>
-                                  <div className="w-7 h-7 rounded-full bg-white/20 text-white/40 flex items-center justify-center text-xs" />
+                                <div key={i} className="flex flex-col items-center">
+                                  <span className="text-[8px] text-white/70 mb-0.5">{day}</span>
+                                  <div className="w-4 h-4 rounded-full bg-white/20 text-white/40 flex items-center justify-center text-[8px]" />
                                 </div>
                               ))}
                             </div>
@@ -1211,11 +1209,11 @@ const Dashboard = () => {
                           
                           <Button 
                             size="sm" 
-                            className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30"
+                            className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 h-7 text-[10px]"
                             onClick={handleGenerateChallenges}
                             disabled={loadingChallenges}
                           >
-                            {loadingChallenges ? "Generando..." : "Aceptar reto"}
+                            {loadingChallenges ? "..." : "Aceptar"}
                           </Button>
                         </div>
                       </Card>
@@ -1250,34 +1248,32 @@ const Dashboard = () => {
                     return (
                       <Card 
                         key={challenge.id} 
-                        className={`p-4 sm:p-6 bg-gradient-to-br ${gradient} card-glow shadow-2xl border-2 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in`}
+                        className={`p-2 bg-gradient-to-br ${gradient} card-glow shadow-2xl border-2 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in`}
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
                         
                         <div className="relative z-10">
-                          <div className="flex justify-between items-start mb-3">
-                            <div className="flex-1">
-                              <h4 className="text-base sm:text-lg font-bold text-white drop-shadow-lg mb-1">
-                                {challenge.title}
-                              </h4>
-                              <p className="text-xs sm:text-sm text-white/80 drop-shadow">
-                                {challenge.description}
-                              </p>
-                            </div>
+                          <div className="mb-1">
+                            <h4 className="text-sm font-bold text-white drop-shadow-lg mb-0.5">
+                              {challenge.title}
+                            </h4>
+                            <p className="text-[10px] text-white/80 drop-shadow line-clamp-1">
+                              {challenge.description}
+                            </p>
                           </div>
                           
-                          <div className="mb-3">
-                            <div className="flex justify-between items-baseline mb-1">
-                              <span className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg">
-                                ${challenge.current_amount.toFixed(2)}
+                          <div className="mb-2">
+                            <div className="flex justify-between items-baseline mb-0.5">
+                              <span className="text-sm font-bold text-white drop-shadow-lg">
+                                ${challenge.current_amount.toFixed(0)}
                               </span>
-                              <span className="text-sm text-white/80 drop-shadow">
-                                de ${challenge.target_amount} límite
+                              <span className="text-[10px] text-white/80 drop-shadow">
+                                de ${challenge.target_amount}
                               </span>
                             </div>
                             
-                            <div className="relative h-2 bg-black/20 rounded-full overflow-hidden">
+                            <div className="relative h-1.5 bg-black/20 rounded-full overflow-hidden">
                               <div 
                                 className="h-full bg-black/60 rounded-full transition-all duration-1000 ease-out"
                                 style={{ width: `${Math.min(progress, 100)}%` }}
@@ -1285,21 +1281,18 @@ const Dashboard = () => {
                             </div>
                           </div>
                           
-                          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
-                            <p className="text-xs text-white/80 mb-2 drop-shadow">
-                              Día {daysStatus.filter((d: any) => d.status !== 'pending').length + 1} de 7
-                            </p>
-                            <div className="flex justify-between gap-1">
+                          <div className="bg-white/10 backdrop-blur-sm rounded p-1.5 border border-white/20">
+                            <div className="flex justify-between gap-0.5">
                               {daysStatus.map((day: any, dayIndex: number) => (
                                 <div 
                                   key={dayIndex} 
-                                  className="flex flex-col items-center flex-1"
+                                  className="flex flex-col items-center"
                                 >
-                                  <span className="text-[10px] text-white/70 mb-1">
+                                  <span className="text-[8px] text-white/70 mb-0.5">
                                     {dayNames[day.day]}
                                   </span>
                                   <div 
-                                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
+                                    className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold transition-all ${
                                       day.status === 'completed' 
                                         ? 'bg-white/90 text-green-600' 
                                         : day.status === 'failed'
