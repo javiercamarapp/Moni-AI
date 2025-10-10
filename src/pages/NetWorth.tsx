@@ -205,7 +205,7 @@ export default function NetWorth() {
               <div className="h-0.5 w-4 bg-white/70"></div>
               <div className="h-0.5 w-4 bg-white/70"></div>
             </div>
-            Sort by institution
+            Filtrar por institución
           </button>
         </div>
 
@@ -214,10 +214,25 @@ export default function NetWorth() {
           <p className="text-[10px] text-white/70 mb-0.5">Efectivo Disponible</p>
           <p className="text-base font-bold text-white break-words">
             ${assets
-              .filter(a => 
-                a.category.toLowerCase().includes('check') || 
-                a.category.toLowerCase().includes('saving')
-              )
+              .filter(a => {
+                const category = a.category.toLowerCase();
+                // Incluir cuentas líquidas
+                const isLiquid = category.includes('check') || 
+                                 category.includes('saving') || 
+                                 category.includes('cash') || 
+                                 category.includes('efectivo') ||
+                                 category.includes('ahorro') ||
+                                 category.includes('corriente') ||
+                                 category.includes('money market');
+                // Excluir activos no líquidos
+                const isNotLiquid = category.includes('retirement') || 
+                                   category.includes('pension') || 
+                                   category.includes('retiro') ||
+                                   category.includes('property') ||
+                                   category.includes('real estate') ||
+                                   category.includes('propiedad');
+                return isLiquid && !isNotLiquid;
+              })
               .reduce((sum, a) => sum + Number(a.value), 0)
               .toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
@@ -225,10 +240,25 @@ export default function NetWorth() {
 
         <div className="space-y-2">
           {assets
-            .filter(account => 
-              account.category.toLowerCase().includes('check') || 
-              account.category.toLowerCase().includes('saving')
-            )
+            .filter(account => {
+              const category = account.category.toLowerCase();
+              // Incluir cuentas líquidas
+              const isLiquid = category.includes('check') || 
+                               category.includes('saving') || 
+                               category.includes('cash') || 
+                               category.includes('efectivo') ||
+                               category.includes('ahorro') ||
+                               category.includes('corriente') ||
+                               category.includes('money market');
+              // Excluir activos no líquidos
+              const isNotLiquid = category.includes('retirement') || 
+                                 category.includes('pension') || 
+                                 category.includes('retiro') ||
+                                 category.includes('property') ||
+                                 category.includes('real estate') ||
+                                 category.includes('propiedad');
+              return isLiquid && !isNotLiquid;
+            })
             .map((account) => {
               const iconName = getIconForCategory(account.category);
               const Icon = iconMap[iconName];
@@ -256,10 +286,23 @@ export default function NetWorth() {
               );
             })}
             
-          {assets.filter(a => 
-            a.category.toLowerCase().includes('check') || 
-            a.category.toLowerCase().includes('saving')
-          ).length === 0 && (
+          {assets.filter(a => {
+            const category = a.category.toLowerCase();
+            const isLiquid = category.includes('check') || 
+                             category.includes('saving') || 
+                             category.includes('cash') || 
+                             category.includes('efectivo') ||
+                             category.includes('ahorro') ||
+                             category.includes('corriente') ||
+                             category.includes('money market');
+            const isNotLiquid = category.includes('retirement') || 
+                               category.includes('pension') || 
+                               category.includes('retiro') ||
+                               category.includes('property') ||
+                               category.includes('real estate') ||
+                               category.includes('propiedad');
+            return isLiquid && !isNotLiquid;
+          }).length === 0 && (
             <div className="p-8 text-center text-white/60 bg-white/5 rounded-xl border border-white/10">
               No hay cuentas líquidas registradas
             </div>
