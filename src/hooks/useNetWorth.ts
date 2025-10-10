@@ -125,46 +125,56 @@ export function useNetWorth(timeRange: TimeRange) {
       }
 
       // If only one data point (just completed questionnaire), create a horizontal line
-      if (chartData.length === 1) {
-        const singlePoint = chartData[0];
-        // Create points for the time range to show a horizontal line
-        let numPoints = 6;
-        let interval: number;
+      if (chartData.length <= 1) {
+        const singlePoint = chartData[0] || {
+          date: '',
+          value: currentNetWorth,
+          assets: totalAssets,
+          liabilities: totalLiabilities
+        };
+        
+        chartData = [];
+        let dates: Date[] = [];
         
         switch (timeRange) {
           case '1M':
-            interval = 5; // Every 5 days
+            // Every 5 days for 1 month (6 points)
+            for (let i = 5; i >= 0; i--) {
+              dates.push(subDays(now, i * 5));
+            }
             break;
           case '3M':
-            interval = 12; // Every 12 days
+            // Every 12 days for 3 months (~8 points)
+            for (let i = 7; i >= 0; i--) {
+              dates.push(subDays(now, i * 12));
+            }
             break;
           case '6M':
-            interval = 30; // Every month
+            // Every month for 6 months (6 points)
+            for (let i = 5; i >= 0; i--) {
+              dates.push(subMonths(now, i));
+            }
             break;
           case '1Y':
-            interval = 60; // Every 2 months
+            // Every 2 months for 1 year (6 points)
+            for (let i = 5; i >= 0; i--) {
+              dates.push(subMonths(now, i * 2));
+            }
             break;
           case 'All':
-            numPoints = 6;
-            interval = 1;
+            // Default: weekly for 6 weeks
+            for (let i = 5; i >= 0; i--) {
+              dates.push(subDays(now, i * 7));
+            }
             break;
-          default:
-            interval = 7;
         }
-
-        chartData = [];
-        for (let i = 0; i < numPoints; i++) {
-          const date = timeRange === 'All' 
-            ? subDays(now, (numPoints - 1 - i) * 7)
-            : subDays(now, (numPoints - 1 - i) * interval);
-          
-          chartData.push({
-            date: formatDateLabel(date, timeRange),
-            value: singlePoint.value,
-            assets: singlePoint.assets,
-            liabilities: singlePoint.liabilities
-          });
-        }
+        
+        chartData = dates.map(date => ({
+          date: formatDateLabel(date, timeRange),
+          value: singlePoint.value,
+          assets: singlePoint.assets,
+          liabilities: singlePoint.liabilities
+        }));
       } else {
         // Filter data points based on time range to avoid overcrowding
         if (chartData.length > 10) {

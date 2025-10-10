@@ -76,19 +76,6 @@ export default function NetWorthWidget() {
 
       {/* Chart */}
       <div className="relative h-[400px]">
-        {/* High/Low Labels */}
-        {highPoint && lowPoint && (
-          <>
-            <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-white/20 z-10">
-              <p className="text-[10px] text-white/60">Alto</p>
-              <p className="text-sm font-bold text-emerald-300">${(highPoint / 1000).toFixed(1)}k</p>
-            </div>
-            <div className="absolute bottom-24 right-4 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-white/20 z-10">
-              <p className="text-[10px] text-white/60">Bajo</p>
-              <p className="text-sm font-bold text-red-300">${(lowPoint / 1000).toFixed(1)}k</p>
-            </div>
-          </>
-        )}
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData}>
             <defs>
@@ -103,12 +90,6 @@ export default function NetWorthWidget() {
               tick={{ fill: 'white', fontSize: 11 }}
               tickLine={{ stroke: 'rgba(255,255,255,0.1)' }}
               axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-            />
-            <YAxis 
-              tick={{ fill: 'white', fontSize: 11 }}
-              tickLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-              axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-              tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
             />
             <Tooltip
               contentStyle={{ 
