@@ -113,6 +113,41 @@ export type Database = {
         }
         Relationships: []
       }
+      category_budgets: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          id: string
+          monthly_budget: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          id?: string
+          monthly_budget?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          id?: string
+          monthly_budget?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "category_budgets_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       challenges: {
         Row: {
           category: string
@@ -162,6 +197,33 @@ export type Database = {
           status?: string
           target_amount?: number
           title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      fixed_expenses_config: {
+        Row: {
+          category_name: string
+          created_at: string
+          id: string
+          monthly_amount: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category_name: string
+          created_at?: string
+          id?: string
+          monthly_amount?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category_name?: string
+          created_at?: string
+          id?: string
+          monthly_amount?: number
           updated_at?: string
           user_id?: string
         }

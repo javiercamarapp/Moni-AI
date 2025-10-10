@@ -1053,7 +1053,15 @@ const Dashboard = () => {
         </div>
 
         {/* Safe to Spend Widget */}
-        <SafeToSpendWidget safeToSpend={monthlyIncome - fixedExpenses - goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} monthlyIncome={monthlyIncome} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} />
+        <SafeToSpendWidget 
+          monthlyIncome={monthlyIncome} 
+          fixedExpenses={fixedExpenses} 
+          budgetedExpenses={0} 
+          savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12}
+          actualExpenses={monthlyExpenses}
+          budgetExcesses={0}
+          unbudgetedExpenses={0}
+        />
 
         {/* Presupuesto Mensual */}
         <Card className="p-5 bg-gradient-to-br from-[hsl(220,45%,18%)] to-[hsl(240,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(220,50%,35%)]/40 relative overflow-hidden">
