@@ -580,7 +580,7 @@ const Balance = () => {
               <TrendingUp className="h-5 w-5 text-success" />
               <p className="text-sm text-muted-foreground">Ingresos</p>
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-foreground break-words">
+            <p className="text-lg sm:text-xl font-bold text-foreground break-words leading-tight">
               ${totalIngresos.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
           </Card>
@@ -592,7 +592,7 @@ const Balance = () => {
               <TrendingDown className="h-5 w-5 text-destructive" />
               <p className="text-sm text-muted-foreground">Gastos</p>
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-foreground break-words">
+            <p className="text-lg sm:text-xl font-bold text-foreground break-words leading-tight">
               ${totalGastos.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
           </Card>
@@ -606,7 +606,7 @@ const Balance = () => {
             <Wallet className={`h-5 w-5 ${balance >= 0 ? 'text-green-200' : 'text-red-200'}`} />
             <p className="text-sm text-white/90">Balance</p>
           </div>
-          <p className="text-xl sm:text-2xl font-bold text-white break-words">
+          <p className="text-lg sm:text-xl font-bold text-white break-words leading-tight">
             ${balance.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
         </Card>
