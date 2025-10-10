@@ -18,14 +18,21 @@ export default function AICoachInsightsWidget({
   balance
 }: AICoachInsightsProps) {
   const [api, setApi] = useState<CarouselApi>();
+  const [isReady, setIsReady] = useState(false);
 
-  // Auto-scroll carousel
+  // Wait for carousel to be ready before starting auto-scroll
   useEffect(() => {
     if (!api) return;
-    const interval = setInterval(() => {
+    
+    // Mark as ready immediately to prevent initial animation
+    setIsReady(true);
+    
+    // Start auto-scroll after a delay
+    const scrollInterval = setInterval(() => {
       api.scrollNext();
     }, 4000);
-    return () => clearInterval(interval);
+    
+    return () => clearInterval(scrollInterval);
   }, [api]);
 
   // Generate dynamic insights based on financial data
@@ -123,22 +130,35 @@ export default function AICoachInsightsWidget({
   const insights = generateInsights();
 
   return (
-    <Carousel className="w-full" setApi={setApi} opts={{ loop: true, align: "center" }}>
-      <CarouselContent>
-        {insights.map((insight, index) => (
-          <CarouselItem key={index}>
-            <Card className={`p-3 card-glow border-white/20 bg-gradient-to-br ${
-              insight.isPositive 
-                ? 'from-emerald-500/90 to-emerald-600/90' 
-                : 'from-red-500/90 to-red-600/90'
-            }`}>
-              <p className="text-xs text-white leading-snug">
-                {insight.emoji} <span className="font-medium">{insight.message}</span>
-              </p>
-            </Card>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-    </Carousel>
+    <div className="w-full [&_.embla\_\_container]:!transition-none">
+      <Carousel 
+        className="w-full" 
+        setApi={setApi} 
+        opts={{ 
+          loop: true, 
+          align: "center",
+          duration: 0,
+          startIndex: 0,
+          skipSnaps: false,
+          dragFree: false
+        }}
+      >
+        <CarouselContent className="-ml-2 md:-ml-4" style={{ transition: 'none', transform: 'translate3d(0, 0, 0)' }}>
+          {insights.map((insight, index) => (
+            <CarouselItem key={index} className="pl-2 md:pl-4">
+              <Card className={`p-3 card-glow border-white/20 bg-gradient-to-br ${
+                insight.isPositive 
+                  ? 'from-emerald-500/90 to-emerald-600/90' 
+                  : 'from-red-500/90 to-red-600/90'
+              }`}>
+                <p className="text-xs text-white leading-snug">
+                  {insight.emoji} <span className="font-medium">{insight.message}</span>
+                </p>
+              </Card>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
+    </div>
   );
 }
