@@ -8,10 +8,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import { es } from "date-fns/locale";
 
+interface SubAccount {
+  nombre: string;
+  monto: number;
+}
+
 interface CategoryData {
   categoria: string;
   monto: number;
-  transacciones: number;
+  subcuentas: SubAccount[];
 }
 
 interface IncomeStatement {
@@ -123,17 +128,26 @@ export default function SafeToSpendExplanation() {
               </div>
 
               {/* Categorías de Ingresos */}
-              <div className="space-y-2 pl-2">
+              <div className="space-y-3">
                 {statement.ingresos.length === 0 ? (
                   <p className="text-muted-foreground text-sm py-2">No hay ingresos registrados</p>
                 ) : (
                   statement.ingresos.map((cat, idx) => (
-                    <div key={idx} className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-muted/30 transition-colors">
-                      <div className="flex-1">
-                        <p className="text-card-foreground font-medium">{cat.categoria}</p>
-                        <p className="text-muted-foreground text-xs">{cat.transacciones} transacción(es)</p>
+                    <div key={idx} className="border-b border-border/20 pb-3 last:border-0">
+                      {/* Categoría Principal */}
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-card-foreground font-bold text-base">{cat.categoria}</h4>
+                        <p className="text-card-foreground font-bold text-base">{formatCurrency(cat.monto)}</p>
                       </div>
-                      <p className="text-card-foreground font-semibold">{formatCurrency(cat.monto)}</p>
+                      {/* Subcuentas */}
+                      <div className="space-y-1 pl-6">
+                        {cat.subcuentas.map((sub, subIdx) => (
+                          <div key={subIdx} className="flex items-center justify-between py-1">
+                            <p className="text-muted-foreground text-sm">{sub.nombre}</p>
+                            <p className="text-muted-foreground text-sm">{formatCurrency(sub.monto)}</p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   ))
                 )}
@@ -155,17 +169,26 @@ export default function SafeToSpendExplanation() {
               </div>
 
               {/* Categorías de Gastos */}
-              <div className="space-y-2 pl-2">
+              <div className="space-y-3">
                 {statement.gastos.length === 0 ? (
                   <p className="text-muted-foreground text-sm py-2">No hay gastos registrados</p>
                 ) : (
                   statement.gastos.map((cat, idx) => (
-                    <div key={idx} className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-muted/30 transition-colors">
-                      <div className="flex-1">
-                        <p className="text-card-foreground font-medium">{cat.categoria}</p>
-                        <p className="text-muted-foreground text-xs">{cat.transacciones} transacción(es)</p>
+                    <div key={idx} className="border-b border-border/20 pb-3 last:border-0">
+                      {/* Categoría Principal */}
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-card-foreground font-bold text-base">{cat.categoria}</h4>
+                        <p className="text-card-foreground font-bold text-base">{formatCurrency(cat.monto)}</p>
                       </div>
-                      <p className="text-card-foreground font-semibold">-{formatCurrency(cat.monto)}</p>
+                      {/* Subcuentas */}
+                      <div className="space-y-1 pl-6">
+                        {cat.subcuentas.map((sub, subIdx) => (
+                          <div key={subIdx} className="flex items-center justify-between py-1">
+                            <p className="text-muted-foreground text-sm">{sub.nombre}</p>
+                            <p className="text-muted-foreground text-sm">{formatCurrency(sub.monto)}</p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   ))
                 )}

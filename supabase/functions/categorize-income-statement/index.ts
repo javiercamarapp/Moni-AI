@@ -38,28 +38,37 @@ serve(async (req) => {
       categoria: t.category_name || t.categoria
     }));
 
-    const systemPrompt = `Eres un contador experto que agrupa transacciones financieras en categorías significativas.
+    const systemPrompt = `Eres un contador experto que crea estados de resultados profesionales agrupando transacciones.
 
-REGLAS DE AGRUPACIÓN:
-1. Agrupa gastos similares en categorías generales (ej: todos los restaurantes → "Comidas y Restaurantes")
-2. Agrupa salidas, bares, fiestas → "Entretenimiento y Vida Nocturna"
-3. Transporte (Uber, gasolina, estacionamiento) → "Transporte"
-4. Supermercados y tiendas → "Supermercado y Despensa"
-5. Servicios (luz, agua, gas, internet) → "Servicios Básicos"
-6. Suscripciones (Netflix, Spotify, etc.) → "Suscripciones Digitales"
-7. Salud (farmacia, doctor, gym) → "Salud y Bienestar"
-8. Vivienda (renta, mantenimiento) → "Vivienda"
+REGLAS CRÍTICAS DE AGRUPACIÓN:
+1. DEBES agrupar TODAS las transacciones similares en UNA SOLA categoría
+2. SUMA todos los montos de transacciones similares
+3. Crea una estructura jerárquica con categorías principales y subcuentas
 
-Para INGRESOS:
-1. Salario → "Salario"
-2. Freelance/consultoría → "Ingresos Profesionales"
-3. Ventas → "Ventas"
-4. Otros → Agrupa de forma inteligente
+CATEGORÍAS PARA GASTOS:
+- "Gastos de Alimentación": Restaurantes, comida rápida, cafés, delivery, supermercado
+- "Gastos de Transporte": Uber, taxis, gasolina, estacionamiento, mantenimiento auto
+- "Entretenimiento y Ocio": Bares, fiestas, cine, eventos, salidas nocturnas
+- "Servicios Básicos": Luz, agua, gas, internet, teléfono
+- "Suscripciones": Netflix, Spotify, Amazon Prime, Disney+, HBO, apps
+- "Salud y Bienestar": Farmacia, doctor, dentista, gym, seguro médico
+- "Vivienda": Renta, mantenimiento, muebles
+- "Compras y Shopping": Ropa, electrónicos, accesorios
+- "Educación": Cursos, libros, material escolar
+- "Otros Gastos": Todo lo que no encaje arriba
 
-IMPORTANTE:
-- Suma todos los montos de transacciones que pertenezcan a la misma categoría
-- Devuelve categorías ordenadas de mayor a menor monto
-- Usa nombres de categorías en español, claros y profesionales`;
+CATEGORÍAS PARA INGRESOS:
+- "Ingresos por Salario": Sueldos, nómina
+- "Ingresos Profesionales": Freelance, consultoría, servicios
+- "Ventas": Productos vendidos
+- "Otros Ingresos": Inversiones, intereses, regalos
+
+FORMATO DE RESPUESTA:
+- Cada categoría debe tener subcuentas agrupadas
+- Ejemplo: "Gastos de Alimentación" incluye: "Restaurantes", "Supermercado", "Cafés"
+- SUMA los montos de transacciones similares en cada subcuenta
+- NO repitas subcuentas, agrúpalas todas en una sola línea`;
+
 
     const userPrompt = `Analiza estas transacciones y agrúpalas en categorías inteligentes:
 
@@ -94,9 +103,18 @@ Devuelve el resultado agrupado y sumado por categorías.`;
                     properties: {
                       categoria: { type: "string" },
                       monto: { type: "number" },
-                      transacciones: { type: "number" }
+                      subcuentas: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            nombre: { type: "string" },
+                            monto: { type: "number" }
+                          }
+                        }
+                      }
                     },
-                    required: ["categoria", "monto", "transacciones"]
+                    required: ["categoria", "monto", "subcuentas"]
                   }
                 },
                 gastos: {
@@ -106,9 +124,18 @@ Devuelve el resultado agrupado y sumado por categorías.`;
                     properties: {
                       categoria: { type: "string" },
                       monto: { type: "number" },
-                      transacciones: { type: "number" }
+                      subcuentas: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            nombre: { type: "string" },
+                            monto: { type: "number" }
+                          }
+                        }
+                      }
                     },
-                    required: ["categoria", "monto", "transacciones"]
+                    required: ["categoria", "monto", "subcuentas"]
                   }
                 }
               },
