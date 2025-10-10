@@ -1,103 +1,17 @@
-import { useState, useEffect, useRef, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, TrendingUp, PiggyBank, CreditCard, Target, Zap, Activity } from 'lucide-react';
+import { ArrowLeft, AlertCircle, PiggyBank, CreditCard, Target, TrendingUp, Activity } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import BottomNav from '@/components/BottomNav';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Sphere, MeshDistortMaterial, Float, OrbitControls, Environment, Html } from '@react-three/drei';
-import * as THREE from 'three';
-
-// 3D Score Orb Component
-function ScoreOrb({ score }: { score: number }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const [hovered, setHovered] = useState(false);
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = state.clock.getElapsedTime() * 0.2;
-      meshRef.current.rotation.x = Math.sin(state.clock.getElapsedTime() * 0.3) * 0.1;
-    }
-  });
-
-  // Color based on score
-  const getColor = () => {
-    if (score >= 80) return '#10b981'; // green
-    if (score >= 60) return '#3b82f6'; // blue
-    if (score >= 40) return '#f59e0b'; // orange
-    return '#ef4444'; // red
-  };
-
-  return (
-    <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-      <Sphere
-        ref={meshRef}
-        args={[2, 128, 128]}
-        scale={hovered ? 1.1 : 1}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
-      >
-        <MeshDistortMaterial
-          color={getColor()}
-          attach="material"
-          distort={0.4}
-          speed={2}
-          roughness={0.2}
-          metalness={0.8}
-          emissive={getColor()}
-          emissiveIntensity={0.5}
-        />
-      </Sphere>
-      
-      {/* Score text as HTML overlay */}
-      <Html position={[0, 0, 0]} center>
-        <div className="text-6xl font-bold text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.8)] pointer-events-none">
-          {score}
-        </div>
-      </Html>
-    </Float>
-  );
-}
-
-// Particle field background
-function ParticleField() {
-  const particlesRef = useRef<THREE.Points>(null);
-  
-  useFrame((state) => {
-    if (particlesRef.current) {
-      particlesRef.current.rotation.y = state.clock.getElapsedTime() * 0.05;
-    }
-  });
-
-  const particleCount = 1000;
-  const positions = new Float32Array(particleCount * 3);
-  
-  for (let i = 0; i < particleCount * 3; i += 3) {
-    positions[i] = (Math.random() - 0.5) * 50;
-    positions[i + 1] = (Math.random() - 0.5) * 50;
-    positions[i + 2] = (Math.random() - 0.5) * 50;
-  }
-
-  return (
-    <points ref={particlesRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={particleCount}
-          array={positions}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial size={0.05} color="#8b5cf6" transparent opacity={0.6} />
-    </points>
-  );
-}
+import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts';
 
 const ScoreMoni = () => {
   const navigate = useNavigate();
   const [score, setScore] = useState(40);
   const [loading, setLoading] = useState(true);
+  const [hoveredPoint, setHoveredPoint] = useState<string | null>(null);
   const [components, setComponents] = useState({
     savingsAndLiquidity: 0,
     debt: 0,
@@ -141,57 +55,57 @@ const ScoreMoni = () => {
     }
   };
 
-  const getScoreLevel = (score: number) => {
-    if (score >= 80) return { level: 'Excelente', color: 'from-emerald-600 to-emerald-800' };
-    if (score >= 60) return { level: 'Bueno', color: 'from-blue-600 to-blue-800' };
-    if (score >= 40) return { level: 'Regular', color: 'from-orange-600 to-orange-800' };
-    return { level: 'Necesita Mejorar', color: 'from-red-600 to-red-800' };
-  };
-
-  const scoreLevel = getScoreLevel(score);
-
-  const scoreComponents = [
-    {
-      name: 'Ahorro y Liquidez',
-      value: components.savingsAndLiquidity,
-      max: 30,
+  const radarData = [
+    { 
+      dimension: 'Ahorro y Liquidez', 
+      value: components.savingsAndLiquidity, 
+      fullMark: 30,
       icon: PiggyBank,
-      color: 'from-emerald-600/90 to-emerald-800/90',
+      color: '#10b981',
       description: 'Capacidad de ahorro mensual, meses de liquidez disponible, y fondos de emergencia'
     },
-    {
-      name: 'Gestión de Deuda',
-      value: components.debt,
-      max: 20,
+    { 
+      dimension: 'Gestión de Deuda', 
+      value: components.debt, 
+      fullMark: 20,
       icon: CreditCard,
-      color: 'from-red-600/90 to-red-800/90',
+      color: '#ef4444',
       description: 'Ratio deuda-ingreso, carga financiera, y gestión de intereses'
     },
-    {
-      name: 'Control Financiero',
-      value: components.control,
-      max: 20,
+    { 
+      dimension: 'Control Financiero', 
+      value: components.control, 
+      fullMark: 20,
       icon: Target,
-      color: 'from-blue-600/90 to-blue-800/90',
+      color: '#3b82f6',
       description: 'Gastos fijos vs variables, gastos hormiga, y control de presupuesto'
     },
-    {
-      name: 'Crecimiento Patrimonial',
-      value: components.growth,
-      max: 15,
+    { 
+      dimension: 'Crecimiento', 
+      value: components.growth, 
+      fullMark: 15,
       icon: TrendingUp,
-      color: 'from-purple-600/90 to-purple-800/90',
+      color: '#8b5cf6',
       description: 'Tasa de inversión, ROE personal, y crecimiento de patrimonio'
     },
-    {
-      name: 'Hábitos Financieros',
-      value: components.behavior,
-      max: 15,
+    { 
+      dimension: 'Hábitos', 
+      value: components.behavior, 
+      fullMark: 15,
       icon: Activity,
-      color: 'from-orange-600/90 to-orange-800/90',
+      color: '#f59e0b',
       description: 'Cumplimiento de metas, consistencia en ahorro, y compras impulsivas'
     }
   ];
+
+  const getScoreLevel = (score: number) => {
+    if (score >= 80) return { level: 'Excelente', color: 'from-emerald-600 to-emerald-800', textColor: 'text-emerald-400' };
+    if (score >= 60) return { level: 'Bueno', color: 'from-blue-600 to-blue-800', textColor: 'text-blue-400' };
+    if (score >= 40) return { level: 'Regular', color: 'from-orange-600 to-orange-800', textColor: 'text-orange-400' };
+    return { level: 'Necesita Mejorar', color: 'from-red-600 to-red-800', textColor: 'text-red-400' };
+  };
+
+  const scoreLevel = getScoreLevel(score);
 
   if (loading) {
     return (
@@ -219,123 +133,219 @@ const ScoreMoni = () => {
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-white">Score Moni 3D</h1>
-              <p className="text-xs text-white/70">Visualización Ultra Realista de tu Salud Financiera</p>
+              <h1 className="text-xl font-bold text-white">Score Moni</h1>
+              <p className="text-xs text-white/70">Desglose completo de tu salud financiera</p>
             </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
-        {/* 3D Score Visualization */}
-        <Card className={`p-0 bg-gradient-to-br ${scoreLevel.color} card-glow shadow-2xl border-2 border-white/20 relative overflow-hidden h-[400px]`}>
-          <Canvas camera={{ position: [0, 0, 8], fov: 50 }}>
-            <Suspense fallback={null}>
-              <ambientLight intensity={0.5} />
-              <pointLight position={[10, 10, 10]} intensity={1} />
-              <pointLight position={[-10, -10, -10]} intensity={0.5} color="#8b5cf6" />
-              
-              <ParticleField />
-              <ScoreOrb score={score} />
-              
-              <OrbitControls 
-                enableZoom={false} 
-                enablePan={false}
-                autoRotate
-                autoRotateSpeed={0.5}
-              />
-              <Environment preset="night" />
-            </Suspense>
-          </Canvas>
+        {/* Score Principal */}
+        <Card className={`p-8 bg-gradient-to-br ${scoreLevel.color} card-glow shadow-2xl border-2 border-white/20 relative overflow-hidden`}>
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse" />
           
-          {/* Score overlay */}
-          <div className="absolute top-4 left-4 z-10">
-            <div className="bg-black/50 backdrop-blur-md rounded-lg p-3 border border-white/20">
-              <p className="text-xs text-white/80">Tu Score Moni</p>
-              <p className="text-3xl font-bold text-white">{score}<span className="text-lg">/100</span></p>
-              <p className="text-xs text-white/70 mt-1">{scoreLevel.level}</p>
-            </div>
-          </div>
-
-          <div className="absolute bottom-4 left-4 right-4 z-10">
-            <div className="bg-black/50 backdrop-blur-md rounded-lg p-3 border border-white/20">
-              <p className="text-xs text-white/90 text-center">
-                🎯 Interactúa con la esfera - Arrastra para rotar
-              </p>
+          <div className="relative z-10">
+            <div className="text-center mb-6">
+              <p className="text-sm text-white/80 mb-2">Tu Score Moni</p>
+              <div className="flex items-baseline justify-center gap-3">
+                <p className="text-7xl font-bold text-white drop-shadow-lg">{score}</p>
+                <span className="text-2xl text-white/60">/100</span>
+              </div>
+              <p className="text-xl font-bold text-white mt-2">{scoreLevel.level}</p>
             </div>
           </div>
         </Card>
 
-        {/* Methodology Explanation */}
-        <Card className="p-6 bg-gradient-card card-glow border-white/20">
-          <div className="flex items-center gap-3 mb-4">
-            <Zap className="w-6 h-6 text-yellow-400" />
-            <div>
-              <h2 className="text-xl font-bold text-white">Metodología IA del Score Moni</h2>
-              <p className="text-xs text-white/70">Análisis multidimensional de 100 puntos</p>
+        {/* Radar Chart 3D Animado */}
+        <Card className="p-6 bg-gradient-card card-glow border-white/20 relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          
+          <div className="relative z-10">
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-white mb-2">Análisis Multidimensional</h2>
+              <p className="text-sm text-white/70">Interactúa con la gráfica para ver detalles</p>
+            </div>
+
+            {/* Radar Chart Container con efecto 3D */}
+            <div 
+              className="relative h-[500px] transition-transform duration-300 hover:scale-105"
+              style={{
+                perspective: '1000px',
+                transformStyle: 'preserve-3d'
+              }}
+            >
+              <div 
+                className="absolute inset-0 transition-transform duration-500"
+                style={{
+                  transform: hoveredPoint ? 'rotateY(5deg) rotateX(5deg)' : 'rotateY(0deg) rotateX(0deg)',
+                }}
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart 
+                    data={radarData}
+                    onMouseMove={(data: any) => {
+                      if (data && data.activeLabel) {
+                        setHoveredPoint(data.activeLabel);
+                      }
+                    }}
+                    onMouseLeave={() => setHoveredPoint(null)}
+                  >
+                    <defs>
+                      <filter id="glow">
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                        <feMerge>
+                          <feMergeNode in="coloredBlur"/>
+                          <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                      </filter>
+                      <radialGradient id="radarGradient">
+                        <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.8}/>
+                        <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                      </radialGradient>
+                    </defs>
+                    
+                    <PolarGrid 
+                      stroke="rgba(255,255,255,0.2)" 
+                      strokeWidth={hoveredPoint ? 2 : 1}
+                      className="transition-all duration-300"
+                    />
+                    
+                    <PolarAngleAxis 
+                      dataKey="dimension" 
+                      tick={{ 
+                        fill: 'white', 
+                        fontSize: 14, 
+                        fontWeight: hoveredPoint ? 'bold' : 'normal' 
+                      }}
+                      className="transition-all duration-300"
+                    />
+                    
+                    <PolarRadiusAxis 
+                      angle={90} 
+                      domain={[0, 30]}
+                      tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 12 }}
+                    />
+                    
+                    <Radar
+                      name="Score"
+                      dataKey="value"
+                      stroke="#8b5cf6"
+                      strokeWidth={3}
+                      fill="url(#radarGradient)"
+                      fillOpacity={hoveredPoint ? 0.8 : 0.6}
+                      filter="url(#glow)"
+                      className="transition-all duration-300"
+                      animationDuration={1500}
+                      animationBegin={0}
+                    />
+                    
+                    <Tooltip
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="bg-black/90 backdrop-blur-md border border-white/20 rounded-lg p-4 shadow-2xl">
+                              <div className="flex items-center gap-2 mb-2">
+                                <div 
+                                  className="w-3 h-3 rounded-full"
+                                  style={{ backgroundColor: data.color }}
+                                />
+                                <p className="text-sm font-bold text-white">{data.dimension}</p>
+                              </div>
+                              <p className="text-lg font-bold text-white mb-1">
+                                {data.value}<span className="text-xs text-white/60">/{data.fullMark}</span>
+                              </p>
+                              <p className="text-xs text-white/70">{data.description}</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
-          
-          <p className="text-sm text-white/80 leading-relaxed mb-4">
-            Nuestro sistema de IA analiza tu salud financiera a través de 5 dimensiones fundamentales, 
-            cada una con un peso específico que suma un total de 100 puntos. Esta metodología está diseñada 
-            para dar una visión holística y precisa de tu situación financiera actual.
-          </p>
         </Card>
 
-        {/* Score Components Breakdown */}
-        <div className="space-y-3">
-          {scoreComponents.map((component, index) => {
-            const Icon = component.icon;
-            const percentage = (component.value / component.max) * 100;
+        {/* Component Details Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {radarData.map((item, idx) => {
+            const Icon = item.icon;
+            const percentage = (item.value / item.fullMark) * 100;
+            const isHovered = hoveredPoint === item.dimension;
             
             return (
               <Card 
-                key={index}
-                className={`p-4 bg-gradient-to-br ${component.color} card-glow border-2 border-white/20 relative overflow-hidden animate-fade-in`}
-                style={{ animationDelay: `${index * 100}ms` }}
+                key={idx}
+                className={`p-4 bg-gradient-card card-glow border-2 transition-all duration-300 ${
+                  isHovered 
+                    ? 'border-white/40 scale-105 shadow-2xl' 
+                    : 'border-white/20'
+                }`}
+                onMouseEnter={() => setHoveredPoint(item.dimension)}
+                onMouseLeave={() => setHoveredPoint(null)}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-                
-                <div className="relative z-10">
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-6 h-6 text-white" />
-                    </div>
-                    
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className="text-sm font-bold text-white">{component.name}</h3>
-                        <span className="text-lg font-bold text-white">
-                          {component.value}<span className="text-xs text-white/70">/{component.max}</span>
-                        </span>
-                      </div>
-                      <p className="text-xs text-white/80 mb-3">{component.description}</p>
-                      
-                      {/* Progress bar */}
-                      <div className="relative h-2 bg-black/30 rounded-full overflow-hidden">
-                        <div 
-                          className="absolute top-0 left-0 h-full bg-white/90 rounded-full transition-all duration-1000"
-                          style={{ width: `${percentage}%` }}
-                        />
-                      </div>
+                <div className="flex items-start gap-3 mb-3">
+                  <div 
+                    className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ 
+                      backgroundColor: `${item.color}20`,
+                      border: `2px solid ${item.color}40`
+                    }}
+                  >
+                    <Icon className="w-6 h-6" style={{ color: item.color }} />
+                  </div>
+                  
+                  <div className="flex-1">
+                    <h3 className="text-sm font-bold text-white mb-1">{item.dimension}</h3>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-2xl font-bold text-white">{item.value}</span>
+                      <span className="text-sm text-white/60">/{item.fullMark}</span>
                     </div>
                   </div>
+                </div>
+                
+                <p className="text-xs text-white/70 mb-3">{item.description}</p>
+                
+                {/* Progress bar */}
+                <div className="relative h-2 bg-black/30 rounded-full overflow-hidden">
+                  <div 
+                    className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000"
+                    style={{ 
+                      width: `${percentage}%`,
+                      backgroundColor: item.color,
+                      boxShadow: `0 0 10px ${item.color}80`
+                    }}
+                  />
                 </div>
               </Card>
             );
           })}
         </div>
 
-        {/* AI Insights */}
+        {/* AI Methodology Explanation */}
         <Card className="p-6 bg-gradient-to-br from-purple-600/90 to-purple-800/90 card-glow border-2 border-purple-500/30">
-          <h3 className="text-lg font-bold text-white mb-3">🤖 Análisis IA</h3>
-          <div className="space-y-2 text-sm text-white/90">
-            <p>
-              {score >= 80 && "¡Excelente trabajo! Tu perfil financiero está en un nivel óptimo. Mantén estos hábitos y considera diversificar aún más tus inversiones."}
-              {score >= 60 && score < 80 && "Tu situación financiera es sólida. Continúa mejorando en las áreas con menor puntaje para alcanzar la excelencia."}
-              {score >= 40 && score < 60 && "Vas por buen camino, pero hay áreas importantes que requieren atención. Enfócate en mejorar tu ahorro y control de gastos."}
-              {score < 40 && "Es momento de tomar acción. Establece un presupuesto, reduce deudas y comienza a construir un fondo de emergencia. ¡Tú puedes!"}
+          <div className="flex items-start gap-3 mb-4">
+            <AlertCircle className="w-6 h-6 text-purple-200 flex-shrink-0 mt-1" />
+            <div>
+              <h3 className="text-lg font-bold text-white mb-2">Metodología IA del Score Moni</h3>
+              <p className="text-sm text-white/90 leading-relaxed">
+                El Score Moni utiliza un sistema de análisis multidimensional basado en inteligencia artificial 
+                que evalúa 5 aspectos fundamentales de tu salud financiera. Cada dimensión tiene un peso específico 
+                que suma un total de 100 puntos, proporcionando una visión holística y precisa de tu situación actual.
+              </p>
+            </div>
+          </div>
+          
+          <div className="space-y-2 mt-4">
+            <p className="text-sm text-white/80">
+              {score >= 80 && "🎉 ¡Excelente trabajo! Tu perfil financiero está en un nivel óptimo. Mantén estos hábitos y considera diversificar aún más tus inversiones."}
+              {score >= 60 && score < 80 && "👏 Tu situación financiera es sólida. Continúa mejorando en las áreas con menor puntaje para alcanzar la excelencia."}
+              {score >= 40 && score < 60 && "💪 Vas por buen camino, pero hay áreas importantes que requieren atención. Enfócate en mejorar tu ahorro y control de gastos."}
+              {score < 40 && "🎯 Es momento de tomar acción. Establece un presupuesto, reduce deudas y comienza a construir un fondo de emergencia. ¡Tú puedes!"}
             </p>
           </div>
         </Card>
