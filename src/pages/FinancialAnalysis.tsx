@@ -39,29 +39,47 @@ export default function FinancialAnalysis() {
   const [loadingTransactions, setLoadingTransactions] = useState(true);
   const [quickMetrics, setQuickMetrics] = useState<any>(null); // Métricas instantáneas
   const [historicalAverages, setHistoricalAverages] = useState<any>(null); // Promedios históricos
-  const [showSplash, setShowSplash] = useState(true); // Mostrar logo inicial
+  const [showSplash, setShowSplash] = useState(false); // Splash instantáneo
 
   // Helper function to safely format values in thousands
   const formatK = (value: number | undefined | null): string => {
     if (value == null || isNaN(value)) return '0.0';
     return (value / 1000).toFixed(1);
   };
+
+  // Cargar datos cacheados inmediatamente al montar el componente
   useEffect(() => {
     checkAuth();
     
-    // Ocultar splash después de 2 segundos
-    const splashTimer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2000);
+    // Cargar datos cacheados instantáneamente
+    const cachedMetrics = localStorage.getItem('financialAnalysis_quickMetrics');
+    const cachedAnalysis = localStorage.getItem('financialAnalysis_analysis');
+    const cachedTransactions = localStorage.getItem('financialAnalysis_recentTransactions');
+    const cachedFutureEvents = localStorage.getItem('financialAnalysis_futureEvents');
+    const cachedHistoricalAvg = localStorage.getItem('financialAnalysis_historicalAverages');
     
-    return () => clearTimeout(splashTimer);
+    if (cachedMetrics) {
+      setQuickMetrics(JSON.parse(cachedMetrics));
+    }
+    if (cachedAnalysis) {
+      setAnalysis(JSON.parse(cachedAnalysis));
+    }
+    if (cachedTransactions) {
+      const parsed = JSON.parse(cachedTransactions);
+      // Reconvertir las fechas de string a Date
+      setRecentTransactions(parsed.map((t: any) => ({...t, date: new Date(t.date)})));
+    }
+    if (cachedFutureEvents) {
+      const parsed = JSON.parse(cachedFutureEvents);
+      setFutureEvents(parsed.map((e: any) => ({...e, date: new Date(e.date)})));
+    }
+    if (cachedHistoricalAvg) {
+      setHistoricalAverages(JSON.parse(cachedHistoricalAvg));
+    }
   }, []);
+
   useEffect(() => {
     if (user) {
-      // Limpiar datos anteriores al cambiar período
-      setQuickMetrics(null);
-      setAnalysis(null);
-      
       // 1. Calcular métricas básicas inmediatamente
       calculateQuickMetrics();
       // 2. Cargar transacciones
@@ -142,24 +160,29 @@ export default function FinancialAnalysis() {
         avgMonthlyExpenses: Math.round(avgMonthlyExpenses)
       });
       
-      setHistoricalAverages({
+      const historicalData = {
         avgMonthlyIncome: Math.round(avgMonthlyIncome),
         avgMonthlyExpenses: Math.round(avgMonthlyExpenses),
         avgBalance: Math.round(avgMonthlyIncome - avgMonthlyExpenses),
         monthsAnalyzed: monthsWithData,
         period: 'year' // Siempre proyección anual basada en 12+1 meses
-      });
+      };
+      
+      setHistoricalAverages(historicalData);
+      localStorage.setItem('financialAnalysis_historicalAverages', JSON.stringify(historicalData));
       
       console.log('💰 Transactions found:', transactions?.length || 0);
       
       if (!transactions || transactions.length === 0) {
-        setQuickMetrics({
+        const emptyMetrics = {
           totalIncome: 0,
           totalExpenses: 0,
           balance: 0,
           savingsRate: 0,
           scoreMoni: 40
-        });
+        };
+        setQuickMetrics(emptyMetrics);
+        localStorage.setItem('financialAnalysis_quickMetrics', JSON.stringify(emptyMetrics));
         return;
       }
       
@@ -188,7 +211,7 @@ export default function FinancialAnalysis() {
       if (savingsRate > 20) score += 20;
       if (totalIncome > 0) score += 20;
       
-      setQuickMetrics({
+      const metricsData = {
         totalIncome,
         totalExpenses,
         balance,
@@ -216,7 +239,10 @@ export default function FinancialAnalysis() {
         projectedAnnualSavings: balance * 12,
         mindfulSpendingIndex: 0,
         scoreMoni: Math.min(100, score)
-      });
+      };
+      
+      setQuickMetrics(metricsData);
+      localStorage.setItem('financialAnalysis_quickMetrics', JSON.stringify(metricsData));
     } catch (error) {
       console.error('Error calculating quick metrics:', error);
     }
@@ -256,6 +282,7 @@ export default function FinancialAnalysis() {
       })) || [];
 
       setRecentTransactions(formattedRecent);
+      localStorage.setItem('financialAnalysis_recentTransactions', JSON.stringify(formattedRecent));
 
       // Fetch ALL transactions (last 6 months) to detect patterns
       const sixMonthsAgo = new Date();
@@ -273,6 +300,7 @@ export default function FinancialAnalysis() {
       // AI analyzes patterns and predicts future payments
       const predicted = detectRecurringPayments(allTx || []);
       setFutureEvents(predicted);
+      localStorage.setItem('financialAnalysis_futureEvents', JSON.stringify(predicted));
       
       setLoadingTransactions(false);
     } catch (error) {
@@ -422,6 +450,7 @@ export default function FinancialAnalysis() {
       
       if (data) {
         setAnalysis(data);
+        localStorage.setItem('financialAnalysis_analysis', JSON.stringify(data));
         console.log('Analysis data set successfully');
       }
     } catch (error: any) {
@@ -432,19 +461,6 @@ export default function FinancialAnalysis() {
     }
   };
   
-  // Mostrar splash screen durante los primeros 2 segundos
-  if (showSplash) {
-    return (
-      <div className="min-h-screen animated-wave-bg flex items-center justify-center px-8">
-        <img 
-          src={moniAiLogo} 
-          alt="Moni AI" 
-          className="w-full max-w-md animate-pulse"
-          style={{ objectFit: 'contain' }}
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen animated-wave-bg pb-24">
