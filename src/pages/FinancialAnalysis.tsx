@@ -583,10 +583,7 @@ export default function FinancialAnalysis() {
 
             {/* Proyección Anual removida - se moverá a página de proyecciones */}
 
-            {/* 3. PATRIMONIO Y RUNWAY */}
-            {analysis?.netWorth && <NetWorthWidget runwayMonths={analysis.netWorth.runwayMonths || 0} />}
-
-            {/* 4. PROYECCIONES CON ESCENARIOS */}
+            {/* 3. PROYECCIONES CON ESCENARIOS */}
             {analysis?.forecast && <ForecastWidget {...analysis?.forecast} />}
 
             {/* 5. PRESUPUESTO VIVO */}

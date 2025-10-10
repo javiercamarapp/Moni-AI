@@ -8,6 +8,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { cn } from "@/lib/utils";
 import { useNetWorth, useHasNetWorthData, TimeRange } from "@/hooks/useNetWorth";
 import NetWorthSetupForm from "@/components/NetWorthSetupForm";
+import NetWorthWidget from "@/components/analysis/NetWorthWidget";
 import networthIntro from "@/assets/networth-intro.jpg";
 
 type CategoryFilter = 'All' | 'Checking' | 'Savings' | 'Credit' | 'Loans' | 'Investments' | 'Property' | 'Other' | 'Mortgage';
@@ -300,6 +301,9 @@ export default function NetWorth() {
             </div>
           )}
         </Card>
+
+        {/* Widget de Evolución del Patrimonio */}
+        <NetWorthWidget />
 
         {/* Assets Card */}
         <Card className="bg-gradient-card border-border/50 overflow-hidden">

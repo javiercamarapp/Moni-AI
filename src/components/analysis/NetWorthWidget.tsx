@@ -1,64 +1,16 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { TrendingUp, Shield, TrendingDown, ArrowRight } from "lucide-react";
-import { useNetWorth, useHasNetWorthData, TimeRange } from "@/hooks/useNetWorth";
+import { TrendingUp, Shield, TrendingDown } from "lucide-react";
+import { useNetWorth, TimeRange } from "@/hooks/useNetWorth";
 import { cn } from "@/lib/utils";
 
-interface NetWorthProps {
-  runwayMonths: number;
-}
-
-export default function NetWorthWidget({ runwayMonths }: NetWorthProps) {
-  const navigate = useNavigate();
+export default function NetWorthWidget() {
   const [timeRange, setTimeRange] = useState<TimeRange>('1Y');
-  const { data: hasData, isLoading: checkingData } = useHasNetWorthData();
-  const { data: netWorthData, isLoading: loadingData } = useNetWorth(timeRange);
+  const { data: netWorthData, isLoading } = useNetWorth(timeRange);
 
-  // Si aún está verificando si hay datos
-  if (checkingData) {
-    return (
-      <Card className="p-4 bg-gradient-card card-glow border-white/20 animate-pulse">
-        <div className="space-y-3">
-          <div className="h-20 bg-white/5 rounded"></div>
-          <div className="h-[120px] bg-white/5 rounded"></div>
-        </div>
-      </Card>
-    );
-  }
-
-  // Si no tiene datos de NetWorth (no ha completado el quiz)
-  if (!hasData) {
-    return (
-      <Card className="p-6 bg-gradient-card card-glow border-white/20">
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 mb-2">
-            <Shield className="h-8 w-8 text-primary" />
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-white mb-2">
-              Descubre tu Patrimonio Neto
-            </h3>
-            <p className="text-sm text-white/70 mb-4">
-              Completa el quiz para ver tu patrimonio real, activos, pasivos y runway de liquidez
-            </p>
-          </div>
-          <Button 
-            onClick={() => navigate('/net-worth')}
-            className="w-full bg-primary/20 hover:bg-primary/30 text-white border border-primary/50"
-          >
-            Completar Quiz de Patrimonio
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
-      </Card>
-    );
-  }
-
-  // Si está cargando los datos después de verificar que existen
-  if (loadingData || !netWorthData) {
+  if (isLoading || !netWorthData) {
     return (
       <Card className="p-4 bg-gradient-card card-glow border-white/20 animate-pulse">
         <div className="space-y-3">
@@ -72,7 +24,6 @@ export default function NetWorthWidget({ runwayMonths }: NetWorthProps) {
   const { currentNetWorth, totalAssets, totalLiabilities, chartData, percentageChange } = netWorthData;
   const isPositive = currentNetWorth >= 0;
   const isPositiveChange = percentageChange >= 0;
-  const runwaySafe = runwayMonths >= 3;
 
   return (
     <Card className="p-4 bg-gradient-card card-glow border-white/20">
@@ -80,9 +31,9 @@ export default function NetWorthWidget({ runwayMonths }: NetWorthProps) {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs font-medium text-white/80 flex items-center gap-1">
-              <Shield className="h-3 w-3" /> Patrimonio Neto
+              <Shield className="h-3 w-3" /> Evolución Patrimonio Neto
             </p>
-            <p className="text-xs text-white/60">Assets − Deudas</p>
+            <p className="text-xs text-white/60">Activos − Pasivos</p>
           </div>
           {isPositiveChange ? (
             <TrendingUp className="h-5 w-5 text-emerald-400" />
@@ -184,21 +135,10 @@ export default function NetWorthWidget({ runwayMonths }: NetWorthProps) {
           </ResponsiveContainer>
         </div>
 
-        <div className={`p-2 rounded-lg ${runwaySafe ? 'bg-emerald-500/10 border border-emerald-500/30' : 'bg-red-500/10 border border-red-500/30'}`}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-white/70">Runway de Liquidez</p>
-              <p className={`text-lg font-bold ${runwaySafe ? 'text-emerald-300' : 'text-red-300'}`}>
-                {runwayMonths.toFixed(1)} meses
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-[10px] text-white/60">Meta: ≥3 meses</p>
-              <p className={`text-xs font-medium ${runwaySafe ? 'text-emerald-300' : 'text-red-300'}`}>
-                {runwaySafe ? '✅ Seguro' : '⚠️ Crítico'}
-              </p>
-            </div>
-          </div>
+        <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
+          <p className="text-[10px] text-white/70 text-center">
+            Tu patrimonio crece con cada ingreso y se actualiza automáticamente con tus transacciones
+          </p>
         </div>
       </div>
     </Card>
