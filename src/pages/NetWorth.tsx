@@ -51,34 +51,33 @@ export default function NetWorth() {
   const isLiquidAsset = (category: string) => {
     const cat = category.toLowerCase();
     
-    // First check if it's NOT liquid (exclusions have priority)
-    if (cat.includes('retirement') || 
-        cat.includes('pension') || 
-        cat.includes('retiro') ||
-        cat.includes('pensión') ||
-        cat.includes('401k') ||
-        cat.includes('ira') ||
-        cat.includes('property') ||
-        cat.includes('real estate') ||
-        cat.includes('propiedad') ||
-        cat.includes('inmueble') ||
-        cat.includes('investment') ||
-        cat.includes('inversión') ||
-        cat.includes('stock') ||
-        cat.includes('bond') ||
-        cat.includes('acción')) {
+    // Activos NO líquidos (tienen prioridad en la exclusión)
+    const illiquidKeywords = [
+      'retirement', 'pension', 'retiro', 'pensión', '401k', 'ira', 'roth',
+      'property', 'real estate', 'propiedad', 'inmueble', 'edificio',
+      'machinery', 'maquinaria', 'equipment', 'equipo',
+      'certificate', 'certificado', 'cd', // CDs tienen penalidad
+      'annuity', 'anualidad'
+    ];
+    
+    if (illiquidKeywords.some(keyword => cat.includes(keyword))) {
       return false;
     }
     
-    // Then check if it IS liquid
-    return cat.includes('check') || 
-           cat.includes('saving') || 
-           cat.includes('cash') || 
-           cat.includes('efectivo') ||
-           cat.includes('ahorro') ||
-           cat.includes('corriente') ||
-           cat.includes('cuenta') ||
-           cat.includes('money market');
+    // Activos líquidos: efectivo, depósitos bancarios, valores negociables, fondos
+    const liquidKeywords = [
+      'cash', 'efectivo', 'dinero',
+      'checking', 'corriente', 'cuenta corriente',
+      'saving', 'ahorro', 'cuenta de ahorro',
+      'money market', 'mercado de dinero',
+      'deposit', 'depósito', 'depósito a la vista',
+      'stock', 'acción', 'equity', // Solo acciones grandes empresas
+      'bond', 'bono', // Bonos corto plazo
+      'mutual fund', 'fondo', 'fondo de inversión',
+      'etf'
+    ];
+    
+    return liquidKeywords.some(keyword => cat.includes(keyword));
   };
 
   // Mostrar formulario si definitivamente no hay datos (no mientras está cargando)
@@ -249,15 +248,15 @@ export default function NetWorth() {
             </button>
             
             {showInstitutionFilter && (
-              <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[200px] z-50">
+              <div className="absolute right-0 top-full mt-2 bg-gradient-card/95 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 py-2 min-w-[200px] z-50">
                 <button
                   onClick={() => {
                     setSelectedInstitution('All');
                     setShowInstitutionFilter(false);
                   }}
                   className={cn(
-                    "w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors",
-                    selectedInstitution === 'All' ? "bg-blue-50 text-blue-600 font-semibold" : "text-gray-700"
+                    "w-full text-left px-4 py-2 text-sm hover:bg-white/10 transition-colors rounded-lg",
+                    selectedInstitution === 'All' ? "bg-white/20 text-white font-semibold" : "text-white/80"
                   )}
                 >
                   Todas las instituciones
@@ -274,8 +273,8 @@ export default function NetWorth() {
                       setShowInstitutionFilter(false);
                     }}
                     className={cn(
-                      "w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors",
-                      selectedInstitution === institution ? "bg-blue-50 text-blue-600 font-semibold" : "text-gray-700"
+                      "w-full text-left px-4 py-2 text-sm hover:bg-white/10 transition-colors rounded-lg",
+                      selectedInstitution === institution ? "bg-white/20 text-white font-semibold" : "text-white/80"
                     )}
                   >
                     {institution}
