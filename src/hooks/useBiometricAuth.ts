@@ -1,6 +1,32 @@
 import { useState, useEffect } from 'react';
-import { BiometricAuth, CheckBiometryResult } from '@aparajita/capacitor-biometric-auth';
 import { Capacitor } from '@capacitor/core';
+
+// Interfaces tipadas para evitar errores de importación
+interface CheckBiometryResult {
+  isAvailable: boolean;
+  biometryType: number;
+}
+
+interface AuthenticateOptions {
+  reason: string;
+  cancelTitle?: string;
+  allowDeviceCredential?: boolean;
+  iosFallbackTitle?: string;
+  androidTitle?: string;
+  androidSubtitle?: string;
+  androidConfirmationRequired?: boolean;
+}
+
+// Importación dinámica de BiometricAuth solo en plataformas nativas
+let BiometricAuth: any = null;
+
+if (Capacitor.isNativePlatform()) {
+  import('@aparajita/capacitor-biometric-auth').then((module) => {
+    BiometricAuth = module.BiometricAuth;
+  }).catch(() => {
+    console.log('BiometricAuth no disponible');
+  });
+}
 
 export const useBiometricAuth = () => {
   const [isAvailable, setIsAvailable] = useState(false);
@@ -21,6 +47,15 @@ export const useBiometricAuth = () => {
     setIsNative(true);
 
     try {
+      if (!BiometricAuth) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
+      if (!BiometricAuth) {
+        setIsAvailable(false);
+        return;
+      }
+
       const result: CheckBiometryResult = await BiometricAuth.checkBiometry();
       setIsAvailable(result.isAvailable);
       
@@ -39,7 +74,7 @@ export const useBiometricAuth = () => {
   };
 
   const authenticate = async (reason: string = 'Autenticarse'): Promise<boolean> => {
-    if (!isAvailable || !isNative) {
+    if (!isAvailable || !isNative || !BiometricAuth) {
       return false;
     }
 
