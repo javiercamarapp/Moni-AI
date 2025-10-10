@@ -135,27 +135,27 @@ Ejemplo formato:
       });
     }
 
-    // Calcular fechas según el período
+    // Calcular fechas según el período - OPTIMIZADO para carga rápida
     const now = new Date();
     let startDate: Date;
     
-    // Para incluir todas las transacciones disponibles, usamos una fecha muy antigua
-    // Esto asegura que se analicen todas las transacciones sin importar su fecha
+    // Limitar a 3 meses para carga ultra-rápida
     if (period === 'month') {
-      startDate = new Date(2020, 0, 1); // Desde enero 2020
+      startDate = new Date(now.getFullYear(), now.getMonth() - 2, 1); // Últimos 3 meses
     } else if (period === 'year') {
-      startDate = new Date(2020, 0, 1);
+      startDate = new Date(now.getFullYear(), now.getMonth() - 11, 1); // Últimos 12 meses
     } else {
-      startDate = new Date(2020, 0, 1);
+      startDate = new Date(now.getFullYear(), now.getMonth() - 2, 1);
     }
 
-    // Obtener transacciones del período
+    // Obtener transacciones del período - LIMITADO para velocidad
     const { data: transactions, error: txError } = await supabase
       .from('transactions')
       .select('*, categories(name, type)')
       .eq('user_id', userId)
       .gte('transaction_date', startDate.toISOString().split('T')[0])
-      .order('transaction_date', { ascending: false });
+      .order('transaction_date', { ascending: false })
+      .limit(500); // Límite de 500 transacciones para velocidad
 
     console.log('Transactions found:', transactions?.length || 0);
     if (txError) console.error('Transaction query error:', txError);

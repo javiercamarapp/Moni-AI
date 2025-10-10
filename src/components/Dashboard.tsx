@@ -289,7 +289,8 @@ const Dashboard = () => {
           .eq('user_id', user.id)
           .eq('type', 'gasto')
           .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
-          .order('transaction_date', { ascending: false });
+          .order('transaction_date', { ascending: false })
+          .limit(300); // Límite de 300 transacciones para velocidad
 
         console.log('📊 Gastos encontrados para análisis:', allExpenses?.length || 0);
 
@@ -481,12 +482,17 @@ const Dashboard = () => {
         .lte('transaction_date', lastDay.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
 
-      // Get ALL historical transactions
+      // Get últimos 6 meses de transacciones para análisis rápido
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+      
       const { data: allTransactions } = await supabase
         .from('transactions')
         .select('*, categories(name)')
         .eq('user_id', user.id)
-        .order('transaction_date', { ascending: false });
+        .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false })
+        .limit(300); // Límite de 300 transacciones
 
       const periodLabel = getMonthName(0);
 

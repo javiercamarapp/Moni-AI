@@ -205,12 +205,18 @@ const Balance = () => {
         ascending: false
       });
 
-      // Get ALL historical transactions (for projections)
+      // Get últimos 6 meses de transacciones (para proyecciones rápidas)
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+      
       const {
         data: allTransactions
-      } = await supabase.from('transactions').select('*, categories(name)').eq('user_id', user.id).order('transaction_date', {
-        ascending: false
-      });
+      } = await supabase.from('transactions')
+        .select('*, categories(name)')
+        .eq('user_id', user.id)
+        .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false })
+        .limit(300); // Límite de 300 transacciones
       const periodLabel = getPeriodLabel();
       const {
         data,

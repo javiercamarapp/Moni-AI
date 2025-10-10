@@ -75,7 +75,7 @@ Si no detectas suscripciones, responde: {"subscriptions": []}`
           },
           {
             role: 'user',
-            content: `Analiza estas transacciones de gastos y detecta suscripciones y pagos recurrentes:\n\n${JSON.stringify(transactions.map((t: any) => ({
+            content: `Analiza estas transacciones de gastos y detecta suscripciones y pagos recurrentes (ANALIZA SOLO LAS PRIMERAS 200):\n\n${JSON.stringify(transactions.slice(0, 200).map((t: any) => ({
               description: t.description,
               amount: t.amount,
               date: t.transaction_date,
