@@ -53,7 +53,7 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
   const scoreChange = previousScore ? scoreMoni - previousScore : 0;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div>
         <p className="text-xs font-medium text-white/80 mb-1">Desglose Score Moni</p>
         <div className="flex items-baseline gap-2">
@@ -67,9 +67,9 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
         </div>
       </div>
 
-      <div className="h-[500px] my-1">
+      <div className="h-[500px]">
         <ResponsiveContainer width="100%" height="100%">
-          <RadarChart data={radarData} margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
+          <RadarChart data={radarData} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
             <PolarGrid stroke="rgba(255,255,255,0.1)" />
             <PolarAngleAxis 
               dataKey="dimension" 
