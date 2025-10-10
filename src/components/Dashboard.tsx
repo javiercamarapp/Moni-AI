@@ -57,6 +57,7 @@ const Dashboard = () => {
   const [isUpdatingProjections, setIsUpdatingProjections] = useState(false);
   const [challenges, setChallenges] = useState<any[]>([]);
   const [loadingChallenges, setLoadingChallenges] = useState(false);
+  const [netWorth, setNetWorth] = useState<number>(0);
   const navigate = useNavigate();
   const {
     toast
@@ -193,6 +194,36 @@ const Dashboard = () => {
       }
     };
     fetchScoreMoni();
+  }, []);
+
+  // Fetch Net Worth (Assets - Liabilities)
+  useEffect(() => {
+    const fetchNetWorth = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Fetch assets
+        const { data: assetsData } = await supabase
+          .from('assets')
+          .select('value')
+          .eq('user_id', user.id);
+
+        // Fetch liabilities
+        const { data: liabilitiesData } = await supabase
+          .from('liabilities')
+          .select('value')
+          .eq('user_id', user.id);
+
+        const totalAssets = assetsData?.reduce((sum, a) => sum + Number(a.value), 0) || 0;
+        const totalLiabilities = liabilitiesData?.reduce((sum, l) => sum + Number(l.value), 0) || 0;
+        
+        setNetWorth(totalAssets - totalLiabilities);
+      } catch (error) {
+        console.error('Error fetching net worth:', error);
+      }
+    };
+    fetchNetWorth();
   }, []);
 
   // Fetch recent transactions and calculate monthly totals
@@ -986,9 +1017,9 @@ const Dashboard = () => {
                 <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-success-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Net Worth</p>
-                <p className="text-xs sm:text-base font-bold text-white leading-tight">
-                  ${(goals.reduce((sum, goal) => sum + Number(goal.current), 0) / 1000).toFixed(0)}k
+                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Patrimonio Neto</p>
+                <p className="text-xs sm:text-sm font-bold text-white leading-tight break-words">
+                  ${netWorth.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>
             </div>
