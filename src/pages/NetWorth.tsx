@@ -191,11 +191,9 @@ export default function NetWorth() {
         </div>
       </div>
 
-      {/* Widget de Evolución del Patrimonio en tamaño completo */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="transform scale-100 lg:scale-110 origin-top">
-          <NetWorthWidget />
-        </div>
+      {/* Widget de Evolución del Patrimonio sin escala adicional */}
+      <div className="max-w-7xl mx-auto">
+        <NetWorthWidget />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 space-y-6">
