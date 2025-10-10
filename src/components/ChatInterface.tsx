@@ -75,42 +75,7 @@ const ChatInterface = () => {
   }, [messages]);
   useEffect(() => {
     if (user && messages.length === 0) {
-      loadPersonalizedSuggestions();
-    }
-  }, [user, messages.length]);
-  const loadPersonalizedSuggestions = async () => {
-    setIsLoadingSuggestions(true);
-    try {
-      const {
-        data: functionData,
-        error: functionError
-      } = await supabase.functions.invoke('financial-analysis', {
-        body: {
-          type: 'suggestions',
-          userId: user?.id
-        }
-      });
-      if (functionError) throw functionError;
-      if (functionData?.suggestions) {
-        setSuggestionCards(functionData.suggestions);
-      } else {
-        // Fallback suggestions
-        setSuggestionCards([{
-          title: "Analizar mis gastos",
-          subtitle: "del mes actual"
-        }, {
-          title: "Ver mi progreso",
-          subtitle: "de ahorro"
-        }, {
-          title: "Crear una meta",
-          subtitle: "de ahorro"
-        }, {
-          title: "Revisar mi presupuesto",
-          subtitle: "mensual"
-        }]);
-      }
-    } catch (error) {
-      console.error('Error loading suggestions:', error);
+      // Mostrar sugerencias inmediatamente
       setSuggestionCards([{
         title: "Analizar mis gastos",
         subtitle: "del mes actual"
@@ -124,8 +89,29 @@ const ChatInterface = () => {
         title: "Revisar mi presupuesto",
         subtitle: "mensual"
       }]);
-    } finally {
-      setIsLoadingSuggestions(false);
+      
+      // Cargar sugerencias personalizadas en segundo plano
+      loadPersonalizedSuggestions();
+    }
+  }, [user, messages.length]);
+  const loadPersonalizedSuggestions = async () => {
+    try {
+      const {
+        data: functionData,
+        error: functionError
+      } = await supabase.functions.invoke('financial-analysis', {
+        body: {
+          type: 'suggestions',
+          userId: user?.id
+        }
+      });
+      if (functionError) throw functionError;
+      if (functionData?.suggestions) {
+        setSuggestionCards(functionData.suggestions);
+      }
+    } catch (error) {
+      console.error('Error loading suggestions:', error);
+      // Mantener las sugerencias predeterminadas si hay error
     }
   };
   const handleSendMessage = async () => {
