@@ -52,6 +52,23 @@ const Auth = () => {
     loadSavedEmail();
   }, [biometricAvailable]);
 
+  // Solicitar Face ID automáticamente al abrir la app
+  useEffect(() => {
+    const autoAuthenticate = async () => {
+      // Solo solicitar si hay credenciales guardadas y biometría disponible
+      if (savedEmail && biometricAvailable && isLogin && !loading) {
+        await handleBiometricAuth();
+      }
+    };
+    
+    // Pequeño delay para asegurar que la UI esté lista
+    const timer = setTimeout(() => {
+      autoAuthenticate();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [savedEmail, biometricAvailable, isLogin]);
+
   const handleBiometricAuth = async () => {
     if (!savedEmail) {
       toast({
