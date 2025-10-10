@@ -41,9 +41,45 @@ export default function NetWorth() {
   const [assetFilter, setAssetFilter] = useState<CategoryFilter>('All');
   const [liabilityFilter, setLiabilityFilter] = useState<CategoryFilter>('All');
   const [showForm, setShowForm] = useState(false);
+  const [showInstitutionFilter, setShowInstitutionFilter] = useState(false);
+  const [selectedInstitution, setSelectedInstitution] = useState<string>('All');
 
   const { data: hasData, isLoading: checkingData, refetch: refetchHasData } = useHasNetWorthData();
   const { data: netWorthData, isLoading: loadingData } = useNetWorth(timeRange);
+
+  // Helper function to check if an asset is liquid
+  const isLiquidAsset = (category: string) => {
+    const cat = category.toLowerCase();
+    
+    // First check if it's NOT liquid (exclusions have priority)
+    if (cat.includes('retirement') || 
+        cat.includes('pension') || 
+        cat.includes('retiro') ||
+        cat.includes('pensión') ||
+        cat.includes('401k') ||
+        cat.includes('ira') ||
+        cat.includes('property') ||
+        cat.includes('real estate') ||
+        cat.includes('propiedad') ||
+        cat.includes('inmueble') ||
+        cat.includes('investment') ||
+        cat.includes('inversión') ||
+        cat.includes('stock') ||
+        cat.includes('bond') ||
+        cat.includes('acción')) {
+      return false;
+    }
+    
+    // Then check if it IS liquid
+    return cat.includes('check') || 
+           cat.includes('saving') || 
+           cat.includes('cash') || 
+           cat.includes('efectivo') ||
+           cat.includes('ahorro') ||
+           cat.includes('corriente') ||
+           cat.includes('cuenta') ||
+           cat.includes('money market');
+  };
 
   // Mostrar formulario si definitivamente no hay datos (no mientras está cargando)
   if (!checkingData && hasData === false) {
@@ -200,13 +236,54 @@ export default function NetWorth() {
       <div className="px-4 mt-2">
         <div className="flex items-center justify-between mb-1">
           <h2 className="text-xl font-bold text-white">Liquidez</h2>
-          <button className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors">
-            <div className="flex flex-col gap-0.5">
-              <div className="h-0.5 w-4 bg-white/70"></div>
-              <div className="h-0.5 w-4 bg-white/70"></div>
-            </div>
-            Filtrar por institución
-          </button>
+          <div className="relative">
+            <button 
+              onClick={() => setShowInstitutionFilter(!showInstitutionFilter)}
+              className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors"
+            >
+              <div className="flex flex-col gap-0.5">
+                <div className="h-0.5 w-4 bg-white/70"></div>
+                <div className="h-0.5 w-4 bg-white/70"></div>
+              </div>
+              Filtrar por institución
+            </button>
+            
+            {showInstitutionFilter && (
+              <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[200px] z-50">
+                <button
+                  onClick={() => {
+                    setSelectedInstitution('All');
+                    setShowInstitutionFilter(false);
+                  }}
+                  className={cn(
+                    "w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors",
+                    selectedInstitution === 'All' ? "bg-blue-50 text-blue-600 font-semibold" : "text-gray-700"
+                  )}
+                >
+                  Todas las instituciones
+                </button>
+                {Array.from(new Set(
+                  assets
+                    .filter(a => isLiquidAsset(a.category))
+                    .map(a => a.name.split(' ')[0]) // Get first word as institution name
+                )).map((institution) => (
+                  <button
+                    key={institution}
+                    onClick={() => {
+                      setSelectedInstitution(institution);
+                      setShowInstitutionFilter(false);
+                    }}
+                    className={cn(
+                      "w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors",
+                      selectedInstitution === institution ? "bg-blue-50 text-blue-600 font-semibold" : "text-gray-700"
+                    )}
+                  >
+                    {institution}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Total Líquido */}
@@ -214,25 +291,8 @@ export default function NetWorth() {
           <p className="text-[10px] text-white/70 mb-0.5">Efectivo Disponible</p>
           <p className="text-base font-bold text-white break-words">
             ${assets
-              .filter(a => {
-                const category = a.category.toLowerCase();
-                // Incluir cuentas líquidas
-                const isLiquid = category.includes('check') || 
-                                 category.includes('saving') || 
-                                 category.includes('cash') || 
-                                 category.includes('efectivo') ||
-                                 category.includes('ahorro') ||
-                                 category.includes('corriente') ||
-                                 category.includes('money market');
-                // Excluir activos no líquidos
-                const isNotLiquid = category.includes('retirement') || 
-                                   category.includes('pension') || 
-                                   category.includes('retiro') ||
-                                   category.includes('property') ||
-                                   category.includes('real estate') ||
-                                   category.includes('propiedad');
-                return isLiquid && !isNotLiquid;
-              })
+              .filter(a => isLiquidAsset(a.category))
+              .filter(a => selectedInstitution === 'All' || a.name.startsWith(selectedInstitution))
               .reduce((sum, a) => sum + Number(a.value), 0)
               .toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
@@ -240,25 +300,8 @@ export default function NetWorth() {
 
         <div className="space-y-2">
           {assets
-            .filter(account => {
-              const category = account.category.toLowerCase();
-              // Incluir cuentas líquidas
-              const isLiquid = category.includes('check') || 
-                               category.includes('saving') || 
-                               category.includes('cash') || 
-                               category.includes('efectivo') ||
-                               category.includes('ahorro') ||
-                               category.includes('corriente') ||
-                               category.includes('money market');
-              // Excluir activos no líquidos
-              const isNotLiquid = category.includes('retirement') || 
-                                 category.includes('pension') || 
-                                 category.includes('retiro') ||
-                                 category.includes('property') ||
-                                 category.includes('real estate') ||
-                                 category.includes('propiedad');
-              return isLiquid && !isNotLiquid;
-            })
+            .filter(account => isLiquidAsset(account.category))
+            .filter(account => selectedInstitution === 'All' || account.name.startsWith(selectedInstitution))
             .map((account) => {
               const iconName = getIconForCategory(account.category);
               const Icon = iconMap[iconName];
@@ -286,25 +329,11 @@ export default function NetWorth() {
               );
             })}
             
-          {assets.filter(a => {
-            const category = a.category.toLowerCase();
-            const isLiquid = category.includes('check') || 
-                             category.includes('saving') || 
-                             category.includes('cash') || 
-                             category.includes('efectivo') ||
-                             category.includes('ahorro') ||
-                             category.includes('corriente') ||
-                             category.includes('money market');
-            const isNotLiquid = category.includes('retirement') || 
-                               category.includes('pension') || 
-                               category.includes('retiro') ||
-                               category.includes('property') ||
-                               category.includes('real estate') ||
-                               category.includes('propiedad');
-            return isLiquid && !isNotLiquid;
-          }).length === 0 && (
+          {assets.filter(a => isLiquidAsset(a.category)).filter(a => selectedInstitution === 'All' || a.name.startsWith(selectedInstitution)).length === 0 && (
             <div className="p-8 text-center text-white/60 bg-white/5 rounded-xl border border-white/10">
-              No hay cuentas líquidas registradas
+              {selectedInstitution === 'All' 
+                ? 'No hay cuentas líquidas registradas'
+                : `No hay cuentas líquidas de ${selectedInstitution}`}
             </div>
           )}
         </div>
