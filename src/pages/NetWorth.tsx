@@ -223,42 +223,34 @@ export default function NetWorth() {
           </p>
         </div>
 
-        <div className="space-y-0 bg-white rounded-2xl overflow-hidden">
+        <div className="space-y-2">
           {assets
             .filter(account => 
               account.category.toLowerCase().includes('check') || 
               account.category.toLowerCase().includes('saving')
             )
-            .map((account, index) => {
+            .map((account) => {
               const iconName = getIconForCategory(account.category);
               const Icon = iconMap[iconName];
-              const isLast = index === assets.filter(a => 
-                a.category.toLowerCase().includes('check') || 
-                a.category.toLowerCase().includes('saving')
-              ).length - 1;
               
               return (
                 <div
                   key={account.id}
-                  className={cn(
-                    "flex items-center justify-between p-4 hover:bg-gray-50 transition-colors",
-                    !isLast && "border-b border-gray-100"
-                  )}
+                  className="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/10"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-                      <Icon className="h-6 w-6 text-white" />
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                      <Icon className="h-5 w-5 text-white" />
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900">{account.name}</p>
-                      <p className="text-sm text-gray-500">{account.category}</p>
+                      <p className="font-semibold text-white text-sm">{account.name}</p>
+                      <p className="text-xs text-white/60">{account.category}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-gray-900 break-words">
+                    <p className="font-bold text-white text-sm break-words">
                       ${Number(account.value).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
-                    <p className="text-xs text-gray-400">Actualizado</p>
                   </div>
                 </div>
               );
@@ -268,7 +260,7 @@ export default function NetWorth() {
             a.category.toLowerCase().includes('check') || 
             a.category.toLowerCase().includes('saving')
           ).length === 0 && (
-            <div className="p-8 text-center text-gray-500">
+            <div className="p-8 text-center text-white/60 bg-white/5 rounded-xl border border-white/10">
               No hay cuentas líquidas registradas
             </div>
           )}
