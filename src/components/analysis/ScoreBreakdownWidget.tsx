@@ -29,7 +29,14 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
   const scoreChange = previousScore ? scoreMoni - previousScore : 0;
 
   return (
-    <Card className="p-4 bg-gradient-card card-glow border-white/20">
+    <Card className="p-4 bg-gradient-card card-glow border-white/20 relative group">
+      {/* Indicator for clickable */}
+      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <div className="text-xs text-white/70 bg-white/10 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1">
+          👆 Click para ver en 3D
+        </div>
+      </div>
+      
       <div className="space-y-3">
         <div>
           <p className="text-xs font-medium text-white/80 mb-1">Desglose Score Moni</p>

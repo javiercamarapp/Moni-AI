@@ -562,8 +562,15 @@ export default function FinancialAnalysis() {
 
             {analysis?.topActions && analysis?.topActions.length > 0 && <TopActionsWidget actions={analysis?.topActions} />}
 
-            {/* 2. EXPLICABILIDAD DEL SCORE */}
-            {analysis?.scoreBreakdown && <ScoreBreakdownWidget {...analysis?.scoreBreakdown} />}
+            {/* 2. EXPLICABILIDAD DEL SCORE - Click para ver en 3D */}
+            {analysis?.scoreBreakdown && (
+              <div 
+                onClick={() => navigate('/score-moni')} 
+                className="cursor-pointer hover:scale-[1.02] transition-transform duration-200"
+              >
+                <ScoreBreakdownWidget {...analysis?.scoreBreakdown} />
+              </div>
+            )}
 
             {/* 3. PATRIMONIO Y RUNWAY */}
             {analysis?.netWorth && <NetWorthWidget {...analysis?.netWorth} />}
