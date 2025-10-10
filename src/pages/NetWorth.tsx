@@ -198,6 +198,17 @@ export default function NetWorth() {
 
       {/* Liquidez Section */}
       <div className="px-4 mt-4">
+        <div className="flex items-center justify-between mb-1">
+          <h2 className="text-xl font-bold text-white">Liquidez</h2>
+          <button className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors">
+            <div className="flex flex-col gap-0.5">
+              <div className="h-0.5 w-4 bg-white/70"></div>
+              <div className="h-0.5 w-4 bg-white/70"></div>
+            </div>
+            Sort by institution
+          </button>
+        </div>
+
         {/* Total Líquido */}
         <div className="mb-4 bg-gradient-to-br from-blue-500/20 to-blue-700/20 backdrop-blur-sm rounded-xl p-3 border border-blue-500/30">
           <p className="text-[10px] text-white/70 mb-0.5">Efectivo Disponible</p>
@@ -210,17 +221,6 @@ export default function NetWorth() {
               .reduce((sum, a) => sum + Number(a.value), 0)
               .toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
-        </div>
-
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-white">Liquidez</h2>
-          <button className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors">
-            <div className="flex flex-col gap-0.5">
-              <div className="h-0.5 w-4 bg-white/70"></div>
-              <div className="h-0.5 w-4 bg-white/70"></div>
-            </div>
-            Sort by institution
-          </button>
         </div>
 
         <div className="space-y-0 bg-white rounded-2xl overflow-hidden">
