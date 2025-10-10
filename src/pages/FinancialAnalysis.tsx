@@ -513,16 +513,36 @@ export default function FinancialAnalysis() {
             <div className="space-y-2">
               <p className="text-xs font-medium text-white/80">🎯 Acciones Recomendadas</p>
               <div className="grid grid-cols-2 gap-2">
-                <Button variant="ghost" size="sm" className="bg-gradient-card card-glow text-white border border-white/20 hover:bg-white/20 hover:text-white active:bg-white/30 active:text-white hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="bg-gradient-card card-glow text-white border border-white/20 hover:bg-white/20 hover:text-white active:bg-white/30 active:text-white hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2"
+                  onClick={() => navigate('/balance')}
+                >
                   Ajustar presupuesto
                 </Button>
-                <Button variant="ghost" size="sm" className="bg-gradient-card card-glow text-white border border-white/20 hover:bg-white/20 hover:text-white active:bg-white/30 active:text-white hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="bg-gradient-card card-glow text-white border border-white/20 hover:bg-white/20 hover:text-white active:bg-white/30 active:text-white hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2"
+                  onClick={() => navigate('/networth')}
+                >
                   Plan de deudas
                 </Button>
-                <Button variant="ghost" size="sm" className="bg-gradient-card card-glow text-white border border-white/20 hover:bg-white/20 hover:text-white active:bg-white/30 active:text-white hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="bg-gradient-card card-glow text-white border border-white/20 hover:bg-white/20 hover:text-white active:bg-white/30 active:text-white hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2"
+                  onClick={() => navigate('/new-goal')}
+                >
                   ↑ Ahorro a 10%
                 </Button>
-                <Button variant="ghost" size="sm" className="bg-gradient-card card-glow text-white border border-white/20 hover:bg-white/20 hover:text-white active:bg-white/30 active:text-white hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="bg-gradient-card card-glow text-white border border-white/20 hover:bg-white/20 hover:text-white active:bg-white/30 active:text-white hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2"
+                  onClick={() => navigate('/gastos')}
+                >
                   Revisar subs
                 </Button>
               </div>
