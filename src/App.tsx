@@ -20,6 +20,7 @@ import FinancialAnalysis from "./pages/FinancialAnalysis";
 import BankConnection from "./pages/BankConnection";
 import NotificationSettings from "./pages/NotificationSettings";
 import NetWorth from "./pages/NetWorth";
+import ScoreMoni from "./pages/ScoreMoni";
 
 import NotFound from "./pages/NotFound";
 
@@ -49,6 +50,7 @@ const App = () => (
           <Route path="/bank-connection" element={<BankConnection />} />
           <Route path="/notifications" element={<NotificationSettings />} />
           <Route path="/net-worth" element={<NetWorth />} />
+          <Route path="/score-moni" element={<ScoreMoni />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
