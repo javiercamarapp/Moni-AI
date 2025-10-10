@@ -37,6 +37,7 @@ export default function FinancialAnalysis() {
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
   const [futureEvents, setFutureEvents] = useState<any[]>([]);
   const [loadingTransactions, setLoadingTransactions] = useState(true);
+  const [quickMetrics, setQuickMetrics] = useState<any>(null); // Métricas instantáneas
 
   // Helper function to safely format values in thousands
   const formatK = (value: number | undefined | null): string => {
@@ -48,11 +49,76 @@ export default function FinancialAnalysis() {
   }, []);
   useEffect(() => {
     if (user) {
-      // Cargar en background sin bloquear la UI
-      loadAnalysis();
+      // 1. Calcular métricas básicas inmediatamente
+      calculateQuickMetrics();
+      // 2. Cargar transacciones
       fetchTransactionsData();
+      // 3. Cargar análisis IA en background (no bloquea UI)
+      loadAnalysis();
     }
   }, [user, period]);
+
+  const calculateQuickMetrics = async () => {
+    if (!user) return;
+    
+    try {
+      // Calcular fechas según el período
+      const now = new Date();
+      let startDate: Date;
+      
+      if (period === 'month') {
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      } else {
+        startDate = new Date(now.getFullYear(), 0, 1);
+      }
+      
+      // Obtener transacciones del período
+      const { data: transactions } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('transaction_date', startDate.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false });
+      
+      if (!transactions || transactions.length === 0) {
+        setQuickMetrics({
+          totalIncome: 0,
+          totalExpenses: 0,
+          balance: 0,
+          savingsRate: 0,
+          scoreMoni: 40
+        });
+        return;
+      }
+      
+      const totalIncome = transactions
+        .filter(t => t.type === 'income' || t.type === 'ingreso')
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+      
+      const totalExpenses = transactions
+        .filter(t => t.type === 'expense' || t.type === 'gasto')
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+      
+      const balance = totalIncome - totalExpenses;
+      const savingsRate = totalIncome > 0 ? ((balance / totalIncome) * 100) : 0;
+      
+      // Score rápido
+      let score = 40;
+      if (balance > 0) score += 20;
+      if (savingsRate > 20) score += 20;
+      if (totalIncome > 0) score += 20;
+      
+      setQuickMetrics({
+        totalIncome,
+        totalExpenses,
+        balance,
+        savingsRate: Math.round(savingsRate * 100) / 100,
+        scoreMoni: Math.min(100, score)
+      });
+    } catch (error) {
+      console.error('Error calculating quick metrics:', error);
+    }
+  };
 
   const fetchTransactionsData = async () => {
     if (!user) return;
@@ -271,7 +337,8 @@ export default function FinancialAnalysis() {
           </div>
         </div>
 
-        {analysis && <>
+        {/* Mostrar métricas instantáneas primero, luego actualizar con análisis completo */}
+        {(quickMetrics || analysis) && <>
             {/* Animated Income & Expense Lines */}
             <Card className="p-4 bg-gradient-card card-glow space-y-4 animate-fade-in hover:scale-[1.02] transition-transform duration-200" style={{ animationDelay: '0ms' }}>
               {/* Ingresos */}
@@ -287,14 +354,14 @@ export default function FinancialAnalysis() {
                     </div>
                   </div>
                   <p className="text-xl font-bold text-green-400">
-                    ${formatK(analysis.metrics.totalIncome)}k
+                    ${formatK(analysis?.metrics?.totalIncome || quickMetrics?.totalIncome)}k
                   </p>
                 </div>
                 <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
                   <div 
                     className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-600 to-green-400 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.5)]"
                     style={{ 
-                      width: `${Math.min((analysis.metrics.totalIncome / Math.max(analysis.metrics.totalIncome, analysis.metrics.totalExpenses)) * 100, 100)}%`,
+                      width: `${Math.min(((analysis?.metrics?.totalIncome || quickMetrics?.totalIncome || 0) / Math.max(analysis?.metrics?.totalIncome || quickMetrics?.totalIncome || 1, analysis?.metrics?.totalExpenses || quickMetrics?.totalExpenses || 1)) * 100, 100)}%`,
                       animation: 'slideIn 1.5s ease-out'
                     }}
                   />
@@ -314,14 +381,14 @@ export default function FinancialAnalysis() {
                     </div>
                   </div>
                   <p className="text-xl font-bold text-red-400">
-                    ${formatK(analysis.metrics.totalExpenses)}k
+                    ${formatK(analysis?.metrics?.totalExpenses || quickMetrics?.totalExpenses)}k
                   </p>
                 </div>
                 <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
                   <div 
                     className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)]"
                     style={{ 
-                      width: `${Math.min((analysis.metrics.totalExpenses / Math.max(analysis.metrics.totalIncome, analysis.metrics.totalExpenses)) * 100, 100)}%`,
+                      width: `${Math.min(((analysis?.metrics?.totalExpenses || quickMetrics?.totalExpenses || 0) / Math.max(analysis?.metrics?.totalIncome || quickMetrics?.totalIncome || 1, analysis?.metrics?.totalExpenses || quickMetrics?.totalExpenses || 1)) * 100, 100)}%`,
                       animation: 'slideIn 1.5s ease-out 0.3s both'
                     }}
                   />
@@ -332,8 +399,8 @@ export default function FinancialAnalysis() {
               <div className="pt-2 border-t border-white/10">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-white">Balance</p>
-                  <p className={`text-xl font-bold ${analysis.metrics.balance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {analysis.metrics.balance >= 0 ? '+' : ''}${formatK(analysis.metrics.balance)}k
+                  <p className={`text-xl font-bold ${(analysis?.metrics?.balance || quickMetrics?.balance || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    {(analysis?.metrics?.balance || quickMetrics?.balance || 0) >= 0 ? '+' : ''}${formatK(analysis?.metrics?.balance || quickMetrics?.balance)}k
                   </p>
                 </div>
               </div>
