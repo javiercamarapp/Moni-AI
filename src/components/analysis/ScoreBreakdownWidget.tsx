@@ -1,11 +1,5 @@
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts';
 import { AlertCircle } from "lucide-react";
-import {
-  Tooltip as UITooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface ScoreComponents {
   savingsAndLiquidity: number;
@@ -59,32 +53,32 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
   const scoreChange = previousScore ? scoreMoni - previousScore : 0;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-6">
       <div>
-        <p className="text-xs font-medium text-white/80 mb-1">Desglose Score Moni</p>
-        <div className="flex items-baseline gap-2">
-          <p className="text-3xl font-bold text-white">{scoreMoni}</p>
-          <span className="text-sm text-white/60">/100</span>
+        <p className="text-sm font-medium text-white/80 mb-2">Desglose Score Moni</p>
+        <div className="flex items-baseline gap-3">
+          <p className="text-5xl font-bold text-white">{scoreMoni}</p>
+          <span className="text-xl text-white/60">/100</span>
           {scoreChange !== 0 && (
-            <span className={`text-xs font-medium ${scoreChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            <span className={`text-lg font-medium ${scoreChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
               {scoreChange > 0 ? '↑' : '↓'} {Math.abs(scoreChange)} pts
             </span>
           )}
         </div>
       </div>
 
-      <div className="h-[200px]">
+      <div className="h-[500px]">
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart data={radarData}>
             <PolarGrid stroke="rgba(255,255,255,0.1)" />
             <PolarAngleAxis 
               dataKey="dimension" 
-              tick={{ fill: 'white', fontSize: 10 }}
+              tick={{ fill: 'white', fontSize: 14, fontWeight: 600 }}
             />
             <PolarRadiusAxis 
               angle={90} 
               domain={[0, 30]}
-              tick={{ fill: 'white', fontSize: 8 }}
+              tick={{ fill: 'white', fontSize: 12 }}
             />
             <Radar
               name="Score"
@@ -92,51 +86,48 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
               stroke="#8b5cf6"
               fill="#8b5cf6"
               fillOpacity={0.6}
+              strokeWidth={3}
             />
             <Tooltip
               contentStyle={{ 
                 backgroundColor: 'rgba(0,0,0,0.9)', 
                 border: '1px solid rgba(255,255,255,0.2)', 
                 borderRadius: '8px',
-                fontSize: '11px'
+                fontSize: '13px',
+                padding: '12px'
               }}
-              labelStyle={{ color: 'white' }}
+              labelStyle={{ color: 'white', fontWeight: 'bold' }}
             />
           </RadarChart>
         </ResponsiveContainer>
       </div>
 
       {changeReason && (
-        <div className="bg-purple-500/10 rounded-lg p-2 border border-purple-500/30">
-          <div className="flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 text-purple-300 mt-0.5" />
+        <div className="bg-purple-500/10 rounded-xl p-4 border border-purple-500/30">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-purple-300 mt-0.5 flex-shrink-0" />
             <div>
-              <p className="text-xs font-medium text-purple-200">¿Por qué cambió?</p>
-              <p className="text-xs text-white/70 mt-1">{changeReason}</p>
+              <p className="text-sm font-medium text-purple-200 mb-1">¿Por qué cambió?</p>
+              <p className="text-sm text-white/70 leading-relaxed">{changeReason}</p>
             </div>
           </div>
         </div>
       )}
 
-      <TooltipProvider>
-        <div className="grid grid-cols-2 gap-2 pt-2">
-          {radarData.map((item, idx) => (
-            <UITooltip key={idx}>
-              <TooltipTrigger asChild>
-                <div className="flex items-center justify-between cursor-help hover:bg-white/5 rounded px-2 py-1 transition-colors">
-                  <span className="text-xs text-white/60">{item.dimension}</span>
-                  <span className="text-xs font-medium text-white">
-                    {item.value}/{item.fullMark}
-                  </span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent className="max-w-xs bg-black/95 border-white/20">
-                <p className="text-xs text-white">{item.explanation}</p>
-              </TooltipContent>
-            </UITooltip>
-          ))}
-        </div>
-      </TooltipProvider>
+      <div className="space-y-4 pt-2">
+        <h3 className="text-base font-bold text-white mb-3">Desglose por Componente</h3>
+        {radarData.map((item, idx) => (
+          <div key={idx} className="bg-white/5 rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-colors">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-base font-semibold text-white">{item.dimension}</span>
+              <span className="text-lg font-bold text-purple-300">
+                {item.value}/{item.fullMark}
+              </span>
+            </div>
+            <p className="text-sm text-white/70 leading-relaxed">{item.explanation}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

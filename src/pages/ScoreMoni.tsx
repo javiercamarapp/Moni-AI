@@ -103,14 +103,12 @@ const ScoreMoni = () => {
 
       {/* Score Breakdown Widget en tamaño completo */}
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="transform scale-100 lg:scale-110 origin-top">
-          <ScoreBreakdownWidget
-            components={components}
-            scoreMoni={score}
-            changeReason={changeReason}
-            previousScore={previousScore}
-          />
-        </div>
+        <ScoreBreakdownWidget
+          components={components}
+          scoreMoni={score}
+          changeReason={changeReason}
+          previousScore={previousScore}
+        />
       </div>
 
       <BottomNav />
