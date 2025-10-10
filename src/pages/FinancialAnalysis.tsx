@@ -559,7 +559,7 @@ export default function FinancialAnalysis() {
                 transactions={futureEvents.slice(0, 10).map(e => ({
                   description: e.description,
                   amount: e.amount,
-                  date: e.date,
+                  date: e.date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' }),
                   type: e.type,
                   risk: e.risk,
                   daysUntil: Math.ceil((e.date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
