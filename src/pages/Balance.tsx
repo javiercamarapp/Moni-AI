@@ -409,7 +409,7 @@ const Balance = () => {
       {/* Header */}
       <div className="p-4 flex items-center justify-between border-b border-border/30 bg-card/50 backdrop-blur-sm">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')} className="text-foreground hover:bg-accent/50 transition-all hover:scale-105">
+          <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="text-foreground hover:bg-accent/50 transition-all hover:scale-105">
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>

@@ -216,7 +216,7 @@ const Ingresos = () => {
           <Button 
             variant="ghost" 
             size="icon"
-            onClick={() => navigate('/balance')}
+            onClick={() => navigate(-1)}
             className="text-foreground hover:bg-accent/50 transition-all hover:scale-105"
           >
             <ArrowLeft className="h-5 w-5" />

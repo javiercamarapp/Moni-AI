@@ -93,7 +93,7 @@ export default function NetWorth() {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate(-1)}
                 className="text-foreground hover:bg-white/5"
               >
                 <ArrowLeft className="h-5 w-5" />
@@ -147,7 +147,7 @@ export default function NetWorth() {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate(-1)}
                 className="text-white hover:bg-white/10"
               >
                 <ArrowLeft className="h-5 w-5" />
@@ -215,7 +215,7 @@ export default function NetWorth() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate(-1)}
               className="text-white hover:bg-white/10"
             >
               <ArrowLeft className="h-5 w-5" />

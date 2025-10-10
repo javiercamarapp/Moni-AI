@@ -63,7 +63,7 @@ export default function BankConnection() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate(-1)}
             className="text-white hover:bg-white/10"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -176,7 +176,7 @@ export default function BankConnection() {
             </Button>
             <Button
               variant="outline"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate(-1)}
               className="w-full border-white/20 text-white hover:bg-white/10 h-9 text-sm"
             >
               Lo haré después
