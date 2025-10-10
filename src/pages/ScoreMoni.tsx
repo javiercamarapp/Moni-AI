@@ -65,7 +65,7 @@ const ScoreMoni = () => {
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
             <Button 
-              onClick={() => navigate('/analysis')}
+              onClick={() => navigate('/dashboard')}
               size="icon"
               variant="ghost"
               className="text-white hover:bg-white/10"
