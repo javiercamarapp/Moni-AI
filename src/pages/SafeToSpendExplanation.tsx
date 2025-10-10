@@ -1,15 +1,93 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, DollarSign, TrendingUp, Shield, Calculator, Target, Wallet } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, DollarSign, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import BottomNav from "@/components/BottomNav";
+import { supabase } from "@/integrations/supabase/client";
+import { format, startOfMonth, endOfMonth } from "date-fns";
+import { es } from "date-fns/locale";
+
+interface CategoryData {
+  categoria: string;
+  monto: number;
+  transacciones: number;
+}
+
+interface IncomeStatement {
+  ingresos: CategoryData[];
+  gastos: CategoryData[];
+  totalIngresos: number;
+  totalGastos: number;
+  balance: number;
+}
 
 export default function SafeToSpendExplanation() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [statement, setStatement] = useState<IncomeStatement | null>(null);
+  const [currentMonth] = useState(new Date());
+
+  useEffect(() => {
+    fetchIncomeStatement();
+  }, []);
+
+  const fetchIncomeStatement = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate('/auth');
+        return;
+      }
+
+      const startDate = format(startOfMonth(currentMonth), 'yyyy-MM-dd');
+      const endDate = format(endOfMonth(currentMonth), 'yyyy-MM-dd');
+
+      // Obtener todas las transacciones del mes
+      const { data: transactions, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('transaction_date', startDate)
+        .lte('transaction_date', endDate)
+        .order('transaction_date', { ascending: false });
+
+      if (error) throw error;
+
+      // Llamar al edge function para categorizar con IA
+      const { data: categorizedData, error: aiError } = await supabase.functions.invoke(
+        'categorize-income-statement',
+        { body: { transactions } }
+      );
+
+      if (aiError) throw aiError;
+
+      setStatement(categorizedData);
+    } catch (error) {
+      console.error('Error fetching income statement:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN'
+    }).format(amount);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-white animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
-      <div className="p-6 max-w-2xl mx-auto">
+      <div className="p-6 max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <Button
@@ -20,132 +98,109 @@ export default function SafeToSpendExplanation() {
           >
             <ArrowLeft className="w-6 h-6" />
           </Button>
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-success/20 flex items-center justify-center">
-              <Shield className="w-6 h-6 text-success" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-white">Seguro para Gastar</h1>
-              <p className="text-white/70 text-sm">Tu dinero disponible protegido</p>
-            </div>
+          <div>
+            <h1 className="text-2xl font-bold text-white">Estado de Resultados</h1>
+            <p className="text-white/70 text-sm">
+              {format(currentMonth, "MMMM yyyy", { locale: es })}
+            </p>
           </div>
         </div>
 
-        {/* Main Explanation Card */}
-        <Card className="p-6 mb-6 bg-white/10 backdrop-blur-sm border-white/20">
-          <div className="flex items-start gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0">
-              <DollarSign className="w-5 h-5 text-success" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-white mb-2">¿Qué es el Seguro para Gastar?</h2>
-              <p className="text-white/80 leading-relaxed">
-                Es la cantidad de dinero que puedes gastar libremente sin comprometer tus obligaciones financieras ni tus metas de ahorro. Es tu "colchón seguro" para gastos variables y discrecionales.
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        {/* Calculation Breakdown */}
-        <Card className="p-6 mb-6 bg-white/10 backdrop-blur-sm border-white/20">
-          <div className="flex items-center gap-2 mb-4">
-            <Calculator className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-semibold text-white">¿Cómo se calcula?</h3>
-          </div>
-          
-          <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-1">
-                <TrendingUp className="w-4 h-4 text-success" />
-              </div>
-              <div className="flex-1">
-                <p className="text-white font-medium mb-1">1. Ingreso Mensual</p>
-                <p className="text-white/70 text-sm">Todo el dinero que entra en el mes</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-danger/20 flex items-center justify-center flex-shrink-0 mt-1">
-                <Wallet className="w-4 h-4 text-danger" />
-              </div>
-              <div className="flex-1">
-                <p className="text-white font-medium mb-1">2. Menos Gastos Fijos</p>
-                <p className="text-white/70 text-sm">Renta, servicios, préstamos, etc.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-warning/20 flex items-center justify-center flex-shrink-0 mt-1">
-                <Target className="w-4 h-4 text-warning" />
-              </div>
-              <div className="flex-1">
-                <p className="text-white font-medium mb-1">3. Menos Metas de Ahorro</p>
-                <p className="text-white/70 text-sm">El dinero que planeas ahorrar</p>
-              </div>
-            </div>
-
-            <div className="border-t border-white/20 pt-4 mt-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-success" />
-                  <p className="text-white font-semibold">= Seguro para Gastar</p>
+        {statement && (
+          <>
+            {/* INGRESOS */}
+            <Card className="p-6 mb-4 bg-white/10 backdrop-blur-sm border-white/20">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-success" />
                 </div>
-                <p className="text-success font-bold text-lg">Tu dinero libre</p>
+                <div className="flex-1">
+                  <h2 className="text-xl font-bold text-white">INGRESOS</h2>
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl font-bold text-success">
+                    {formatCurrency(statement.totalIngresos)}
+                  </p>
+                </div>
               </div>
-            </div>
-          </div>
-        </Card>
 
-        {/* Benefits */}
-        <Card className="p-6 mb-6 bg-white/10 backdrop-blur-sm border-white/20">
-          <h3 className="text-lg font-semibold text-white mb-4">¿Por qué es importante?</h3>
-          
-          <div className="space-y-3">
-            <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <div className="w-2 h-2 rounded-full bg-success"></div>
+              {/* Categorías de Ingresos */}
+              <div className="space-y-2 pl-4">
+                {statement.ingresos.map((cat, idx) => (
+                  <div key={idx} className="flex items-center justify-between py-2 border-b border-white/10">
+                    <div className="flex-1">
+                      <p className="text-white/90 font-medium">{cat.categoria}</p>
+                      <p className="text-white/50 text-xs">{cat.transacciones} transacción(es)</p>
+                    </div>
+                    <p className="text-white font-semibold">{formatCurrency(cat.monto)}</p>
+                  </div>
+                ))}
               </div>
-              <p className="text-white/80 text-sm">
-                <span className="font-semibold text-white">Protege tus obligaciones:</span> Asegura que siempre podrás pagar tus gastos fijos
+            </Card>
+
+            {/* GASTOS */}
+            <Card className="p-6 mb-4 bg-white/10 backdrop-blur-sm border-white/20">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-danger/20 flex items-center justify-center">
+                  <TrendingDown className="w-5 h-5 text-danger" />
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-xl font-bold text-white">GASTOS</h2>
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl font-bold text-danger">
+                    {formatCurrency(statement.totalGastos)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Categorías de Gastos */}
+              <div className="space-y-2 pl-4">
+                {statement.gastos.map((cat, idx) => (
+                  <div key={idx} className="flex items-center justify-between py-2 border-b border-white/10">
+                    <div className="flex-1">
+                      <p className="text-white/90 font-medium">{cat.categoria}</p>
+                      <p className="text-white/50 text-xs">{cat.transacciones} transacción(es)</p>
+                    </div>
+                    <p className="text-white font-semibold">-{formatCurrency(cat.monto)}</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* RESULTADO FINAL */}
+            <Card className={`p-6 ${statement.balance >= 0 ? 'bg-success/20' : 'bg-danger/20'} backdrop-blur-sm border-white/20`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`w-12 h-12 rounded-full ${statement.balance >= 0 ? 'bg-success/30' : 'bg-danger/30'} flex items-center justify-center`}>
+                    <DollarSign className={`w-6 h-6 ${statement.balance >= 0 ? 'text-success' : 'text-danger'}`} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">
+                      {statement.balance >= 0 ? 'SUPERÁVIT' : 'DÉFICIT'}
+                    </h3>
+                    <p className="text-white/70 text-sm">Balance del período</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className={`text-3xl font-bold ${statement.balance >= 0 ? 'text-success' : 'text-danger'}`}>
+                    {formatCurrency(Math.abs(statement.balance))}
+                  </p>
+                  <p className="text-white/70 text-sm mt-1">
+                    {((statement.balance / statement.totalIngresos) * 100).toFixed(1)}% de ingresos
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            {/* Nota explicativa */}
+            <div className="mt-6 p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10">
+              <p className="text-white/80 text-sm text-center">
+                🤖 Categorías agrupadas inteligentemente por IA para una mejor comprensión de tus finanzas
               </p>
             </div>
-
-            <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <div className="w-2 h-2 rounded-full bg-success"></div>
-              </div>
-              <p className="text-white/80 text-sm">
-                <span className="font-semibold text-white">Cumple tus metas:</span> Mantiene tu plan de ahorro en marcha sin interrupciones
-              </p>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <div className="w-2 h-2 rounded-full bg-success"></div>
-              </div>
-              <p className="text-white/80 text-sm">
-                <span className="font-semibold text-white">Gasta sin culpa:</span> Sabes exactamente cuánto puedes gastar libremente
-              </p>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <div className="w-2 h-2 rounded-full bg-success"></div>
-              </div>
-              <p className="text-white/80 text-sm">
-                <span className="font-semibold text-white">Evita sobregiros:</span> Previene que gastes más de lo que deberías
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        {/* Tips */}
-        <Card className="p-6 bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-sm border-primary/30">
-          <h3 className="text-lg font-semibold text-white mb-3">💡 Consejo</h3>
-          <p className="text-white/90 text-sm leading-relaxed">
-            Si tu "Seguro para Gastar" es negativo, significa que tus gastos fijos y metas de ahorro superan tus ingresos. Es momento de revisar y ajustar tu presupuesto.
-          </p>
-        </Card>
+          </>
+        )}
       </div>
 
       <BottomNav />
