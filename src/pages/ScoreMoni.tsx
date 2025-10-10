@@ -63,7 +63,7 @@ const ScoreMoni = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-dashboard flex items-center justify-center">
+      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
         <div className="text-white text-center">
           <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
           <p>Calculando tu Score Moni...</p>
@@ -73,7 +73,7 @@ const ScoreMoni = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-dashboard pb-20">
+    <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
       <div className="bg-gradient-card/95 backdrop-blur-sm border-b border-white/10 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-4">
