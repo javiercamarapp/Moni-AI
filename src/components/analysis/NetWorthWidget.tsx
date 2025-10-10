@@ -11,7 +11,7 @@ export default function NetWorthWidget() {
   const [timeRange, setTimeRange] = useState<TimeRange>('1Y');
   const { data: netWorthData, isLoading } = useNetWorth(timeRange);
 
-  if (isLoading || !netWorthData) {
+  if (!netWorthData) {
     return (
       <div className="min-h-screen animated-wave-bg px-4 py-8">
         <div className="space-y-6 animate-pulse">
@@ -125,8 +125,9 @@ export default function NetWorthWidget() {
               stroke="#10b981"
               strokeWidth={2.5}
               fill="url(#colorNetWorth)"
-              animationDuration={1000}
+              animationDuration={300}
               dot={false}
+              isAnimationActive={true}
             />
           </AreaChart>
         </ResponsiveContainer>
