@@ -53,16 +53,16 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Prepare data summary for AI - período específico para insights (LIMITADO)
-    const transactionSummary = transactions?.slice(0, 30).map((t: any) => ({
+    // Prepare data summary for AI - período específico para insights
+    const transactionSummary = transactions?.map((t: any) => ({
       type: t.type,
       amount: t.amount,
       date: t.transaction_date,
       category: t.categories?.name
     })) || [];
 
-    // Preparar resumen de datos históricos (LIMITADO a últimos 200)
-    const allTransactionsSummary = allTransactions?.slice(0, 200).map((t: any) => ({
+    // Preparar resumen de datos históricos completo
+    const allTransactionsSummary = allTransactions?.map((t: any) => ({
       type: t.type,
       amount: t.amount,
       date: t.transaction_date,

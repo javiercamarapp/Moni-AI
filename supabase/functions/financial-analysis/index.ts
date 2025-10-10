@@ -135,27 +135,13 @@ Ejemplo formato:
       });
     }
 
-    // Calcular fechas según el período - OPTIMIZADO para carga rápida
-    const now = new Date();
-    let startDate: Date;
-    
-    // Limitar a 3 meses para carga ultra-rápida
-    if (period === 'month') {
-      startDate = new Date(now.getFullYear(), now.getMonth() - 2, 1); // Últimos 3 meses
-    } else if (period === 'year') {
-      startDate = new Date(now.getFullYear(), now.getMonth() - 11, 1); // Últimos 12 meses
-    } else {
-      startDate = new Date(now.getFullYear(), now.getMonth() - 2, 1);
-    }
-
-    // Obtener transacciones del período - LIMITADO para velocidad
+    // Obtener todas las transacciones históricas
     const { data: transactions, error: txError } = await supabase
       .from('transactions')
       .select('*, categories(name, type)')
       .eq('user_id', userId)
-      .gte('transaction_date', startDate.toISOString().split('T')[0])
-      .order('transaction_date', { ascending: false })
-      .limit(500); // Límite de 500 transacciones para velocidad
+      .gte('transaction_date', '2020-01-01')
+      .order('transaction_date', { ascending: false });
 
     console.log('Transactions found:', transactions?.length || 0);
     if (txError) console.error('Transaction query error:', txError);

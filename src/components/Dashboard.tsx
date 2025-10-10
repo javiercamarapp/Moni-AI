@@ -279,18 +279,13 @@ const Dashboard = () => {
         
         setHasBankConnections((bankData?.length || 0) > 0);
 
-        // Fetch all expense transactions from last 6 months for AI analysis
-        const sixMonthsAgo = new Date();
-        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-
+        // Fetch all expense transactions for AI analysis
         const { data: allExpenses, error: expensesError } = await supabase
           .from('transactions')
           .select('*, categories(name)')
           .eq('user_id', user.id)
           .eq('type', 'gasto')
-          .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
-          .order('transaction_date', { ascending: false })
-          .limit(300); // Límite de 300 transacciones para velocidad
+          .order('transaction_date', { ascending: false });
 
         console.log('📊 Gastos encontrados para análisis:', allExpenses?.length || 0);
 
@@ -482,17 +477,12 @@ const Dashboard = () => {
         .lte('transaction_date', lastDay.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
 
-      // Get últimos 6 meses de transacciones para análisis rápido
-      const sixMonthsAgo = new Date();
-      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-      
+      // Get todas las transacciones históricas para análisis completo
       const { data: allTransactions } = await supabase
         .from('transactions')
         .select('*, categories(name)')
         .eq('user_id', user.id)
-        .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
-        .order('transaction_date', { ascending: false })
-        .limit(300); // Límite de 300 transacciones
+        .order('transaction_date', { ascending: false });
 
       const periodLabel = getMonthName(0);
 

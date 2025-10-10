@@ -46,7 +46,7 @@ Deno.serve(async (req) => {
             role: 'system',
             content: `Eres un asistente financiero experto en detectar suscripciones y pagos recurrentes.
 
-Analiza las transacciones y agrupa los gastos que se repiten para identificar PAGOS RECURRENTES ÚNICOS:
+Analiza TODAS las transacciones proporcionadas y agrupa los gastos que se repiten para identificar PAGOS RECURRENTES ÚNICOS:
 
 1. Identifica patrones de pagos que se repiten: Netflix, Spotify, Amazon, Disney, HBO, Gym, Internet, Luz, Agua, Gas, Teléfono, Renta, etc.
 2. AGRUPA todos los pagos del MISMO CONCEPTO (ej: si hay "Netflix oct 25", "Netflix sept 25", "Netflix ago 25" → devuelve solo UNO como "Netflix")
@@ -75,7 +75,7 @@ Si no detectas suscripciones, responde: {"subscriptions": []}`
           },
           {
             role: 'user',
-            content: `Analiza estas transacciones de gastos y detecta suscripciones y pagos recurrentes (ANALIZA SOLO LAS PRIMERAS 200):\n\n${JSON.stringify(transactions.slice(0, 200).map((t: any) => ({
+            content: `Analiza estas transacciones de gastos y detecta suscripciones y pagos recurrentes:\n\n${JSON.stringify(transactions.map((t: any) => ({
               description: t.description,
               amount: t.amount,
               date: t.transaction_date,
