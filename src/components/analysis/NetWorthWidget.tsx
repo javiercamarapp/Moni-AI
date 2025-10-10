@@ -60,7 +60,7 @@ export default function NetWorthWidget() {
       </div>
 
       {/* Chart with high/low indicators */}
-      <div className="relative h-[400px]">
+      <div className="relative h-[400px] [&_.recharts-yAxis]:hidden [&_.recharts-cartesian-axis-tick]:first:hidden">
         {/* High Point Label */}
         {highPoint && (
           <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/30 z-10">
