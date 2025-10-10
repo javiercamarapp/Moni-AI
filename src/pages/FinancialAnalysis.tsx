@@ -393,11 +393,11 @@ export default function FinancialAnalysis() {
             <p className="text-xs text-white/70">Tu salud financiera</p>
           </div>
           <Tabs value={period} onValueChange={setPeriod}>
-            <TabsList className="h-10 bg-white/10 border border-white/30 px-1">
-              <TabsTrigger value="month" className="text-sm text-white data-[state=active]:bg-white data-[state=active]:text-black px-6 py-2">
+            <TabsList className="h-8 bg-white/10 border border-white/30">
+              <TabsTrigger value="month" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black px-3 py-1">
                 Mes
               </TabsTrigger>
-              <TabsTrigger value="year" className="text-sm text-white data-[state=active]:bg-white data-[state=active]:text-black px-6 py-2">
+              <TabsTrigger value="year" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black px-3 py-1">
                 Año
               </TabsTrigger>
             </TabsList>
