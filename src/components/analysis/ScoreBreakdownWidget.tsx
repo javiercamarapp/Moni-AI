@@ -69,16 +69,16 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
 
       <div className="h-[500px]">
         <ResponsiveContainer width="100%" height="100%">
-          <RadarChart data={radarData} margin={{ top: 20, right: 60, bottom: 20, left: 60 }}>
+          <RadarChart data={radarData} margin={{ top: 5, right: 30, bottom: 5, left: 30 }}>
             <PolarGrid stroke="rgba(255,255,255,0.1)" />
             <PolarAngleAxis 
               dataKey="dimension" 
-              tick={{ fill: 'white', fontSize: 13, fontWeight: 600 }}
+              tick={{ fill: 'white', fontSize: 12, fontWeight: 600 }}
             />
             <PolarRadiusAxis 
               angle={90} 
               domain={[0, 30]}
-              tick={{ fill: 'white', fontSize: 12 }}
+              tick={{ fill: 'white', fontSize: 11 }}
             />
             <Radar
               name="Score"
