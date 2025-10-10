@@ -7,7 +7,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { addDays, addWeeks, addMonths, addYears, isBefore, startOfDay } from "date-fns";
 import { TrendingUp, TrendingDown, DollarSign, PiggyBank, Home, Target, MessageSquare, User, RefreshCw, Droplets, AlertCircle, Zap, Activity, BarChart3, Shield, Trophy, Heart } from "lucide-react";
-import moniAiLogo from "@/assets/moni-ai-logo.png";
+import moniAiLogo from "@/assets/moni-ai-horizontal.png";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import BottomNav from '@/components/BottomNav';
 import SafeToSpendWidget from "@/components/analysis/SafeToSpendWidget";
@@ -372,11 +372,12 @@ export default function FinancialAnalysis() {
   // Mostrar splash screen durante los primeros 2 segundos
   if (showSplash) {
     return (
-      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
+      <div className="min-h-screen animated-wave-bg flex items-center justify-center px-8">
         <img 
           src={moniAiLogo} 
           alt="Moni AI" 
-          className="w-40 h-40 animate-pulse"
+          className="w-full max-w-md animate-pulse"
+          style={{ objectFit: 'contain' }}
         />
       </div>
     );
