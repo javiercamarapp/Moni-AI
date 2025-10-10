@@ -591,31 +591,6 @@ const Dashboard = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  // Fetch challenges
-  useEffect(() => {
-    const fetchChallenges = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        // Fetch only pending challenges (not yet accepted)
-        const { data, error } = await supabase
-          .from('challenges')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('status', 'pending')
-          .order('created_at', { ascending: false })
-          .limit(2);
-
-        if (error) throw error;
-        setChallenges(data || []);
-      } catch (error) {
-        console.error('Error fetching challenges:', error);
-      }
-    };
-    fetchChallenges();
-  }, []);
-
   const handleAcceptChallenge = async (challengeId: string) => {
     try {
       const { error } = await supabase
@@ -690,6 +665,41 @@ const Dashboard = () => {
       setLoadingChallenges(false);
     }
   };
+
+  // Fetch challenges and auto-generate if none exist
+  useEffect(() => {
+    const fetchChallenges = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Fetch only pending challenges (not yet accepted)
+        const { data, error } = await supabase
+          .from('challenges')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('status', 'pending')
+          .order('created_at', { ascending: false })
+          .limit(2);
+
+        if (error) throw error;
+        
+        // If no pending challenges exist, auto-generate 2
+        if (!data || data.length === 0) {
+          console.log('No pending challenges found, auto-generating...');
+          await handleGenerateChallenges();
+        } else {
+          setChallenges(data);
+        }
+      } catch (error) {
+        console.error('Error fetching challenges:', error);
+      }
+    };
+    
+    if (user) {
+      fetchChallenges();
+    }
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -1182,16 +1192,8 @@ const Dashboard = () => {
 
               {challenges.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-white/70 mb-4">Aún no tienes retos activos</p>
-                  <Button 
-                    size="lg" 
-                    onClick={handleGenerateChallenges} 
-                    disabled={loadingChallenges}
-                    className="bg-gradient-card card-glow hover:bg-white/30 text-white border-white/30"
-                  >
-                    <Zap className="w-5 h-5 mr-2" />
-                    {loadingChallenges ? "Generando retos..." : "Generar mis primeros 2 retos"}
-                  </Button>
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white mb-4"></div>
+                  <p className="text-white/70">Generando tus primeros 2 retos personalizados...</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3 sm:gap-4">
