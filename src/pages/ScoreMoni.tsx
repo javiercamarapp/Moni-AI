@@ -6,7 +6,7 @@ import { ArrowLeft, TrendingUp, PiggyBank, CreditCard, Target, Zap, Activity } f
 import { supabase } from '@/integrations/supabase/client';
 import BottomNav from '@/components/BottomNav';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Sphere, MeshDistortMaterial, Float, Text3D, OrbitControls, Environment } from '@react-three/drei';
+import { Sphere, MeshDistortMaterial, Float, OrbitControls, Environment, Html } from '@react-three/drei';
 import * as THREE from 'three';
 
 // 3D Score Orb Component
@@ -50,16 +50,12 @@ function ScoreOrb({ score }: { score: number }) {
         />
       </Sphere>
       
-      {/* Score text in 3D */}
-      <Text3D
-        font="/fonts/helvetiker_regular.typeface.json"
-        size={0.8}
-        height={0.2}
-        position={[-0.8, -0.3, 2.5]}
-      >
-        {score}
-        <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.5} />
-      </Text3D>
+      {/* Score text as HTML overlay */}
+      <Html position={[0, 0, 0]} center>
+        <div className="text-6xl font-bold text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.8)] pointer-events-none">
+          {score}
+        </div>
+      </Html>
     </Float>
   );
 }
