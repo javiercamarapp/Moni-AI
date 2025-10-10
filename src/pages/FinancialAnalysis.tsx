@@ -58,8 +58,11 @@ export default function FinancialAnalysis() {
   }, []);
   useEffect(() => {
     if (user) {
+      // Limpiar datos anteriores al cambiar período
+      setQuickMetrics(null);
+      setAnalysis(null);
+      
       // 1. Calcular métricas básicas inmediatamente
-      setQuickMetrics(null); // Limpiar métricas anteriores
       calculateQuickMetrics();
       // 2. Cargar transacciones
       fetchTransactionsData();
@@ -70,6 +73,8 @@ export default function FinancialAnalysis() {
 
   const calculateQuickMetrics = async () => {
     if (!user) return;
+    
+    console.log('📊 Calculating metrics for period:', period);
     
     try {
       // Calcular fechas según el período
@@ -82,6 +87,12 @@ export default function FinancialAnalysis() {
         startDate = new Date(now.getFullYear(), 0, 1);
       }
       
+      console.log('📅 Date range:', { 
+        period, 
+        startDate: startDate.toISOString().split('T')[0],
+        endDate: now.toISOString().split('T')[0]
+      });
+      
       // Obtener transacciones del período
       const { data: transactions } = await supabase
         .from('transactions')
@@ -89,6 +100,8 @@ export default function FinancialAnalysis() {
         .eq('user_id', user.id)
         .gte('transaction_date', startDate.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
+      
+      console.log('💰 Transactions found:', transactions?.length || 0);
       
       if (!transactions || transactions.length === 0) {
         setQuickMetrics({
