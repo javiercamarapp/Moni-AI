@@ -50,6 +50,15 @@ export default function FinancialAnalysis() {
     if (user) {
       loadAnalysis();
       fetchTransactionsData();
+      
+      // Auto-hide loading overlay after 2 seconds max
+      const timeout = setTimeout(() => {
+        if (loading) {
+          setLoading(false);
+        }
+      }, 2000);
+      
+      return () => clearTimeout(timeout);
     }
   }, [user, period]);
 
@@ -246,16 +255,18 @@ export default function FinancialAnalysis() {
       setLoading(false);
     }
   };
-  if (loading && !analysis) {
-    return <div className="min-h-screen animated-wave-bg flex items-center justify-center">
-        <div className="text-center">
-          <img src="/moni-logo.png" alt="Moni Logo" className="w-[280px] max-w-[90vw] mx-auto animate-pulse" />
-        </div>
-      </div>;
-  }
   
   return (
     <div className="min-h-screen animated-wave-bg pb-24">
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
+          <div className="text-center">
+            <img src="/moni-logo.png" alt="Cargando" className="w-[200px] max-w-[70vw] mx-auto animate-pulse" />
+            <p className="text-white text-sm mt-4">Analizando tus finanzas...</p>
+          </div>
+        </div>
+      )}
+      
       <div className="mx-4 space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between pt-4 mb-4">
