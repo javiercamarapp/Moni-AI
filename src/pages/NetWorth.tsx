@@ -199,9 +199,9 @@ export default function NetWorth() {
       {/* Liquidez Section */}
       <div className="px-4 mt-4">
         {/* Total Líquido */}
-        <div className="mb-4 bg-gradient-to-br from-blue-500/20 to-blue-700/20 backdrop-blur-sm rounded-2xl p-4 border border-blue-500/30">
-          <p className="text-sm text-white/80 mb-1">Efectivo Disponible</p>
-          <p className="text-3xl font-bold text-white break-words">
+        <div className="mb-4 bg-gradient-to-br from-blue-500/20 to-blue-700/20 backdrop-blur-sm rounded-xl p-3 border border-blue-500/30">
+          <p className="text-[10px] text-white/70 mb-0.5">Efectivo Disponible</p>
+          <p className="text-base font-bold text-white break-words">
             ${assets
               .filter(a => 
                 a.category.toLowerCase().includes('check') || 
@@ -209,15 +209,6 @@ export default function NetWorth() {
               )
               .reduce((sum, a) => sum + Number(a.value), 0)
               .toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </p>
-          <p className="text-xs text-white/60 mt-1">
-            {assets.filter(a => 
-              a.category.toLowerCase().includes('check') || 
-              a.category.toLowerCase().includes('saving')
-            ).length} cuenta{assets.filter(a => 
-              a.category.toLowerCase().includes('check') || 
-              a.category.toLowerCase().includes('saving')
-            ).length !== 1 ? 's' : ''}
           </p>
         </div>
 
