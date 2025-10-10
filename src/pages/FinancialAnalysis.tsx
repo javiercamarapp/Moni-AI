@@ -59,6 +59,7 @@ export default function FinancialAnalysis() {
   useEffect(() => {
     if (user) {
       // 1. Calcular métricas básicas inmediatamente
+      setQuickMetrics(null); // Limpiar métricas anteriores
       calculateQuickMetrics();
       // 2. Cargar transacciones
       fetchTransactionsData();
@@ -405,7 +406,14 @@ export default function FinancialAnalysis() {
         </div>
 
         {/* Mostrar métricas instantáneas primero, luego actualizar con análisis completo */}
-        {(quickMetrics || analysis) ? (
+        {!quickMetrics && !analysis ? (
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="text-center">
+              <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-white/80">Calculando métricas {period === 'month' ? 'mensuales' : 'anuales'}...</p>
+            </div>
+          </div>
+        ) : (quickMetrics || analysis) ? (
           <>
             {/* Animated Income & Expense Lines */}
             <Card 
