@@ -126,8 +126,28 @@ export default function NetWorthWidget() {
         </ResponsiveContainer>
       </div>
 
-      {/* Assets and Liabilities - Moved below chart and closer */}
-      <div className="grid grid-cols-2 gap-3 -mt-2">
+      {/* Time Range Buttons */}
+      <div className="flex gap-1.5 justify-center">
+        {(['1M', '3M', '6M', '1Y', 'All'] as TimeRange[]).map((range) => (
+          <Button
+            key={range}
+            variant={timeRange === range ? "default" : "outline"}
+            size="sm"
+            onClick={() => setTimeRange(range)}
+            className={cn(
+              "h-6 px-2 text-[10px] transition-all rounded-full",
+              timeRange === range 
+                ? "bg-white/20 text-white border-white/30 shadow-lg" 
+                : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10 hover:border-white/20"
+            )}
+          >
+            {range}
+          </Button>
+        ))}
+      </div>
+
+      {/* Assets and Liabilities */}
+      <div className="grid grid-cols-2 gap-3">
         <div className="bg-emerald-500/10 backdrop-blur-sm rounded-xl p-3 border border-emerald-500/20">
           <p className="text-[10px] text-white/70 mb-0.5">Activos</p>
           <p className="text-xl font-bold text-emerald-300">
@@ -142,25 +162,6 @@ export default function NetWorthWidget() {
         </div>
       </div>
 
-      {/* Time Range Buttons */}
-      <div className="flex gap-2 justify-center">
-        {(['1M', '3M', '6M', '1Y', 'All'] as TimeRange[]).map((range) => (
-          <Button
-            key={range}
-            variant={timeRange === range ? "default" : "outline"}
-            size="sm"
-            onClick={() => setTimeRange(range)}
-            className={cn(
-              "h-9 px-4 text-sm transition-all rounded-full",
-              timeRange === range 
-                ? "bg-white/20 text-white border-white/30 shadow-lg" 
-                : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10 hover:border-white/20"
-            )}
-          >
-            {range}
-          </Button>
-        ))}
-      </div>
     </div>
   );
 }
