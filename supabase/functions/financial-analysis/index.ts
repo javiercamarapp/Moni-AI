@@ -143,6 +143,12 @@ Ejemplo formato:
       .gte('transaction_date', '2020-01-01')
       .order('transaction_date', { ascending: false });
 
+    // Define current date and period start date
+    const now = new Date();
+    const startDate = period === 'year' 
+      ? new Date(now.getFullYear(), 0, 1) 
+      : new Date(now.getFullYear(), now.getMonth(), 1);
+
     console.log('Transactions found:', transactions?.length || 0);
     if (txError) console.error('Transaction query error:', txError);
 
