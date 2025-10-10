@@ -82,14 +82,14 @@ export default function NetWorthWidget() {
         )}
         
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData} margin={{ top: 20, right: 20, bottom: 20, left: -10 }}>
+          <AreaChart data={chartData} margin={{ top: 20, right: 20, bottom: 20, left: -20 }}>
             <defs>
               <linearGradient id="colorNetWorth" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
                 <stop offset="95%" stopColor="#10b981" stopOpacity={0.05}/>
               </linearGradient>
             </defs>
-            <YAxis hide domain={['dataMin', 'dataMax']} tick={false} />
+            <YAxis hide width={0} tick={false} tickLine={false} axisLine={false} />
             <XAxis 
               dataKey="date" 
               tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 10 }}
