@@ -62,7 +62,7 @@ export default function NetWorthWidget() {
       {/* Chart with high/low indicators */}
       <div className="relative h-[400px]">
         {/* High Point Label */}
-        {highPoint && highPoint !== lowPoint && (
+        {highPoint && (
           <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/30 z-10">
             <p className="text-[8px] text-white/70 font-medium">high:</p>
             <p className="text-[10px] font-bold text-emerald-300 break-all">
@@ -72,7 +72,7 @@ export default function NetWorthWidget() {
         )}
         
         {/* Low Point Label */}
-        {lowPoint && highPoint !== lowPoint && (
+        {lowPoint && (
           <div className="absolute bottom-20 right-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/30 z-10">
             <p className="text-[8px] text-white/70 font-medium">low:</p>
             <p className="text-[10px] font-bold text-red-300 break-all">
