@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { addDays, addWeeks, addMonths, addYears, isBefore, startOfDay } from "date-fns";
 import { TrendingUp, TrendingDown, DollarSign, PiggyBank, Home, Target, MessageSquare, User, RefreshCw, Droplets, AlertCircle, Zap, Activity, BarChart3, Shield, Trophy, Heart } from "lucide-react";
+import moniAiLogo from "@/assets/moni-ai-logo.png";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import BottomNav from '@/components/BottomNav';
 import SafeToSpendWidget from "@/components/analysis/SafeToSpendWidget";
@@ -388,10 +389,16 @@ export default function FinancialAnalysis() {
 
         {/* Mostrar métricas instantáneas primero, luego actualizar con análisis completo */}
         {!quickMetrics && !analysis && loading ? (
-          <Card className="p-8 bg-gradient-card card-glow border-white/20 text-center">
-            <RefreshCw className="h-8 w-8 text-white/60 animate-spin mx-auto mb-4" />
-            <p className="text-white/80">Cargando análisis financiero...</p>
-          </Card>
+          <div className="flex items-center justify-center min-h-[60vh] animated-wave-bg">
+            <div className="text-center">
+              <img 
+                src={moniAiLogo} 
+                alt="Moni AI" 
+                className="w-32 h-32 mx-auto mb-4 animate-pulse"
+              />
+              <p className="text-white/80 text-lg font-medium">Analizando tus finanzas...</p>
+            </div>
+          </div>
         ) : (quickMetrics || analysis) ? (
           <>
             {/* Animated Income & Expense Lines */}
