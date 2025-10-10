@@ -1017,9 +1017,9 @@ const Dashboard = () => {
                 <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-success-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Patrimonio Neto</p>
-                <p className="text-xs sm:text-sm font-bold text-white leading-tight break-words">
-                  ${netWorth.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Net Worth</p>
+                <p className="text-xs sm:text-base font-bold text-white leading-tight">
+                  ${(netWorth / 1000).toFixed(0)}k
                 </p>
               </div>
             </div>
