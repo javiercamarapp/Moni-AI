@@ -9,7 +9,6 @@ import ScoreBreakdownWidget from '@/components/analysis/ScoreBreakdownWidget';
 const ScoreMoni = () => {
   const navigate = useNavigate();
   const [score, setScore] = useState(40);
-  const [loading, setLoading] = useState(true);
   const [previousScore] = useState(35); // Simulated previous score
   const [components, setComponents] = useState({
     savingsAndLiquidity: 0,
@@ -49,8 +48,6 @@ const ScoreMoni = () => {
       }
     } catch (error) {
       console.error('Error fetching score:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -60,17 +57,6 @@ const ScoreMoni = () => {
     : scoreChange < 0 
     ? "Incremento en gastos variables y reducción en tu tasa de ahorro mensual."
     : undefined;
-
-  if (loading) {
-    return (
-      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
-        <div className="text-white text-center">
-          <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-          <p>Calculando tu Score Moni...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
