@@ -136,11 +136,6 @@ const Auth = () => {
               variant: "destructive",
             });
           }
-        } else {
-          toast({
-            title: "¡Cuenta creada!",
-            description: "Tu cuenta ha sido creada exitosamente",
-          });
         }
       }
     } catch (error) {

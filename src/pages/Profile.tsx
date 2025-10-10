@@ -254,10 +254,6 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      toast({
-        title: "Sesión cerrada",
-        description: "Hasta pronto!"
-      });
       navigate("/auth");
     } catch (error: any) {
       console.error('Error al cerrar sesión:', error);
