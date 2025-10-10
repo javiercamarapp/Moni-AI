@@ -157,6 +157,12 @@ const Balance = () => {
     return cached ? parseFloat(cached) : 0;
   });
   const [loading, setLoading] = useState(false);
+  const [hasInitialData, setHasInitialData] = useState(() => {
+    // Verificar si hay datos en caché
+    const hasIngresos = localStorage.getItem('balance_ingresos');
+    const hasGastos = localStorage.getItem('balance_gastos');
+    return !!(hasIngresos && hasGastos);
+  });
   const [proyecciones, setProyecciones] = useState<{
     proyeccionAnual: number;
     proyeccionSemestral: number;
@@ -296,7 +302,10 @@ const Balance = () => {
     }
   };
   const fetchBalanceData = async () => {
-    setLoading(true);
+    // Solo mostrar loading si NO hay datos iniciales
+    if (!hasInitialData) {
+      setLoading(true);
+    }
     try {
       const {
         data: {
@@ -417,6 +426,7 @@ const Balance = () => {
       })).sort((a, b) => b.total - a.total);
       setGastosByCategory(gastosWithPercentage);
       localStorage.setItem('balance_gastos', JSON.stringify(gastosWithPercentage));
+      setHasInitialData(true);
     } finally {
       setLoading(false);
     }
@@ -444,7 +454,8 @@ const Balance = () => {
     }
     return currentMonth.getFullYear().toString();
   };
-  if (loading) {
+  // Solo mostrar pantalla de carga si no hay datos iniciales
+  if (loading && !hasInitialData) {
     return <div className="min-h-screen animated-wave-bg flex items-center justify-center">
         <p className="text-white text-lg">Cargando balance...</p>
       </div>;
