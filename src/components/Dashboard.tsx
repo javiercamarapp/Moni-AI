@@ -1129,7 +1129,7 @@ const Dashboard = () => {
                     size="sm" 
                     onClick={handleGenerateChallenges} 
                     disabled={loadingChallenges}
-                    className="bg-gradient-card card-glow hover:bg-white/30 text-white border-white/30 text-xs sm:text-sm hover:scale-105 transition-transform duration-200"
+                    className="bg-gradient-card card-glow hover:bg-white/30 text-white border-white/30 text-xs sm:text-sm"
                   >
                     <Zap className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                     Ver mis retos
@@ -1137,13 +1137,14 @@ const Dashboard = () => {
                 )}
               </div>
 
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4" style={{ transform: 'translate3d(0, 0, 0)' }}>
                 {challenges.length === 0 ? (
                   <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       {/* Reto 1: Sin Café */}
-                      <Card className="p-2 bg-gradient-to-br from-[hsl(25,70%,40%)] to-[hsl(25,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(25,80%,50%)]/40 relative overflow-hidden hover:scale-105 transition-transform duration-200 cursor-pointer"
+                      <Card className="p-2 bg-gradient-to-br from-[hsl(25,70%,40%)] to-[hsl(25,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(25,80%,50%)]/40 relative overflow-hidden cursor-pointer"
                         onClick={handleGenerateChallenges}
+                        style={{ transform: 'translate3d(0, 0, 0)' }}
                       >
                         
                         <div className="relative z-10">
@@ -1181,8 +1182,9 @@ const Dashboard = () => {
                       </Card>
 
                       {/* Reto 2: Sin Delivery */}
-                      <Card className="p-2 bg-gradient-to-br from-[hsl(340,70%,40%)] to-[hsl(340,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(340,80%,50%)]/40 relative overflow-hidden hover:scale-105 transition-transform duration-200 cursor-pointer"
+                      <Card className="p-2 bg-gradient-to-br from-[hsl(340,70%,40%)] to-[hsl(340,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(340,80%,50%)]/40 relative overflow-hidden cursor-pointer"
                         onClick={handleGenerateChallenges}
+                        style={{ transform: 'translate3d(0, 0, 0)' }}
                       >
                         
                         <div className="relative z-10">
@@ -1249,7 +1251,8 @@ const Dashboard = () => {
                     return (
                       <Card 
                         key={challenge.id} 
-                        className={`p-2 bg-gradient-to-br ${gradient} card-glow shadow-2xl border-2 relative overflow-hidden hover:scale-105 transition-transform duration-200`}
+                        className={`p-2 bg-gradient-to-br ${gradient} card-glow shadow-2xl border-2 relative overflow-hidden`}
+                        style={{ transform: 'translate3d(0, 0, 0)' }}
                       >
                         
                         <div className="relative z-10">
