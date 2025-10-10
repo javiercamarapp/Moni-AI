@@ -1137,15 +1137,14 @@ const Dashboard = () => {
                 )}
               </div>
 
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4" style={{ transform: 'translate3d(0, 0, 0)' }}>
-                {challenges.length === 0 ? (
-                  <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                      {/* Reto 1: Sin Café */}
-                      <Card className="p-2 bg-gradient-to-br from-[hsl(25,70%,40%)] to-[hsl(25,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(25,80%,50%)]/40 relative overflow-hidden cursor-pointer"
-                        onClick={handleGenerateChallenges}
-                        style={{ transform: 'translate3d(0, 0, 0)' }}
-                      >
+              {challenges.length === 0 ? (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    {/* Reto 1: Sin Café */}
+                    <Card className="p-2 bg-gradient-to-br from-[hsl(25,70%,40%)] to-[hsl(25,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(25,80%,50%)]/40 relative overflow-hidden cursor-pointer"
+                      onClick={handleGenerateChallenges}
+                      style={{ transform: 'translate3d(0, 0, 0)', willChange: 'auto' }}
+                    >
                         
                         <div className="relative z-10">
                           <div className="flex items-center gap-1 mb-1">
@@ -1181,11 +1180,11 @@ const Dashboard = () => {
                         </div>
                       </Card>
 
-                      {/* Reto 2: Sin Delivery */}
-                      <Card className="p-2 bg-gradient-to-br from-[hsl(340,70%,40%)] to-[hsl(340,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(340,80%,50%)]/40 relative overflow-hidden cursor-pointer"
-                        onClick={handleGenerateChallenges}
-                        style={{ transform: 'translate3d(0, 0, 0)' }}
-                      >
+                    {/* Reto 2: Sin Delivery */}
+                    <Card className="p-2 bg-gradient-to-br from-[hsl(340,70%,40%)] to-[hsl(340,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(340,80%,50%)]/40 relative overflow-hidden cursor-pointer"
+                      onClick={handleGenerateChallenges}
+                      style={{ transform: 'translate3d(0, 0, 0)', willChange: 'auto' }}
+                    >
                         
                         <div className="relative z-10">
                           <div className="flex items-center gap-1 mb-1">
@@ -1222,7 +1221,7 @@ const Dashboard = () => {
                       </Card>
                     </div>
                     
-                    <div className="text-center">
+                    <div className="text-center mt-4">
                       <p className="text-sm text-white/70 mb-2">o genera retos personalizados con IA</p>
                       <Button 
                         size="sm" 
@@ -1236,7 +1235,8 @@ const Dashboard = () => {
                     </div>
                   </>
                 ) : (
-                  challenges.slice(0, 2).map((challenge, index) => {
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                    {challenges.slice(0, 2).map((challenge, index) => {
                     const progress = (challenge.current_amount / challenge.target_amount) * 100;
                     const daysStatus = JSON.parse(challenge.days_status || '[]');
                     const dayNames = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
@@ -1311,9 +1311,9 @@ const Dashboard = () => {
                         </div>
                       </Card>
                     );
-                  })
+                  })}
+                  </div>
                 )}
-              </div>
             </div>
           </div>
 
