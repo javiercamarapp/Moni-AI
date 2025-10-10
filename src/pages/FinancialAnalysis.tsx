@@ -416,7 +416,7 @@ export default function FinancialAnalysis() {
             <Card 
               className="p-4 bg-gradient-card card-glow space-y-4 animate-fade-in hover:scale-[1.02] transition-transform duration-200 cursor-pointer" 
               style={{ animationDelay: '0ms' }}
-              onClick={() => navigate(period === 'month' ? '/balance' : '/balance?view=annual')}
+              onClick={() => navigate(`/balance?period=${period}`)}
             >
               {/* Ingresos */}
               <div className="space-y-2">

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -116,10 +116,17 @@ const getCategoryGroup = (categoryName: string): string => {
 };
 const Balance = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const {
     toast
   } = useToast();
   const [viewMode, setViewMode] = useState<'mensual' | 'anual'>(() => {
+    // Primero verificar si hay un parámetro en la URL
+    const urlPeriod = searchParams.get('period');
+    if (urlPeriod === 'year') return 'anual';
+    if (urlPeriod === 'month') return 'mensual';
+    
+    // Si no hay parámetro, usar localStorage
     const saved = localStorage.getItem('balanceViewMode');
     return saved as 'mensual' | 'anual' || 'mensual';
   });
