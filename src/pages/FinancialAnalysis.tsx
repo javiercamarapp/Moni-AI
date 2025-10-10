@@ -81,7 +81,6 @@ export default function FinancialAnalysis() {
       // Calcular fechas según el período
       const now = new Date();
       let startDate: Date;
-      let historicalMonths = period === 'month' ? 6 : 12; // 6 meses para mensual, 12 para anual
       
       if (period === 'month') {
         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -103,9 +102,9 @@ export default function FinancialAnalysis() {
         .gte('transaction_date', startDate.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
       
-      // Calcular promedios históricos (últimos 6 o 12 meses)
+      // Calcular promedios históricos: SIEMPRE últimos 12 meses + mes actual (13 meses total)
       const historicalStartDate = new Date(now);
-      historicalStartDate.setMonth(historicalStartDate.getMonth() - historicalMonths);
+      historicalStartDate.setMonth(historicalStartDate.getMonth() - 12); // 12 meses atrás
       
       const { data: historicalTxs } = await supabase
         .from('transactions')
@@ -114,7 +113,7 @@ export default function FinancialAnalysis() {
         .gte('transaction_date', historicalStartDate.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
       
-      // Agrupar transacciones históricas por mes
+      // Agrupar transacciones históricas por mes (incluye mes actual)
       const monthlyData: Record<string, { income: number; expenses: number }> = {};
       
       historicalTxs?.forEach(tx => {
@@ -138,12 +137,18 @@ export default function FinancialAnalysis() {
         ? Object.values(monthlyData).reduce((sum, m) => sum + m.expenses, 0) / monthsWithData 
         : 0;
       
+      console.log('📊 Historical analysis:', {
+        monthsAnalyzed: monthsWithData,
+        avgMonthlyIncome: Math.round(avgMonthlyIncome),
+        avgMonthlyExpenses: Math.round(avgMonthlyExpenses)
+      });
+      
       setHistoricalAverages({
         avgMonthlyIncome: Math.round(avgMonthlyIncome),
         avgMonthlyExpenses: Math.round(avgMonthlyExpenses),
         avgBalance: Math.round(avgMonthlyIncome - avgMonthlyExpenses),
         monthsAnalyzed: monthsWithData,
-        period: period === 'month' ? 'month' : 'year'
+        period: 'year' // Siempre proyección anual basada en 12+1 meses
       });
       
       console.log('💰 Transactions found:', transactions?.length || 0);
