@@ -112,17 +112,17 @@ export default function SafeToSpendExplanation() {
         </div>
 
         {statement && (
-          <>
+          <Card className="p-6 bg-gradient-card card-glow shadow-elegant border border-border/30">
             {/* INGRESOS */}
-            <Card className="p-6 mb-4 bg-gradient-to-br from-[hsl(145,80%,25%)] to-[hsl(145,70%,20%)] shadow-[0_0_30px_rgba(34,197,94,0.3)] border-2 border-[hsl(145,70%,45%)] hover:shadow-[0_0_40px_rgba(34,197,94,0.5)] transition-all duration-300 animate-fade-in">
-              <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-[hsl(145,70%,55%)]">
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-[hsl(145,70%,50%)]">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-[hsl(145,80%,60%)] flex items-center justify-center shadow-[0_0_20px_rgba(34,197,94,0.6)] animate-pulse">
-                    <TrendingUp className="w-6 h-6 text-white" />
+                  <div className="w-10 h-10 rounded-full bg-[hsl(145,70%,50%)] flex items-center justify-center shadow-lg">
+                    <TrendingUp className="w-5 h-5 text-white" />
                   </div>
-                  <h2 className="text-2xl font-bold text-white">INGRESOS</h2>
+                  <h2 className="text-xl font-bold text-[hsl(145,70%,50%)]">INGRESOS</h2>
                 </div>
-                <p className="text-3xl font-bold text-[hsl(145,100%,75%)] drop-shadow-[0_0_10px_rgba(34,197,94,0.8)]">
+                <p className="text-2xl font-bold text-[hsl(145,70%,50%)] break-words">
                   {formatCurrency(statement.totalIngresos)}
                 </p>
               </div>
@@ -130,21 +130,21 @@ export default function SafeToSpendExplanation() {
               {/* Categorías de Ingresos */}
               <div className="space-y-3">
                 {statement.ingresos.length === 0 ? (
-                  <p className="text-white/70 text-sm py-2">No hay ingresos registrados</p>
+                  <p className="text-muted-foreground text-sm py-2">No hay ingresos registrados</p>
                 ) : (
                   statement.ingresos.map((cat, idx) => (
-                    <div key={idx} className="border-b border-white/20 pb-3 last:border-0 hover:bg-white/5 transition-colors duration-200 rounded-lg p-2 animate-fade-in" style={{ animationDelay: `${idx * 50}ms` }}>
+                    <div key={idx} className="border-b border-border/20 pb-3 last:border-0">
                       {/* Categoría Principal */}
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-white font-bold text-base">{cat.categoria}</h4>
-                        <p className="text-[hsl(145,90%,70%)] font-bold text-base">{formatCurrency(cat.monto)}</p>
+                      <div className="flex items-center justify-between mb-2 gap-2">
+                        <h4 className="text-card-foreground font-bold text-base flex-shrink-0">{cat.categoria}</h4>
+                        <p className="text-card-foreground font-bold text-base break-words text-right">{formatCurrency(cat.monto)}</p>
                       </div>
                       {/* Subcuentas */}
                       <div className="space-y-1 pl-6">
                         {cat.subcuentas.map((sub, subIdx) => (
-                          <div key={subIdx} className="flex items-center justify-between py-1 hover:bg-white/5 rounded px-2 transition-all duration-150">
-                            <p className="text-white/80 text-sm">{sub.nombre}</p>
-                            <p className="text-white/80 text-sm">{formatCurrency(sub.monto)}</p>
+                          <div key={subIdx} className="flex items-center justify-between py-1 gap-2">
+                            <p className="text-muted-foreground text-sm flex-1 min-w-0 truncate">{sub.nombre}</p>
+                            <p className="text-muted-foreground text-sm flex-shrink-0">{formatCurrency(sub.monto)}</p>
                           </div>
                         ))}
                       </div>
@@ -152,18 +152,18 @@ export default function SafeToSpendExplanation() {
                   ))
                 )}
               </div>
-            </Card>
+            </div>
 
             {/* GASTOS */}
-            <Card className="p-6 mb-4 bg-gradient-to-br from-[hsl(0,85%,35%)] to-[hsl(0,75%,25%)] shadow-[0_0_30px_rgba(239,68,68,0.3)] border-2 border-[hsl(0,80%,55%)] hover:shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all duration-300 animate-fade-in" style={{ animationDelay: '100ms' }}>
-              <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-[hsl(0,80%,60%)]">
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-[hsl(0,75%,55%)]">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-[hsl(0,90%,65%)] flex items-center justify-center shadow-[0_0_20px_rgba(239,68,68,0.6)] animate-pulse">
-                    <TrendingDown className="w-6 h-6 text-white" />
+                  <div className="w-10 h-10 rounded-full bg-[hsl(0,75%,55%)] flex items-center justify-center shadow-lg">
+                    <TrendingDown className="w-5 h-5 text-white" />
                   </div>
-                  <h2 className="text-2xl font-bold text-white">GASTOS</h2>
+                  <h2 className="text-xl font-bold text-[hsl(0,75%,55%)]">GASTOS</h2>
                 </div>
-                <p className="text-3xl font-bold text-[hsl(0,100%,80%)] drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]">
+                <p className="text-2xl font-bold text-[hsl(0,75%,55%)] break-words">
                   {formatCurrency(statement.totalGastos)}
                 </p>
               </div>
@@ -171,21 +171,21 @@ export default function SafeToSpendExplanation() {
               {/* Categorías de Gastos */}
               <div className="space-y-3">
                 {statement.gastos.length === 0 ? (
-                  <p className="text-white/70 text-sm py-2">No hay gastos registrados</p>
+                  <p className="text-muted-foreground text-sm py-2">No hay gastos registrados</p>
                 ) : (
                   statement.gastos.map((cat, idx) => (
-                    <div key={idx} className="border-b border-white/20 pb-3 last:border-0 hover:bg-white/5 transition-colors duration-200 rounded-lg p-2 animate-fade-in" style={{ animationDelay: `${idx * 50}ms` }}>
+                    <div key={idx} className="border-b border-border/20 pb-3 last:border-0">
                       {/* Categoría Principal */}
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-white font-bold text-base">{cat.categoria}</h4>
-                        <p className="text-[hsl(0,90%,75%)] font-bold text-base">{formatCurrency(cat.monto)}</p>
+                      <div className="flex items-center justify-between mb-2 gap-2">
+                        <h4 className="text-card-foreground font-bold text-base flex-shrink-0">{cat.categoria}</h4>
+                        <p className="text-card-foreground font-bold text-base break-words text-right">{formatCurrency(cat.monto)}</p>
                       </div>
                       {/* Subcuentas */}
                       <div className="space-y-1 pl-6">
                         {cat.subcuentas.map((sub, subIdx) => (
-                          <div key={subIdx} className="flex items-center justify-between py-1 hover:bg-white/5 rounded px-2 transition-all duration-150">
-                            <p className="text-white/80 text-sm">{sub.nombre}</p>
-                            <p className="text-white/80 text-sm">{formatCurrency(sub.monto)}</p>
+                          <div key={subIdx} className="flex items-center justify-between py-1 gap-2">
+                            <p className="text-muted-foreground text-sm flex-1 min-w-0 truncate">{sub.nombre}</p>
+                            <p className="text-muted-foreground text-sm flex-shrink-0">{formatCurrency(sub.monto)}</p>
                           </div>
                         ))}
                       </div>
@@ -193,40 +193,40 @@ export default function SafeToSpendExplanation() {
                   ))
                 )}
               </div>
-            </Card>
+            </div>
 
             {/* BALANCE */}
-            <Card className={`p-6 animate-fade-in hover:scale-[1.02] transition-transform duration-300 ${statement.balance >= 0 ? 'bg-gradient-to-br from-[hsl(145,85%,30%)] to-[hsl(145,75%,22%)] shadow-[0_0_35px_rgba(34,197,94,0.4)] border-2 border-[hsl(145,80%,50%)]' : 'bg-gradient-to-br from-[hsl(0,90%,38%)] to-[hsl(0,80%,28%)] shadow-[0_0_35px_rgba(239,68,68,0.4)] border-2 border-[hsl(0,85%,58%)]'}`} style={{ animationDelay: '200ms' }}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center shadow-[0_0_25px] animate-pulse ${statement.balance >= 0 ? 'bg-[hsl(145,90%,60%)] shadow-[hsl(145,90%,60%)]' : 'bg-[hsl(0,95%,65%)] shadow-[hsl(0,95%,65%)]'}`}>
-                    <DollarSign className="w-7 h-7 text-white" />
+            <div className={`p-5 rounded-xl ${statement.balance >= 0 ? 'bg-gradient-to-br from-[hsl(145,60%,35%)] to-[hsl(145,50%,28%)] border-2 border-[hsl(145,60%,45%)]' : 'bg-gradient-to-br from-[hsl(0,65%,40%)] to-[hsl(0,55%,32%)] border-2 border-[hsl(0,65%,50%)]'}`}>
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 flex-shrink-0">
+                  <div className={`w-12 h-12 rounded-full ${statement.balance >= 0 ? 'bg-[hsl(145,70%,50%)]' : 'bg-[hsl(0,75%,55%)]'} flex items-center justify-center shadow-lg`}>
+                    <DollarSign className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white">
+                    <h3 className="text-lg font-semibold text-white">
                       {statement.balance >= 0 ? 'SUPERÁVIT' : 'DÉFICIT'}
                     </h3>
-                    <p className="text-white/80 text-sm">Balance del período</p>
+                    <p className="text-white/70 text-sm">Balance del período</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className={`text-4xl font-bold text-white drop-shadow-[0_0_15px] ${statement.balance >= 0 ? 'drop-shadow-[rgba(34,197,94,0.9)]' : 'drop-shadow-[rgba(239,68,68,0.9)]'}`}>
-                    {formatCurrency(Math.abs(statement.balance))}
+                <div className="text-right flex-shrink-0">
+                  <p className="text-2xl font-bold text-white break-words">
+                    {formatCurrency(statement.balance)}
                   </p>
-                  <p className="text-white/90 text-sm mt-1 font-semibold">
+                  <p className="text-white/80 text-sm mt-1">
                     {statement.totalIngresos > 0 ? ((statement.balance / statement.totalIngresos) * 100).toFixed(1) : '0.0'}% de ingresos
                   </p>
                 </div>
               </div>
-            </Card>
+            </div>
 
             {/* Nota explicativa */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-primary/20 to-primary/10 rounded-lg border border-primary/40 shadow-[0_0_15px_rgba(147,51,234,0.2)] animate-fade-in" style={{ animationDelay: '300ms' }}>
-              <p className="text-card-foreground text-sm text-center font-medium">
+            <div className="mt-6 p-3 bg-muted/50 rounded-lg border border-border/50">
+              <p className="text-muted-foreground text-xs text-center">
                 🤖 Categorías agrupadas inteligentemente por IA
               </p>
             </div>
-          </>
+          </Card>
         )}
       </div>
 
