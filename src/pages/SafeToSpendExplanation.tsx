@@ -115,14 +115,14 @@ export default function SafeToSpendExplanation() {
           <Card className="p-6 bg-gradient-card card-glow shadow-elegant border border-border/30">
             {/* INGRESOS */}
             <div className="mb-8">
-              <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-[hsl(145,70%,50%)]">
-                <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-[hsl(145,70%,50%)] gap-3">
+                <div className="flex items-center gap-3 flex-shrink-0">
                   <div className="w-10 h-10 rounded-full bg-[hsl(145,70%,50%)] flex items-center justify-center shadow-lg">
                     <TrendingUp className="w-5 h-5 text-white" />
                   </div>
                   <h2 className="text-xl font-bold text-[hsl(145,70%,50%)]">INGRESOS</h2>
                 </div>
-                <p className="text-2xl font-bold text-[hsl(145,70%,50%)] break-words">
+                <p className="text-lg md:text-2xl font-bold text-[hsl(145,70%,50%)] text-right overflow-hidden">
                   {formatCurrency(statement.totalIngresos)}
                 </p>
               </div>
@@ -156,14 +156,14 @@ export default function SafeToSpendExplanation() {
 
             {/* GASTOS */}
             <div className="mb-8">
-              <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-[hsl(0,75%,55%)]">
-                <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-[hsl(0,75%,55%)] gap-3">
+                <div className="flex items-center gap-3 flex-shrink-0">
                   <div className="w-10 h-10 rounded-full bg-[hsl(0,75%,55%)] flex items-center justify-center shadow-lg">
                     <TrendingDown className="w-5 h-5 text-white" />
                   </div>
                   <h2 className="text-xl font-bold text-[hsl(0,75%,55%)]">GASTOS</h2>
                 </div>
-                <p className="text-2xl font-bold text-[hsl(0,75%,55%)] break-words">
+                <p className="text-lg md:text-2xl font-bold text-[hsl(0,75%,55%)] text-right overflow-hidden">
                   {formatCurrency(statement.totalGastos)}
                 </p>
               </div>
@@ -209,11 +209,11 @@ export default function SafeToSpendExplanation() {
                     <p className="text-white/70 text-sm">Balance del período</p>
                   </div>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="text-2xl font-bold text-white break-words">
+                <div className="text-right overflow-hidden max-w-[50%]">
+                  <p className="text-lg md:text-2xl font-bold text-white overflow-hidden">
                     {formatCurrency(statement.balance)}
                   </p>
-                  <p className="text-white/80 text-sm mt-1">
+                  <p className="text-white/80 text-xs md:text-sm mt-1">
                     {statement.totalIngresos > 0 ? ((statement.balance / statement.totalIngresos) * 100).toFixed(1) : '0.0'}% de ingresos
                   </p>
                 </div>
