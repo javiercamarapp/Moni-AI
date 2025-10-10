@@ -392,21 +392,16 @@ export default function FinancialAnalysis() {
             <h1 className="text-xl font-bold text-white">Análisis Financiero</h1>
             <p className="text-xs text-white/70">Tu salud financiera</p>
           </div>
-          <div className="flex gap-2">
-            <Tabs value={period} onValueChange={setPeriod}>
-              <TabsList className="h-8 bg-white/10 border border-white/30">
-                <TabsTrigger value="month" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black px-3">
-                  Mes
-                </TabsTrigger>
-                <TabsTrigger value="year" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black px-3">
-                  Año
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-            <Button onClick={loadAnalysis} disabled={loading} variant="outline" size="sm" className="h-8 bg-white/10 border-white/30 text-white hover:bg-white/20 hover-lift">
-              <RefreshCw className={`h-3 w-3 ${loading ? 'animate-spin' : ''}`} />
-            </Button>
-          </div>
+          <Tabs value={period} onValueChange={setPeriod}>
+            <TabsList className="h-10 bg-white/10 border border-white/30 px-1">
+              <TabsTrigger value="month" className="text-sm text-white data-[state=active]:bg-white data-[state=active]:text-black px-6 py-2">
+                Mes
+              </TabsTrigger>
+              <TabsTrigger value="year" className="text-sm text-white data-[state=active]:bg-white data-[state=active]:text-black px-6 py-2">
+                Año
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
 
         {/* Mostrar métricas instantáneas primero, luego actualizar con análisis completo */}
