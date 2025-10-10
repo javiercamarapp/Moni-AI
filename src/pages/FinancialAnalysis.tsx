@@ -32,14 +32,50 @@ export default function FinancialAnalysis() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [period, setPeriod] = useState("month");
-  const [analysis, setAnalysis] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
-  const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
-  const [futureEvents, setFutureEvents] = useState<any[]>([]);
   const [loadingTransactions, setLoadingTransactions] = useState(true);
-  const [quickMetrics, setQuickMetrics] = useState<any>(null); // Métricas instantáneas
-  const [historicalAverages, setHistoricalAverages] = useState<any>(null); // Promedios históricos
-  const [showSplash, setShowSplash] = useState(false); // Splash instantáneo
+  
+  // Inicializar estados con caché para carga instantánea
+  const [quickMetrics, setQuickMetrics] = useState<any>(() => {
+    try {
+      const cached = localStorage.getItem('financialAnalysis_quickMetrics');
+      return cached ? JSON.parse(cached) : null;
+    } catch { return null; }
+  });
+  
+  const [historicalAverages, setHistoricalAverages] = useState<any>(() => {
+    try {
+      const cached = localStorage.getItem('financialAnalysis_historicalAverages');
+      return cached ? JSON.parse(cached) : null;
+    } catch { return null; }
+  });
+  
+  const [analysis, setAnalysis] = useState<any>(() => {
+    try {
+      const cached = localStorage.getItem('financialAnalysis_analysis');
+      return cached ? JSON.parse(cached) : null;
+    } catch { return null; }
+  });
+  
+  const [recentTransactions, setRecentTransactions] = useState<any[]>(() => {
+    try {
+      const cached = localStorage.getItem('financialAnalysis_recentTransactions');
+      if (!cached) return [];
+      const parsed = JSON.parse(cached);
+      return parsed.map((t: any) => ({...t, date: new Date(t.date)}));
+    } catch { return []; }
+  });
+  
+  const [futureEvents, setFutureEvents] = useState<any[]>(() => {
+    try {
+      const cached = localStorage.getItem('financialAnalysis_futureEvents');
+      if (!cached) return [];
+      const parsed = JSON.parse(cached);
+      return parsed.map((e: any) => ({...e, date: new Date(e.date)}));
+    } catch { return []; }
+  });
+  
+  const [showSplash, setShowSplash] = useState(false);
 
   // Helper function to safely format values in thousands
   const formatK = (value: number | undefined | null): string => {
@@ -47,35 +83,8 @@ export default function FinancialAnalysis() {
     return (value / 1000).toFixed(1);
   };
 
-  // Cargar datos cacheados inmediatamente al montar el componente
   useEffect(() => {
     checkAuth();
-    
-    // Cargar datos cacheados instantáneamente
-    const cachedMetrics = localStorage.getItem('financialAnalysis_quickMetrics');
-    const cachedAnalysis = localStorage.getItem('financialAnalysis_analysis');
-    const cachedTransactions = localStorage.getItem('financialAnalysis_recentTransactions');
-    const cachedFutureEvents = localStorage.getItem('financialAnalysis_futureEvents');
-    const cachedHistoricalAvg = localStorage.getItem('financialAnalysis_historicalAverages');
-    
-    if (cachedMetrics) {
-      setQuickMetrics(JSON.parse(cachedMetrics));
-    }
-    if (cachedAnalysis) {
-      setAnalysis(JSON.parse(cachedAnalysis));
-    }
-    if (cachedTransactions) {
-      const parsed = JSON.parse(cachedTransactions);
-      // Reconvertir las fechas de string a Date
-      setRecentTransactions(parsed.map((t: any) => ({...t, date: new Date(t.date)})));
-    }
-    if (cachedFutureEvents) {
-      const parsed = JSON.parse(cachedFutureEvents);
-      setFutureEvents(parsed.map((e: any) => ({...e, date: new Date(e.date)})));
-    }
-    if (cachedHistoricalAvg) {
-      setHistoricalAverages(JSON.parse(cachedHistoricalAvg));
-    }
   }, []);
 
   useEffect(() => {
