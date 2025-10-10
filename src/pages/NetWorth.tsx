@@ -10,6 +10,7 @@ import { useNetWorth, useHasNetWorthData, TimeRange } from "@/hooks/useNetWorth"
 import NetWorthSetupForm from "@/components/NetWorthSetupForm";
 import NetWorthWidget from "@/components/analysis/NetWorthWidget";
 import networthIntro from "@/assets/networth-intro.jpg";
+import BottomNav from "@/components/BottomNav";
 
 type CategoryFilter = 'All' | 'Checking' | 'Savings' | 'Credit' | 'Loans' | 'Investments' | 'Property' | 'Other' | 'Mortgage';
 
@@ -101,41 +102,44 @@ export default function NetWorth() {
   // Mostrar skeleton/placeholder mientras carga pero solo si ya sabemos que hay datos
   if ((checkingData || loadingData) && hasData !== false) {
     return (
-      <div className="min-h-screen bg-background pb-20">
+      <div className="min-h-screen animated-wave-bg pb-20">
         {/* Header */}
-        <div className="bg-gradient-card border-b border-border/50 sticky top-0 z-10 backdrop-blur-sm">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center gap-4">
+        <div className="bg-gradient-card/95 backdrop-blur-sm border-b border-white/10 sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-4 py-4">
+            <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => navigate('/dashboard')}
-                className="text-foreground hover:bg-white/5"
+                className="text-white hover:bg-white/10"
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Patrimonio Neto</h1>
-                <p className="text-sm text-muted-foreground">Evolución de tu riqueza</p>
+                <h1 className="text-xl font-bold text-white">Patrimonio Neto</h1>
+                <p className="text-xs text-white/70">Evolución de tu riqueza</p>
               </div>
             </div>
           </div>
         </div>
         
-        <div className="container mx-auto px-4 py-6 space-y-6">
+        <div className="max-w-7xl mx-auto px-4 py-6">
           {/* Skeleton del contenido principal */}
           <Card className="p-6 bg-gradient-card border-border/50 animate-pulse">
             <div className="h-80 bg-muted/20 rounded"></div>
           </Card>
         </div>
+
+        <BottomNav />
       </div>
     );
   }
 
   if (!netWorthData) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Error cargando datos</p>
+      <div className="min-h-screen animated-wave-bg flex items-center justify-center pb-20">
+        <p className="text-white">Error cargando datos</p>
+        <BottomNav />
       </div>
     );
   }
@@ -166,31 +170,35 @@ export default function NetWorth() {
   const liabilityCategories = ['All', ...Array.from(new Set(liabilities.map(l => l.category)))];
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="bg-gradient-card border-b border-border/50 sticky top-0 z-10 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
+      <div className="bg-gradient-card/95 backdrop-blur-sm border-b border-white/10 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate('/dashboard')}
-              className="text-foreground hover:bg-white/5"
+              className="text-white hover:bg-white/10"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Patrimonio Neto</h1>
-              <p className="text-sm text-muted-foreground">Evolución de tu riqueza</p>
+              <h1 className="text-xl font-bold text-white">Patrimonio Neto</h1>
+              <p className="text-xs text-white/70">Evolución de tu riqueza</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6 space-y-6">
-        {/* Widget de Evolución del Patrimonio */}
-        <NetWorthWidget />
+      {/* Widget de Evolución del Patrimonio en tamaño completo */}
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="transform scale-100 lg:scale-110 origin-top">
+          <NetWorthWidget />
+        </div>
+      </div>
 
+      <div className="max-w-7xl mx-auto px-4 space-y-6">
         {/* Assets Card */}
         <Card className="bg-gradient-card border-border/50 overflow-hidden">
           <div 
@@ -345,6 +353,8 @@ export default function NetWorth() {
           )}
         </Card>
       </div>
+
+      <BottomNav />
     </div>
   );
 }
