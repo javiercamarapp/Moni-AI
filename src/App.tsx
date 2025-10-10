@@ -23,6 +23,7 @@ import NetWorth from "./pages/NetWorth";
 import ScoreMoni from "./pages/ScoreMoni";
 import Assets from "./pages/Assets";
 import Liabilities from "./pages/Liabilities";
+import SafeToSpendExplanation from "./pages/SafeToSpendExplanation";
 
 import NotFound from "./pages/NotFound";
 
@@ -55,6 +56,7 @@ const App = () => (
           <Route path="/score-moni" element={<ScoreMoni />} />
           <Route path="/assets" element={<Assets />} />
           <Route path="/liabilities" element={<Liabilities />} />
+          <Route path="/safe-to-spend" element={<SafeToSpendExplanation />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

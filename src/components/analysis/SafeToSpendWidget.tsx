@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { DollarSign, TrendingUp, TrendingDown } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 interface SafeToSpendProps {
   safeToSpend: number;
   monthlyIncome: number;
@@ -12,6 +13,8 @@ export default function SafeToSpendWidget({
   fixedExpenses,
   savingsGoals
 }: SafeToSpendProps) {
+  const navigate = useNavigate();
+  
   // Ensure all values have safe defaults
   const safeSafeToSpend = safeToSpend ?? 0;
   const safeMonthlyIncome = monthlyIncome ?? 0;
@@ -21,11 +24,14 @@ export default function SafeToSpendWidget({
   const percentageOfIncome = safeMonthlyIncome > 0 ? safeSafeToSpend / safeMonthlyIncome * 100 : 0;
   
   return (
-    <Card className={`p-4 card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95 ${
-      safeSafeToSpend >= 0 
-        ? 'bg-gradient-to-br from-success/90 to-success/70' 
-        : 'bg-gradient-to-br from-danger/90 to-danger/70'
-    }`}>
+    <Card 
+      onClick={() => navigate('/safe-to-spend')}
+      className={`p-4 card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95 ${
+        safeSafeToSpend >= 0 
+          ? 'bg-gradient-to-br from-success/90 to-success/70' 
+          : 'bg-gradient-to-br from-danger/90 to-danger/70'
+      }`}
+    >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
