@@ -715,13 +715,13 @@ export default function FinancialAnalysis() {
               <ResponsiveContainer width="100%" height={150}>
                 <BarChart data={[{
               name: 'Ing',
-              total: analysis.metrics.totalIncome
+              total: analysis?.metrics?.totalIncome || quickMetrics?.totalIncome || 0
             }, {
               name: 'Gas',
-              total: analysis.metrics.totalExpenses
+              total: analysis?.metrics?.totalExpenses || quickMetrics?.totalExpenses || 0
             }, {
               name: 'Bal',
-              total: Math.abs(analysis.metrics.balance)
+              total: Math.abs(analysis?.metrics?.balance || quickMetrics?.balance || 0)
             }]}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                   <XAxis dataKey="name" tick={{
@@ -747,7 +747,7 @@ export default function FinancialAnalysis() {
                   v: 2
                 }, {
                   v: 3
-                }].map((_, index) => <Cell key={`cell-${index}`} fill={index === 0 ? '#10b981' : index === 1 ? '#ef4444' : analysis.metrics.balance >= 0 ? '#8b5cf6' : '#f59e0b'} />)}
+                }].map((_, index) => <Cell key={`cell-${index}`} fill={index === 0 ? '#10b981' : index === 1 ? '#ef4444' : (analysis?.metrics?.balance || quickMetrics?.balance || 0) >= 0 ? '#8b5cf6' : '#f59e0b'} />)}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
