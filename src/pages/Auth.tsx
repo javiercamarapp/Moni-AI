@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, Fingerprint } from "lucide-react";
 import heroAuth from "@/assets/moni-ai-logo.png";
+import { useBiometricAuth } from "@/hooks/useBiometricAuth";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,6 +17,8 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isAvailable: biometricAvailable, biometryType, authenticate } = useBiometricAuth();
+  const [savedEmail, setSavedEmail] = useState<string | null>(null);
 
   useEffect(() => {
     // Solo escuchar cambios de auth, no verificar sesión inicial
@@ -37,6 +40,69 @@ const Auth = () => {
       subscription.unsubscribe();
     };
   }, [navigate]);
+
+  // Cargar email guardado para autenticación biométrica
+  useEffect(() => {
+    const loadSavedEmail = async () => {
+      const stored = localStorage.getItem('biometric_email');
+      if (stored && biometricAvailable) {
+        setSavedEmail(stored);
+      }
+    };
+    loadSavedEmail();
+  }, [biometricAvailable]);
+
+  const handleBiometricAuth = async () => {
+    if (!savedEmail) {
+      toast({
+        title: "Error",
+        description: "No hay credenciales guardadas",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const success = await authenticate('Iniciar sesión en Moni');
+      
+      if (success) {
+        // Obtener la contraseña guardada del almacenamiento seguro
+        const savedPassword = localStorage.getItem('biometric_password');
+        
+        if (!savedPassword) {
+          toast({
+            title: "Error",
+            description: "No se encontraron credenciales guardadas",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+
+        const { error } = await supabase.auth.signInWithPassword({
+          email: savedEmail,
+          password: savedPassword,
+        });
+
+        if (error) {
+          toast({
+            title: "Error",
+            description: "Error al iniciar sesión",
+            variant: "destructive",
+          });
+        }
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Autenticación biométrica fallida",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,6 +138,12 @@ const Auth = () => {
               description: error.message,
               variant: "destructive",
             });
+          }
+        } else {
+          // Guardar credenciales para autenticación biométrica si está disponible
+          if (biometricAvailable) {
+            localStorage.setItem('biometric_email', email);
+            localStorage.setItem('biometric_password', password);
           }
         }
       } else {
@@ -249,6 +321,20 @@ const Auth = () => {
               {loading && <Loader2 className="mr-2 h-3 w-3 md:h-4 md:w-4 animate-spin" />}
               {isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
             </Button>
+
+            {/* Botón de autenticación biométrica - solo en login */}
+            {isLogin && biometricAvailable && savedEmail && (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-9 md:h-10 text-sm md:text-base"
+                onClick={handleBiometricAuth}
+                disabled={loading}
+              >
+                <Fingerprint className="mr-2 h-4 w-4" />
+                {biometryType || 'Autenticación biométrica'}
+              </Button>
+            )}
           </form>
 
           <div className="relative my-3 md:my-6">
