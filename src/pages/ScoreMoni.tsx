@@ -8,7 +8,12 @@ import ScoreBreakdownWidget from '@/components/analysis/ScoreBreakdownWidget';
 
 const ScoreMoni = () => {
   const navigate = useNavigate();
-  const [score, setScore] = useState(40);
+  const [score, setScore] = useState(() => {
+    // Load from localStorage first for instant display
+    const cached = localStorage.getItem('scoreMoni');
+    return cached ? parseInt(cached) : 40;
+  });
+  const [loading, setLoading] = useState(false);
   const [previousScore] = useState(35); // Simulated previous score
   const [components, setComponents] = useState({
     savingsAndLiquidity: 0,
@@ -19,11 +24,30 @@ const ScoreMoni = () => {
   });
 
   useEffect(() => {
+    // Calculate initial components based on cached score
+    const cachedScore = localStorage.getItem('scoreMoni');
+    if (cachedScore) {
+      calculateComponents(parseInt(cachedScore));
+    }
+    
+    // Fetch latest score in background
     fetchScore();
   }, []);
 
+  const calculateComponents = (scoreValue: number) => {
+    const basePercentage = scoreValue / 100;
+    setComponents({
+      savingsAndLiquidity: Math.round(30 * basePercentage * (0.9 + Math.random() * 0.2)),
+      debt: Math.round(20 * basePercentage * (0.9 + Math.random() * 0.2)),
+      control: Math.round(20 * basePercentage * (0.9 + Math.random() * 0.2)),
+      growth: Math.round(15 * basePercentage * (0.9 + Math.random() * 0.2)),
+      behavior: Math.round(15 * basePercentage * (0.9 + Math.random() * 0.2))
+    });
+  };
+
   const fetchScore = async () => {
     try {
+      setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const { data, error } = await supabase
@@ -37,19 +61,14 @@ const ScoreMoni = () => {
           // Update cache for Dashboard
           localStorage.setItem('scoreMoni', data.score_moni.toString());
           
-          // Calculate component breakdown (simulated based on score)
-          const basePercentage = data.score_moni / 100;
-          setComponents({
-            savingsAndLiquidity: Math.round(30 * basePercentage * (0.9 + Math.random() * 0.2)),
-            debt: Math.round(20 * basePercentage * (0.9 + Math.random() * 0.2)),
-            control: Math.round(20 * basePercentage * (0.9 + Math.random() * 0.2)),
-            growth: Math.round(15 * basePercentage * (0.9 + Math.random() * 0.2)),
-            behavior: Math.round(15 * basePercentage * (0.9 + Math.random() * 0.2))
-          });
+          // Calculate component breakdown
+          calculateComponents(data.score_moni);
         }
       }
     } catch (error) {
       console.error('Error fetching score:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
