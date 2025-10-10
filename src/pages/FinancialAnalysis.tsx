@@ -409,10 +409,10 @@ export default function FinancialAnalysis() {
             {/* Risk Indicators */}
             <RiskIndicatorsWidget
               hasIssues={
-                analysis.riskIndicators && analysis.riskIndicators.length > 0 &&
+                analysis?.riskIndicators && analysis.riskIndicators.length > 0 &&
                 analysis.riskIndicators.some((i: any) => i.level === 'critical' || i.level === 'warning')
               }
-              indicators={analysis.riskIndicators || []}
+              indicators={analysis?.riskIndicators || []}
             />
 
             {analysis.upcomingTransactions && <UpcomingTransactionsWidget {...analysis.upcomingTransactions} />}
