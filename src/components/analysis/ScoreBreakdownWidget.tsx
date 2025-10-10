@@ -55,12 +55,12 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-sm font-medium text-white/80 mb-2">Desglose Score Moni</p>
-        <div className="flex items-baseline gap-3">
-          <p className="text-5xl font-bold text-white">{scoreMoni}</p>
-          <span className="text-xl text-white/60">/100</span>
+        <p className="text-xs font-medium text-white/80 mb-1">Desglose Score Moni</p>
+        <div className="flex items-baseline gap-2">
+          <p className="text-3xl font-bold text-white">{scoreMoni}</p>
+          <span className="text-sm text-white/60">/100</span>
           {scoreChange !== 0 && (
-            <span className={`text-lg font-medium ${scoreChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            <span className={`text-xs font-medium ${scoreChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
               {scoreChange > 0 ? '↑' : '↓'} {Math.abs(scoreChange)} pts
             </span>
           )}
@@ -103,12 +103,12 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
       </div>
 
       {changeReason && (
-        <div className="bg-purple-500/10 rounded-xl p-4 border border-purple-500/30">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-purple-300 mt-0.5 flex-shrink-0" />
+        <div className="bg-purple-500/10 rounded-lg p-2 border border-purple-500/30">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="h-4 w-4 text-purple-300 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-purple-200 mb-1">¿Por qué cambió?</p>
-              <p className="text-sm text-white/70 leading-relaxed">{changeReason}</p>
+              <p className="text-xs font-medium text-purple-200">¿Por qué cambió?</p>
+              <p className="text-xs text-white/70 mt-1">{changeReason}</p>
             </div>
           </div>
         </div>
