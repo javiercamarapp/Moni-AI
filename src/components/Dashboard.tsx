@@ -15,7 +15,7 @@ import bannerGroups from '@/assets/banner-groups.jpg';
 import bannerHalloween from '@/assets/banner-halloween.png';
 import heroAuth from '@/assets/moni-ai-logo.png';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
-import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User, BarChart3, AlertCircle, CreditCard } from 'lucide-react';
+import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User, BarChart3, AlertCircle, CreditCard, RefreshCw } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
 import SafeToSpendWidget from '@/components/analysis/SafeToSpendWidget';
 import AICoachInsightsWidget from '@/components/analysis/AICoachInsightsWidget';
@@ -617,36 +617,6 @@ const Dashboard = () => {
     }
   };
 
-  const handleRegenerateChallenges = async () => {
-    try {
-      setLoadingChallenges(true);
-      
-      // Delete current pending challenges
-      const { error: deleteError } = await supabase
-        .from('challenges')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('status', 'pending');
-      
-      if (deleteError) throw deleteError;
-      
-      // Generate new challenges (always 2 - current pending count)
-      const challengesToGenerate = 2 - challenges.length;
-      
-      const { data, error } = await supabase.functions.invoke('generate-challenges', {
-        body: { count: 2 } // Always generate 2 new ones
-      });
-      
-      if (error) {
-        if (error.message?.includes('429')) {
-          toast({
-            title: "Límite alcanzado",
-            description: "Demasiadas solicitudes. Intenta más tarde.",
-            variant: "destructive"
-          });
-          return;
-        }
-        throw error;
   const handleRegenerateChallenges = async () => {
     try {
       setLoadingChallenges(true);
