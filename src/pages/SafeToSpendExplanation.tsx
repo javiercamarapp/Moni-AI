@@ -197,9 +197,9 @@ export default function SafeToSpendExplanation() {
 
             {/* BALANCE */}
             <div className={`p-5 rounded-xl ${statement.balance >= 0 ? 'bg-gradient-to-br from-[hsl(145,60%,35%)] to-[hsl(145,50%,28%)] border-2 border-[hsl(145,60%,45%)]' : 'bg-gradient-to-br from-[hsl(0,65%,40%)] to-[hsl(0,55%,32%)] border-2 border-[hsl(0,65%,50%)]'}`}>
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3 flex-shrink-0">
-                  <div className={`w-12 h-12 rounded-full ${statement.balance >= 0 ? 'bg-[hsl(145,70%,50%)]' : 'bg-[hsl(0,75%,55%)]'} flex items-center justify-center shadow-lg`}>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className={`w-12 h-12 rounded-full ${statement.balance >= 0 ? 'bg-[hsl(145,70%,50%)]' : 'bg-[hsl(0,75%,55%)]'} flex items-center justify-center shadow-lg flex-shrink-0`}>
                     <DollarSign className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -209,11 +209,11 @@ export default function SafeToSpendExplanation() {
                     <p className="text-white/70 text-sm">Balance del período</p>
                   </div>
                 </div>
-                <div className="text-right overflow-hidden max-w-[50%]">
-                  <p className="text-lg md:text-2xl font-bold text-white overflow-hidden">
+                <div className="text-left sm:text-right w-full sm:w-auto">
+                  <p className="text-xl sm:text-2xl font-bold text-white break-words">
                     {formatCurrency(statement.balance)}
                   </p>
-                  <p className="text-white/80 text-xs md:text-sm mt-1">
+                  <p className="text-white/80 text-sm mt-1">
                     {statement.totalIngresos > 0 ? ((statement.balance / statement.totalIngresos) * 100).toFixed(1) : '0.0'}% de ingresos
                   </p>
                 </div>
