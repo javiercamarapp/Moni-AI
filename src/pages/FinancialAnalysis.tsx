@@ -553,18 +553,9 @@ export default function FinancialAnalysis() {
               indicators={analysis?.riskIndicators || []}
             />
 
-            {/* Upcoming Transactions - Usa datos locales para carga rápida */}
-            {futureEvents.length > 0 && (
+            {/* Proyección Anual - Usa promedios históricos */}
+            {historicalAverages && (
               <UpcomingTransactionsWidget 
-                transactions={futureEvents.slice(0, 10).map(e => ({
-                  description: e.description,
-                  amount: e.amount,
-                  date: e.date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' }),
-                  type: e.type,
-                  risk: e.risk,
-                  daysUntil: Math.ceil((e.date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
-                }))}
-                periodDays={period === 'month' ? 30 : 365}
                 historicalAverages={historicalAverages}
               />
             )}
