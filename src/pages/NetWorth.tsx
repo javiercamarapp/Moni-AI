@@ -48,8 +48,12 @@ export default function NetWorth() {
   const { data: netWorthData, isLoading: loadingData } = useNetWorth(timeRange);
 
   // Helper function to check if an asset is liquid
-  const isLiquidAsset = (category: string) => {
+  const isLiquidAsset = (category: string, name?: string) => {
     const cat = category.toLowerCase();
+    const accountName = name?.toLowerCase() || '';
+    
+    // Log para debugging
+    console.log('Checking asset:', { category: cat, name: accountName });
     
     // Activos NO líquidos (tienen prioridad en la exclusión)
     const illiquidKeywords = [
@@ -57,10 +61,16 @@ export default function NetWorth() {
       'property', 'real estate', 'propiedad', 'inmueble', 'edificio',
       'machinery', 'maquinaria', 'equipment', 'equipo',
       'certificate', 'certificado', 'cd', // CDs tienen penalidad
-      'annuity', 'anualidad'
+      'annuity', 'anualidad', 'plan', 'jubilación', 'jubilacion'
     ];
     
-    if (illiquidKeywords.some(keyword => cat.includes(keyword))) {
+    // Verificar tanto la categoría como el nombre de la cuenta
+    const hasIlliquidKeyword = illiquidKeywords.some(keyword => 
+      cat.includes(keyword) || accountName.includes(keyword)
+    );
+    
+    if (hasIlliquidKeyword) {
+      console.log('❌ Excluded as illiquid:', category);
       return false;
     }
     
@@ -70,14 +80,12 @@ export default function NetWorth() {
       'checking', 'corriente', 'cuenta corriente',
       'saving', 'ahorro', 'cuenta de ahorro',
       'money market', 'mercado de dinero',
-      'deposit', 'depósito', 'depósito a la vista',
-      'stock', 'acción', 'equity', // Solo acciones grandes empresas
-      'bond', 'bono', // Bonos corto plazo
-      'mutual fund', 'fondo', 'fondo de inversión',
-      'etf'
+      'deposit', 'depósito', 'depósito a la vista'
     ];
     
-    return liquidKeywords.some(keyword => cat.includes(keyword));
+    const isLiquid = liquidKeywords.some(keyword => cat.includes(keyword));
+    console.log(isLiquid ? '✅ Included as liquid:' : '⚠️ Not liquid:', category);
+    return isLiquid;
   };
 
   // Mostrar formulario si definitivamente no hay datos (no mientras está cargando)
@@ -263,7 +271,7 @@ export default function NetWorth() {
                 </button>
                 {Array.from(new Set(
                   assets
-                    .filter(a => isLiquidAsset(a.category))
+                    .filter(a => isLiquidAsset(a.category, a.name))
                     .map(a => a.name.split(' ')[0]) // Get first word as institution name
                 )).map((institution) => (
                   <button
@@ -290,7 +298,7 @@ export default function NetWorth() {
           <p className="text-[10px] text-white/70 mb-0.5">Efectivo Disponible</p>
           <p className="text-base font-bold text-white break-words">
             ${assets
-              .filter(a => isLiquidAsset(a.category))
+              .filter(a => isLiquidAsset(a.category, a.name))
               .filter(a => selectedInstitution === 'All' || a.name.startsWith(selectedInstitution))
               .reduce((sum, a) => sum + Number(a.value), 0)
               .toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -299,7 +307,7 @@ export default function NetWorth() {
 
         <div className="space-y-2">
           {assets
-            .filter(account => isLiquidAsset(account.category))
+            .filter(account => isLiquidAsset(account.category, account.name))
             .filter(account => selectedInstitution === 'All' || account.name.startsWith(selectedInstitution))
             .map((account) => {
               const iconName = getIconForCategory(account.category);
@@ -328,7 +336,7 @@ export default function NetWorth() {
               );
             })}
             
-          {assets.filter(a => isLiquidAsset(a.category)).filter(a => selectedInstitution === 'All' || a.name.startsWith(selectedInstitution)).length === 0 && (
+          {assets.filter(a => isLiquidAsset(a.category, a.name)).filter(a => selectedInstitution === 'All' || a.name.startsWith(selectedInstitution)).length === 0 && (
             <div className="p-8 text-center text-white/60 bg-white/5 rounded-xl border border-white/10">
               {selectedInstitution === 'All' 
                 ? 'No hay cuentas líquidas registradas'
