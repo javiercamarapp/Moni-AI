@@ -33,7 +33,7 @@ export default function NetWorthWidget() {
             <Shield className="h-4 w-4" /> Patrimonio Neto
           </p>
           <p className={`text-3xl sm:text-4xl font-bold ${isPositive ? 'text-white' : 'text-red-300'} break-words`}>
-            ${currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            ${currentNetWorth.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
           </p>
           <div className="flex items-center gap-2 mt-2">
             <span className={cn(
@@ -66,7 +66,7 @@ export default function NetWorthWidget() {
           <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/30 z-10">
             <p className="text-[8px] text-white/70 font-medium">high:</p>
             <p className="text-[10px] font-bold text-emerald-300 break-all">
-              ${highPoint.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              ${highPoint.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
             </p>
           </div>
         )}
@@ -76,7 +76,7 @@ export default function NetWorthWidget() {
           <div className="absolute bottom-20 right-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/30 z-10">
             <p className="text-[8px] text-white/70 font-medium">low:</p>
             <p className="text-[10px] font-bold text-red-300 break-all">
-              ${lowPoint.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              ${lowPoint.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
             </p>
           </div>
         )}
@@ -108,7 +108,7 @@ export default function NetWorthWidget() {
               labelStyle={{ color: 'rgba(255,255,255,0.7)', fontSize: '11px', marginBottom: '4px' }}
               formatter={(value: number) => [
                 <span style={{ color: '#10b981', fontWeight: 'bold', fontSize: '15px' }}>
-                  ${value.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                  ${value.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
                 </span>, 
                 'Patrimonio Neto'
               ]}
@@ -151,13 +151,13 @@ export default function NetWorthWidget() {
         <button className="bg-emerald-500/10 backdrop-blur-sm rounded-xl p-3 border border-emerald-500/20 transition-all hover:bg-emerald-500/20 hover:border-emerald-500/30 hover:shadow-lg active:scale-95 cursor-pointer">
           <p className="text-[10px] text-white/70 mb-0.5">Activos</p>
           <p className="text-base font-bold text-emerald-300 break-words">
-            ${totalAssets.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            ${totalAssets.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
           </p>
         </button>
         <button className="bg-red-500/10 backdrop-blur-sm rounded-xl p-3 border border-red-500/20 transition-all hover:bg-red-500/20 hover:border-red-500/30 hover:shadow-lg active:scale-95 cursor-pointer">
           <p className="text-[10px] text-white/70 mb-0.5">Pasivos</p>
           <p className="text-base font-bold text-red-300 break-words">
-            ${totalLiabilities.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            ${totalLiabilities.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
           </p>
         </button>
       </div>
