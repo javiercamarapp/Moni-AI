@@ -24,11 +24,36 @@ interface ScoreBreakdownProps {
 
 export default function ScoreBreakdownWidget({ components, scoreMoni, changeReason, previousScore }: ScoreBreakdownProps) {
   const radarData = [
-    { dimension: 'Ahorro', value: components.savingsAndLiquidity, fullMark: 30, explanation: 'Evalúa tu capacidad de ahorro mensual y liquidez disponible para emergencias' },
-    { dimension: 'Deuda', value: components.debt, fullMark: 20, explanation: 'Analiza tu nivel de endeudamiento y tu capacidad para manejar deudas existentes' },
-    { dimension: 'Control', value: components.control, fullMark: 20, explanation: 'Mide tu disciplina en el control de gastos y adherencia al presupuesto' },
-    { dimension: 'Crecimiento', value: components.growth, fullMark: 15, explanation: 'Considera tus inversiones y estrategias de crecimiento patrimonial' },
-    { dimension: 'Hábitos', value: components.behavior, fullMark: 15, explanation: 'Evalúa la consistencia de tus buenos hábitos financieros en el tiempo' }
+    { 
+      dimension: 'Ahorro', 
+      value: components.savingsAndLiquidity, 
+      fullMark: 30, 
+      explanation: 'Ahorro y Liquidez (30 pts): Se evalúa tu tasa de ahorro mensual (% de ingreso que ahorras) y tu fondo de emergencia (meses de gastos cubiertos). Para mejorar: aumenta tu ahorro mensual y mantén 3-6 meses de gastos en efectivo.'
+    },
+    { 
+      dimension: 'Deuda', 
+      value: components.debt, 
+      fullMark: 20, 
+      explanation: 'Manejo de Deudas (20 pts): Se mide tu nivel de endeudamiento vs ingresos y si pagas puntualmente. Para mejorar: reduce deudas de alto interés primero y evita nuevas deudas innecesarias.'
+    },
+    { 
+      dimension: 'Control', 
+      value: components.control, 
+      fullMark: 20, 
+      explanation: 'Control de Gastos (20 pts): Evalúa si cumples tu presupuesto mensual y reduces gastos hormiga. Para mejorar: registra todos tus gastos, define presupuestos por categoría y revísalos semanalmente.'
+    },
+    { 
+      dimension: 'Crecimiento', 
+      value: components.growth, 
+      fullMark: 15, 
+      explanation: 'Crecimiento Patrimonial (15 pts): Considera tus inversiones, activos y estrategias de crecimiento. Para mejorar: destina un % de tus ingresos a inversiones de largo plazo y diversifica tu portafolio.'
+    },
+    { 
+      dimension: 'Hábitos', 
+      value: components.behavior, 
+      fullMark: 15, 
+      explanation: 'Hábitos Financieros (15 pts): Mide la consistencia de tus buenos hábitos como revisar gastos diariamente, actualizar presupuestos y planear compras grandes. Para mejorar: crea rutinas financieras diarias y mensuales.'
+    }
   ];
 
   const scoreChange = previousScore ? scoreMoni - previousScore : 0;
