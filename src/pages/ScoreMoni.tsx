@@ -30,7 +30,7 @@ const ScoreMoni = () => {
           .from('user_scores')
           .select('score_moni')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
 
         if (data && !error) {
           setScore(data.score_moni);

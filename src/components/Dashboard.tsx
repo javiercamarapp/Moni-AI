@@ -155,39 +155,32 @@ const Dashboard = () => {
     fetchGoals();
   }, []);
 
-  // Calculate Score Moni instantly based on local data
+  // Fetch Score Moni from database
   useEffect(() => {
-    const calculateScoreMoni = () => {
-      // Simple instant calculation based on available data
-      let score = 40; // Base score
+    const fetchScoreMoni = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-      // Income factor (up to +20 points)
-      if (monthlyIncome > 0) {
-        score += 10;
-        if (monthlyIncome > 50000) score += 10;
+        const { data, error } = await supabase
+          .from('user_scores')
+          .select('score_moni')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (data && !error) {
+          setScoreMoni(data.score_moni);
+        } else {
+          // If no score exists, set a default
+          setScoreMoni(40);
+        }
+      } catch (error) {
+        console.error('Error fetching score:', error);
+        setScoreMoni(40);
       }
-
-      // Balance factor (up to +20 points)
-      const balance = monthlyIncome - monthlyExpenses;
-      if (balance > 0) {
-        score += 10;
-        const savingsRate = balance / monthlyIncome * 100;
-        if (savingsRate > 20) score += 10;
-      }
-
-      // Goals factor (up to +10 points)
-      if (goals.length > 0) score += 5;
-      if (goals.some(g => Number(g.current) > 0)) score += 5;
-
-      // Fixed expenses control (up to +10 points)
-      if (monthlyIncome > 0) {
-        const fixedRatio = fixedExpenses / monthlyIncome * 100;
-        if (fixedRatio < 50) score += 10;else if (fixedRatio < 70) score += 5;
-      }
-      setScoreMoni(Math.min(100, Math.max(0, score)));
     };
-    calculateScoreMoni();
-  }, [monthlyIncome, monthlyExpenses, fixedExpenses, goals]);
+    fetchScoreMoni();
+  }, []);
 
   // Fetch recent transactions and calculate monthly totals
   useEffect(() => {
