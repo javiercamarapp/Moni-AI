@@ -1142,10 +1142,9 @@ const Dashboard = () => {
                   <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       {/* Reto 1: Sin Café */}
-                      <Card className="p-2 bg-gradient-to-br from-[hsl(25,70%,40%)] to-[hsl(25,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(25,80%,50%)]/40 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer"
+                      <Card className="p-2 bg-gradient-to-br from-[hsl(25,70%,40%)] to-[hsl(25,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(25,80%,50%)]/40 relative overflow-hidden hover:scale-105 transition-transform duration-200 cursor-pointer"
                         onClick={handleGenerateChallenges}
                       >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
                         
                         <div className="relative z-10">
                           <div className="flex items-center gap-1 mb-1">
@@ -1182,11 +1181,9 @@ const Dashboard = () => {
                       </Card>
 
                       {/* Reto 2: Sin Delivery */}
-                      <Card className="p-2 bg-gradient-to-br from-[hsl(340,70%,40%)] to-[hsl(340,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(340,80%,50%)]/40 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer"
-                        style={{ animationDelay: '100ms' }}
+                      <Card className="p-2 bg-gradient-to-br from-[hsl(340,70%,40%)] to-[hsl(340,60%,30%)] card-glow shadow-2xl border-2 border-[hsl(340,80%,50%)]/40 relative overflow-hidden hover:scale-105 transition-transform duration-200 cursor-pointer"
                         onClick={handleGenerateChallenges}
                       >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
                         
                         <div className="relative z-10">
                           <div className="flex items-center gap-1 mb-1">
@@ -1252,10 +1249,8 @@ const Dashboard = () => {
                     return (
                       <Card 
                         key={challenge.id} 
-                        className={`p-2 bg-gradient-to-br ${gradient} card-glow shadow-2xl border-2 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in`}
-                        style={{ animationDelay: `${index * 100}ms` }}
+                        className={`p-2 bg-gradient-to-br ${gradient} card-glow shadow-2xl border-2 relative overflow-hidden hover:scale-105 transition-transform duration-200`}
                       >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
                         
                         <div className="relative z-10">
                           <div className="mb-1">
