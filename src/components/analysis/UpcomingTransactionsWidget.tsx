@@ -46,26 +46,26 @@ export default function UpcomingTransactionsWidget({ historicalAverages }: Upcom
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          <div className="bg-emerald-500/10 rounded-lg p-2 border border-emerald-500/30">
-            <p className="text-[10px] text-white/70">Ingresos</p>
-            <p className="text-sm font-bold text-emerald-300">
+          <div className="bg-gradient-to-br from-emerald-600/90 to-emerald-800/90 rounded-lg p-2 border border-emerald-500/30 card-glow">
+            <p className="text-[10px] text-emerald-200">Ingresos</p>
+            <p className="text-sm font-bold text-white">
               {formatK(projectedAnnualIncome)}
             </p>
-            <p className="text-[9px] text-white/50">esperados</p>
+            <p className="text-[9px] text-emerald-300">esperados</p>
           </div>
-          <div className="bg-red-500/10 rounded-lg p-2 border border-red-500/30">
-            <p className="text-[10px] text-white/70">Gastos</p>
-            <p className="text-sm font-bold text-red-300">
+          <div className="bg-gradient-to-br from-red-600/90 to-red-800/90 rounded-lg p-2 border border-red-500/30 card-glow">
+            <p className="text-[10px] text-red-200">Gastos</p>
+            <p className="text-sm font-bold text-white">
               {formatK(projectedAnnualExpenses)}
             </p>
-            <p className="text-[9px] text-white/50">esperados</p>
+            <p className="text-[9px] text-red-300">esperados</p>
           </div>
-          <div className={`${projectedAnnualBalance >= 0 ? 'bg-purple-500/10 border-purple-500/30' : 'bg-red-500/10 border-red-500/30'} rounded-lg p-2 border`}>
-            <p className="text-[10px] text-white/70">Balance</p>
-            <p className={`text-sm font-bold ${projectedAnnualBalance >= 0 ? 'text-purple-300' : 'text-red-300'}`}>
+          <div className={`${projectedAnnualBalance >= 0 ? 'bg-gradient-to-br from-purple-600/90 to-purple-800/90 border-purple-500/30' : 'bg-gradient-to-br from-orange-600/90 to-orange-800/90 border-orange-500/30'} rounded-lg p-2 border card-glow`}>
+            <p className="text-[10px] text-white/80">Balance</p>
+            <p className={`text-sm font-bold text-white`}>
               {projectedAnnualBalance >= 0 ? '+' : ''}{formatK(projectedAnnualBalance)}
             </p>
-            <p className="text-[9px] text-white/50">proyectado</p>
+            <p className={`text-[9px] ${projectedAnnualBalance >= 0 ? 'text-purple-300' : 'text-orange-300'}`}>proyectado</p>
           </div>
         </div>
       </div>
