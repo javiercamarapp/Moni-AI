@@ -60,7 +60,7 @@ export default function NetWorthWidget() {
       </div>
 
       {/* Chart with high/low indicators */}
-      <div className="relative h-[400px]" style={{ overflow: 'hidden' }}>
+      <div className="relative h-[400px]">
         {/* High Point Label */}
         {highPoint && highPoint !== lowPoint && (
           <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/30 z-10">
@@ -81,57 +81,48 @@ export default function NetWorthWidget() {
           </div>
         )}
         
-        <div style={{ marginLeft: '-30px', width: 'calc(100% + 30px)' }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 20, right: 20, bottom: 20, left: 30 }}>
-              <defs>
-                <linearGradient id="colorNetWorth" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0.05}/>
-                </linearGradient>
-              </defs>
-              <YAxis 
-                domain={['dataMin', 'dataMax']}
-                tick={false}
-                tickLine={false}
-                axisLine={false}
-                width={0}
-              />
-              <XAxis 
-                dataKey="date" 
-                tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 10 }}
-                tickLine={false}
-                axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-              />
-              <Tooltip
-                contentStyle={{ 
-                  backgroundColor: 'rgba(0,0,0,0.95)', 
-                  border: '1px solid rgba(16, 185, 129, 0.3)', 
-                  borderRadius: '12px',
-                  fontSize: '13px',
-                  padding: '12px 16px',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
-                }}
-                labelStyle={{ color: 'rgba(255,255,255,0.7)', fontSize: '11px', marginBottom: '4px' }}
-                formatter={(value: number) => [
-                  <span style={{ color: '#10b981', fontWeight: 'bold', fontSize: '15px' }}>
-                    ${value.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
-                  </span>, 
-                  'Patrimonio Neto'
-                ]}
-              />
-              <Area 
-                type="monotone" 
-                dataKey="value" 
-                stroke="#10b981"
-                strokeWidth={2.5}
-                fill="url(#colorNetWorth)"
-                animationDuration={1000}
-                dot={false}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={chartData} margin={{ top: 20, right: 20, bottom: 20, left: 5 }}>
+            <defs>
+              <linearGradient id="colorNetWorth" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="#10b981" stopOpacity={0.05}/>
+              </linearGradient>
+            </defs>
+            <XAxis 
+              dataKey="date" 
+              tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 10 }}
+              tickLine={false}
+              axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+            />
+            <Tooltip
+              contentStyle={{ 
+                backgroundColor: 'rgba(0,0,0,0.95)', 
+                border: '1px solid rgba(16, 185, 129, 0.3)', 
+                borderRadius: '12px',
+                fontSize: '13px',
+                padding: '12px 16px',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
+              }}
+              labelStyle={{ color: 'rgba(255,255,255,0.7)', fontSize: '11px', marginBottom: '4px' }}
+              formatter={(value: number) => [
+                <span style={{ color: '#10b981', fontWeight: 'bold', fontSize: '15px' }}>
+                  ${value.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                </span>, 
+                'Patrimonio Neto'
+              ]}
+            />
+            <Area 
+              type="monotone" 
+              dataKey="value" 
+              stroke="#10b981"
+              strokeWidth={2.5}
+              fill="url(#colorNetWorth)"
+              animationDuration={1000}
+              dot={false}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
       </div>
 
       {/* Assets and Liabilities - Moved below chart and closer */}
