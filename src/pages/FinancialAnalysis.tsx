@@ -558,12 +558,7 @@ export default function FinancialAnalysis() {
               indicators={analysis?.riskIndicators || []}
             />
 
-            {/* Proyección Anual - Usa promedios históricos */}
-            {historicalAverages && (
-              <UpcomingTransactionsWidget 
-                historicalAverages={historicalAverages}
-              />
-            )}
+            {/* Proyección Anual removida - se moverá a página de proyecciones */}
 
             {analysis?.topActions && analysis?.topActions.length > 0 && <TopActionsWidget actions={analysis?.topActions} />}
 
