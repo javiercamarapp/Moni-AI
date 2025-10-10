@@ -22,9 +22,10 @@ export default function SafeToSpendWidget({
 }: SafeToSpendProps) {
   
   // Calcular el disponible para gastar
-  // Fórmula: Ingresos - Gastos Fijos - Presupuesto - Metas de Ahorro - Excesos - Gastos No Presupuestados
-  const baseAvailable = monthlyIncome - fixedExpenses - budgetedExpenses - savingsGoals;
-  const safeToSpend = baseAvailable - budgetExcesses - unbudgetedExpenses;
+  // Por ahora: Ingresos - Gastos Totales - Metas de Ahorro
+  // En el futuro: Se restará también los excesos de presupuesto y gastos no presupuestados
+  const totalSpent = actualExpenses;
+  const safeToSpend = monthlyIncome - totalSpent - savingsGoals;
   
   const percentageOfIncome = monthlyIncome > 0 ? (safeToSpend / monthlyIncome * 100) : 0;
   
@@ -58,40 +59,13 @@ export default function SafeToSpendWidget({
           <span className="text-white font-medium">${monthlyIncome.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
         </div>
         <div className="flex justify-between">
-          <span>Gastos fijos</span>
-          <span className="text-white font-medium">-${fixedExpenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
-        </div>
-        <div className="flex justify-between">
-          <span>Presupuestado</span>
-          <span className="text-white font-medium">-${budgetedExpenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+          <span>Gastos totales</span>
+          <span className="text-white font-medium">-${totalSpent.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
         </div>
         <div className="flex justify-between">
           <span>Metas de ahorro</span>
           <span className="text-white font-medium">-${savingsGoals.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
         </div>
-        {(budgetExcesses > 0 || unbudgetedExpenses > 0) && (
-          <>
-            <div className="border-t border-white/30 pt-2" />
-            {budgetExcesses > 0 && (
-              <div className="flex justify-between items-center">
-                <span className="flex items-center gap-1">
-                  <AlertTriangle className="w-3 h-3" />
-                  Excesos presupuesto
-                </span>
-                <span className="text-white font-medium">-${budgetExcesses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
-              </div>
-            )}
-            {unbudgetedExpenses > 0 && (
-              <div className="flex justify-between items-center">
-                <span className="flex items-center gap-1">
-                  <AlertTriangle className="w-3 h-3" />
-                  Gastos no presupuestados
-                </span>
-                <span className="text-white font-medium">-${unbudgetedExpenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
-              </div>
-            )}
-          </>
-        )}
         <div className="border-t border-white/20 pt-2 flex justify-between font-semibold">
           <span className="text-white">Disponible</span>
           <span className="text-white font-bold">
