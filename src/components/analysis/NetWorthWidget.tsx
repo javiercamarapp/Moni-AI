@@ -126,8 +126,8 @@ export default function NetWorthWidget() {
         </ResponsiveContainer>
       </div>
 
-      {/* Time Range Buttons */}
-      <div className="flex gap-1.5 justify-center">
+      {/* Time Range Buttons - closer to chart */}
+      <div className="flex gap-1.5 justify-center -mt-2">
         {(['1M', '3M', '6M', '1Y', 'All'] as TimeRange[]).map((range) => (
           <Button
             key={range}
@@ -146,20 +146,20 @@ export default function NetWorthWidget() {
         ))}
       </div>
 
-      {/* Assets and Liabilities */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-emerald-500/10 backdrop-blur-sm rounded-xl p-3 border border-emerald-500/20">
+      {/* Assets and Liabilities - closer to buttons with hover effects */}
+      <div className="grid grid-cols-2 gap-3 mt-3">
+        <button className="bg-emerald-500/10 backdrop-blur-sm rounded-xl p-3 border border-emerald-500/20 transition-all hover:bg-emerald-500/20 hover:border-emerald-500/30 hover:shadow-lg active:scale-95 cursor-pointer">
           <p className="text-[10px] text-white/70 mb-0.5">Activos</p>
           <p className="text-xl font-bold text-emerald-300">
             ${(totalAssets / 1000).toFixed(1)}k
           </p>
-        </div>
-        <div className="bg-red-500/10 backdrop-blur-sm rounded-xl p-3 border border-red-500/20">
+        </button>
+        <button className="bg-red-500/10 backdrop-blur-sm rounded-xl p-3 border border-red-500/20 transition-all hover:bg-red-500/20 hover:border-red-500/30 hover:shadow-lg active:scale-95 cursor-pointer">
           <p className="text-[10px] text-white/70 mb-0.5">Pasivos</p>
           <p className="text-xl font-bold text-red-300">
             ${(totalLiabilities / 1000).toFixed(1)}k
           </p>
-        </div>
+        </button>
       </div>
 
     </div>
