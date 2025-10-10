@@ -39,6 +39,7 @@ export default function FinancialAnalysis() {
   const [futureEvents, setFutureEvents] = useState<any[]>([]);
   const [loadingTransactions, setLoadingTransactions] = useState(true);
   const [quickMetrics, setQuickMetrics] = useState<any>(null); // Métricas instantáneas
+  const [showSplash, setShowSplash] = useState(true); // Mostrar logo inicial
 
   // Helper function to safely format values in thousands
   const formatK = (value: number | undefined | null): string => {
@@ -47,6 +48,13 @@ export default function FinancialAnalysis() {
   };
   useEffect(() => {
     checkAuth();
+    
+    // Ocultar splash después de 2 segundos
+    const splashTimer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2000);
+    
+    return () => clearTimeout(splashTimer);
   }, []);
   useEffect(() => {
     if (user) {
@@ -361,6 +369,19 @@ export default function FinancialAnalysis() {
     }
   };
   
+  // Mostrar splash screen durante los primeros 2 segundos
+  if (showSplash) {
+    return (
+      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
+        <img 
+          src={moniAiLogo} 
+          alt="Moni AI" 
+          className="w-40 h-40 animate-pulse"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen animated-wave-bg pb-24">
       <div className="mx-4 space-y-4">
@@ -388,18 +409,7 @@ export default function FinancialAnalysis() {
         </div>
 
         {/* Mostrar métricas instantáneas primero, luego actualizar con análisis completo */}
-        {!quickMetrics && !analysis && loading ? (
-          <div className="flex items-center justify-center min-h-[60vh] animated-wave-bg">
-            <div className="text-center">
-              <img 
-                src={moniAiLogo} 
-                alt="Moni AI" 
-                className="w-32 h-32 mx-auto mb-4 animate-pulse"
-              />
-              <p className="text-white/80 text-lg font-medium">Analizando tus finanzas...</p>
-            </div>
-          </div>
-        ) : (quickMetrics || analysis) ? (
+        {(quickMetrics || analysis) ? (
           <>
             {/* Animated Income & Expense Lines */}
             <Card 
