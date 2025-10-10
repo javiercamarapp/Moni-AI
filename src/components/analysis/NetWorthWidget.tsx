@@ -1,9 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { TrendingUp, Shield, TrendingDown } from "lucide-react";
-import { useNetWorth, TimeRange } from "@/hooks/useNetWorth";
+import { TrendingUp, Shield, TrendingDown, ArrowRight } from "lucide-react";
+import { useNetWorth, useHasNetWorthData, TimeRange } from "@/hooks/useNetWorth";
 import { cn } from "@/lib/utils";
 
 interface NetWorthProps {
@@ -11,10 +12,53 @@ interface NetWorthProps {
 }
 
 export default function NetWorthWidget({ runwayMonths }: NetWorthProps) {
+  const navigate = useNavigate();
   const [timeRange, setTimeRange] = useState<TimeRange>('1Y');
-  const { data: netWorthData, isLoading } = useNetWorth(timeRange);
+  const { data: hasData, isLoading: checkingData } = useHasNetWorthData();
+  const { data: netWorthData, isLoading: loadingData } = useNetWorth(timeRange);
 
-  if (isLoading || !netWorthData) {
+  // Si aún está verificando si hay datos
+  if (checkingData) {
+    return (
+      <Card className="p-4 bg-gradient-card card-glow border-white/20 animate-pulse">
+        <div className="space-y-3">
+          <div className="h-20 bg-white/5 rounded"></div>
+          <div className="h-[120px] bg-white/5 rounded"></div>
+        </div>
+      </Card>
+    );
+  }
+
+  // Si no tiene datos de NetWorth (no ha completado el quiz)
+  if (!hasData) {
+    return (
+      <Card className="p-6 bg-gradient-card card-glow border-white/20">
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 mb-2">
+            <Shield className="h-8 w-8 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-white mb-2">
+              Descubre tu Patrimonio Neto
+            </h3>
+            <p className="text-sm text-white/70 mb-4">
+              Completa el quiz para ver tu patrimonio real, activos, pasivos y runway de liquidez
+            </p>
+          </div>
+          <Button 
+            onClick={() => navigate('/net-worth')}
+            className="w-full bg-primary/20 hover:bg-primary/30 text-white border border-primary/50"
+          >
+            Completar Quiz de Patrimonio
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      </Card>
+    );
+  }
+
+  // Si está cargando los datos después de verificar que existen
+  if (loadingData || !netWorthData) {
     return (
       <Card className="p-4 bg-gradient-card card-glow border-white/20 animate-pulse">
         <div className="space-y-3">
