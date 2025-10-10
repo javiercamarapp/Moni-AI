@@ -25,10 +25,7 @@ export default function UpcomingTransactionsWidget({ historicalAverages }: Upcom
 
   // Helper to format values
   const formatK = (value: number): string => {
-    if (value >= 1000) {
-      return `$${(value / 1000).toFixed(1)}k`;
-    }
-    return `$${value.toLocaleString()}`;
+    return `$${value.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   return (

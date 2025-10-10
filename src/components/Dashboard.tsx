@@ -1035,8 +1035,8 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold text-white drop-shadow-lg">💰 Presupuesto Mensual</h3>
-                <p className="text-xs text-white/80 font-medium">
-                  Gastado: ${monthlyExpenses.toLocaleString('es-MX')} de ${(monthlyIncome * 0.8).toLocaleString('es-MX')}
+                <p className="text-xs text-white/80 font-medium break-words">
+                  Gastado: ${monthlyExpenses.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} de ${(monthlyIncome * 0.8).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>
               <div className="text-right">
@@ -1075,8 +1075,8 @@ const Dashboard = () => {
               
               {/* Texto sobre la barra */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] px-2 py-0.5 rounded-full bg-black/30 backdrop-blur-sm">
-                  ${(monthlyIncome > 0 ? (monthlyIncome * 0.8) - monthlyExpenses : 0).toLocaleString('es-MX')} restantes
+                <span className="text-xs font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] px-2 py-0.5 rounded-full bg-black/30 backdrop-blur-sm break-words">
+                  ${(monthlyIncome > 0 ? (monthlyIncome * 0.8) - monthlyExpenses : 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} restantes
                 </span>
               </div>
             </div>
@@ -1143,8 +1143,8 @@ const Dashboard = () => {
                   <div className="pt-2 border-t border-white/20 mt-2 flex-shrink-0">
                     <div className="flex justify-between items-center">
                       <p className="text-[9px] text-white/70">Total mensual</p>
-                      <p className="text-xs font-black text-white drop-shadow-lg">
-                        ${upcomingSubscriptions.reduce((sum, s) => sum + s.amount, 0).toLocaleString('es-MX')}
+                      <p className="text-xs font-black text-white drop-shadow-lg break-words">
+                        ${upcomingSubscriptions.reduce((sum, s) => sum + s.amount, 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </p>
                     </div>
                   </div>
@@ -1186,8 +1186,8 @@ const Dashboard = () => {
                 <>
                   <div className="text-center py-2 flex-shrink-0">
                     <p className="text-[9px] text-white/70 mb-1">Total adeudado</p>
-                    <p className="text-xl font-black text-red-400 drop-shadow-lg">
-                      ${creditCardDebts.reduce((sum, card) => sum + card.balance, 0).toLocaleString('es-MX')}
+                    <p className="text-base sm:text-xl font-black text-red-400 drop-shadow-lg break-words">
+                      ${creditCardDebts.reduce((sum, card) => sum + card.balance, 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
                   </div>
                   
@@ -1197,7 +1197,7 @@ const Dashboard = () => {
                         <div key={index} className="bg-white/10 rounded py-0.5 sm:py-2 px-1 sm:px-3 backdrop-blur-sm border border-white/20 min-h-[18px] sm:min-h-[50px]">
                           <div className="flex items-center justify-between gap-0.5 sm:gap-2 mb-0 sm:mb-1">
                             <p className="text-[6px] sm:text-sm font-bold text-white truncate flex-1 min-w-0 leading-none">{card.name}</p>
-                            <p className="text-[6px] sm:text-base font-black text-red-400 shrink-0 leading-none">${card.balance.toLocaleString('es-MX')}</p>
+                            <p className="text-[6px] sm:text-sm font-black text-red-400 shrink-0 leading-none break-words">${card.balance.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                           </div>
                           <div className="flex items-center gap-0.5 sm:gap-1 mt-0.5 sm:mt-1">
                             <div className="flex-1 h-[1.5px] sm:h-2 bg-white/20 rounded-full overflow-hidden">

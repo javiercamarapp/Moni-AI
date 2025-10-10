@@ -114,20 +114,20 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA 
         <div className="grid grid-cols-3 gap-2 text-center">
           <div>
             <p className="text-[10px] text-amber-300">Conservador</p>
-            <p className="text-sm font-bold text-amber-300">
-              ${(displayData[displayData.length - 1]?.conservative / 1000 || 0).toFixed(1)}k
+            <p className="text-xs font-bold text-amber-300 break-words">
+              ${(displayData[displayData.length - 1]?.conservative || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
           </div>
           <div>
             <p className="text-[10px] text-purple-300">Realista</p>
-            <p className="text-sm font-bold text-purple-300">
-              ${(displayData[displayData.length - 1]?.realistic / 1000 || 0).toFixed(1)}k
+            <p className="text-xs font-bold text-purple-300 break-words">
+              ${(displayData[displayData.length - 1]?.realistic || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
           </div>
           <div>
             <p className="text-[10px] text-emerald-300">Óptimo</p>
-            <p className="text-sm font-bold text-emerald-300">
-              ${(displayData[displayData.length - 1]?.optimistic / 1000 || 0).toFixed(1)}k
+            <p className="text-xs font-bold text-emerald-300 break-words">
+              ${(displayData[displayData.length - 1]?.optimistic || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
           </div>
         </div>

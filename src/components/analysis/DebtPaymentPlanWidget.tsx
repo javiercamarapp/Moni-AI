@@ -70,8 +70,8 @@ export default function DebtPaymentPlanWidget({ debts, strategy, totalInterest, 
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-bold text-red-300">
-                      ${(debt.balance / 1000).toFixed(1)}k
+                    <p className="text-xs font-bold text-red-300 break-words">
+                      ${debt.balance.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
                     <p className="text-[10px] text-white/60">
                       Pago mín: ${debt.minPayment}

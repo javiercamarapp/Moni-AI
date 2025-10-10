@@ -46,7 +46,7 @@ export default function HistoricalComparisonWidget({ data, insight }: Historical
                   fontSize: '11px'
                 }}
                 labelStyle={{ color: 'white' }}
-                formatter={(value: any) => `$${(value/1000).toFixed(1)}k`}
+                formatter={(value: any) => `$${value.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
               />
               <Legend 
                 wrapperStyle={{ fontSize: '10px' }}
@@ -78,8 +78,8 @@ export default function HistoricalComparisonWidget({ data, insight }: Historical
         <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10">
           <div>
             <p className="text-[10px] text-white/60">Ahorro promedio</p>
-            <p className="text-sm font-bold text-purple-300">
-              ${(avgSavings / 1000).toFixed(1)}k
+            <p className="text-xs font-bold text-purple-300 break-words">
+              ${avgSavings.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
           </div>
           <div>

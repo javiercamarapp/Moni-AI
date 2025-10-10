@@ -96,8 +96,8 @@ export default function FutureCalendarWidget({ events }: FutureCalendarProps) {
                       </span>
                     </div>
                   </div>
-                  <p className={`text-sm font-bold ${getEventColor(event.type)}`}>
-                    {event.type === "income" ? "+" : "-"}${(event.amount / 1000).toFixed(1)}k
+                  <p className={`text-xs font-bold ${getEventColor(event.type)} break-words`}>
+                    {event.type === "income" ? "+" : "-"}${event.amount.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </p>
                 </div>
               </div>
