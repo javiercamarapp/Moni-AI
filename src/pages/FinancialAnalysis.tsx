@@ -12,7 +12,6 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, R
 import BottomNav from '@/components/BottomNav';
 import SafeToSpendWidget from "@/components/analysis/SafeToSpendWidget";
 import TopActionsWidget from "@/components/analysis/TopActionsWidget";
-import ScoreBreakdownWidget from "@/components/analysis/ScoreBreakdownWidget";
 import NetWorthWidget from "@/components/analysis/NetWorthWidget";
 import ForecastWidget from "@/components/analysis/ForecastWidget";
 import BudgetProgressWidget from "@/components/analysis/BudgetProgressWidget";
@@ -561,16 +560,6 @@ export default function FinancialAnalysis() {
             {/* Proyección Anual removida - se moverá a página de proyecciones */}
 
             {analysis?.topActions && analysis?.topActions.length > 0 && <TopActionsWidget actions={analysis?.topActions} />}
-
-            {/* 2. EXPLICABILIDAD DEL SCORE - Click para ver en 3D */}
-            {analysis?.scoreBreakdown && (
-              <div 
-                onClick={() => navigate('/score-moni')} 
-                className="cursor-pointer hover:scale-[1.02] transition-transform duration-200"
-              >
-                <ScoreBreakdownWidget {...analysis?.scoreBreakdown} />
-              </div>
-            )}
 
             {/* 3. PATRIMONIO Y RUNWAY */}
             {analysis?.netWorth && <NetWorthWidget {...analysis?.netWorth} />}
