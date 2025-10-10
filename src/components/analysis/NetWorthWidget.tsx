@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { TrendingUp, Shield, TrendingDown } from "lucide-react";
@@ -6,6 +7,7 @@ import { useNetWorth, TimeRange } from "@/hooks/useNetWorth";
 import { cn } from "@/lib/utils";
 
 export default function NetWorthWidget() {
+  const navigate = useNavigate();
   const [timeRange, setTimeRange] = useState<TimeRange>('1Y');
   const { data: netWorthData, isLoading } = useNetWorth(timeRange);
 
@@ -152,13 +154,19 @@ export default function NetWorthWidget() {
 
       {/* Assets and Liabilities - closer to buttons with hover effects */}
       <div className="grid grid-cols-2 gap-3 mt-3">
-        <button className="bg-emerald-500/10 backdrop-blur-sm rounded-xl p-3 border border-emerald-500/20 transition-all hover:bg-emerald-500/20 hover:border-emerald-500/30 hover:shadow-lg active:scale-95 cursor-pointer">
+        <button 
+          onClick={() => navigate('/assets')}
+          className="bg-emerald-500/10 backdrop-blur-sm rounded-xl p-3 border border-emerald-500/20 transition-all hover:bg-emerald-500/20 hover:border-emerald-500/30 hover:shadow-lg active:scale-95 cursor-pointer"
+        >
           <p className="text-[10px] text-white/70 mb-0.5">Activos</p>
           <p className="text-base font-bold text-emerald-300 break-words">
             ${totalAssets.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
           </p>
         </button>
-        <button className="bg-red-500/10 backdrop-blur-sm rounded-xl p-3 border border-red-500/20 transition-all hover:bg-red-500/20 hover:border-red-500/30 hover:shadow-lg active:scale-95 cursor-pointer">
+        <button 
+          onClick={() => navigate('/liabilities')}
+          className="bg-red-500/10 backdrop-blur-sm rounded-xl p-3 border border-red-500/20 transition-all hover:bg-red-500/20 hover:border-red-500/30 hover:shadow-lg active:scale-95 cursor-pointer"
+        >
           <p className="text-[10px] text-white/70 mb-0.5">Pasivos</p>
           <p className="text-base font-bold text-red-300 break-words">
             ${totalLiabilities.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
