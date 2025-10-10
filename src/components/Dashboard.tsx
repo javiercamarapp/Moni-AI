@@ -749,6 +749,50 @@ const Dashboard = () => {
     }
   };
 
+  // Verify challenge progress daily
+  useEffect(() => {
+    const verifyDailyChallenges = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Call edge function to verify challenges
+        await supabase.functions.invoke('verify-challenge-progress');
+        
+        // Refresh challenges after verification
+        const { data: activeData } = await supabase
+          .from('challenges')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('status', 'active')
+          .order('created_at', { ascending: false });
+
+        const activeChallenges = activeData || [];
+        const slotsAvailable = 2 - activeChallenges.length;
+
+        if (slotsAvailable > 0) {
+          const { data: pendingData } = await supabase
+            .from('challenges')
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('status', 'pending')
+            .order('created_at', { ascending: false })
+            .limit(slotsAvailable);
+
+          setChallenges([...activeChallenges, ...(pendingData || [])]);
+        } else {
+          setChallenges(activeChallenges);
+        }
+      } catch (error) {
+        console.error('Error verifying challenges:', error);
+      }
+    };
+
+    if (user && challenges.some(c => c.status === 'active')) {
+      verifyDailyChallenges();
+    }
+  }, [user]);
+
   // Fetch challenges (active + pending suggestions)
   useEffect(() => {
     const fetchChallenges = async () => {
@@ -1352,20 +1396,35 @@ const Dashboard = () => {
                           
                           <div className="bg-white/10 backdrop-blur-sm rounded p-1.5 border border-white/20 mb-2">
                             <div className="flex justify-between gap-0.5">
-                              {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => (
-                                <div 
-                                  key={dayIndex} 
-                                  className="flex flex-col items-center"
-                                >
-                                  <span className="text-[8px] text-white/70 mb-0.5">
-                                    {dayNames[dayIndex]}
-                                  </span>
+                              {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
+                                const dayStatus = daysStatus[dayIndex];
+                                const isCompleted = dayStatus?.completed === true;
+                                const isFailed = dayStatus?.completed === false;
+                                const isPending = !dayStatus;
+                                
+                                return (
                                   <div 
-                                    className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold bg-white/20 text-white/40"
+                                    key={dayIndex} 
+                                    className="flex flex-col items-center"
                                   >
+                                    <span className="text-[8px] text-white/70 mb-0.5">
+                                      {dayNames[dayIndex]}
+                                    </span>
+                                    <div 
+                                      className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                                        isCompleted 
+                                          ? 'bg-green-500/80 text-white' 
+                                          : isFailed 
+                                          ? 'bg-red-500/80 text-white'
+                                          : 'bg-white/20 text-white/40'
+                                      }`}
+                                    >
+                                      {isCompleted && '✓'}
+                                      {isFailed && '✗'}
+                                    </div>
                                   </div>
-                                </div>
-                              ))}
+                                );
+                              })}
                             </div>
                           </div>
                           
