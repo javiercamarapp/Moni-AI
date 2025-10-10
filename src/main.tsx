@@ -5,11 +5,8 @@ import "./index.css";
 
 const root = createRoot(document.getElementById("root")!);
 
-// Mostrar la pantalla de carga brevemente
-setTimeout(() => {
-  root.render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  );
-}, 500);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
