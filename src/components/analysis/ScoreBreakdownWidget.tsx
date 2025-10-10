@@ -1,5 +1,11 @@
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts';
 import { AlertCircle } from "lucide-react";
+import {
+  Tooltip as UITooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ScoreComponents {
   savingsAndLiquidity: number;
@@ -18,11 +24,11 @@ interface ScoreBreakdownProps {
 
 export default function ScoreBreakdownWidget({ components, scoreMoni, changeReason, previousScore }: ScoreBreakdownProps) {
   const radarData = [
-    { dimension: 'Ahorro', value: components.savingsAndLiquidity, fullMark: 30 },
-    { dimension: 'Deuda', value: components.debt, fullMark: 20 },
-    { dimension: 'Control', value: components.control, fullMark: 20 },
-    { dimension: 'Crecimiento', value: components.growth, fullMark: 15 },
-    { dimension: 'Hábitos', value: components.behavior, fullMark: 15 }
+    { dimension: 'Ahorro', value: components.savingsAndLiquidity, fullMark: 30, explanation: 'Evalúa tu capacidad de ahorro mensual y liquidez disponible para emergencias' },
+    { dimension: 'Deuda', value: components.debt, fullMark: 20, explanation: 'Analiza tu nivel de endeudamiento y tu capacidad para manejar deudas existentes' },
+    { dimension: 'Control', value: components.control, fullMark: 20, explanation: 'Mide tu disciplina en el control de gastos y adherencia al presupuesto' },
+    { dimension: 'Crecimiento', value: components.growth, fullMark: 15, explanation: 'Considera tus inversiones y estrategias de crecimiento patrimonial' },
+    { dimension: 'Hábitos', value: components.behavior, fullMark: 15, explanation: 'Evalúa la consistencia de tus buenos hábitos financieros en el tiempo' }
   ];
 
   const scoreChange = previousScore ? scoreMoni - previousScore : 0;
@@ -87,16 +93,25 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-2 pt-2">
-        {radarData.map((item, idx) => (
-          <div key={idx} className="flex items-center justify-between">
-            <span className="text-xs text-white/60">{item.dimension}</span>
-            <span className="text-xs font-medium text-white">
-              {item.value}/{item.fullMark}
-            </span>
-          </div>
-        ))}
-      </div>
+      <TooltipProvider>
+        <div className="grid grid-cols-2 gap-2 pt-2">
+          {radarData.map((item, idx) => (
+            <UITooltip key={idx}>
+              <TooltipTrigger asChild>
+                <div className="flex items-center justify-between cursor-help hover:bg-white/5 rounded px-2 py-1 transition-colors">
+                  <span className="text-xs text-white/60">{item.dimension}</span>
+                  <span className="text-xs font-medium text-white">
+                    {item.value}/{item.fullMark}
+                  </span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs bg-black/95 border-white/20">
+                <p className="text-xs text-white">{item.explanation}</p>
+              </TooltipContent>
+            </UITooltip>
+          ))}
+        </div>
+      </TooltipProvider>
     </div>
   );
 }
