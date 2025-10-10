@@ -39,6 +39,7 @@ export default function FinancialAnalysis() {
   const [futureEvents, setFutureEvents] = useState<any[]>([]);
   const [loadingTransactions, setLoadingTransactions] = useState(true);
   const [quickMetrics, setQuickMetrics] = useState<any>(null); // Métricas instantáneas
+  const [historicalAverages, setHistoricalAverages] = useState<any>(null); // Promedios históricos
   const [showSplash, setShowSplash] = useState(true); // Mostrar logo inicial
 
   // Helper function to safely format values in thousands
@@ -80,6 +81,7 @@ export default function FinancialAnalysis() {
       // Calcular fechas según el período
       const now = new Date();
       let startDate: Date;
+      let historicalMonths = period === 'month' ? 6 : 12; // 6 meses para mensual, 12 para anual
       
       if (period === 'month') {
         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -93,13 +95,56 @@ export default function FinancialAnalysis() {
         endDate: now.toISOString().split('T')[0]
       });
       
-      // Obtener transacciones del período
+      // Obtener transacciones del período actual
       const { data: transactions } = await supabase
         .from('transactions')
         .select('*')
         .eq('user_id', user.id)
         .gte('transaction_date', startDate.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
+      
+      // Calcular promedios históricos (últimos 6 o 12 meses)
+      const historicalStartDate = new Date(now);
+      historicalStartDate.setMonth(historicalStartDate.getMonth() - historicalMonths);
+      
+      const { data: historicalTxs } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('transaction_date', historicalStartDate.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false });
+      
+      // Agrupar transacciones históricas por mes
+      const monthlyData: Record<string, { income: number; expenses: number }> = {};
+      
+      historicalTxs?.forEach(tx => {
+        const monthKey = tx.transaction_date.substring(0, 7); // YYYY-MM
+        if (!monthlyData[monthKey]) {
+          monthlyData[monthKey] = { income: 0, expenses: 0 };
+        }
+        
+        if (tx.type === 'income' || tx.type === 'ingreso') {
+          monthlyData[monthKey].income += Number(tx.amount);
+        } else if (tx.type === 'expense' || tx.type === 'gasto') {
+          monthlyData[monthKey].expenses += Number(tx.amount);
+        }
+      });
+      
+      const monthsWithData = Object.keys(monthlyData).length;
+      const avgMonthlyIncome = monthsWithData > 0 
+        ? Object.values(monthlyData).reduce((sum, m) => sum + m.income, 0) / monthsWithData 
+        : 0;
+      const avgMonthlyExpenses = monthsWithData > 0 
+        ? Object.values(monthlyData).reduce((sum, m) => sum + m.expenses, 0) / monthsWithData 
+        : 0;
+      
+      setHistoricalAverages({
+        avgMonthlyIncome: Math.round(avgMonthlyIncome),
+        avgMonthlyExpenses: Math.round(avgMonthlyExpenses),
+        avgBalance: Math.round(avgMonthlyIncome - avgMonthlyExpenses),
+        monthsAnalyzed: monthsWithData,
+        period: period === 'month' ? 'month' : 'year'
+      });
       
       console.log('💰 Transactions found:', transactions?.length || 0);
       
@@ -508,7 +553,21 @@ export default function FinancialAnalysis() {
               indicators={analysis?.riskIndicators || []}
             />
 
-            {analysis?.upcomingTransactions && <UpcomingTransactionsWidget {...analysis?.upcomingTransactions} />}
+            {/* Upcoming Transactions - Usa datos locales para carga rápida */}
+            {futureEvents.length > 0 && (
+              <UpcomingTransactionsWidget 
+                transactions={futureEvents.slice(0, 10).map(e => ({
+                  description: e.description,
+                  amount: e.amount,
+                  date: e.date,
+                  type: e.type,
+                  risk: e.risk,
+                  daysUntil: Math.ceil((e.date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+                }))}
+                periodDays={period === 'month' ? 30 : 365}
+                historicalAverages={historicalAverages}
+              />
+            )}
 
             {analysis?.topActions && analysis?.topActions.length > 0 && <TopActionsWidget actions={analysis?.topActions} />}
 

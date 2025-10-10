@@ -25,8 +25,6 @@ interface UpcomingTransactionsProps {
 }
 
 export default function UpcomingTransactionsWidget({ transactions, periodDays, historicalAverages }: UpcomingTransactionsProps) {
-  console.log('UpcomingTransactionsWidget - historicalAverages:', historicalAverages);
-  
   const upcomingExpenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
   const upcomingIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
   const netChange = upcomingIncome - upcomingExpenses;
