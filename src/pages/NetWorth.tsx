@@ -248,7 +248,7 @@ export default function NetWorth() {
             </button>
             
             {showInstitutionFilter && (
-              <div className="absolute right-0 top-full mt-2 bg-gradient-card/95 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 py-2 min-w-[200px] z-50">
+              <div className="absolute right-0 top-full mt-2 animated-wave-bg backdrop-blur-md rounded-xl shadow-2xl border border-white/20 py-2 min-w-[200px] z-50">
                 <button
                   onClick={() => {
                     setSelectedInstitution('All');
