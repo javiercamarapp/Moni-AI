@@ -786,6 +786,59 @@ Responde SOLO con el JSON array, sin texto adicional.`;
     const projectedIncome = avgDailyIncome * projectionDays;
     const projectedBalance = projectedIncome - projectedExpenses;
 
+    // Calcular promedios históricos (últimos 6 o 12 meses según el período)
+    console.log('Calculating historical averages for period:', period);
+    const monthsToAnalyze = period === 'year' ? 12 : 6;
+    const historicalStartDate = new Date();
+    historicalStartDate.setMonth(historicalStartDate.getMonth() - monthsToAnalyze);
+    
+    // Obtener transacciones históricas
+    const historicalTransactions = transactions.filter(t => 
+      new Date(t.transaction_date) >= historicalStartDate
+    );
+    
+    console.log(`Historical transactions found (last ${monthsToAnalyze} months):`, historicalTransactions.length);
+    
+    // Agrupar por mes y calcular promedios
+    const monthlyData: Record<string, { income: number; expenses: number }> = {};
+    
+    historicalTransactions.forEach(t => {
+      const monthKey = t.transaction_date.substring(0, 7); // YYYY-MM
+      if (!monthlyData[monthKey]) {
+        monthlyData[monthKey] = { income: 0, expenses: 0 };
+      }
+      
+      const amount = Number(t.amount);
+      if (t.type === 'income' || t.type === 'ingreso') {
+        monthlyData[monthKey].income += amount;
+      } else if (t.type === 'expense' || t.type === 'gasto') {
+        monthlyData[monthKey].expenses += amount;
+      }
+    });
+    
+    const monthsWithData = Object.keys(monthlyData).length;
+    console.log('Months with data:', monthsWithData);
+    
+    // Calcular promedios
+    let totalHistoricalIncome = 0;
+    let totalHistoricalExpenses = 0;
+    
+    Object.values(monthlyData).forEach(({ income, expenses }) => {
+      totalHistoricalIncome += income;
+      totalHistoricalExpenses += expenses;
+    });
+    
+    const avgMonthlyIncome = monthsWithData > 0 ? Math.round(totalHistoricalIncome / monthsWithData) : 0;
+    const avgMonthlyExpenses = monthsWithData > 0 ? Math.round(totalHistoricalExpenses / monthsWithData) : 0;
+    const avgBalance = avgMonthlyIncome - avgMonthlyExpenses;
+    
+    console.log('Historical averages calculated:', {
+      avgMonthlyIncome,
+      avgMonthlyExpenses,
+      avgBalance,
+      monthsAnalyzed: monthsWithData
+    });
+
     // Construir objeto de respuesta
     const responseData = {
       analysis,
@@ -807,7 +860,14 @@ Responde SOLO con el JSON array, sin texto adicional.`;
       },
       upcomingTransactions: {
         transactions: upcomingTransactions,
-        periodDays: 30
+        periodDays: 30,
+        historicalAverages: {
+          avgMonthlyIncome: avgMonthlyIncome,
+          avgMonthlyExpenses: avgMonthlyExpenses,
+          avgBalance: avgBalance,
+          monthsAnalyzed: monthsToAnalyze,
+          period: period
+        }
       },
       topActions,
       scoreBreakdown: {
