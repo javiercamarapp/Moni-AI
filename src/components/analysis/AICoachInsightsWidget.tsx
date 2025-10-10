@@ -130,7 +130,7 @@ export default function AICoachInsightsWidget({
   const insights = generateInsights();
 
   return (
-    <div className="w-full [&_.embla\_\_container]:!transition-none">
+    <div className="w-full overflow-hidden">
       <Carousel 
         className="w-full" 
         setApi={setApi} 
@@ -143,18 +143,20 @@ export default function AICoachInsightsWidget({
           dragFree: false
         }}
       >
-        <CarouselContent className="-ml-2 md:-ml-4" style={{ transition: 'none', transform: 'translate3d(0, 0, 0)' }}>
+        <CarouselContent className="-ml-1 md:-ml-2">
           {insights.map((insight, index) => (
-            <CarouselItem key={index} className="pl-2 md:pl-4">
-              <Card className={`p-3 card-glow border-white/20 bg-gradient-to-br ${
-                insight.isPositive 
-                  ? 'from-emerald-500/90 to-emerald-600/90' 
-                  : 'from-red-500/90 to-red-600/90'
-              }`}>
-                <p className="text-xs text-white leading-snug">
-                  {insight.emoji} <span className="font-medium">{insight.message}</span>
-                </p>
-              </Card>
+            <CarouselItem key={index} className="pl-1 md:pl-2 basis-full">
+              <div className="px-1">
+                <Card className={`p-3 card-glow border-white/20 bg-gradient-to-br ${
+                  insight.isPositive 
+                    ? 'from-emerald-500/90 to-emerald-600/90' 
+                    : 'from-red-500/90 to-red-600/90'
+                }`}>
+                  <p className="text-xs text-white leading-snug">
+                    {insight.emoji} <span className="font-medium">{insight.message}</span>
+                  </p>
+                </Card>
+              </div>
             </CarouselItem>
           ))}
         </CarouselContent>
