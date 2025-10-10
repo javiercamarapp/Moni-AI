@@ -136,6 +136,7 @@ Ejemplo formato:
     }
 
     // Obtener todas las transacciones históricas
+    console.log('Fetching transactions for user:', userId, 'period:', period);
     const { data: transactions, error: txError } = await supabase
       .from('transactions')
       .select('*, categories(name, type)')
@@ -150,6 +151,7 @@ Ejemplo formato:
       : new Date(now.getFullYear(), now.getMonth(), 1);
 
     console.log('Transactions found:', transactions?.length || 0);
+    console.log('Period:', period, 'Start date:', startDate, 'Now:', now);
     if (txError) console.error('Transaction query error:', txError);
 
     if (!transactions || transactions.length === 0) {

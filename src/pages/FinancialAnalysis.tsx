@@ -102,6 +102,14 @@ export default function FinancialAnalysis() {
       const balance = totalIncome - totalExpenses;
       const savingsRate = totalIncome > 0 ? ((balance / totalIncome) * 100) : 0;
       
+      // Calculate additional metrics
+      const fixedExpenses = transactions
+        .filter(t => (t.type === 'expense' || t.type === 'gasto') && t.frequency && t.frequency !== 'once')
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+      
+      const variableExpenses = totalExpenses - fixedExpenses;
+      const liquidityMonths = totalExpenses > 0 ? (balance / totalExpenses) : 0;
+      
       // Score rápido
       let score = 40;
       if (balance > 0) score += 20;
@@ -113,6 +121,28 @@ export default function FinancialAnalysis() {
         totalExpenses,
         balance,
         savingsRate: Math.round(savingsRate * 100) / 100,
+        liquidityMonths: Math.round(liquidityMonths * 100) / 100,
+        cashFlowAccumulated: balance,
+        fixedExpenses,
+        variableExpenses,
+        fixedExpensesPercentage: totalExpenses > 0 ? (fixedExpenses / totalExpenses * 100) : 0,
+        variableExpensesPercentage: totalExpenses > 0 ? (variableExpenses / totalExpenses * 100) : 0,
+        antExpenses: transactions.filter(t => (t.type === 'expense' || t.type === 'gasto') && Number(t.amount) < 50).reduce((sum, t) => sum + Number(t.amount), 0),
+        antExpensesPercentage: totalIncome > 0 ? (transactions.filter(t => (t.type === 'expense' || t.type === 'gasto') && Number(t.amount) < 50).reduce((sum, t) => sum + Number(t.amount), 0) / totalIncome * 100) : 0,
+        impulsivePurchases: transactions.filter(t => (t.type === 'expense' || t.type === 'gasto') && Number(t.amount) > 500 && (!t.frequency || t.frequency === 'once')).length,
+        totalDebt: 0,
+        debtRatio: 0,
+        financialBurden: 0,
+        debtToIncomeRatio: 0,
+        interestOnIncome: 0,
+        investmentRate: 0,
+        personalROE: 0,
+        equityGrowth: 0,
+        personalROI: 0,
+        avgGoalCompletion: 0,
+        consistencyScore: 0,
+        projectedAnnualSavings: balance * 12,
+        mindfulSpendingIndex: 0,
         scoreMoni: Math.min(100, score)
       });
     } catch (error) {
@@ -293,7 +323,14 @@ export default function FinancialAnalysis() {
     setUser(user);
   };
   const loadAnalysis = async () => {
+    if (!user?.id) {
+      console.log('User not available yet, skipping analysis load');
+      return;
+    }
+    
+    setLoading(true);
     try {
+      console.log('Calling financial-analysis function with:', { userId: user.id, period });
       const {
         data,
         error
@@ -303,11 +340,23 @@ export default function FinancialAnalysis() {
           period
         }
       });
-      if (error) throw error;
-      setAnalysis(data);
+      
+      console.log('Financial analysis response:', { data, error });
+      
+      if (error) {
+        console.error('Financial analysis error:', error);
+        throw error;
+      }
+      
+      if (data) {
+        setAnalysis(data);
+        console.log('Analysis data set successfully');
+      }
     } catch (error: any) {
       console.error("Error loading analysis:", error);
-      toast.error("No se pudo cargar el análisis");
+      toast.error(`No se pudo cargar el análisis: ${error.message || 'Error desconocido'}`);
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -338,7 +387,13 @@ export default function FinancialAnalysis() {
         </div>
 
         {/* Mostrar métricas instantáneas primero, luego actualizar con análisis completo */}
-        {(quickMetrics || analysis) && <>
+        {!quickMetrics && !analysis && loading ? (
+          <Card className="p-8 bg-gradient-card card-glow border-white/20 text-center">
+            <RefreshCw className="h-8 w-8 text-white/60 animate-spin mx-auto mb-4" />
+            <p className="text-white/80">Cargando análisis financiero...</p>
+          </Card>
+        ) : (quickMetrics || analysis) ? (
+          <>
             {/* Animated Income & Expense Lines */}
             <Card className="p-4 bg-gradient-card card-glow space-y-4 animate-fade-in hover:scale-[1.02] transition-transform duration-200" style={{ animationDelay: '0ms' }}>
               {/* Ingresos */}
@@ -811,7 +866,12 @@ export default function FinancialAnalysis() {
                 monthlyExpenses={analysis?.metrics?.totalExpenses ?? 0}
               />
             </div>
-          </>}
+          </>
+        ) : (
+          <Card className="p-8 bg-gradient-card card-glow border-white/20 text-center">
+            <p className="text-white/80">No hay datos disponibles para mostrar</p>
+          </Card>
+        )}
       </div>
       
       <BottomNav />
