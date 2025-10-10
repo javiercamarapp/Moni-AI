@@ -398,7 +398,7 @@ export default function FinancialAnalysis() {
             <Card 
               className="p-4 bg-gradient-card card-glow space-y-4 animate-fade-in hover:scale-[1.02] transition-transform duration-200 cursor-pointer" 
               style={{ animationDelay: '0ms' }}
-              onClick={() => navigate('/gastos')}
+              onClick={() => navigate('/balance')}
             >
               {/* Ingresos */}
               <div className="space-y-2">
