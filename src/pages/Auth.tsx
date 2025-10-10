@@ -73,11 +73,6 @@ const Auth = () => {
               variant: "destructive",
             });
           }
-        } else {
-          toast({
-            title: "¡Bienvenido de vuelta!",
-            description: "Inicio de sesión exitoso",
-          });
         }
       } else {
         if (!fullName) {
