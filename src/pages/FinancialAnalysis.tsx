@@ -48,17 +48,9 @@ export default function FinancialAnalysis() {
   }, []);
   useEffect(() => {
     if (user) {
+      // Cargar en background sin bloquear la UI
       loadAnalysis();
       fetchTransactionsData();
-      
-      // Auto-hide loading overlay after 2 seconds max
-      const timeout = setTimeout(() => {
-        if (loading) {
-          setLoading(false);
-        }
-      }, 2000);
-      
-      return () => clearTimeout(timeout);
     }
   }, [user, period]);
 
@@ -235,7 +227,6 @@ export default function FinancialAnalysis() {
     setUser(user);
   };
   const loadAnalysis = async () => {
-    setLoading(true);
     try {
       const {
         data,
@@ -251,22 +242,11 @@ export default function FinancialAnalysis() {
     } catch (error: any) {
       console.error("Error loading analysis:", error);
       toast.error("No se pudo cargar el análisis");
-    } finally {
-      setLoading(false);
     }
   };
   
   return (
     <div className="min-h-screen animated-wave-bg pb-24">
-      {loading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
-          <div className="text-center">
-            <img src="/moni-logo.png" alt="Cargando" className="w-[200px] max-w-[70vw] mx-auto animate-pulse" />
-            <p className="text-white text-sm mt-4">Analizando tus finanzas...</p>
-          </div>
-        </div>
-      )}
-      
       <div className="mx-4 space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between pt-4 mb-4">
