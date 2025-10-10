@@ -35,23 +35,22 @@ export default function NetWorthWidget() {
           <p className={`text-5xl font-bold ${isPositive ? 'text-white' : 'text-red-300'}`}>
             ${(currentNetWorth / 1000).toFixed(1)}k
           </p>
-          {percentageChange !== 0 && (
-            <div className="flex items-center gap-2 mt-2">
-              <span className={cn(
-                "text-sm font-medium",
-                isPositiveChange ? "text-emerald-300" : "text-red-300"
-              )}>
-                {isPositiveChange ? '+' : ''}{percentageChange.toFixed(2)}%
-              </span>
-              <span className="text-sm text-white/60">
-                {timeRange === '1M' ? 'último mes' : 
-                 timeRange === '3M' ? 'últimos 3M' :
-                 timeRange === '6M' ? 'últimos 6M' :
-                 timeRange === '1Y' ? 'último año' :
-                 'total'}
-              </span>
-            </div>
-          )}
+          <div className="flex items-center gap-2 mt-2">
+            <span className={cn(
+              "text-sm font-medium",
+              percentageChange === 0 ? "text-white/50" : 
+              isPositiveChange ? "text-emerald-300" : "text-red-300"
+            )}>
+              {isPositiveChange && percentageChange !== 0 ? '+' : ''}{percentageChange.toFixed(2)}%
+            </span>
+            <span className="text-sm text-white/60">
+              {timeRange === '1M' ? 'último mes' : 
+               timeRange === '3M' ? 'últimos 3M' :
+               timeRange === '6M' ? 'últimos 6M' :
+               timeRange === '1Y' ? 'último año' :
+               'total'}
+            </span>
+          </div>
         </div>
         {isPositiveChange ? (
           <TrendingUp className="h-8 w-8 text-emerald-400" />
