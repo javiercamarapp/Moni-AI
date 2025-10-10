@@ -40,7 +40,7 @@ export default function UpcomingTransactionsWidget({ historicalAverages }: Upcom
               <TrendingUp className="h-3 w-3" /> Proyección Anual
             </p>
             <p className="text-xs text-white/60">
-              Basado en últimos 12 meses + mes actual
+              Basado en últimos 12 meses
             </p>
           </div>
         </div>
