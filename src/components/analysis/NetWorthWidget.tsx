@@ -77,38 +77,44 @@ export default function NetWorthWidget() {
       {/* Chart */}
       <div className="relative h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData}>
+          <AreaChart data={chartData} margin={{ top: 20, right: 20, bottom: 20, left: 0 }}>
             <defs>
               <linearGradient id="colorNetWorth" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={isPositiveChange ? "#10b981" : "#ef4444"} stopOpacity={0.6}/>
-                <stop offset="95%" stopColor={isPositiveChange ? "#10b981" : "#ef4444"} stopOpacity={0.05}/>
+                <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="#10b981" stopOpacity={0.05}/>
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
             <XAxis 
               dataKey="date" 
-              tick={{ fill: 'white', fontSize: 11 }}
-              tickLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+              tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 10 }}
+              tickLine={false}
               axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
             />
             <Tooltip
               contentStyle={{ 
-                backgroundColor: 'rgba(0,0,0,0.9)', 
-                border: '1px solid rgba(255,255,255,0.2)', 
+                backgroundColor: 'rgba(0,0,0,0.95)', 
+                border: '1px solid rgba(16, 185, 129, 0.3)', 
                 borderRadius: '12px',
-                fontSize: '12px',
-                padding: '12px'
+                fontSize: '13px',
+                padding: '12px 16px',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
               }}
-              labelStyle={{ color: 'white', marginBottom: '4px' }}
-              formatter={(value: number) => [`$${value.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Patrimonio']}
+              labelStyle={{ color: 'rgba(255,255,255,0.7)', fontSize: '11px', marginBottom: '4px' }}
+              formatter={(value: number) => [
+                <span style={{ color: '#10b981', fontWeight: 'bold', fontSize: '15px' }}>
+                  ${value.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                </span>, 
+                'Patrimonio Neto'
+              ]}
             />
             <Area 
               type="monotone" 
               dataKey="value" 
-              stroke={isPositiveChange ? "#10b981" : "#ef4444"}
-              strokeWidth={3}
+              stroke="#10b981"
+              strokeWidth={2.5}
               fill="url(#colorNetWorth)"
-              animationDuration={800}
+              animationDuration={1000}
+              dot={false}
             />
           </AreaChart>
         </ResponsiveContainer>
