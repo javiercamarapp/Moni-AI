@@ -600,12 +600,37 @@ const Dashboard = () => {
 
       if (error) throw error;
 
-      // Remove from pending list
-      setChallenges(prev => prev.filter(c => c.id !== challengeId));
+      // Refresh challenges list to show the newly active challenge
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: activeData } = await supabase
+        .from('challenges')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+
+      const activeChallenges = activeData || [];
+      const slotsAvailable = 2 - activeChallenges.length;
+
+      if (slotsAvailable > 0) {
+        const { data: pendingData } = await supabase
+          .from('challenges')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('status', 'pending')
+          .order('created_at', { ascending: false })
+          .limit(slotsAvailable);
+
+        setChallenges([...activeChallenges, ...(pendingData || [])]);
+      } else {
+        setChallenges(activeChallenges);
+      }
       
       toast({
         title: "¡Reto aceptado!",
-        description: "Empieza hoy mismo tu reto"
+        description: "Empieza hoy mismo tu reto semanal"
       });
     } catch (error) {
       console.error('Error accepting challenge:', error);
@@ -724,30 +749,51 @@ const Dashboard = () => {
     }
   };
 
-  // Fetch challenges and auto-generate if none exist
+  // Fetch challenges (active + pending suggestions)
   useEffect(() => {
     const fetchChallenges = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        // Fetch only pending challenges (not yet accepted)
-        const { data, error } = await supabase
+        // Fetch active challenges (accepted and in progress)
+        const { data: activeData, error: activeError } = await supabase
           .from('challenges')
           .select('*')
           .eq('user_id', user.id)
-          .eq('status', 'pending')
-          .order('created_at', { ascending: false })
-          .limit(2);
+          .eq('status', 'active')
+          .order('created_at', { ascending: false });
 
-        if (error) throw error;
-        
-        // If no pending challenges exist, auto-generate 2
-        if (!data || data.length === 0) {
-          console.log('No pending challenges found, auto-generating...');
-          await handleGenerateChallenges();
+        if (activeError) throw activeError;
+
+        const activeChallenges = activeData || [];
+        const slotsAvailable = 2 - activeChallenges.length;
+
+        // If we need more challenges to fill 2 slots, fetch pending suggestions
+        if (slotsAvailable > 0) {
+          const { data: pendingData, error: pendingError } = await supabase
+            .from('challenges')
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('status', 'pending')
+            .order('created_at', { ascending: false })
+            .limit(slotsAvailable);
+
+          if (pendingError) throw pendingError;
+
+          const pendingSuggestions = pendingData || [];
+
+          // If no pending suggestions exist, auto-generate them
+          if (pendingSuggestions.length === 0) {
+            console.log('No pending suggestions found, auto-generating...');
+            await handleGenerateChallenges();
+            return;
+          }
+
+          setChallenges([...activeChallenges, ...pendingSuggestions]);
         } else {
-          setChallenges(data);
+          // We already have 2 active challenges
+          setChallenges(activeChallenges);
         }
       } catch (error) {
         console.error('Error fetching challenges:', error);
@@ -1233,23 +1279,12 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Tus Retos Section */}
+            {/* Tus Retos Semanales Section */}
             <div>
               <div className="flex flex-row justify-between items-center mb-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-white">Tus Retos</h3>
+                <h3 className="text-lg sm:text-xl font-semibold text-white">Tus Retos Semanales</h3>
                 <div className="flex gap-2">
-                  {challenges.length > 0 && challenges.length < 2 && (
-                    <Button 
-                      size="sm" 
-                      onClick={handleGenerateChallenges} 
-                      disabled={loadingChallenges}
-                      className="bg-gradient-card card-glow hover:bg-white/30 text-white border-white/30 text-xs"
-                    >
-                      <Zap className="w-3 h-3 mr-1" />
-                      {loadingChallenges ? "..." : "Generar 1 más"}
-                    </Button>
-                  )}
-                  {challenges.length > 0 && (
+                  {challenges.filter(c => c.status === 'active').length < 2 && challenges.some(c => c.status === 'pending') && (
                     <Button 
                       size="sm" 
                       onClick={handleRegenerateChallenges} 
@@ -1266,7 +1301,7 @@ const Dashboard = () => {
               {challenges.length === 0 ? (
                 <div className="text-center py-8">
                   <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white mb-4"></div>
-                  <p className="text-white/70">Generando tus primeros 2 retos personalizados...</p>
+                  <p className="text-white/70">Generando tus primeros 2 retos semanales...</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
@@ -1334,13 +1369,21 @@ const Dashboard = () => {
                             </div>
                           </div>
                           
-                          <Button 
-                            size="sm" 
-                            className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 h-7 text-[10px] font-medium"
-                            onClick={() => handleAcceptChallenge(challenge.id)}
-                          >
-                            Aceptar reto
-                          </Button>
+                          {challenge.status === 'pending' ? (
+                            <Button 
+                              size="sm" 
+                              className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 h-7 text-[10px] font-medium"
+                              onClick={() => handleAcceptChallenge(challenge.id)}
+                            >
+                              Aceptar reto
+                            </Button>
+                          ) : (
+                            <div className="text-center py-1">
+                              <Badge className="bg-green-500/20 text-green-300 text-[9px] border-green-500/30">
+                                En progreso
+                              </Badge>
+                            </div>
+                          )}
                         </div>
                       </Card>
                     );
