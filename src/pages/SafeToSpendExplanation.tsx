@@ -107,73 +107,77 @@ export default function SafeToSpendExplanation() {
         </div>
 
         {statement && (
-          <>
+          <Card className="p-6 bg-gradient-card card-glow shadow-elegant border border-border/30">
             {/* INGRESOS */}
-            <Card className="p-6 mb-4 bg-white/10 backdrop-blur-sm border-white/20">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-success" />
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-success/30">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-success" />
+                  </div>
+                  <h2 className="text-xl font-bold text-card-foreground">INGRESOS</h2>
                 </div>
-                <div className="flex-1">
-                  <h2 className="text-xl font-bold text-white">INGRESOS</h2>
-                </div>
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-success">
-                    {formatCurrency(statement.totalIngresos)}
-                  </p>
-                </div>
+                <p className="text-2xl font-bold text-success">
+                  {formatCurrency(statement.totalIngresos)}
+                </p>
               </div>
 
               {/* Categorías de Ingresos */}
-              <div className="space-y-2 pl-4">
-                {statement.ingresos.map((cat, idx) => (
-                  <div key={idx} className="flex items-center justify-between py-2 border-b border-white/10">
-                    <div className="flex-1">
-                      <p className="text-white/90 font-medium">{cat.categoria}</p>
-                      <p className="text-white/50 text-xs">{cat.transacciones} transacción(es)</p>
+              <div className="space-y-2 pl-2">
+                {statement.ingresos.length === 0 ? (
+                  <p className="text-muted-foreground text-sm py-2">No hay ingresos registrados</p>
+                ) : (
+                  statement.ingresos.map((cat, idx) => (
+                    <div key={idx} className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-muted/30 transition-colors">
+                      <div className="flex-1">
+                        <p className="text-card-foreground font-medium">{cat.categoria}</p>
+                        <p className="text-muted-foreground text-xs">{cat.transacciones} transacción(es)</p>
+                      </div>
+                      <p className="text-card-foreground font-semibold">{formatCurrency(cat.monto)}</p>
                     </div>
-                    <p className="text-white font-semibold">{formatCurrency(cat.monto)}</p>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
-            </Card>
+            </div>
 
             {/* GASTOS */}
-            <Card className="p-6 mb-4 bg-white/10 backdrop-blur-sm border-white/20">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-danger/20 flex items-center justify-center">
-                  <TrendingDown className="w-5 h-5 text-danger" />
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-destructive/30">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-destructive/20 flex items-center justify-center">
+                    <TrendingDown className="w-5 h-5 text-destructive" />
+                  </div>
+                  <h2 className="text-xl font-bold text-card-foreground">GASTOS</h2>
                 </div>
-                <div className="flex-1">
-                  <h2 className="text-xl font-bold text-white">GASTOS</h2>
-                </div>
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-danger">
-                    {formatCurrency(statement.totalGastos)}
-                  </p>
-                </div>
+                <p className="text-2xl font-bold text-destructive">
+                  {formatCurrency(statement.totalGastos)}
+                </p>
               </div>
 
               {/* Categorías de Gastos */}
-              <div className="space-y-2 pl-4">
-                {statement.gastos.map((cat, idx) => (
-                  <div key={idx} className="flex items-center justify-between py-2 border-b border-white/10">
-                    <div className="flex-1">
-                      <p className="text-white/90 font-medium">{cat.categoria}</p>
-                      <p className="text-white/50 text-xs">{cat.transacciones} transacción(es)</p>
+              <div className="space-y-2 pl-2">
+                {statement.gastos.length === 0 ? (
+                  <p className="text-muted-foreground text-sm py-2">No hay gastos registrados</p>
+                ) : (
+                  statement.gastos.map((cat, idx) => (
+                    <div key={idx} className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-muted/30 transition-colors">
+                      <div className="flex-1">
+                        <p className="text-card-foreground font-medium">{cat.categoria}</p>
+                        <p className="text-muted-foreground text-xs">{cat.transacciones} transacción(es)</p>
+                      </div>
+                      <p className="text-card-foreground font-semibold">-{formatCurrency(cat.monto)}</p>
                     </div>
-                    <p className="text-white font-semibold">-{formatCurrency(cat.monto)}</p>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
-            </Card>
+            </div>
 
-            {/* RESULTADO FINAL */}
-            <Card className={`p-6 ${statement.balance >= 0 ? 'bg-success/20' : 'bg-danger/20'} backdrop-blur-sm border-white/20`}>
+            {/* BALANCE */}
+            <div className={`p-5 rounded-xl ${statement.balance >= 0 ? 'bg-gradient-to-br from-[hsl(145,45%,30%)] to-[hsl(145,55%,25%)] border-2 border-[hsl(145,50%,35%)]/50' : 'bg-gradient-to-br from-[hsl(0,50%,30%)] to-[hsl(0,55%,25%)] border-2 border-[hsl(0,50%,35%)]/50'}`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className={`w-12 h-12 rounded-full ${statement.balance >= 0 ? 'bg-success/30' : 'bg-danger/30'} flex items-center justify-center`}>
-                    <DollarSign className={`w-6 h-6 ${statement.balance >= 0 ? 'text-success' : 'text-danger'}`} />
+                  <div className={`w-12 h-12 rounded-full ${statement.balance >= 0 ? 'bg-white/20' : 'bg-white/20'} flex items-center justify-center`}>
+                    <DollarSign className="w-6 h-6 text-white" />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-white">
@@ -183,23 +187,23 @@ export default function SafeToSpendExplanation() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className={`text-3xl font-bold ${statement.balance >= 0 ? 'text-success' : 'text-danger'}`}>
+                  <p className="text-3xl font-bold text-white">
                     {formatCurrency(Math.abs(statement.balance))}
                   </p>
-                  <p className="text-white/70 text-sm mt-1">
-                    {((statement.balance / statement.totalIngresos) * 100).toFixed(1)}% de ingresos
+                  <p className="text-white/80 text-sm mt-1">
+                    {statement.totalIngresos > 0 ? ((statement.balance / statement.totalIngresos) * 100).toFixed(1) : '0.0'}% de ingresos
                   </p>
                 </div>
               </div>
-            </Card>
+            </div>
 
             {/* Nota explicativa */}
-            <div className="mt-6 p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10">
-              <p className="text-white/80 text-sm text-center">
-                🤖 Categorías agrupadas inteligentemente por IA para una mejor comprensión de tus finanzas
+            <div className="mt-6 p-3 bg-muted/50 rounded-lg border border-border/50">
+              <p className="text-muted-foreground text-xs text-center">
+                🤖 Categorías agrupadas inteligentemente por IA
               </p>
             </div>
-          </>
+          </Card>
         )}
       </div>
 

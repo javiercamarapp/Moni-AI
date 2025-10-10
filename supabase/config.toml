@@ -47,3 +47,6 @@ verify_jwt = true
 
 [functions.detect-subscriptions]
 verify_jwt = true
+
+[functions.categorize-income-statement]
+verify_jwt = true
