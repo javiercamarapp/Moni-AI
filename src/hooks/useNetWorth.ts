@@ -93,9 +93,9 @@ export function useNetWorth(timeRange: TimeRange) {
           case '3M':
             return format(date, 'd MMM');
           case '6M':
-            return format(date, 'MMM yy');
+            return format(date, 'MMM');
           case '1Y':
-            return format(date, 'MMM yy');
+            return format(date, 'MMM');
           case 'All':
             return format(date, 'MMM yy').substring(0, 6);
           default:
@@ -103,7 +103,10 @@ export function useNetWorth(timeRange: TimeRange) {
         }
       };
 
-      // Format snapshots for chart
+      // Get today's date
+      const today = format(now, 'yyyy-MM-dd');
+      
+      // Format snapshots for chart (only historical data, not today)
       let chartData: NetWorthSnapshot[] = snapshots?.map(s => ({
         date: formatDateLabel(new Date(s.snapshot_date), timeRange),
         value: Number(s.net_worth),
@@ -111,79 +114,76 @@ export function useNetWorth(timeRange: TimeRange) {
         liabilities: Number(s.total_liabilities)
       })) || [];
 
-      // Add current data point if not already in snapshots
-      const today = format(now, 'yyyy-MM-dd');
-      const hasToday = snapshots?.some(s => s.snapshot_date === today);
+      // If we have no historical data or only today's data, create horizontal line
+      const hasHistoricalData = chartData.length > 0 && 
+        snapshots?.some(s => s.snapshot_date !== today);
       
-      if (!hasToday) {
-        chartData.push({
-          date: formatDateLabel(now, timeRange),
-          value: currentNetWorth,
-          assets: totalAssets,
-          liabilities: totalLiabilities
-        });
-      }
-
-      // If only one data point (just completed questionnaire), create a horizontal line
-      if (chartData.length <= 1) {
-        const singlePoint = chartData[0] || {
-          date: '',
-          value: currentNetWorth,
-          assets: totalAssets,
-          liabilities: totalLiabilities
-        };
-        
+      if (!hasHistoricalData) {
+        // Create horizontal line from past to today with current net worth value
         chartData = [];
         let dates: Date[] = [];
         
         switch (timeRange) {
           case '1M':
-            // Every 5 days for 1 month (6 points)
+            // Every 5 days for 1 month
             for (let i = 5; i >= 0; i--) {
               dates.push(subDays(now, i * 5));
             }
             break;
           case '3M':
-            // Every 12 days for 3 months (~8 points)
+            // Every 12 days for 3 months
             for (let i = 7; i >= 0; i--) {
               dates.push(subDays(now, i * 12));
             }
             break;
           case '6M':
-            // Every month for 6 months (6 points)
+            // Every month for 6 months
             for (let i = 5; i >= 0; i--) {
               dates.push(subMonths(now, i));
             }
             break;
           case '1Y':
-            // Every 2 months for 1 year (6 points)
+            // Every 2 months for 1 year
             for (let i = 5; i >= 0; i--) {
               dates.push(subMonths(now, i * 2));
             }
             break;
           case 'All':
-            // Default: weekly for 6 weeks
+            // Weekly for 6 weeks
             for (let i = 5; i >= 0; i--) {
               dates.push(subDays(now, i * 7));
             }
             break;
         }
         
+        // All points have the same value (horizontal line)
         chartData = dates.map(date => ({
           date: formatDateLabel(date, timeRange),
-          value: singlePoint.value,
-          assets: singlePoint.assets,
-          liabilities: singlePoint.liabilities
+          value: currentNetWorth,
+          assets: totalAssets,
+          liabilities: totalLiabilities
         }));
       } else {
-        // Filter data points based on time range to avoid overcrowding
+        // We have historical data - use it and add today's point
+        const hasToday = snapshots?.some(s => s.snapshot_date === today);
+        
+        if (!hasToday) {
+          chartData.push({
+            date: formatDateLabel(now, timeRange),
+            value: currentNetWorth,
+            assets: totalAssets,
+            liabilities: totalLiabilities
+          });
+        }
+        
+        // Filter data points to avoid overcrowding
         if (chartData.length > 10) {
           const step = Math.ceil(chartData.length / 6);
           const filtered: NetWorthSnapshot[] = [];
           for (let i = 0; i < chartData.length; i += step) {
             filtered.push(chartData[i]);
           }
-          // Always include the last point
+          // Always include the last point (today)
           if (filtered[filtered.length - 1] !== chartData[chartData.length - 1]) {
             filtered.push(chartData[chartData.length - 1]);
           }
