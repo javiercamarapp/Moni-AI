@@ -125,31 +125,31 @@ export function useNetWorth(timeRange: TimeRange) {
         
         switch (timeRange) {
           case '1M':
-            // Every 5 days for 1 month
+            // Every 5 days for 1 month (6 points)
             for (let i = 5; i >= 0; i--) {
               dates.push(subDays(now, i * 5));
             }
             break;
           case '3M':
-            // Every 12 days for 3 months
-            for (let i = 7; i >= 0; i--) {
-              dates.push(subDays(now, i * 12));
+            // Every 15 days for 3 months (6 points)
+            for (let i = 5; i >= 0; i--) {
+              dates.push(subDays(now, i * 15));
             }
             break;
           case '6M':
-            // Every month for 6 months
+            // Every month for 6 months (6 points)
             for (let i = 5; i >= 0; i--) {
               dates.push(subMonths(now, i));
             }
             break;
           case '1Y':
-            // Every 2 months for 1 year
+            // Every 2 months for 1 year (6 points)
             for (let i = 5; i >= 0; i--) {
               dates.push(subMonths(now, i * 2));
             }
             break;
           case 'All':
-            // Weekly for 6 weeks
+            // Divide total time by 6 points
             for (let i = 5; i >= 0; i--) {
               dates.push(subDays(now, i * 7));
             }
