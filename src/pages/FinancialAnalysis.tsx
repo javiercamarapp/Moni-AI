@@ -488,7 +488,6 @@ export default function FinancialAnalysis() {
               </TabsTrigger>
             </TabsList>
           </Tabs>
-          </div>
         </div>
 
         {/* Mostrar métricas instantáneas primero, luego actualizar con análisis completo */}
