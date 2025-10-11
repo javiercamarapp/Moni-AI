@@ -4,62 +4,62 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Moni Fintech Design System - Minimal Glassmorphism */
+/* Moni Fintech Design System - Apple Glass Minimal */
 
 @layer base {
   :root {
-    /* Minimal dark base */
-    --background: 220 15% 8%;
-    --foreground: 0 0% 95%;
+    /* White base - Apple style */
+    --background: 0 0% 98%;
+    --foreground: 0 0% 10%;
 
-    /* Glass cards - subtle */
-    --card: 220 10% 12%;
-    --card-foreground: 0 0% 95%;
-    --card-border: 0 0% 25%;
-    --glass-bg: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.1);
+    /* Glass cards - transparent on white */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --card-border: 0 0% 88%;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(0, 0, 0, 0.08);
 
-    /* Primary - minimal accent */
-    --primary: 0 0% 95%;
-    --primary-foreground: 220 15% 10%;
-    --primary-glow: 0 0% 80%;
+    /* Primary - neutral */
+    --primary: 0 0% 10%;
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 0 0% 20%;
 
-    /* Secondary */
-    --secondary: 220 10% 18%;
-    --secondary-foreground: 0 0% 90%;
+    /* Secondary - neutral */
+    --secondary: 0 0% 95%;
+    --secondary-foreground: 0 0% 10%;
 
-    /* Muted */
-    --muted: 220 10% 15%;
-    --muted-foreground: 0 0% 60%;
+    /* Muted - neutral */
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
-    /* Accent */
-    --accent: 220 10% 20%;
-    --accent-foreground: 0 0% 95%;
+    /* Accent - neutral */
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 10%;
 
-    /* Status colors - subtle */
-    --destructive: 0 60% 50%;
-    --destructive-foreground: 0 0% 98%;
-    --success: 150 50% 45%;
-    --success-foreground: 0 0% 98%;
-    --danger: 0 60% 50%;
-    --danger-foreground: 0 0% 98%;
-    --warning: 38 70% 55%;
-    --warning-foreground: 0 0% 98%;
+    /* Status colors - ONLY for financial data */
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
+    --danger: 0 70% 50%;
+    --danger-foreground: 0 0% 100%;
+    --warning: 38 90% 50%;
+    --warning-foreground: 0 0% 100%;
 
-    /* Interactive elements */
-    --border: 0 0% 25%;
-    --input: 0 0% 95%;
-    --ring: 0 0% 60%;
+    /* Interactive elements - neutral */
+    --border: 0 0% 88%;
+    --input: 0 0% 10%;
+    --ring: 0 0% 70%;
 
-    /* Gradients - Minimal */
-    --gradient-primary: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-    --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(220 15% 8%) 0%, hsl(220 12% 10%) 100%);
+    /* Gradients - Minimal glass */
+    --gradient-primary: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
+    --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.5) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 98%) 0%, hsl(0 0% 96%) 100%);
 
-    /* Shadows - Subtle */
-    --shadow-glow: 0 4px 24px rgba(0, 0, 0, 0.4);
-    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
-    --shadow-elegant: 0 8px 32px rgba(0, 0, 0, 0.4);
+    /* Shadows - Apple style */
+    --shadow-glow: 0 2px 16px rgba(0, 0, 0, 0.06);
+    --shadow-card: 0 2px 16px rgba(0, 0, 0, 0.04);
+    --shadow-elegant: 0 4px 24px rgba(0, 0, 0, 0.08);
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -151,37 +151,37 @@
 }
 
 @layer components {
-  /* Minimal Glassmorphism */
+  /* Apple-style Glass on White */
   .glass {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(12px) saturate(120%);
-    -webkit-backdrop-filter: blur(12px) saturate(120%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
   }
 
   .glass-card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(12px) saturate(120%);
-    -webkit-backdrop-filter: blur(12px) saturate(120%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
     border-radius: var(--radius);
   }
 
   .glass-strong {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(16px) saturate(130%);
-    -webkit-backdrop-filter: blur(16px) saturate(130%);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
   }
 
   .glow-primary {
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
   }
 
-  /* Gradient backgrounds */
+  /* Gradient backgrounds - subtle */
   .bg-gradient-primary {
     background: var(--gradient-primary);
   }
@@ -194,15 +194,15 @@
     background: var(--gradient-hero);
   }
 
-  /* Interactive animations */
+  /* Interactive animations - Apple style */
   .hover-lift {
     transition: var(--transition-smooth);
   }
 
   .hover-lift:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.12);
   }
 
   .bounce-in {
