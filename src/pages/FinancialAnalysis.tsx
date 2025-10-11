@@ -37,7 +37,13 @@ export default function FinancialAnalysis() {
   // Cargar datos del caché inmediatamente para mostrar instantáneamente
   const [quickMetrics, setQuickMetrics] = useState<any>(() => {
     const cached = localStorage.getItem('financialAnalysis_quickMetrics');
-    return cached ? JSON.parse(cached) : null;
+    return cached ? JSON.parse(cached) : {
+      totalIncome: 0,
+      totalExpenses: 0,
+      balance: 0,
+      savingsRate: 0,
+      transactionsCount: 0
+    };
   });
   const [historicalAverages, setHistoricalAverages] = useState<any>(() => {
     const cached = localStorage.getItem('financialAnalysis_historicalAverages');
@@ -45,7 +51,13 @@ export default function FinancialAnalysis() {
   });
   const [analysis, setAnalysis] = useState<any>(() => {
     const cached = localStorage.getItem('financialAnalysis_analysis');
-    return cached ? JSON.parse(cached) : null;
+    return cached ? JSON.parse(cached) : {
+      metrics: {
+        totalIncome: 0,
+        totalExpenses: 0,
+        balance: 0
+      }
+    };
   });
   const [recentTransactions, setRecentTransactions] = useState<any[]>(() => {
     const cached = localStorage.getItem('financialAnalysis_recentTransactions');
@@ -70,25 +82,13 @@ export default function FinancialAnalysis() {
 
   useEffect(() => {
     if (user) {
-      // Limpiar TODO el caché al cambiar período
-      localStorage.removeItem('financialAnalysis_quickMetrics');
-      localStorage.removeItem('financialAnalysis_analysis');
-      localStorage.removeItem('financialAnalysis_historicalAverages');
-      localStorage.removeItem('financialAnalysis_recentTransactions');
-      localStorage.removeItem('financialAnalysis_futureEvents');
+      // NO limpiar caché al cambiar período - mantener datos anteriores visibles
+      // mientras se cargan los nuevos
       
-      // Resetear estados a null para forzar recálculo
-      setQuickMetrics(null);
-      setAnalysis(null);
-      
-      // Ejecutar todas las cargas en paralelo para máxima velocidad
-      Promise.all([
-        calculateQuickMetrics(),
-        fetchTransactionsData(),
-        loadAnalysis()
-      ]).catch(error => {
-        console.error('Error loading data:', error);
-      });
+      // Ejecutar cargas en background sin bloquear UI
+      calculateQuickMetrics();
+      fetchTransactionsData();
+      loadAnalysis();
     }
   }, [user, period]);
 
