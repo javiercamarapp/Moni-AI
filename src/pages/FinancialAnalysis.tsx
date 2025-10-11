@@ -32,14 +32,29 @@ export default function FinancialAnalysis() {
   const [loading, setLoading] = useState(false);
   const [period, setPeriod] = useState("month");
   const [user, setUser] = useState<any>(null);
-  const [loadingTransactions, setLoadingTransactions] = useState(true);
+  const [loadingTransactions, setLoadingTransactions] = useState(false);
   
-  // Inicializar estados SIN caché para evitar datos incorrectos
-  const [quickMetrics, setQuickMetrics] = useState<any>(null);
-  const [historicalAverages, setHistoricalAverages] = useState<any>(null);
-  const [analysis, setAnalysis] = useState<any>(null);
-  const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
-  const [futureEvents, setFutureEvents] = useState<any[]>([]);
+  // Cargar datos del caché inmediatamente para mostrar instantáneamente
+  const [quickMetrics, setQuickMetrics] = useState<any>(() => {
+    const cached = localStorage.getItem('financialAnalysis_quickMetrics');
+    return cached ? JSON.parse(cached) : null;
+  });
+  const [historicalAverages, setHistoricalAverages] = useState<any>(() => {
+    const cached = localStorage.getItem('financialAnalysis_historicalAverages');
+    return cached ? JSON.parse(cached) : null;
+  });
+  const [analysis, setAnalysis] = useState<any>(() => {
+    const cached = localStorage.getItem('financialAnalysis_analysis');
+    return cached ? JSON.parse(cached) : null;
+  });
+  const [recentTransactions, setRecentTransactions] = useState<any[]>(() => {
+    const cached = localStorage.getItem('financialAnalysis_recentTransactions');
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [futureEvents, setFutureEvents] = useState<any[]>(() => {
+    const cached = localStorage.getItem('financialAnalysis_futureEvents');
+    return cached ? JSON.parse(cached) : [];
+  });
   
   const [showSplash, setShowSplash] = useState(false);
 
@@ -88,12 +103,13 @@ export default function FinancialAnalysis() {
         endDate: now.toISOString().split('T')[0]
       });
       
-      // Obtener transacciones del período actual
+      // Obtener transacciones del período actual (sin await para no bloquear)
       const { data: transactions } = await supabase
         .from('transactions')
         .select('*')
         .eq('user_id', user.id)
         .gte('transaction_date', startDate.toISOString().split('T')[0])
+        .lte('transaction_date', now.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
       
       // Calcular promedios históricos: SIEMPRE últimos 12 meses + mes actual (13 meses total)
@@ -490,15 +506,8 @@ export default function FinancialAnalysis() {
           </Tabs>
         </div>
 
-        {/* Mostrar métricas instantáneas primero, luego actualizar con análisis completo */}
-        {!quickMetrics && !analysis ? (
-          <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="text-center">
-              <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-white/80">Calculando métricas {period === 'month' ? 'mensuales' : 'anuales'}...</p>
-            </div>
-          </div>
-        ) : (quickMetrics || analysis) ? (
+        {/* Mostrar métricas instantáneas (siempre disponibles del caché) */}
+        {(quickMetrics || analysis) ? (
           <>
             {/* Animated Income & Expense Lines */}
             <Card 
