@@ -1501,15 +1501,15 @@ const Dashboard = () => {
           <div className="space-y-6">
             
             {/* Recent Transactions */}
-            <Card className="p-3 bg-gradient-to-br from-[hsl(45,60%,25%)] to-[hsl(38,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(45,70%,45%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
+            <Card className="p-3 glass card-glow shadow-2xl border-border relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
               
               <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
                 <div className="flex items-center justify-between flex-shrink-0">
-                  <h3 className="text-sm sm:text-xs font-bold text-white drop-shadow-lg">📊 Movimientos Recientes</h3>
+                  <h3 className="text-sm sm:text-xs font-bold text-foreground drop-shadow-lg">📊 Movimientos Recientes</h3>
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="text-[10px] sm:text-[9px] text-white hover:bg-white/10 hover:scale-105 transition-transform duration-200 h-6 px-2"
+                    className="text-[10px] sm:text-[9px] text-foreground hover:bg-white/10 hover:scale-105 transition-transform duration-200 h-6 px-2"
                     onClick={() => navigate('/gastos')}
                   >
                     Ver todas
@@ -1518,8 +1518,8 @@ const Dashboard = () => {
 
                 {recentTransactions.length === 0 ? (
                   <div className="text-center py-3 flex-1 flex flex-col justify-center">
-                    <p className="text-xs sm:text-[10px] text-white/70 mb-1">Sin movimientos</p>
-                    <p className="text-[10px] sm:text-[9px] text-white/50">Registra tu primer transacción</p>
+                    <p className="text-xs sm:text-[10px] text-muted-foreground mb-1">Sin movimientos</p>
+                    <p className="text-[10px] sm:text-[9px] text-muted-foreground">Registra tu primer transacción</p>
                   </div>
                 ) : (
                   <div className="flex-1 min-h-0 overflow-y-auto pr-1">
@@ -1527,23 +1527,23 @@ const Dashboard = () => {
                       {recentTransactions.map((transaction) => (
                         <div 
                           key={transaction.id}
-                          className="flex items-center gap-1.5 sm:gap-2 py-2 sm:py-2 px-2 sm:px-3 bg-white/10 rounded backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all min-h-[50px] sm:min-h-[40px]"
+                          className="flex items-center gap-1.5 sm:gap-2 py-2 sm:py-2 px-2 sm:px-3 glass rounded border-border hover:bg-white/15 transition-all min-h-[50px] sm:min-h-[40px]"
                         >
-                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-amber-400 to-yellow-700 flex items-center justify-center text-sm sm:text-base shadow-lg shrink-0">
+                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full glass flex items-center justify-center text-sm sm:text-base shadow-lg shrink-0">
                             {transaction.type === 'ingreso' ? '💰' : '💳'}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs sm:text-sm font-bold text-white truncate leading-tight">
+                            <p className="text-xs sm:text-sm font-bold text-foreground truncate leading-tight">
                               {transaction.description}
                             </p>
                             <div className="flex items-center gap-1 mt-0.5">
-                              <span className="text-[10px] sm:text-[10px] text-white/60">
+                              <span className="text-[10px] sm:text-[10px] text-muted-foreground">
                                 {new Date(transaction.transaction_date).toLocaleDateString('es-MX')}
                               </span>
                               {transaction.categories?.name && (
                                 <>
-                                  <span className="text-[10px] sm:text-[10px] text-white/60">•</span>
-                                  <span className="text-[10px] sm:text-[10px] text-white/60 truncate">
+                                  <span className="text-[10px] sm:text-[10px] text-muted-foreground">•</span>
+                                  <span className="text-[10px] sm:text-[10px] text-muted-foreground truncate">
                                     {transaction.categories.name}
                                   </span>
                                 </>
