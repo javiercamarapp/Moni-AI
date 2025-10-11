@@ -67,7 +67,7 @@ export default function SubscriptionsWidget({ subscriptions, totalMonthly }: Sub
 
                 <div className="flex flex-wrap gap-1 mt-2">
                   {isUnused && (
-                    <Badge variant="outline" className="text-[10px] glass text-foreground border-border">
+                    <Badge variant="outline" className="text-[10px] bg-yellow-500/10 text-yellow-300 border-yellow-500/30">
                       Sin uso {sub.daysUnused} días
                     </Badge>
                   )}
@@ -84,8 +84,8 @@ export default function SubscriptionsWidget({ subscriptions, totalMonthly }: Sub
         </div>
 
         {unusedSubs.length > 0 && (
-          <div className="glass rounded-lg p-2 border-border">
-            <p className="text-xs text-foreground">
+          <div className="bg-yellow-500/10 rounded-lg p-2 border border-yellow-500/30">
+            <p className="text-xs text-yellow-200">
               💡 {unusedSubs.length} suscripciones sin usar podrían ahorrarte ${unusedSubs.reduce((sum, s) => sum + s.amount, 0)}/mes
             </p>
           </div>

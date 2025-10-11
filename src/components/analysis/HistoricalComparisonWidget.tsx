@@ -97,8 +97,8 @@ export default function HistoricalComparisonWidget({ data, insight }: Historical
         </div>
 
         {insight && (
-          <div className="glass rounded px-3 py-2 border-border">
-            <p className="text-[10px] text-foreground leading-snug">
+          <div className="bg-purple-500/20 rounded px-3 py-2 border border-purple-500/30">
+            <p className="text-[10px] text-purple-200 leading-snug">
               🔸 <span className="font-medium">Insight:</span> {insight}
             </p>
           </div>

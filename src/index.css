@@ -4,68 +4,66 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Moni Fintech Design System - Apple Glass Minimal */
+/* Moni Fintech Design System - Minimalist Black & White Futuristic */
 
 @layer base {
   :root {
-    /* White base - Apple style */
-    --background: 0 0% 98%;
-    --foreground: 0 0% 10%;
+    /* Deep metallic base */
+    --background: 220 25% 6%;
+    --foreground: 210 12% 80%;
 
-    /* Glass cards - transparent on white */
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
-    --card-border: 0 0% 88%;
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(0, 0, 0, 0.08);
+    /* Cards and surfaces - Deep metallic */
+    --card: 218 22% 9%;
+    --card-foreground: 210 10% 85%;
+    --card-border: 215 15% 18%;
 
-    /* Primary - transparent glass */
-    --primary: 0 0% 10%;
-    --primary-foreground: 0 0% 10%;
-    --primary-glow: 0 0% 20%;
+    /* Primary deep metallic blue */
+    --primary: 218 28% 12%;
+    --primary-foreground: 210 10% 88%;
+    --primary-glow: 215 22% 20%;
 
-    /* Secondary - transparent glass */
-    --secondary: 0 0% 100%;
-    --secondary-foreground: 0 0% 10%;
+    /* Secondary deep metallic grey */
+    --secondary: 222 18% 16%;
+    --secondary-foreground: 210 10% 82%;
 
-    /* Muted - transparent glass */
-    --muted: 0 0% 100%;
-    --muted-foreground: 0 0% 45%;
+    /* Muted deep metallic colors */
+    --muted: 220 15% 14%;
+    --muted-foreground: 215 8% 50%;
 
-    /* Accent - transparent glass */
-    --accent: 0 0% 100%;
-    --accent-foreground: 0 0% 10%;
+    /* Accent deep metallic steel */
+    --accent: 200 18% 22%;
+    --accent-foreground: 210 10% 88%;
 
-    /* Status colors - ONLY for financial data */
-    --destructive: 0 70% 50%;
-    --destructive-foreground: 0 0% 100%;
-    --success: 142 70% 45%;
-    --success-foreground: 0 0% 100%;
-    --danger: 0 70% 50%;
-    --danger-foreground: 0 0% 100%;
-    --warning: 38 90% 50%;
-    --warning-foreground: 0 0% 100%;
+    /* Status colors - Deep metallic tones */
+    --destructive: 0 50% 28%;
+    --destructive-foreground: 0 0% 92%;
+    --success: 150 35% 20%;
+    --success-foreground: 0 0% 92%;
+    --danger: 0 45% 25%;
+    --danger-foreground: 0 0% 92%;
+    --warning: 38 40% 25%;
+    --warning-foreground: 0 0% 92%;
 
-    /* Interactive elements - neutral */
-    --border: 0 0% 88%;
-    --input: 0 0% 10%;
-    --ring: 0 0% 70%;
+    /* Interactive elements */
+    --border: 215 15% 18%;
+    --input: 215 10% 85%;
+    --ring: 215 28% 15%;
 
-    /* Gradients - Minimal glass */
-    --gradient-primary: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
-    --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.5) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(0 0% 98%) 0%, hsl(0 0% 96%) 100%);
+    /* Gradients - Deep Metallic */
+    --gradient-primary: linear-gradient(135deg, hsl(218 28% 9%) 0%, hsl(215 22% 14%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(218 25% 10%) 0%, hsl(220 20% 15%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(220 25% 7%) 0%, hsl(218 20% 11%) 50%, hsl(215 18% 15%) 100%);
 
-    /* Shadows - Apple style */
-    --shadow-glow: 0 2px 16px rgba(0, 0, 0, 0.06);
-    --shadow-card: 0 2px 16px rgba(0, 0, 0, 0.04);
-    --shadow-elegant: 0 4px 24px rgba(0, 0, 0, 0.08);
+    /* Shadows - Deep Metallic glow */
+    --shadow-glow: 0 0 45px hsl(215 35% 12% / 0.5);
+    --shadow-card: 0 10px 28px hsl(218 28% 6% / 0.6);
+    --shadow-elegant: 0 14px 52px hsl(215 32% 8% / 0.7);
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-    --radius: 1.25rem;
+    --radius: 0.5rem;
 
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 0 0% 9%;
@@ -135,8 +133,7 @@
 }
 
   body {
-    @apply text-foreground font-inter antialiased;
-    background: hsl(var(--background));
+    @apply bg-background text-foreground font-inter antialiased;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-y: auto;
@@ -151,66 +148,17 @@
 }
 
 @layer components {
-  /* Apple-style Glass on White - Everything transparent */
-  .glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
-    border-radius: var(--radius);
-  }
-
-  .glass-strong {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(24px) saturate(200%);
-    -webkit-backdrop-filter: blur(24px) saturate(200%);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-  }
-
-  /* ONLY green/red elements are solid (not transparent) */
-  .bg-success,
-  .badge-success,
-  [class*="success"] {
-    background: hsl(var(--success)) !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-
-  .bg-destructive,
-  .bg-danger,
-  .badge-danger,
-  .badge-destructive,
-  [class*="destructive"],
-  [class*="danger"] {
-    background: hsl(var(--destructive)) !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-
-  .text-success {
-    color: hsl(var(--success)) !important;
-  }
-
-  .text-destructive,
-  .text-danger {
-    color: hsl(var(--destructive)) !important;
-  }
-
+  /* Subtle shadow effects */
   .glow-primary {
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-glow);
   }
 
-  /* Gradient backgrounds - subtle */
+  .card-glow {
+    box-shadow: var(--shadow-card);
+    border: 1px solid hsl(var(--card-border));
+  }
+
+  /* Gradient backgrounds */
   .bg-gradient-primary {
     background: var(--gradient-primary);
   }
@@ -223,15 +171,14 @@
     background: var(--gradient-hero);
   }
 
-  /* Interactive animations - Apple style */
+  /* Interactive animations */
   .hover-lift {
     transition: var(--transition-smooth);
   }
 
   .hover-lift:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-    border-color: rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-elegant);
   }
 
   .bounce-in {
@@ -336,3 +283,20 @@
   }
 }
 
+/* Animated wave background - Deep metallic */
+.animated-wave-bg {
+  background: 
+    radial-gradient(ellipse at 20% 30%, rgba(30, 42, 58, 0.25) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(25, 38, 52, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 40% 80%, rgba(20, 35, 50, 0.35) 0%, transparent 50%),
+    linear-gradient(135deg, 
+      hsl(220, 28%, 5%) 0%, 
+      hsl(218, 25%, 8%) 20%,
+      hsl(220, 22%, 11%) 40%,
+      hsl(218, 20%, 9%) 60%,
+      hsl(220, 26%, 7%) 80%,
+      hsl(220, 28%, 5%) 100%
+    );
+  background-size: 300% 300%, 250% 250%, 280% 280%, 200% 200%;
+  animation: wave-3d 12s ease-in-out infinite, gradient-shift 8s ease-in-out infinite;
+}

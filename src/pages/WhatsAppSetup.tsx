@@ -285,7 +285,6 @@ export default function WhatsAppSetup() {
             </div>
           </div>
         </Card>
-
       </div>
     </div>
   );

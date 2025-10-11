@@ -86,15 +86,6 @@ export default {
         'gradient-card': 'var(--gradient-card)',
         'gradient-hero': 'var(--gradient-hero)',
       },
-      backdropBlur: {
-        xs: '2px',
-        glass: '16px',
-        strong: '24px',
-      },
-      backdropSaturate: {
-        glass: '180%',
-        strong: '200%',
-      },
       transitionTimingFunction: {
         smooth: 'cubic-bezier(0.4, 0, 0.2, 1)',
         bounce: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
@@ -116,24 +107,10 @@ export default {
             height: "0",
           },
         },
-        aurora: {
-          from: {
-            backgroundPosition: "50% 50%, 50% 50%",
-          },
-          to: {
-            backgroundPosition: "350% 50%, 350% 50%",
-          },
-        },
-        "wave-pulse": {
-          "0%, 100%": { opacity: "0.4" },
-          "50%": { opacity: "0.7" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        aurora: "aurora 60s linear infinite",
-        "wave-pulse": "wave-pulse 4s ease-in-out infinite",
       },
     },
   },

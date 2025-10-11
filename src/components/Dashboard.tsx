@@ -914,13 +914,13 @@ const Dashboard = () => {
         {/* Puntos y nivel + Notificaciones */}
         <div className="flex gap-2 items-center">
           {/* Botón de puntos y nivel */}
-          <Button variant="ghost" className="glass hover:bg-white/80 text-foreground h-10 px-3 gap-2 hover:scale-105 transition-transform duration-200">
+          <Button variant="ghost" className="bg-gradient-card card-glow hover:bg-white/20 text-white h-10 px-3 gap-2 hover:scale-105 transition-transform duration-200">
             <span className="text-sm font-bold">{currentXP} pts</span>
             <span className="text-xs opacity-80">Nivel {level}</span>
           </Button>
           
           {/* Botón de notificaciones */}
-          <Button variant="ghost" size="icon" className="glass hover:bg-white/80 text-foreground h-10 w-10 hover:scale-105 transition-transform duration-200">
+          <Button variant="ghost" size="icon" className="bg-gradient-card card-glow hover:bg-white/20 text-white h-10 w-10 hover:scale-105 transition-transform duration-200">
             <Bell className="h-5 w-5" />
           </Button>
         </div>
@@ -929,24 +929,24 @@ const Dashboard = () => {
       {/* Header con saludo */}
       <div className="p-4 pt-2 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-base sm:text-lg font-bold text-foreground leading-tight">
+          <h1 className="text-base sm:text-lg font-bold text-white leading-tight">
             ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
           </h1>
-          <p className="text-sm text-foreground">Vas excelente con tus metas financieras</p>
+          <p className="text-sm text-white">Vas excelente con tus metas financieras</p>
         </div>
         
         {/* Botón de cuentas y tarjetas */}
         <Card 
-          className="p-3 glass hover:scale-105 transition-transform duration-200 cursor-pointer flex-shrink-0"
+          className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 cursor-pointer flex-shrink-0"
           onClick={() => navigate('/net-worth')}
         >
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg glass flex items-center justify-center flex-shrink-0">
-              <CreditCard className="w-4 h-4 text-foreground" />
+            <div className="w-8 h-8 rounded-lg bg-purple-500/30 flex items-center justify-center flex-shrink-0">
+              <CreditCard className="w-4 h-4 text-white" />
             </div>
             <div className="text-left">
-              <p className="text-xs text-muted-foreground leading-tight whitespace-nowrap">Mis cuentas</p>
-              <p className="text-xs font-bold text-foreground leading-tight whitespace-nowrap">y tarjetas</p>
+              <p className="text-xs text-white/80 leading-tight whitespace-nowrap">Mis cuentas</p>
+              <p className="text-xs font-bold text-white leading-tight whitespace-nowrap">y tarjetas</p>
             </div>
           </div>
         </Card>
@@ -998,63 +998,63 @@ const Dashboard = () => {
       <div className="mx-4 space-y-4 sm:space-y-6">
         {/* Quick Stats - 4 botones horizontales en una línea */}
         <div className="grid grid-cols-4 gap-2 sm:gap-3">
-          <Card className="p-3 glass hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
+          <Card className="p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
           animationDelay: '100ms'
         }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg glass flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-muted-foreground leading-tight">Ingreso vs Gasto</p>
-                <p className="text-xs sm:text-base font-bold text-foreground leading-tight">
+                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Ingreso vs Gasto</p>
+                <p className="text-xs sm:text-base font-bold text-white leading-tight">
                   ${(currentMonth.balance / 1000).toFixed(0)}k
                 </p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-3 glass hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer" 
+          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer" 
             style={{ animationDelay: '200ms' }}
             onClick={() => navigate('/net-worth')}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg glass flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-success/30 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-success-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-muted-foreground leading-tight">Net Worth</p>
-                <p className="text-xs sm:text-base font-bold text-foreground leading-tight">
+                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Net Worth</p>
+                <p className="text-xs sm:text-base font-bold text-white leading-tight">
                   ${(netWorth / 1000).toFixed(0)}k
                 </p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-3 glass hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
+          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
           animationDelay: '300ms'
         }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg glass flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Target className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-warning/30 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+                <Target className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-warning-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-muted-foreground leading-tight">Metas</p>
-                <p className="text-xs sm:text-base font-bold text-foreground leading-tight">{goals.length}</p>
+                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Metas</p>
+                <p className="text-xs sm:text-base font-bold text-white leading-tight">{goals.length}</p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-3 glass hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
+          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
           animationDelay: '400ms'
         }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg glass flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-muted-foreground leading-tight">Presupuestos</p>
-                <p className="text-xs sm:text-base font-bold text-foreground leading-tight">
+                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Presupuestos</p>
+                <p className="text-xs sm:text-base font-bold text-white leading-tight">
                   ${(monthlyIncome / 1000).toFixed(0)}k
                 </p>
               </div>
@@ -1501,15 +1501,15 @@ const Dashboard = () => {
           <div className="space-y-6">
             
             {/* Recent Transactions */}
-            <Card className="p-3 glass card-glow shadow-2xl border-border relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
+            <Card className="p-3 bg-gradient-to-br from-[hsl(45,60%,25%)] to-[hsl(38,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(45,70%,45%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
               
               <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
                 <div className="flex items-center justify-between flex-shrink-0">
-                  <h3 className="text-sm sm:text-xs font-bold text-foreground drop-shadow-lg">📊 Movimientos Recientes</h3>
+                  <h3 className="text-sm sm:text-xs font-bold text-white drop-shadow-lg">📊 Movimientos Recientes</h3>
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="text-[10px] sm:text-[9px] text-foreground hover:bg-white/10 hover:scale-105 transition-transform duration-200 h-6 px-2"
+                    className="text-[10px] sm:text-[9px] text-white hover:bg-white/10 hover:scale-105 transition-transform duration-200 h-6 px-2"
                     onClick={() => navigate('/gastos')}
                   >
                     Ver todas
@@ -1518,8 +1518,8 @@ const Dashboard = () => {
 
                 {recentTransactions.length === 0 ? (
                   <div className="text-center py-3 flex-1 flex flex-col justify-center">
-                    <p className="text-xs sm:text-[10px] text-muted-foreground mb-1">Sin movimientos</p>
-                    <p className="text-[10px] sm:text-[9px] text-muted-foreground">Registra tu primer transacción</p>
+                    <p className="text-xs sm:text-[10px] text-white/70 mb-1">Sin movimientos</p>
+                    <p className="text-[10px] sm:text-[9px] text-white/50">Registra tu primer transacción</p>
                   </div>
                 ) : (
                   <div className="flex-1 min-h-0 overflow-y-auto pr-1">
@@ -1527,23 +1527,23 @@ const Dashboard = () => {
                       {recentTransactions.map((transaction) => (
                         <div 
                           key={transaction.id}
-                          className="flex items-center gap-1.5 sm:gap-2 py-2 sm:py-2 px-2 sm:px-3 glass rounded border-border hover:bg-white/15 transition-all min-h-[50px] sm:min-h-[40px]"
+                          className="flex items-center gap-1.5 sm:gap-2 py-2 sm:py-2 px-2 sm:px-3 bg-white/10 rounded backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all min-h-[50px] sm:min-h-[40px]"
                         >
-                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full glass flex items-center justify-center text-sm sm:text-base shadow-lg shrink-0">
+                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-amber-400 to-yellow-700 flex items-center justify-center text-sm sm:text-base shadow-lg shrink-0">
                             {transaction.type === 'ingreso' ? '💰' : '💳'}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs sm:text-sm font-bold text-foreground truncate leading-tight">
+                            <p className="text-xs sm:text-sm font-bold text-white truncate leading-tight">
                               {transaction.description}
                             </p>
                             <div className="flex items-center gap-1 mt-0.5">
-                              <span className="text-[10px] sm:text-[10px] text-muted-foreground">
+                              <span className="text-[10px] sm:text-[10px] text-white/60">
                                 {new Date(transaction.transaction_date).toLocaleDateString('es-MX')}
                               </span>
                               {transaction.categories?.name && (
                                 <>
-                                  <span className="text-[10px] sm:text-[10px] text-muted-foreground">•</span>
-                                  <span className="text-[10px] sm:text-[10px] text-muted-foreground truncate">
+                                  <span className="text-[10px] sm:text-[10px] text-white/60">•</span>
+                                  <span className="text-[10px] sm:text-[10px] text-white/60 truncate">
                                     {transaction.categories.name}
                                   </span>
                                 </>
