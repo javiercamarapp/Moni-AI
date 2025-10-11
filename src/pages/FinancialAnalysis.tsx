@@ -562,69 +562,86 @@ export default function FinancialAnalysis() {
               className="p-4 bg-gradient-card card-glow space-y-4 animate-fade-in" 
               style={{ animationDelay: '0ms' }}
             >
-              {/* Ingresos */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-                      <TrendingUp className="w-5 h-5 text-green-400" />
+              {(() => {
+                const income = (analysis?.metrics?.totalIncome ?? quickMetrics?.totalIncome) || 0;
+                const expenses = (analysis?.metrics?.totalExpenses ?? quickMetrics?.totalExpenses) || 0;
+                const balance = (analysis?.metrics?.balance ?? quickMetrics?.balance) || 0;
+                
+                console.log('🎨 UI MOSTRANDO:', {
+                  ingresos: income,
+                  gastos: expenses,
+                  balance: balance,
+                  fuente: analysis?.metrics ? 'analysis' : 'quickMetrics'
+                });
+                
+                return (
+                  <>
+                    {/* Ingresos */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
+                            <TrendingUp className="w-5 h-5 text-green-400" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-white">Ingresos</p>
+                            <p className="text-xs text-white/70">Período actual</p>
+                          </div>
+                        </div>
+                        <p className="text-xl font-bold text-green-400">
+                          ${income.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </p>
+                      </div>
+                      <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
+                        <div 
+                          className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-600 to-green-400 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.5)]"
+                          style={{ 
+                            width: `${Math.min((income / Math.max(income, expenses)) * 100, 100)}%`,
+                            animation: 'slideIn 1.5s ease-out'
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-semibold text-white">Ingresos</p>
-                      <p className="text-xs text-white/70">Período actual</p>
-                    </div>
-                  </div>
-                  <p className="text-xl font-bold text-green-400">
-                    ${((analysis?.metrics?.totalIncome ?? quickMetrics?.totalIncome) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </p>
-                </div>
-                <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
-                  <div 
-                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-600 to-green-400 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.5)]"
-                    style={{ 
-                      width: `${Math.min((((analysis?.metrics?.totalIncome ?? quickMetrics?.totalIncome) || 0) / Math.max((analysis?.metrics?.totalIncome ?? quickMetrics?.totalIncome) || 1, (analysis?.metrics?.totalExpenses ?? quickMetrics?.totalExpenses) || 1)) * 100, 100)}%`,
-                      animation: 'slideIn 1.5s ease-out'
-                    }}
-                  />
-                </div>
-              </div>
 
-              {/* Gastos */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
-                      <TrendingDown className="w-5 h-5 text-red-400" />
+                    {/* Gastos */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
+                            <TrendingDown className="w-5 h-5 text-red-400" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-white">Gastos</p>
+                            <p className="text-xs text-white/70">Período actual</p>
+                          </div>
+                        </div>
+                        <p className="text-xl font-bold text-red-400">
+                          ${expenses.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </p>
+                      </div>
+                      <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
+                        <div 
+                          className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)]"
+                          style={{ 
+                            width: `${Math.min((expenses / Math.max(income, expenses)) * 100, 100)}%`,
+                            animation: 'slideIn 1.5s ease-out 0.3s both'
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-semibold text-white">Gastos</p>
-                      <p className="text-xs text-white/70">Período actual</p>
-                    </div>
-                  </div>
-                  <p className="text-xl font-bold text-red-400">
-                    ${((analysis?.metrics?.totalExpenses ?? quickMetrics?.totalExpenses) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </p>
-                </div>
-                <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
-                  <div 
-                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)]"
-                    style={{ 
-                      width: `${Math.min((((analysis?.metrics?.totalExpenses ?? quickMetrics?.totalExpenses) || 0) / Math.max((analysis?.metrics?.totalIncome ?? quickMetrics?.totalIncome) || 1, (analysis?.metrics?.totalExpenses ?? quickMetrics?.totalExpenses) || 1)) * 100, 100)}%`,
-                      animation: 'slideIn 1.5s ease-out 0.3s both'
-                    }}
-                  />
-                </div>
-              </div>
 
-              {/* Balance */}
-              <div className="pt-2 border-t border-white/10">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-white">Balance</p>
-                  <p className={`text-xl font-bold ${((analysis?.metrics?.balance ?? quickMetrics?.balance) || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {((analysis?.metrics?.balance ?? quickMetrics?.balance) || 0) >= 0 ? '+' : ''}${((analysis?.metrics?.balance ?? quickMetrics?.balance) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </p>
-                </div>
-              </div>
+                    {/* Balance */}
+                    <div className="pt-2 border-t border-white/10">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-semibold text-white">Balance</p>
+                        <p className={`text-xl font-bold ${balance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          {balance >= 0 ? '+' : ''}${balance.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
             </Card>
 
             {/* Risk Indicators */}
