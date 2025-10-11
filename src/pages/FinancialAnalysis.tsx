@@ -94,27 +94,37 @@ export default function FinancialAnalysis() {
       // Calcular fechas según el período
       const now = new Date();
       let startDate: Date;
+      let endDate: Date;
       
       if (period === 'month') {
         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0); // Último día del mes
       } else {
         startDate = new Date(now.getFullYear(), 0, 1);
+        endDate = new Date(now.getFullYear(), 11, 31); // 31 de diciembre
       }
       
       console.log('📅 Date range:', { 
         period, 
         startDate: startDate.toISOString().split('T')[0],
-        endDate: now.toISOString().split('T')[0]
+        endDate: endDate.toISOString().split('T')[0]
       });
       
-      // Obtener transacciones del período actual (sin await para no bloquear)
+      // Obtener transacciones del período actual
       const { data: transactions } = await supabase
         .from('transactions')
         .select('*')
         .eq('user_id', user.id)
         .gte('transaction_date', startDate.toISOString().split('T')[0])
-        .lte('transaction_date', now.toISOString().split('T')[0])
+        .lte('transaction_date', endDate.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
+      
+      console.log('📅 ANÁLISIS FINANCIERO - Rango de fechas:', {
+        periodo: period,
+        fechaInicio: startDate.toISOString().split('T')[0],
+        fechaFin: endDate.toISOString().split('T')[0],
+        transaccionesTotales: transactions?.length || 0
+      });
       
       // Calcular promedios históricos: SIEMPRE últimos 12 meses + mes actual (13 meses total)
       const historicalStartDate = new Date(now);
