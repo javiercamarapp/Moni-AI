@@ -16,8 +16,13 @@ interface FutureCalendarProps {
 }
 
 export default function FutureCalendarWidget({ events }: FutureCalendarProps) {
-  // Sort events by date
-  const sortedEvents = [...events].sort((a, b) => a.date.getTime() - b.date.getTime());
+  // Convertir fechas a objetos Date si son strings y ordenar
+  const sortedEvents = [...events]
+    .map(event => ({
+      ...event,
+      date: typeof event.date === 'string' ? new Date(event.date) : event.date
+    }))
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
   
   const getEventIcon = (type: string) => {
     switch (type) {
