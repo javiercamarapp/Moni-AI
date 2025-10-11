@@ -552,7 +552,7 @@ export default function FinancialAnalysis() {
                     </div>
                   </div>
                   <p className="text-xl font-bold text-green-400">
-                    ${formatK((analysis?.metrics?.totalIncome ?? quickMetrics?.totalIncome) || 0)}k
+                    ${((analysis?.metrics?.totalIncome ?? quickMetrics?.totalIncome) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </p>
                 </div>
                 <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
@@ -579,7 +579,7 @@ export default function FinancialAnalysis() {
                     </div>
                   </div>
                   <p className="text-xl font-bold text-red-400">
-                    ${formatK((analysis?.metrics?.totalExpenses ?? quickMetrics?.totalExpenses) || 0)}k
+                    ${((analysis?.metrics?.totalExpenses ?? quickMetrics?.totalExpenses) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </p>
                 </div>
                 <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
@@ -598,7 +598,7 @@ export default function FinancialAnalysis() {
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-white">Balance</p>
                   <p className={`text-xl font-bold ${((analysis?.metrics?.balance ?? quickMetrics?.balance) || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {((analysis?.metrics?.balance ?? quickMetrics?.balance) || 0) >= 0 ? '+' : ''}${formatK((analysis?.metrics?.balance ?? quickMetrics?.balance) || 0)}k
+                    {((analysis?.metrics?.balance ?? quickMetrics?.balance) || 0) >= 0 ? '+' : ''}${((analysis?.metrics?.balance ?? quickMetrics?.balance) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </p>
                 </div>
               </div>
