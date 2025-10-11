@@ -248,14 +248,17 @@ export default function FinancialAnalysis() {
         consistencyScore: 0,
         projectedAnnualSavings: balance * 12,
         mindfulSpendingIndex: 0,
-        scoreMoni: Math.min(100, score)
+        scoreMoni: Math.min(100, score),
+        transactionsCount: transactions.length
       };
       
       console.log('💰 QUICK METRICS CALCULATED:', {
+        periodo: period,
+        fechaInicio: startDate.toISOString().split('T')[0],
+        transacciones: transactions.length,
         ingresos: totalIncome,
         gastos: totalExpenses,
-        balance: balance,
-        transactions: transactions.length
+        balance: balance
       });
       
       setQuickMetrics(metricsData);
@@ -575,6 +578,12 @@ export default function FinancialAnalysis() {
               className="p-4 bg-gradient-card card-glow space-y-4 animate-fade-in" 
               style={{ animationDelay: '0ms' }}
             >
+              {quickMetrics && (
+                <div className="mb-2 p-2 bg-black/20 rounded text-xs text-white/60">
+                  Debug: Período {period} | TX: {quickMetrics.transactionsCount || 0}
+                </div>
+              )}
+              
               {/* Ingresos */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -584,7 +593,7 @@ export default function FinancialAnalysis() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-white">Ingresos</p>
-                      <p className="text-xs text-white/70">Total del período</p>
+                      <p className="text-xs text-white/70">Período actual</p>
                     </div>
                   </div>
                   <p className="text-xl font-bold text-green-400">
@@ -611,7 +620,7 @@ export default function FinancialAnalysis() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-white">Gastos</p>
-                      <p className="text-xs text-white/70">Total del período</p>
+                      <p className="text-xs text-white/70">Período actual</p>
                     </div>
                   </div>
                   <p className="text-xl font-bold text-red-400">
