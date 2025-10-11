@@ -330,56 +330,59 @@ const Dashboard = () => {
         const shouldUpdate = !lastUpdate || (now - parseInt(lastUpdate)) > ONE_DAY;
 
         if (shouldUpdate) {
-          // Fetch last 100 expense transactions for AI analysis (instead of all)
-          const { data: allExpenses } = await supabase
-            .from('transactions')
-            .select('*, categories(name)')
-            .eq('user_id', user.id)
-            .eq('type', 'gasto')
-            .order('transaction_date', { ascending: false })
-            .limit(100);
-
-          if (allExpenses && allExpenses.length > 0) {
+          // Ejecutar AI en background sin bloquear la UI
+          setTimeout(async () => {
             try {
-              // Use AI to detect subscriptions
-              const { data: aiResult } = await supabase.functions.invoke('detect-subscriptions', {
-                body: { transactions: allExpenses }
-              });
+              // Fetch last 100 expense transactions for AI analysis (instead of all)
+              const { data: allExpenses } = await supabase
+                .from('transactions')
+                .select('*, categories(name)')
+                .eq('user_id', user.id)
+                .eq('type', 'gasto')
+                .order('transaction_date', { ascending: false })
+                .limit(100);
 
-              // Agrupar por nombre de concepto para mostrar solo UNO por tipo
-              const uniqueSubs = new Map();
-              (aiResult?.subscriptions || []).forEach((sub: any) => {
-                const normalizedName = sub.description.toLowerCase()
-                  .replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '')
-                  .replace(/\s*\d{4}$/g, '')
-                  .trim();
-                
-                if (!uniqueSubs.has(normalizedName)) {
-                  uniqueSubs.set(normalizedName, {
-                    name: sub.description.replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '').trim(),
-                    amount: Number(sub.amount),
-                    icon: getSubscriptionIcon(sub.description),
-                    frequency: sub.frequency || 'mensual',
-                  });
-                }
-              });
+              if (allExpenses && allExpenses.length > 0) {
+                // Use AI to detect subscriptions
+                const { data: aiResult } = await supabase.functions.invoke('detect-subscriptions', {
+                  body: { transactions: allExpenses }
+                });
 
-              const detectedSubs = Array.from(uniqueSubs.values()).map((sub: any, index: number) => ({
-                id: `ai-sub-${index}`,
-                name: sub.name,
-                amount: sub.amount,
-                icon: sub.icon,
-                dueDate: calculateNextDueDate(sub.frequency),
-              }));
+                // Agrupar por nombre de concepto para mostrar solo UNO por tipo
+                const uniqueSubs = new Map();
+                (aiResult?.subscriptions || []).forEach((sub: any) => {
+                  const normalizedName = sub.description.toLowerCase()
+                    .replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '')
+                    .replace(/\s*\d{4}$/g, '')
+                    .trim();
+                  
+                  if (!uniqueSubs.has(normalizedName)) {
+                    uniqueSubs.set(normalizedName, {
+                      name: sub.description.replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '').trim(),
+                      amount: Number(sub.amount),
+                      icon: getSubscriptionIcon(sub.description),
+                      frequency: sub.frequency || 'mensual',
+                    });
+                  }
+                });
 
-              setUpcomingSubscriptions(detectedSubs);
-              // Cache the results
-              localStorage.setItem('cachedSubscriptions', JSON.stringify(detectedSubs));
-              localStorage.setItem('subscriptionsLastUpdate', now.toString());
+                const detectedSubs = Array.from(uniqueSubs.values()).map((sub: any, index: number) => ({
+                  id: `ai-sub-${index}`,
+                  name: sub.name,
+                  amount: sub.amount,
+                  icon: sub.icon,
+                  dueDate: calculateNextDueDate(sub.frequency),
+                }));
+
+                setUpcomingSubscriptions(detectedSubs);
+                // Cache the results
+                localStorage.setItem('cachedSubscriptions', JSON.stringify(detectedSubs));
+                localStorage.setItem('subscriptionsLastUpdate', now.toString());
+              }
             } catch (aiError) {
               console.error('Error calling AI:', aiError);
             }
-          }
+          }, 100); // Ejecutar después de 100ms para no bloquear
         }
 
         // Mock credit card debts (esto se obtendría de la conexión bancaria real)
@@ -437,9 +440,19 @@ const Dashboard = () => {
         return;
       }
 
+      // Mostrar mensaje inmediato basado en lógica simple
+      const budget = monthlyIncome * 0.8;
+      const percentageSpent = (monthlyExpenses / budget) * 100;
+      if (percentageSpent > 90) {
+        setBudgetMessage("⚠️ Hay que mejorar o no lograremos el presupuesto del mensual");
+      } else if (percentageSpent > 75) {
+        setBudgetMessage("⚡ Se debe de ahorrar un poco más");
+      } else {
+        setBudgetMessage("✅ Dentro del presupuesto del mes");
+      }
+
+      // Luego, en background, obtener análisis AI más detallado
       try {
-        setLoadingBudgetMessage(true);
-        
         const now = new Date();
         const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
         const daysIntoMonth = now.getDate();
@@ -453,19 +466,7 @@ const Dashboard = () => {
           }
         });
 
-        if (error) {
-          console.error('Error analyzing budget:', error);
-          // Fallback a lógica simple
-          const budget = monthlyIncome * 0.8;
-          const percentageSpent = (monthlyExpenses / budget) * 100;
-          if (percentageSpent > 90) {
-            setBudgetMessage("⚠️ Hay que mejorar o no lograremos el presupuesto del mensual");
-          } else if (percentageSpent > 75) {
-            setBudgetMessage("⚡ Se debe de ahorrar un poco más");
-          } else {
-            setBudgetMessage("✅ Dentro del presupuesto del mes");
-          }
-        } else {
+        if (!error && data?.message) {
           setBudgetMessage(data?.message || "✅ Dentro del presupuesto del mes");
         }
       } catch (error) {
