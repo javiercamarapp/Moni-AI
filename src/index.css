@@ -151,7 +151,7 @@
 }
 
 @layer components {
-  /* Apple-style Glass on White */
+  /* Apple-style Glass on White - Everything transparent */
   .glass {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(20px) saturate(180%);
@@ -175,6 +175,35 @@
     -webkit-backdrop-filter: blur(24px) saturate(200%);
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  /* ONLY green/red elements are solid (not transparent) */
+  .bg-success,
+  .badge-success,
+  [class*="success"] {
+    background: hsl(var(--success)) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .bg-destructive,
+  .bg-danger,
+  .badge-danger,
+  .badge-destructive,
+  [class*="destructive"],
+  [class*="danger"] {
+    background: hsl(var(--destructive)) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .text-success {
+    color: hsl(var(--success)) !important;
+  }
+
+  .text-destructive,
+  .text-danger {
+    color: hsl(var(--destructive)) !important;
   }
 
   .glow-primary {
