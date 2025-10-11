@@ -115,11 +115,16 @@ export default {
             backgroundPosition: "350% 50%, 350% 50%",
           },
         },
+        "wave-pulse": {
+          "0%, 100%": { opacity: "0.4" },
+          "50%": { opacity: "0.7" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         aurora: "aurora 60s linear infinite",
+        "wave-pulse": "wave-pulse 4s ease-in-out infinite",
       },
     },
   },
