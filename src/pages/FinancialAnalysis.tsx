@@ -251,6 +251,13 @@ export default function FinancialAnalysis() {
         scoreMoni: Math.min(100, score)
       };
       
+      console.log('💰 QUICK METRICS CALCULATED:', {
+        ingresos: totalIncome,
+        gastos: totalExpenses,
+        balance: balance,
+        transactions: transactions.length
+      });
+      
       setQuickMetrics(metricsData);
       localStorage.setItem('financialAnalysis_quickMetrics', JSON.stringify(metricsData));
     } catch (error) {
@@ -496,6 +503,32 @@ export default function FinancialAnalysis() {
   };
   
 
+  const handleRefreshData = () => {
+    // Limpiar todo el caché
+    localStorage.removeItem('financialAnalysis_quickMetrics');
+    localStorage.removeItem('financialAnalysis_historicalAverages');
+    localStorage.removeItem('financialAnalysis_analysis');
+    localStorage.removeItem('financialAnalysis_recentTransactions');
+    localStorage.removeItem('financialAnalysis_futureEvents');
+    localStorage.removeItem(`financialAnalysis_full_${period}_${user?.id}`);
+    localStorage.removeItem(`financialAnalysis_full_${period}_${user?.id}_time`);
+    
+    // Recargar datos
+    setQuickMetrics(null);
+    setAnalysis(null);
+    setHistoricalAverages(null);
+    
+    if (user) {
+      Promise.all([
+        calculateQuickMetrics(),
+        fetchTransactionsData(),
+        loadAnalysis()
+      ]);
+    }
+    
+    toast.success('Datos actualizados');
+  };
+
   return (
     <div className="min-h-screen animated-wave-bg pb-24">
       <div className="mx-4 space-y-4">
@@ -505,16 +538,26 @@ export default function FinancialAnalysis() {
             <h1 className="text-xl font-bold text-white">Análisis Financiero</h1>
             <p className="text-xs text-white/70">Tu salud financiera</p>
           </div>
-          <Tabs value={period} onValueChange={setPeriod}>
-            <TabsList className="h-8 bg-white/10 border border-white/30">
-              <TabsTrigger value="month" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black px-3 py-1">
-                Mes
-              </TabsTrigger>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleRefreshData}
+              className="text-white/70 hover:text-white h-8 w-8 p-0"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </Button>
+            <Tabs value={period} onValueChange={setPeriod}>
+              <TabsList className="h-8 bg-white/10 border border-white/30">
+                <TabsTrigger value="month" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black px-3 py-1">
+                  Mes
+                </TabsTrigger>
               <TabsTrigger value="year" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black px-3 py-1">
                 Año
               </TabsTrigger>
             </TabsList>
           </Tabs>
+          </div>
         </div>
 
         {/* Mostrar métricas instantáneas primero, luego actualizar con análisis completo */}
