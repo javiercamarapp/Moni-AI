@@ -85,7 +85,6 @@ export default {
         'gradient-primary': 'var(--gradient-primary)',
         'gradient-card': 'var(--gradient-card)',
         'gradient-hero': 'var(--gradient-hero)',
-        'gradient-mesh': 'var(--gradient-mesh)',
       },
       backdropBlur: {
         xs: '2px',
