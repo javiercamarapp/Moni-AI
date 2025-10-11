@@ -70,9 +70,16 @@ export default function FinancialAnalysis() {
 
   useEffect(() => {
     if (user) {
-      // Limpiar caché al cambiar período para evitar datos incorrectos
+      // Limpiar TODO el caché al cambiar período
       localStorage.removeItem('financialAnalysis_quickMetrics');
       localStorage.removeItem('financialAnalysis_analysis');
+      localStorage.removeItem('financialAnalysis_historicalAverages');
+      localStorage.removeItem('financialAnalysis_recentTransactions');
+      localStorage.removeItem('financialAnalysis_futureEvents');
+      
+      // Resetear estados a null para forzar recálculo
+      setQuickMetrics(null);
+      setAnalysis(null);
       
       // Ejecutar todas las cargas en paralelo para máxima velocidad
       Promise.all([
