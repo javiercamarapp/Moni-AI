@@ -34,9 +34,10 @@ export default function FinancialAnalysis() {
   const [user, setUser] = useState<any>(null);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
   
-  // Cargar datos del caché inmediatamente para mostrar instantáneamente
+  // Cargar datos del caché inmediatamente para mostrar instantáneamente (con clave específica por período)
   const [quickMetrics, setQuickMetrics] = useState<any>(() => {
-    const cached = localStorage.getItem('financialAnalysis_quickMetrics');
+    const cacheKey = `financialAnalysis_quickMetrics_${period}`;
+    const cached = localStorage.getItem(cacheKey);
     return cached ? JSON.parse(cached) : {
       totalIncome: 0,
       totalExpenses: 0,
@@ -82,10 +83,23 @@ export default function FinancialAnalysis() {
 
   useEffect(() => {
     if (user) {
-      // NO limpiar caché al cambiar período - mantener datos anteriores visibles
-      // mientras se cargan los nuevos
+      // Cargar datos del período correcto
+      const cacheKey = `financialAnalysis_quickMetrics_${period}`;
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        setQuickMetrics(JSON.parse(cached));
+      } else {
+        // Si no hay caché, usar valores por defecto
+        setQuickMetrics({
+          totalIncome: 0,
+          totalExpenses: 0,
+          balance: 0,
+          savingsRate: 0,
+          transactionsCount: 0
+        });
+      }
       
-      // Ejecutar cargas en background sin bloquear UI
+      // Ejecutar cargas en background
       calculateQuickMetrics();
       fetchTransactionsData();
       loadAnalysis();
@@ -211,7 +225,7 @@ export default function FinancialAnalysis() {
       console.log('💵 Cálculo de métricas:', {
         periodo: period,
         fechaInicio: startDate.toISOString().split('T')[0],
-        fechaFin: now.toISOString().split('T')[0],
+        fechaFin: endDate.toISOString().split('T')[0],
         transacciones: transactions.length,
         ingresos: totalIncome,
         gastos: totalExpenses,
@@ -274,7 +288,9 @@ export default function FinancialAnalysis() {
       });
       
       setQuickMetrics(metricsData);
-      localStorage.setItem('financialAnalysis_quickMetrics', JSON.stringify(metricsData));
+      // Guardar con clave específica por período
+      const cacheKey = `financialAnalysis_quickMetrics_${period}`;
+      localStorage.setItem(cacheKey, JSON.stringify(metricsData));
     } catch (error) {
       console.error('Error calculating quick metrics:', error);
     }
