@@ -103,12 +103,12 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
       </div>
 
       {changeReason && (
-        <div className="bg-purple-500/10 rounded-lg p-2 border border-purple-500/30 mt-0">
+        <div className="glass rounded-lg p-2 border-border mt-0">
           <div className="flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 text-purple-300 mt-0.5" />
+            <AlertCircle className="h-4 w-4 text-foreground mt-0.5" />
             <div>
-              <p className="text-xs font-medium text-purple-200">¿Por qué cambió?</p>
-              <p className="text-xs text-white/70 mt-1">{changeReason}</p>
+              <p className="text-xs font-medium text-foreground">¿Por qué cambió?</p>
+              <p className="text-xs text-muted-foreground mt-1">{changeReason}</p>
             </div>
           </div>
         </div>

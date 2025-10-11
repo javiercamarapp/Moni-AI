@@ -76,8 +76,8 @@ export default function BudgetProgressWidget({ categories }: BudgetProgressProps
         </div>
 
         {categories.some(c => c.percentUsed >= 80) && (
-          <div className="bg-yellow-500/10 rounded-lg p-2 border border-yellow-500/30">
-            <p className="text-xs text-yellow-200">
+          <div className="glass rounded-lg p-2 border-border">
+            <p className="text-xs text-foreground">
               ⚠️ {categories.filter(c => c.percentUsed >= 80).length} categorías cerca o sobre el límite
             </p>
           </div>

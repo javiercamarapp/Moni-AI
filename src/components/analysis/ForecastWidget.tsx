@@ -132,15 +132,15 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA 
           </div>
         </div>
 
-        <div className="bg-purple-500/10 rounded-lg p-2 border border-purple-500/30">
+        <div className="glass rounded-lg p-2 border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-white/70">Probabilidad de cumplir meta</p>
-              <p className="text-lg font-bold text-purple-300">{goalProbability}%</p>
+              <p className="text-xs text-muted-foreground">Probabilidad de cumplir meta</p>
+              <p className="text-lg font-bold text-foreground">{goalProbability}%</p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-white/70">ETA estimado</p>
-              <p className="text-sm font-medium text-white">{goalETA}</p>
+              <p className="text-xs text-muted-foreground">ETA estimado</p>
+              <p className="text-sm font-medium text-foreground">{goalETA}</p>
             </div>
           </div>
         </div>

@@ -941,8 +941,8 @@ const Dashboard = () => {
           onClick={() => navigate('/net-worth')}
         >
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-purple-500/30 flex items-center justify-center flex-shrink-0">
-              <CreditCard className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-lg glass flex items-center justify-center flex-shrink-0">
+              <CreditCard className="w-4 h-4 text-foreground" />
             </div>
             <div className="text-left">
               <p className="text-xs text-white/80 leading-tight whitespace-nowrap">Mis cuentas</p>
@@ -1049,8 +1049,8 @@ const Dashboard = () => {
           animationDelay: '400ms'
         }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg glass flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
                 <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Presupuestos</p>

@@ -43,10 +43,10 @@ export default function DebtPaymentPlanWidget({ debts, strategy, totalInterest, 
             <p className={`text-lg font-bold text-${dtiColor}-300`}>{dti.toFixed(1)}%</p>
             <p className={`text-[10px] text-${dtiColor}-300`}>{dtiStatus}</p>
           </div>
-          <div className="bg-purple-500/10 rounded-lg p-2 border border-purple-500/30">
-            <p className="text-[10px] text-white/70">Intereses totales</p>
-            <p className="text-lg font-bold text-purple-300">${totalInterest.toLocaleString()}</p>
-            <p className="text-[10px] text-white/60">próximos 12M</p>
+          <div className="glass rounded-lg p-2 border-border">
+            <p className="text-[10px] text-muted-foreground">Intereses totales</p>
+            <p className="text-lg font-bold text-foreground">${totalInterest.toLocaleString()}</p>
+            <p className="text-[10px] text-muted-foreground">próximos 12M</p>
           </div>
         </div>
 
@@ -60,7 +60,7 @@ export default function DebtPaymentPlanWidget({ debts, strategy, totalInterest, 
                 <div className="flex items-start justify-between mb-2">
                   <div>
                     <p className="text-xs font-medium text-white flex items-center gap-1">
-                      <span className="bg-purple-500/20 text-purple-300 text-[10px] font-bold px-1.5 py-0.5 rounded">
+                      <span className="glass text-foreground text-[10px] font-bold px-1.5 py-0.5 rounded">
                         #{debt.order}
                       </span>
                       {debt.name}

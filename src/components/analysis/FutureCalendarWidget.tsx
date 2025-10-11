@@ -111,8 +111,8 @@ export default function FutureCalendarWidget({ events }: FutureCalendarProps) {
         </div>
 
         {sortedEvents.filter(e => getDaysUntil(e.date) <= 3).length > 0 && (
-          <div className="bg-yellow-500/20 rounded px-3 py-2 border border-yellow-500/30">
-            <p className="text-[10px] text-yellow-200 leading-snug">
+          <div className="glass rounded px-3 py-2 border-border">
+            <p className="text-[10px] text-foreground leading-snug">
               ⚠️ <span className="font-medium">
                 {sortedEvents.filter(e => getDaysUntil(e.date) <= 3).length} movimientos próximos
               </span> en los siguientes 3 días
