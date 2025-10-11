@@ -529,9 +529,8 @@ export default function FinancialAnalysis() {
           <>
             {/* Animated Income & Expense Lines */}
             <Card 
-              className="p-4 bg-gradient-card card-glow space-y-4 animate-fade-in hover:scale-[1.02] transition-transform duration-200 cursor-pointer" 
+              className="p-4 bg-gradient-card card-glow space-y-4 animate-fade-in" 
               style={{ animationDelay: '0ms' }}
-              onClick={() => navigate(`/balance?period=${period}`)}
             >
               {/* Ingresos */}
               <div className="space-y-2">
