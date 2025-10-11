@@ -70,6 +70,10 @@ export default function FinancialAnalysis() {
 
   useEffect(() => {
     if (user) {
+      // Limpiar caché al cambiar período para evitar datos incorrectos
+      localStorage.removeItem('financialAnalysis_quickMetrics');
+      localStorage.removeItem('financialAnalysis_analysis');
+      
       // Ejecutar todas las cargas en paralelo para máxima velocidad
       Promise.all([
         calculateQuickMetrics(),
@@ -186,6 +190,16 @@ export default function FinancialAnalysis() {
       const totalExpenses = transactions
         .filter(t => t.type === 'expense' || t.type === 'gasto')
         .reduce((sum, t) => sum + Number(t.amount), 0);
+      
+      console.log('💵 Cálculo de métricas:', {
+        periodo: period,
+        fechaInicio: startDate.toISOString().split('T')[0],
+        fechaFin: now.toISOString().split('T')[0],
+        transacciones: transactions.length,
+        ingresos: totalIncome,
+        gastos: totalExpenses,
+        balance: totalIncome - totalExpenses
+      });
       
       const balance = totalIncome - totalExpenses;
       const savingsRate = totalIncome > 0 ? ((balance / totalIncome) * 100) : 0;
