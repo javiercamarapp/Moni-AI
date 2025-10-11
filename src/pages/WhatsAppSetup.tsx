@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import whatsappLogo from '@/assets/whatsapp-logo.png';
 import Autoplay from "embla-carousel-autoplay";
+import { ThreeDPhotoCarousel } from "@/components/ui/3d-carousel";
 
 export default function WhatsAppSetup() {
   const navigate = useNavigate();
@@ -283,6 +284,16 @@ export default function WhatsAppSetup() {
                 <p className="text-[10px] text-white/70">Alertas útiles</p>
               </div>
             </div>
+          </div>
+        </Card>
+
+        {/* 3D Photo Carousel */}
+        <Card className="p-4 bg-card/80 backdrop-blur border-border/50">
+          <h3 className="font-bold text-base text-white mb-3">
+            Galería 3D
+          </h3>
+          <div className="w-full h-[500px] rounded-lg overflow-hidden">
+            <ThreeDPhotoCarousel />
           </div>
         </Card>
       </div>
