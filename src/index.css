@@ -19,21 +19,21 @@
     --glass-bg: rgba(255, 255, 255, 0.7);
     --glass-border: rgba(0, 0, 0, 0.08);
 
-    /* Primary - neutral */
+    /* Primary - transparent glass */
     --primary: 0 0% 10%;
-    --primary-foreground: 0 0% 98%;
+    --primary-foreground: 0 0% 10%;
     --primary-glow: 0 0% 20%;
 
-    /* Secondary - neutral */
-    --secondary: 0 0% 95%;
+    /* Secondary - transparent glass */
+    --secondary: 0 0% 100%;
     --secondary-foreground: 0 0% 10%;
 
-    /* Muted - neutral */
-    --muted: 0 0% 96%;
+    /* Muted - transparent glass */
+    --muted: 0 0% 100%;
     --muted-foreground: 0 0% 45%;
 
-    /* Accent - neutral */
-    --accent: 0 0% 96%;
+    /* Accent - transparent glass */
+    --accent: 0 0% 100%;
     --accent-foreground: 0 0% 10%;
 
     /* Status colors - ONLY for financial data */
