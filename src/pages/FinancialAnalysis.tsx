@@ -545,14 +545,14 @@ export default function FinancialAnalysis() {
                     </div>
                   </div>
                   <p className="text-xl font-bold text-green-400">
-                    ${formatK(analysis?.metrics?.totalIncome || quickMetrics?.totalIncome)}k
+                    ${formatK(quickMetrics?.totalIncome || 0)}k
                   </p>
                 </div>
                 <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
                   <div 
                     className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-600 to-green-400 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.5)]"
                     style={{ 
-                      width: `${Math.min(((analysis?.metrics?.totalIncome || quickMetrics?.totalIncome || 0) / Math.max(analysis?.metrics?.totalIncome || quickMetrics?.totalIncome || 1, analysis?.metrics?.totalExpenses || quickMetrics?.totalExpenses || 1)) * 100, 100)}%`,
+                      width: `${Math.min(((quickMetrics?.totalIncome || 0) / Math.max(quickMetrics?.totalIncome || 1, quickMetrics?.totalExpenses || 1)) * 100, 100)}%`,
                       animation: 'slideIn 1.5s ease-out'
                     }}
                   />
@@ -572,14 +572,14 @@ export default function FinancialAnalysis() {
                     </div>
                   </div>
                   <p className="text-xl font-bold text-red-400">
-                    ${formatK(analysis?.metrics?.totalExpenses || quickMetrics?.totalExpenses)}k
+                    ${formatK(quickMetrics?.totalExpenses || 0)}k
                   </p>
                 </div>
                 <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
                   <div 
                     className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)]"
                     style={{ 
-                      width: `${Math.min(((analysis?.metrics?.totalExpenses || quickMetrics?.totalExpenses || 0) / Math.max(analysis?.metrics?.totalIncome || quickMetrics?.totalIncome || 1, analysis?.metrics?.totalExpenses || quickMetrics?.totalExpenses || 1)) * 100, 100)}%`,
+                      width: `${Math.min(((quickMetrics?.totalExpenses || 0) / Math.max(quickMetrics?.totalIncome || 1, quickMetrics?.totalExpenses || 1)) * 100, 100)}%`,
                       animation: 'slideIn 1.5s ease-out 0.3s both'
                     }}
                   />
@@ -590,8 +590,8 @@ export default function FinancialAnalysis() {
               <div className="pt-2 border-t border-white/10">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-white">Balance</p>
-                  <p className={`text-xl font-bold ${(analysis?.metrics?.balance || quickMetrics?.balance || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {(analysis?.metrics?.balance || quickMetrics?.balance || 0) >= 0 ? '+' : ''}${formatK(analysis?.metrics?.balance || quickMetrics?.balance)}k
+                  <p className={`text-xl font-bold ${(quickMetrics?.balance || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    {(quickMetrics?.balance || 0) >= 0 ? '+' : ''}${formatK(quickMetrics?.balance || 0)}k
                   </p>
                 </div>
               </div>
