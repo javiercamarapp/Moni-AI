@@ -257,6 +257,7 @@ export default function FinancialAnalysis() {
       });
       
       setQuickMetrics(metricsData);
+      localStorage.setItem('financialAnalysis_quickMetrics', JSON.stringify(metricsData));
     } catch (error) {
       console.error('Error calculating quick metrics:', error);
     }
@@ -981,8 +982,8 @@ export default function FinancialAnalysis() {
             {/* Additional Financial Health Charts */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <IncomeExpensePieWidget 
-                income={analysis?.metrics?.totalIncome ?? 0}
-                expenses={analysis?.metrics?.totalExpenses ?? 0}
+                income={(analysis?.metrics?.totalIncome ?? quickMetrics?.totalIncome) || 0}
+                expenses={(analysis?.metrics?.totalExpenses ?? quickMetrics?.totalExpenses) || 0}
               />
               
               <FinancialHealthPieWidget 
