@@ -914,13 +914,13 @@ const Dashboard = () => {
         {/* Puntos y nivel + Notificaciones */}
         <div className="flex gap-2 items-center">
           {/* Botón de puntos y nivel */}
-          <Button variant="ghost" className="bg-gradient-card card-glow hover:bg-white/20 text-white h-10 px-3 gap-2 hover:scale-105 transition-transform duration-200">
+          <Button variant="ghost" className="glass hover:bg-white/80 text-foreground h-10 px-3 gap-2 hover:scale-105 transition-transform duration-200">
             <span className="text-sm font-bold">{currentXP} pts</span>
             <span className="text-xs opacity-80">Nivel {level}</span>
           </Button>
           
           {/* Botón de notificaciones */}
-          <Button variant="ghost" size="icon" className="bg-gradient-card card-glow hover:bg-white/20 text-white h-10 w-10 hover:scale-105 transition-transform duration-200">
+          <Button variant="ghost" size="icon" className="glass hover:bg-white/80 text-foreground h-10 w-10 hover:scale-105 transition-transform duration-200">
             <Bell className="h-5 w-5" />
           </Button>
         </div>
@@ -929,15 +929,15 @@ const Dashboard = () => {
       {/* Header con saludo */}
       <div className="p-4 pt-2 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-base sm:text-lg font-bold text-white leading-tight">
+          <h1 className="text-base sm:text-lg font-bold text-foreground leading-tight">
             ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
           </h1>
-          <p className="text-sm text-white">Vas excelente con tus metas financieras</p>
+          <p className="text-sm text-foreground">Vas excelente con tus metas financieras</p>
         </div>
         
         {/* Botón de cuentas y tarjetas */}
         <Card 
-          className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 cursor-pointer flex-shrink-0"
+          className="p-3 glass hover:scale-105 transition-transform duration-200 cursor-pointer flex-shrink-0"
           onClick={() => navigate('/net-worth')}
         >
           <div className="flex items-center gap-2">
@@ -945,8 +945,8 @@ const Dashboard = () => {
               <CreditCard className="w-4 h-4 text-foreground" />
             </div>
             <div className="text-left">
-              <p className="text-xs text-white/80 leading-tight whitespace-nowrap">Mis cuentas</p>
-              <p className="text-xs font-bold text-white leading-tight whitespace-nowrap">y tarjetas</p>
+              <p className="text-xs text-muted-foreground leading-tight whitespace-nowrap">Mis cuentas</p>
+              <p className="text-xs font-bold text-foreground leading-tight whitespace-nowrap">y tarjetas</p>
             </div>
           </div>
         </Card>
@@ -998,54 +998,54 @@ const Dashboard = () => {
       <div className="mx-4 space-y-4 sm:space-y-6">
         {/* Quick Stats - 4 botones horizontales en una línea */}
         <div className="grid grid-cols-4 gap-2 sm:gap-3">
-          <Card className="p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
+          <Card className="p-3 glass hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
           animationDelay: '100ms'
         }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg glass flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Ingreso vs Gasto</p>
-                <p className="text-xs sm:text-base font-bold text-white leading-tight">
+                <p className="text-[9px] sm:text-xs text-muted-foreground leading-tight">Ingreso vs Gasto</p>
+                <p className="text-xs sm:text-base font-bold text-foreground leading-tight">
                   ${(currentMonth.balance / 1000).toFixed(0)}k
                 </p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer" 
+          <Card className="p-3 glass hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer" 
             style={{ animationDelay: '200ms' }}
             onClick={() => navigate('/net-worth')}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-success/30 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-success-foreground" />
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg glass flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Net Worth</p>
-                <p className="text-xs sm:text-base font-bold text-white leading-tight">
+                <p className="text-[9px] sm:text-xs text-muted-foreground leading-tight">Net Worth</p>
+                <p className="text-xs sm:text-base font-bold text-foreground leading-tight">
                   ${(netWorth / 1000).toFixed(0)}k
                 </p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
+          <Card className="p-3 glass hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
           animationDelay: '300ms'
         }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-warning/30 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Target className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-warning-foreground" />
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg glass flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+                <Target className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Metas</p>
-                <p className="text-xs sm:text-base font-bold text-white leading-tight">{goals.length}</p>
+                <p className="text-[9px] sm:text-xs text-muted-foreground leading-tight">Metas</p>
+                <p className="text-xs sm:text-base font-bold text-foreground leading-tight">{goals.length}</p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
+          <Card className="p-3 glass hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
           animationDelay: '400ms'
         }}>
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
@@ -1053,8 +1053,8 @@ const Dashboard = () => {
                 <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Presupuestos</p>
-                <p className="text-xs sm:text-base font-bold text-white leading-tight">
+                <p className="text-[9px] sm:text-xs text-muted-foreground leading-tight">Presupuestos</p>
+                <p className="text-xs sm:text-base font-bold text-foreground leading-tight">
                   ${(monthlyIncome / 1000).toFixed(0)}k
                 </p>
               </div>
