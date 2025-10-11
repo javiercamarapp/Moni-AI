@@ -85,6 +85,16 @@ export default {
         'gradient-primary': 'var(--gradient-primary)',
         'gradient-card': 'var(--gradient-card)',
         'gradient-hero': 'var(--gradient-hero)',
+        'gradient-mesh': 'var(--gradient-mesh)',
+      },
+      backdropBlur: {
+        xs: '2px',
+        glass: '16px',
+        strong: '24px',
+      },
+      backdropSaturate: {
+        glass: '180%',
+        strong: '200%',
       },
       transitionTimingFunction: {
         smooth: 'cubic-bezier(0.4, 0, 0.2, 1)',
