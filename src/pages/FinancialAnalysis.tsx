@@ -34,45 +34,12 @@ export default function FinancialAnalysis() {
   const [user, setUser] = useState<any>(null);
   const [loadingTransactions, setLoadingTransactions] = useState(true);
   
-  // Inicializar estados con caché para carga instantánea
-  const [quickMetrics, setQuickMetrics] = useState<any>(() => {
-    try {
-      const cached = localStorage.getItem('financialAnalysis_quickMetrics');
-      return cached ? JSON.parse(cached) : null;
-    } catch { return null; }
-  });
-  
-  const [historicalAverages, setHistoricalAverages] = useState<any>(() => {
-    try {
-      const cached = localStorage.getItem('financialAnalysis_historicalAverages');
-      return cached ? JSON.parse(cached) : null;
-    } catch { return null; }
-  });
-  
-  const [analysis, setAnalysis] = useState<any>(() => {
-    try {
-      const cached = localStorage.getItem('financialAnalysis_analysis');
-      return cached ? JSON.parse(cached) : null;
-    } catch { return null; }
-  });
-  
-  const [recentTransactions, setRecentTransactions] = useState<any[]>(() => {
-    try {
-      const cached = localStorage.getItem('financialAnalysis_recentTransactions');
-      if (!cached) return [];
-      const parsed = JSON.parse(cached);
-      return parsed.map((t: any) => ({...t, date: new Date(t.date)}));
-    } catch { return []; }
-  });
-  
-  const [futureEvents, setFutureEvents] = useState<any[]>(() => {
-    try {
-      const cached = localStorage.getItem('financialAnalysis_futureEvents');
-      if (!cached) return [];
-      const parsed = JSON.parse(cached);
-      return parsed.map((e: any) => ({...e, date: new Date(e.date)}));
-    } catch { return []; }
-  });
+  // Inicializar estados SIN caché para evitar datos incorrectos
+  const [quickMetrics, setQuickMetrics] = useState<any>(null);
+  const [historicalAverages, setHistoricalAverages] = useState<any>(null);
+  const [analysis, setAnalysis] = useState<any>(null);
+  const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
+  const [futureEvents, setFutureEvents] = useState<any[]>([]);
   
   const [showSplash, setShowSplash] = useState(false);
 
@@ -252,17 +219,14 @@ export default function FinancialAnalysis() {
         transactionsCount: transactions.length
       };
       
-      console.log('💰 QUICK METRICS CALCULATED:', {
-        periodo: period,
-        fechaInicio: startDate.toISOString().split('T')[0],
-        transacciones: transactions.length,
+      console.log('💰 MÉTRICAS FINALES:', {
         ingresos: totalIncome,
         gastos: totalExpenses,
-        balance: balance
+        balance: balance,
+        transacciones: transactions.length
       });
       
       setQuickMetrics(metricsData);
-      localStorage.setItem('financialAnalysis_quickMetrics', JSON.stringify(metricsData));
     } catch (error) {
       console.error('Error calculating quick metrics:', error);
     }
@@ -504,33 +468,6 @@ export default function FinancialAnalysis() {
       setLoading(false);
     }
   };
-  
-
-  const handleRefreshData = () => {
-    // Limpiar todo el caché
-    localStorage.removeItem('financialAnalysis_quickMetrics');
-    localStorage.removeItem('financialAnalysis_historicalAverages');
-    localStorage.removeItem('financialAnalysis_analysis');
-    localStorage.removeItem('financialAnalysis_recentTransactions');
-    localStorage.removeItem('financialAnalysis_futureEvents');
-    localStorage.removeItem(`financialAnalysis_full_${period}_${user?.id}`);
-    localStorage.removeItem(`financialAnalysis_full_${period}_${user?.id}_time`);
-    
-    // Recargar datos
-    setQuickMetrics(null);
-    setAnalysis(null);
-    setHistoricalAverages(null);
-    
-    if (user) {
-      Promise.all([
-        calculateQuickMetrics(),
-        fetchTransactionsData(),
-        loadAnalysis()
-      ]);
-    }
-    
-    toast.success('Datos actualizados');
-  };
 
   return (
     <div className="min-h-screen animated-wave-bg pb-24">
@@ -541,20 +478,11 @@ export default function FinancialAnalysis() {
             <h1 className="text-xl font-bold text-white">Análisis Financiero</h1>
             <p className="text-xs text-white/70">Tu salud financiera</p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleRefreshData}
-              className="text-white/70 hover:text-white h-8 w-8 p-0"
-            >
-              <RefreshCw className="w-4 h-4" />
-            </Button>
-            <Tabs value={period} onValueChange={setPeriod}>
-              <TabsList className="h-8 bg-white/10 border border-white/30">
-                <TabsTrigger value="month" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black px-3 py-1">
-                  Mes
-                </TabsTrigger>
+          <Tabs value={period} onValueChange={setPeriod}>
+            <TabsList className="h-8 bg-white/10 border border-white/30">
+              <TabsTrigger value="month" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black px-3 py-1">
+                Mes
+              </TabsTrigger>
               <TabsTrigger value="year" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black px-3 py-1">
                 Año
               </TabsTrigger>
@@ -578,12 +506,6 @@ export default function FinancialAnalysis() {
               className="p-4 bg-gradient-card card-glow space-y-4 animate-fade-in" 
               style={{ animationDelay: '0ms' }}
             >
-              {quickMetrics && (
-                <div className="mb-2 p-2 bg-black/20 rounded text-xs text-white/60">
-                  Debug: Período {period} | TX: {quickMetrics.transactionsCount || 0}
-                </div>
-              )}
-              
               {/* Ingresos */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
