@@ -139,22 +139,6 @@ const RetroCarousel = ({items, initialScroll = 0}: CarouselProps) => {
           })}
         </div>
       </div>
-      <div className="flex justify-end gap-2 mt-4">
-        <button
-          className="relative z-40 h-10 w-10 rounded-full bg-foreground/80 flex items-center justify-center disabled:opacity-50 hover:bg-foreground transition-colors duration-200"
-          onClick={handleScrollLeft}
-          disabled={!canScrollLeft}
-        >
-          <ArrowLeft className="h-6 w-6 text-background" />
-        </button>
-        <button
-          className="relative z-40 h-10 w-10 rounded-full bg-foreground/80 flex items-center justify-center disabled:opacity-50 hover:bg-foreground transition-colors duration-200"
-          onClick={handleScrollRight}
-          disabled={!canScrollRight}
-        >
-          <ArrowRight className="h-6 w-6 text-background" />
-        </button>
-      </div>
     </div>
   );
 };
