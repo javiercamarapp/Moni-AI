@@ -51,24 +51,33 @@ const Reports = () => {
           startDate: startDate.toISOString().split('T')[0],
           endDate: endDate.toISOString().split('T')[0],
           monthName: months[month - 1].name,
-          year: currentYear
+          year: currentYear,
+          viewMode: 'mensual',
+          month: month
         }
       });
 
       if (error) throw error;
 
-      if (data?.pdfUrl) {
+      if (data?.html) {
+        // Crear un Blob con el HTML
+        const blob = new Blob([data.html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        
         // Crear un link temporal y hacer click para descargar
         const link = document.createElement('a');
-        link.href = data.pdfUrl;
-        link.download = `Estado_Cuenta_${months[month - 1].name}_${currentYear}.pdf`;
+        link.href = url;
+        link.download = data.filename || `Estado_Cuenta_${months[month - 1].name}_${currentYear}.html`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        
+        // Liberar el objeto URL
+        URL.revokeObjectURL(url);
 
         toast({
           title: "¡Descarga iniciada!",
-          description: `Descargando reporte de ${months[month - 1].name} ${currentYear}`
+          description: `Descargando reporte de ${months[month - 1].name} ${currentYear}. Abre el archivo y presiona Ctrl+P para guardarlo como PDF.`
         });
       }
     } catch (error: any) {
