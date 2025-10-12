@@ -160,7 +160,7 @@ const Reports = () => {
                 <SelectValue placeholder="Año" />
               </SelectTrigger>
               <SelectContent 
-                className="bg-white border border-blue-100 rounded-[15px] shadow-xl"
+                className="bg-white border border-blue-100 rounded-[15px] shadow-xl z-[200]"
                 position="popper"
                 sideOffset={5}
               >
