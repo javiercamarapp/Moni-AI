@@ -1,6 +1,6 @@
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts';
 import { AlertCircle } from "lucide-react";
-import { ThreeDCarousel } from "@/components/ui/3d-carousel";
+import { RetroCarousel, ScoreCard } from "@/components/ui/retro-carousel";
 
 interface ScoreComponents {
   savingsAndLiquidity: number;
@@ -119,13 +119,19 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
 
       <div className="space-y-2">
         <h3 className="text-base font-bold text-foreground mb-1">Desglose por Componente</h3>
-        <ThreeDCarousel 
-          cards={radarData.map(item => ({
-            title: item.dimension,
-            value: item.value,
-            maxValue: item.fullMark,
-            description: item.explanation
-          }))}
+        <RetroCarousel 
+          items={radarData.map((item, index) => (
+            <ScoreCard
+              key={item.dimension}
+              component={{
+                title: item.dimension,
+                value: item.value,
+                maxValue: item.fullMark,
+                description: item.explanation
+              }}
+              index={index}
+            />
+          ))}
         />
       </div>
     </div>
