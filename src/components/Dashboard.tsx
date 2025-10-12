@@ -1633,7 +1633,21 @@ const Dashboard = () => {
           <div className="space-y-6">
             
             {/* Recent Transactions */}
-            <Card className="p-3 bg-gradient-to-br from-[hsl(45,60%,25%)] to-[hsl(38,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(45,70%,45%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer">
+            <BorderRotate
+              animationMode="auto-rotate"
+              animationSpeed={3}
+              gradientColors={{
+                primary: '#f59e0b',
+                secondary: '#fbbf24',
+                accent: '#fde047'
+              }}
+              backgroundColor="hsl(38, 55%, 15%)"
+              borderWidth={3}
+              borderRadius={12}
+              className="h-[220px] animate-fade-in hover:scale-105 transition-all duration-300"
+              style={{ animationDelay: '300ms' }}
+            >
+              <Card className="p-3 bg-gradient-to-br from-[hsl(45,60%,25%)] to-[hsl(38,55%,15%)] shadow-2xl border-0 relative overflow-hidden h-full flex flex-col cursor-pointer hover:-translate-y-1 transition-all duration-300">
               <GlowingEffect
                 spread={40}
                 glow={true}
@@ -1699,6 +1713,7 @@ const Dashboard = () => {
                 )}
               </div>
             </Card>
+          </BorderRotate>
 
             {/* Achievements */}
             
