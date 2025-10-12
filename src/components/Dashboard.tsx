@@ -1355,10 +1355,10 @@ const Dashboard = () => {
           backgroundColor="hsl(142, 55%, 15%)"
           borderWidth={3}
           borderRadius={12}
-          className="animate-fade-in"
+          className="animate-fade-in cursor-pointer hover:scale-105 hover:-translate-y-2 transition-all duration-300"
           style={{ animationDelay: '200ms' }}
         >
-          <Card className="p-3 sm:p-4 bg-gradient-to-br from-[hsl(142,60%,25%)] to-[hsl(142,55%,15%)] shadow-2xl border-0 relative overflow-visible cursor-pointer hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300">
+          <Card className="p-3 sm:p-4 bg-gradient-to-br from-[hsl(142,60%,25%)] to-[hsl(142,55%,15%)] shadow-2xl border-0 relative overflow-visible cursor-pointer">
             <GlowingEffect
               spread={40}
               glow={true}
