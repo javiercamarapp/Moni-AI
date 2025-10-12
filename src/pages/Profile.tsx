@@ -329,7 +329,7 @@ const Profile = () => {
           </div>
 
           {/* Plan Section */}
-          <Card className="bg-gradient-primary border-blue-100 p-4 hover:scale-105 transition-transform duration-200 shadow-xl rounded-[20px]">
+          <Card className="bg-gradient-to-r from-purple-600 to-blue-600 border-0 p-4 hover:scale-105 transition-transform duration-200 shadow-xl rounded-[20px]">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-white/90 mb-1">Tu plan</p>
