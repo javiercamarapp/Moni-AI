@@ -1485,8 +1485,8 @@ const Dashboard = () => {
                     const gradient = gradients[index % gradients.length];
                     
                     const challengeColors = [
-                      { primary: '#584827', secondary: '#c7a03c', accent: '#f9de90', bg: 'hsl(38, 55%, 25%)' },
-                      { primary: '#1e3a5f', secondary: '#4a7ba7', accent: '#7eb3d8', bg: 'hsl(200, 55%, 15%)' },
+                      { primary: '#f59e0b', secondary: '#fbbf24', accent: '#fde047', bg: 'hsl(38, 55%, 25%)' },
+                      { primary: '#3b82f6', secondary: '#60a5fa', accent: '#93c5fd', bg: 'hsl(200, 55%, 15%)' },
                     ];
                     const colors = challengeColors[index % challengeColors.length];
                     
@@ -1494,10 +1494,10 @@ const Dashboard = () => {
                       <BorderRotate
                         key={challenge.id}
                         animationMode="auto-rotate"
-                        animationSpeed={8}
+                        animationSpeed={3}
                         gradientColors={colors}
                         backgroundColor={colors.bg}
-                        borderWidth={2}
+                        borderWidth={3}
                         borderRadius={12}
                         className="p-0"
                       >
