@@ -102,11 +102,9 @@ const Gastos = () => {
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState<'recent' | 'highest' | 'lowest'>('recent');
   const [isProcessingReceipt, setIsProcessingReceipt] = useState(false);
-  const [dailyExpensesTotal, setDailyExpensesTotal] = useState(0);
 
   useEffect(() => {
     fetchData();
-    loadDailyExpensesTotal();
   }, [currentMonth, viewMode]);
 
   const fetchData = async () => {
@@ -154,42 +152,6 @@ const Gastos = () => {
   };
 
   const totalGastos = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
-
-  const loadDailyExpensesTotal = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Obtener todas las transacciones de gastos
-      const { data: allExpenses, error } = await supabase
-        .from('transactions')
-        .select('*, categories(name)')
-        .eq('user_id', user.id)
-        .eq('type', 'gasto')
-        .order('transaction_date', { ascending: false });
-
-      if (error || !allExpenses || allExpenses.length === 0) {
-        setDailyExpensesTotal(0);
-        return;
-      }
-
-      // Invocar la función de IA para detectar gastos cotidianos
-      const { data: aiResult } = await supabase.functions.invoke('detect-daily-expenses', {
-        body: { transactions: allExpenses }
-      });
-
-      if (aiResult?.expenses) {
-        // Sumar los promedios de todos los gastos cotidianos
-        const total = aiResult.expenses.reduce((sum: number, exp: any) => {
-          return sum + Number(exp.averageAmount || 0);
-        }, 0);
-        setDailyExpensesTotal(total);
-      }
-    } catch (error) {
-      console.error('Error loading daily expenses total:', error);
-      setDailyExpensesTotal(0);
-    }
-  };
 
   const handlePreviousPeriod = () => {
     if (viewMode === 'mensual') {
@@ -696,12 +658,9 @@ const Gastos = () => {
           <Button
             variant="ghost"
             onClick={() => navigate('/daily-expenses')}
-            className="flex-1 bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 text-foreground font-medium flex flex-col items-center justify-center py-1"
+            className="flex-1 bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 text-foreground font-medium"
           >
-            <span className="text-xs">Gastos cotidianos</span>
-            <span className="text-red-600 font-bold text-sm">
-              ${dailyExpensesTotal.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-            </span>
+            Gastos cotidianos
           </Button>
         </div>
 
