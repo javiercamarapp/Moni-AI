@@ -539,15 +539,15 @@ export default function FinancialAnalysis() {
         {/* Header */}
         <div className="flex items-center justify-between pt-4 mb-4">
           <div>
-            <h1 className="text-xl font-bold text-white">Análisis Financiero</h1>
-            <p className="text-xs text-white/70">Tu salud financiera</p>
+            <h1 className="text-xl font-bold text-foreground">Análisis Financiero</h1>
+            <p className="text-xs text-muted-foreground">Tu salud financiera</p>
           </div>
           <Tabs value={period} onValueChange={setPeriod}>
-            <TabsList className="h-8 bg-white/10 border border-white/30">
-              <TabsTrigger value="month" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black px-3 py-1">
+            <TabsList className="h-8 bg-card/70 backdrop-blur-sm border border-border/30">
+              <TabsTrigger value="month" className="text-xs data-[state=active]:bg-accent px-3 py-1">
                 Mes
               </TabsTrigger>
-              <TabsTrigger value="year" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black px-3 py-1">
+              <TabsTrigger value="year" className="text-xs data-[state=active]:bg-accent px-3 py-1">
                 Año
               </TabsTrigger>
             </TabsList>
@@ -559,7 +559,7 @@ export default function FinancialAnalysis() {
           <>
             {/* Animated Income & Expense Lines */}
             <Card 
-              className="p-4 bg-gradient-card card-glow space-y-4 animate-fade-in" 
+              className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-4 animate-fade-in" 
               style={{ animationDelay: '0ms' }}
             >
               {(() => {
@@ -580,21 +580,21 @@ export default function FinancialAnalysis() {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-                            <TrendingUp className="w-5 h-5 text-green-400" />
+                          <div className="w-10 h-10 rounded-lg bg-success/20 flex items-center justify-center">
+                            <TrendingUp className="w-5 h-5 text-success" />
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-white">Ingresos</p>
-                            <p className="text-xs text-white/70">Período actual</p>
+                            <p className="text-sm font-semibold text-foreground">Ingresos</p>
+                            <p className="text-xs text-muted-foreground">Período actual</p>
                           </div>
                         </div>
-                        <p className="text-xl font-bold text-green-400">
+                        <p className="text-xl font-bold text-success">
                           ${income.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </p>
                       </div>
-                      <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
+                      <div className="relative h-3 bg-muted rounded-full overflow-hidden">
                         <div 
-                          className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-600 to-green-400 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.5)]"
+                          className="absolute top-0 left-0 h-full bg-success rounded-full"
                           style={{ 
                             width: `${Math.min((income / Math.max(income, expenses)) * 100, 100)}%`,
                             animation: 'slideIn 1.5s ease-out'
@@ -607,21 +607,21 @@ export default function FinancialAnalysis() {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
-                            <TrendingDown className="w-5 h-5 text-red-400" />
+                          <div className="w-10 h-10 rounded-lg bg-destructive/20 flex items-center justify-center">
+                            <TrendingDown className="w-5 h-5 text-destructive" />
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-white">Gastos</p>
-                            <p className="text-xs text-white/70">Período actual</p>
+                            <p className="text-sm font-semibold text-foreground">Gastos</p>
+                            <p className="text-xs text-muted-foreground">Período actual</p>
                           </div>
                         </div>
-                        <p className="text-xl font-bold text-red-400">
+                        <p className="text-xl font-bold text-destructive">
                           ${expenses.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </p>
                       </div>
-                      <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
+                      <div className="relative h-3 bg-muted rounded-full overflow-hidden">
                         <div 
-                          className="absolute top-0 left-0 h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)]"
+                          className="absolute top-0 left-0 h-full bg-destructive rounded-full"
                           style={{ 
                             width: `${Math.min((expenses / Math.max(income, expenses)) * 100, 100)}%`,
                             animation: 'slideIn 1.5s ease-out 0.3s both'
@@ -631,10 +631,10 @@ export default function FinancialAnalysis() {
                     </div>
 
                     {/* Balance */}
-                    <div className="pt-2 border-t border-white/10">
+                    <div className="pt-2 border-t border-border">
                       <div className="flex items-center justify-between">
-                        <p className="text-sm font-semibold text-white">Balance</p>
-                        <p className={`text-xl font-bold ${balance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        <p className="text-sm font-semibold text-foreground">Balance</p>
+                        <p className={`text-xl font-bold ${balance >= 0 ? 'text-success' : 'text-destructive'}`}>
                           {balance >= 0 ? '+' : ''}${balance.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </p>
                       </div>
@@ -669,12 +669,12 @@ export default function FinancialAnalysis() {
 
             {/* Llamados a la Acción */}
             <div className="space-y-2">
-              <p className="text-xs font-medium text-white/80">🎯 Acciones Recomendadas</p>
+              <p className="text-xs font-medium text-muted-foreground">🎯 Acciones Recomendadas</p>
               <div className="grid grid-cols-2 gap-2">
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="bg-gradient-card card-glow text-white border border-white/20 hover:bg-white/20 hover:text-white active:bg-white/30 active:text-white hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2"
+                  className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 hover:scale-105 active:scale-95 transition-all text-xs h-auto py-2"
                   onClick={() => navigate('/balance')}
                 >
                   Ajustar presupuesto
@@ -682,7 +682,7 @@ export default function FinancialAnalysis() {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="bg-gradient-card card-glow text-white border border-white/20 hover:bg-white/20 hover:text-white active:bg-white/30 active:text-white hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2"
+                  className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 hover:scale-105 active:scale-95 transition-all text-xs h-auto py-2"
                   onClick={() => navigate('/networth')}
                 >
                   Plan de deudas
@@ -690,15 +690,15 @@ export default function FinancialAnalysis() {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="bg-gradient-card card-glow text-white border border-white/20 hover:bg-white/20 hover:text-white active:bg-white/30 active:text-white hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2"
+                  className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 hover:scale-105 active:scale-95 transition-all text-xs h-auto py-2"
                   onClick={() => navigate('/new-goal')}
                 >
                   ↑ Ahorro a 10%
                 </Button>
                 <Button 
                   variant="ghost" 
-                  size="sm" 
-                  className="bg-gradient-card card-glow text-white border border-white/20 hover:bg-white/20 hover:text-white active:bg-white/30 active:text-white hover:scale-105 active:scale-95 transition-transform duration-200 text-xs h-auto py-2"
+                  size="sm"
+                  className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 hover:scale-105 active:scale-95 transition-all text-xs h-auto py-2"
                   onClick={() => navigate('/gastos')}
                 >
                   Revisar subs
@@ -708,25 +708,25 @@ export default function FinancialAnalysis() {
 
             {/* Liquidez - Grid Compacto Mejorado */}
             <div className="space-y-2">
-              <p className="text-xs font-medium text-white/80 flex items-center gap-1">
+              <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
                 <Droplets className="h-3 w-3" /> Liquidez y Estabilidad
               </p>
               <div className="grid grid-cols-2 gap-2">
-                <Card className="p-3 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/70">Balance</span>
+                    <span className="text-xs text-muted-foreground">Balance</span>
                     <div className="flex items-center gap-1">
-                      <DollarSign className="h-3 w-3 text-emerald-400" />
-                      {(analysis?.metrics?.balance ?? 0) >= 0 ? <span className="text-emerald-400 text-xs">↑</span> : <span className="text-red-400 text-xs">↓</span>}
+                      <DollarSign className="h-3 w-3 text-success" />
+                      {(analysis?.metrics?.balance ?? 0) >= 0 ? <span className="text-success text-xs">↑</span> : <span className="text-destructive text-xs">↓</span>}
                     </div>
                   </div>
-                  <p className={`text-lg font-bold ${(analysis?.metrics?.balance ?? 0) >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  <p className={`text-lg font-bold ${(analysis?.metrics?.balance ?? 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
                     ${formatK(analysis?.metrics?.balance)}k
                   </p>
-                  <p className="text-[10px] text-white/60">MoM: +2.3%</p>
+                  <p className="text-[10px] text-muted-foreground">MoM: +2.3%</p>
                 </Card>
 
-                <Card className="p-3 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs text-white/70">Ahorro</span>
                     <PiggyBank className="h-3 w-3 text-purple-400" />
@@ -932,25 +932,25 @@ export default function FinancialAnalysis() {
             
 
             {/* Análisis AI */}
-            <Card className="p-3 bg-gradient-card card-glow border-white/20">
-              <p className="text-xs font-medium text-white/80 mb-2 flex items-center gap-1">
+            <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100">
+              <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
                 <BarChart3 className="h-3 w-3" /> Análisis Moni AI
               </p>
-              <div className="text-xs text-white/80 leading-relaxed whitespace-pre-line max-h-60 overflow-y-auto">
+              <div className="text-xs text-foreground leading-relaxed whitespace-pre-line max-h-60 overflow-y-auto">
                 {analysis?.analysis}
               </div>
             </Card>
 
             {/* Calendario de Próximos Movimientos */}
             {loadingTransactions ? (
-              <Card className="p-4 bg-gradient-card card-glow border-white/20">
-                <div className="text-center text-white/60 py-4">Cargando pagos futuros...</div>
+              <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
+                <div className="text-center text-muted-foreground py-4">Cargando pagos futuros...</div>
               </Card>
             ) : futureEvents.length > 0 ? (
               <FutureCalendarWidget events={futureEvents} />
             ) : (
-              <Card className="p-4 bg-gradient-card card-glow border-white/20">
-                <div className="text-center text-white/60 py-4">
+              <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
+                <div className="text-center text-muted-foreground py-4">
                   No hay pagos recurrentes configurados
                 </div>
               </Card>
@@ -960,8 +960,8 @@ export default function FinancialAnalysis() {
             <RecentMovementsWidget />
 
             {/* Gráficas adicionales */}
-            <Card className="p-3 bg-gradient-card card-glow border-white/20">
-              <p className="text-xs font-medium text-white/80 mb-2">Ingresos vs Gastos</p>
+            <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100">
+              <p className="text-xs font-medium text-muted-foreground mb-2">Ingresos vs Gastos</p>
               <ResponsiveContainer width="100%" height={150}>
                 <BarChart data={[{
               name: 'Ing',
@@ -1063,8 +1063,8 @@ export default function FinancialAnalysis() {
             </div>
           </>
         ) : (
-          <Card className="p-8 bg-gradient-card card-glow border-white/20 text-center">
-            <p className="text-white/80">No hay datos disponibles para mostrar</p>
+          <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center">
+            <p className="text-muted-foreground">No hay datos disponibles para mostrar</p>
           </Card>
         )}
       </div>
