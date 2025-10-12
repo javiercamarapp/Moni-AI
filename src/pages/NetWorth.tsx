@@ -96,9 +96,9 @@ export default function NetWorth() {
                 variant="ghost"
                 size="icon"
                 onClick={() => navigate(-1)}
-                className="text-foreground hover:bg-white/5"
+                className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12"
               >
-                <ArrowLeft className="h-5 w-5" />
+                <ArrowLeft className="h-5 w-5 text-foreground" />
               </Button>
             </div>
           </div>

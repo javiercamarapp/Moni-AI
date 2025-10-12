@@ -64,13 +64,13 @@ const NewGoal = () => {
     <div className="min-h-screen animated-wave-bg">
       {/* Header */}
       <div className="p-4 flex items-center gap-4">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           size="icon"
           onClick={() => navigate(-1)}
-          className="text-white hover:bg-white/10"
+          className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12"
         >
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-5 w-5 text-foreground" />
         </Button>
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-white">
