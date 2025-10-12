@@ -31,41 +31,42 @@ export default function SafeToSpendWidget({
   
   return (
     <Card 
-      className="p-4 card-glow border-white/20"
-      style={{ backgroundColor: safeToSpend >= 0 ? '#10b981' : '#ef4444' }}
+      className="p-5 bg-white backdrop-blur-sm rounded-[20px] shadow-xl border border-blue-100"
     >
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center">
-            <DollarSign className="w-5 h-5 text-black" />
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${safeToSpend >= 0 ? 'bg-emerald-500/30' : 'bg-red-500/30'}`}>
+            <DollarSign className={`w-5 h-5 ${safeToSpend >= 0 ? 'text-emerald-600' : 'text-destructive'}`} />
           </div>
           <div>
-            <p className="text-xs text-black/70">Seguro para gastar</p>
-            <p className="text-2xl font-bold text-black">${safeToSpend.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</p>
+            <p className="text-xs text-foreground/80 font-medium">Seguro para gastar</p>
+            <p className={`text-2xl font-bold ${safeToSpend >= 0 ? 'text-emerald-700' : 'text-destructive'}`}>
+              ${safeToSpend.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+            </p>
           </div>
         </div>
         <div className="text-right">
-          <p className="text-xs text-black/70">Del ingreso mensual</p>
-          <p className="text-lg font-semibold text-black">{percentageOfIncome.toFixed(0)}%</p>
+          <p className="text-xs text-foreground/80 font-medium">Del ingreso mensual</p>
+          <p className="text-lg font-semibold text-foreground">{percentageOfIncome.toFixed(0)}%</p>
         </div>
       </div>
       
-      <div className="space-y-2 text-xs text-black/70">
+      <div className="space-y-2 text-xs text-foreground/80">
         <div className="flex justify-between">
           <span>Ingreso mensual</span>
-          <span className="text-black font-medium">${monthlyIncome.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+          <span className="text-foreground font-medium">${monthlyIncome.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
         </div>
         <div className="flex justify-between">
           <span>Gastos totales</span>
-          <span className="text-black font-medium">-${totalSpent.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+          <span className="text-foreground font-medium">-${totalSpent.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
         </div>
         <div className="flex justify-between">
           <span>Metas de ahorro</span>
-          <span className="text-black font-medium">-${savingsGoals.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+          <span className="text-foreground font-medium">-${savingsGoals.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
         </div>
-        <div className="border-t border-black/20 pt-2 flex justify-between font-semibold">
-          <span className="text-black">Disponible</span>
-          <span className="text-black font-bold">
+        <div className="border-t border-blue-100 pt-2 flex justify-between font-semibold">
+          <span className="text-foreground">Disponible</span>
+          <span className={`font-bold ${safeToSpend >= 0 ? 'text-emerald-700' : 'text-destructive'}`}>
             ${safeToSpend.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
           </span>
         </div>
