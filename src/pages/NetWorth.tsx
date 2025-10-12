@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, TrendingUp, TrendingDown, ChevronDown, ChevronUp, Building2, CreditCard, Home, Wallet } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, ChevronDown, ChevronUp, Building2, CreditCard, Home, Wallet, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import NetWorthSetupForm from "@/components/NetWorthSetupForm";
 import NetWorthWidget from "@/components/analysis/NetWorthWidget";
 import networthIntro from "@/assets/networth-intro.jpg";
 import BottomNav from "@/components/BottomNav";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 type CategoryFilter = 'All' | 'Checking' | 'Savings' | 'Credit' | 'Loans' | 'Investments' | 'Property' | 'Other' | 'Mortgage';
 
@@ -231,6 +233,64 @@ export default function NetWorth() {
       {/* Widget de Evolución del Patrimonio sin escala adicional */}
       <div className="max-w-7xl mx-auto">
         <NetWorthWidget />
+      </div>
+
+      {/* Botón de descarga de PDF */}
+      <div className="px-4 mt-4">
+        <Button 
+          variant="ghost" 
+          className="w-full bg-muted/50 hover:bg-muted rounded-[20px] text-foreground transition-all h-auto py-3 px-4 text-xs font-semibold flex items-center justify-center"
+          onClick={async () => {
+            try {
+              const { data: { user } } = await supabase.auth.getUser();
+              if (!user) {
+                toast.error("Debes iniciar sesión para descargar el reporte");
+                return;
+              }
+
+              toast.info("Generando reporte de patrimonio...");
+
+              const { data, error } = await supabase.functions.invoke('generate-networth-pdf', {
+                body: {
+                  userId: user.id,
+                  timeRange
+                }
+              });
+
+              if (error) {
+                console.error('Error al generar reporte:', error);
+                throw error;
+              }
+
+              if (!data || !data.html || !data.filename) {
+                throw new Error('Datos incompletos en la respuesta');
+              }
+
+              // Crear blob con el HTML
+              const blob = new Blob([data.html], { type: 'text/html' });
+              const url = URL.createObjectURL(blob);
+
+              // Crear link temporal y hacer click
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = data.filename.replace('.pdf', '.html');
+              document.body.appendChild(link);
+              link.click();
+
+              // Limpiar
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+
+              toast.success("Reporte descargado. Abre el archivo HTML y usa Ctrl+P (Cmd+P en Mac) para guardarlo como PDF.");
+            } catch (error: any) {
+              console.error('Error al generar reporte:', error);
+              toast.error(error.message || "No se pudo generar el reporte");
+            }
+          }}
+        >
+          <Download className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
+          <span className="whitespace-nowrap">Descargar Reporte de Patrimonio en PDF</span>
+        </Button>
       </div>
 
       {/* Liquidez Section */}

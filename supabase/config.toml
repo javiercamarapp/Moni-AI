@@ -62,3 +62,6 @@ verify_jwt = true
 
 [functions.update-net-worth-snapshot]
 verify_jwt = true
+
+[functions.generate-networth-pdf]
+verify_jwt = true
