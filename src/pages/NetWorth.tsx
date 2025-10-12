@@ -235,19 +235,21 @@ export default function NetWorth() {
 
       {/* Liquidez Section */}
       <div className="px-4 mt-2">
-        <div className="flex items-center justify-between mb-1">
+        <div className="flex items-center justify-between mb-3">
           <h2 className="text-xl font-bold text-foreground drop-shadow-lg">Liquidez</h2>
           <div className="relative">
-            <button 
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setShowInstitutionFilter(!showInstitutionFilter)}
-              className="flex items-center gap-2 text-sm text-foreground/70 hover:text-foreground transition-colors"
+              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-9 px-3 gap-2 text-foreground"
             >
               <div className="flex flex-col gap-0.5">
-                <div className="h-0.5 w-4 bg-foreground/70"></div>
-                <div className="h-0.5 w-4 bg-foreground/70"></div>
+                <div className="h-0.5 w-3 bg-foreground/70"></div>
+                <div className="h-0.5 w-3 bg-foreground/70"></div>
               </div>
-              Filtrar por institución
-            </button>
+              <span className="text-xs font-medium">Filtrar</span>
+            </Button>
             
             {showInstitutionFilter && (
               <div className="absolute right-0 top-full mt-2 bg-white backdrop-blur-md rounded-[20px] shadow-xl border border-blue-100 py-2 min-w-[200px] z-50">
@@ -257,8 +259,8 @@ export default function NetWorth() {
                     setShowInstitutionFilter(false);
                   }}
                   className={cn(
-                    "w-full text-left px-4 py-2 text-sm hover:bg-primary/10 transition-colors rounded-lg",
-                    selectedInstitution === 'All' ? "bg-primary/20 text-foreground font-semibold" : "text-foreground/80"
+                    "w-full text-left px-4 py-2.5 text-sm hover:bg-primary/10 transition-colors font-medium",
+                    selectedInstitution === 'All' ? "bg-primary/20 text-foreground" : "text-foreground/80"
                   )}
                 >
                   Todas las instituciones
@@ -275,8 +277,8 @@ export default function NetWorth() {
                       setShowInstitutionFilter(false);
                     }}
                     className={cn(
-                      "w-full text-left px-4 py-2 text-sm hover:bg-primary/10 transition-colors rounded-lg",
-                      selectedInstitution === institution ? "bg-primary/20 text-foreground font-semibold" : "text-foreground/80"
+                      "w-full text-left px-4 py-2.5 text-sm hover:bg-primary/10 transition-colors font-medium",
+                      selectedInstitution === institution ? "bg-primary/20 text-foreground" : "text-foreground/80"
                     )}
                   >
                     {institution}
@@ -288,9 +290,9 @@ export default function NetWorth() {
         </div>
 
         {/* Total Líquido */}
-        <div className="mb-4 bg-white/90 backdrop-blur-sm rounded-[20px] p-4 border border-blue-100 shadow-xl">
-          <p className="text-xs text-muted-foreground mb-1 font-medium">Efectivo Disponible</p>
-          <p className="text-xl font-bold text-foreground break-words">
+        <div className="mb-4 bg-white backdrop-blur-sm rounded-[20px] p-4 border border-blue-100 shadow-xl">
+          <p className="text-xs text-foreground/80 mb-1 font-medium">Efectivo Disponible</p>
+          <p className="text-2xl font-bold text-foreground break-words">
             ${assets
               .filter(a => isLiquidAsset(a.category, a.name))
               .filter(a => selectedInstitution === 'All' || a.name.startsWith(selectedInstitution))
@@ -310,28 +312,30 @@ export default function NetWorth() {
               return (
                 <div
                   key={account.id}
-                  className="flex items-center justify-between p-4 rounded-[20px] bg-white/90 hover:bg-white transition-colors border border-blue-100 shadow-xl hover:scale-[1.02] animate-fade-in"
+                  className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-[1.02] transition-all cursor-pointer border border-blue-100 animate-fade-in"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center">
-                      <Icon className="h-5 w-5 text-primary" />
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="w-10 h-10 rounded-lg bg-primary/40 flex items-center justify-center flex-shrink-0">
+                        <Icon className="h-5 w-5 text-foreground" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-foreground text-sm leading-tight">{account.name}</p>
+                        <p className="text-xs text-foreground/70 leading-tight">{account.category}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-bold text-foreground text-base">{account.name}</p>
-                      <p className="text-xs text-muted-foreground">{account.category}</p>
+                    <div className="text-right flex-shrink-0">
+                      <p className="font-bold text-foreground text-sm break-words">
+                        ${Number(account.value).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </p>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-foreground text-base break-words">
-                      ${Number(account.value).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </p>
                   </div>
                 </div>
               );
             })}
             
           {assets.filter(a => isLiquidAsset(a.category, a.name)).filter(a => selectedInstitution === 'All' || a.name.startsWith(selectedInstitution)).length === 0 && (
-            <div className="p-8 text-center text-muted-foreground bg-white/90 rounded-[20px] border border-blue-100 shadow-xl">
+            <div className="p-8 text-center text-muted-foreground bg-white rounded-[20px] border border-blue-100 shadow-xl">
               {selectedInstitution === 'All' 
                 ? 'No hay cuentas líquidas registradas'
                 : `No hay cuentas líquidas de ${selectedInstitution}`}
