@@ -17,13 +17,13 @@ export default function RiskIndicatorsWidget({ indicators, hasIssues }: RiskIndi
   const getIndicatorStyle = (level: string) => {
     switch (level) {
       case "critical":
-        return "bg-gradient-to-r from-red-600 via-red-500 to-red-600 shadow-[0_0_20px_rgba(239,68,68,0.6)]";
+        return "bg-gradient-to-r from-red-600 via-red-500 to-red-600";
       case "warning":
-        return "bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500 shadow-[0_0_20px_rgba(251,191,36,0.6)]";
+        return "bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500";
       case "good":
-        return "bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 shadow-[0_0_20px_rgba(4,120,87,0.6)]";
+        return "bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500";
       default:
-        return "bg-white border-border shadow-lg";
+        return "bg-white border-border";
     }
   };
 
@@ -48,7 +48,7 @@ export default function RiskIndicatorsWidget({ indicators, hasIssues }: RiskIndi
       </div>
       
       {!hasIssues ? (
-        <Card className="p-4 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 shadow-[0_0_20px_rgba(4,120,87,0.6)] animate-fade-in rounded-[20px] border-0">
+        <Card className="p-4 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 animate-fade-in rounded-[20px] border-0">
           <div className="flex items-start gap-3">
             <CheckCircle className="h-5 w-5 text-white flex-shrink-0 mt-0.5" />
             <div>
