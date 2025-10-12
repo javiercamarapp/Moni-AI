@@ -175,10 +175,11 @@ export default function DailyExpenses() {
               <Activity className="h-6 w-6 text-orange-600" />
             </div>
             <div>
-              <p className="text-sm text-foreground/70">Promedio Mensual</p>
+              <p className="text-sm text-foreground/70">Gasto Mensual Estimado</p>
               <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
                 ${totalMonthly.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
               </h2>
+              <p className="text-xs text-foreground/50 mt-1">Basado en frecuencia de pago</p>
             </div>
           </div>
           <div className="flex justify-between text-sm text-foreground/70">
