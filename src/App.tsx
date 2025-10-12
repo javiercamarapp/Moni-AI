@@ -26,6 +26,7 @@ import Assets from "./pages/Assets";
 import Liabilities from "./pages/Liabilities";
 
 import Subscriptions from "./pages/Subscriptions";
+import DailyExpenses from './pages/DailyExpenses';
 
 import NotFound from "./pages/NotFound";
 
@@ -68,7 +69,8 @@ const App = () => {
             <Route path="/score-moni" element={<ScoreMoni />} />
             <Route path="/assets" element={<Assets />} />
             <Route path="/liabilities" element={<Liabilities />} />
-            <Route path="/subscriptions" element={<Subscriptions />} />
+          <Route path="/subscriptions" element={<Subscriptions />} />
+          <Route path="/daily-expenses" element={<DailyExpenses />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

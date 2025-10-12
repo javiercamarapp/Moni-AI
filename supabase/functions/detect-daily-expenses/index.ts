@@ -11,24 +11,23 @@ Deno.serve(async (req) => {
   try {
     const { transactions } = await req.json();
 
-    console.log('📥 Received transactions:', transactions?.length || 0);
+    console.log('📥 Received transactions for daily expenses:', transactions?.length || 0);
 
     if (!transactions || transactions.length === 0) {
       console.log('⚠️ No transactions to analyze');
       return new Response(
-        JSON.stringify({ subscriptions: [] }),
+        JSON.stringify({ expenses: [] }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Usar Lovable AI para detectar suscripciones
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     console.log('🔑 API Key present:', !!LOVABLE_API_KEY);
 
     if (!LOVABLE_API_KEY) {
       console.error('❌ LOVABLE_API_KEY not found in environment');
       return new Response(
-        JSON.stringify({ subscriptions: [], error: 'API key not configured' }),
+        JSON.stringify({ expenses: [], error: 'API key not configured' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -44,45 +43,52 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `Eres un asistente financiero experto en detectar SUSCRIPCIONES con monto fijo.
+            content: `Eres un asistente financiero experto en detectar GASTOS COTIDIANOS recurrentes con monto variable.
 
-IMPORTANTE: Solo detecta SUSCRIPCIONES de entretenimiento, software y servicios de MONTO FIJO.
+IMPORTANTE: Solo detecta SERVICIOS BÁSICOS y GASTOS RECURRENTES con MONTO VARIABLE.
 
 ✅ INCLUYE:
-- Streaming: Netflix, Spotify, Disney+, HBO Max, Amazon Prime, Apple Music, YouTube Premium
-- Gimnasio y deportes
-- Software y aplicaciones
-- Servicios en línea con monto fijo
+- CFE, Luz, electricidad (monto variable)
+- Agua, SACMEX, servicios de agua (monto variable)
+- Gas natural, gas LP (monto variable)
+- Teléfono celular si tiene consumo variable
+- Internet si tiene cargos variables
+- Gasolina / combustible
+- Comida / supermercado si es recurrente
+- Transporte público
 
-❌ NO INCLUYAS (son gastos cotidianos variables):
-- CFE, Luz, electricidad
-- Agua, SACMEX, servicios de agua
-- Gas natural, gas LP
-- Servicios básicos con monto variable
+❌ NO INCLUYAS:
+- Netflix, Spotify, Disney+ (son suscripciones de monto fijo)
+- Servicios de streaming
+- Gimnasios
+- Software
 
 Analiza las transacciones y:
-1. Identifica solo suscripciones de MONTO FIJO que se repiten
-2. AGRUPA pagos del mismo servicio (ej: "Netflix oct 25", "Netflix sept 25" → uno solo como "Netflix")
-3. Calcula el monto PROMEDIO
+1. Identifica servicios básicos recurrentes con MONTO VARIABLE
+2. AGRUPA pagos del mismo servicio
+3. Calcula PROMEDIO, MÍNIMO y MÁXIMO de cada servicio
 4. Detecta la frecuencia
 
 Responde ÚNICAMENTE con un JSON válido:
 {
-  "subscriptions": [
+  "expenses": [
     {
-      "description": "nombre limpio del servicio (SIN meses ni años)",
-      "amount": monto_promedio,
+      "description": "nombre del servicio",
+      "averageAmount": monto_promedio,
+      "minAmount": monto_minimo,
+      "maxAmount": monto_maximo,
       "frequency": "mensual" | "quincenal" | "semanal",
-      "categoryName": "categoría si disponible"
+      "categoryName": "categoría si disponible",
+      "occurrences": número_de_veces_que_aparece
     }
   ]
 }
 
-Si no detectas suscripciones de monto fijo, responde: {"subscriptions": []}`
+Si no detectas gastos cotidianos, responde: {"expenses": []}`
           },
           {
             role: 'user',
-            content: `Analiza estas transacciones de gastos y detecta suscripciones y pagos recurrentes:\n\n${JSON.stringify(transactions.map((t: any) => ({
+            content: `Analiza estas transacciones y detecta gastos cotidianos recurrentes con monto variable:\n\n${JSON.stringify(transactions.map((t: any) => ({
               description: t.description,
               amount: t.amount,
               date: t.transaction_date,
@@ -98,7 +104,7 @@ Si no detectas suscripciones de monto fijo, responde: {"subscriptions": []}`
       const errorText = await aiResponse.text();
       console.error('❌ AI API error:', aiResponse.status, errorText);
       return new Response(
-        JSON.stringify({ subscriptions: [], error: `AI API error: ${aiResponse.status}` }),
+        JSON.stringify({ expenses: [], error: `AI API error: ${aiResponse.status}` }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -106,14 +112,13 @@ Si no detectas suscripciones de monto fijo, responde: {"subscriptions": []}`
     const aiData = await aiResponse.json();
     console.log('🤖 AI Response:', JSON.stringify(aiData, null, 2));
     
-    const content = aiData.choices?.[0]?.message?.content || '{"subscriptions": []}';
+    const content = aiData.choices?.[0]?.message?.content || '{"expenses": []}';
     console.log('📝 AI Content:', content);
     
-    // Limpiar la respuesta para extraer solo el JSON
     const jsonMatch = content.match(/\{[\s\S]*\}/);
-    const jsonResponse = jsonMatch ? JSON.parse(jsonMatch[0]) : { subscriptions: [] };
+    const jsonResponse = jsonMatch ? JSON.parse(jsonMatch[0]) : { expenses: [] };
     
-    console.log('✅ Parsed subscriptions:', jsonResponse.subscriptions?.length || 0);
+    console.log('✅ Parsed daily expenses:', jsonResponse.expenses?.length || 0);
 
     return new Response(
       JSON.stringify(jsonResponse),
@@ -121,14 +126,14 @@ Si no detectas suscripciones de monto fijo, responde: {"subscriptions": []}`
     );
 
   } catch (error) {
-    console.error('Error detecting subscriptions:', error);
+    console.error('Error detecting daily expenses:', error);
     return new Response(
       JSON.stringify({ 
-        subscriptions: [],
+        expenses: [],
         error: error.message 
       }),
       { 
-        status: 200, // Return 200 to avoid breaking the UI
+        status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
     );

@@ -65,3 +65,6 @@ verify_jwt = true
 
 [functions.generate-networth-pdf]
 verify_jwt = true
+
+[functions.detect-daily-expenses]
+verify_jwt = true
