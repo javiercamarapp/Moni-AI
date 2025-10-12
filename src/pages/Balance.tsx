@@ -532,7 +532,11 @@ const Balance = () => {
               <span>Tasa de ahorro:</span>
               <span className="font-semibold text-foreground">{tasaAhorro.toFixed(1)}%</span>
             </div>
-            <Progress value={tasaAhorro} className="h-2 bg-primary/10" />
+            <Progress 
+              value={tasaAhorro} 
+              className="h-2 bg-primary/10" 
+              indicatorClassName={ahorro >= 0 ? "bg-emerald-600" : "bg-destructive"}
+            />
           </div>
           
           {/* Botón de descarga de PDF */}
