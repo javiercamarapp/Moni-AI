@@ -515,13 +515,13 @@ const Balance = () => {
       }}>
           <div className="flex items-center gap-3 mb-3">
             <div className="p-3 bg-card/40 backdrop-blur-sm rounded-full border border-border/30">
-              <Wallet className="h-6 w-6 text-white" />
+              <Wallet className="h-6 w-6 text-black" />
             </div>
             <div>
-              <p className="text-sm text-white/90">
+              <p className="text-sm text-black/90">
                 Ahorro {viewMode === 'mensual' ? 'Mensual' : 'Anual'}
               </p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white">
+              <h2 className="text-3xl sm:text-4xl font-bold text-black">
                 ${ahorro.toLocaleString('es-MX', {
                 minimumFractionDigits: 2
               })}
@@ -529,7 +529,7 @@ const Balance = () => {
             </div>
           </div>
           <div className="space-y-2">
-            <div className="flex justify-between text-sm text-white/90">
+            <div className="flex justify-between text-sm text-black/90">
               <span>Tasa de ahorro:</span>
               <span className="font-semibold">{tasaAhorro.toFixed(1)}%</span>
             </div>
