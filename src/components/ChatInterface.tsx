@@ -569,20 +569,21 @@ const ChatInterface = () => {
   };
   return <div className="flex flex-col h-screen animated-wave-bg text-white">
       {/* Header */}
-      <div className="flex items-center justify-center px-4 py-4 relative border-b border-border/30 bg-card/50 backdrop-blur-sm">
+      <div className="flex items-center justify-between px-4 py-4 border-b border-border/30 bg-card/50 backdrop-blur-sm">
         <Button 
           variant="ghost" 
           size="icon" 
           onClick={() => navigate("/dashboard")} 
-          className="absolute left-3 text-foreground hover:bg-accent/50 transition-all hover:scale-110 hover-lift fade-in-up rounded-full"
+          className="text-foreground hover:bg-accent/50 transition-all hover:scale-110 hover-lift fade-in-up rounded-full"
         >
           <ArrowLeft className="w-5 h-5" />
         </Button>
-        <div className="flex items-center gap-3 fade-in-up">
+        <div className="flex items-center gap-3 fade-in-up absolute left-1/2 -translate-x-1/2">
           <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden w-16 h-10">
             <img src={moniLogo} alt="Moni" className="w-full h-full object-cover" />
           </div>
         </div>
+        <div className="w-10"></div>
       </div>
 
       {/* Messages Area */}
