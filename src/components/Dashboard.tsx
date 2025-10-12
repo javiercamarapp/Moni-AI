@@ -1312,7 +1312,7 @@ const Dashboard = () => {
             <div>
               <div className="flex flex-row justify-between items-center mb-4">
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Tus Metas</h3>
-                <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-green-600 hover:bg-green-700 text-white border-0 text-xs sm:text-sm hover:scale-105 transition-all">
+                <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-white rounded-[20px] shadow-xl border border-blue-100 text-foreground hover:bg-gray-50 text-xs sm:text-sm hover:scale-105 transition-all">
                   <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   Nueva Meta
                 </Button>
