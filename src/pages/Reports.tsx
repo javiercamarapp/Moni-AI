@@ -114,10 +114,6 @@ const Reports = () => {
     }
   };
 
-  // Debug: Log available years
-  console.log('Available years:', availableYears);
-  console.log('Selected year:', selectedYear);
-
   return (
     <div className="min-h-screen animated-wave-bg pb-20 overflow-visible">
       {/* Header */}
@@ -151,32 +147,24 @@ const Reports = () => {
         </Card>
 
         {/* Lista de Meses con Selector de Año */}
-        <div className="space-y-3 relative z-10 overflow-visible">
-          <div className="flex items-center justify-between px-2">
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 px-2">
             <h3 className="text-sm font-semibold text-foreground">
-              Reportes de {selectedYear}
+              Reportes de
             </h3>
             <Select
               value={selectedYear.toString()}
               onValueChange={(value) => setSelectedYear(parseInt(value))}
             >
-              <SelectTrigger className="w-[120px] h-9 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all">
-                <SelectValue placeholder="Año" />
+              <SelectTrigger className="w-[100px] h-8 bg-white rounded-[15px] shadow-lg border border-blue-100 text-sm font-semibold">
+                <SelectValue />
               </SelectTrigger>
-              <SelectContent 
-                className="bg-white border border-blue-100 rounded-[15px] shadow-2xl min-w-[120px]"
-                position="popper"
-                sideOffset={8}
-                align="end"
-                avoidCollisions={true}
-                collisionPadding={20}
-                style={{ zIndex: 9999 }}
-              >
+              <SelectContent className="bg-white border border-blue-100 rounded-[15px] shadow-xl">
                 {availableYears.filter(year => year <= new Date().getFullYear()).map((year) => (
                   <SelectItem 
                     key={year} 
                     value={year.toString()}
-                    className="hover:bg-primary/10 cursor-pointer rounded-[10px] focus:bg-primary/10"
+                    className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10"
                   >
                     {year}
                   </SelectItem>
