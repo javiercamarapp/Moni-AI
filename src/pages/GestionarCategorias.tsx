@@ -469,7 +469,7 @@ const GestionarCategorias = () => {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deleteCategory} onOpenChange={open => !open && setDeleteCategory(null)}>
-        <AlertDialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100">
+        <AlertDialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100 max-w-[85%] sm:max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-foreground">¿Eliminar categoría?</AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground">
