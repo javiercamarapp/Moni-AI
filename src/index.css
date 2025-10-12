@@ -283,6 +283,15 @@
   }
 }
 
+@keyframes gradient-rotate {
+  from {
+    --gradient-angle: 0deg;
+  }
+  to {
+    --gradient-angle: 360deg;
+  }
+}
+
 /* Animated wave background - Deep metallic */
 .animated-wave-bg {
   background: 
@@ -299,4 +308,35 @@
     );
   background-size: 300% 300%, 250% 250%, 280% 280%, 200% 200%;
   animation: wave-3d 12s ease-in-out infinite, gradient-shift 8s ease-in-out infinite;
+}
+
+/* Gradient border animations */
+.gradient-border-component {
+  @supports (background: paint(something)) {
+    @property --gradient-angle {
+      syntax: "<angle>";
+      inherits: false;
+      initial-value: 0deg;
+    }
+  }
+}
+
+.gradient-border-auto {
+  animation: gradient-rotate var(--animation-duration, 5s) linear infinite;
+}
+
+.gradient-border-hover {
+  animation: gradient-rotate var(--animation-duration, 5s) linear infinite paused;
+}
+
+.gradient-border-hover:hover {
+  animation-play-state: running;
+}
+
+.gradient-border-stop-hover {
+  animation: gradient-rotate var(--animation-duration, 5s) linear infinite;
+}
+
+.gradient-border-stop-hover:hover {
+  animation-play-state: paused;
 }
