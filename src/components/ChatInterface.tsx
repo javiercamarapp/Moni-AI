@@ -10,7 +10,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import Autoplay from 'embla-carousel-autoplay';
 import moniLogo from '@/assets/moni-ai-logo.png';
 import { Camera as CapCamera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { SiriOrb } from '@/components/ui/siri-orb';
+import { PulseBeams } from '@/components/ui/pulse-beams';
+
 const ChatInterface = () => {
   const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
@@ -568,7 +569,54 @@ const ChatInterface = () => {
       });
     }
   };
-  return <div className="flex flex-col h-screen animated-wave-bg text-white">
+  const beamPaths = [
+    {
+      path: "M50,200 Q200,100 400,200 T750,200",
+      gradientConfig: {
+        initial: { x1: "0", x2: "100%", y1: "0", y2: "0" },
+        animate: {
+          x1: ["0", "100%", "0"],
+          x2: ["100%", "200%", "100%"],
+          y1: ["0", "50%", "0"],
+          y2: ["0", "50%", "0"],
+        },
+        transition: { duration: 6, repeat: Infinity, ease: "linear" }
+      }
+    },
+    {
+      path: "M100,350 Q300,250 500,350 T800,350",
+      gradientConfig: {
+        initial: { x1: "0", x2: "100%", y1: "0", y2: "0" },
+        animate: {
+          x1: ["100%", "0", "100%"],
+          x2: ["200%", "100%", "200%"],
+          y1: ["0", "50%", "0"],
+          y2: ["0", "50%", "0"],
+        },
+        transition: { duration: 8, repeat: Infinity, ease: "linear", delay: 1 }
+      }
+    },
+    {
+      path: "M0,100 Q250,50 450,150 T850,100",
+      gradientConfig: {
+        initial: { x1: "0", x2: "100%", y1: "0", y2: "0" },
+        animate: {
+          x1: ["0", "100%", "0"],
+          x2: ["100%", "200%", "100%"],
+          y1: ["0", "30%", "0"],
+          y2: ["0", "30%", "0"],
+        },
+        transition: { duration: 7, repeat: Infinity, ease: "linear", delay: 2 }
+      }
+    }
+  ];
+
+  return <PulseBeams 
+    beams={beamPaths}
+    background={<div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />}
+    className="text-white"
+  >
+    <div className="flex flex-col h-screen relative z-10">
       {/* Header */}
       <div className="grid grid-cols-3 items-center px-4 py-4 border-b border-border/30 bg-card/50 backdrop-blur-sm">
         <div className="justify-self-start">
@@ -592,12 +640,6 @@ const ChatInterface = () => {
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto px-3 sm:px-4">
         {messages.length === 0 ? <div className="h-full flex flex-col items-center justify-center pb-32">
-            <SiriOrb 
-              size="192px"
-              animationDuration={15}
-              className="drop-shadow-2xl mb-6"
-            />
-            <h1 className="text-2xl sm:text-3xl font-normal text-foreground text-center fade-in-up px-4">¿En qué puedo ayudarte hoy?</h1>
           </div> : <div className="py-4 sm:py-6 space-y-4 sm:space-y-6 max-w-4xl mx-auto">
             {messages.map((msg, index) => <div key={msg.id} className="fade-in-up" style={{
           animationDelay: `${index * 0.1}s`
@@ -898,6 +940,7 @@ const ChatInterface = () => {
         
         <p className="text-center text-xs text-muted-foreground mt-3">Verifica la información importante.</p>
       </div>
-    </div>;
+    </div>
+  </PulseBeams>;
 };
 export default ChatInterface;
