@@ -297,6 +297,10 @@ const GestionarCategorias = () => {
           <DialogTrigger asChild>
             <Button
               size="icon"
+              onClick={() => {
+                setParentCategoryForSubcategory(null);
+                setNewCategory({ name: '', type: 'ingreso', color: 'bg-primary/20', parent_id: null });
+              }}
               className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10"
             >
               <Plus className="h-5 w-5 text-foreground" />
