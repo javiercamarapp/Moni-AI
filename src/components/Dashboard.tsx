@@ -1123,16 +1123,6 @@ const Dashboard = () => {
                 </div>
               </div>
               
-              {/* Texto sobre la barra */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className={`text-xs font-black px-2 py-0.5 rounded-full break-words ${
-                  monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 90 
-                    ? 'text-white bg-black/20' 
-                    : 'text-gray-900 bg-white/40'
-                }`}>
-                  ${(monthlyIncome > 0 ? (monthlyIncome * 0.8) - monthlyExpenses : 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} restantes
-                </span>
-              </div>
             </div>
             
             <p className="text-xs text-foreground/80 text-center font-semibold min-h-[32px] flex items-center justify-center">
