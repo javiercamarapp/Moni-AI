@@ -964,11 +964,11 @@ const Dashboard = () => {
                       ? '0 0 20px rgba(239, 68, 68, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)' 
                       : monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 75 
                       ? '0 0 20px rgba(251, 191, 36, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)' 
-                      : '0 0 20px rgba(16, 185, 129, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)'
+                      : '0 0 20px rgba(4, 120, 87, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)'
                   }}
                 >
-                  {/* Efecto de brillo superior */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-transparent" />
+                  {/* Efecto de brillo superior con verde esmeralda */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-emerald-700/30 via-transparent to-transparent" />
                 </div>
               </div>
               
