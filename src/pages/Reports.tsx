@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Download, FileText } from 'lucide-react';
+import { ArrowLeft, Download, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -148,29 +148,45 @@ const Reports = () => {
 
         {/* Lista de Meses con Selector de Año */}
         <div className="space-y-3">
-          <div className="flex items-center gap-2 px-2">
-            <h3 className="text-sm font-semibold text-foreground">
-              Reportes de
-            </h3>
-            <Select
-              value={selectedYear.toString()}
-              onValueChange={(value) => setSelectedYear(parseInt(value))}
+          <div className="flex items-center justify-center gap-3 px-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                const currentIndex = availableYears.indexOf(selectedYear);
+                if (currentIndex < availableYears.length - 1) {
+                  setSelectedYear(availableYears[currentIndex + 1]);
+                }
+              }}
+              disabled={selectedYear === availableYears[availableYears.length - 1]}
+              className="h-8 w-8 rounded-full bg-white shadow-lg border border-blue-100 hover:bg-primary/10 disabled:opacity-30 disabled:cursor-not-allowed"
             >
-              <SelectTrigger className="w-[100px] h-8 bg-white rounded-[15px] shadow-lg border border-blue-100 text-sm font-semibold">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-white border border-blue-100 rounded-[15px] shadow-xl">
-                {availableYears.filter(year => year <= new Date().getFullYear()).map((year) => (
-                  <SelectItem 
-                    key={year} 
-                    value={year.toString()}
-                    className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10"
-                  >
-                    {year}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-foreground">
+                Reportes de
+              </h3>
+              <div className="bg-white rounded-[15px] shadow-lg border border-blue-100 px-4 py-1.5 min-w-[80px] text-center">
+                <span className="text-sm font-bold text-foreground">{selectedYear}</span>
+              </div>
+            </div>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                const currentIndex = availableYears.indexOf(selectedYear);
+                if (currentIndex > 0) {
+                  setSelectedYear(availableYears[currentIndex - 1]);
+                }
+              }}
+              disabled={selectedYear === availableYears[0]}
+              className="h-8 w-8 rounded-full bg-white shadow-lg border border-blue-100 hover:bg-primary/10 disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
           <div className="grid grid-cols-1 gap-2 relative z-0">
             {[...months].reverse().filter((month) => {
