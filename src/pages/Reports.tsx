@@ -159,12 +159,16 @@ const Reports = () => {
               <SelectTrigger className="w-[120px] h-9 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all">
                 <SelectValue placeholder="Año" />
               </SelectTrigger>
-              <SelectContent className="bg-white border border-blue-100 rounded-[15px] shadow-xl z-50">
+              <SelectContent 
+                className="bg-white border border-blue-100 rounded-[15px] shadow-xl"
+                position="popper"
+                sideOffset={5}
+              >
                 {availableYears.filter(year => year <= new Date().getFullYear()).map((year) => (
                   <SelectItem 
                     key={year} 
                     value={year.toString()}
-                    className="hover:bg-primary/10 cursor-pointer rounded-[10px]"
+                    className="hover:bg-primary/10 cursor-pointer rounded-[10px] focus:bg-primary/10"
                   >
                     {year}
                   </SelectItem>
