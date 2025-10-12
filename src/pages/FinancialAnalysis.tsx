@@ -51,8 +51,8 @@ export default function FinancialAnalysis() {
     return cached ? JSON.parse(cached) : null;
   });
   const [analysis, setAnalysis] = useState<any>(() => {
-    const cached = localStorage.getItem('financialAnalysis_analysis');
-    return cached ? JSON.parse(cached) : {
+    // No usar caché inicial ya que depende del período seleccionado
+    return {
       metrics: {
         totalIncome: 0,
         totalExpenses: 0,
@@ -210,7 +210,8 @@ export default function FinancialAnalysis() {
           scoreMoni: 40
         };
         setQuickMetrics(emptyMetrics);
-        localStorage.setItem('financialAnalysis_quickMetrics', JSON.stringify(emptyMetrics));
+        const cacheKey = `financialAnalysis_quickMetrics_${period}`;
+        localStorage.setItem(cacheKey, JSON.stringify(emptyMetrics));
         return;
       }
       
@@ -519,7 +520,6 @@ export default function FinancialAnalysis() {
         // Guardar con timestamp
         localStorage.setItem(cacheKey, JSON.stringify(data));
         localStorage.setItem(cacheTimeKey, now.toString());
-        localStorage.setItem('financialAnalysis_analysis', JSON.stringify(data));
         console.log('✅ Analysis data cached successfully');
       }
     } catch (error: any) {
@@ -539,15 +539,30 @@ export default function FinancialAnalysis() {
         {/* Header */}
         <div className="flex items-center justify-between pt-4 mb-4">
           <div>
-            <h1 className="text-xl font-bold text-foreground">Análisis Financiero</h1>
-            <p className="text-xs text-muted-foreground">Tu salud financiera</p>
+            <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+              Análisis Financiero
+              {(loading || loadingTransactions) && (
+                <RefreshCw className="h-4 w-4 animate-spin text-primary" />
+              )}
+            </h1>
+            <p className="text-xs text-muted-foreground">
+              {period === 'month' ? 'Mes actual' : 'Año completo'}
+            </p>
           </div>
           <Tabs value={period} onValueChange={setPeriod}>
             <TabsList className="h-10 bg-white rounded-[20px] shadow-xl border border-blue-100">
-              <TabsTrigger value="month" className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-[16px] transition-all">
+              <TabsTrigger 
+                value="month" 
+                className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-[16px] transition-all"
+                disabled={loading || loadingTransactions}
+              >
                 Mes
               </TabsTrigger>
-              <TabsTrigger value="year" className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-[16px] transition-all">
+              <TabsTrigger 
+                value="year" 
+                className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-[16px] transition-all"
+                disabled={loading || loadingTransactions}
+              >
                 Año
               </TabsTrigger>
             </TabsList>
