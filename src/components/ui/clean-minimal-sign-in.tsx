@@ -4,10 +4,16 @@ import * as React from "react"
  
 import { useState } from "react";
 
-import { Lock, Mail } from "lucide-react";
+import { Lock, Mail, Loader2 } from "lucide-react";
 import moniLogo from "@/assets/moni-auth-logo.png";
+
+interface SignIn2Props {
+  onSignIn: (email: string, password: string) => Promise<void>;
+  onSocialLogin: (provider: 'google' | 'facebook' | 'apple') => Promise<void>;
+  loading: boolean;
+}
  
-const SignIn2 = () => {
+const SignIn2 = ({ onSignIn, onSocialLogin, loading }: SignIn2Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -16,17 +22,19 @@ const SignIn2 = () => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
  
-  const handleSignIn = () => {
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
     if (!email || !password) {
-      setError("Please enter both email and password.");
+      setError("Por favor ingresa email y contraseña.");
       return;
     }
     if (!validateEmail(email)) {
-      setError("Please enter a valid email address.");
+      setError("Por favor ingresa un email válido.");
       return;
     }
     setError("");
-    alert("Sign in successful! (Demo)");
+    await onSignIn(email, password);
   };
  
   return (
@@ -72,9 +80,17 @@ const SignIn2 = () => {
         </div>
         <button
           onClick={handleSignIn}
-          className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 md:py-3 text-sm md:text-base rounded-xl shadow hover:brightness-105 hover:scale-105 cursor-pointer transition-all mb-2 mt-1"
+          disabled={loading}
+          className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 md:py-3 text-sm md:text-base rounded-xl shadow hover:brightness-105 hover:scale-105 cursor-pointer transition-all mb-2 mt-1 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Get Started
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Iniciando sesión...
+            </span>
+          ) : (
+            "Iniciar Sesión"
+          )}
         </button>
         <div className="flex items-center w-full my-1">
           <div className="flex-grow border-t border-dashed border-gray-200"></div>
@@ -82,21 +98,33 @@ const SignIn2 = () => {
           <div className="flex-grow border-t border-dashed border-gray-200"></div>
         </div>
         <div className="flex gap-3 w-full justify-center mt-1">
-          <button className="flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow">
+          <button 
+            onClick={() => onSocialLogin('google')}
+            disabled={loading}
+            className="flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google"
               className="w-6 h-6 md:w-8 md:h-8"
             />
           </button>
-          <button className="flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow">
+          <button 
+            onClick={() => onSocialLogin('facebook')}
+            disabled={loading}
+            className="flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <img
               src="https://www.svgrepo.com/show/448224/facebook.svg"
               alt="Facebook"
               className="w-6 h-6 md:w-8 md:h-8"
             />
           </button>
-          <button className="flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow">
+          <button 
+            onClick={() => onSocialLogin('apple')}
+            disabled={loading}
+            className="flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <img
               src="https://www.svgrepo.com/show/511330/apple-173.svg"
               alt="Apple"

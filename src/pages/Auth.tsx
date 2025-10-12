@@ -285,7 +285,49 @@ const Auth = () => {
       <div 
         className="flex-1 flex items-center justify-center py-8 md:py-12 px-2 md:px-4 relative z-10"
       >
-        <SignIn2 />
+        <SignIn2 
+          onSignIn={async (email, password) => {
+            setLoading(true);
+            try {
+              const { error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+              });
+
+              if (error) {
+                if (error.message.includes("Invalid login credentials")) {
+                  toast({
+                    title: "Error",
+                    description: "Correo o contraseña incorrectos",
+                    variant: "destructive",
+                  });
+                } else {
+                  toast({
+                    title: "Error",
+                    description: error.message,
+                    variant: "destructive",
+                  });
+                }
+              } else {
+                // Guardar credenciales para autenticación biométrica si está disponible
+                if (biometricAvailable) {
+                  localStorage.setItem('biometric_email', email);
+                  localStorage.setItem('biometric_password', password);
+                }
+              }
+            } catch (error) {
+              toast({
+                title: "Error",
+                description: "Algo salió mal. Por favor intenta de nuevo.",
+                variant: "destructive",
+              });
+            } finally {
+              setLoading(false);
+            }
+          }}
+          onSocialLogin={handleSocialLogin}
+          loading={loading}
+        />
       </div>
 
       {/* Footer fijo en la parte inferior - oculto en móvil */}
