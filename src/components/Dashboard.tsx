@@ -1173,9 +1173,9 @@ const Dashboard = () => {
             backgroundColor="hsl(300, 40%, 12%)"
             borderWidth={3}
             borderRadius={12}
-            className="h-[220px] animate-fade-in hover:scale-105 transition-all duration-300"
+            className="h-[220px] animate-fade-in"
           >
-            <Card className="p-3 bg-gradient-to-br from-[hsl(280,45%,18%)] to-[hsl(300,40%,12%)] shadow-2xl border-0 relative overflow-hidden h-full flex flex-col cursor-pointer hover:-translate-y-1 transition-all duration-300">
+            <Card className="p-3 bg-gradient-to-br from-[hsl(280,45%,18%)] to-[hsl(300,40%,12%)] shadow-2xl border-0 relative overflow-visible h-full flex flex-col cursor-pointer hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300">
               <GlowingEffect
                 spread={40}
                 glow={true}
@@ -1240,10 +1240,10 @@ const Dashboard = () => {
             backgroundColor="hsl(15, 40%, 12%)"
             borderWidth={3}
             borderRadius={12}
-            className="h-[220px] animate-fade-in hover:scale-105 transition-all duration-300"
+            className="h-[220px] animate-fade-in"
             style={{ animationDelay: '100ms' }}
           >
-            <Card className="p-3 bg-gradient-to-br from-[hsl(0,45%,18%)] to-[hsl(15,40%,12%)] shadow-2xl border-0 relative overflow-hidden h-full flex flex-col cursor-pointer hover:-translate-y-1 transition-all duration-300">
+            <Card className="p-3 bg-gradient-to-br from-[hsl(0,45%,18%)] to-[hsl(15,40%,12%)] shadow-2xl border-0 relative overflow-visible h-full flex flex-col cursor-pointer hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300">
               <GlowingEffect
                 spread={40}
               glow={true}
@@ -1327,10 +1327,10 @@ const Dashboard = () => {
           backgroundColor="hsl(142, 55%, 15%)"
           borderWidth={3}
           borderRadius={12}
-          className="animate-fade-in hover:scale-105 transition-all duration-300"
+          className="animate-fade-in"
           style={{ animationDelay: '200ms' }}
         >
-          <Card className="p-3 sm:p-4 bg-gradient-to-br from-[hsl(142,60%,25%)] to-[hsl(142,55%,15%)] shadow-2xl border-0 relative overflow-hidden cursor-pointer hover:-translate-y-1 transition-all duration-300">
+          <Card className="p-3 sm:p-4 bg-gradient-to-br from-[hsl(142,60%,25%)] to-[hsl(142,55%,15%)] shadow-2xl border-0 relative overflow-visible cursor-pointer hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300">
             <GlowingEffect
               spread={40}
               glow={true}
@@ -1427,10 +1427,10 @@ const Dashboard = () => {
                     backgroundColor={colors.bg}
                     borderWidth={3}
                     borderRadius={12}
-                    className="animate-fade-in hover:scale-105 transition-all duration-300"
+                    className="animate-fade-in"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <Card className={`p-4 sm:p-6 bg-gradient-to-br ${gradient} shadow-2xl border-0 relative overflow-hidden hover:-translate-y-1 transition-all duration-300`}>
+                    <Card className={`p-4 sm:p-6 bg-gradient-to-br ${gradient} shadow-2xl border-0 relative overflow-visible hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300`}>
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
                         
                         <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-4 relative z-10">
@@ -1535,11 +1535,11 @@ const Dashboard = () => {
                         backgroundColor={colors.bg}
                         borderWidth={3}
                         borderRadius={12}
-                        className="p-0 animate-fade-in hover:scale-105 transition-all duration-300"
+                        className="p-0 animate-fade-in"
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <Card 
-                          className={`p-2.5 bg-gradient-to-br ${gradient} shadow-2xl border-0 relative overflow-hidden hover:-translate-y-1 transition-transform duration-300`}
+                          className={`p-2.5 bg-gradient-to-br ${gradient} shadow-2xl border-0 relative overflow-visible hover:scale-[1.02] hover:-translate-y-1 transition-transform duration-300`}
                           style={{ transform: 'translate3d(0, 0, 0)' }}
                         >
                           <div className="relative z-10">
@@ -1644,10 +1644,10 @@ const Dashboard = () => {
               backgroundColor="hsl(38, 55%, 15%)"
               borderWidth={3}
               borderRadius={12}
-              className="h-[220px] animate-fade-in hover:scale-105 transition-all duration-300"
+              className="h-[220px] animate-fade-in"
               style={{ animationDelay: '300ms' }}
             >
-              <Card className="p-3 bg-gradient-to-br from-[hsl(45,60%,25%)] to-[hsl(38,55%,15%)] shadow-2xl border-0 relative overflow-hidden h-full flex flex-col cursor-pointer hover:-translate-y-1 transition-all duration-300">
+              <Card className="p-3 bg-gradient-to-br from-[hsl(45,60%,25%)] to-[hsl(38,55%,15%)] shadow-2xl border-0 relative overflow-visible h-full flex flex-col cursor-pointer hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300">
               <GlowingEffect
                 spread={40}
                 glow={true}
