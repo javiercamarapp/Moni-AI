@@ -1090,28 +1090,7 @@ const Dashboard = () => {
         />
 
         {/* Presupuesto Mensual */}
-        <BorderRotate
-          animationMode="auto-rotate"
-          animationSpeed={3}
-          gradientColors={{
-            primary: '#3b82f6',
-            secondary: '#60a5fa',
-            accent: '#93c5fd'
-          }}
-          backgroundColor="hsl(240, 40%, 12%)"
-          borderWidth={3}
-          borderRadius={12}
-          className="hover:scale-105 hover:-translate-y-2 transition-all duration-300"
-        >
-          <Card className="p-5 bg-gradient-to-br from-[hsl(220,45%,18%)] to-[hsl(240,40%,12%)] shadow-2xl border-0 relative overflow-hidden">
-          <GlowingEffect
-            spread={40}
-            glow={true}
-            disabled={false}
-            proximity={64}
-            inactiveZone={0.01}
-            borderWidth={2}
-          />
+        <Card className="p-5 bg-gradient-to-br from-[hsl(220,45%,18%)] to-[hsl(240,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(220,50%,35%)]/40 relative overflow-hidden">
           <div className="space-y-3 relative z-10">
             <div className="flex items-center justify-between">
               <div>
@@ -1185,7 +1164,6 @@ const Dashboard = () => {
             }
           `}</style>
         </Card>
-      </BorderRotate>
 
         {/* Grid de 2 columnas: Suscripciones y Deudas - Alineados horizontalmente siempre */}
         <div className="grid grid-cols-2 gap-2 sm:gap-4">
