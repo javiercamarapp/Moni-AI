@@ -915,7 +915,7 @@ const Dashboard = () => {
         {/* Puntos y nivel + Notificaciones */}
         <div className="flex gap-2 items-center">
           {/* Botón de puntos y nivel */}
-          <Button variant="ghost" className="bg-gradient-card card-glow hover:bg-white/20 text-foreground h-10 px-3 gap-2 hover:scale-105 transition-transform duration-200">
+          <Button variant="ghost" className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 px-3 gap-2 hover:scale-105 transition-all border border-blue-100">
             <span className="text-sm font-bold">{currentXP} pts</span>
             <span className="text-xs opacity-80">Nivel {level}</span>
           </Button>
