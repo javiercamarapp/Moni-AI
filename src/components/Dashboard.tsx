@@ -1320,21 +1320,14 @@ const Dashboard = () => {
 
               <div className="space-y-3 sm:space-y-4">
                 {goals.length === 0 ? (
-                  <Card className="p-6 bg-gradient-to-br from-[hsl(25,60%,25%)] to-[hsl(25,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(25,70%,45%)]/40 relative overflow-hidden text-center animate-fade-in">
-                    <GlowingEffect
-                      spread={40}
-                      glow={true}
-                      disabled={false}
-                      proximity={64}
-                      inactiveZone={0.01}
-                      borderWidth={2}
-                    />
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
-                      <p className="text-white/90 mb-4 relative z-10 drop-shadow-lg">No tienes metas creadas aún</p>
-                      <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:scale-105 transition-transform duration-200 relative z-10">
+                  <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden text-center animate-fade-in">
+                    <div className="relative z-10">
+                      <p className="text-foreground/90 mb-4">No tienes metas creadas aún</p>
+                      <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-primary hover:bg-primary/90 text-white border-0 hover:scale-105 transition-transform duration-200">
                         <Plus className="w-4 h-4 mr-2" />
                       Crear tu primera meta
                     </Button>
+                    </div>
                   </Card>
                 ) : goals.map((goal, index) => {
                 const goalProgress = goal.current / goal.target * 100;
