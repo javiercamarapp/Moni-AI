@@ -19,7 +19,7 @@ const BottomNav = () => {
         <button 
           onClick={() => navigate('/dashboard')}
           className={`flex flex-col items-center gap-1 transition-colors ${
-            isActive('/dashboard') ? 'text-white' : 'text-white/70 hover:text-white'
+            isActive('/dashboard') ? 'text-foreground' : 'text-foreground/70 hover:text-foreground'
           }`}
         >
           <Home className="w-5 h-5" />
@@ -29,7 +29,7 @@ const BottomNav = () => {
         <button 
           onClick={() => navigate('/analysis')}
           className={`flex flex-col items-center gap-1 transition-colors ${
-            isActive('/analysis') ? 'text-white' : 'text-white/70 hover:text-white'
+            isActive('/analysis') ? 'text-foreground' : 'text-foreground/70 hover:text-foreground'
           }`}
         >
           <BarChart3 className="w-5 h-5" />
@@ -37,7 +37,7 @@ const BottomNav = () => {
         </button>
         
         <button 
-          className="flex flex-col items-center gap-1 text-white/70 hover:text-white transition-colors"
+          className="flex flex-col items-center gap-1 text-foreground/70 hover:text-foreground transition-colors"
         >
           <Users className="w-5 h-5" />
           <span className="text-xs">Social</span>
@@ -46,7 +46,7 @@ const BottomNav = () => {
         <button 
           onClick={() => navigate('/chat')}
           className={`flex flex-col items-center gap-1 transition-colors ${
-            isActive('/chat') ? 'text-white' : 'text-white/70 hover:text-white'
+            isActive('/chat') ? 'text-foreground' : 'text-foreground/70 hover:text-foreground'
           }`}
         >
           <MessageCircle className="w-5 h-5" />
@@ -56,7 +56,7 @@ const BottomNav = () => {
         <button 
           onClick={() => navigate('/profile')}
           className={`flex flex-col items-center gap-1 transition-colors ${
-            isActive('/profile') ? 'text-white' : 'text-white/70 hover:text-white'
+            isActive('/profile') ? 'text-foreground' : 'text-foreground/70 hover:text-foreground'
           }`}
         >
           <User className="w-5 h-5" />
