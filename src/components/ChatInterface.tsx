@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from "@/hooks/use-toast";
-import { Send, Plus, Mic, ArrowLeft, Circle, Paperclip, TrendingUp, Calculator, PiggyBank, Lightbulb, Target, Receipt, Sparkles, Camera } from 'lucide-react';
+import { Send, Plus, Mic, Circle, Paperclip, TrendingUp, Calculator, PiggyBank, Lightbulb, Target, Receipt, Sparkles, Camera } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import Autoplay from 'embla-carousel-autoplay';
@@ -570,9 +570,6 @@ const ChatInterface = () => {
   return <div className="flex flex-col h-screen animated-wave-bg text-white">
       {/* Header */}
       <div className="flex items-center justify-center px-4 py-4 relative border-b border-border/30 bg-card/50 backdrop-blur-sm">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")} className="absolute left-0 text-foreground hover:bg-accent/50 transition-all hover:scale-105">
-          <ArrowLeft className="w-6 h-6" />
-        </Button>
         <div className="flex items-center gap-3 fade-in-up">
           <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden w-16 h-10">
             <img src={moniLogo} alt="Moni" className="w-full h-full object-cover" />
