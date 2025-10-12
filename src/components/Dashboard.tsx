@@ -1125,11 +1125,11 @@ const Dashboard = () => {
               
               {/* Texto sobre la barra */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className={`text-xs font-black px-2 py-0.5 rounded-full bg-white/30 backdrop-blur-sm break-words ${
+                <span className={`text-xs font-black px-2 py-0.5 rounded-full break-words ${
                   monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 90 
-                    ? 'text-white' 
-                    : 'text-gray-900'
-                }`} style={{ textShadow: 'none' }}>
+                    ? 'text-white bg-black/20' 
+                    : 'text-gray-900 bg-white/40'
+                }`}>
                   ${(monthlyIncome > 0 ? (monthlyIncome * 0.8) - monthlyExpenses : 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} restantes
                 </span>
               </div>
