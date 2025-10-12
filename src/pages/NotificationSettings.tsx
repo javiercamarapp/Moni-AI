@@ -111,7 +111,7 @@ export default function NotificationSettings() {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-24">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-md mx-auto">
         {/* Header */}
         <div className="p-4 flex items-center justify-between border-b border-border/30 bg-card/50 backdrop-blur-sm">
           <div className="flex items-center gap-4">
