@@ -210,7 +210,7 @@ export default function Assets() {
               </div>
               <p className="text-xs text-foreground/80 font-medium">Activos Líquidos</p>
             </div>
-            <p className="text-lg font-bold text-blue-700 break-words">
+            <p className="text-lg font-bold text-foreground break-words">
               ${totalLiquid >= 100000 
                 ? `${(totalLiquid / 1000).toFixed(0)}k` 
                 : totalLiquid.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
@@ -226,7 +226,7 @@ export default function Assets() {
               </div>
               <p className="text-xs text-foreground/80 font-medium">Activos Fijos</p>
             </div>
-            <p className="text-lg font-bold text-amber-700 break-words">
+            <p className="text-lg font-bold text-foreground break-words">
               ${totalFixed >= 100000 
                 ? `${(totalFixed / 1000).toFixed(0)}k` 
                 : totalFixed.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
