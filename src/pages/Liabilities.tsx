@@ -186,7 +186,7 @@ export default function Liabilities() {
               </div>
               <p className="text-xs text-foreground/80 font-medium">Pasivos Corrientes</p>
             </div>
-            <p className="text-lg font-bold text-orange-700 break-words">
+            <p className="text-lg font-bold text-foreground break-words">
               ${totalCurrent >= 100000 
                 ? `${(totalCurrent / 1000).toFixed(0)}k` 
                 : totalCurrent.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
@@ -202,7 +202,7 @@ export default function Liabilities() {
               </div>
               <p className="text-xs text-foreground/80 font-medium">Pasivos No Corrientes</p>
             </div>
-            <p className="text-lg font-bold text-purple-700 break-words">
+            <p className="text-lg font-bold text-foreground break-words">
               ${totalNonCurrent >= 100000 
                 ? `${(totalNonCurrent / 1000).toFixed(0)}k` 
                 : totalNonCurrent.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
