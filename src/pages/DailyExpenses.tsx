@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, TrendingUp, TrendingDown, Activity, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useQuery } from '@tanstack/react-query';
 import BottomNav from '@/components/BottomNav';
 
 interface DailyExpense {
@@ -44,29 +45,18 @@ const getVariabilityColor = (min: number, max: number, avg: number): string => {
 export default function DailyExpenses() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [expenses, setExpenses] = useState<DailyExpense[]>([]);
-  const [loading, setLoading] = useState(true);
   const [totalMonthly, setTotalMonthly] = useState(0);
 
-  useEffect(() => {
-    loadDailyExpenses();
-  }, []);
-
-  const loadDailyExpenses = async () => {
-    try {
-      setLoading(true);
+  const { data: expenses = [], isLoading: loading, refetch } = useQuery({
+    queryKey: ['daily-expenses'],
+    queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         navigate('/auth');
-        return;
+        return [];
       }
 
-      toast({
-        title: "Analizando todo tu historial...",
-        description: "IA está detectando gastos consistentes de 6+ meses",
-      });
-
-      // Obtener TODAS las transacciones de gastos (sin límite) para análisis completo
+      // Obtener TODAS las transacciones de gastos para análisis completo
       const { data: allExpenses, error: expensesError } = await supabase
         .from('transactions')
         .select('*, categories(name)')
@@ -109,46 +99,44 @@ export default function DailyExpenses() {
           }
         });
 
-        const detectedExpenses = Array.from(uniqueExpenses.values());
-        setExpenses(detectedExpenses);
-
-        const total = detectedExpenses.reduce((sum: number, exp: any) => {
-          const amount = exp.averageAmount;
-          switch (exp.frequency.toLowerCase()) {
-            case 'anual':
-              return sum + (amount / 12);
-            case 'semanal':
-              return sum + (amount * 4);
-            case 'quincenal':
-              return sum + (amount * 2);
-            default:
-              return sum + amount;
-          }
-        }, 0);
-        setTotalMonthly(total);
-
-        toast({
-          title: "¡Listo!",
-          description: `Se detectaron ${detectedExpenses.length} gastos cotidianos recurrentes`,
-        });
-      } else {
-        toast({
-          title: "Sin transacciones",
-          description: "No hay suficientes transacciones para detectar gastos cotidianos",
-          variant: "destructive",
-        });
+        return Array.from(uniqueExpenses.values());
       }
-    } catch (error: any) {
-      console.error('Error loading daily expenses:', error);
+      return [];
+    },
+    staleTime: 1000 * 60 * 10, // Cache por 10 minutos
+    gcTime: 1000 * 60 * 15, // Garbage collection después de 15 minutos
+  });
+
+  useEffect(() => {
+    if (loading) {
       toast({
-        title: "Error",
-        description: error.message || "No se pudieron cargar los gastos cotidianos",
-        variant: "destructive",
+        title: "Analizando todo tu historial...",
+        description: "IA está detectando gastos consistentes de 6+ meses",
       });
-    } finally {
-      setLoading(false);
+    } else if (expenses.length > 0) {
+      toast({
+        title: "¡Listo!",
+        description: `Se detectaron ${expenses.length} gastos cotidianos consistentes`,
+      });
     }
-  };
+  }, [loading]);
+
+  useEffect(() => {
+    const total = expenses.reduce((sum: number, exp: DailyExpense) => {
+      const amount = exp.averageAmount;
+      switch (exp.frequency.toLowerCase()) {
+        case 'anual':
+          return sum + (amount / 12);
+        case 'semanal':
+          return sum + (amount * 4);
+        case 'quincenal':
+          return sum + (amount * 2);
+        default:
+          return sum + amount;
+      }
+    }, 0);
+    setTotalMonthly(total);
+  }, [expenses]);
 
   return (
     <div className="min-h-screen animated-wave-bg pb-24">
@@ -171,7 +159,7 @@ export default function DailyExpenses() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={loadDailyExpenses}
+          onClick={() => refetch()}
           disabled={loading}
           className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
         >
@@ -203,7 +191,8 @@ export default function DailyExpenses() {
         {loading && (
           <Card className="p-8 text-center bg-white rounded-[20px] shadow-xl border border-blue-100">
             <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-            <p className="text-foreground/70">Analizando tus transacciones...</p>
+            <p className="text-foreground/70 mb-2">Analizando todo tu historial...</p>
+            <p className="text-xs text-foreground/50">Esto puede tomar unos segundos al detectar patrones de 6+ meses</p>
           </Card>
         )}
 
