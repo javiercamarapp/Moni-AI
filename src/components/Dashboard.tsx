@@ -821,7 +821,7 @@ const Dashboard = () => {
               </div>
               <div className="relative">
                 <svg className="w-20 h-20 transform -rotate-90">
-                  <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" className="text-muted/30" />
+                  {/* Círculo de fondo */}
                   <circle 
                     cx="40" 
                     cy="40" 
@@ -829,9 +829,19 @@ const Dashboard = () => {
                     stroke="currentColor" 
                     strokeWidth="6" 
                     fill="none" 
-                    strokeDasharray={`${2 * Math.PI * 34}`} 
-                    strokeDashoffset={`${2 * Math.PI * 34 * (1 - scoreMoni / 100)}`} 
-                    className={`transition-all ${scoreMoni >= 70 ? 'text-emerald-600' : scoreMoni >= 40 ? 'text-amber-500' : 'text-red-600'}`}
+                    className="text-muted/30" 
+                  />
+                  {/* Círculo de progreso que se llena según el score */}
+                  <circle 
+                    cx="40" 
+                    cy="40" 
+                    r="34" 
+                    stroke="currentColor" 
+                    strokeWidth="6" 
+                    fill="none" 
+                    strokeDasharray={213.628} 
+                    strokeDashoffset={213.628 - (213.628 * scoreMoni) / 100} 
+                    className={`transition-all duration-1000 ${scoreMoni >= 70 ? 'text-emerald-600' : scoreMoni >= 40 ? 'text-amber-500' : 'text-red-600'}`}
                     strokeLinecap="round" 
                   />
                 </svg>
