@@ -509,36 +509,36 @@ const Balance = () => {
 
       <div className="px-4 space-y-4">
         {/* Ahorro destacado */}
-        <Card className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer border border-blue-100 animate-fade-in">
-          <div className="flex items-center gap-2 mb-3">
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${ahorro >= 0 ? 'bg-emerald-500/30' : 'bg-red-500/30'}`}>
-              <Wallet className={`h-5 w-5 ${ahorro >= 0 ? 'text-emerald-600' : 'text-destructive'}`} />
+        <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in">
+          <div className="flex items-start gap-3 mb-4">
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${ahorro >= 0 ? 'bg-emerald-500/20' : 'bg-red-500/20'}`}>
+              <Wallet className={`h-6 w-6 ${ahorro >= 0 ? 'text-emerald-600' : 'text-destructive'}`} />
             </div>
-            <div className="flex-1 min-w-0 text-left">
-              <p className="text-xs text-foreground/80 leading-tight font-medium">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-foreground/60 mb-1 font-medium">
                 Ahorro {viewMode === 'mensual' ? 'Mensual' : 'Anual'}
               </p>
-              <p className={`text-base font-bold leading-tight break-words ${ahorro >= 0 ? 'text-emerald-700' : 'text-destructive'}`}>
+              <p className={`text-3xl sm:text-4xl font-bold leading-tight break-words ${ahorro >= 0 ? 'text-emerald-600' : 'text-destructive'}`}>
                 ${ahorro.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
               </p>
             </div>
           </div>
           
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs text-foreground/80">
-              <span>Tasa de ahorro:</span>
-              <span className="font-semibold text-foreground">{tasaAhorro.toFixed(1)}%</span>
+          <div className="space-y-2 mb-4">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-foreground/60">Tasa de ahorro:</span>
+              <span className="text-lg font-bold text-foreground">{tasaAhorro.toFixed(1)}%</span>
             </div>
             <Progress 
               value={tasaAhorro} 
-              className="h-2 bg-primary/10" 
-              indicatorClassName={ahorro >= 0 ? "bg-emerald-700" : "bg-destructive"}
+              className="h-2.5 bg-transparent" 
+              indicatorClassName={ahorro >= 0 ? "bg-emerald-600" : "bg-destructive"}
             />
           </div>
           
           {/* Botón de descarga de PDF */}
-          <div className="mt-4 pt-4 border-t border-blue-100">
-            <Button variant="ghost" className="w-full bg-primary/10 backdrop-blur-sm rounded-[20px] border border-blue-100 text-foreground hover:bg-primary/20 transition-all duration-300 hover:scale-105 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight font-semibold shadow-lg" onClick={async () => {
+          <div>
+            <Button variant="ghost" className="w-full bg-muted/50 hover:bg-muted rounded-[20px] text-foreground transition-all h-auto py-3 px-4 text-sm font-semibold justify-center" onClick={async () => {
             try {
               // Get current user
               const {
