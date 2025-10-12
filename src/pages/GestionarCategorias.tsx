@@ -351,17 +351,13 @@ const GestionarCategorias = () => {
               )}
 
               {!parentCategoryForSubcategory && (
-                <div className="space-y-3 p-4 bg-primary/5 rounded-lg border border-primary/20">
-                  <Label className="text-foreground text-base font-semibold">Crear como subcategoría</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Selecciona una categoría padre para organizar mejor tus finanzas
-                  </p>
+                <div className="flex items-center gap-2">
                   <select
                     value={newCategory.parent_id || ''}
                     onChange={(e) => setNewCategory({ ...newCategory, parent_id: e.target.value || null })}
-                    className="w-full h-14 rounded-lg bg-white border border-blue-100 text-foreground px-4"
+                    className="flex-1 h-14 rounded-lg bg-white border border-blue-100 text-foreground px-4"
                   >
-                    <option value="">Ninguna (Categoría principal)</option>
+                    <option value="">Seleccionar categoría padre (opcional)</option>
                     {categories
                       .filter(cat => cat.type === newCategory.type)
                       .map(cat => (
@@ -370,6 +366,9 @@ const GestionarCategorias = () => {
                         </option>
                       ))}
                   </select>
+                  <div className="flex items-center justify-center w-14 h-14 rounded-lg bg-primary/10 text-primary">
+                    <Plus className="h-5 w-5" />
+                  </div>
                 </div>
               )}
 
