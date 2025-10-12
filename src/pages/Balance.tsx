@@ -509,8 +509,9 @@ const Balance = () => {
 
       <div className="px-4 space-y-4">
         {/* Ahorro destacado */}
-        <Card className="p-6 bg-gradient-to-br from-[hsl(145,45%,30%)] to-[hsl(145,55%,25%)] border-[hsl(145,50%,35%)]/50 card-glow animate-fade-in shadow-elegant" style={{
-        animationDelay: '0ms'
+        <Card className="p-6 card-glow animate-fade-in shadow-elegant border-white/20" style={{
+        animationDelay: '0ms',
+        backgroundColor: ahorro >= 0 ? '#10b981' : '#ef4444'
       }}>
           <div className="flex items-center gap-3 mb-3">
             <div className="p-3 bg-card/40 backdrop-blur-sm rounded-full border border-border/30">
