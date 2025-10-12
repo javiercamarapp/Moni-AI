@@ -34,6 +34,7 @@ const GestionarCategorias = () => {
     color: 'bg-primary/20',
     parent_id: null as string | null
   });
+  const [showSubcategoryInput, setShowSubcategoryInput] = useState(false);
   const [parentCategoryForSubcategory, setParentCategoryForSubcategory] = useState<Category | null>(null);
   const colorOptions = ['bg-primary/20', 'bg-secondary/20', 'bg-accent/20', 'bg-red-500/20', 'bg-orange-500/20', 'bg-yellow-500/20', 'bg-green-500/20', 'bg-blue-500/20', 'bg-purple-500/20', 'bg-pink-500/20'];
   useEffect(() => {
@@ -109,6 +110,7 @@ const GestionarCategorias = () => {
       });
       setShowAddDialog(false);
       setParentCategoryForSubcategory(null);
+      setShowSubcategoryInput(false);
       fetchCategories();
     } catch (error) {
       console.error('Error adding category:', error);
@@ -228,14 +230,15 @@ const GestionarCategorias = () => {
         <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
           <DialogTrigger asChild>
             <Button size="icon" onClick={() => {
-            setParentCategoryForSubcategory(null);
-            setNewCategory({
-              name: '',
-              type: 'ingreso',
-              color: 'bg-primary/20',
-              parent_id: null
-            });
-          }} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10">
+              setParentCategoryForSubcategory(null);
+              setShowSubcategoryInput(false);
+              setNewCategory({
+                name: '',
+                type: 'ingreso',
+                color: 'bg-primary/20',
+                parent_id: null
+              });
+            }} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10">
               <Plus className="h-5 w-5 text-foreground" />
             </Button>
           </DialogTrigger>
@@ -278,11 +281,32 @@ const GestionarCategorias = () => {
                 </div>}
 
               {!parentCategoryForSubcategory && <div className="space-y-2">
-                  <Label className="text-foreground/90 text-base flex items-center gap-2">
+                  <Label 
+                    onClick={() => setShowSubcategoryInput(!showSubcategoryInput)}
+                    className="text-foreground/90 text-base flex items-center gap-2 cursor-pointer hover:text-primary transition-colors"
+                  >
                     <Plus className="h-4 w-4 text-primary" />
                     Agregar Subcategoría
                   </Label>
-                  
+                  {showSubcategoryInput && (
+                    <select
+                      value={newCategory.parent_id || ''}
+                      onChange={(e) => setNewCategory({
+                        ...newCategory,
+                        parent_id: e.target.value || null
+                      })}
+                      className="w-full h-14 rounded-lg bg-white border border-blue-100 text-foreground px-4 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all animate-in fade-in slide-in-from-top-2 duration-200"
+                    >
+                      <option value="">Ninguna (Categoría Principal)</option>
+                      {categories
+                        .filter(c => c.type === newCategory.type && !c.parent_id)
+                        .map(cat => (
+                          <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </option>
+                        ))}
+                    </select>
+                  )}
                 </div>}
 
               <div className="space-y-2">
