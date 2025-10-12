@@ -1205,7 +1205,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Widget de Deudas de Tarjetas */}
-          <Card className="p-3 bg-gradient-to-br from-[hsl(0,45%,18%)] to-[hsl(15,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(0,50%,35%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
+          <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-all active:scale-95">
             <GlowingEffect
               spread={40}
               glow={true}
