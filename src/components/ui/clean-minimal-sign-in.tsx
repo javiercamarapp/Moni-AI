@@ -87,21 +87,21 @@ const SignIn2 = () => {
           <div className="flex-grow border-t border-dashed border-gray-200"></div>
         </div>
         <div className="flex gap-3 w-full justify-center mt-2">
-          <button className="flex items-center justify-center w-12 h-12 rounded-xl border bg-white hover:bg-gray-100 transition grow">
+          <button className="flex items-center justify-center w-12 h-12 rounded-xl bg-white hover:bg-gray-100 transition grow">
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google"
               className="w-6 h-6"
             />
           </button>
-          <button className="flex items-center justify-center w-12 h-12 rounded-xl border bg-white hover:bg-gray-100 transition grow">
+          <button className="flex items-center justify-center w-12 h-12 rounded-xl bg-white hover:bg-gray-100 transition grow">
             <img
               src="https://www.svgrepo.com/show/448224/facebook.svg"
               alt="Facebook"
               className="w-6 h-6"
             />
           </button>
-          <button className="flex items-center justify-center w-12 h-12 rounded-xl border bg-white hover:bg-gray-100 transition grow">
+          <button className="flex items-center justify-center w-12 h-12 rounded-xl bg-white hover:bg-gray-100 transition grow">
             <img
               src="https://www.svgrepo.com/show/511330/apple-173.svg"
               alt="Apple"
