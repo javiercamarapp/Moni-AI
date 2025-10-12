@@ -1499,10 +1499,11 @@ const Dashboard = () => {
                         backgroundColor={colors.bg}
                         borderWidth={3}
                         borderRadius={12}
-                        className="p-0"
+                        className="p-0 animate-fade-in hover:scale-105 transition-all duration-300"
+                        style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <Card 
-                          className={`p-2.5 bg-gradient-to-br ${gradient} shadow-2xl border-0 relative overflow-hidden`}
+                          className={`p-2.5 bg-gradient-to-br ${gradient} shadow-2xl border-0 relative overflow-hidden hover:-translate-y-1 transition-transform duration-300`}
                           style={{ transform: 'translate3d(0, 0, 0)' }}
                         >
                           <div className="relative z-10">
