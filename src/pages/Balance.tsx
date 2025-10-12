@@ -538,7 +538,7 @@ const Balance = () => {
           
           {/* Botón de descarga de PDF */}
           <div className="mt-4 pt-4 border-t border-white/20">
-            <Button variant="ghost" className="w-full bg-card/40 backdrop-blur-sm border border-border/30 text-white hover:bg-card/60 transition-all duration-300 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight" onClick={async () => {
+            <Button variant="ghost" className="w-full bg-card/40 backdrop-blur-sm border border-border/30 text-black hover:bg-card/60 transition-all duration-300 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight" onClick={async () => {
             try {
               // Get current user
               const {
