@@ -457,7 +457,7 @@ const Profile = () => {
                   <div className="space-y-1">
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-sm"
+                      className="w-full justify-start text-sm hover:bg-blue-50 hover:text-blue-600"
                       onClick={handleTakePhoto}
                       disabled={uploadingAvatar}
                     >
@@ -466,7 +466,7 @@ const Profile = () => {
                     </Button>
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-sm"
+                      className="w-full justify-start text-sm hover:bg-blue-50 hover:text-blue-600"
                       onClick={handleUploadFromFiles}
                       disabled={uploadingAvatar}
                     >
