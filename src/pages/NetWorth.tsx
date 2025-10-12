@@ -141,20 +141,20 @@ export default function NetWorth() {
     return (
       <div className="min-h-screen animated-wave-bg pb-20">
         {/* Header */}
-        <div className="bg-gradient-card/95 backdrop-blur-sm border-b border-white/10 sticky top-0 z-40">
+        <div className="bg-white/95 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-40 shadow-sm">
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => navigate(-1)}
-                className="text-white hover:bg-white/10"
+                className="text-foreground hover:bg-primary/10 rounded-[20px]"
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <div>
-                <h1 className="text-xl font-bold text-white">Patrimonio Neto</h1>
-                <p className="text-xs text-white/70">Evolución de tu riqueza</p>
+                <h1 className="text-xl font-bold text-foreground">Patrimonio Neto</h1>
+                <p className="text-xs text-muted-foreground">Evolución de tu riqueza</p>
               </div>
             </div>
           </div>
@@ -162,8 +162,8 @@ export default function NetWorth() {
         
         <div className="max-w-7xl mx-auto px-4 py-6">
           {/* Skeleton del contenido principal */}
-          <Card className="p-6 bg-gradient-card border-border/50 animate-pulse">
-            <div className="h-80 bg-muted/20 rounded"></div>
+          <Card className="p-6 bg-white border-blue-100 animate-pulse rounded-[20px] shadow-xl">
+            <div className="h-80 bg-primary/10 rounded-[20px]"></div>
           </Card>
         </div>
 
@@ -175,7 +175,7 @@ export default function NetWorth() {
   if (!netWorthData) {
     return (
       <div className="min-h-screen animated-wave-bg flex items-center justify-center pb-20">
-        <p className="text-white">Error cargando datos</p>
+        <p className="text-foreground font-semibold text-lg drop-shadow-lg">Error cargando datos</p>
         <BottomNav />
       </div>
     );
@@ -209,20 +209,20 @@ export default function NetWorth() {
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="bg-gradient-card/95 backdrop-blur-sm border-b border-white/10 sticky top-0 z-40">
+      <div className="bg-white/95 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate("/dashboard")}
-              className="text-white hover:bg-white/10"
+              className="text-foreground hover:bg-primary/10 rounded-[20px]"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-white">Patrimonio Neto</h1>
-              <p className="text-xs text-white/70">Evolución de tu riqueza</p>
+              <h1 className="text-xl font-bold text-foreground">Patrimonio Neto</h1>
+              <p className="text-xs text-muted-foreground">Evolución de tu riqueza</p>
             </div>
           </div>
         </div>
@@ -236,29 +236,29 @@ export default function NetWorth() {
       {/* Liquidez Section */}
       <div className="px-4 mt-2">
         <div className="flex items-center justify-between mb-1">
-          <h2 className="text-xl font-bold text-white">Liquidez</h2>
+          <h2 className="text-xl font-bold text-foreground drop-shadow-lg">Liquidez</h2>
           <div className="relative">
             <button 
               onClick={() => setShowInstitutionFilter(!showInstitutionFilter)}
-              className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors"
+              className="flex items-center gap-2 text-sm text-foreground/70 hover:text-foreground transition-colors"
             >
               <div className="flex flex-col gap-0.5">
-                <div className="h-0.5 w-4 bg-white/70"></div>
-                <div className="h-0.5 w-4 bg-white/70"></div>
+                <div className="h-0.5 w-4 bg-foreground/70"></div>
+                <div className="h-0.5 w-4 bg-foreground/70"></div>
               </div>
               Filtrar por institución
             </button>
             
             {showInstitutionFilter && (
-              <div className="absolute right-0 top-full mt-2 animated-wave-bg backdrop-blur-md rounded-xl shadow-2xl border border-white/20 py-2 min-w-[200px] z-50">
+              <div className="absolute right-0 top-full mt-2 bg-white backdrop-blur-md rounded-[20px] shadow-xl border border-blue-100 py-2 min-w-[200px] z-50">
                 <button
                   onClick={() => {
                     setSelectedInstitution('All');
                     setShowInstitutionFilter(false);
                   }}
                   className={cn(
-                    "w-full text-left px-4 py-2 text-sm hover:bg-white/10 transition-colors rounded-lg",
-                    selectedInstitution === 'All' ? "bg-white/20 text-white font-semibold" : "text-white/80"
+                    "w-full text-left px-4 py-2 text-sm hover:bg-primary/10 transition-colors rounded-lg",
+                    selectedInstitution === 'All' ? "bg-primary/20 text-foreground font-semibold" : "text-foreground/80"
                   )}
                 >
                   Todas las instituciones
@@ -275,8 +275,8 @@ export default function NetWorth() {
                       setShowInstitutionFilter(false);
                     }}
                     className={cn(
-                      "w-full text-left px-4 py-2 text-sm hover:bg-white/10 transition-colors rounded-lg",
-                      selectedInstitution === institution ? "bg-white/20 text-white font-semibold" : "text-white/80"
+                      "w-full text-left px-4 py-2 text-sm hover:bg-primary/10 transition-colors rounded-lg",
+                      selectedInstitution === institution ? "bg-primary/20 text-foreground font-semibold" : "text-foreground/80"
                     )}
                   >
                     {institution}
@@ -288,9 +288,9 @@ export default function NetWorth() {
         </div>
 
         {/* Total Líquido */}
-        <div className="mb-4 bg-gradient-to-br from-blue-500/20 to-blue-700/20 backdrop-blur-sm rounded-xl p-3 border border-blue-500/30">
-          <p className="text-[10px] text-white/70 mb-0.5">Efectivo Disponible</p>
-          <p className="text-base font-bold text-white break-words">
+        <div className="mb-4 bg-white/90 backdrop-blur-sm rounded-[20px] p-4 border border-blue-100 shadow-xl">
+          <p className="text-xs text-muted-foreground mb-1 font-medium">Efectivo Disponible</p>
+          <p className="text-xl font-bold text-foreground break-words">
             ${assets
               .filter(a => isLiquidAsset(a.category, a.name))
               .filter(a => selectedInstitution === 'All' || a.name.startsWith(selectedInstitution))
@@ -299,7 +299,7 @@ export default function NetWorth() {
           </p>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-3">
           {assets
             .filter(account => isLiquidAsset(account.category, account.name))
             .filter(account => selectedInstitution === 'All' || account.name.startsWith(selectedInstitution))
@@ -310,19 +310,19 @@ export default function NetWorth() {
               return (
                 <div
                   key={account.id}
-                  className="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/10"
+                  className="flex items-center justify-between p-4 rounded-[20px] bg-white/90 hover:bg-white transition-colors border border-blue-100 shadow-xl hover:scale-[1.02] animate-fade-in"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-                      <Icon className="h-5 w-5 text-white" />
+                    <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center">
+                      <Icon className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="font-semibold text-white text-sm">{account.name}</p>
-                      <p className="text-xs text-white/60">{account.category}</p>
+                      <p className="font-bold text-foreground text-base">{account.name}</p>
+                      <p className="text-xs text-muted-foreground">{account.category}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-white text-sm break-words">
+                    <p className="font-bold text-foreground text-base break-words">
                       ${Number(account.value).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
                   </div>
@@ -331,7 +331,7 @@ export default function NetWorth() {
             })}
             
           {assets.filter(a => isLiquidAsset(a.category, a.name)).filter(a => selectedInstitution === 'All' || a.name.startsWith(selectedInstitution)).length === 0 && (
-            <div className="p-8 text-center text-white/60 bg-white/5 rounded-xl border border-white/10">
+            <div className="p-8 text-center text-muted-foreground bg-white/90 rounded-[20px] border border-blue-100 shadow-xl">
               {selectedInstitution === 'All' 
                 ? 'No hay cuentas líquidas registradas'
                 : `No hay cuentas líquidas de ${selectedInstitution}`}
