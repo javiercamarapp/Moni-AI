@@ -646,6 +646,22 @@ const Gastos = () => {
           </div>
         </Card>
 
+        {/* Botones de filtro */}
+        <div className="flex gap-3 mb-4">
+          <Button
+            variant="ghost"
+            className="flex-1 bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 text-foreground font-medium"
+          >
+            Suscripciones
+          </Button>
+          <Button
+            variant="ghost"
+            className="flex-1 bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 text-foreground font-medium"
+          >
+            Gastos cotidianos
+          </Button>
+        </div>
+
         {/* Lista de transacciones */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
