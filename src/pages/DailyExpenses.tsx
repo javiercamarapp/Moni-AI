@@ -75,18 +75,24 @@ export default function DailyExpenses() {
 
         const uniqueExpenses = new Map();
         (aiResult?.expenses || []).forEach((exp: any) => {
+          // Normalizar nombre removiendo variaciones comunes
           const normalizedName = exp.description.toLowerCase()
             .replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '')
             .replace(/\s*\d{4}$/g, '')
+            .replace(/\s*(supercenter|express|plus|premium|básico|básica)\s*/gi, '')
+            .replace(/\s*-\s*.*/gi, '') // Remover todo después de guión
             .trim();
           
           if (!uniqueExpenses.has(normalizedName)) {
-            // Si monthsPresent no viene en la respuesta, usar occurrences como estimado
             const monthsPresent = exp.monthsPresent || Math.min(exp.occurrences || 1, 12);
             
             uniqueExpenses.set(normalizedName, {
               id: `exp-${Date.now()}-${Math.random()}`,
-              name: exp.description.replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '').trim(),
+              name: exp.description
+                .replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '')
+                .replace(/\s*(supercenter|express|plus|premium|básico|básica)\s*/gi, '')
+                .replace(/\s*-\s*.*/gi, '')
+                .trim(),
               averageAmount: Number(exp.averageAmount),
               minAmount: Number(exp.minAmount),
               maxAmount: Number(exp.maxAmount),
@@ -95,6 +101,19 @@ export default function DailyExpenses() {
               occurrences: exp.occurrences || 1,
               monthsPresent: monthsPresent,
               icon: getExpenseIcon(exp.description),
+            });
+          } else {
+            // Si ya existe, combinar los datos (promediar montos, sumar occurrences)
+            const existing = uniqueExpenses.get(normalizedName);
+            const totalOccurrences = existing.occurrences + (exp.occurrences || 1);
+            
+            uniqueExpenses.set(normalizedName, {
+              ...existing,
+              averageAmount: (existing.averageAmount * existing.occurrences + Number(exp.averageAmount) * (exp.occurrences || 1)) / totalOccurrences,
+              minAmount: Math.min(existing.minAmount, Number(exp.minAmount)),
+              maxAmount: Math.max(existing.maxAmount, Number(exp.maxAmount)),
+              occurrences: totalOccurrences,
+              monthsPresent: Math.max(existing.monthsPresent, exp.monthsPresent || Math.min(exp.occurrences || 1, 12)),
             });
           }
         });
