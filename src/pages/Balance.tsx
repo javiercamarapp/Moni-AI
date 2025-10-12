@@ -509,54 +509,36 @@ const Balance = () => {
 
       <div className="px-4 space-y-4">
         {/* Ahorro destacado */}
-        <Card className={`p-4 card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95 relative overflow-hidden ${ahorro >= 0 ? 'bg-gradient-to-br from-success/90 to-success/70' : 'bg-gradient-to-br from-danger/90 to-danger/70'}`}>
-          {/* Efecto brillante */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent" 
-               style={{
-                 backgroundSize: '200% 100%',
-                 animation: 'shimmer 2s ease-in-out infinite',
-               }}
-          />
-          
-          <div className="relative z-10">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <p className="text-xs text-white/90 mb-1">Ahorro {viewMode === 'mensual' ? 'Mensual' : 'Anual'}</p>
-                <p className="text-3xl font-bold text-white">
-                  ${ahorro.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
-                </p>
-                <p className="text-xs text-white/90 mt-1">
-                  {ahorro >= 0 ? '✅ Positivo' : '⚠️ Negativo'}
-                </p>
-              </div>
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-white/20">
-                <Wallet className="h-6 w-6 text-white" />
-              </div>
+        <Card className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer border border-blue-100 animate-fade-in">
+          <div className="flex items-center gap-2 mb-3">
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${ahorro >= 0 ? 'bg-emerald-500/30' : 'bg-red-500/30'}`}>
+              <Wallet className={`h-5 w-5 ${ahorro >= 0 ? 'text-emerald-600' : 'text-destructive'}`} />
             </div>
-            
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs text-white/90">
-                <span>Tasa de ahorro:</span>
-                <span className="font-semibold text-white">{tasaAhorro.toFixed(1)}%</span>
-              </div>
-              <Progress 
-                value={tasaAhorro} 
-                className="h-2 bg-white/20" 
-                indicatorClassName="bg-white"
-              />
+            <div className="flex-1 min-w-0 text-left">
+              <p className="text-xs text-foreground/80 leading-tight font-medium">
+                Ahorro {viewMode === 'mensual' ? 'Mensual' : 'Anual'}
+              </p>
+              <p className={`text-base font-bold leading-tight break-words ${ahorro >= 0 ? 'text-emerald-700' : 'text-destructive'}`}>
+                ${ahorro.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+              </p>
             </div>
           </div>
           
-          <style>{`
-            @keyframes shimmer {
-              0% { transform: translateX(-100%); }
-              100% { transform: translateX(200%); }
-            }
-          `}</style>
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs text-foreground/80">
+              <span>Tasa de ahorro:</span>
+              <span className="font-semibold text-foreground">{tasaAhorro.toFixed(1)}%</span>
+            </div>
+            <Progress 
+              value={tasaAhorro} 
+              className="h-2 bg-primary/10" 
+              indicatorClassName={ahorro >= 0 ? "bg-emerald-700" : "bg-destructive"}
+            />
+          </div>
           
           {/* Botón de descarga de PDF */}
-          <div className="mt-4 pt-4 border-t border-white/20 relative z-10">
-            <Button variant="ghost" className="w-full bg-white/20 backdrop-blur-sm rounded-lg border border-white/30 text-white hover:bg-white/30 transition-all duration-300 hover:scale-105 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight font-semibold" onClick={async () => {
+          <div className="mt-4 pt-4 border-t border-blue-100">
+            <Button variant="ghost" className="w-full bg-primary/10 backdrop-blur-sm rounded-[20px] border border-blue-100 text-foreground hover:bg-primary/20 transition-all duration-300 hover:scale-105 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight font-semibold shadow-lg" onClick={async () => {
             try {
               // Get current user
               const {
