@@ -157,34 +157,34 @@ export default function NetWorthWidget() {
       <div className="grid grid-cols-2 gap-3 mt-3">
         <button 
           onClick={() => navigate('/assets')}
-          className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer border border-blue-100 animate-fade-in"
+          className="p-4 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer border border-blue-100 animate-fade-in"
         >
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-lg bg-emerald-500/30 flex items-center justify-center flex-shrink-0">
-              <TrendingUp className="w-5 h-5 text-emerald-600" />
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-lg bg-emerald-500/30 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-5 h-5 text-emerald-600" />
+              </div>
+              <p className="text-sm text-foreground/80 font-medium">Activos</p>
             </div>
-            <div className="flex-1 min-w-0 text-left">
-              <p className="text-xs text-foreground/80 leading-tight font-medium">Activos</p>
-              <p className="text-base font-bold text-emerald-700 leading-tight break-words">
-                ${totalAssets.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
-              </p>
-            </div>
+            <p className="text-2xl font-bold text-emerald-700 break-words text-left">
+              ${totalAssets.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </p>
           </div>
         </button>
         <button 
           onClick={() => navigate('/liabilities')}
-          className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer border border-blue-100 animate-fade-in"
+          className="p-4 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer border border-blue-100 animate-fade-in"
         >
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-lg bg-red-500/30 flex items-center justify-center flex-shrink-0">
-              <TrendingDown className="w-5 h-5 text-destructive" />
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-lg bg-red-500/30 flex items-center justify-center flex-shrink-0">
+                <TrendingDown className="w-5 h-5 text-destructive" />
+              </div>
+              <p className="text-sm text-foreground/80 font-medium">Pasivos</p>
             </div>
-            <div className="flex-1 min-w-0 text-left">
-              <p className="text-xs text-foreground/80 leading-tight font-medium">Pasivos</p>
-              <p className="text-base font-bold text-destructive leading-tight break-words">
-                ${totalLiabilities.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
-              </p>
-            </div>
+            <p className="text-2xl font-bold text-destructive break-words text-left">
+              ${totalLiabilities.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </p>
           </div>
         </button>
       </div>
