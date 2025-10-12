@@ -221,7 +221,7 @@ export function ThreeDCarousel({ cards }: { cards: CarouselCard[] }) {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="relative h-[400px] w-full overflow-hidden">
+      <div className="relative h-[320px] w-full overflow-hidden">
         <Carousel
           handleClick={handleClick}
           controls={controls}

@@ -54,8 +54,8 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
   const scoreChange = previousScore ? scoreMoni - previousScore : 0;
 
   return (
-    <div className="space-y-4">
-      <div className="bg-white rounded-[20px] shadow-xl border border-blue-100 p-5">
+    <div className="space-y-3">
+      <div className="bg-white rounded-[20px] shadow-xl border border-blue-100 p-4">
         <p className="text-xs font-medium text-foreground/80 mb-1">Score Moni</p>
         <div className="flex items-baseline gap-2">
           <p className="text-3xl font-bold text-foreground">{scoreMoni}</p>
@@ -68,8 +68,8 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
         </div>
       </div>
 
-      <div className="bg-white rounded-[20px] shadow-xl border border-blue-100 p-5">
-        <div className="h-[380px]">
+      <div className="bg-white rounded-[20px] shadow-xl border border-blue-100 p-4">
+        <div className="h-[320px]">
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart data={radarData} margin={{ top: 5, right: 30, bottom: 5, left: 30 }}>
               <PolarGrid stroke="rgba(0,0,0,0.05)" />
@@ -117,8 +117,8 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
         </div>
       )}
 
-      <div className="space-y-3">
-        <h3 className="text-base font-bold text-foreground mb-3">Desglose por Componente</h3>
+      <div className="space-y-2">
+        <h3 className="text-base font-bold text-foreground mb-1">Desglose por Componente</h3>
         <ThreeDCarousel 
           cards={radarData.map(item => ({
             title: item.dimension,
