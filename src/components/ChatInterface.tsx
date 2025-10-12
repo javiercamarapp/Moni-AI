@@ -379,10 +379,24 @@ const ChatInterface = () => {
 
       const loadedFiles = await Promise.all(filePromises);
       setUploadedFiles(prev => [...prev, ...loadedFiles]);
-      toast({
-        title: "Archivos cargados",
-        description: `${loadedFiles.length} archivo(s) listo(s) para enviar`
-      });
+      
+      // Auto-analizar si es una imagen (potencial ticket)
+      const imageFiles = loadedFiles.filter(f => f.type.startsWith('image/'));
+      if (imageFiles.length > 0) {
+        toast({
+          title: "Analizando ticket...",
+          description: "La IA está procesando tu imagen"
+        });
+        
+        // Analizar el primer archivo de imagen
+        const imageFile = imageFiles[0];
+        await analyzeReceipt(imageFile);
+      } else {
+        toast({
+          title: "Archivos cargados",
+          description: `${loadedFiles.length} archivo(s) listo(s) para enviar`
+        });
+      }
     } catch (error) {
       console.error('Error reading files:', error);
       toast({
@@ -394,6 +408,65 @@ const ChatInterface = () => {
 
     // Reset input
     e.target.value = '';
+  };
+
+  const analyzeReceipt = async (imageFile: {name: string; type: string; data: string}) => {
+    try {
+      setIsTyping(true);
+      
+      // Extraer base64 puro (sin el prefijo data:image/...)
+      const base64Data = imageFile.data.split(',')[1];
+      
+      const { data, error } = await supabase.functions.invoke('analyze-receipt', {
+        body: {
+          imageBase64: base64Data,
+          userId: user?.id
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.success) {
+        const { receiptData, transaction } = data;
+        
+        // Agregar mensaje de éxito al chat
+        const successMessage = {
+          id: Date.now(),
+          type: 'ai',
+          content: `✅ **Ticket analizado exitosamente**\n\n` +
+                   `💰 **Monto:** $${receiptData.amount.toFixed(2)}\n` +
+                   `📝 **Descripción:** ${receiptData.description}\n` +
+                   `🏷️ **Categoría:** ${receiptData.category}\n` +
+                   `📅 **Fecha:** ${new Date(receiptData.date).toLocaleDateString('es-MX')}\n\n` +
+                   `La transacción ha sido guardada en tu historial.`
+        };
+        
+        setMessages(prev => [...prev, successMessage]);
+        
+        toast({
+          title: "¡Ticket procesado!",
+          description: `$${receiptData.amount} en ${receiptData.category}`,
+        });
+      }
+      
+      setIsTyping(false);
+      setUploadedFiles([]);
+      
+    } catch (error: any) {
+      console.error('Error analyzing receipt:', error);
+      setIsTyping(false);
+      
+      toast({
+        title: "Error al analizar ticket",
+        description: error.message || "No se pudo procesar el ticket. Intenta de nuevo.",
+        variant: "destructive"
+      });
+      
+      // Mantener el archivo para que el usuario pueda enviarlo manualmente al chat
+      setUploadedFiles([]);
+    }
   };
 
   const toggleVoiceMode = () => {
@@ -635,6 +708,39 @@ const ChatInterface = () => {
               >
                 <Paperclip className="w-5 h-5" />
                 <span className="font-medium">Adjuntar archivo o foto</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem 
+                onSelect={(e) => {
+                  e.preventDefault();
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = 'image/*';
+                  input.onchange = (event) => {
+                    const target = event.target as HTMLInputElement;
+                    if (target.files && target.files[0]) {
+                      const reader = new FileReader();
+                      reader.onloadend = async () => {
+                        const base64 = reader.result as string;
+                        const imageFile = {
+                          name: target.files![0].name,
+                          type: target.files![0].type,
+                          data: base64
+                        };
+                        await analyzeReceipt(imageFile);
+                      };
+                      reader.readAsDataURL(target.files[0]);
+                    }
+                  };
+                  input.click();
+                }}
+                className="flex items-center gap-3 py-3 cursor-pointer"
+              >
+                <Receipt className="w-5 h-5 text-primary" />
+                <div className="flex flex-col">
+                  <span className="font-medium">Escanear ticket</span>
+                  <span className="text-xs text-muted-foreground">La IA detectará y guardará el gasto</span>
+                </div>
               </DropdownMenuItem>
               
               <DropdownMenuSeparator />

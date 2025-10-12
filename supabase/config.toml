@@ -50,3 +50,15 @@ verify_jwt = true
 
 [functions.categorize-income-statement]
 verify_jwt = true
+
+[functions.analyze-receipt]
+verify_jwt = true
+
+[functions.generate-challenges]
+verify_jwt = true
+
+[functions.verify-challenge-progress]
+verify_jwt = true
+
+[functions.update-net-worth-snapshot]
+verify_jwt = true
