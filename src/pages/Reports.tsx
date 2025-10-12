@@ -49,6 +49,7 @@ const Reports = () => {
           transactions.map(t => new Date(t.transaction_date).getFullYear())
         )].sort((a, b) => b - a);
         
+        console.log('Loaded years:', years);
         setAvailableYears(years);
       } else {
         setAvailableYears([new Date().getFullYear()]);
@@ -56,6 +57,26 @@ const Reports = () => {
     } catch (error) {
       console.error('Error loading years:', error);
       setAvailableYears([new Date().getFullYear()]);
+    }
+  };
+
+  const handlePreviousYear = () => {
+    const currentIndex = availableYears.indexOf(selectedYear);
+    console.log('Previous - Current index:', currentIndex, 'Current year:', selectedYear, 'Available years:', availableYears);
+    if (currentIndex !== -1 && currentIndex < availableYears.length - 1) {
+      const newYear = availableYears[currentIndex + 1];
+      console.log('Going to year:', newYear);
+      setSelectedYear(newYear);
+    }
+  };
+
+  const handleNextYear = () => {
+    const currentIndex = availableYears.indexOf(selectedYear);
+    console.log('Next - Current index:', currentIndex, 'Current year:', selectedYear, 'Available years:', availableYears);
+    if (currentIndex !== -1 && currentIndex > 0) {
+      const newYear = availableYears[currentIndex - 1];
+      console.log('Going to year:', newYear);
+      setSelectedYear(newYear);
     }
   };
 
@@ -152,14 +173,9 @@ const Reports = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => {
-                const currentIndex = availableYears.indexOf(selectedYear);
-                if (currentIndex !== -1 && currentIndex < availableYears.length - 1) {
-                  setSelectedYear(availableYears[currentIndex + 1]);
-                }
-              }}
+              onClick={handlePreviousYear}
               disabled={
-                availableYears.length === 0 || 
+                availableYears.length <= 1 || 
                 selectedYear === availableYears[availableYears.length - 1]
               }
               className="h-8 w-8 rounded-full bg-white shadow-lg border border-blue-100 hover:bg-primary/10 hover:scale-110 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
@@ -179,16 +195,10 @@ const Reports = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => {
-                const currentIndex = availableYears.indexOf(selectedYear);
-                if (currentIndex !== -1 && currentIndex > 0) {
-                  setSelectedYear(availableYears[currentIndex - 1]);
-                }
-              }}
+              onClick={handleNextYear}
               disabled={
-                availableYears.length === 0 || 
-                selectedYear === availableYears[0] ||
-                selectedYear >= new Date().getFullYear()
+                availableYears.length <= 1 || 
+                selectedYear === availableYears[0]
               }
               className="h-8 w-8 rounded-full bg-white shadow-lg border border-blue-100 hover:bg-primary/10 hover:scale-110 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
