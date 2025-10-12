@@ -217,7 +217,7 @@ const Ingresos = () => {
             variant="ghost" 
             size="icon"
             onClick={() => navigate(-1)}
-            className="text-foreground hover:bg-accent/50 transition-all hover:scale-105"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -233,7 +233,7 @@ const Ingresos = () => {
           <Button
             size="icon"
             onClick={handleWhatsAppRegister}
-            className="bg-card/70 hover:bg-card/90 border border-border/30 transition-all hover:scale-105"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10"
           >
             <img src={whatsappLogo} alt="WhatsApp" className="w-5 h-5 object-contain" />
           </Button>
@@ -242,7 +242,7 @@ const Ingresos = () => {
             <DialogTrigger asChild>
               <Button
                 size="icon"
-                className="bg-card/70 hover:bg-card/90 border border-border/30 transition-all hover:scale-105"
+                className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10"
               >
                 <Plus className="h-5 w-5 text-foreground" />
               </Button>
@@ -388,7 +388,7 @@ const Ingresos = () => {
           <Button
             size="icon"
             onClick={() => navigate('/categorias')}
-            className="bg-card/70 hover:bg-card/90 border border-border/30 transition-all hover:scale-105"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10"
           >
             <Sliders className="h-5 w-5 text-foreground" />
           </Button>
@@ -402,12 +402,12 @@ const Ingresos = () => {
             variant="ghost"
             size="icon"
             onClick={handlePreviousPeriod}
-            className="text-foreground hover:bg-accent/50 transition-all hover:scale-105"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
           
-          <div className="bg-card/70 backdrop-blur-sm rounded-lg px-4 py-2 border border-border/30 shadow-card">
+          <div className="bg-white rounded-[20px] shadow-xl px-4 py-2 border border-blue-100">
             <p className="text-foreground font-medium capitalize text-center">
               {getPeriodLabel()}
             </p>
@@ -417,7 +417,7 @@ const Ingresos = () => {
             variant="ghost"
             size="icon"
             onClick={handleNextPeriod}
-            className="text-foreground hover:bg-accent/50 transition-all hover:scale-105"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
           >
             <ChevronRight className="h-5 w-5" />
           </Button>
@@ -426,22 +426,22 @@ const Ingresos = () => {
 
       <div className="px-4 space-y-4">
         {/* Total de ingresos destacado */}
-        <Card className="p-6 bg-gradient-to-br from-[hsl(145,45%,30%)] to-[hsl(145,55%,25%)] border-[hsl(145,50%,35%)]/50 card-glow animate-fade-in shadow-elegant" style={{ animationDelay: '0ms' }}>
+        <Card className="p-6 rounded-[20px] shadow-xl animate-fade-in border-white/20" style={{ animationDelay: '0ms', backgroundColor: '#10b981' }}>
           <div className="flex items-center gap-3 mb-3">
             <div className="p-3 bg-card/40 backdrop-blur-sm rounded-full border border-border/30">
-              <TrendingUp className="h-6 w-6 text-green-200" />
+              <TrendingUp className="h-6 w-6 text-black" />
             </div>
             <div>
-              <p className="text-sm text-white/90">
+              <p className="text-sm text-black/90">
                 Total de Ingresos {viewMode === 'mensual' ? 'Mensuales' : 'Anuales'}
               </p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white">
+              <h2 className="text-3xl sm:text-4xl font-bold text-black">
                 ${totalIngresos.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
               </h2>
             </div>
           </div>
           <div className="space-y-2">
-            <div className="flex justify-between text-sm text-white/90">
+            <div className="flex justify-between text-sm text-black/90">
               <span>Transacciones:</span>
               <span className="font-semibold">{transactions.length}</span>
             </div>
@@ -451,7 +451,7 @@ const Ingresos = () => {
           <div className="mt-4 pt-4 border-t border-white/20">
             <Button 
               variant="ghost" 
-              className="w-full bg-card/40 backdrop-blur-sm border border-border/30 text-white hover:bg-card/60 transition-all duration-300 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight"
+              className="w-full bg-white/20 backdrop-blur-sm rounded-[12px] border border-white/30 text-black hover:bg-white/30 transition-all duration-300 hover:scale-105 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight font-semibold"
               onClick={async () => {
                 try {
                   const { data: { user } } = await supabase.auth.getUser();
@@ -521,7 +521,7 @@ const Ingresos = () => {
             </h3>
             
             <Select value={sortBy} onValueChange={(value: 'recent' | 'highest' | 'lowest') => setSortBy(value)}>
-              <SelectTrigger className="w-[160px] bg-card/70 border-border/30 text-foreground h-9 text-xs">
+              <SelectTrigger className="w-[160px] bg-white rounded-[12px] shadow-md border border-blue-100 text-foreground h-9 text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-card border-border/30 z-[100]">
@@ -533,7 +533,7 @@ const Ingresos = () => {
           </div>
           
           {transactions.length === 0 ? (
-            <Card className="p-6 bg-gradient-card card-glow text-center shadow-card border border-border/30">
+            <Card className="p-6 bg-white rounded-[20px] shadow-xl text-center border border-blue-100">
               <p className="text-muted-foreground">No hay ingresos registrados este mes</p>
             </Card>
           ) : (
@@ -556,7 +556,7 @@ const Ingresos = () => {
               return (
                 <Card 
                   key={item.id} 
-                  className="p-2 bg-gradient-card card-glow hover-lift shadow-card border border-border/30 animate-fade-in transition-all duration-300"
+                  className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all animate-fade-in active:scale-95 cursor-pointer"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div className="flex items-center gap-2">
