@@ -1164,18 +1164,18 @@ const Dashboard = () => {
           {/* Widget de Suscripciones Próximas */}
           <BorderRotate
             animationMode="auto-rotate"
-            animationSpeed={8}
+            animationSpeed={3}
             gradientColors={{
-              primary: '#581c87',
-              secondary: '#9333ea',
-              accent: '#c084fc'
+              primary: '#a855f7',
+              secondary: '#c084fc',
+              accent: '#e9d5ff'
             }}
             backgroundColor="hsl(300, 40%, 12%)"
-            borderWidth={2}
+            borderWidth={3}
             borderRadius={12}
-            className="h-[220px]"
+            className="h-[220px] animate-fade-in hover:scale-105 transition-all duration-300"
           >
-            <Card className="p-3 bg-gradient-to-br from-[hsl(280,45%,18%)] to-[hsl(300,40%,12%)] shadow-2xl border-0 relative overflow-hidden h-full flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
+            <Card className="p-3 bg-gradient-to-br from-[hsl(280,45%,18%)] to-[hsl(300,40%,12%)] shadow-2xl border-0 relative overflow-hidden h-full flex flex-col cursor-pointer hover:-translate-y-1 transition-all duration-300">
               <GlowingEffect
                 spread={40}
                 glow={true}
@@ -1231,18 +1231,19 @@ const Dashboard = () => {
           {/* Widget de Deudas de Tarjetas */}
           <BorderRotate
             animationMode="auto-rotate"
-            animationSpeed={8}
+            animationSpeed={3}
             gradientColors={{
-              primary: '#7f1d1d',
-              secondary: '#dc2626',
-              accent: '#f87171'
+              primary: '#ef4444',
+              secondary: '#f87171',
+              accent: '#fca5a5'
             }}
             backgroundColor="hsl(15, 40%, 12%)"
-            borderWidth={2}
+            borderWidth={3}
             borderRadius={12}
-            className="h-[220px]"
+            className="h-[220px] animate-fade-in hover:scale-105 transition-all duration-300"
+            style={{ animationDelay: '100ms' }}
           >
-            <Card className="p-3 bg-gradient-to-br from-[hsl(0,45%,18%)] to-[hsl(15,40%,12%)] shadow-2xl border-0 relative overflow-hidden h-full flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
+            <Card className="p-3 bg-gradient-to-br from-[hsl(0,45%,18%)] to-[hsl(15,40%,12%)] shadow-2xl border-0 relative overflow-hidden h-full flex flex-col cursor-pointer hover:-translate-y-1 transition-all duration-300">
               <GlowingEffect
                 spread={40}
               glow={true}
@@ -1317,19 +1318,19 @@ const Dashboard = () => {
         {/* WhatsApp Banner */}
         <BorderRotate
           animationMode="auto-rotate"
-          animationSpeed={8}
+          animationSpeed={3}
           gradientColors={{
-            primary: '#064e3b',
-            secondary: '#059669',
-            accent: '#34d399'
+            primary: '#10b981',
+            secondary: '#34d399',
+            accent: '#6ee7b7'
           }}
           backgroundColor="hsl(142, 55%, 15%)"
-          borderWidth={2}
+          borderWidth={3}
           borderRadius={12}
-          className="animate-fade-in"
-          style={{ animationDelay: '500ms' }}
+          className="animate-fade-in hover:scale-105 transition-all duration-300"
+          style={{ animationDelay: '200ms' }}
         >
-          <Card className="p-3 sm:p-4 bg-gradient-to-br from-[hsl(142,60%,25%)] to-[hsl(142,55%,15%)] shadow-2xl border-0 relative overflow-hidden hover:scale-105 transition-transform duration-200 cursor-pointer">
+          <Card className="p-3 sm:p-4 bg-gradient-to-br from-[hsl(142,60%,25%)] to-[hsl(142,55%,15%)] shadow-2xl border-0 relative overflow-hidden cursor-pointer hover:-translate-y-1 transition-all duration-300">
             <GlowingEffect
               spread={40}
               glow={true}
