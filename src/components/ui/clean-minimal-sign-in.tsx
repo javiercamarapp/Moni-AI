@@ -30,7 +30,7 @@ const SignIn2 = () => {
   };
  
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-start pt-[50vh] rounded-xl z-1 gap-6">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center rounded-xl z-1">
       <div className="w-full max-w-[320px] bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl shadow-opacity-10 pt-3 px-6 pb-6 flex flex-col items-center border border-blue-100 text-black">
         <div className="flex items-center justify-center w-48 h-24 mb-2">
           <img src={moniLogo} alt="Moni AI" className="w-full h-full object-contain" />
@@ -103,37 +103,6 @@ const SignIn2 = () => {
               className="w-6 h-6"
             />
           </button>
-        </div>
-      </div>
-      
-      {/* User testimonials section - outside card */}
-      <div className="w-full max-w-[320px]">
-        <p className="text-xs text-center text-white font-medium mb-3">
-          Únete a los cientos de mexicanos que cuidan sus finanzas
-        </p>
-        <div className="flex items-center justify-center gap-3">
-          <div className="flex -space-x-2">
-            <img 
-              src="https://i.pravatar.cc/150?img=12" 
-              alt="User" 
-              className="w-8 h-8 rounded-full object-cover"
-            />
-            <img 
-              src="https://i.pravatar.cc/150?img=25" 
-              alt="User" 
-              className="w-8 h-8 rounded-full object-cover"
-            />
-            <img 
-              src="https://i.pravatar.cc/150?img=33" 
-              alt="User" 
-              className="w-8 h-8 rounded-full object-cover"
-            />
-            <img 
-              src="https://i.pravatar.cc/150?img=47" 
-              alt="User" 
-              className="w-8 h-8 rounded-full object-cover"
-            />
-          </div>
         </div>
       </div>
     </div>
