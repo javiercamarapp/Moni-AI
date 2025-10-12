@@ -53,78 +53,80 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
   const scoreChange = previousScore ? scoreMoni - previousScore : 0;
 
   return (
-    <div className="space-y-0">
-      <div className="mb-2">
-        <p className="text-xs font-medium text-white/80 mb-1">Desglose Score Moni</p>
+    <div className="space-y-4">
+      <div className="bg-white rounded-[20px] shadow-xl border border-blue-100 p-5">
+        <p className="text-xs font-medium text-foreground/80 mb-1">Score Moni</p>
         <div className="flex items-baseline gap-2">
-          <p className="text-3xl font-bold text-white">{scoreMoni}</p>
-          <span className="text-sm text-white/60">/100</span>
+          <p className="text-3xl font-bold text-foreground">{scoreMoni}</p>
+          <span className="text-sm text-muted-foreground">/100</span>
           {scoreChange !== 0 && (
-            <span className={`text-xs font-medium ${scoreChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            <span className={`text-xs font-medium ${scoreChange > 0 ? 'text-emerald-600' : 'text-red-600'}`}>
               {scoreChange > 0 ? '↑' : '↓'} {Math.abs(scoreChange)} pts
             </span>
           )}
         </div>
       </div>
 
-      <div className="h-[380px] mb-0">
-        <ResponsiveContainer width="100%" height="100%">
-          <RadarChart data={radarData} margin={{ top: 5, right: 30, bottom: 5, left: 30 }}>
-            <PolarGrid stroke="rgba(255,255,255,0.1)" />
-            <PolarAngleAxis 
-              dataKey="dimension" 
-              tick={{ fill: 'white', fontSize: 12, fontWeight: 600 }}
-            />
-            <PolarRadiusAxis 
-              angle={90} 
-              domain={[0, 30]}
-              tick={{ fill: 'white', fontSize: 11 }}
-            />
-            <Radar
-              name="Score"
-              dataKey="value"
-              stroke="#8b5cf6"
-              fill="#8b5cf6"
-              fillOpacity={0.6}
-              strokeWidth={3}
-            />
-            <Tooltip
-              contentStyle={{ 
-                backgroundColor: 'rgba(0,0,0,0.9)', 
-                border: '1px solid rgba(255,255,255,0.2)', 
-                borderRadius: '8px',
-                fontSize: '13px',
-                padding: '12px'
-              }}
-              labelStyle={{ color: 'white', fontWeight: 'bold' }}
-            />
-          </RadarChart>
-        </ResponsiveContainer>
+      <div className="bg-white rounded-[20px] shadow-xl border border-blue-100 p-5">
+        <div className="h-[380px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <RadarChart data={radarData} margin={{ top: 5, right: 30, bottom: 5, left: 30 }}>
+              <PolarGrid stroke="rgba(0,0,0,0.05)" />
+              <PolarAngleAxis 
+                dataKey="dimension" 
+                tick={{ fill: 'hsl(var(--foreground))', fontSize: 12, fontWeight: 600 }}
+              />
+              <PolarRadiusAxis 
+                angle={90} 
+                domain={[0, 30]}
+                tick={{ fill: 'hsl(var(--foreground))', fontSize: 11 }}
+              />
+              <Radar
+                name="Score"
+                dataKey="value"
+                stroke="#8b5cf6"
+                fill="#8b5cf6"
+                fillOpacity={0.6}
+                strokeWidth={3}
+              />
+              <Tooltip
+                contentStyle={{ 
+                  backgroundColor: 'white', 
+                  border: '1px solid hsl(var(--border))', 
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  padding: '12px'
+                }}
+                labelStyle={{ color: 'hsl(var(--foreground))', fontWeight: 'bold' }}
+              />
+            </RadarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {changeReason && (
-        <div className="bg-purple-500/10 rounded-lg p-2 border border-purple-500/30 mt-0">
+        <div className="bg-purple-500/10 rounded-[20px] p-4 border border-purple-500/30">
           <div className="flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 text-purple-300 mt-0.5" />
+            <AlertCircle className="h-4 w-4 text-purple-600 mt-0.5" />
             <div>
-              <p className="text-xs font-medium text-purple-200">¿Por qué cambió?</p>
-              <p className="text-xs text-white/70 mt-1">{changeReason}</p>
+              <p className="text-xs font-medium text-purple-700">¿Por qué cambió?</p>
+              <p className="text-xs text-foreground/70 mt-1">{changeReason}</p>
             </div>
           </div>
         </div>
       )}
 
-      <div className="space-y-4 pt-2">
-        <h3 className="text-base font-bold text-white mb-3">Desglose por Componente</h3>
+      <div className="space-y-3">
+        <h3 className="text-base font-bold text-foreground mb-3">Desglose por Componente</h3>
         {radarData.map((item, idx) => (
-          <div key={idx} className="bg-white/5 rounded-xl p-4 border border-white/10 hover:bg-white/10 transition-colors">
+          <div key={idx} className="bg-white rounded-[20px] shadow-xl border border-blue-100 p-4 hover:scale-[1.02] transition-all">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-base font-semibold text-white">{item.dimension}</span>
-              <span className="text-lg font-bold text-purple-300">
+              <span className="text-base font-semibold text-foreground">{item.dimension}</span>
+              <span className="text-lg font-bold text-purple-600">
                 {item.value}/{item.fullMark}
               </span>
             </div>
-            <p className="text-sm text-white/70 leading-relaxed">{item.explanation}</p>
+            <p className="text-sm text-foreground/70 leading-relaxed">{item.explanation}</p>
           </div>
         ))}
       </div>

@@ -82,27 +82,25 @@ const ScoreMoni = () => {
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="bg-gradient-card/95 backdrop-blur-sm border-b border-white/10 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-3">
-            <Button 
-              onClick={() => navigate("/dashboard")}
-              size="icon"
-              variant="ghost"
-              className="text-white hover:bg-white/10"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold text-white">Desglose Score Moni</h1>
-              <p className="text-xs text-white/70">Análisis completo de tu salud financiera</p>
-            </div>
+      <div className="p-4 flex items-center justify-between border-b border-border/30 bg-card/50 backdrop-blur-sm">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate('/dashboard')}
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">Score Moni</h1>
+            <p className="text-sm text-muted-foreground">Análisis completo de tu salud financiera</p>
           </div>
         </div>
       </div>
 
-      {/* Score Breakdown Widget en tamaño completo */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      {/* Score Breakdown Widget */}
+      <div className="px-4 py-6">
         <ScoreBreakdownWidget
           components={components}
           scoreMoni={score}
