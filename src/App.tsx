@@ -25,6 +25,8 @@ import ScoreMoni from "./pages/ScoreMoni";
 import Assets from "./pages/Assets";
 import Liabilities from "./pages/Liabilities";
 
+import Subscriptions from "./pages/Subscriptions";
+
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -66,6 +68,7 @@ const App = () => {
             <Route path="/score-moni" element={<ScoreMoni />} />
             <Route path="/assets" element={<Assets />} />
             <Route path="/liabilities" element={<Liabilities />} />
+            <Route path="/subscriptions" element={<Subscriptions />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
