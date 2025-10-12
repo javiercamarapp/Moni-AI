@@ -340,7 +340,7 @@ const Gastos = () => {
           <Button 
             variant="ghost" 
             size="icon"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/balance')}
             className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
           >
             <ArrowLeft className="h-5 w-5" />
