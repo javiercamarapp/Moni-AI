@@ -9,7 +9,7 @@
 @layer base {
   :root {
     /* Soft off-white base with muted grays */
-    --background: 0 0% 96%;
+    --background: 48 25% 92%;
     --foreground: 0 0% 20%;
 
     /* Cards and surfaces - Soft grays */
