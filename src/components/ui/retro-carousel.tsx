@@ -326,9 +326,8 @@ const ScoreCard = ({
           </div>
         )}
       </AnimatePresence>
-      <motion.button
+      <motion.div
         layoutId={layout ? `card-${component.title}` : undefined}
-        onClick={handleExpand}
         className=""
         whileHover={{
           rotateX: 2,
@@ -371,7 +370,7 @@ const ScoreCard = ({
             </motion.p>
           </div>
         </div>
-      </motion.button>
+      </motion.div>
     </>
   );
 };
