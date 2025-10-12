@@ -938,7 +938,7 @@ const Dashboard = () => {
         
         {/* Botón de cuentas y tarjetas */}
         <Card 
-          className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 cursor-pointer flex-shrink-0"
+          className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer flex-shrink-0 border border-blue-100"
           onClick={() => navigate('/net-worth')}
         >
           <div className="flex items-center gap-2">
