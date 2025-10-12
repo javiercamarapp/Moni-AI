@@ -63,6 +63,7 @@ const Dashboard = () => {
   const [creditCardDebts, setCreditCardDebts] = useState<any[]>([]);
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const [loadingScore, setLoadingScore] = useState(false);
+  const [dailyExpenses, setDailyExpenses] = useState<{total: number, average: number}>({total: 0, average: 0});
   const [proyecciones, setProyecciones] = useState<{
     proyeccionAnual: number;
     proyeccionSemestral: number;
@@ -170,6 +171,26 @@ const Dashboard = () => {
         
         setHasBankConnections((bankData?.length || 0) > 0);
 
+        // Calculate daily expenses for current month
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        
+        const { data: dailyExpensesData } = await supabase
+          .from('transactions')
+          .select('amount, transaction_date')
+          .eq('user_id', user.id)
+          .eq('type', 'gasto')
+          .gte('transaction_date', startOfMonth.toISOString().split('T')[0])
+          .lte('transaction_date', endOfMonth.toISOString().split('T')[0]);
+
+        if (dailyExpensesData && dailyExpensesData.length > 0) {
+          const total = dailyExpensesData.reduce((sum, t) => sum + Number(t.amount), 0);
+          const daysInMonth = endOfMonth.getDate();
+          const average = total / daysInMonth;
+          setDailyExpenses({ total, average });
+        }
+
         // Load cached subscriptions immediately for instant display
         const cachedSubs = localStorage.getItem('cachedSubscriptions');
         const lastUpdate = localStorage.getItem('subscriptionsLastUpdate');
@@ -179,9 +200,9 @@ const Dashboard = () => {
         }
 
         // Check if we need to update (once per day)
-        const now = Date.now();
+        const now2 = Date.now();
         const ONE_DAY = 24 * 60 * 60 * 1000;
-        const shouldUpdate = !lastUpdate || (now - parseInt(lastUpdate)) > ONE_DAY;
+        const shouldUpdate = !lastUpdate || (now2 - parseInt(lastUpdate)) > ONE_DAY;
 
         if (shouldUpdate) {
           // Ejecutar AI en background sin bloquear la UI
@@ -231,7 +252,7 @@ const Dashboard = () => {
                 setUpcomingSubscriptions(detectedSubs);
                 // Cache the results
                 localStorage.setItem('cachedSubscriptions', JSON.stringify(detectedSubs));
-                localStorage.setItem('subscriptionsLastUpdate', now.toString());
+                localStorage.setItem('subscriptionsLastUpdate', now2.toString());
               }
             } catch (aiError) {
               console.error('Error calling AI:', aiError);
@@ -1024,7 +1045,7 @@ const Dashboard = () => {
 
         {/* Grid de 2 columnas: Suscripciones y Deudas - Alineados horizontalmente siempre */}
         <div className="grid grid-cols-2 gap-2 sm:gap-4">
-          {/* Widget de Suscripciones Próximas */}
+          {/* Widget combinado: Suscripciones + Gastos Cotidianos */}
           <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-all active:scale-95">
             <GlowingEffect
               spread={40}
@@ -1035,50 +1056,77 @@ const Dashboard = () => {
               borderWidth={2}
             />
             <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
-              <div className="flex items-center justify-between flex-shrink-0">
-                <h3 className="text-xs font-bold text-foreground">📅 Pagos Recurrentes</h3>
-                <span className="text-[10px] text-foreground/70 font-semibold">{upcomingSubscriptions.length}</span>
-              </div>
-
-              {upcomingSubscriptions.length === 0 ? (
-                <div className="text-center py-3 flex-1 flex flex-col justify-center">
-                  <p className="text-[10px] text-foreground/70 mb-1">Analizando gastos...</p>
-                  <p className="text-[9px] text-foreground/50">La IA detectará suscripciones</p>
+              {/* Suscripciones - Mitad superior */}
+              <div className="flex-1 flex flex-col min-h-0">
+                <div className="flex items-center justify-between flex-shrink-0">
+                  <h3 className="text-[10px] font-bold text-foreground">📅 Suscripciones</h3>
+                  <span className="text-[9px] text-foreground/70 font-semibold">{upcomingSubscriptions.length}</span>
                 </div>
-              ) : (
-                <>
-                  <div className="flex-1 min-h-0 overflow-y-auto pr-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                    <style>{`
-                      .flex-1.min-h-0.overflow-y-auto::-webkit-scrollbar {
-                        display: none;
-                      }
-                    `}</style>
-                    <div className="space-y-0.5">
-                      {upcomingSubscriptions.map((sub) => (
+
+                {upcomingSubscriptions.length === 0 ? (
+                  <div className="text-center py-1 flex-1 flex flex-col justify-center">
+                    <p className="text-[9px] text-foreground/70">Sin suscripciones</p>
+                  </div>
+                ) : (
+                  <div className="flex-1 min-h-0 overflow-hidden">
+                    <div className="space-y-0.5 max-h-[50px] overflow-y-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                      <style>{`
+                        .space-y-0\\.5.max-h-\\[50px\\]::-webkit-scrollbar {
+                          display: none;
+                        }
+                      `}</style>
+                      {upcomingSubscriptions.slice(0, 2).map((sub) => (
                         <div 
                           key={sub.id} 
-                          className="flex items-center gap-0.5 sm:gap-2 py-0.5 sm:py-2 px-1 sm:px-3 bg-white/10 rounded backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all min-h-[18px] sm:min-h-[40px]"
+                          className="flex items-center gap-1 py-0.5 px-1 bg-white/10 rounded backdrop-blur-sm border border-white/20"
                         >
-                          <div className="w-3 h-3 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-[6px] sm:text-base shadow-lg shrink-0">
+                          <div className="w-3 h-3 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-[6px] shadow-lg shrink-0">
                             {sub.icon}
                           </div>
-                          <p className="text-[6px] sm:text-sm font-bold text-foreground truncate leading-none flex-1 min-w-0">{sub.name}</p>
-                          <p className="text-[6px] sm:text-base font-black text-foreground shrink-0 leading-none">${sub.amount.toFixed(0)}</p>
+                          <p className="text-[7px] font-bold text-foreground truncate flex-1 min-w-0">{sub.name}</p>
+                          <p className="text-[7px] font-black text-foreground shrink-0">${sub.amount.toFixed(0)}</p>
                         </div>
                       ))}
                     </div>
                   </div>
-                  
-                  <div className="pt-2 border-t border-white/20 mt-2 flex-shrink-0">
+                )}
+                
+                <div className="pt-1 border-t border-white/20 mt-1 flex-shrink-0">
+                  <div className="flex justify-between items-center">
+                    <p className="text-[8px] text-foreground/70 font-semibold">Total mensual</p>
+                    <p className="text-[9px] font-black text-foreground">
+                      ${upcomingSubscriptions.reduce((sum, s) => sum + s.amount, 0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Separador */}
+              <div className="border-t-2 border-dashed border-white/30 my-1"></div>
+
+              {/* Gastos Cotidianos - Mitad inferior */}
+              <div className="flex-1 flex flex-col min-h-0">
+                <div className="flex items-center justify-between flex-shrink-0">
+                  <h3 className="text-[10px] font-bold text-foreground">☕ Gastos Cotidianos</h3>
+                </div>
+
+                <div className="flex-1 flex flex-col justify-center py-1">
+                  <div className="space-y-1">
                     <div className="flex justify-between items-center">
-                      <p className="text-[9px] text-foreground/70">Total mensual</p>
-                      <p className="text-xs font-black text-foreground break-words">
-                        ${upcomingSubscriptions.reduce((sum, s) => sum + s.amount, 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      <p className="text-[8px] text-foreground/70">Total del mes</p>
+                      <p className="text-[9px] font-bold text-foreground">
+                        ${dailyExpenses.total.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      </p>
+                    </div>
+                    <div className="flex justify-between items-center pt-1 border-t border-white/20">
+                      <p className="text-[8px] text-foreground/70 font-semibold">Promedio diario</p>
+                      <p className="text-[9px] font-black text-foreground">
+                        ${dailyExpenses.average.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                       </p>
                     </div>
                   </div>
-                </>
-              )}
+                </div>
+              </div>
             </div>
           </Card>
 
