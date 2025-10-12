@@ -173,7 +173,7 @@ const Reports = () => {
             </Select>
           </div>
           <div className="grid grid-cols-1 gap-2">
-            {months.map((month) => (
+            {[...months].reverse().map((month) => (
               <Card
                 key={month.number}
                 className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] transition-all"
