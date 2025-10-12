@@ -1322,11 +1322,7 @@ const Dashboard = () => {
                 {goals.length === 0 ? (
                   <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden text-center animate-fade-in">
                     <div className="relative z-10">
-                      <p className="text-foreground/90 mb-4">No tienes metas creadas aún</p>
-                      <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-green-600 hover:bg-green-700 text-white border-0 hover:scale-105 transition-all font-semibold shadow-lg">
-                        <Plus className="w-4 h-4 mr-2" />
-                      Crear tu primera meta
-                    </Button>
+                      <p className="text-foreground/90">No tienes metas creadas aún</p>
                     </div>
                   </Card>
                 ) : goals.map((goal, index) => {
