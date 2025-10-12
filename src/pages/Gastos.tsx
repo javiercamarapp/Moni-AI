@@ -324,14 +324,6 @@ const Gastos = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
-        <p className="text-foreground text-lg">Cargando gastos...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
