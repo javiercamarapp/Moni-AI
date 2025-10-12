@@ -574,7 +574,7 @@ const ChatInterface = () => {
           variant="ghost" 
           size="icon" 
           onClick={() => navigate("/dashboard")} 
-          className="absolute left-4 text-foreground hover:bg-accent/50 transition-all hover:scale-110 hover-lift fade-in-up rounded-full"
+          className="absolute left-2 text-foreground hover:bg-accent/50 transition-all hover:scale-110 hover-lift fade-in-up rounded-full"
         >
           <ArrowLeft className="w-5 h-5" />
         </Button>
