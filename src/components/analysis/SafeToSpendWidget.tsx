@@ -32,7 +32,7 @@ export default function SafeToSpendWidget({
   return (
     <Card 
       className="p-4 card-glow border-white/20"
-      style={{ backgroundColor: safeToSpend >= 0 ? '#2d7a2d' : '#ff7765' }}
+      style={{ backgroundColor: safeToSpend >= 0 ? '#10b981' : '#ff7765' }}
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
