@@ -1022,27 +1022,25 @@ const Dashboard = () => {
         />
 
         {/* Presupuesto Mensual */}
-        <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden">
-          <div className="space-y-3 relative z-10">
+        <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden">
+          <div className="space-y-1.5 relative z-10">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-bold text-foreground">💰 Presupuesto Mensual</h3>
-                <p className="text-xs text-foreground/80 font-medium break-words">
+                <h3 className="text-xs font-bold text-foreground leading-tight">💰 Presupuesto Mensual</h3>
+                <p className="text-[10px] text-foreground/80 font-medium break-words leading-tight">
                   Gastado: ${monthlyExpenses.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} de ${(monthlyIncome * 0.8).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-2xl font-black text-foreground">
+                <p className="text-lg font-black text-foreground leading-tight">
                   {monthlyIncome > 0 ? ((monthlyExpenses / (monthlyIncome * 0.8)) * 100).toFixed(0) : 0}%
                 </p>
-                <p className="text-xs text-foreground/70 font-semibold">del presupuesto</p>
+                <p className="text-[9px] text-foreground/70 font-semibold leading-tight">del presupuesto</p>
               </div>
             </div>
             
             <div className="relative">
-              {/* Barra de fondo */}
-              <div className="h-6 rounded-full bg-gradient-to-r from-[hsl(220,60%,10%)] to-[hsl(240,55%,8%)] border border-white/10 overflow-hidden shadow-inner">
-                {/* Barra de progreso animada */}
+              <div className="h-4 rounded-full bg-gradient-to-r from-[hsl(220,60%,10%)] to-[hsl(240,55%,8%)] border border-white/10 overflow-hidden shadow-inner">
                 <div 
                   className={`h-full rounded-full relative overflow-hidden transition-all duration-1000 ease-out ${
                     monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 90 
@@ -1060,17 +1058,15 @@ const Dashboard = () => {
                       : '0 0 20px rgba(4, 120, 87, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)'
                   }}
                 >
-                  {/* Efecto de brillo superior con verde esmeralda */}
                   <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/40 via-transparent to-transparent" />
                 </div>
               </div>
-              
             </div>
             
-            <p className="text-xs text-foreground/80 text-center font-semibold min-h-[32px] flex items-center justify-center">
+            <p className="text-[10px] text-foreground/80 text-center font-semibold min-h-[20px] flex items-center justify-center leading-tight">
               {loadingBudgetMessage ? (
-                <span className="inline-flex items-center gap-2">
-                  <span className="inline-block animate-spin rounded-full h-3 w-3 border-b-2 border-foreground"></span>
+                <span className="inline-flex items-center gap-1">
+                  <span className="inline-block animate-spin rounded-full h-2 w-2 border-b-2 border-foreground"></span>
                   Analizando patrón...
                 </span>
               ) : (
@@ -1078,17 +1074,6 @@ const Dashboard = () => {
               )}
             </p>
           </div>
-          
-          <style>{`
-            @keyframes shimmer {
-              0% { background-position: -200% 0; }
-              100% { background-position: 200% 0; }
-            }
-            @keyframes slide {
-              0% { transform: translateX(-100%); }
-              100% { transform: translateX(200%); }
-            }
-          `}</style>
         </Card>
 
         {/* Grid de 2 columnas: Suscripciones y Deudas - Alineados horizontalmente siempre */}
