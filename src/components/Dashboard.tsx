@@ -915,13 +915,13 @@ const Dashboard = () => {
         {/* Puntos y nivel + Notificaciones */}
         <div className="flex gap-2 items-center">
           {/* Botón de puntos y nivel */}
-          <Button variant="ghost" className="bg-gradient-card card-glow hover:bg-white/20 text-white h-10 px-3 gap-2 hover:scale-105 transition-transform duration-200">
+          <Button variant="ghost" className="bg-gradient-card card-glow hover:bg-white/20 text-foreground h-10 px-3 gap-2 hover:scale-105 transition-transform duration-200">
             <span className="text-sm font-bold">{currentXP} pts</span>
             <span className="text-xs opacity-80">Nivel {level}</span>
           </Button>
           
           {/* Botón de notificaciones */}
-          <Button variant="ghost" size="icon" className="bg-gradient-card card-glow hover:bg-white/20 text-white h-10 w-10 hover:scale-105 transition-transform duration-200">
+          <Button variant="ghost" size="icon" className="bg-gradient-card card-glow hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-transform duration-200">
             <Bell className="h-5 w-5" />
           </Button>
         </div>
@@ -930,10 +930,10 @@ const Dashboard = () => {
       {/* Header con saludo */}
       <div className="p-4 pt-2 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-base sm:text-lg font-bold text-white leading-tight">
+          <h1 className="text-base sm:text-lg font-bold text-foreground leading-tight">
             ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
           </h1>
-          <p className="text-sm text-white">Vas excelente con tus metas financieras</p>
+          <p className="text-sm text-foreground">Vas excelente con tus metas financieras</p>
         </div>
         
         {/* Botón de cuentas y tarjetas */}
@@ -943,11 +943,11 @@ const Dashboard = () => {
         >
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-purple-500/30 flex items-center justify-center flex-shrink-0">
-              <CreditCard className="w-4 h-4 text-white" />
+              <CreditCard className="w-4 h-4 text-foreground" />
             </div>
             <div className="text-left">
-              <p className="text-xs text-white/80 leading-tight whitespace-nowrap">Mis cuentas</p>
-              <p className="text-xs font-bold text-white leading-tight whitespace-nowrap">y tarjetas</p>
+              <p className="text-xs text-foreground/80 leading-tight whitespace-nowrap">Mis cuentas</p>
+              <p className="text-xs font-bold text-foreground leading-tight whitespace-nowrap">y tarjetas</p>
             </div>
           </div>
         </Card>
@@ -1006,11 +1006,11 @@ const Dashboard = () => {
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
+                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Ingreso vs Gasto</p>
-                <p className="text-xs sm:text-base font-bold text-white leading-tight">
+                <p className="text-[9px] sm:text-xs text-foreground/80 leading-tight">Ingreso vs Gasto</p>
+                <p className="text-xs sm:text-base font-bold text-foreground leading-tight">
                   ${(currentMonth.balance / 1000).toFixed(0)}k
                 </p>
               </div>
@@ -1027,8 +1027,8 @@ const Dashboard = () => {
                 <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-success-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Net Worth</p>
-                <p className="text-xs sm:text-base font-bold text-white leading-tight">
+                <p className="text-[9px] sm:text-xs text-foreground/80 leading-tight">Net Worth</p>
+                <p className="text-xs sm:text-base font-bold text-foreground leading-tight">
                   ${(netWorth / 1000).toFixed(0)}k
                 </p>
               </div>
@@ -1044,8 +1044,8 @@ const Dashboard = () => {
                 <Target className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-warning-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Metas</p>
-                <p className="text-xs sm:text-base font-bold text-white leading-tight">{goals.length}</p>
+                <p className="text-[9px] sm:text-xs text-foreground/80 leading-tight">Metas</p>
+                <p className="text-xs sm:text-base font-bold text-foreground leading-tight">{goals.length}</p>
               </div>
             </div>
           </button>
@@ -1056,11 +1056,11 @@ const Dashboard = () => {
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
+                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-white/80 leading-tight">Presupuestos</p>
-                <p className="text-xs sm:text-base font-bold text-white leading-tight">
+                <p className="text-[9px] sm:text-xs text-foreground/80 leading-tight">Presupuestos</p>
+                <p className="text-xs sm:text-base font-bold text-foreground leading-tight">
                   ${(monthlyIncome / 1000).toFixed(0)}k
                 </p>
               </div>
@@ -1084,16 +1084,16 @@ const Dashboard = () => {
           <div className="space-y-3 relative z-10">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-bold text-white drop-shadow-lg">💰 Presupuesto Mensual</h3>
-                <p className="text-xs text-white/80 font-medium break-words">
+                <h3 className="text-sm font-bold text-foreground">💰 Presupuesto Mensual</h3>
+                <p className="text-xs text-foreground/80 font-medium break-words">
                   Gastado: ${monthlyExpenses.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} de ${(monthlyIncome * 0.8).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-2xl font-black text-white drop-shadow-lg">
+                <p className="text-2xl font-black text-foreground">
                   {monthlyIncome > 0 ? ((monthlyExpenses / (monthlyIncome * 0.8)) * 100).toFixed(0) : 0}%
                 </p>
-                <p className="text-xs text-white/70 font-semibold">del presupuesto</p>
+                <p className="text-xs text-foreground/70 font-semibold">del presupuesto</p>
               </div>
             </div>
             
@@ -1125,16 +1125,16 @@ const Dashboard = () => {
               
               {/* Texto sobre la barra */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] px-2 py-0.5 rounded-full bg-black/30 backdrop-blur-sm break-words">
+                <span className="text-xs font-black text-foreground drop-shadow-[0_2px_4px_rgba(255,255,255,0.9)] px-2 py-0.5 rounded-full bg-white/30 backdrop-blur-sm break-words">
                   ${(monthlyIncome > 0 ? (monthlyIncome * 0.8) - monthlyExpenses : 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} restantes
                 </span>
               </div>
             </div>
             
-            <p className="text-xs text-white/80 text-center font-semibold min-h-[32px] flex items-center justify-center">
+            <p className="text-xs text-foreground/80 text-center font-semibold min-h-[32px] flex items-center justify-center">
               {loadingBudgetMessage ? (
                 <span className="inline-flex items-center gap-2">
-                  <span className="inline-block animate-spin rounded-full h-3 w-3 border-b-2 border-white"></span>
+                  <span className="inline-block animate-spin rounded-full h-3 w-3 border-b-2 border-foreground"></span>
                   Analizando patrón...
                 </span>
               ) : (
@@ -1169,14 +1169,14 @@ const Dashboard = () => {
             />
             <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
               <div className="flex items-center justify-between flex-shrink-0">
-                <h3 className="text-xs font-bold text-white drop-shadow-lg">📅 Pagos Recurrentes</h3>
-                <span className="text-[10px] text-white/70 font-semibold">{upcomingSubscriptions.length}</span>
+                <h3 className="text-xs font-bold text-foreground">📅 Pagos Recurrentes</h3>
+                <span className="text-[10px] text-foreground/70 font-semibold">{upcomingSubscriptions.length}</span>
               </div>
 
               {upcomingSubscriptions.length === 0 ? (
                 <div className="text-center py-3 flex-1 flex flex-col justify-center">
-                  <p className="text-[10px] text-white/70 mb-1">Analizando gastos...</p>
-                  <p className="text-[9px] text-white/50">La IA detectará suscripciones</p>
+                  <p className="text-[10px] text-foreground/70 mb-1">Analizando gastos...</p>
+                  <p className="text-[9px] text-foreground/50">La IA detectará suscripciones</p>
                 </div>
               ) : (
                 <>
@@ -1190,8 +1190,8 @@ const Dashboard = () => {
                           <div className="w-3 h-3 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-[6px] sm:text-base shadow-lg shrink-0">
                             {sub.icon}
                           </div>
-                          <p className="text-[6px] sm:text-sm font-bold text-white truncate leading-none flex-1 min-w-0">{sub.name}</p>
-                          <p className="text-[6px] sm:text-base font-black text-white shrink-0 leading-none">${sub.amount.toFixed(0)}</p>
+                          <p className="text-[6px] sm:text-sm font-bold text-foreground truncate leading-none flex-1 min-w-0">{sub.name}</p>
+                          <p className="text-[6px] sm:text-base font-black text-foreground shrink-0 leading-none">${sub.amount.toFixed(0)}</p>
                         </div>
                       ))}
                     </div>
@@ -1199,8 +1199,8 @@ const Dashboard = () => {
                   
                   <div className="pt-2 border-t border-white/20 mt-2 flex-shrink-0">
                     <div className="flex justify-between items-center">
-                      <p className="text-[9px] text-white/70">Total mensual</p>
-                      <p className="text-xs font-black text-white drop-shadow-lg break-words">
+                      <p className="text-[9px] text-foreground/70">Total mensual</p>
+                      <p className="text-xs font-black text-foreground break-words">
                         ${upcomingSubscriptions.reduce((sum, s) => sum + s.amount, 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </p>
                     </div>
@@ -1222,7 +1222,7 @@ const Dashboard = () => {
             />
             <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
               <div className="flex items-center justify-between flex-shrink-0">
-                <h3 className="text-xs font-bold text-white drop-shadow-lg">💳 Deudas</h3>
+                <h3 className="text-xs font-bold text-foreground">💳 Deudas</h3>
               </div>
 
               {!hasBankConnections ? (
@@ -1231,26 +1231,26 @@ const Dashboard = () => {
                     <div className="w-10 h-10 mx-auto rounded-full bg-white/10 flex items-center justify-center mb-2">
                       <span className="text-xl">🏦</span>
                     </div>
-                    <p className="text-[10px] text-white/80 mb-1 font-semibold">Conecta tus cuentas</p>
-                    <p className="text-[9px] text-white/60 mb-3">Monitorea tu salud</p>
+                    <p className="text-[10px] text-foreground/80 mb-1 font-semibold">Conecta tus cuentas</p>
+                    <p className="text-[9px] text-foreground/60 mb-3">Monitorea tu salud</p>
                   </div>
                   <Button 
                     onClick={() => navigate('/bank-connection')}
-                    className="bg-white/20 hover:bg-white/30 text-white border border-white/30 font-semibold text-[9px] px-3 py-1.5 h-auto"
+                    className="bg-white/20 hover:bg-white/30 text-foreground border border-white/30 font-semibold text-[9px] px-3 py-1.5 h-auto"
                   >
                     Conectar
                   </Button>
                 </div>
               ) : creditCardDebts.length === 0 ? (
                 <div className="text-center py-3 flex-1 flex flex-col justify-center">
-                  <p className="text-sm font-bold text-green-400 drop-shadow-lg">✅ Sin deudas</p>
-                  <p className="text-[10px] text-white/70 mt-1">¡Excelente!</p>
+                  <p className="text-sm font-bold text-green-600">✅ Sin deudas</p>
+                  <p className="text-[10px] text-foreground/70 mt-1">¡Excelente!</p>
                 </div>
               ) : (
                 <>
                   <div className="text-center py-2 flex-shrink-0">
-                    <p className="text-[9px] text-white/70 mb-1">Total adeudado</p>
-                    <p className="text-base sm:text-xl font-black text-red-400 drop-shadow-lg break-words">
+                    <p className="text-[9px] text-foreground/70 mb-1">Total adeudado</p>
+                    <p className="text-base sm:text-xl font-black text-red-600 break-words">
                       ${creditCardDebts.reduce((sum, card) => sum + card.balance, 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
                   </div>
@@ -1260,8 +1260,8 @@ const Dashboard = () => {
                       {creditCardDebts.map((card, index) => (
                         <div key={index} className="bg-white/10 rounded py-0.5 sm:py-2 px-1 sm:px-3 backdrop-blur-sm border border-white/20 min-h-[18px] sm:min-h-[50px]">
                           <div className="flex items-center justify-between gap-0.5 sm:gap-2 mb-0 sm:mb-1">
-                            <p className="text-[6px] sm:text-sm font-bold text-white truncate flex-1 min-w-0 leading-none">{card.name}</p>
-                            <p className="text-[6px] sm:text-sm font-black text-red-400 shrink-0 leading-none break-words">${card.balance.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                            <p className="text-[6px] sm:text-sm font-bold text-foreground truncate flex-1 min-w-0 leading-none">{card.name}</p>
+                            <p className="text-[6px] sm:text-sm font-black text-red-600 shrink-0 leading-none break-words">${card.balance.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                           </div>
                           <div className="flex items-center gap-0.5 sm:gap-1 mt-0.5 sm:mt-1">
                             <div className="flex-1 h-[1.5px] sm:h-2 bg-white/20 rounded-full overflow-hidden">
@@ -1270,7 +1270,7 @@ const Dashboard = () => {
                                 style={{ width: `${card.percentage}%` }}
                               />
                             </div>
-                            <p className="text-[5px] sm:text-xs text-white/80 font-semibold leading-none">{card.percentage}%</p>
+                            <p className="text-[5px] sm:text-xs text-foreground/80 font-semibold leading-none">{card.percentage}%</p>
                           </div>
                         </div>
                       ))}
