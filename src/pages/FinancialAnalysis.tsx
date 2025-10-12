@@ -608,13 +608,15 @@ export default function FinancialAnalysis() {
               onClick={() => navigate('/balance')}
             >
               {(() => {
-                // Si estamos en modo "month", usar los mismos datos que el Dashboard
+                // CRITICAL: Usar siempre la misma fuente que el Dashboard
+                // - Mes: dashboardData (tiempo real del mes actual)
+                // - Año: quickMetrics (calculado de TODA la BD, 1000 transacciones)
                 const income = period === 'month' 
                   ? dashboardData.monthlyIncome 
-                  : ((analysis?.metrics?.totalIncome ?? quickMetrics?.totalIncome) || 0);
+                  : (quickMetrics?.totalIncome || 0);
                 const expenses = period === 'month'
                   ? dashboardData.monthlyExpenses
-                  : ((analysis?.metrics?.totalExpenses ?? quickMetrics?.totalExpenses) || 0);
+                  : (quickMetrics?.totalExpenses || 0);
                 const balance = income - expenses;
                 const maxValue = Math.max(income, expenses);
                 
@@ -622,11 +624,11 @@ export default function FinancialAnalysis() {
                   ingresos: income,
                   gastos: expenses,
                   balance: balance,
-                  fuente: period === 'month' ? 'dashboardData (tiempo real)' : (analysis?.metrics ? 'analysis (calculado)' : 'quickMetrics (caché)'),
+                  fuente: period === 'month' ? 'dashboardData (tiempo real)' : 'quickMetrics (TODA LA BD)',
                   dashboardIncome: dashboardData.monthlyIncome,
                   dashboardExpenses: dashboardData.monthlyExpenses,
-                  analysisIncome: analysis?.metrics?.totalIncome,
-                  quickMetricsIncome: quickMetrics?.totalIncome
+                  quickMetricsIncome: quickMetrics?.totalIncome,
+                  quickMetricsExpenses: quickMetrics?.totalExpenses
                 });
                 
                 return (
