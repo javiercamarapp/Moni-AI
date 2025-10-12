@@ -8,24 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Plus, Trash2, Edit2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 interface Category {
   id: string;
   name: string;
@@ -34,98 +18,95 @@ interface Category {
   parent_id?: string | null;
   subcategories?: Category[];
 }
-
 const GestionarCategorias = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [deleteCategory, setDeleteCategory] = useState<Category | null>(null);
-  const [newCategory, setNewCategory] = useState({ name: '', type: 'ingreso' as 'ingreso' | 'gasto', color: 'bg-primary/20', parent_id: null as string | null });
+  const [newCategory, setNewCategory] = useState({
+    name: '',
+    type: 'ingreso' as 'ingreso' | 'gasto',
+    color: 'bg-primary/20',
+    parent_id: null as string | null
+  });
   const [parentCategoryForSubcategory, setParentCategoryForSubcategory] = useState<Category | null>(null);
-
-  const colorOptions = [
-    'bg-primary/20',
-    'bg-secondary/20',
-    'bg-accent/20',
-    'bg-red-500/20',
-    'bg-orange-500/20',
-    'bg-yellow-500/20',
-    'bg-green-500/20',
-    'bg-blue-500/20',
-    'bg-purple-500/20',
-    'bg-pink-500/20',
-  ];
-
+  const colorOptions = ['bg-primary/20', 'bg-secondary/20', 'bg-accent/20', 'bg-red-500/20', 'bg-orange-500/20', 'bg-yellow-500/20', 'bg-green-500/20', 'bg-blue-500/20', 'bg-purple-500/20', 'bg-pink-500/20'];
   useEffect(() => {
     fetchCategories();
   }, []);
-
   const fetchCategories = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
       if (!user) {
         navigate('/auth');
         return;
       }
-
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
+      const {
+        data,
+        error
+      } = await supabase.from('categories').select('*').eq('user_id', user.id).order('created_at', {
+        ascending: false
+      });
       if (error) throw error;
-      
+
       // Organize categories and subcategories
       const allCategories = (data || []) as Category[];
       const mainCategories = allCategories.filter(cat => !cat.parent_id);
-      
+
       // Attach subcategories to their parents
       mainCategories.forEach(mainCat => {
         mainCat.subcategories = allCategories.filter(cat => cat.parent_id === mainCat.id);
       });
-      
       setCategories(mainCategories);
     } catch (error) {
       console.error('Error fetching categories:', error);
       toast({
         title: "Error",
         description: "No se pudieron cargar las categorías",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
   };
-
   const handleAddCategory = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
       if (!user) return;
-
-      const { error } = await supabase
-        .from('categories')
-        .insert({
-          user_id: user.id,
-          name: newCategory.name,
-          type: newCategory.type,
-          color: newCategory.color,
-          parent_id: newCategory.parent_id,
-        });
-
+      const {
+        error
+      } = await supabase.from('categories').insert({
+        user_id: user.id,
+        name: newCategory.name,
+        type: newCategory.type,
+        color: newCategory.color,
+        parent_id: newCategory.parent_id
+      });
       if (error) throw error;
-
       toast({
         title: newCategory.parent_id ? "Subcategoría creada" : "Categoría creada",
-        description: newCategory.parent_id ? "Tu nueva subcategoría ha sido creada exitosamente" : "Tu nueva categoría ha sido creada exitosamente",
+        description: newCategory.parent_id ? "Tu nueva subcategoría ha sido creada exitosamente" : "Tu nueva categoría ha sido creada exitosamente"
       });
-
-      setNewCategory({ name: '', type: 'ingreso', color: 'bg-primary/20', parent_id: null });
+      setNewCategory({
+        name: '',
+        type: 'ingreso',
+        color: 'bg-primary/20',
+        parent_id: null
+      });
       setShowAddDialog(false);
       setParentCategoryForSubcategory(null);
       fetchCategories();
@@ -134,31 +115,25 @@ const GestionarCategorias = () => {
       toast({
         title: "Error",
         description: "No se pudo crear la categoría",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const handleEditCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingCategory) return;
-
     try {
-      const { error } = await supabase
-        .from('categories')
-        .update({
-          name: editingCategory.name,
-          color: editingCategory.color,
-        })
-        .eq('id', editingCategory.id);
-
+      const {
+        error
+      } = await supabase.from('categories').update({
+        name: editingCategory.name,
+        color: editingCategory.color
+      }).eq('id', editingCategory.id);
       if (error) throw error;
-
       toast({
         title: "Categoría actualizada",
-        description: "Los cambios han sido guardados",
+        description: "Los cambios han sido guardados"
       });
-
       setEditingCategory(null);
       fetchCategories();
     } catch (error) {
@@ -166,27 +141,21 @@ const GestionarCategorias = () => {
       toast({
         title: "Error",
         description: "No se pudo actualizar la categoría",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const handleDeleteCategory = async () => {
     if (!deleteCategory) return;
-
     try {
-      const { error } = await supabase
-        .from('categories')
-        .delete()
-        .eq('id', deleteCategory.id);
-
+      const {
+        error
+      } = await supabase.from('categories').delete().eq('id', deleteCategory.id);
       if (error) throw error;
-
       toast({
         title: "Categoría eliminada",
-        description: "La categoría ha sido eliminada exitosamente",
+        description: "La categoría ha sido eliminada exitosamente"
       });
-
       setDeleteCategory(null);
       fetchCategories();
     } catch (error) {
@@ -194,95 +163,58 @@ const GestionarCategorias = () => {
       toast({
         title: "Error",
         description: "No se pudo eliminar la categoría",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const ingresos = categories.filter(c => c.type === 'ingreso');
   const gastos = categories.filter(c => c.type === 'gasto');
-
   const openAddSubcategoryDialog = (parentCategory: Category) => {
     setParentCategoryForSubcategory(parentCategory);
-    setNewCategory({ 
-      name: '', 
-      type: parentCategory.type, 
-      color: parentCategory.color, 
-      parent_id: parentCategory.id 
+    setNewCategory({
+      name: '',
+      type: parentCategory.type,
+      color: parentCategory.color,
+      parent_id: parentCategory.id
     });
     setShowAddDialog(true);
   };
-
-  const renderCategoryCard = (category: Category, isSubcategory: boolean = false) => (
-    <div key={category.id}>
+  const renderCategoryCard = (category: Category, isSubcategory: boolean = false) => <div key={category.id}>
       <Card className={`p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in hover:scale-105 transition-all ${isSubcategory ? 'ml-8 mt-2' : ''}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 flex-1">
             <div className={`w-12 h-12 rounded-lg ${category.color}`} />
             <div className="flex-1">
               <p className="text-lg font-semibold text-foreground">{category.name}</p>
-              {!isSubcategory && category.subcategories && category.subcategories.length > 0 && (
-                <p className="text-xs text-muted-foreground">{category.subcategories.length} subcategorías</p>
-              )}
+              {!isSubcategory && category.subcategories && category.subcategories.length > 0 && <p className="text-xs text-muted-foreground">{category.subcategories.length} subcategorías</p>}
             </div>
           </div>
           <div className="flex gap-2">
-            {!isSubcategory && (
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => openAddSubcategoryDialog(category)}
-                className="text-primary hover:bg-primary/10 hover:scale-105 transition-all"
-                title="Agregar subcategoría"
-              >
+            {!isSubcategory && <Button size="icon" variant="ghost" onClick={() => openAddSubcategoryDialog(category)} className="text-primary hover:bg-primary/10 hover:scale-105 transition-all" title="Agregar subcategoría">
                 <Plus className="h-4 w-4" />
-              </Button>
-            )}
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => setEditingCategory(category)}
-              className="text-foreground hover:bg-accent/50 hover:scale-105 transition-all"
-            >
+              </Button>}
+            <Button size="icon" variant="ghost" onClick={() => setEditingCategory(category)} className="text-foreground hover:bg-accent/50 hover:scale-105 transition-all">
               <Edit2 className="h-4 w-4" />
             </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => setDeleteCategory(category)}
-              className="text-destructive hover:bg-destructive/10 hover:scale-105 transition-all"
-            >
+            <Button size="icon" variant="ghost" onClick={() => setDeleteCategory(category)} className="text-destructive hover:bg-destructive/10 hover:scale-105 transition-all">
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         </div>
       </Card>
       {/* Render subcategories */}
-      {!isSubcategory && category.subcategories && category.subcategories.map((subcat) => 
-        renderCategoryCard(subcat, true)
-      )}
-    </div>
-  );
-
+      {!isSubcategory && category.subcategories && category.subcategories.map(subcat => renderCategoryCard(subcat, true))}
+    </div>;
   if (loading) {
-    return (
-      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
+    return <div className="min-h-screen animated-wave-bg flex items-center justify-center">
         <p className="text-white text-lg">Cargando...</p>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen animated-wave-bg pb-20">
+  return <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
       <div className="p-4 flex items-center justify-between border-b border-border/30 bg-card/50 backdrop-blur-sm">
         <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={() => navigate(-1)}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
-          >
+          <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10">
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
@@ -295,14 +227,15 @@ const GestionarCategorias = () => {
 
         <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
           <DialogTrigger asChild>
-            <Button
-              size="icon"
-              onClick={() => {
-                setParentCategoryForSubcategory(null);
-                setNewCategory({ name: '', type: 'ingreso', color: 'bg-primary/20', parent_id: null });
-              }}
-              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10"
-            >
+            <Button size="icon" onClick={() => {
+            setParentCategoryForSubcategory(null);
+            setNewCategory({
+              name: '',
+              type: 'ingreso',
+              color: 'bg-primary/20',
+              parent_id: null
+            });
+          }} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10">
               <Plus className="h-5 w-5 text-foreground" />
             </Button>
           </DialogTrigger>
@@ -318,79 +251,51 @@ const GestionarCategorias = () => {
                 <Label htmlFor="name" className="text-card-foreground/90 text-base">
                   Nombre de la categoría
                 </Label>
-                <Input
-                  id="name"
-                  placeholder="Ej: Educación, Entretenimiento..."
-                  value={newCategory.name}
-                  onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-                  required
-                  className="bg-white border-blue-100 text-foreground placeholder:text-muted-foreground h-14"
-                />
+                <Input id="name" placeholder="Ej: Educación, Entretenimiento..." value={newCategory.name} onChange={e => setNewCategory({
+                ...newCategory,
+                name: e.target.value
+              })} required className="bg-white border-blue-100 text-foreground placeholder:text-muted-foreground h-14" />
               </div>
 
-              {!parentCategoryForSubcategory && (
-                <div className="space-y-2">
+              {!parentCategoryForSubcategory && <div className="space-y-2">
                   <Label className="text-foreground/90 text-base">Tipo</Label>
                   <div className="flex gap-3">
-                    <Button
-                      type="button"
-                      onClick={() => setNewCategory({ ...newCategory, type: 'ingreso', parent_id: null })}
-                      className={`flex-1 ${newCategory.type === 'ingreso' ? 'bg-primary text-white' : 'bg-white text-foreground border border-blue-100'} hover:bg-primary/80 h-12`}
-                    >
+                    <Button type="button" onClick={() => setNewCategory({
+                  ...newCategory,
+                  type: 'ingreso',
+                  parent_id: null
+                })} className={`flex-1 ${newCategory.type === 'ingreso' ? 'bg-primary text-white' : 'bg-white text-foreground border border-blue-100'} hover:bg-primary/80 h-12`}>
                       Ingreso
                     </Button>
-                    <Button
-                      type="button"
-                      onClick={() => setNewCategory({ ...newCategory, type: 'gasto', parent_id: null })}
-                      className={`flex-1 ${newCategory.type === 'gasto' ? 'bg-primary text-white' : 'bg-white text-foreground border border-blue-100'} hover:bg-primary/80 h-12`}
-                    >
+                    <Button type="button" onClick={() => setNewCategory({
+                  ...newCategory,
+                  type: 'gasto',
+                  parent_id: null
+                })} className={`flex-1 ${newCategory.type === 'gasto' ? 'bg-primary text-white' : 'bg-white text-foreground border border-blue-100'} hover:bg-primary/80 h-12`}>
                       Gasto
                     </Button>
                   </div>
-                </div>
-              )}
+                </div>}
 
-              {!parentCategoryForSubcategory && (
-                <div className="space-y-2">
+              {!parentCategoryForSubcategory && <div className="space-y-2">
                   <Label className="text-foreground/90 text-base flex items-center gap-2">
                     <Plus className="h-4 w-4 text-primary" />
                     Agregar Subcategoría
                   </Label>
-                  <select
-                    value={newCategory.parent_id || ''}
-                    onChange={(e) => setNewCategory({ ...newCategory, parent_id: e.target.value || null })}
-                    className="w-full h-14 rounded-lg bg-white border border-blue-100 text-foreground px-4 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                  >
-                    <option value="">Seleccionar categoría padre (opcional)</option>
-                    {categories
-                      .filter(cat => cat.type === newCategory.type)
-                      .map(cat => (
-                        <option key={cat.id} value={cat.id}>
-                          {cat.name}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-              )}
+                  
+                </div>}
 
               <div className="space-y-2">
                 <Label className="text-foreground/90 text-base">Color</Label>
                 <div className="grid grid-cols-5 gap-2">
-                  {colorOptions.map((color) => (
-                    <button
-                      key={color}
-                      type="button"
-                      onClick={() => setNewCategory({ ...newCategory, color })}
-                      className={`w-full h-12 rounded-lg ${color} border-2 ${newCategory.color === color ? 'border-primary' : 'border-blue-100'} hover:border-primary/50 transition-colors`}
-                    />
-                  ))}
+                  {colorOptions.map(color => <button key={color} type="button" onClick={() => setNewCategory({
+                  ...newCategory,
+                  color
+                })} className={`w-full h-12 rounded-lg ${color} border-2 ${newCategory.color === color ? 'border-primary' : 'border-blue-100'} hover:border-primary/50 transition-colors`} />)}
                 </div>
               </div>
 
-              <Button
-                type="submit"
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg font-semibold"
-              >
+              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg font-semibold">
                 {parentCategoryForSubcategory ? 'Crear Subcategoría' : 'Crear Categoría'}
               </Button>
             </form>
@@ -411,17 +316,17 @@ const GestionarCategorias = () => {
           </TabsList>
 
           <TabsContent value="ingresos" className="space-y-3 mt-4">
-            {ingresos.map((category) => renderCategoryCard(category))}
+            {ingresos.map(category => renderCategoryCard(category))}
           </TabsContent>
 
           <TabsContent value="gastos" className="space-y-3 mt-4">
-            {gastos.map((category) => renderCategoryCard(category))}
+            {gastos.map(category => renderCategoryCard(category))}
           </TabsContent>
         </Tabs>
       </div>
 
       {/* Edit Dialog */}
-      <Dialog open={!!editingCategory} onOpenChange={(open) => !open && setEditingCategory(null)}>
+      <Dialog open={!!editingCategory} onOpenChange={open => !open && setEditingCategory(null)}>
         <DialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100 max-w-[85%] sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-foreground">
@@ -434,33 +339,23 @@ const GestionarCategorias = () => {
               <Label htmlFor="edit-name" className="text-foreground/90 text-base">
                 Nombre de la categoría
               </Label>
-              <Input
-                id="edit-name"
-                value={editingCategory?.name || ''}
-                onChange={(e) => setEditingCategory(editingCategory ? { ...editingCategory, name: e.target.value } : null)}
-                required
-                className="bg-white border-blue-100 text-foreground h-14"
-              />
+              <Input id="edit-name" value={editingCategory?.name || ''} onChange={e => setEditingCategory(editingCategory ? {
+              ...editingCategory,
+              name: e.target.value
+            } : null)} required className="bg-white border-blue-100 text-foreground h-14" />
             </div>
 
             <div className="space-y-2">
               <Label className="text-foreground/90 text-base">Color</Label>
               <div className="grid grid-cols-5 gap-2">
-                {colorOptions.map((color) => (
-                  <button
-                    key={color}
-                    type="button"
-                    onClick={() => setEditingCategory(editingCategory ? { ...editingCategory, color } : null)}
-                    className={`w-full h-12 rounded-lg ${color} border-2 ${editingCategory?.color === color ? 'border-primary' : 'border-blue-100'} hover:border-primary/50 transition-colors`}
-                  />
-                ))}
+                {colorOptions.map(color => <button key={color} type="button" onClick={() => setEditingCategory(editingCategory ? {
+                ...editingCategory,
+                color
+              } : null)} className={`w-full h-12 rounded-lg ${color} border-2 ${editingCategory?.color === color ? 'border-primary' : 'border-blue-100'} hover:border-primary/50 transition-colors`} />)}
               </div>
             </div>
 
-            <Button
-              type="submit"
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg font-semibold"
-            >
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg font-semibold">
               Guardar Cambios
             </Button>
           </form>
@@ -468,7 +363,7 @@ const GestionarCategorias = () => {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteCategory} onOpenChange={(open) => !open && setDeleteCategory(null)}>
+      <AlertDialog open={!!deleteCategory} onOpenChange={open => !open && setDeleteCategory(null)}>
         <AlertDialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-foreground">¿Eliminar categoría?</AlertDialogTitle>
@@ -480,17 +375,12 @@ const GestionarCategorias = () => {
             <AlertDialogCancel className="bg-white border border-blue-100 text-foreground hover:bg-gray-50">
               Cancelar
             </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteCategory}
-              className="bg-destructive/80 hover:bg-destructive text-destructive-foreground"
-            >
+            <AlertDialogAction onClick={handleDeleteCategory} className="bg-destructive/80 hover:bg-destructive text-destructive-foreground">
               Eliminar
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
-  );
+    </div>;
 };
-
 export default GestionarCategorias;
