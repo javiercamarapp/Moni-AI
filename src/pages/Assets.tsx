@@ -73,27 +73,27 @@ export default function Assets() {
   if (isLoading || !netWorthData) {
     return (
       <div className="min-h-screen animated-wave-bg pb-20">
-        <div className="bg-gradient-card/95 backdrop-blur-sm border-b border-white/10 sticky top-0 z-40">
+        <div className="bg-white/95 backdrop-blur-sm sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-4 py-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => navigate(-1)}
-                className="text-white hover:bg-white/10"
+                className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12 flex-shrink-0"
               >
-                <ArrowLeft className="h-5 w-5" />
+                <ArrowLeft className="h-5 w-5 text-foreground" />
               </Button>
-              <div>
-                <h1 className="text-xl font-bold text-white">Activos</h1>
-                <p className="text-xs text-white/70">Cargando...</p>
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl sm:text-2xl font-bold text-foreground">Activos</h1>
+                <p className="text-sm text-foreground/80 font-medium">Cargando...</p>
               </div>
             </div>
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <Card className="p-6 bg-gradient-card border-border/50 animate-pulse">
-            <div className="h-80 bg-muted/20 rounded"></div>
+          <Card className="p-6 bg-white border-blue-100 animate-pulse rounded-[20px] shadow-xl">
+            <div className="h-80 bg-primary/10 rounded-[20px]"></div>
           </Card>
         </div>
         <BottomNav />
@@ -117,20 +117,20 @@ export default function Assets() {
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="bg-gradient-card/95 backdrop-blur-sm border-b border-white/10 sticky top-0 z-40">
+      <div className="bg-background/95 backdrop-blur-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate(-1)}
-              className="text-white hover:bg-white/10"
+              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12 flex-shrink-0"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-5 w-5 text-foreground" />
             </Button>
-            <div>
-              <h1 className="text-xl font-bold text-white">Activos</h1>
-              <p className="text-xs text-white/70">Recursos que posees</p>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">Activos</h1>
+              <p className="text-sm text-foreground/80 font-medium">Recursos que posees</p>
             </div>
           </div>
         </div>
@@ -138,22 +138,22 @@ export default function Assets() {
 
       <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
         {/* Info Card */}
-        <Card className="bg-gradient-to-br from-emerald-500/20 to-emerald-700/20 backdrop-blur-sm border-emerald-500/30 p-6">
-          <h2 className="text-lg font-bold text-white mb-3">¿Qué son los Activos?</h2>
-          <p className="text-sm text-white/80 leading-relaxed mb-4">
+        <Card className="bg-white/90 backdrop-blur-sm border-blue-100 p-5 rounded-[20px] shadow-xl">
+          <h2 className="text-lg font-bold text-foreground mb-3">¿Qué son los Activos?</h2>
+          <p className="text-sm text-foreground/80 leading-relaxed mb-4">
             Son los recursos que posees y que se pueden convertir en dinero. Incluyen bienes raíces, 
             dinero en efectivo, inversiones, vehículos, joyas, arte y cuentas de jubilación.
           </p>
-          <div className="flex items-center gap-2 text-xs text-white/70">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Droplet className="h-4 w-4" />
             <span>Los activos se clasifican en líquidos (fácil conversión) y fijos (conversión lenta)</span>
           </div>
         </Card>
 
         {/* Total Activos */}
-        <div className="bg-gradient-to-br from-emerald-500/20 to-emerald-700/20 backdrop-blur-sm rounded-xl p-4 border border-emerald-500/30">
-          <p className="text-xs text-white/70 mb-1">Total de Activos</p>
-          <p className="text-3xl font-bold text-white break-words">
+        <div className="bg-white backdrop-blur-sm rounded-[20px] p-5 border border-blue-100 shadow-xl">
+          <p className="text-xs text-foreground/80 mb-1 font-medium">Total de Activos</p>
+          <p className="text-3xl font-bold text-emerald-700 break-words">
             ${totalAssets.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
         </div>
@@ -165,10 +165,10 @@ export default function Assets() {
             size="sm"
             onClick={() => setFilter('All')}
             className={cn(
-              "flex-1 transition-all",
+              "flex-1 transition-all rounded-[20px] shadow-lg font-semibold border border-blue-100 h-9",
               filter === 'All'
-                ? "bg-white/20 text-white border-white/30"
-                : "bg-white/5 text-white/70 border-white/10 hover:bg-white/10"
+                ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105"
+                : "bg-white text-foreground hover:bg-primary/10 hover:scale-105"
             )}
           >
             Todos
@@ -178,10 +178,10 @@ export default function Assets() {
             size="sm"
             onClick={() => setFilter('Liquid')}
             className={cn(
-              "flex-1 transition-all",
+              "flex-1 transition-all rounded-[20px] shadow-lg font-semibold border border-blue-100 h-9",
               filter === 'Liquid'
-                ? "bg-blue-500/30 text-white border-blue-500/40"
-                : "bg-white/5 text-white/70 border-white/10 hover:bg-white/10"
+                ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105"
+                : "bg-white text-foreground hover:bg-primary/10 hover:scale-105"
             )}
           >
             Líquidos
@@ -191,10 +191,10 @@ export default function Assets() {
             size="sm"
             onClick={() => setFilter('Fixed')}
             className={cn(
-              "flex-1 transition-all",
+              "flex-1 transition-all rounded-[20px] shadow-lg font-semibold border border-blue-100 h-9",
               filter === 'Fixed'
-                ? "bg-amber-500/30 text-white border-amber-500/40"
-                : "bg-white/5 text-white/70 border-white/10 hover:bg-white/10"
+                ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105"
+                : "bg-white text-foreground hover:bg-primary/10 hover:scale-105"
             )}
           >
             Fijos
@@ -203,35 +203,43 @@ export default function Assets() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-blue-500/10 backdrop-blur-sm rounded-xl p-3 border border-blue-500/20">
-            <div className="flex items-center gap-2 mb-1">
-              <Droplet className="h-4 w-4 text-blue-400" />
-              <p className="text-[10px] text-white/70">Activos Líquidos</p>
+          <div className="bg-white backdrop-blur-sm rounded-[20px] p-4 border border-blue-100 shadow-xl">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 rounded-lg bg-blue-500/30 flex items-center justify-center">
+                <Droplet className="h-4 w-4 text-blue-600" />
+              </div>
+              <p className="text-xs text-foreground/80 font-medium">Activos Líquidos</p>
             </div>
-            <p className="text-sm font-bold text-blue-300 break-words">
-              ${totalLiquid.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            <p className="text-lg font-bold text-blue-700 break-words">
+              ${totalLiquid >= 100000 
+                ? `${(totalLiquid / 1000).toFixed(0)}k` 
+                : totalLiquid.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
             </p>
-            <p className="text-[9px] text-white/50 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {liquidAssets.length} cuenta{liquidAssets.length !== 1 ? 's' : ''}
             </p>
           </div>
-          <div className="bg-amber-500/10 backdrop-blur-sm rounded-xl p-3 border border-amber-500/20">
-            <div className="flex items-center gap-2 mb-1">
-              <Home className="h-4 w-4 text-amber-400" />
-              <p className="text-[10px] text-white/70">Activos Fijos</p>
+          <div className="bg-white backdrop-blur-sm rounded-[20px] p-4 border border-blue-100 shadow-xl">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 rounded-lg bg-amber-500/30 flex items-center justify-center">
+                <Home className="h-4 w-4 text-amber-600" />
+              </div>
+              <p className="text-xs text-foreground/80 font-medium">Activos Fijos</p>
             </div>
-            <p className="text-sm font-bold text-amber-300 break-words">
-              ${totalFixed.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            <p className="text-lg font-bold text-amber-700 break-words">
+              ${totalFixed >= 100000 
+                ? `${(totalFixed / 1000).toFixed(0)}k` 
+                : totalFixed.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
             </p>
-            <p className="text-[9px] text-white/50 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {fixedAssets.length} bien{fixedAssets.length !== 1 ? 'es' : ''}
             </p>
           </div>
         </div>
 
         {/* Assets List */}
-        <div className="space-y-2">
-          <h3 className="text-lg font-bold text-white mb-3">
+        <div className="space-y-3">
+          <h3 className="text-lg font-bold text-foreground mb-3 drop-shadow-lg">
             {filter === 'Liquid' ? 'Activos Líquidos' : 
              filter === 'Fixed' ? 'Activos Fijos' : 
              'Todos los Activos'}
@@ -244,46 +252,51 @@ export default function Assets() {
             return (
               <div
                 key={asset.id}
-                className="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/10"
+                className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-[1.02] transition-all cursor-pointer border border-blue-100 animate-fade-in"
               >
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0",
-                    isLiquid 
-                      ? "bg-gradient-to-br from-blue-500 to-blue-700" 
-                      : "bg-gradient-to-br from-amber-500 to-amber-700"
-                  )}>
-                    <Icon className="h-5 w-5 text-white" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-white text-sm truncate">{asset.name}</p>
-                    <div className="flex items-center gap-2">
-                      <p className="text-xs text-white/60">{asset.category}</p>
-                      <Badge 
-                        variant="outline" 
-                        className={cn(
-                          "text-[9px] px-1.5 py-0",
-                          isLiquid 
-                            ? "border-blue-500/40 text-blue-300" 
-                            : "border-amber-500/40 text-amber-300"
-                        )}
-                      >
-                        {isLiquid ? 'Líquido' : 'Fijo'}
-                      </Badge>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className={cn(
+                      "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
+                      isLiquid 
+                        ? "bg-blue-500/30" 
+                        : "bg-amber-500/30"
+                    )}>
+                      <Icon className={cn(
+                        "h-5 w-5",
+                        isLiquid ? "text-blue-600" : "text-amber-600"
+                      )} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold text-foreground text-sm leading-tight">{asset.name}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-xs text-foreground/70 leading-tight">{asset.category}</p>
+                        <Badge 
+                          variant="outline" 
+                          className={cn(
+                            "text-[9px] px-1.5 py-0",
+                            isLiquid 
+                              ? "border-blue-500/40 text-blue-600 bg-blue-50" 
+                              : "border-amber-500/40 text-amber-600 bg-amber-50"
+                          )}
+                        >
+                          {isLiquid ? 'Líquido' : 'Fijo'}
+                        </Badge>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="text-right flex-shrink-0 ml-2">
-                  <p className="font-bold text-emerald-300 text-sm break-words">
-                    ${Number(asset.value).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </p>
+                  <div className="text-right flex-shrink-0 ml-2">
+                    <p className="font-bold text-emerald-700 text-sm break-words">
+                      ${Number(asset.value).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                  </div>
                 </div>
               </div>
             );
           })}
           
           {displayAssets.length === 0 && (
-            <div className="p-8 text-center text-white/60 bg-white/5 rounded-xl border border-white/10">
+            <div className="p-8 text-center text-muted-foreground bg-white rounded-[20px] border border-blue-100 shadow-xl">
               No hay activos en esta categoría
             </div>
           )}
