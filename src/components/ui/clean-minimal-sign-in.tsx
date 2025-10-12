@@ -104,6 +104,33 @@ const SignIn2 = () => {
             />
           </button>
         </div>
+        <div className="flex flex-col items-center mt-4 gap-2">
+          <div className="flex -space-x-2">
+            <img
+              src="https://i.pravatar.cc/150?img=1"
+              alt="User 1"
+              className="w-8 h-8 rounded-full border-2 border-white"
+            />
+            <img
+              src="https://i.pravatar.cc/150?img=2"
+              alt="User 2"
+              className="w-8 h-8 rounded-full border-2 border-white"
+            />
+            <img
+              src="https://i.pravatar.cc/150?img=3"
+              alt="User 3"
+              className="w-8 h-8 rounded-full border-2 border-white"
+            />
+            <img
+              src="https://i.pravatar.cc/150?img=4"
+              alt="User 4"
+              className="w-8 h-8 rounded-full border-2 border-white"
+            />
+          </div>
+          <p className="text-xs text-white/80 text-center">
+            Únete a más de 10,000 usuarios
+          </p>
+        </div>
       </div>
     </div>
   );
