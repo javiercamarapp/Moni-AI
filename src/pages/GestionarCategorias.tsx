@@ -198,21 +198,21 @@ const GestionarCategorias = () => {
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="p-4 flex items-center justify-between">
+      <div className="p-4 flex items-center justify-between border-b border-border/30 bg-card/50 backdrop-blur-sm">
         <div className="flex items-center gap-4">
           <Button 
             variant="ghost" 
             size="icon"
             onClick={() => navigate(-1)}
-            className="text-white hover:bg-white/10"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-white">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
               Gestionar Categorías
             </h1>
-            <p className="text-sm text-white/80">Personaliza tus categorías</p>
+            <p className="text-sm text-muted-foreground">Personaliza tus categorías</p>
           </div>
         </div>
 
@@ -220,21 +220,21 @@ const GestionarCategorias = () => {
           <DialogTrigger asChild>
             <Button
               size="icon"
-              className="bg-white/20 hover:bg-white/30 border-white/30"
+              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10"
             >
-              <Plus className="h-5 w-5 text-white" />
+              <Plus className="h-5 w-5 text-foreground" />
             </Button>
           </DialogTrigger>
           <DialogContent className="bg-gradient-card border-white/20">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-bold text-white">
+              <DialogTitle className="text-2xl font-bold text-card-foreground">
                 Nueva Categoría
               </DialogTitle>
             </DialogHeader>
             
             <form onSubmit={handleAddCategory} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-white/90 text-base">
+                <Label htmlFor="name" className="text-card-foreground/90 text-base">
                   Nombre de la categoría
                 </Label>
                 <Input
@@ -243,24 +243,24 @@ const GestionarCategorias = () => {
                   value={newCategory.name}
                   onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
                   required
-                  className="bg-white/10 border-white/30 text-white placeholder:text-white/40 h-14"
+                  className="bg-card/50 border-border/30 text-card-foreground placeholder:text-muted-foreground h-14"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-white/90 text-base">Tipo</Label>
+                <Label className="text-card-foreground/90 text-base">Tipo</Label>
                 <div className="flex gap-3">
                   <Button
                     type="button"
                     onClick={() => setNewCategory({ ...newCategory, type: 'ingreso' })}
-                    className={`flex-1 ${newCategory.type === 'ingreso' ? 'bg-white/30' : 'bg-white/10'} hover:bg-white/20 text-white h-12`}
+                    className={`flex-1 ${newCategory.type === 'ingreso' ? 'bg-primary text-white' : 'bg-card/50 text-card-foreground'} hover:bg-primary/80 h-12`}
                   >
                     Ingreso
                   </Button>
                   <Button
                     type="button"
                     onClick={() => setNewCategory({ ...newCategory, type: 'gasto' })}
-                    className={`flex-1 ${newCategory.type === 'gasto' ? 'bg-white/30' : 'bg-white/10'} hover:bg-white/20 text-white h-12`}
+                    className={`flex-1 ${newCategory.type === 'gasto' ? 'bg-primary text-white' : 'bg-card/50 text-card-foreground'} hover:bg-primary/80 h-12`}
                   >
                     Gasto
                   </Button>
@@ -268,14 +268,14 @@ const GestionarCategorias = () => {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-white/90 text-base">Color</Label>
+                <Label className="text-card-foreground/90 text-base">Color</Label>
                 <div className="grid grid-cols-5 gap-2">
                   {colorOptions.map((color) => (
                     <button
                       key={color}
                       type="button"
                       onClick={() => setNewCategory({ ...newCategory, color })}
-                      className={`w-full h-12 rounded-lg ${color} border-2 ${newCategory.color === color ? 'border-white' : 'border-white/20'} hover:border-white/50 transition-colors`}
+                      className={`w-full h-12 rounded-lg ${color} border-2 ${newCategory.color === color ? 'border-primary' : 'border-border/30'} hover:border-primary/50 transition-colors`}
                     />
                   ))}
                 </div>
@@ -283,7 +283,7 @@ const GestionarCategorias = () => {
 
               <Button
                 type="submit"
-                className="w-full bg-primary hover:bg-primary/90 text-white h-14 text-lg font-semibold"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg font-semibold"
               >
                 Crear Categoría
               </Button>
@@ -295,29 +295,29 @@ const GestionarCategorias = () => {
       {/* Tabs: Ingresos y Gastos */}
       <div className="px-4">
         <Tabs defaultValue="ingresos" className="w-full">
-          <TabsList className="w-full bg-white/10 backdrop-blur-sm">
-            <TabsTrigger value="ingresos" className="flex-1 data-[state=active]:bg-white/20 text-white">
+          <TabsList className="w-full bg-white rounded-[20px] shadow-xl border border-blue-100">
+            <TabsTrigger value="ingresos" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white text-foreground rounded-[16px]">
               Ingresos ({ingresos.length})
             </TabsTrigger>
-            <TabsTrigger value="gastos" className="flex-1 data-[state=active]:bg-white/20 text-white">
+            <TabsTrigger value="gastos" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white text-foreground rounded-[16px]">
               Gastos ({gastos.length})
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="ingresos" className="space-y-3 mt-4">
             {ingresos.map((category) => (
-              <Card key={category.id} className="p-4 bg-gradient-card card-glow">
+              <Card key={category.id} className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in hover:scale-105 transition-all">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 flex-1">
                     <div className={`w-12 h-12 rounded-lg ${category.color}`} />
-                    <p className="text-lg font-semibold text-white">{category.name}</p>
+                    <p className="text-lg font-semibold text-foreground">{category.name}</p>
                   </div>
                   <div className="flex gap-2">
                     <Button
                       size="icon"
                       variant="ghost"
                       onClick={() => setEditingCategory(category)}
-                      className="text-white hover:bg-white/10"
+                      className="text-foreground hover:bg-accent/50 hover:scale-105 transition-all"
                     >
                       <Edit2 className="h-4 w-4" />
                     </Button>
@@ -325,7 +325,7 @@ const GestionarCategorias = () => {
                       size="icon"
                       variant="ghost"
                       onClick={() => setDeleteCategory(category)}
-                      className="text-white hover:bg-white/10"
+                      className="text-destructive hover:bg-destructive/10 hover:scale-105 transition-all"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -337,18 +337,18 @@ const GestionarCategorias = () => {
 
           <TabsContent value="gastos" className="space-y-3 mt-4">
             {gastos.map((category) => (
-              <Card key={category.id} className="p-4 bg-gradient-card card-glow">
+              <Card key={category.id} className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in hover:scale-105 transition-all">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 flex-1">
                     <div className={`w-12 h-12 rounded-lg ${category.color}`} />
-                    <p className="text-lg font-semibold text-white">{category.name}</p>
+                    <p className="text-lg font-semibold text-foreground">{category.name}</p>
                   </div>
                   <div className="flex gap-2">
                     <Button
                       size="icon"
                       variant="ghost"
                       onClick={() => setEditingCategory(category)}
-                      className="text-white hover:bg-white/10"
+                      className="text-foreground hover:bg-accent/50 hover:scale-105 transition-all"
                     >
                       <Edit2 className="h-4 w-4" />
                     </Button>
@@ -356,7 +356,7 @@ const GestionarCategorias = () => {
                       size="icon"
                       variant="ghost"
                       onClick={() => setDeleteCategory(category)}
-                      className="text-white hover:bg-white/10"
+                      className="text-destructive hover:bg-destructive/10 hover:scale-105 transition-all"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -372,14 +372,14 @@ const GestionarCategorias = () => {
       <Dialog open={!!editingCategory} onOpenChange={(open) => !open && setEditingCategory(null)}>
         <DialogContent className="bg-gradient-card border-white/20">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-white">
+            <DialogTitle className="text-2xl font-bold text-card-foreground">
               Editar Categoría
             </DialogTitle>
           </DialogHeader>
           
           <form onSubmit={handleEditCategory} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="edit-name" className="text-white/90 text-base">
+              <Label htmlFor="edit-name" className="text-card-foreground/90 text-base">
                 Nombre de la categoría
               </Label>
               <Input
@@ -387,19 +387,19 @@ const GestionarCategorias = () => {
                 value={editingCategory?.name || ''}
                 onChange={(e) => setEditingCategory(editingCategory ? { ...editingCategory, name: e.target.value } : null)}
                 required
-                className="bg-white/10 border-white/30 text-white h-14"
+                className="bg-card/50 border-border/30 text-card-foreground h-14"
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-white/90 text-base">Color</Label>
+              <Label className="text-card-foreground/90 text-base">Color</Label>
               <div className="grid grid-cols-5 gap-2">
                 {colorOptions.map((color) => (
                   <button
                     key={color}
                     type="button"
                     onClick={() => setEditingCategory(editingCategory ? { ...editingCategory, color } : null)}
-                    className={`w-full h-12 rounded-lg ${color} border-2 ${editingCategory?.color === color ? 'border-white' : 'border-white/20'} hover:border-white/50 transition-colors`}
+                    className={`w-full h-12 rounded-lg ${color} border-2 ${editingCategory?.color === color ? 'border-primary' : 'border-border/30'} hover:border-primary/50 transition-colors`}
                   />
                 ))}
               </div>
@@ -407,7 +407,7 @@ const GestionarCategorias = () => {
 
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/90 text-white h-14 text-lg font-semibold"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg font-semibold"
             >
               Guardar Cambios
             </Button>
@@ -417,20 +417,20 @@ const GestionarCategorias = () => {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deleteCategory} onOpenChange={(open) => !open && setDeleteCategory(null)}>
-        <AlertDialogContent className="bg-gradient-card border-white/20">
+        <AlertDialogContent className="bg-gradient-card border-border/30">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-white">¿Eliminar categoría?</AlertDialogTitle>
-            <AlertDialogDescription className="text-white/80">
+            <AlertDialogTitle className="text-card-foreground">¿Eliminar categoría?</AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">
               Esta acción no se puede deshacer. La categoría "{deleteCategory?.name}" será eliminada permanentemente.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-white/10 border-white/30 text-white hover:bg-white/20">
+            <AlertDialogCancel className="bg-card/50 border-border/30 text-card-foreground hover:bg-card/70">
               Cancelar
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteCategory}
-              className="bg-red-500/80 hover:bg-red-500 text-white"
+              className="bg-destructive/80 hover:bg-destructive text-destructive-foreground"
             >
               Eliminar
             </AlertDialogAction>
