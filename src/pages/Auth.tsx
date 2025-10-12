@@ -273,8 +273,8 @@ const Auth = () => {
         <SignIn2 />
       </div>
 
-      {/* Footer fijo en la parte inferior */}
-      <footer className="w-full border-t border-gray-700 py-2 md:py-4 bg-black/50 backdrop-blur-sm">
+      {/* Footer fijo en la parte inferior - oculto en móvil */}
+      <footer className="hidden md:block w-full border-t border-gray-700 py-2 md:py-4 bg-black/50 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 md:gap-4 text-[10px] md:text-xs">
             {/* Producto */}
