@@ -17,6 +17,7 @@ interface DailyExpense {
   frequency: string;
   category: string;
   occurrences: number;
+  monthsPresent: number;
   icon: string;
 }
 
@@ -61,17 +62,17 @@ export default function DailyExpenses() {
       }
 
       toast({
-        title: "Analizando gastos...",
-        description: "IA está detectando tus gastos cotidianos recurrentes",
+        title: "Analizando todo tu historial...",
+        description: "IA está detectando gastos consistentes de 6+ meses",
       });
 
+      // Obtener TODAS las transacciones de gastos (sin límite) para análisis completo
       const { data: allExpenses, error: expensesError } = await supabase
         .from('transactions')
         .select('*, categories(name)')
         .eq('user_id', user.id)
         .eq('type', 'gasto')
-        .order('transaction_date', { ascending: false })
-        .limit(200);
+        .order('transaction_date', { ascending: false });
 
       if (expensesError) throw expensesError;
 
@@ -99,6 +100,7 @@ export default function DailyExpenses() {
               frequency: exp.frequency || 'mensual',
               category: exp.categoryName || 'Servicios',
               occurrences: exp.occurrences || 1,
+              monthsPresent: exp.monthsPresent || 0,
               icon: getExpenseIcon(exp.description),
             });
           }
@@ -160,7 +162,7 @@ export default function DailyExpenses() {
           </Button>
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-foreground">Gastos Cotidianos</h1>
-            <p className="text-xs sm:text-sm text-foreground/70">Servicios con monto variable</p>
+            <p className="text-xs sm:text-sm text-foreground/70">Pagados 6+ meses consecutivos</p>
           </div>
         </div>
         <Button
@@ -205,8 +207,8 @@ export default function DailyExpenses() {
         {/* Empty state */}
         {!loading && expenses.length === 0 && (
           <Card className="p-8 text-center bg-white rounded-[20px] shadow-xl border border-blue-100">
-            <p className="text-foreground/70 mb-4">No se detectaron gastos cotidianos</p>
-            <p className="text-sm text-foreground/50">La IA necesita más transacciones para detectar patrones</p>
+            <p className="text-foreground/70 mb-4">No se detectaron gastos cotidianos consistentes</p>
+            <p className="text-sm text-foreground/50">La IA requiere gastos pagados en 6+ meses diferentes para identificar patrones</p>
           </Card>
         )}
 
@@ -261,7 +263,7 @@ export default function DailyExpenses() {
 
                   {/* Occurrences */}
                   <div className="text-[10px] text-foreground/50">
-                    Detectado {expense.occurrences} {expense.occurrences === 1 ? 'vez' : 'veces'} • {expense.category}
+                    Detectado en {expense.monthsPresent} meses • {expense.occurrences} {expense.occurrences === 1 ? 'pago' : 'pagos'} • {expense.category}
                   </div>
                 </div>
               </div>

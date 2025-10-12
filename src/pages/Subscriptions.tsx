@@ -80,21 +80,20 @@ export default function Subscriptions() {
         return;
       }
 
-      // Fetch last 200 expense transactions for AI analysis
+      // Obtener TODAS las transacciones de gastos para análisis completo
       const { data: allExpenses, error: expensesError } = await supabase
         .from('transactions')
         .select('*, categories(name)')
         .eq('user_id', user.id)
         .eq('type', 'gasto')
-        .order('transaction_date', { ascending: false })
-        .limit(200);
+        .order('transaction_date', { ascending: false });
 
       if (expensesError) throw expensesError;
 
       if (allExpenses && allExpenses.length > 0) {
         toast({
-          title: "Analizando transacciones...",
-          description: "IA está detectando tus suscripciones automáticamente",
+          title: "Analizando todo tu historial...",
+          description: "IA está detectando suscripciones de 3+ meses",
         });
 
         // Use AI to detect subscriptions
@@ -204,7 +203,7 @@ export default function Subscriptions() {
           </Button>
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-foreground">Suscripciones</h1>
-            <p className="text-xs sm:text-sm text-foreground/70">Detectadas automáticamente por IA</p>
+            <p className="text-xs sm:text-sm text-foreground/70">Pagadas 3+ meses • Monto fijo</p>
           </div>
         </div>
         <Button
@@ -250,7 +249,7 @@ export default function Subscriptions() {
         {!loading && subscriptions.length === 0 && (
           <Card className="p-8 text-center bg-white rounded-[20px] shadow-xl border border-blue-100">
             <p className="text-foreground/70 mb-4">No se detectaron suscripciones activas</p>
-            <p className="text-sm text-foreground/50">La IA necesita más transacciones para detectar patrones</p>
+            <p className="text-sm text-foreground/50">La IA requiere suscripciones pagadas en 3+ meses para detectarlas</p>
           </Card>
         )}
 

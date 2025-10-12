@@ -43,31 +43,35 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `Eres un asistente financiero experto en detectar GASTOS COTIDIANOS recurrentes con monto variable.
+            content: `Eres un asistente financiero experto en detectar GASTOS COTIDIANOS CONSISTENTES.
 
-IMPORTANTE: Solo detecta SERVICIOS BÁSICOS y GASTOS RECURRENTES con MONTO VARIABLE.
+REGLA CRÍTICA: Solo incluye gastos que aparezcan en AL MENOS 6 MESES DIFERENTES del historial.
 
-✅ INCLUYE:
+✅ INCLUYE (solo si hay 6+ meses de pagos):
 - CFE, Luz, electricidad (monto variable)
 - Agua, SACMEX, servicios de agua (monto variable)
 - Gas natural, gas LP (monto variable)
 - Teléfono celular si tiene consumo variable
 - Internet si tiene cargos variables
-- Gasolina / combustible
-- Comida / supermercado si es recurrente
-- Transporte público
+- Gasolina / combustible (si es recurrente mensual)
+- Comida / supermercado (solo si es el mismo establecimiento, 6+ meses)
+- Transporte (si es recurrente mensual)
 
 ❌ NO INCLUYAS:
+- Gastos que aparezcan en menos de 6 meses diferentes
 - Netflix, Spotify, Disney+ (son suscripciones de monto fijo)
 - Servicios de streaming
 - Gimnasios
-- Software
+- Compras ocasionales o no recurrentes
 
-Analiza las transacciones y:
-1. Identifica servicios básicos recurrentes con MONTO VARIABLE
-2. AGRUPA pagos del mismo servicio
-3. Calcula PROMEDIO, MÍNIMO y MÁXIMO de cada servicio
-4. Detecta la frecuencia
+ANÁLISIS REQUERIDO:
+1. Agrupa transacciones por descripción similar (ej: "CFE oct", "CFE nov" → "CFE")
+2. Cuenta en cuántos MESES DIFERENTES aparece cada concepto
+3. DESCARTA cualquier concepto que aparezca en menos de 6 meses diferentes
+4. Para los que califican (6+ meses):
+   - Calcula PROMEDIO, MÍNIMO y MÁXIMO
+   - Identifica la frecuencia más común
+   - Cuenta el total de ocurrencias
 
 Responde ÚNICAMENTE con un JSON válido:
 {
@@ -79,12 +83,13 @@ Responde ÚNICAMENTE con un JSON válido:
       "maxAmount": monto_maximo,
       "frequency": "mensual" | "quincenal" | "semanal",
       "categoryName": "categoría si disponible",
-      "occurrences": número_de_veces_que_aparece
+      "occurrences": número_total_de_pagos,
+      "monthsPresent": número_de_meses_diferentes_donde_aparece
     }
   ]
 }
 
-Si no detectas gastos cotidianos, responde: {"expenses": []}`
+IMPORTANTE: Si ningún gasto cumple el requisito de 6 meses, responde: {"expenses": []}`
           },
           {
             role: 'user',

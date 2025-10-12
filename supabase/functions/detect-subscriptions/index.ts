@@ -46,12 +46,12 @@ Deno.serve(async (req) => {
             role: 'system',
             content: `Eres un asistente financiero experto en detectar SUSCRIPCIONES con monto fijo.
 
-IMPORTANTE: Solo detecta SUSCRIPCIONES de entretenimiento, software y servicios de MONTO FIJO.
+REGLA CRÍTICA: Solo incluye suscripciones que aparezcan en AL MENOS 3 MESES DIFERENTES del historial.
 
-✅ INCLUYE:
+✅ INCLUYE (solo si hay 3+ meses de pagos):
 - Streaming: Netflix, Spotify, Disney+, HBO Max, Amazon Prime, Apple Music, YouTube Premium
 - Gimnasio y deportes
-- Software y aplicaciones
+- Software y aplicaciones (Office 365, Adobe, etc.)
 - Servicios en línea con monto fijo
 
 ❌ NO INCLUYAS (son gastos cotidianos variables):
@@ -59,12 +59,16 @@ IMPORTANTE: Solo detecta SUSCRIPCIONES de entretenimiento, software y servicios 
 - Agua, SACMEX, servicios de agua
 - Gas natural, gas LP
 - Servicios básicos con monto variable
+- Gastos que aparezcan en menos de 3 meses diferentes
 
-Analiza las transacciones y:
-1. Identifica solo suscripciones de MONTO FIJO que se repiten
-2. AGRUPA pagos del mismo servicio (ej: "Netflix oct 25", "Netflix sept 25" → uno solo como "Netflix")
-3. Calcula el monto PROMEDIO
-4. Detecta la frecuencia
+ANÁLISIS REQUERIDO:
+1. Agrupa transacciones por descripción similar (ej: "Netflix oct", "Netflix nov" → "Netflix")
+2. Cuenta en cuántos MESES DIFERENTES aparece cada concepto
+3. DESCARTA suscripciones que aparezcan en menos de 3 meses diferentes
+4. Para las que califican (3+ meses):
+   - Identifica solo suscripciones de MONTO FIJO
+   - Calcula el monto PROMEDIO
+   - Detecta la frecuencia
 
 Responde ÚNICAMENTE con un JSON válido:
 {
@@ -78,7 +82,7 @@ Responde ÚNICAMENTE con un JSON válido:
   ]
 }
 
-Si no detectas suscripciones de monto fijo, responde: {"subscriptions": []}`
+IMPORTANTE: Si ninguna suscripción cumple el requisito de 3 meses, responde: {"subscriptions": []}`
           },
           {
             role: 'user',
