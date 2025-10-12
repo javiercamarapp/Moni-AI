@@ -265,16 +265,29 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen animated-wave-bg flex flex-col">
+    <div className="min-h-screen flex flex-col relative overflow-hidden">
+      {/* Video de fondo */}
+      <video 
+        autoPlay 
+        loop 
+        muted 
+        playsInline
+        className="absolute top-0 left-0 w-full h-full object-cover z-0"
+      >
+        <source src="/auth-background.mp4" type="video/mp4" />
+      </video>
+      
+      {/* Overlay oscuro opcional para mejor legibilidad */}
+      <div className="absolute top-0 left-0 w-full h-full bg-black/20 z-0" />
       
       <div 
-        className="flex-1 flex items-center justify-center py-8 md:py-12 px-2 md:px-4 relative"
+        className="flex-1 flex items-center justify-center py-8 md:py-12 px-2 md:px-4 relative z-10"
       >
         <SignIn2 />
       </div>
 
       {/* Footer fijo en la parte inferior - oculto en móvil */}
-      <footer className="hidden md:block w-full border-t border-gray-700 py-2 md:py-4 bg-black/50 backdrop-blur-sm">
+      <footer className="hidden md:block w-full border-t border-gray-700 py-2 md:py-4 bg-black/50 backdrop-blur-sm relative z-10">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 md:gap-4 text-[10px] md:text-xs">
             {/* Producto */}
