@@ -42,21 +42,32 @@ const GestionarCategorias = () => {
   }, []);
   const fetchCategories = async () => {
     try {
+      console.log('Fetching categories...');
       const {
         data: {
           user
         }
       } = await supabase.auth.getUser();
+      
+      console.log('User:', user?.id);
+      
       if (!user) {
+        console.log('No user found, redirecting to auth');
         navigate('/auth');
+        setLoading(false);
         return;
       }
+      
       const {
         data,
         error
       } = await supabase.from('categories').select('*').eq('user_id', user.id).order('created_at', {
         ascending: false
       });
+      
+      console.log('Categories data:', data);
+      console.log('Categories error:', error);
+      
       if (error) throw error;
 
       // Organize categories and subcategories
@@ -67,6 +78,8 @@ const GestionarCategorias = () => {
       mainCategories.forEach(mainCat => {
         mainCat.subcategories = allCategories.filter(cat => cat.parent_id === mainCat.id);
       });
+      
+      console.log('Main categories:', mainCategories);
       setCategories(mainCategories);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -76,6 +89,7 @@ const GestionarCategorias = () => {
         variant: "destructive"
       });
     } finally {
+      console.log('Setting loading to false');
       setLoading(false);
     }
   };
