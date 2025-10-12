@@ -400,7 +400,7 @@ const GestionarCategorias = () => {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all h-14 text-lg font-semibold">
+              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 hover:shadow-2xl transition-all duration-200 h-14 text-lg font-semibold">
                 {parentCategoryForSubcategory ? 'Crear Subcategoría' : 'Crear Categoría'}
               </Button>
             </form>
@@ -460,7 +460,7 @@ const GestionarCategorias = () => {
               </div>
             </div>
 
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all h-14 text-lg font-semibold">
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 hover:shadow-2xl transition-all duration-200 h-14 text-lg font-semibold">
               Guardar Cambios
             </Button>
           </form>
@@ -477,10 +477,10 @@ const GestionarCategorias = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-white rounded-[20px] shadow-xl border border-blue-100 text-foreground hover:bg-gray-50 hover:scale-105 transition-all h-12 text-base font-semibold">
+            <AlertDialogCancel className="bg-white rounded-[20px] shadow-xl border border-blue-100 text-foreground hover:bg-gray-50 hover:scale-105 active:scale-95 hover:shadow-2xl transition-all duration-200 h-12 text-base font-semibold">
               Cancelar
             </AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteCategory} className="bg-destructive rounded-[20px] shadow-xl hover:bg-destructive/90 text-destructive-foreground hover:scale-105 transition-all h-12 text-base font-semibold">
+            <AlertDialogAction onClick={handleDeleteCategory} className="bg-destructive rounded-[20px] shadow-xl hover:bg-destructive/90 text-destructive-foreground hover:scale-105 active:scale-95 hover:shadow-2xl transition-all duration-200 h-12 text-base font-semibold">
               Eliminar
             </AlertDialogAction>
           </AlertDialogFooter>

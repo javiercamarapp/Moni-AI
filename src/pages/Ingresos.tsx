@@ -463,7 +463,7 @@ const Ingresos = () => {
 
                 <Button
                   type="submit"
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg font-semibold"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg font-semibold rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 hover:shadow-2xl transition-all duration-200"
                 >
                   Agregar Ingreso
                 </Button>
