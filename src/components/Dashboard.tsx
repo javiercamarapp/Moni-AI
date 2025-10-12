@@ -1005,7 +1005,7 @@ const Dashboard = () => {
             style={{ animationDelay: '100ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-primary/40 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
                 <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
@@ -1023,7 +1023,7 @@ const Dashboard = () => {
             onClick={() => navigate('/net-worth')}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-success/30 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-success/50 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
                 <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-success-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
@@ -1040,7 +1040,7 @@ const Dashboard = () => {
             style={{ animationDelay: '300ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-warning/30 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-warning/50 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
                 <Target className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-warning-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
@@ -1055,7 +1055,7 @@ const Dashboard = () => {
             style={{ animationDelay: '400ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
-              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
+              <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-blue-500/40 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
                 <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
