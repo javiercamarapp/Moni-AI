@@ -157,21 +157,35 @@ export default function NetWorthWidget() {
       <div className="grid grid-cols-2 gap-3 mt-3">
         <button 
           onClick={() => navigate('/assets')}
-          className="bg-emerald-50 backdrop-blur-sm rounded-[20px] p-4 border border-emerald-200 transition-all hover:bg-emerald-100 hover:border-emerald-300 hover:shadow-xl hover:scale-[1.02] active:scale-95 cursor-pointer"
+          className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer border border-blue-100 animate-fade-in"
         >
-          <p className="text-xs text-muted-foreground mb-1 font-medium">Activos</p>
-          <p className="text-lg font-bold text-emerald-700 break-words">
-            ${totalAssets.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
-          </p>
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 rounded-lg bg-emerald-500/30 flex items-center justify-center flex-shrink-0">
+              <TrendingUp className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div className="flex-1 min-w-0 text-left">
+              <p className="text-xs text-foreground/80 leading-tight font-medium">Activos</p>
+              <p className="text-base font-bold text-emerald-700 leading-tight break-words">
+                ${totalAssets.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+              </p>
+            </div>
+          </div>
         </button>
         <button 
           onClick={() => navigate('/liabilities')}
-          className="bg-red-50 backdrop-blur-sm rounded-[20px] p-4 border border-red-200 transition-all hover:bg-red-100 hover:border-red-300 hover:shadow-xl hover:scale-[1.02] active:scale-95 cursor-pointer"
+          className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer border border-blue-100 animate-fade-in"
         >
-          <p className="text-xs text-muted-foreground mb-1 font-medium">Pasivos</p>
-          <p className="text-lg font-bold text-destructive break-words">
-            ${totalLiabilities.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
-          </p>
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 rounded-lg bg-red-500/30 flex items-center justify-center flex-shrink-0">
+              <TrendingDown className="w-5 h-5 text-destructive" />
+            </div>
+            <div className="flex-1 min-w-0 text-left">
+              <p className="text-xs text-foreground/80 leading-tight font-medium">Pasivos</p>
+              <p className="text-base font-bold text-destructive leading-tight break-words">
+                ${totalLiabilities.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+              </p>
+            </div>
+          </div>
         </button>
       </div>
 
