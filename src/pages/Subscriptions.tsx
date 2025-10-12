@@ -258,43 +258,43 @@ export default function Subscriptions() {
         {!loading && subscriptions.map((sub, index) => (
           <Card 
             key={sub.id}
-            className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all animate-fade-in"
+            className="p-3 bg-white rounded-[16px] shadow-lg border border-blue-100 hover:scale-105 transition-all animate-fade-in"
             style={{ animationDelay: `${index * 100}ms` }}
           >
-            <div className="flex items-start gap-4">
+            <div className="flex items-start gap-3">
               {/* Icon */}
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center flex-shrink-0 border border-blue-300 shadow-md">
-                <span className="text-2xl">{sub.icon}</span>
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center flex-shrink-0 border border-blue-300">
+                <span className="text-xl">{sub.icon}</span>
               </div>
 
               {/* Details */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <h3 className="font-bold text-foreground text-lg truncate">{sub.name}</h3>
-                  <Badge className={`${getFrequencyBadgeColor(sub.frequency)} shrink-0`}>
+                <div className="flex items-start justify-between gap-2 mb-1.5">
+                  <h3 className="font-bold text-foreground text-base truncate">{sub.name}</h3>
+                  <Badge className={`${getFrequencyBadgeColor(sub.frequency)} shrink-0 text-xs`}>
                     {sub.frequency}
                   </Badge>
                 </div>
 
-                <div className="space-y-2 text-sm text-foreground/70">
+                <div className="space-y-1.5 text-xs text-foreground/70">
                   <div className="flex items-center gap-2">
-                    <TrendingDown className="h-4 w-4 text-red-500" />
-                    <span className="font-semibold text-foreground text-lg">
+                    <TrendingDown className="h-3.5 w-3.5 text-red-500" />
+                    <span className="font-semibold text-foreground text-base">
                       ${sub.amount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <CreditCard className="h-4 w-4" />
+                    <CreditCard className="h-3.5 w-3.5" />
                     <span>{sub.paymentMethod} • {sub.account}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
+                    <Calendar className="h-3.5 w-3.5" />
                     <span>Próximo cargo: <span className="font-medium text-foreground">{sub.nextPaymentDate}</span></span>
                   </div>
 
-                  <div className="text-xs text-foreground/50">
+                  <div className="text-[10px] text-foreground/50">
                     Último pago: {sub.lastPaymentDate}
                   </div>
                 </div>
