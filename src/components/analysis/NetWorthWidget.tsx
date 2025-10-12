@@ -27,7 +27,7 @@ export default function NetWorthWidget() {
   const isPositiveChange = percentageChange >= 0;
 
   return (
-    <div className="px-4 py-8 space-y-6">
+    <div className="px-4 py-4 space-y-4">
       {/* Header Section */}
       <div className="flex items-start justify-between">
         <div>
@@ -62,7 +62,7 @@ export default function NetWorthWidget() {
       </div>
 
       {/* Chart with high/low indicators */}
-      <div className="relative h-[400px]">
+      <div className="relative h-[280px]">
         <style>{`
           .recharts-cartesian-axis-tick-value { display: none !important; }
           .recharts-yAxis { display: none !important; }
@@ -134,7 +134,7 @@ export default function NetWorthWidget() {
       </div>
 
       {/* Time Range Buttons - closer to chart */}
-      <div className="flex gap-1.5 justify-center -mt-2">
+      <div className="flex gap-1.5 justify-center -mt-6">
         {(['1M', '3M', '6M', '1Y', 'All'] as TimeRange[]).map((range) => (
           <Button
             key={range}
@@ -154,7 +154,7 @@ export default function NetWorthWidget() {
       </div>
 
       {/* Assets and Liabilities - closer to buttons with hover effects */}
-      <div className="grid grid-cols-2 gap-3 mt-3">
+      <div className="grid grid-cols-2 gap-3 mt-1">
         <button 
           onClick={() => navigate('/assets')}
           className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer border border-blue-100 animate-fade-in"
