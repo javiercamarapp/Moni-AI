@@ -43,34 +43,36 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `Eres un asistente financiero experto en detectar GASTOS COTIDIANOS CONSISTENTES.
+            content: `Eres un asistente financiero experto en detectar GASTOS COTIDIANOS con monto variable.
 
-REGLA CRÍTICA: Solo incluye gastos que aparezcan en AL MENOS 6 MESES DIFERENTES del historial.
+REGLA CRÍTICA: Solo incluye gastos donde el MONTO VARÍA SIGNIFICATIVAMENTE (>10% entre pagos) y aparecen en AL MENOS 6 MESES DIFERENTES.
 
-✅ INCLUYE (solo si hay 6+ meses de pagos):
-- CFE, Luz, electricidad (monto variable)
-- Agua, SACMEX, servicios de agua (monto variable)
-- Gas natural, gas LP (monto variable)
-- Teléfono celular si tiene consumo variable
-- Internet si tiene cargos variables
-- Gasolina / combustible (si es recurrente mensual)
-- Comida / supermercado (solo si es el mismo establecimiento, 6+ meses)
-- Transporte (si es recurrente mensual)
+✅ INCLUYE (solo si hay 6+ meses y MONTO VARIABLE >10%):
+- CFE, Luz, electricidad (MONTO VARÍA por consumo)
+- Agua, SACMEX, servicios de agua (MONTO VARÍA)
+- Gas natural, gas LP (MONTO VARÍA por consumo)
+- Gasolina / combustible (MONTO VARÍA)
+- Supermercado (si es recurrente y MONTO VARÍA)
+- Transporte (si es recurrente y MONTO VARÍA)
 
 ❌ NO INCLUYAS:
 - Gastos que aparezcan en menos de 6 meses diferentes
-- Netflix, Spotify, Disney+ (son suscripciones de monto fijo)
-- Servicios de streaming
-- Gimnasios
+- Netflix, Spotify, Disney+, Amazon Prime (MONTO FIJO = suscripción)
+- Gimnasio (MONTO FIJO = suscripción)
+- Software, apps (MONTO FIJO = suscripción)
+- Cualquier servicio donde el monto sea CONSISTENTE (variación <10%)
 - Compras ocasionales o no recurrentes
 
 ANÁLISIS REQUERIDO:
 1. Agrupa transacciones por descripción similar (ej: "CFE oct", "CFE nov" → "CFE")
-2. Cuenta en cuántos MESES DIFERENTES aparece cada concepto
-3. DESCARTA cualquier concepto que aparezca en menos de 6 meses diferentes
-4. Para los que califican (6+ meses):
+2. Calcula la VARIABILIDAD del monto entre pagos del mismo servicio
+3. Si la variabilidad es MAYOR al 10%, es MONTO VARIABLE (gasto cotidiano)
+4. Si la variabilidad es MENOR al 10%, NO es gasto cotidiano (es suscripción)
+5. Cuenta en cuántos MESES DIFERENTES aparece
+6. DESCARTA conceptos que aparezcan en menos de 6 meses diferentes
+7. Para los que califican (6+ meses y monto variable):
    - Calcula PROMEDIO, MÍNIMO y MÁXIMO
-   - Identifica la frecuencia más común
+   - Identifica la frecuencia
    - Cuenta el total de ocurrencias
 
 CRÍTICO: Debes incluir el campo "monthsPresent" que indica en cuántos meses DIFERENTES aparece el gasto.
@@ -91,7 +93,7 @@ Responde ÚNICAMENTE con un JSON válido:
   ]
 }
 
-IMPORTANTE: Si ningún gasto cumple el requisito de 6 meses, responde: {"expenses": []}`
+IMPORTANTE: Si ningún gasto cumple los requisitos (6 meses Y monto variable >10%), responde: {"expenses": []}`
           },
           {
             role: 'user',

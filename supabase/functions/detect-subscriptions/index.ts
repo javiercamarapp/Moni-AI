@@ -46,27 +46,32 @@ Deno.serve(async (req) => {
             role: 'system',
             content: `Eres un asistente financiero experto en detectar SUSCRIPCIONES con monto fijo.
 
-REGLA CRÍTICA: Solo incluye suscripciones que aparezcan en AL MENOS 3 MESES DIFERENTES del historial.
+REGLA CRÍTICA: Solo incluye suscripciones donde el MONTO ES CASI IGUAL cada vez (variación menor al 5%) y aparecen en AL MENOS 3 MESES DIFERENTES.
 
-✅ INCLUYE (solo si hay 3+ meses de pagos):
+✅ INCLUYE (solo si hay 3+ meses y MONTO FIJO):
 - Streaming: Netflix, Spotify, Disney+, HBO Max, Amazon Prime, Apple Music, YouTube Premium
-- Gimnasio y deportes
+- Gimnasio y deportes (si el pago es fijo cada mes)
 - Software y aplicaciones (Office 365, Adobe, etc.)
-- Servicios en línea con monto fijo
+- Servicios en línea con cargo fijo mensual
+- Cualquier servicio donde el monto sea CONSISTENTE (±5%)
 
 ❌ NO INCLUYAS (son gastos cotidianos variables):
-- CFE, Luz, electricidad
-- Agua, SACMEX, servicios de agua
-- Gas natural, gas LP
-- Servicios básicos con monto variable
-- Gastos que aparezcan en menos de 3 meses diferentes
+- CFE, Luz, electricidad (MONTO VARIABLE cada mes)
+- Agua, SACMEX (MONTO VARIABLE)
+- Gas natural, gas LP (MONTO VARIABLE)
+- Gasolina (MONTO VARIABLE por consumo)
+- Supermercado (MONTO VARIABLE)
+- Restaurantes, delivery (MONTO VARIABLE)
+- Cualquier servicio donde el monto VARÍA significativamente (>5%)
 
 ANÁLISIS REQUERIDO:
 1. Agrupa transacciones por descripción similar (ej: "Netflix oct", "Netflix nov" → "Netflix")
-2. Cuenta en cuántos MESES DIFERENTES aparece cada concepto
-3. DESCARTA suscripciones que aparezcan en menos de 3 meses diferentes
-4. Para las que califican (3+ meses):
-   - Identifica solo suscripciones de MONTO FIJO
+2. Calcula la VARIABILIDAD del monto entre pagos del mismo servicio
+3. Si la variabilidad es MENOR al 5%, es MONTO FIJO (suscripción)
+4. Si la variabilidad es MAYOR al 5%, NO es suscripción
+5. Cuenta en cuántos MESES DIFERENTES aparece
+6. DESCARTA suscripciones que aparezcan en menos de 3 meses diferentes
+7. Para las que califican (3+ meses y monto fijo):
    - Calcula el monto PROMEDIO
    - Detecta la frecuencia
 
@@ -82,7 +87,7 @@ Responde ÚNICAMENTE con un JSON válido:
   ]
 }
 
-IMPORTANTE: Si ninguna suscripción cumple el requisito de 3 meses, responde: {"subscriptions": []}`
+IMPORTANTE: Si ninguna suscripción cumple los requisitos (3 meses Y monto fijo), responde: {"subscriptions": []}`
           },
           {
             role: 'user',
