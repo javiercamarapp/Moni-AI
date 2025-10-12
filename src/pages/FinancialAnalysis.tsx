@@ -89,24 +89,10 @@ export default function FinancialAnalysis() {
     if (user) {
       console.log('🔄 PERÍODO CAMBIADO A:', period);
       
-      // Cargar datos del período correcto
+      // IMPORTANTE: Limpiar caché antiguo cuando cambie el período
       const cacheKey = `financialAnalysis_quickMetrics_${period}`;
-      const cached = localStorage.getItem(cacheKey);
-      if (cached) {
-        const cachedData = JSON.parse(cached);
-        console.log('📦 Cargando caché para período:', period, cachedData);
-        setQuickMetrics(cachedData);
-      } else {
-        // Si no hay caché, usar valores por defecto
-        console.log('❌ No hay caché para período:', period);
-        setQuickMetrics({
-          totalIncome: 0,
-          totalExpenses: 0,
-          balance: 0,
-          savingsRate: 0,
-          transactionsCount: 0
-        });
-      }
+      localStorage.removeItem(cacheKey);
+      console.log('🗑️ Limpiando caché antiguo para:', period);
       
       // Ejecutar cargas en background
       console.log('🚀 Iniciando carga de datos para período:', period);
@@ -141,19 +127,37 @@ export default function FinancialAnalysis() {
         endDate: endDate.toISOString().split('T')[0]
       });
       
-      // Obtener transacciones del período actual - SIN LÍMITES, TODA LA BD
-      const { data: transactions, error: txError } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user.id)
-        .gte('transaction_date', startDate.toISOString().split('T')[0])
-        .lte('transaction_date', endDate.toISOString().split('T')[0])
-        .order('transaction_date', { ascending: false });
+      // Obtener transacciones del período actual - CON PAGINACIÓN para obtener TODAS
+      let allTransactions: any[] = [];
+      let page = 0;
+      const pageSize = 1000;
+      let hasMore = true;
       
-      if (txError) {
-        console.error('Error fetching transactions:', txError);
-        throw txError;
+      while (hasMore) {
+        const { data: pageData, error: pageError } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', user.id)
+          .gte('transaction_date', startDate.toISOString().split('T')[0])
+          .lte('transaction_date', endDate.toISOString().split('T')[0])
+          .range(page * pageSize, (page + 1) * pageSize - 1)
+          .order('transaction_date', { ascending: false });
+        
+        if (pageError) {
+          console.error('Error fetching transactions page:', pageError);
+          throw pageError;
+        }
+        
+        if (pageData && pageData.length > 0) {
+          allTransactions = [...allTransactions, ...pageData];
+          hasMore = pageData.length === pageSize;
+          page++;
+        } else {
+          hasMore = false;
+        }
       }
+      
+      const transactions = allTransactions;
       
       console.log('📅 ANÁLISIS FINANCIERO - Transacciones obtenidas:', {
         periodo: period,
@@ -168,16 +172,33 @@ export default function FinancialAnalysis() {
         }))
       });
       
-      // Calcular promedios históricos: SIEMPRE últimos 12 meses + mes actual (13 meses total)
+      // Calcular promedios históricos: SIEMPRE últimos 12 meses + mes actual (13 meses total) - CON PAGINACIÓN
       const historicalStartDate = new Date(now);
       historicalStartDate.setMonth(historicalStartDate.getMonth() - 12); // 12 meses atrás
       
-      const { data: historicalTxs } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user.id)
-        .gte('transaction_date', historicalStartDate.toISOString().split('T')[0])
-        .order('transaction_date', { ascending: false });
+      let allHistoricalTxs: any[] = [];
+      let histPage = 0;
+      let histHasMore = true;
+      
+      while (histHasMore) {
+        const { data: histPageData } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', user.id)
+          .gte('transaction_date', historicalStartDate.toISOString().split('T')[0])
+          .range(histPage * pageSize, (histPage + 1) * pageSize - 1)
+          .order('transaction_date', { ascending: false });
+        
+        if (histPageData && histPageData.length > 0) {
+          allHistoricalTxs = [...allHistoricalTxs, ...histPageData];
+          histHasMore = histPageData.length === pageSize;
+          histPage++;
+        } else {
+          histHasMore = false;
+        }
+      }
+      
+      const historicalTxs = allHistoricalTxs;
       
       // Agrupar transacciones históricas por mes (incluye mes actual)
       const monthlyData: Record<string, { income: number; expenses: number }> = {};
