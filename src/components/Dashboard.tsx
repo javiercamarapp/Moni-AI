@@ -1427,38 +1427,38 @@ const Dashboard = () => {
                     return (
                       <Card 
                         key={challenge.id} 
-                        className={`p-2.5 bg-gradient-to-br ${gradient} card-glow shadow-2xl border-2 relative overflow-hidden`}
+                        className="p-2.5 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden"
                         style={{ transform: 'translate3d(0, 0, 0)' }}
                       >
                         <div className="relative z-10">
                           <div className="mb-2">
-                            <h4 className="text-sm font-bold text-white drop-shadow-lg mb-0.5 line-clamp-1 leading-tight">
+                            <h4 className="text-sm font-bold text-foreground drop-shadow-sm mb-0.5 line-clamp-1 leading-tight">
                               {challenge.title}
                             </h4>
-                            <p className="text-[10px] text-white/80 drop-shadow line-clamp-2 leading-tight">
+                            <p className="text-[10px] text-foreground/70 drop-shadow-sm line-clamp-2 leading-tight">
                               {challenge.description}
                             </p>
                           </div>
                           
                           <div className="mb-2">
                             <div className="flex justify-between items-baseline mb-1">
-                              <span className="text-base font-bold text-white drop-shadow-lg">
+                              <span className="text-base font-bold text-foreground drop-shadow-sm">
                                 ${challenge.current_amount.toFixed(0)}
                               </span>
-                              <span className="text-[10px] text-white/80 drop-shadow">
+                              <span className="text-[10px] text-foreground/70 drop-shadow-sm">
                                 de ${challenge.target_amount}
                               </span>
                             </div>
                             
-                            <div className="relative h-1.5 bg-black/20 rounded-full overflow-hidden">
+                            <div className="relative h-1.5 bg-gray-200 rounded-full overflow-hidden">
                               <div 
-                                className="h-full bg-white/60 rounded-full"
+                                className="h-full bg-green-600 rounded-full"
                                 style={{ width: `${Math.min(progress, 100)}%` }}
                               />
                             </div>
                           </div>
                           
-                          <div className="bg-white/10 backdrop-blur-sm rounded p-1.5 border border-white/20 mb-2">
+                          <div className="bg-gray-100 backdrop-blur-sm rounded p-1.5 border border-gray-200 mb-2">
                             <div className="flex justify-between gap-0.5">
                               {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
                                 const dayStatus = daysStatus[dayIndex];
@@ -1471,7 +1471,7 @@ const Dashboard = () => {
                                     key={dayIndex} 
                                     className="flex flex-col items-center"
                                   >
-                                    <span className="text-[8px] text-white/70 mb-0.5">
+                                    <span className="text-[8px] text-foreground/70 mb-0.5">
                                       {dayNames[dayIndex]}
                                     </span>
                                     <div 
@@ -1480,7 +1480,7 @@ const Dashboard = () => {
                                           ? 'bg-green-500/80 text-white' 
                                           : isFailed 
                                           ? 'bg-red-500/80 text-white'
-                                          : 'bg-white/20 text-white/40'
+                                          : 'bg-gray-200 text-gray-400'
                                       }`}
                                     >
                                       {isCompleted && '✓'}
@@ -1495,14 +1495,14 @@ const Dashboard = () => {
                           {challenge.status === 'pending' ? (
                             <Button 
                               size="sm" 
-                              className="w-full bg-white/20 hover:bg-white/30 text-white border border-white/30 h-7 text-[10px] font-medium"
+                              className="w-full bg-green-600 hover:bg-green-700 text-white border-0 h-7 text-[10px] font-medium"
                               onClick={() => handleAcceptChallenge(challenge.id)}
                             >
                               Aceptar reto
                             </Button>
                           ) : (
                             <div className="text-center py-1">
-                              <Badge className="bg-green-500/20 text-green-300 text-[9px] border-green-500/30">
+                              <Badge className="bg-green-500/20 text-green-700 text-[9px] border-green-500/30">
                                 En progreso
                               </Badge>
                             </div>
