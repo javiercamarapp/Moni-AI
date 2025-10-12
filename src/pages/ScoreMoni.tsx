@@ -22,6 +22,15 @@ const ScoreMoni = () => {
     growth: 0,
     behavior: 0
   });
+  const [previousComponents] = useState({
+    savingsAndLiquidity: 10,
+    debt: 8,
+    control: 7,
+    growth: 5,
+    behavior: 5
+  });
+  const [changeReason, setChangeReason] = useState<string | undefined>(undefined);
+  const [loadingReason, setLoadingReason] = useState(false);
 
   useEffect(() => {
     // Calculate initial components based on cached score
@@ -57,12 +66,25 @@ const ScoreMoni = () => {
           .maybeSingle();
 
         if (data && !error) {
-          setScore(data.score_moni);
+          const newScore = data.score_moni;
+          setScore(newScore);
           // Update cache for Dashboard
-          localStorage.setItem('scoreMoni', data.score_moni.toString());
+          localStorage.setItem('scoreMoni', newScore.toString());
           
           // Calculate component breakdown
-          calculateComponents(data.score_moni);
+          const newComponents = {
+            savingsAndLiquidity: Math.round(30 * (newScore / 100) * (0.9 + Math.random() * 0.2)),
+            debt: Math.round(20 * (newScore / 100) * (0.9 + Math.random() * 0.2)),
+            control: Math.round(20 * (newScore / 100) * (0.9 + Math.random() * 0.2)),
+            growth: Math.round(15 * (newScore / 100) * (0.9 + Math.random() * 0.2)),
+            behavior: Math.round(15 * (newScore / 100) * (0.9 + Math.random() * 0.2))
+          };
+          setComponents(newComponents);
+          
+          // Generate AI explanation for score change
+          if (Math.abs(newScore - previousScore) > 0) {
+            generateScoreExplanation(newScore, newComponents);
+          }
         }
       }
     } catch (error) {
@@ -72,12 +94,37 @@ const ScoreMoni = () => {
     }
   };
 
-  const scoreChange = previousScore ? score - previousScore : 0;
-  const changeReason = scoreChange > 0 
-    ? "Tu ahorro mensual aumentó 15% y redujiste gastos hormiga significativamente." 
-    : scoreChange < 0 
-    ? "Incremento en gastos variables y reducción en tu tasa de ahorro mensual."
-    : undefined;
+  const generateScoreExplanation = async (currentScore: number, currentComponents: typeof components) => {
+    try {
+      setLoadingReason(true);
+      const { data, error } = await supabase.functions.invoke('analyze-score-change', {
+        body: {
+          currentScore,
+          previousScore,
+          components: currentComponents,
+          previousComponents
+        }
+      });
+
+      if (error) throw error;
+      
+      if (data?.explanation) {
+        setChangeReason(data.explanation);
+      }
+    } catch (error) {
+      console.error('Error generating explanation:', error);
+      // Fallback to static message
+      const scoreChange = currentScore - previousScore;
+      setChangeReason(
+        scoreChange > 0 
+          ? "Tu score mejoró gracias a mejores hábitos financieros." 
+          : "Tu score disminuyó. Revisa tus gastos y ahorro para mejorarlo."
+      );
+    } finally {
+      setLoadingReason(false);
+    }
+  };
+
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
@@ -106,6 +153,7 @@ const ScoreMoni = () => {
           scoreMoni={score}
           changeReason={changeReason}
           previousScore={previousScore}
+          loadingReason={loadingReason}
         />
       </div>
 

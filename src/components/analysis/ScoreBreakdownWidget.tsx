@@ -15,9 +15,10 @@ interface ScoreBreakdownProps {
   scoreMoni: number;
   changeReason?: string;
   previousScore?: number;
+  loadingReason?: boolean;
 }
 
-export default function ScoreBreakdownWidget({ components, scoreMoni, changeReason, previousScore }: ScoreBreakdownProps) {
+export default function ScoreBreakdownWidget({ components, scoreMoni, changeReason, previousScore, loadingReason }: ScoreBreakdownProps) {
   const radarData = [
     { 
       dimension: 'Ahorro', 
@@ -105,13 +106,20 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
         </div>
       </div>
 
-      {changeReason && (
+      {(changeReason || loadingReason) && (
         <div className="bg-purple-500/10 rounded-[20px] p-4 border border-purple-500/30">
           <div className="flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 text-purple-600 mt-0.5" />
-            <div>
+            <AlertCircle className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
               <p className="text-xs font-medium text-purple-700">¿Por qué cambió?</p>
-              <p className="text-xs text-foreground/70 mt-1">{changeReason}</p>
+              {loadingReason ? (
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="w-3 h-3 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
+                  <p className="text-xs text-foreground/70">Analizando cambios...</p>
+                </div>
+              ) : (
+                <p className="text-xs text-foreground/70 mt-1">{changeReason}</p>
+              )}
             </div>
           </div>
         </div>
