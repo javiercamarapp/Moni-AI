@@ -43,7 +43,7 @@ export default function RiskIndicatorsWidget({ indicators, hasIssues }: RiskIndi
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <Sparkles className="h-4 w-4 text-primary" />
+        <Sparkles className="h-4 w-4 text-yellow-500" />
         <p className="text-xs font-medium text-foreground">⚡ Análisis de Riesgos IA</p>
       </div>
       
