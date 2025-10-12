@@ -578,6 +578,92 @@ export default function FinancialAnalysis() {
         {/* Mostrar métricas instantáneas (siempre disponibles del caché) */}
         {(quickMetrics || analysis) ? (
           <>
+            {/* Animated Income & Expense Card */}
+            <Card 
+              className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-4 animate-fade-in cursor-pointer hover:scale-105 active:scale-95 transition-all" 
+              style={{ animationDelay: '0ms' }}
+              onClick={() => navigate('/balance')}
+            >
+              {(() => {
+                const income = (analysis?.metrics?.totalIncome ?? quickMetrics?.totalIncome) || 0;
+                const expenses = (analysis?.metrics?.totalExpenses ?? quickMetrics?.totalExpenses) || 0;
+                const balance = (analysis?.metrics?.balance ?? quickMetrics?.balance) || 0;
+                const maxValue = Math.max(income, expenses);
+                
+                return (
+                  <>
+                    {/* Ingresos */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-16 h-16 rounded-2xl bg-success/10 flex items-center justify-center">
+                            <TrendingUp className="w-8 h-8 text-success" />
+                          </div>
+                          <div>
+                            <p className="text-lg font-bold text-foreground">Ingresos</p>
+                            <p className="text-sm text-muted-foreground">Período actual</p>
+                          </div>
+                        </div>
+                        <p className="text-2xl font-black text-success">
+                          ${income.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </p>
+                      </div>
+                      <div className="relative h-4 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out"
+                          style={{ 
+                            width: `${maxValue > 0 ? (income / maxValue * 100) : 0}%`,
+                            background: 'linear-gradient(90deg, #10b981, #22c55e, #10b981)',
+                            backgroundSize: '200% 100%',
+                            animation: 'slideIn 1.5s ease-out, gradient-shift 3s ease-in-out infinite'
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Gastos */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center">
+                            <TrendingDown className="w-8 h-8 text-destructive" />
+                          </div>
+                          <div>
+                            <p className="text-lg font-bold text-foreground">Gastos</p>
+                            <p className="text-sm text-muted-foreground">Período actual</p>
+                          </div>
+                        </div>
+                        <p className="text-2xl font-black text-destructive">
+                          ${expenses.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </p>
+                      </div>
+                      <div className="relative h-4 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out"
+                          style={{ 
+                            width: `${maxValue > 0 ? (expenses / maxValue * 100) : 0}%`,
+                            background: 'linear-gradient(90deg, #dc2626, #ef4444, #dc2626)',
+                            backgroundSize: '200% 100%',
+                            animation: 'slideIn 1.5s ease-out 0.3s both, gradient-shift 3s ease-in-out infinite'
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Balance */}
+                    <div className="pt-3 border-t border-border">
+                      <div className="flex items-center justify-between">
+                        <p className="text-lg font-bold text-foreground">Balance</p>
+                        <p className={`text-3xl font-black ${balance >= 0 ? 'text-success' : 'text-destructive'}`}>
+                          {balance >= 0 ? '+' : ''}${balance.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
+            </Card>
+
             {/* Risk Indicators */}
             <RiskIndicatorsWidget
               hasIssues={
