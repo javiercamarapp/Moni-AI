@@ -149,7 +149,7 @@ export default function AICoachInsightsWidget({
               <div className="px-1">
                 <Card 
                   className="p-3 card-glow border-white/20"
-                  style={{ backgroundColor: insight.isPositive ? '#96ff85' : '#ff7765' }}
+                  style={{ backgroundColor: insight.isPositive ? '#10b981' : '#ef4444' }}
                 >
                   <p className="text-xs text-black leading-snug">
                     {insight.emoji} <span className="font-medium">{insight.message}</span>
