@@ -34,7 +34,7 @@ const GestionarCategorias = () => {
     color: 'bg-primary/20',
     parent_id: null as string | null
   });
-  const [showSubcategoryInput, setShowSubcategoryInput] = useState(false);
+  const [subcategoryNames, setSubcategoryNames] = useState<string[]>([]);
   const [parentCategoryForSubcategory, setParentCategoryForSubcategory] = useState<Category | null>(null);
   const colorOptions = ['bg-primary/20', 'bg-secondary/20', 'bg-accent/20', 'bg-red-500/20', 'bg-orange-500/20', 'bg-yellow-500/20', 'bg-green-500/20', 'bg-blue-500/20', 'bg-purple-500/20', 'bg-pink-500/20'];
   useEffect(() => {
@@ -88,29 +88,61 @@ const GestionarCategorias = () => {
         }
       } = await supabase.auth.getUser();
       if (!user) return;
-      const {
-        error
-      } = await supabase.from('categories').insert({
-        user_id: user.id,
-        name: newCategory.name,
-        type: newCategory.type,
-        color: newCategory.color,
-        parent_id: newCategory.parent_id
-      });
-      if (error) throw error;
+      
+      // First, create the main category
+      const { data: parentCategory, error: parentError } = await supabase
+        .from('categories')
+        .insert({
+          user_id: user.id,
+          name: newCategory.name,
+          type: newCategory.type,
+          color: newCategory.color,
+          parent_id: newCategory.parent_id
+        })
+        .select()
+        .single();
+      
+      if (parentError) throw parentError;
+      
+      // If there are subcategories and this is not a subcategory itself, create them
+      if (subcategoryNames.length > 0 && !newCategory.parent_id && parentCategory) {
+        const subcategoriesToInsert = subcategoryNames
+          .filter(name => name.trim() !== '')
+          .map(name => ({
+            user_id: user.id,
+            name: name.trim(),
+            type: newCategory.type,
+            color: newCategory.color,
+            parent_id: parentCategory.id
+          }));
+        
+        if (subcategoriesToInsert.length > 0) {
+          const { error: subError } = await supabase
+            .from('categories')
+            .insert(subcategoriesToInsert);
+          
+          if (subError) throw subError;
+        }
+      }
+      
       toast({
         title: newCategory.parent_id ? "Subcategoría creada" : "Categoría creada",
-        description: newCategory.parent_id ? "Tu nueva subcategoría ha sido creada exitosamente" : "Tu nueva categoría ha sido creada exitosamente"
+        description: newCategory.parent_id 
+          ? "Tu nueva subcategoría ha sido creada exitosamente" 
+          : subcategoryNames.length > 0 
+            ? `Categoría y ${subcategoryNames.filter(n => n.trim()).length} subcategoría(s) creadas exitosamente`
+            : "Tu nueva categoría ha sido creada exitosamente"
       });
+      
       setNewCategory({
         name: '',
         type: 'ingreso',
         color: 'bg-primary/20',
         parent_id: null
       });
+      setSubcategoryNames([]);
       setShowAddDialog(false);
       setParentCategoryForSubcategory(null);
-      setShowSubcategoryInput(false);
       fetchCategories();
     } catch (error) {
       console.error('Error adding category:', error);
@@ -231,7 +263,7 @@ const GestionarCategorias = () => {
           <DialogTrigger asChild>
             <Button size="icon" onClick={() => {
               setParentCategoryForSubcategory(null);
-              setShowSubcategoryInput(false);
+              setSubcategoryNames([]);
               setNewCategory({
                 name: '',
                 type: 'ingreso',
@@ -281,32 +313,44 @@ const GestionarCategorias = () => {
                 </div>}
 
               {!parentCategoryForSubcategory && <div className="space-y-2">
-                  <Label 
-                    onClick={() => setShowSubcategoryInput(!showSubcategoryInput)}
-                    className="text-foreground/90 text-base flex items-center gap-2 cursor-pointer hover:text-primary transition-colors"
-                  >
-                    <Plus className="h-4 w-4 text-primary" />
-                    Agregar Subcategoría
-                  </Label>
-                  {showSubcategoryInput && (
-                    <select
-                      value={newCategory.parent_id || ''}
-                      onChange={(e) => setNewCategory({
-                        ...newCategory,
-                        parent_id: e.target.value || null
-                      })}
-                      className="w-full h-14 rounded-lg bg-white border border-blue-100 text-foreground px-4 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all animate-in fade-in slide-in-from-top-2 duration-200"
+                  <div className="flex items-center justify-between">
+                    <Label className="text-foreground/90 text-base">Subcategorías</Label>
+                    <Button 
+                      type="button"
+                      size="sm"
+                      onClick={() => setSubcategoryNames([...subcategoryNames, ''])}
+                      className="bg-primary/10 hover:bg-primary/20 text-primary h-8 gap-1"
                     >
-                      <option value="">Ninguna (Categoría Principal)</option>
-                      {categories
-                        .filter(c => c.type === newCategory.type && !c.parent_id)
-                        .map(cat => (
-                          <option key={cat.id} value={cat.id}>
-                            {cat.name}
-                          </option>
-                        ))}
-                    </select>
-                  )}
+                      <Plus className="h-3 w-3" />
+                      Agregar
+                    </Button>
+                  </div>
+                  
+                  {subcategoryNames.map((subName, index) => (
+                    <div key={index} className="flex gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <Input
+                        placeholder={`Subcategoría ${index + 1}`}
+                        value={subName}
+                        onChange={(e) => {
+                          const updated = [...subcategoryNames];
+                          updated[index] = e.target.value;
+                          setSubcategoryNames(updated);
+                        }}
+                        className="bg-white border-blue-100 text-foreground h-12"
+                      />
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => {
+                          setSubcategoryNames(subcategoryNames.filter((_, i) => i !== index));
+                        }}
+                        className="text-destructive hover:bg-destructive/10 h-12 w-12"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
                 </div>}
 
               <div className="space-y-2">
