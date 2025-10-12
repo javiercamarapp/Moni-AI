@@ -255,10 +255,10 @@ const GestionarCategorias = () => {
             <ArrowLeft className="h-5 w-5 text-foreground" />
           </Button>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground drop-shadow-lg">
               Gestionar Categorías
             </h1>
-            <p className="text-sm text-white drop-shadow-md font-medium">Personaliza tus categorías</p>
+            <p className="text-sm text-foreground/80 drop-shadow-md font-medium">Personaliza tus categorías</p>
           </div>
         </div>
 
