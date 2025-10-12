@@ -477,10 +477,10 @@ const GestionarCategorias = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-white border border-blue-100 text-foreground hover:bg-gray-50">
+            <AlertDialogCancel className="bg-white rounded-[20px] shadow-xl border border-blue-100 text-foreground hover:bg-gray-50 hover:scale-105 transition-all h-12 text-base font-semibold">
               Cancelar
             </AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteCategory} className="bg-destructive/80 hover:bg-destructive text-destructive-foreground">
+            <AlertDialogAction onClick={handleDeleteCategory} className="bg-destructive rounded-[20px] shadow-xl hover:bg-destructive/90 text-destructive-foreground hover:scale-105 transition-all h-12 text-base font-semibold">
               Eliminar
             </AlertDialogAction>
           </AlertDialogFooter>
