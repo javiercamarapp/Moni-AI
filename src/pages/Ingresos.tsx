@@ -333,7 +333,7 @@ const Ingresos = () => {
                 <Plus className="h-4 w-4 text-foreground" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-gradient-card border-border/30 h-3/4 overflow-y-auto flex flex-col justify-center">
+            <DialogContent className="bg-gradient-card border-border/30 max-h-[85vh] overflow-y-auto max-w-md w-[90%]">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-bold text-card-foreground">
                   Registrar Ingreso
