@@ -83,13 +83,18 @@ export default function FinancialAnalysis() {
 
   useEffect(() => {
     if (user) {
+      console.log('🔄 PERÍODO CAMBIADO A:', period);
+      
       // Cargar datos del período correcto
       const cacheKey = `financialAnalysis_quickMetrics_${period}`;
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
-        setQuickMetrics(JSON.parse(cached));
+        const cachedData = JSON.parse(cached);
+        console.log('📦 Cargando caché para período:', period, cachedData);
+        setQuickMetrics(cachedData);
       } else {
         // Si no hay caché, usar valores por defecto
+        console.log('❌ No hay caché para período:', period);
         setQuickMetrics({
           totalIncome: 0,
           totalExpenses: 0,
@@ -100,6 +105,7 @@ export default function FinancialAnalysis() {
       }
       
       // Ejecutar cargas en background
+      console.log('🚀 Iniciando carga de datos para período:', period);
       calculateQuickMetrics();
       fetchTransactionsData();
       loadAnalysis();
