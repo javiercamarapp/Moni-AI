@@ -301,10 +301,10 @@ const ScoreCard = ({
               className={`max-w-4xl w-full mx-4 bg-gradient-to-b ${colors.gradient} h-3/4 z-[60] p-4 md:p-10 rounded-3xl relative overflow-y-auto`}
             >
               <button
-                className={`sticky top-4 h-8 w-8 right-0 ml-auto rounded-full flex items-center justify-center ${colors.button}`}
+                className="sticky top-4 h-12 w-12 right-0 ml-auto bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 flex items-center justify-center"
                 onClick={handleCollapse}
               >
-                <X className="h-6 w-6 text-white absolute" />
+                <X className="h-5 w-5 text-foreground" />
               </button>
               <motion.p
                 layoutId={layout ? `title-${component.title}` : undefined}
