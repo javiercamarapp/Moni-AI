@@ -351,11 +351,15 @@ const GestionarCategorias = () => {
               )}
 
               {!parentCategoryForSubcategory && (
-                <div className="flex items-center gap-2">
+                <div className="space-y-2">
+                  <Label className="text-foreground/90 text-base flex items-center gap-2">
+                    <Plus className="h-4 w-4 text-primary" />
+                    Agregar Subcategoría
+                  </Label>
                   <select
                     value={newCategory.parent_id || ''}
                     onChange={(e) => setNewCategory({ ...newCategory, parent_id: e.target.value || null })}
-                    className="flex-1 h-14 rounded-lg bg-white border border-blue-100 text-foreground px-4"
+                    className="w-full h-14 rounded-lg bg-white border border-blue-100 text-foreground px-4 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                   >
                     <option value="">Seleccionar categoría padre (opcional)</option>
                     {categories
@@ -366,9 +370,6 @@ const GestionarCategorias = () => {
                         </option>
                       ))}
                   </select>
-                  <div className="flex items-center justify-center w-14 h-14 rounded-lg bg-primary/10 text-primary">
-                    <Plus className="h-5 w-5" />
-                  </div>
                 </div>
               )}
 
