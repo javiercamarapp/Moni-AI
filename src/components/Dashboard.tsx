@@ -53,7 +53,16 @@ const Dashboard = () => {
     setMonthlyExpenses(dashboardData.monthlyExpenses);
     setFixedExpenses(dashboardData.fixedExpenses);
     setHasBankConnections(dashboardData.hasBankConnections);
-  }, [dashboardData]);
+  }, [
+    dashboardData.goals,
+    dashboardData.recentTransactions,
+    dashboardData.scoreMoni,
+    dashboardData.netWorth,
+    dashboardData.monthlyIncome,
+    dashboardData.monthlyExpenses,
+    dashboardData.fixedExpenses,
+    dashboardData.hasBankConnections
+  ]);
   
   const [loading, setLoading] = useState(false);
   const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
@@ -63,7 +72,7 @@ const Dashboard = () => {
   const [creditCardDebts, setCreditCardDebts] = useState<any[]>([]);
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const [loadingScore, setLoadingScore] = useState(false);
-  const [dailyExpenses, setDailyExpenses] = useState<{total: number, average: number}>({total: 0, average: 0});
+  const [dailyExpenses, setDailyExpenses] = useState<Array<{name: string, amount: number, icon: string}>>([]);
   const [proyecciones, setProyecciones] = useState<{
     proyeccionAnual: number;
     proyeccionSemestral: number;
@@ -171,24 +180,50 @@ const Dashboard = () => {
         
         setHasBankConnections((bankData?.length || 0) > 0);
 
-        // Calculate daily expenses for current month
+        // Calculate daily expenses for current month - get specific transactions
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
         
         const { data: dailyExpensesData } = await supabase
           .from('transactions')
-          .select('amount, transaction_date')
+          .select('*, categories(name)')
           .eq('user_id', user.id)
           .eq('type', 'gasto')
           .gte('transaction_date', startOfMonth.toISOString().split('T')[0])
-          .lte('transaction_date', endOfMonth.toISOString().split('T')[0]);
+          .lte('transaction_date', endOfMonth.toISOString().split('T')[0])
+          .order('amount', { ascending: false });
 
         if (dailyExpensesData && dailyExpensesData.length > 0) {
-          const total = dailyExpensesData.reduce((sum, t) => sum + Number(t.amount), 0);
-          const daysInMonth = endOfMonth.getDate();
-          const average = total / daysInMonth;
-          setDailyExpenses({ total, average });
+          // Group by category and sum amounts
+          const categoryMap = new Map<string, {name: string, total: number, icon: string}>();
+          
+          dailyExpensesData.forEach((transaction) => {
+            const categoryName = transaction.categories?.name || transaction.description || 'Otros';
+            const icon = getCategoryIcon(categoryName);
+            
+            if (categoryMap.has(categoryName)) {
+              const existing = categoryMap.get(categoryName)!;
+              existing.total += Number(transaction.amount);
+            } else {
+              categoryMap.set(categoryName, {
+                name: categoryName,
+                total: Number(transaction.amount),
+                icon
+              });
+            }
+          });
+          
+          // Convert to array and sort by total
+          const expenses = Array.from(categoryMap.values())
+            .sort((a, b) => b.total - a.total)
+            .map(e => ({
+              name: e.name,
+              amount: e.total,
+              icon: e.icon
+            }));
+          
+          setDailyExpenses(expenses);
         }
 
         // Load cached subscriptions immediately for instant display
@@ -277,6 +312,19 @@ const Dashboard = () => {
 
     fetchSubscriptionsAndDebts();
   }, []);
+
+  const getCategoryIcon = (categoryName: string): string => {
+    const lower = categoryName.toLowerCase();
+    if (lower.includes('comida') || lower.includes('restaurante') || lower.includes('alimento')) return '🍔';
+    if (lower.includes('transporte') || lower.includes('uber') || lower.includes('taxi')) return '🚗';
+    if (lower.includes('entretenimiento') || lower.includes('cine')) return '🎬';
+    if (lower.includes('compras') || lower.includes('ropa')) return '🛍️';
+    if (lower.includes('salud') || lower.includes('farmacia')) return '💊';
+    if (lower.includes('café') || lower.includes('cafetería')) return '☕';
+    if (lower.includes('super') || lower.includes('despensa')) return '🛒';
+    if (lower.includes('gasolina') || lower.includes('combustible')) return '⛽';
+    return '💰';
+  };
 
   const getSubscriptionIcon = (description: string): string => {
     const lower = description.toLowerCase();
@@ -1058,7 +1106,7 @@ const Dashboard = () => {
             <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
               {/* Suscripciones - Mitad superior */}
               <div className="flex-1 flex flex-col min-h-0">
-                <div className="flex items-center justify-between flex-shrink-0">
+                <div className="flex items-center justify-between flex-shrink-0 mb-1">
                   <h3 className="text-[10px] font-bold text-foreground">📅 Suscripciones</h3>
                   <span className="text-[9px] text-foreground/70 font-semibold">{upcomingSubscriptions.length}</span>
                 </div>
@@ -1068,37 +1116,47 @@ const Dashboard = () => {
                     <p className="text-[9px] text-foreground/70">Sin suscripciones</p>
                   </div>
                 ) : (
-                  <div className="flex-1 min-h-0 overflow-hidden">
-                    <div className="space-y-0.5 max-h-[50px] overflow-y-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                  <>
+                    <div className="flex-1 min-h-0 overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
                       <style>{`
-                        .space-y-0\\.5.max-h-\\[50px\\]::-webkit-scrollbar {
-                          display: none;
+                        .flex-1.min-h-0.overflow-y-auto::-webkit-scrollbar {
+                          width: 3px;
+                        }
+                        .flex-1.min-h-0.overflow-y-auto::-webkit-scrollbar-track {
+                          background: rgba(0,0,0,0.05);
+                          border-radius: 10px;
+                        }
+                        .flex-1.min-h-0.overflow-y-auto::-webkit-scrollbar-thumb {
+                          background: rgba(0,0,0,0.2);
+                          border-radius: 10px;
                         }
                       `}</style>
-                      {upcomingSubscriptions.slice(0, 2).map((sub) => (
-                        <div 
-                          key={sub.id} 
-                          className="flex items-center gap-1 py-0.5 px-1 bg-white/10 rounded backdrop-blur-sm border border-white/20"
-                        >
-                          <div className="w-3 h-3 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-[6px] shadow-lg shrink-0">
-                            {sub.icon}
+                      <div className="space-y-1">
+                        {upcomingSubscriptions.map((sub) => (
+                          <div 
+                            key={sub.id} 
+                            className="flex items-center gap-1 py-1 px-2 bg-white/10 rounded backdrop-blur-sm border border-white/20"
+                          >
+                            <div className="w-4 h-4 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-[8px] shadow-lg shrink-0">
+                              {sub.icon}
+                            </div>
+                            <p className="text-[8px] font-bold text-foreground truncate flex-1 min-w-0">{sub.name}</p>
+                            <p className="text-[8px] font-black text-foreground shrink-0">${sub.amount.toFixed(0)}</p>
                           </div>
-                          <p className="text-[7px] font-bold text-foreground truncate flex-1 min-w-0">{sub.name}</p>
-                          <p className="text-[7px] font-black text-foreground shrink-0">${sub.amount.toFixed(0)}</p>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                    
+                    <div className="pt-1 border-t border-white/20 mt-1 flex-shrink-0">
+                      <div className="flex justify-between items-center">
+                        <p className="text-[8px] text-foreground/70 font-semibold">Total mensual</p>
+                        <p className="text-[9px] font-black text-foreground">
+                          ${upcomingSubscriptions.reduce((sum, s) => sum + s.amount, 0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                        </p>
+                      </div>
+                    </div>
+                  </>
                 )}
-                
-                <div className="pt-1 border-t border-white/20 mt-1 flex-shrink-0">
-                  <div className="flex justify-between items-center">
-                    <p className="text-[8px] text-foreground/70 font-semibold">Total mensual</p>
-                    <p className="text-[9px] font-black text-foreground">
-                      ${upcomingSubscriptions.reduce((sum, s) => sum + s.amount, 0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                    </p>
-                  </div>
-                </div>
               </div>
 
               {/* Separador */}
@@ -1106,26 +1164,57 @@ const Dashboard = () => {
 
               {/* Gastos Cotidianos - Mitad inferior */}
               <div className="flex-1 flex flex-col min-h-0">
-                <div className="flex items-center justify-between flex-shrink-0">
+                <div className="flex items-center justify-between flex-shrink-0 mb-1">
                   <h3 className="text-[10px] font-bold text-foreground">☕ Gastos Cotidianos</h3>
+                  <span className="text-[9px] text-foreground/70 font-semibold">{dailyExpenses.length}</span>
                 </div>
 
-                <div className="flex-1 flex flex-col justify-center py-1">
-                  <div className="space-y-1">
-                    <div className="flex justify-between items-center">
-                      <p className="text-[8px] text-foreground/70">Total del mes</p>
-                      <p className="text-[9px] font-bold text-foreground">
-                        ${dailyExpenses.total.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                      </p>
-                    </div>
-                    <div className="flex justify-between items-center pt-1 border-t border-white/20">
-                      <p className="text-[8px] text-foreground/70 font-semibold">Promedio diario</p>
-                      <p className="text-[9px] font-black text-foreground">
-                        ${dailyExpenses.average.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                      </p>
-                    </div>
+                {dailyExpenses.length === 0 ? (
+                  <div className="text-center py-1 flex-1 flex flex-col justify-center">
+                    <p className="text-[9px] text-foreground/70">Sin gastos</p>
                   </div>
-                </div>
+                ) : (
+                  <>
+                    <div className="flex-1 min-h-0 overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
+                      <style>{`
+                        .flex-1.min-h-0.overflow-y-auto::-webkit-scrollbar {
+                          width: 3px;
+                        }
+                        .flex-1.min-h-0.overflow-y-auto::-webkit-scrollbar-track {
+                          background: rgba(0,0,0,0.05);
+                          border-radius: 10px;
+                        }
+                        .flex-1.min-h-0.overflow-y-auto::-webkit-scrollbar-thumb {
+                          background: rgba(0,0,0,0.2);
+                          border-radius: 10px;
+                        }
+                      `}</style>
+                      <div className="space-y-1">
+                        {dailyExpenses.map((expense, idx) => (
+                          <div 
+                            key={idx} 
+                            className="flex items-center gap-1 py-1 px-2 bg-white/10 rounded backdrop-blur-sm border border-white/20"
+                          >
+                            <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-[8px] shadow-lg shrink-0">
+                              {expense.icon}
+                            </div>
+                            <p className="text-[8px] font-bold text-foreground truncate flex-1 min-w-0">{expense.name}</p>
+                            <p className="text-[8px] font-black text-foreground shrink-0">${expense.amount.toFixed(0)}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="pt-1 border-t border-white/20 mt-1 flex-shrink-0">
+                      <div className="flex justify-between items-center">
+                        <p className="text-[8px] text-foreground/70 font-semibold">Total mensual</p>
+                        <p className="text-[9px] font-black text-foreground">
+                          ${dailyExpenses.reduce((sum, e) => sum + e.amount, 0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </Card>
