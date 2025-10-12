@@ -147,7 +147,7 @@ const Reports = () => {
         </Card>
 
         {/* Lista de Meses con Selector de Año */}
-        <div className="space-y-3">
+        <div className="space-y-3 relative z-10">
           <div className="flex items-center justify-between px-2">
             <h3 className="text-sm font-semibold text-foreground">
               Reportes de {selectedYear}
@@ -160,9 +160,10 @@ const Reports = () => {
                 <SelectValue placeholder="Año" />
               </SelectTrigger>
               <SelectContent 
-                className="bg-white border border-blue-100 rounded-[15px] shadow-xl z-[200]"
+                className="bg-white border border-blue-100 rounded-[15px] shadow-xl min-w-[120px]"
                 position="popper"
-                sideOffset={5}
+                sideOffset={8}
+                align="end"
               >
                 {availableYears.filter(year => year <= new Date().getFullYear()).map((year) => (
                   <SelectItem 
