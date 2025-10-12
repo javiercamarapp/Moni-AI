@@ -538,7 +538,7 @@ const Balance = () => {
           
           {/* Botón de descarga de PDF */}
           <div>
-            <Button variant="ghost" className="w-full bg-muted/50 hover:bg-muted rounded-[20px] text-foreground transition-all h-auto py-3 px-4 text-sm font-semibold justify-center" onClick={async () => {
+            <Button variant="ghost" className="w-full bg-muted/50 hover:bg-muted rounded-[20px] text-foreground transition-all h-auto py-3 px-4 text-sm font-semibold flex items-center justify-center" onClick={async () => {
             try {
               // Get current user
               const {
@@ -622,7 +622,7 @@ const Balance = () => {
             }
           }}>
               <Download className="h-4 w-4 mr-1.5 flex-shrink-0" />
-              <span className="break-words whitespace-normal">Descargar movimientos del {viewMode === 'mensual' ? 'mes' : 'año'} en PDF</span>
+              <span className="whitespace-nowrap">Descargar movimientos del {viewMode === 'mensual' ? 'mes' : 'año'} en PDF</span>
             </Button>
           </div>
         </Card>
