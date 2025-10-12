@@ -123,17 +123,7 @@ export default function DailyExpenses() {
 
   useEffect(() => {
     const total = expenses.reduce((sum: number, exp: DailyExpense) => {
-      const amount = exp.averageAmount;
-      switch (exp.frequency.toLowerCase()) {
-        case 'anual':
-          return sum + (amount / 12);
-        case 'semanal':
-          return sum + (amount * 4);
-        case 'quincenal':
-          return sum + (amount * 2);
-        default:
-          return sum + amount;
-      }
+      return sum + exp.averageAmount;
     }, 0);
     setTotalMonthly(total);
   }, [expenses]);
@@ -175,11 +165,11 @@ export default function DailyExpenses() {
               <Activity className="h-6 w-6 text-orange-600" />
             </div>
             <div>
-              <p className="text-sm text-foreground/70">Gasto Mensual Estimado</p>
+              <p className="text-sm text-foreground/70">Suma de Promedios</p>
               <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
                 ${totalMonthly.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
               </h2>
-              <p className="text-xs text-foreground/50 mt-1">Basado en frecuencia de pago</p>
+              <p className="text-xs text-foreground/50 mt-1">Promedio de todos los gastos cotidianos</p>
             </div>
           </div>
           <div className="flex justify-between text-sm text-foreground/70">
