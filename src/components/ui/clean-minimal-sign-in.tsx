@@ -34,7 +34,11 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading }: SignIn2Props) => {
       return;
     }
     setError("");
-    await onSignIn(email, password);
+    try {
+      await onSignIn(email, password);
+    } catch (err) {
+      setError("Error al iniciar sesión. Intenta de nuevo.");
+    }
   };
  
   return (
@@ -44,44 +48,49 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading }: SignIn2Props) => {
           <img src={moniLogo} alt="Moni AI" className="w-full h-full object-contain" />
         </div>
         <div className="w-full flex flex-col gap-2 md:gap-3 mb-2">
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              <Mail className="w-4 h-4" />
-            </span>
-            <input
-              placeholder="Email"
-              type="email"
-              value={email}
-              className="w-full pl-10 pr-3 py-2 md:py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm md:text-base"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              <Lock className="w-4 h-4" />
-            </span>
-            <input
-              placeholder="Password"
-              type="password"
-              value={password}
-              className="w-full pl-10 pr-10 py-2 md:py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm md:text-base"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer text-xs select-none"></span>
-          </div>
-          <div className="w-full flex justify-end">
-          {error && (
-            <div className="text-sm text-red-500 text-left">{error}</div>
-          )}
-            <button className="text-xs hover:underline font-medium transition-all hover:text-gray-700">
-              Forgot password?
-            </button>
-          </div>
+          <form onSubmit={handleSignIn} className="contents">
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <Mail className="w-4 h-4" />
+              </span>
+              <input
+                placeholder="Email"
+                type="email"
+                value={email}
+                disabled={loading}
+                className="w-full pl-10 pr-3 py-2 md:py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm md:text-base disabled:opacity-50"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <Lock className="w-4 h-4" />
+              </span>
+              <input
+                placeholder="Contraseña"
+                type="password"
+                value={password}
+                disabled={loading}
+                className="w-full pl-10 pr-10 py-2 md:py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm md:text-base disabled:opacity-50"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer text-xs select-none"></span>
+            </div>
+            <div className="w-full flex justify-between items-center">
+              {error && (
+                <div className="text-sm text-red-500 text-left">{error}</div>
+              )}
+              <button type="button" className="text-xs hover:underline font-medium transition-all hover:text-gray-700 ml-auto">
+                ¿Olvidaste tu contraseña?
+              </button>
+            </div>
+          </form>
         </div>
         <button
+          type="submit"
           onClick={handleSignIn}
           disabled={loading}
-          className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 md:py-3 text-sm md:text-base rounded-xl shadow hover:brightness-105 hover:scale-105 cursor-pointer transition-all mb-2 mt-1 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 md:py-3 text-sm md:text-base rounded-xl shadow hover:brightness-105 hover:scale-105 cursor-pointer transition-all mb-2 mt-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">
@@ -94,7 +103,7 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading }: SignIn2Props) => {
         </button>
         <div className="flex items-center w-full my-1">
           <div className="flex-grow border-t border-dashed border-gray-200"></div>
-          <span className="mx-2 text-xs text-gray-400">Or sign in with</span>
+          <span className="mx-2 text-xs text-gray-400">O inicia sesión con</span>
           <div className="flex-grow border-t border-dashed border-gray-200"></div>
         </div>
         <div className="flex gap-3 w-full justify-center mt-1">
