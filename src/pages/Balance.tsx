@@ -509,39 +509,54 @@ const Balance = () => {
 
       <div className="px-4 space-y-4">
         {/* Ahorro destacado */}
-        <Card className="p-5 bg-white backdrop-blur-sm rounded-[20px] shadow-xl border border-blue-100 animate-fade-in" style={{
-        animationDelay: '0ms'
-      }}>
-          <div className="flex items-center gap-3 mb-3">
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${ahorro >= 0 ? 'bg-emerald-500/30' : 'bg-red-500/30'}`}>
-              <Wallet className={`h-6 w-6 ${ahorro >= 0 ? 'text-emerald-600' : 'text-destructive'}`} />
+        <Card className={`p-4 card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95 relative overflow-hidden ${ahorro >= 0 ? 'bg-gradient-to-br from-success/90 to-success/70' : 'bg-gradient-to-br from-danger/90 to-danger/70'}`}>
+          {/* Efecto brillante */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent" 
+               style={{
+                 backgroundSize: '200% 100%',
+                 animation: 'shimmer 2s ease-in-out infinite',
+               }}
+          />
+          
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-xs text-white/90 mb-1">Ahorro {viewMode === 'mensual' ? 'Mensual' : 'Anual'}</p>
+                <p className="text-3xl font-bold text-white">
+                  ${ahorro.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                </p>
+                <p className="text-xs text-white/90 mt-1">
+                  {ahorro >= 0 ? '✅ Positivo' : '⚠️ Negativo'}
+                </p>
+              </div>
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-white/20">
+                <Wallet className="h-6 w-6 text-white" />
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-foreground/80 font-medium">
-                Ahorro {viewMode === 'mensual' ? 'Mensual' : 'Anual'}
-              </p>
-              <h2 className={`text-3xl sm:text-4xl font-bold ${ahorro >= 0 ? 'text-emerald-700' : 'text-destructive'}`}>
-                ${ahorro.toLocaleString('es-MX', {
-                minimumFractionDigits: 2
-              })}
-              </h2>
+            
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs text-white/90">
+                <span>Tasa de ahorro:</span>
+                <span className="font-semibold text-white">{tasaAhorro.toFixed(1)}%</span>
+              </div>
+              <Progress 
+                value={tasaAhorro} 
+                className="h-2 bg-white/20" 
+                indicatorClassName="bg-white"
+              />
             </div>
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm text-foreground/80">
-              <span>Tasa de ahorro:</span>
-              <span className="font-semibold text-foreground">{tasaAhorro.toFixed(1)}%</span>
-            </div>
-            <Progress 
-              value={tasaAhorro} 
-              className="h-2 bg-primary/10" 
-              indicatorClassName={ahorro >= 0 ? "bg-emerald-600" : "bg-destructive"}
-            />
           </div>
           
+          <style>{`
+            @keyframes shimmer {
+              0% { transform: translateX(-100%); }
+              100% { transform: translateX(200%); }
+            }
+          `}</style>
+          
           {/* Botón de descarga de PDF */}
-          <div className="mt-4 pt-4 border-t border-blue-100">
-            <Button variant="ghost" className="w-full bg-primary/10 backdrop-blur-sm rounded-[20px] border border-blue-100 text-foreground hover:bg-primary/20 transition-all duration-300 hover:scale-105 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight font-semibold shadow-lg" onClick={async () => {
+          <div className="mt-4 pt-4 border-t border-white/20 relative z-10">
+            <Button variant="ghost" className="w-full bg-white/20 backdrop-blur-sm rounded-lg border border-white/30 text-white hover:bg-white/30 transition-all duration-300 hover:scale-105 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight font-semibold" onClick={async () => {
             try {
               // Get current user
               const {
