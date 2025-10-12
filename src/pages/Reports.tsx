@@ -114,8 +114,12 @@ const Reports = () => {
     }
   };
 
+  // Debug: Log available years
+  console.log('Available years:', availableYears);
+  console.log('Selected year:', selectedYear);
+
   return (
-    <div className="min-h-screen animated-wave-bg pb-20">
+    <div className="min-h-screen animated-wave-bg pb-20 overflow-visible">
       {/* Header */}
       <div className="p-4 flex items-center justify-between sticky top-0 z-10 bg-gradient-to-b from-background to-transparent backdrop-blur-sm">
         <Button
@@ -130,7 +134,7 @@ const Reports = () => {
         <div className="w-12" />
       </div>
 
-      <div className="px-4 space-y-4">
+      <div className="px-4 space-y-4 overflow-visible">
         {/* Descripción */}
         <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
           <div className="flex items-start gap-3">
@@ -147,7 +151,7 @@ const Reports = () => {
         </Card>
 
         {/* Lista de Meses con Selector de Año */}
-        <div className="space-y-3 relative z-10">
+        <div className="space-y-3 relative z-10 overflow-visible">
           <div className="flex items-center justify-between px-2">
             <h3 className="text-sm font-semibold text-foreground">
               Reportes de {selectedYear}
