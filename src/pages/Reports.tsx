@@ -65,18 +65,28 @@ const Reports = () => {
     console.log('Previous - Current index:', currentIndex, 'Current year:', selectedYear, 'Available years:', availableYears);
     if (currentIndex !== -1 && currentIndex < availableYears.length - 1) {
       const newYear = availableYears[currentIndex + 1];
-      console.log('Going to year:', newYear);
+      console.log('Going to previous year:', newYear);
       setSelectedYear(newYear);
+    } else {
+      console.log('Cannot go to previous year - at the end of array or invalid index');
     }
   };
 
   const handleNextYear = () => {
     const currentIndex = availableYears.indexOf(selectedYear);
+    const currentYear = new Date().getFullYear();
     console.log('Next - Current index:', currentIndex, 'Current year:', selectedYear, 'Available years:', availableYears);
     if (currentIndex !== -1 && currentIndex > 0) {
       const newYear = availableYears[currentIndex - 1];
-      console.log('Going to year:', newYear);
-      setSelectedYear(newYear);
+      // No permitir ir más allá del año actual
+      if (newYear <= currentYear) {
+        console.log('Going to next year:', newYear);
+        setSelectedYear(newYear);
+      } else {
+        console.log('Cannot go to future year:', newYear);
+      }
+    } else {
+      console.log('Cannot go to next year - at the start of array or invalid index');
     }
   };
 
@@ -179,6 +189,7 @@ const Reports = () => {
                 selectedYear === availableYears[availableYears.length - 1]
               }
               className="h-8 w-8 rounded-full bg-white shadow-lg border border-blue-100 hover:bg-primary/10 hover:scale-110 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              title="Año anterior"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -198,9 +209,10 @@ const Reports = () => {
               onClick={handleNextYear}
               disabled={
                 availableYears.length <= 1 || 
-                selectedYear === availableYears[0]
+                selectedYear >= new Date().getFullYear()
               }
               className="h-8 w-8 rounded-full bg-white shadow-lg border border-blue-100 hover:bg-primary/10 hover:scale-110 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              title="Año siguiente"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
