@@ -1535,11 +1535,11 @@ const Dashboard = () => {
                         backgroundColor={colors.bg}
                         borderWidth={3}
                         borderRadius={12}
-                        className="p-0 animate-fade-in group cursor-pointer"
+                        className="p-0 animate-fade-in cursor-pointer hover:scale-105 hover:-translate-y-2 transition-all duration-300"
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <Card 
-                          className={`p-2.5 bg-gradient-to-br ${gradient} shadow-2xl border-0 relative group-hover:scale-105 group-hover:-translate-y-2 transition-all duration-300`}
+                          className={`p-2.5 bg-gradient-to-br ${gradient} shadow-2xl border-0 relative`}
                         >
                           <div className="relative z-10">
                           <div className="mb-2">
