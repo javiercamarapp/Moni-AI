@@ -639,7 +639,7 @@ const Profile = () => {
               className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
               onClick={() => navigate('/reports')}
             >
-              <span className="text-foreground">Historial de gastos e ingresos</span>
+              <span className="text-foreground">Historial de ingresos y gastos del año</span>
               <ChevronRight className="h-5 w-5 text-foreground/70" />
             </Button>
           </Card>
