@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { GlowingEffect } from '@/components/ui/glowing-effect';
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from '@/components/ui/carousel';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Autoplay from 'embla-carousel-autoplay';
@@ -1075,7 +1076,14 @@ const Dashboard = () => {
 
         {/* Presupuesto Mensual */}
         <Card className="p-5 bg-gradient-to-br from-[hsl(220,45%,18%)] to-[hsl(240,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(220,50%,35%)]/40 relative overflow-hidden">
-          
+          <GlowingEffect
+            spread={40}
+            glow={true}
+            disabled={false}
+            proximity={64}
+            inactiveZone={0.01}
+            borderWidth={2}
+          />
           <div className="space-y-3 relative z-10">
             <div className="flex items-center justify-between">
               <div>
@@ -1154,7 +1162,14 @@ const Dashboard = () => {
         <div className="grid grid-cols-2 gap-2 sm:gap-4">
           {/* Widget de Suscripciones Próximas */}
           <Card className="p-3 bg-gradient-to-br from-[hsl(280,45%,18%)] to-[hsl(300,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(280,50%,35%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
-            
+            <GlowingEffect
+              spread={40}
+              glow={true}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+              borderWidth={2}
+            />
             <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
               <div className="flex items-center justify-between flex-shrink-0">
                 <h3 className="text-xs font-bold text-white drop-shadow-lg">📅 Pagos Recurrentes</h3>
@@ -1200,7 +1215,14 @@ const Dashboard = () => {
 
           {/* Widget de Deudas de Tarjetas */}
           <Card className="p-3 bg-gradient-to-br from-[hsl(0,45%,18%)] to-[hsl(15,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(0,50%,35%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
-            
+            <GlowingEffect
+              spread={40}
+              glow={true}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+              borderWidth={2}
+            />
             <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
               <div className="flex items-center justify-between flex-shrink-0">
                 <h3 className="text-xs font-bold text-white drop-shadow-lg">💳 Deudas</h3>
@@ -1267,7 +1289,14 @@ const Dashboard = () => {
         <Card className="p-3 sm:p-4 bg-gradient-to-br from-[hsl(142,60%,25%)] to-[hsl(142,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(142,70%,45%)]/40 relative overflow-hidden animate-fade-in hover:scale-105 transition-transform duration-200 cursor-pointer" style={{
         animationDelay: '500ms'
       }}>
-          
+          <GlowingEffect
+            spread={40}
+            glow={true}
+            disabled={false}
+            proximity={64}
+            inactiveZone={0.01}
+            borderWidth={2}
+          />
           <div className="flex items-center gap-2 sm:gap-3 relative z-10">
             <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center p-2">
               <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
@@ -1300,6 +1329,14 @@ const Dashboard = () => {
 
               <div className="space-y-3 sm:space-y-4">
                 {goals.length === 0 ? <Card className="p-6 bg-gradient-to-br from-[hsl(25,60%,25%)] to-[hsl(25,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(25,70%,45%)]/40 relative overflow-hidden text-center animate-fade-in">
+                    <GlowingEffect
+                      spread={40}
+                      glow={true}
+                      disabled={false}
+                      proximity={64}
+                      inactiveZone={0.01}
+                      borderWidth={2}
+                    />
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
                     <p className="text-white/90 mb-4 relative z-10 drop-shadow-lg">No tienes metas creadas aún</p>
                     <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:scale-105 transition-transform duration-200 relative z-10">
@@ -1502,7 +1539,14 @@ const Dashboard = () => {
             
             {/* Recent Transactions */}
             <Card className="p-3 bg-gradient-to-br from-[hsl(45,60%,25%)] to-[hsl(38,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(45,70%,45%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
-              
+              <GlowingEffect
+                spread={40}
+                glow={true}
+                disabled={false}
+                proximity={64}
+                inactiveZone={0.01}
+                borderWidth={2}
+              />
               <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
                 <div className="flex items-center justify-between flex-shrink-0">
                   <h3 className="text-sm sm:text-xs font-bold text-white drop-shadow-lg">📊 Movimientos Recientes</h3>
