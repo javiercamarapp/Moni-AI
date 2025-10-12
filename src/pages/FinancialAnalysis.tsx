@@ -27,12 +27,16 @@ import IncomeExpensePieWidget from "@/components/analysis/IncomeExpensePieWidget
 import CategoryBreakdownWidget from "@/components/analysis/CategoryBreakdownWidget";
 import FinancialHealthPieWidget from "@/components/analysis/FinancialHealthPieWidget";
 import LiquidityGaugeWidget from "@/components/analysis/LiquidityGaugeWidget";
+import { useDashboardData } from "@/hooks/useDashboardData";
 export default function FinancialAnalysis() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [period, setPeriod] = useState("month");
   const [user, setUser] = useState<any>(null);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
+  
+  // Usar el mismo hook que el Dashboard para datos del mes actual
+  const dashboardData = useDashboardData(0);
   
   // Cargar datos del caché inmediatamente para mostrar instantáneamente (con clave específica por período)
   const [quickMetrics, setQuickMetrics] = useState<any>(() => {
@@ -585,10 +589,22 @@ export default function FinancialAnalysis() {
               onClick={() => navigate('/balance')}
             >
               {(() => {
-                const income = (analysis?.metrics?.totalIncome ?? quickMetrics?.totalIncome) || 0;
-                const expenses = (analysis?.metrics?.totalExpenses ?? quickMetrics?.totalExpenses) || 0;
-                const balance = (analysis?.metrics?.balance ?? quickMetrics?.balance) || 0;
+                // Si estamos en modo "month", usar los mismos datos que el Dashboard
+                const income = period === 'month' 
+                  ? dashboardData.monthlyIncome 
+                  : ((analysis?.metrics?.totalIncome ?? quickMetrics?.totalIncome) || 0);
+                const expenses = period === 'month'
+                  ? dashboardData.monthlyExpenses
+                  : ((analysis?.metrics?.totalExpenses ?? quickMetrics?.totalExpenses) || 0);
+                const balance = income - expenses;
                 const maxValue = Math.max(income, expenses);
+                
+                console.log('🎨 UI MOSTRANDO (period:', period, '):', {
+                  ingresos: income,
+                  gastos: expenses,
+                  balance: balance,
+                  fuente: period === 'month' ? 'dashboardData' : (analysis?.metrics ? 'analysis' : 'quickMetrics')
+                });
                 
                 return (
                   <>
