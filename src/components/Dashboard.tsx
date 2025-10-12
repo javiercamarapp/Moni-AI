@@ -10,6 +10,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselApi } from '@/componen
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Autoplay from 'embla-carousel-autoplay';
 import { useToast } from "@/hooks/use-toast";
+import { useDashboardData } from "@/hooks/useDashboardData";
 import bannerInvestment from '@/assets/banner-investment.jpg';
 import bannerGoals from '@/assets/banner-goals.jpg';
 import bannerGroups from '@/assets/banner-groups.jpg';
@@ -21,27 +22,46 @@ import moniLogo from '/moni-logo.png';
 import SafeToSpendWidget from '@/components/analysis/SafeToSpendWidget';
 import AICoachInsightsWidget from '@/components/analysis/AICoachInsightsWidget';
 import BottomNav from '@/components/BottomNav';
+
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(false); // Changed to false for instant load
   const [currentXP] = useState(0);
   const [nextLevelXP] = useState(100);
   const [level] = useState(1);
   const [api, setApi] = useState<CarouselApi>();
-  const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
+  const [selectedMonthOffset, setSelectedMonthOffset] = useState(0);
+  
+  // Use optimized hook for all dashboard data
+  const dashboardData = useDashboardData(selectedMonthOffset);
+  
   const [goals, setGoals] = useState<any[]>([]);
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
+  const [scoreMoni, setScoreMoni] = useState<number | null>(null);
+  const [netWorth, setNetWorth] = useState<number>(0);
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [monthlyExpenses, setMonthlyExpenses] = useState(0);
   const [fixedExpenses, setFixedExpenses] = useState(0);
+  const [hasBankConnections, setHasBankConnections] = useState(false);
+  
+  // Update state from optimized hook
+  useEffect(() => {
+    setGoals(dashboardData.goals);
+    setRecentTransactions(dashboardData.recentTransactions);
+    setScoreMoni(dashboardData.scoreMoni);
+    setNetWorth(dashboardData.netWorth);
+    setMonthlyIncome(dashboardData.monthlyIncome);
+    setMonthlyExpenses(dashboardData.monthlyExpenses);
+    setFixedExpenses(dashboardData.fixedExpenses);
+    setHasBankConnections(dashboardData.hasBankConnections);
+  }, [dashboardData]);
+  
+  const [loading, setLoading] = useState(false);
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
   const [budgetMessage, setBudgetMessage] = useState<string>("✅ Dentro del presupuesto del mes");
   const [loadingBudgetMessage, setLoadingBudgetMessage] = useState(false);
-  const [selectedMonthOffset, setSelectedMonthOffset] = useState(0); // 0 = mes actual, 1 = mes anterior, etc.
   const [upcomingSubscriptions, setUpcomingSubscriptions] = useState<any[]>([]);
   const [creditCardDebts, setCreditCardDebts] = useState<any[]>([]);
-  const [hasBankConnections, setHasBankConnections] = useState(false);
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
-  const [scoreMoni, setScoreMoni] = useState<number | null>(null);
   const [loadingScore, setLoadingScore] = useState(false);
   const [proyecciones, setProyecciones] = useState<{
     proyeccionAnual: number;
@@ -58,7 +78,6 @@ const Dashboard = () => {
   const [isUpdatingProjections, setIsUpdatingProjections] = useState(false);
   const [challenges, setChallenges] = useState<any[]>([]);
   const [loadingChallenges, setLoadingChallenges] = useState(false);
-  const [netWorth, setNetWorth] = useState<number>(0);
   const navigate = useNavigate();
   const {
     toast
@@ -132,174 +151,8 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [api]);
 
-  // Fetch goals
-  useEffect(() => {
-    const fetchGoals = async () => {
-      try {
-        const {
-          data: {
-            user
-          }
-        } = await supabase.auth.getUser();
-        if (!user) return;
-        const {
-          data,
-          error
-        } = await supabase.from('goals').select('*').eq('user_id', user.id).order('created_at', {
-          ascending: false
-        });
-        if (error) throw error;
-        setGoals(data || []);
-      } catch (error) {
-        console.error('Error fetching goals:', error);
-      }
-    };
-    fetchGoals();
-  }, []);
-
-  // Fetch Score Moni from database with instant display using cache
-  useEffect(() => {
-    const fetchScoreMoni = async () => {
-      try {
-        // Load cached score immediately for instant display
-        const cachedScore = localStorage.getItem('scoreMoni');
-        if (cachedScore) {
-          setScoreMoni(Number(cachedScore));
-        }
-
-        // Fetch fresh score in background
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        const { data, error } = await supabase
-          .from('user_scores')
-          .select('score_moni')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        if (data && !error) {
-          setScoreMoni(data.score_moni);
-          // Update cache for next time
-          localStorage.setItem('scoreMoni', data.score_moni.toString());
-        } else if (!cachedScore) {
-          // If no score exists and no cache, set a default
-          setScoreMoni(40);
-          localStorage.setItem('scoreMoni', '40');
-        }
-      } catch (error) {
-        console.error('Error fetching score:', error);
-        const cachedScore = localStorage.getItem('scoreMoni');
-        if (!cachedScore) {
-          setScoreMoni(40);
-        }
-      }
-    };
-    fetchScoreMoni();
-  }, []);
-
-  // Fetch Net Worth (Assets - Liabilities)
-  useEffect(() => {
-    const fetchNetWorth = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        // Fetch assets
-        const { data: assetsData } = await supabase
-          .from('assets')
-          .select('value')
-          .eq('user_id', user.id);
-
-        // Fetch liabilities
-        const { data: liabilitiesData } = await supabase
-          .from('liabilities')
-          .select('value')
-          .eq('user_id', user.id);
-
-        const totalAssets = assetsData?.reduce((sum, a) => sum + Number(a.value), 0) || 0;
-        const totalLiabilities = liabilitiesData?.reduce((sum, l) => sum + Number(l.value), 0) || 0;
-        
-        setNetWorth(totalAssets - totalLiabilities);
-      } catch (error) {
-        console.error('Error fetching net worth:', error);
-      }
-    };
-    fetchNetWorth();
-  }, []);
-
-  // Fetch recent transactions and calculate monthly totals
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const {
-          data: {
-            user
-          }
-        } = await supabase.auth.getUser();
-        if (!user) return;
-
-        // Calculate the selected month's dates
-        const now = new Date();
-        const targetDate = new Date(now.getFullYear(), now.getMonth() - selectedMonthOffset, 1);
-        const firstDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1);
-        const lastDay = new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 0);
-
-        // Fetch all transactions for selected month
-        const {
-          data: allTransactions,
-          error: allError
-        } = await supabase.from('transactions').select('*').eq('user_id', user.id).gte('transaction_date', firstDay.toISOString().split('T')[0]).lte('transaction_date', lastDay.toISOString().split('T')[0]);
-        if (allError) throw allError;
-
-        // Calculate monthly totals
-        const income = allTransactions?.filter(t => t.type === 'ingreso').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
-        const expenses = allTransactions?.filter(t => t.type === 'gasto').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
-
-        // Calculate fixed expenses (rent, utilities, subscriptions, etc.)
-        const fixedExpensesCategories = ['22cecde3-c7c8-437e-9b9d-d73bc7f3bdfe',
-        // Luz
-        'c88f9517-ba61-4420-bc49-ba6261c37e9c',
-        // Agua
-        '4675137c-d5b5-4679-b308-6259762ea100',
-        // Internet
-        'c4d8514f-54be-4fba-8300-b18164d78790',
-        // Teléfono
-        '77bc7935-51b3-418b-9945-7028c27d47ec',
-        // Gas
-        '8544dcaa-4114-4893-aa38-c4372c46a821',
-        // Netflix
-        'eba3ecce-a824-41d3-8209-175902e66cb9',
-        // Spotify
-        '94c263d1-aed5-4399-b5af-da3dfe758b58',
-        // Amazon Prime
-        'd81abe12-0879-49bc-9d94-ebf7c3e9e315',
-        // Disney+
-        'd9251ee1-749f-4cc7-94a2-ceb19a16fd8c',
-        // HBO Max
-        'e50cbb0b-6f45-4afd-bf09-218e413a3086' // Gym
-        ];
-        const fixed = allTransactions?.filter(t => t.type === 'gasto' && (fixedExpensesCategories.includes(t.category_id) || t.description?.toLowerCase().includes('renta'))).reduce((sum, t) => sum + Number(t.amount), 0) || 0;
-        setMonthlyIncome(income);
-        setMonthlyExpenses(expenses);
-        setFixedExpenses(fixed);
-
-        // Fetch recent transactions for display (always from current month for recent view)
-        if (selectedMonthOffset === 0) {
-          const {
-            data: recentData,
-            error: recentError
-          } = await supabase.from('transactions').select('*, categories(name, color)').eq('user_id', user.id).order('transaction_date', {
-            ascending: false
-          }).limit(20);
-          if (recentError) throw recentError;
-          setRecentTransactions(recentData || []);
-        }
-      } catch (error) {
-        console.error('Error fetching transactions:', error);
-      }
-    };
-    fetchTransactions();
-  }, [selectedMonthOffset]);
+  // REMOVED: Multiple separate useEffect calls for goals, score, netWorth, transactions
+  // Now using optimized useDashboardData hook
 
   // Fetch upcoming subscriptions and bank connections
   useEffect(() => {
