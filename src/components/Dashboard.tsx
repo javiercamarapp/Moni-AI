@@ -999,9 +999,11 @@ const Dashboard = () => {
       <div className="mx-4 space-y-4 sm:space-y-6">
         {/* Quick Stats - 4 botones horizontales en una línea */}
         <div className="grid grid-cols-4 gap-2 sm:gap-3">
-          <Card className="p-3 bg-gradient-card card-glow cursor-pointer hover:scale-105 transition-transform duration-200 animate-fade-in" onClick={() => navigate('/balance')} style={{
-          animationDelay: '100ms'
-        }}>
+          <button 
+            className="p-3 bg-gradient-to-b from-gray-700 to-gray-900 rounded-xl shadow-xl hover:brightness-105 hover:scale-105 transition-all cursor-pointer animate-fade-in border border-gray-600" 
+            onClick={() => navigate('/balance')} 
+            style={{ animationDelay: '100ms' }}
+          >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
                 <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
@@ -1013,9 +1015,10 @@ const Dashboard = () => {
                 </p>
               </div>
             </div>
-          </Card>
+          </button>
 
-          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in cursor-pointer" 
+          <button 
+            className="p-3 bg-gradient-to-b from-gray-700 to-gray-900 rounded-xl shadow-xl hover:brightness-105 hover:scale-105 transition-all cursor-pointer animate-fade-in border border-gray-600" 
             style={{ animationDelay: '200ms' }}
             onClick={() => navigate('/net-worth')}
           >
@@ -1030,11 +1033,12 @@ const Dashboard = () => {
                 </p>
               </div>
             </div>
-          </Card>
+          </button>
 
-          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
-          animationDelay: '300ms'
-        }}>
+          <button 
+            className="p-3 bg-gradient-to-b from-gray-700 to-gray-900 rounded-xl shadow-xl hover:brightness-105 hover:scale-105 transition-all cursor-pointer animate-fade-in border border-gray-600" 
+            style={{ animationDelay: '300ms' }}
+          >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-warning/30 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
                 <Target className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-warning-foreground" />
@@ -1044,11 +1048,12 @@ const Dashboard = () => {
                 <p className="text-xs sm:text-base font-bold text-white leading-tight">{goals.length}</p>
               </div>
             </div>
-          </Card>
+          </button>
 
-          <Card className="p-3 bg-gradient-card card-glow hover:scale-105 transition-transform duration-200 animate-fade-in" style={{
-          animationDelay: '400ms'
-        }}>
+          <button 
+            className="p-3 bg-gradient-to-b from-gray-700 to-gray-900 rounded-xl shadow-xl hover:brightness-105 hover:scale-105 transition-all cursor-pointer animate-fade-in border border-gray-600" 
+            style={{ animationDelay: '400ms' }}
+          >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
                 <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" />
@@ -1060,7 +1065,7 @@ const Dashboard = () => {
                 </p>
               </div>
             </div>
-          </Card>
+          </button>
         </div>
 
         {/* Safe to Spend Widget */}
