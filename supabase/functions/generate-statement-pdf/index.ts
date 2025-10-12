@@ -174,17 +174,30 @@ serve(async (req) => {
 
     if (type === 'gasto' || !type) {
       try {
-        // Get all expense transactions for AI analysis
-        const allExpenses = transactions?.filter(t => t.type === 'gasto') || [];
+        // Get ALL historical expense transactions for pattern detection (not just current period)
+        const { data: allHistoricalExpenses } = await supabase
+          .from('transactions')
+          .select(`
+            *,
+            categories (
+              id,
+              name,
+              color,
+              icon
+            )
+          `)
+          .eq('user_id', userId)
+          .eq('type', 'gasto')
+          .order('transaction_date', { ascending: false });
         
         console.log('=== DETECTING SUBSCRIPTIONS AND DAILY EXPENSES ===');
-        console.log('All expenses count:', allExpenses.length);
+        console.log('All historical expenses count:', allHistoricalExpenses?.length || 0);
         
-        if (allExpenses.length > 0) {
-          // Detect subscriptions
+        if (allHistoricalExpenses && allHistoricalExpenses.length > 0) {
+          // Detect subscriptions using all historical data
           console.log('Invoking detect-subscriptions function...');
           const { data: subsResult, error: subsError } = await supabase.functions.invoke('detect-subscriptions', {
-            body: { transactions: allExpenses }
+            body: { transactions: allHistoricalExpenses }
           });
 
           if (subsError) {
@@ -216,10 +229,10 @@ serve(async (req) => {
             console.log('Subscriptions detected:', subscriptions.length);
           }
 
-          // Detect daily expenses
+          // Detect daily expenses using all historical data
           console.log('Invoking detect-daily-expenses function...');
           const { data: dailyResult, error: dailyError } = await supabase.functions.invoke('detect-daily-expenses', {
-            body: { transactions: allExpenses }
+            body: { transactions: allHistoricalExpenses }
           });
 
           if (dailyError) {
