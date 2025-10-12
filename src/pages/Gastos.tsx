@@ -560,32 +560,33 @@ const Gastos = () => {
 
       <div className="px-4 space-y-4">
         {/* Total de gastos destacado */}
-        <Card className="p-6 rounded-[20px] shadow-xl animate-fade-in border-white/20" style={{ animationDelay: '0ms', backgroundColor: '#ef4444' }}>
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-3 bg-card/40 backdrop-blur-sm rounded-full border border-border/30">
-              <TrendingDown className="h-6 w-6 text-black" />
+        <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-red-100 animate-fade-in">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-red-500/20">
+              <TrendingDown className="h-6 w-6 text-red-600" />
             </div>
-            <div>
-              <p className="text-sm text-black/90">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-foreground/60 mb-1 font-medium">
                 Total de Gastos {viewMode === 'mensual' ? 'Mensuales' : 'Anuales'}
               </p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-black">
+              <p className="text-3xl sm:text-4xl font-bold leading-tight break-words text-red-600">
                 ${totalGastos.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
-              </h2>
+              </p>
             </div>
           </div>
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm text-black/90">
-              <span>Transacciones:</span>
-              <span className="font-semibold">{transactions.length}</span>
+          
+          <div className="space-y-2 mb-4">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-foreground/60">Transacciones:</span>
+              <span className="text-lg font-bold text-foreground">{transactions.length}</span>
             </div>
           </div>
           
           {/* Botón de descarga de PDF */}
-          <div className="mt-4 pt-4 border-t border-white/20">
+          <div>
             <Button 
               variant="ghost" 
-              className="w-full bg-white/20 backdrop-blur-sm rounded-[12px] border border-white/30 text-black hover:bg-white/30 transition-all duration-300 hover:scale-105 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight font-semibold"
+              className="w-full bg-muted/50 hover:bg-muted rounded-[20px] text-foreground transition-all h-auto py-3 px-4 text-xs font-semibold flex items-center justify-center"
               onClick={async () => {
                 try {
                   const { data: { user } } = await supabase.auth.getUser();
