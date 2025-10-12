@@ -109,6 +109,21 @@ const SignIn2 = () => {
             />
           </button>
         </div>
+        
+        {/* User testimonials section */}
+        <div className="mt-6 pt-6 border-t border-gray-200 w-full">
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <div className="flex -space-x-2">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-white"></div>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 border-2 border-white"></div>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border-2 border-white"></div>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 border-2 border-white"></div>
+            </div>
+          </div>
+          <p className="text-xs text-center text-gray-600 font-medium">
+            Únete a los cientos de mexicanos que cuidan sus finanzas
+          </p>
+        </div>
       </div>
     </div>
   );
