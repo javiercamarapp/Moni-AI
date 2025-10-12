@@ -121,22 +121,22 @@ const SignIn2 = () => {
             <img 
               src="https://i.pravatar.cc/150?img=12" 
               alt="User" 
-              className="w-8 h-8 rounded-full border-2 border-white object-cover"
+              className="w-8 h-8 rounded-full object-cover"
             />
             <img 
               src="https://i.pravatar.cc/150?img=25" 
               alt="User" 
-              className="w-8 h-8 rounded-full border-2 border-white object-cover"
+              className="w-8 h-8 rounded-full object-cover"
             />
             <img 
               src="https://i.pravatar.cc/150?img=33" 
               alt="User" 
-              className="w-8 h-8 rounded-full border-2 border-white object-cover"
+              className="w-8 h-8 rounded-full object-cover"
             />
             <img 
               src="https://i.pravatar.cc/150?img=47" 
               alt="User" 
-              className="w-8 h-8 rounded-full border-2 border-white object-cover"
+              className="w-8 h-8 rounded-full object-cover"
             />
           </div>
         </div>
