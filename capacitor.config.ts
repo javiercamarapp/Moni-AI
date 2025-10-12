@@ -7,6 +7,11 @@ const config: CapacitorConfig = {
   server: {
     url: 'https://de7fbb72-c49f-4c92-bdf1-98b2ca3ba331.lovableproject.com?forceHideBadge=true',
     cleartext: true
+  },
+  plugins: {
+    Camera: {
+      presentationStyle: 'popover'
+    }
   }
 };
 

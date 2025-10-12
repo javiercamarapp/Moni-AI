@@ -4,11 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from "@/hooks/use-toast";
-import { Send, Plus, Mic, ArrowLeft, Circle, Paperclip, TrendingUp, Calculator, PiggyBank, Lightbulb, Target, Receipt, Sparkles } from 'lucide-react';
+import { Send, Plus, Mic, ArrowLeft, Circle, Paperclip, TrendingUp, Calculator, PiggyBank, Lightbulb, Target, Receipt, Sparkles, Camera } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import Autoplay from 'embla-carousel-autoplay';
 import moniLogo from '@/assets/moni-ai-logo.png';
+import { Camera as CapCamera, CameraResultType, CameraSource } from '@capacitor/camera';
 const ChatInterface = () => {
   const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
@@ -469,6 +470,45 @@ const ChatInterface = () => {
     }
   };
 
+  const openCamera = async () => {
+    try {
+      const image = await CapCamera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Camera
+      });
+
+      if (image.dataUrl) {
+        const imageFile = {
+          name: `ticket_${Date.now()}.jpg`,
+          type: 'image/jpeg',
+          data: image.dataUrl
+        };
+        
+        toast({
+          title: "Analizando ticket...",
+          description: "La IA está procesando tu foto"
+        });
+        
+        await analyzeReceipt(imageFile);
+      }
+    } catch (error: any) {
+      console.error('Error opening camera:', error);
+      
+      // Si el error es porque el usuario canceló, no mostrar error
+      if (error.message && error.message.includes('User cancelled')) {
+        return;
+      }
+      
+      toast({
+        title: "Error al abrir cámara",
+        description: "No se pudo acceder a la cámara. Verifica los permisos.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const toggleVoiceMode = () => {
     setIsVoiceActive(!isVoiceActive);
     if (isVoiceActive) {
@@ -740,6 +780,20 @@ const ChatInterface = () => {
                 <div className="flex flex-col">
                   <span className="font-medium">Escanear ticket</span>
                   <span className="text-xs text-muted-foreground">La IA detectará y guardará el gasto</span>
+                </div>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem 
+                onSelect={(e) => {
+                  e.preventDefault();
+                  openCamera();
+                }}
+                className="flex items-center gap-3 py-3 cursor-pointer"
+              >
+                <Camera className="w-5 h-5 text-primary" />
+                <div className="flex flex-col">
+                  <span className="font-medium">Abrir cámara</span>
+                  <span className="text-xs text-muted-foreground">Toma una foto del ticket directamente</span>
                 </div>
               </DropdownMenuItem>
               
