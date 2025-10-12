@@ -19,7 +19,8 @@ import {
   Plus,
   Sliders,
   Download,
-  TrendingUp
+  TrendingUp,
+  Camera
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -53,6 +54,7 @@ const Ingresos = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState<'recent' | 'highest' | 'lowest'>('recent');
+  const [isProcessingReceipt, setIsProcessingReceipt] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -130,6 +132,81 @@ const Ingresos = () => {
       return currentMonth.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
     }
     return currentMonth.getFullYear().toString();
+  };
+
+  const handleCameraCapture = async () => {
+    try {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.capture = 'environment';
+      
+      input.onchange = async (e: any) => {
+        const file = e.target?.files?.[0];
+        if (!file) return;
+
+        setIsProcessingReceipt(true);
+        toast({
+          title: "Procesando ticket",
+          description: "Analizando la imagen con AI...",
+        });
+
+        try {
+          // Convertir imagen a base64
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          
+          reader.onload = async () => {
+            const base64Image = reader.result as string;
+            
+            const { data: receiptData, error } = await supabase.functions.invoke('analyze-receipt', {
+              body: { imageBase64: base64Image, type: 'ingreso' }
+            });
+
+            if (error) throw error;
+
+            // Llenar el formulario con los datos extraídos
+            setAmount(receiptData.amount.toString());
+            setDescription(receiptData.description);
+            setPaymentMethod(receiptData.payment_method);
+            setDate(receiptData.date);
+            
+            // Buscar categoría por nombre
+            const matchingCategory = categories.find(
+              cat => cat.name.toLowerCase().includes(receiptData.category.toLowerCase())
+            );
+            if (matchingCategory) {
+              setCategory(matchingCategory.id);
+            }
+
+            setShowAddDialog(true);
+            setIsProcessingReceipt(false);
+
+            toast({
+              title: "Ticket analizado",
+              description: "Revisa los datos y confirma el registro",
+            });
+          };
+        } catch (error) {
+          console.error('Error processing receipt:', error);
+          toast({
+            title: "Error",
+            description: "No se pudo procesar el ticket",
+            variant: "destructive",
+          });
+          setIsProcessingReceipt(false);
+        }
+      };
+      
+      input.click();
+    } catch (error) {
+      console.error('Error capturing image:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo acceder a la cámara",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -233,18 +310,27 @@ const Ingresos = () => {
           <Button
             size="icon"
             onClick={handleWhatsAppRegister}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-8 w-8"
           >
-            <img src={whatsappLogo} alt="WhatsApp" className="w-5 h-5 object-contain" />
+            <img src={whatsappLogo} alt="WhatsApp" className="w-4 h-4 object-contain" />
+          </Button>
+
+          <Button
+            size="icon"
+            onClick={handleCameraCapture}
+            disabled={isProcessingReceipt}
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-8 w-8 disabled:opacity-50"
+          >
+            <Camera className="h-4 w-4 text-foreground" />
           </Button>
           
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
             <DialogTrigger asChild>
               <Button
                 size="icon"
-                className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10"
+                className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-8 w-8"
               >
-                <Plus className="h-5 w-5 text-foreground" />
+                <Plus className="h-4 w-4 text-foreground" />
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-gradient-card border-border/30 max-h-[85vh] overflow-y-auto">
@@ -388,9 +474,9 @@ const Ingresos = () => {
           <Button
             size="icon"
             onClick={() => navigate('/categorias')}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-8 w-8"
           >
-            <Sliders className="h-5 w-5 text-foreground" />
+            <Sliders className="h-4 w-4 text-foreground" />
           </Button>
         </div>
       </div>

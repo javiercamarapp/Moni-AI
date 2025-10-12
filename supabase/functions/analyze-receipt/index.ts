@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,10 +11,10 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64, userId } = await req.json();
+    const { imageBase64, type } = await req.json();
     
-    if (!imageBase64 || !userId) {
-      throw new Error('Missing required fields: imageBase64 and userId');
+    if (!imageBase64 || !type) {
+      throw new Error('Missing required fields: imageBase64 and type');
     }
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -23,7 +22,12 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    console.log('Analyzing receipt for user:', userId);
+    console.log(`Analyzing receipt as ${type}...`);
+
+    const isIncome = type === 'ingreso';
+    const categories = isIncome 
+      ? ["Salario", "Ventas", "Freelance", "Inversiones", "Renta", "Regalo", "Reembolso", "Otro"]
+      : ["Comida", "Transporte", "Entretenimiento", "Salud", "Compras", "Servicios", "Hogar", "Educación", "Ropa", "Tecnología", "Luz", "Agua", "Gas", "Teléfono", "Internet", "Otro"];
 
     // Call Lovable AI Gateway with vision model
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -37,19 +41,19 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "Eres un asistente que analiza tickets de compra. Extrae la información clave y categoriza el gasto según las categorías comunes: Comida, Transporte, Entretenimiento, Salud, Compras, Servicios, Hogar, Educación, Ropa, Tecnología, Luz, Agua, Gas, Teléfono, Internet, Otro. Analiza cuidadosamente el ticket y extrae el monto total, descripción del comercio/establecimiento, y la fecha de la transacción si está disponible."
+            content: `Eres un asistente que analiza tickets y recibos. Extrae la información clave y categoriza el ${isIncome ? 'ingreso' : 'gasto'} según las categorías disponibles. Analiza cuidadosamente el ticket y extrae el monto total, descripción del comercio/establecimiento, y la fecha de la transacción si está disponible.`
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: "Analiza este ticket de pago y extrae: monto total, descripción/comercio, fecha (si está disponible), y sugiere la categoría más apropiada."
+                text: `Analiza este ticket/recibo y extrae: monto total, descripción/comercio, fecha (si está disponible), y sugiere la categoría más apropiada para un ${isIncome ? 'ingreso' : 'gasto'}.`
               },
               {
                 type: "image_url",
                 image_url: {
-                  url: `data:image/jpeg;base64,${imageBase64}`
+                  url: imageBase64.startsWith('data:') ? imageBase64 : `data:image/jpeg;base64,${imageBase64}`
                 }
               }
             ]
@@ -70,7 +74,7 @@ serve(async (req) => {
                   },
                   description: {
                     type: "string",
-                    description: "El nombre del comercio o establecimiento, o una descripción del gasto"
+                    description: "El nombre del comercio o establecimiento, o una descripción del gasto/ingreso"
                   },
                   date: {
                     type: "string",
@@ -78,16 +82,16 @@ serve(async (req) => {
                   },
                   category: {
                     type: "string",
-                    description: "La categoría sugerida para este gasto",
-                    enum: ["Comida", "Transporte", "Entretenimiento", "Salud", "Compras", "Servicios", "Hogar", "Educación", "Ropa", "Tecnología", "Luz", "Agua", "Gas", "Teléfono", "Internet", "Otro"]
+                    description: "La categoría sugerida para este gasto/ingreso",
+                    enum: categories
                   },
-                  confidence: {
+                  payment_method: {
                     type: "string",
-                    description: "Nivel de confianza en la extracción: high, medium, low",
-                    enum: ["high", "medium", "low"]
+                    description: "Método de pago detectado o sugerido",
+                    enum: ["efectivo", "debito", "credito", "transferencia"]
                   }
                 },
-                required: ["amount", "description", "date", "category", "confidence"],
+                required: ["amount", "description", "date", "category", "payment_method"],
                 additionalProperties: false
               }
             }
@@ -127,72 +131,9 @@ serve(async (req) => {
     const receiptData = JSON.parse(toolCall.function.arguments);
     console.log('Extracted receipt data:', receiptData);
 
-    // Create Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    // Find or create the category
-    let categoryId = null;
-    const { data: existingCategory } = await supabase
-      .from('categories')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('name', receiptData.category)
-      .eq('type', 'expense')
-      .maybeSingle();
-
-    if (existingCategory) {
-      categoryId = existingCategory.id;
-    } else {
-      // Create new category if it doesn't exist
-      const { data: newCategory, error: categoryError } = await supabase
-        .from('categories')
-        .insert({
-          user_id: userId,
-          name: receiptData.category,
-          type: 'expense',
-          color: 'bg-primary/20'
-        })
-        .select('id')
-        .single();
-
-      if (categoryError) {
-        console.error('Error creating category:', categoryError);
-      } else {
-        categoryId = newCategory.id;
-      }
-    }
-
-    // Insert the transaction
-    const { data: transaction, error: transactionError } = await supabase
-      .from('transactions')
-      .insert({
-        user_id: userId,
-        type: 'expense',
-        amount: receiptData.amount,
-        description: receiptData.description,
-        transaction_date: receiptData.date,
-        category_id: categoryId,
-        payment_method: 'Tarjeta' // Default payment method
-      })
-      .select()
-      .single();
-
-    if (transactionError) {
-      console.error('Error creating transaction:', transactionError);
-      throw new Error('Error al guardar la transacción: ' + transactionError.message);
-    }
-
-    console.log('Transaction created:', transaction);
-
+    // Return just the extracted data (don't create transaction)
     return new Response(
-      JSON.stringify({
-        success: true,
-        transaction,
-        receiptData,
-        message: `Ticket analizado: $${receiptData.amount} en ${receiptData.category} - ${receiptData.description}`
-      }),
+      JSON.stringify(receiptData),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
