@@ -21,7 +21,6 @@ import moniLogo from '/moni-logo.png';
 import SafeToSpendWidget from '@/components/analysis/SafeToSpendWidget';
 import AICoachInsightsWidget from '@/components/analysis/AICoachInsightsWidget';
 import BottomNav from '@/components/BottomNav';
-import { BorderRotate } from '@/components/ui/animated-gradient-border';
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false); // Changed to false for instant load
@@ -956,22 +955,9 @@ const Dashboard = () => {
 
       {/* Score Moni - Compacto */}
       {scoreMoni !== null && <div className="mx-4 mb-4">
-          <BorderRotate
-            animationMode="auto-rotate"
-            animationSpeed={3}
-            gradientColors={{
-              primary: scoreMoni >= 70 ? '#10b981' : scoreMoni >= 40 ? '#f59e0b' : '#ef4444',
-              secondary: scoreMoni >= 70 ? '#34d399' : scoreMoni >= 40 ? '#fbbf24' : '#f87171',
-              accent: scoreMoni >= 70 ? '#6ee7b7' : scoreMoni >= 40 ? '#fde047' : '#fca5a5'
-            }}
-            backgroundColor={scoreMoni >= 70 ? 'hsl(150, 40%, 20%)' : scoreMoni >= 40 ? 'hsl(38, 50%, 25%)' : 'hsl(0, 45%, 25%)'}
-            borderWidth={3}
-            borderRadius={12}
-            className="cursor-pointer hover:scale-105 hover:-translate-y-2 transition-all duration-300"
+          <Card className={`p-4 card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95 relative overflow-hidden ${scoreMoni >= 70 ? 'bg-gradient-to-br from-success/90 to-success/70' : scoreMoni >= 40 ? 'bg-gradient-to-br from-warning/90 to-warning/70' : 'bg-gradient-to-br from-danger/90 to-danger/70'}`}
+            onClick={() => navigate('/score-moni')}
           >
-            <Card className={`p-4 border-0 relative overflow-hidden ${scoreMoni >= 70 ? 'bg-gradient-to-br from-success/90 to-success/70' : scoreMoni >= 40 ? 'bg-gradient-to-br from-warning/90 to-warning/70' : 'bg-gradient-to-br from-danger/90 to-danger/70'}`}
-              onClick={() => navigate('/score-moni')}
-            >
             {/* Efecto brillante */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent" 
                  style={{
@@ -1003,7 +989,6 @@ const Dashboard = () => {
               }
             `}</style>
           </Card>
-        </BorderRotate>
         </div>}
 
       {/* AI Coach Insights - Carousel de recomendaciones */}
@@ -1168,28 +1153,15 @@ const Dashboard = () => {
         {/* Grid de 2 columnas: Suscripciones y Deudas - Alineados horizontalmente siempre */}
         <div className="grid grid-cols-2 gap-2 sm:gap-4">
           {/* Widget de Suscripciones Próximas */}
-          <BorderRotate
-            animationMode="auto-rotate"
-            animationSpeed={3}
-            gradientColors={{
-              primary: '#a855f7',
-              secondary: '#c084fc',
-              accent: '#e9d5ff'
-            }}
-            backgroundColor="hsl(300, 40%, 12%)"
-            borderWidth={3}
-            borderRadius={12}
-            className="h-[220px] animate-fade-in cursor-pointer hover:scale-105 hover:-translate-y-2 transition-all duration-300"
-          >
-            <Card className="p-3 bg-gradient-to-br from-[hsl(280,45%,18%)] to-[hsl(300,40%,12%)] shadow-2xl border-0 relative overflow-visible h-full flex flex-col">
-              <GlowingEffect
-                spread={40}
-                glow={true}
-                disabled={false}
-                proximity={64}
-                inactiveZone={0.01}
-                borderWidth={2}
-              />
+          <Card className="p-3 bg-gradient-to-br from-[hsl(280,45%,18%)] to-[hsl(300,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(280,50%,35%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
+            <GlowingEffect
+              spread={40}
+              glow={true}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+              borderWidth={2}
+            />
             <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
               <div className="flex items-center justify-between flex-shrink-0">
                 <h3 className="text-xs font-bold text-white drop-shadow-lg">📅 Pagos Recurrentes</h3>
@@ -1232,26 +1204,11 @@ const Dashboard = () => {
               )}
             </div>
           </Card>
-        </BorderRotate>
 
           {/* Widget de Deudas de Tarjetas */}
-          <BorderRotate
-            animationMode="auto-rotate"
-            animationSpeed={3}
-            gradientColors={{
-              primary: '#ef4444',
-              secondary: '#f87171',
-              accent: '#fca5a5'
-            }}
-            backgroundColor="hsl(15, 40%, 12%)"
-            borderWidth={3}
-            borderRadius={12}
-            className="h-[220px] animate-fade-in cursor-pointer hover:scale-105 hover:-translate-y-2 transition-all duration-300"
-            style={{ animationDelay: '100ms' }}
-          >
-            <Card className="p-3 bg-gradient-to-br from-[hsl(0,45%,18%)] to-[hsl(15,40%,12%)] shadow-2xl border-0 relative overflow-visible h-full flex flex-col">
-              <GlowingEffect
-                spread={40}
+          <Card className="p-3 bg-gradient-to-br from-[hsl(0,45%,18%)] to-[hsl(15,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(0,50%,35%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95">
+            <GlowingEffect
+              spread={40}
               glow={true}
               disabled={false}
               proximity={64}
@@ -1318,33 +1275,20 @@ const Dashboard = () => {
               )}
             </div>
           </Card>
-        </BorderRotate>
         </div>
 
         {/* WhatsApp Banner */}
-        <BorderRotate
-          animationMode="auto-rotate"
-          animationSpeed={3}
-          gradientColors={{
-            primary: '#10b981',
-            secondary: '#34d399',
-            accent: '#6ee7b7'
-          }}
-          backgroundColor="hsl(142, 55%, 15%)"
-          borderWidth={3}
-          borderRadius={12}
-          className="animate-fade-in cursor-pointer hover:scale-105 hover:-translate-y-2 transition-all duration-300"
-          style={{ animationDelay: '200ms' }}
-        >
-          <Card className="p-3 sm:p-4 bg-gradient-to-br from-[hsl(142,60%,25%)] to-[hsl(142,55%,15%)] shadow-2xl border-0 relative overflow-visible cursor-pointer">
-            <GlowingEffect
-              spread={40}
-              glow={true}
-              disabled={false}
-              proximity={64}
-              inactiveZone={0.01}
-              borderWidth={2}
-            />
+        <Card className="p-3 sm:p-4 bg-gradient-to-br from-[hsl(142,60%,25%)] to-[hsl(142,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(142,70%,45%)]/40 relative overflow-hidden animate-fade-in hover:scale-105 transition-transform duration-200 cursor-pointer" style={{
+        animationDelay: '500ms'
+      }}>
+          <GlowingEffect
+            spread={40}
+            glow={true}
+            disabled={false}
+            proximity={64}
+            inactiveZone={0.01}
+            borderWidth={2}
+          />
             <div className="flex items-center gap-2 sm:gap-3 relative z-10">
               <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center p-2">
                 <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
@@ -1360,7 +1304,6 @@ const Dashboard = () => {
               </div>
             </div>
           </Card>
-        </BorderRotate>
 
 
         <div className="grid lg:grid-cols-3 gap-6">
@@ -1378,65 +1321,34 @@ const Dashboard = () => {
 
               <div className="space-y-3 sm:space-y-4">
                 {goals.length === 0 ? (
-                  <BorderRotate
-                    animationMode="auto-rotate"
-                    animationSpeed={3}
-                    gradientColors={{
-                      primary: '#f97316',
-                      secondary: '#fb923c',
-                      accent: '#fdba74'
-                    }}
-                    backgroundColor="hsl(25, 55%, 15%)"
-                    borderWidth={3}
-                    borderRadius={12}
-                    className="animate-fade-in cursor-pointer hover:scale-105 hover:-translate-y-2 transition-all duration-300"
-                  >
-                    <Card className="p-6 bg-gradient-to-br from-[hsl(25,60%,25%)] to-[hsl(25,55%,15%)] shadow-2xl border-0 relative overflow-hidden text-center">
-                      <GlowingEffect
-                        spread={40}
-                        glow={true}
-                        disabled={false}
-                        proximity={64}
-                        inactiveZone={0.01}
-                        borderWidth={2}
-                      />
+                  <Card className="p-6 bg-gradient-to-br from-[hsl(25,60%,25%)] to-[hsl(25,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(25,70%,45%)]/40 relative overflow-hidden text-center animate-fade-in">
+                    <GlowingEffect
+                      spread={40}
+                      glow={true}
+                      disabled={false}
+                      proximity={64}
+                      inactiveZone={0.01}
+                      borderWidth={2}
+                    />
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
                       <p className="text-white/90 mb-4 relative z-10 drop-shadow-lg">No tienes metas creadas aún</p>
                       <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:scale-105 transition-transform duration-200 relative z-10">
                         <Plus className="w-4 h-4 mr-2" />
-                        Crear tu primera meta
-                      </Button>
-                    </Card>
-                  </BorderRotate>
+                      Crear tu primera meta
+                    </Button>
+                  </Card>
                 ) : goals.map((goal, index) => {
                 const goalProgress = goal.current / goal.target * 100;
-                const goalColors = [
-                  { primary: '#a855f7', secondary: '#c084fc', accent: '#e9d5ff', bg: 'hsl(280, 55%, 15%)' },
-                  { primary: '#3b82f6', secondary: '#60a5fa', accent: '#93c5fd', bg: 'hsl(200, 55%, 15%)' },
-                  { primary: '#ec4899', secondary: '#f472b6', accent: '#fbcfe8', bg: 'hsl(340, 55%, 15%)' },
-                  { primary: '#10b981', secondary: '#34d399', accent: '#6ee7b7', bg: 'hsl(145, 55%, 15%)' },
-                ];
-                const colors = goalColors[index % goalColors.length];
                 const gradients = [
-                  'from-[hsl(280,60%,25%)] to-[hsl(280,55%,15%)]',
-                  'from-[hsl(200,60%,25%)] to-[hsl(200,55%,15%)]',
-                  'from-[hsl(340,60%,25%)] to-[hsl(340,55%,15%)]',
-                  'from-[hsl(145,60%,25%)] to-[hsl(145,55%,15%)]',
+                  'from-[hsl(280,60%,25%)] to-[hsl(280,55%,15%)] border-[hsl(280,70%,45%)]/40',
+                  'from-[hsl(200,60%,25%)] to-[hsl(200,55%,15%)] border-[hsl(200,70%,45%)]/40',
+                  'from-[hsl(340,60%,25%)] to-[hsl(340,55%,15%)] border-[hsl(340,70%,45%)]/40',
+                  'from-[hsl(145,60%,25%)] to-[hsl(145,55%,15%)] border-[hsl(145,70%,45%)]/40',
                 ];
                 const gradient = gradients[index % gradients.length];
-                return (
-                  <BorderRotate
-                    key={goal.id}
-                    animationMode="auto-rotate"
-                    animationSpeed={3}
-                    gradientColors={colors}
-                    backgroundColor={colors.bg}
-                    borderWidth={3}
-                    borderRadius={12}
-                    className="animate-fade-in"
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    <Card className={`p-4 sm:p-6 bg-gradient-to-br ${gradient} shadow-2xl border-0 relative overflow-visible hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300`}>
+                return <Card key={goal.id} className={`p-4 sm:p-6 bg-gradient-to-br ${gradient} card-glow shadow-2xl border-2 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in`} style={{
+                  animationDelay: `${index * 100}ms`
+                }}>
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
                         
                         <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-4 relative z-10">
@@ -1482,9 +1394,7 @@ const Dashboard = () => {
                             </span>
                           </div>
                         </div>
-                      </Card>
-                    </BorderRotate>
-                );
+                      </Card>;
               })}
               </div>
             </div>
@@ -1526,28 +1436,13 @@ const Dashboard = () => {
                     ];
                     const gradient = gradients[index % gradients.length];
                     
-                    const challengeColors = [
-                      { primary: '#f59e0b', secondary: '#fbbf24', accent: '#fde047', bg: 'hsl(38, 55%, 25%)' },
-                      { primary: '#3b82f6', secondary: '#60a5fa', accent: '#93c5fd', bg: 'hsl(200, 55%, 15%)' },
-                    ];
-                    const colors = challengeColors[index % challengeColors.length];
-                    
                     return (
-                      <BorderRotate
-                        key={challenge.id}
-                        animationMode="auto-rotate"
-                        animationSpeed={3}
-                        gradientColors={colors}
-                        backgroundColor={colors.bg}
-                        borderWidth={3}
-                        borderRadius={12}
-                        className="p-0 animate-fade-in cursor-pointer hover:scale-105 hover:-translate-y-2 transition-all duration-300"
-                        style={{ animationDelay: `${index * 100}ms` }}
+                      <Card 
+                        key={challenge.id} 
+                        className={`p-2.5 bg-gradient-to-br ${gradient} card-glow shadow-2xl border-2 relative overflow-hidden`}
+                        style={{ transform: 'translate3d(0, 0, 0)' }}
                       >
-                        <Card 
-                          className={`p-2.5 bg-gradient-to-br ${gradient} shadow-2xl border-0 relative`}
-                        >
-                          <div className="relative z-10">
+                        <div className="relative z-10">
                           <div className="mb-2">
                             <h4 className="text-sm font-bold text-white drop-shadow-lg mb-0.5 line-clamp-1 leading-tight">
                               {challenge.title}
@@ -1626,7 +1521,6 @@ const Dashboard = () => {
                           )}
                         </div>
                       </Card>
-                    </BorderRotate>
                     );
                   })}
                 </div>
@@ -1638,21 +1532,7 @@ const Dashboard = () => {
           <div className="space-y-6">
             
             {/* Recent Transactions */}
-            <BorderRotate
-              animationMode="auto-rotate"
-              animationSpeed={3}
-              gradientColors={{
-                primary: '#f59e0b',
-                secondary: '#fbbf24',
-                accent: '#fde047'
-              }}
-              backgroundColor="hsl(38, 55%, 15%)"
-              borderWidth={3}
-              borderRadius={12}
-              className="h-[220px] animate-fade-in"
-              style={{ animationDelay: '300ms' }}
-            >
-              <Card className="p-3 bg-gradient-to-br from-[hsl(45,60%,25%)] to-[hsl(38,55%,15%)] shadow-2xl border-0 relative overflow-visible h-full flex flex-col cursor-pointer">
+            <Card className="p-3 bg-gradient-to-br from-[hsl(45,60%,25%)] to-[hsl(38,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(45,70%,45%)]/40 relative overflow-hidden h-[220px] flex flex-col cursor-pointer">
               <GlowingEffect
                 spread={40}
                 glow={true}
@@ -1718,7 +1598,6 @@ const Dashboard = () => {
                 )}
               </div>
             </Card>
-          </BorderRotate>
 
             {/* Achievements */}
             
