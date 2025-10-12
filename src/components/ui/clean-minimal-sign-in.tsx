@@ -35,12 +35,9 @@ const SignIn2 = () => {
         <div className="flex items-center justify-center w-32 h-16 mb-6">
           <img src={moniLogo} alt="Moni AI" className="w-full h-full object-contain" />
         </div>
-        <h2 className="text-2xl font-semibold mb-2 text-center">
+        <h2 className="text-2xl font-semibold mb-6 text-center">
           Sign in with email
         </h2>
-        <p className="text-gray-500 text-sm mb-6 text-center">
-          Make a new doc to bring your words, data, and teams together. For free
-        </p>
         <div className="w-full flex flex-col gap-3 mb-2">
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
