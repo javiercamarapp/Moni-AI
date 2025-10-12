@@ -148,13 +148,13 @@ export default function AICoachInsightsWidget({
             <CarouselItem key={index} className="pl-1 md:pl-2 basis-full">
               <div className="px-1">
                 <Card 
-                  className={`p-4 rounded-[20px] shadow-xl border transition-all ${
+                  className={`p-4 rounded-[20px] border-0 transition-all ${
                     insight.isPositive 
-                      ? 'bg-emerald-500 border-emerald-100' 
-                      : 'bg-red-500 border-red-100'
+                      ? 'bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500' 
+                      : 'bg-gradient-to-r from-red-600 via-red-500 to-red-600'
                   }`}
                 >
-                  <p className="text-xs text-black leading-snug">
+                  <p className="text-xs text-white leading-snug">
                     {insight.emoji} <span className="font-medium">{insight.message}</span>
                   </p>
                 </Card>
