@@ -32,10 +32,10 @@ const SignIn2 = () => {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center rounded-xl z-1 gap-6">
       <div className="w-full max-w-[320px] bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl shadow-opacity-10 p-6 flex flex-col items-center border border-blue-100 text-black">
-        <div className="flex items-center justify-center w-40 h-20 mb-2">
+        <div className="flex items-center justify-center w-48 h-24 mb-4">
           <img src={moniLogo} alt="Moni AI" className="w-full h-full object-contain" />
         </div>
-        <div className="w-full flex flex-col gap-3 mb-2">
+        <div className="w-full flex flex-col gap-2 mb-2">
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
               <Mail className="w-4 h-4" />
@@ -72,16 +72,16 @@ const SignIn2 = () => {
         </div>
         <button
           onClick={handleSignIn}
-          className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 rounded-xl shadow hover:brightness-105 hover:scale-105 cursor-pointer transition-all mb-4 mt-2"
+          className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 rounded-xl shadow hover:brightness-105 hover:scale-105 cursor-pointer transition-all mb-2 mt-1"
         >
           Get Started
         </button>
-        <div className="flex items-center w-full my-2">
+        <div className="flex items-center w-full my-1">
           <div className="flex-grow border-t border-dashed border-gray-200"></div>
           <span className="mx-2 text-xs text-gray-400">Or sign in with</span>
           <div className="flex-grow border-t border-dashed border-gray-200"></div>
         </div>
-        <div className="flex gap-3 w-full justify-center mt-2">
+        <div className="flex gap-3 w-full justify-center mt-1">
           <button className="flex items-center justify-center w-12 h-12 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow">
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
