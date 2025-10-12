@@ -329,16 +329,16 @@ const Profile = () => {
           </div>
 
           {/* Plan Section */}
-          <Card className="bg-gradient-to-r from-purple-600 to-blue-600 border-0 p-4 hover:scale-105 transition-transform duration-200 shadow-xl rounded-[20px]">
+          <Card className="bg-white rounded-[20px] shadow-xl border border-blue-100 p-4 hover:scale-105 transition-transform duration-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-white/90 mb-1">Tu plan</p>
+                <p className="text-sm text-foreground/70 mb-1">Tu plan</p>
                 <div className="flex items-center gap-2">
-                  <Crown className="w-5 h-5 text-white" />
-                  <span className="text-lg font-bold text-white">Pro Black</span>
+                  <Crown className="w-5 h-5 text-purple-600" />
+                  <span className="text-lg font-bold text-foreground">Pro Black</span>
                 </div>
               </div>
-              <ChevronRight className="h-5 w-5 text-white/70" />
+              <ChevronRight className="h-5 w-5 text-foreground/70" />
             </div>
           </Card>
         </Card>
