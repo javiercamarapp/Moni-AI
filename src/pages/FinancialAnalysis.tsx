@@ -141,8 +141,8 @@ export default function FinancialAnalysis() {
         endDate: endDate.toISOString().split('T')[0]
       });
       
-      // Obtener transacciones del período actual
-      const { data: transactions } = await supabase
+      // Obtener transacciones del período actual - SIN LÍMITES, TODA LA BD
+      const { data: transactions, error: txError } = await supabase
         .from('transactions')
         .select('*')
         .eq('user_id', user.id)
@@ -150,11 +150,22 @@ export default function FinancialAnalysis() {
         .lte('transaction_date', endDate.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
       
-      console.log('📅 ANÁLISIS FINANCIERO - Rango de fechas:', {
+      if (txError) {
+        console.error('Error fetching transactions:', txError);
+        throw txError;
+      }
+      
+      console.log('📅 ANÁLISIS FINANCIERO - Transacciones obtenidas:', {
         periodo: period,
         fechaInicio: startDate.toISOString().split('T')[0],
         fechaFin: endDate.toISOString().split('T')[0],
-        transaccionesTotales: transactions?.length || 0
+        transaccionesTotales: transactions?.length || 0,
+        muestraTransacciones: transactions?.slice(0, 3).map(t => ({
+          fecha: t.transaction_date,
+          tipo: t.type,
+          monto: t.amount,
+          descripcion: t.description
+        }))
       });
       
       // Calcular promedios históricos: SIEMPRE últimos 12 meses + mes actual (13 meses total)
@@ -233,14 +244,22 @@ export default function FinancialAnalysis() {
         .filter(t => t.type === 'expense' || t.type === 'gasto')
         .reduce((sum, t) => sum + Number(t.amount), 0);
       
-      console.log('💵 Cálculo de métricas:', {
+      console.log('💵 Cálculo de métricas COMPLETO:', {
         periodo: period,
-        fechaInicio: startDate.toISOString().split('T')[0],
-        fechaFin: endDate.toISOString().split('T')[0],
-        transacciones: transactions.length,
+        transaccionesAnalizadas: transactions.length,
+        transaccionesIngreso: transactions.filter(t => t.type === 'income' || t.type === 'ingreso').length,
+        transaccionesGasto: transactions.filter(t => t.type === 'expense' || t.type === 'gasto').length,
         ingresos: totalIncome,
         gastos: totalExpenses,
-        balance: totalIncome - totalExpenses
+        balance: totalIncome - totalExpenses,
+        detalleIngresos: transactions
+          .filter(t => t.type === 'income' || t.type === 'ingreso')
+          .slice(0, 5)
+          .map(t => ({ fecha: t.transaction_date, monto: t.amount, descripcion: t.description })),
+        detalleGastos: transactions
+          .filter(t => t.type === 'expense' || t.type === 'gasto')
+          .slice(0, 5)
+          .map(t => ({ fecha: t.transaction_date, monto: t.amount, descripcion: t.description }))
       });
       
       const balance = totalIncome - totalExpenses;
@@ -599,11 +618,15 @@ export default function FinancialAnalysis() {
                 const balance = income - expenses;
                 const maxValue = Math.max(income, expenses);
                 
-                console.log('🎨 UI MOSTRANDO (period:', period, '):', {
+                console.log('🎨 UI MOSTRANDO CARD (period:', period, '):', {
                   ingresos: income,
                   gastos: expenses,
                   balance: balance,
-                  fuente: period === 'month' ? 'dashboardData' : (analysis?.metrics ? 'analysis' : 'quickMetrics')
+                  fuente: period === 'month' ? 'dashboardData (tiempo real)' : (analysis?.metrics ? 'analysis (calculado)' : 'quickMetrics (caché)'),
+                  dashboardIncome: dashboardData.monthlyIncome,
+                  dashboardExpenses: dashboardData.monthlyExpenses,
+                  analysisIncome: analysis?.metrics?.totalIncome,
+                  quickMetricsIncome: quickMetrics?.totalIncome
                 });
                 
                 return (
