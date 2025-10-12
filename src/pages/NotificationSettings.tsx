@@ -146,25 +146,25 @@ export default function NotificationSettings() {
           )}
         </div>
 
-        <div className="p-4 space-y-4">
+        <div className="px-4 py-4 space-y-4 max-w-full overflow-hidden">
 
           {/* Tipos de notificaciones */}
-          <Card className="bg-white border-blue-100 shadow-xl hover:shadow-glow transition-all hover:scale-105 overflow-hidden rounded-[20px]">
-            <div className="bg-blue-50 px-5 py-4 border-b border-blue-100">
+          <Card className="bg-white border-blue-100 shadow-xl hover:shadow-glow transition-all overflow-hidden rounded-[20px]">
+            <div className="bg-blue-50 px-4 py-4 border-b border-blue-100">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-white border border-blue-100">
+                <div className="p-2 rounded-lg bg-white border border-blue-100 flex-shrink-0">
                   <Bell className="h-5 w-5 text-foreground" />
                 </div>
-                <div>
-                  <h3 className="font-bold text-lg text-foreground">Tipos de Notificaciones</h3>
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-bold text-base sm:text-lg text-foreground truncate">Tipos de Notificaciones</h3>
                   <p className="text-xs text-foreground/70">Personaliza tus alertas de WhatsApp</p>
                 </div>
               </div>
             </div>
 
-            <div className="p-5 space-y-4">
+            <div className="p-4 space-y-3">
               <div className="flex items-center justify-between p-3 rounded-lg hover:bg-blue-50 transition-all">
-                <div className="flex-1">
+                <div className="flex-1 min-w-0 pr-4">
                   <Label className="text-foreground text-sm font-medium cursor-pointer">Resumen Diario</Label>
                   <p className="text-xs text-foreground/70 mt-1">
                     Recibe un resumen de tus finanzas cada día
@@ -173,12 +173,12 @@ export default function NotificationSettings() {
                 <Switch
                   checked={settings.daily_summary}
                   onCheckedChange={(checked) => updateSetting('daily_summary', checked)}
-                  className="ml-4"
+                  className="flex-shrink-0"
                 />
               </div>
 
               <div className="flex items-center justify-between p-3 rounded-lg hover:bg-blue-50 transition-all">
-                <div className="flex-1">
+                <div className="flex-1 min-w-0 pr-4">
                   <Label className="text-foreground text-sm font-medium cursor-pointer">Análisis Semanal</Label>
                   <p className="text-xs text-foreground/70 mt-1">
                     Análisis detallado cada lunes
@@ -187,12 +187,12 @@ export default function NotificationSettings() {
                 <Switch
                   checked={settings.weekly_analysis}
                   onCheckedChange={(checked) => updateSetting('weekly_analysis', checked)}
-                  className="ml-4"
+                  className="flex-shrink-0"
                 />
               </div>
 
               <div className="flex items-center justify-between p-3 rounded-lg hover:bg-blue-50 transition-all">
-                <div className="flex-1">
+                <div className="flex-1 min-w-0 pr-4">
                   <Label className="text-foreground text-sm font-medium cursor-pointer">Alertas de Gasto</Label>
                   <p className="text-xs text-foreground/70 mt-1">
                     Notificaciones cuando gastes más de lo normal
@@ -201,12 +201,12 @@ export default function NotificationSettings() {
                 <Switch
                   checked={settings.spending_alerts}
                   onCheckedChange={(checked) => updateSetting('spending_alerts', checked)}
-                  className="ml-4"
+                  className="flex-shrink-0"
                 />
               </div>
 
               <div className="flex items-center justify-between p-3 rounded-lg hover:bg-blue-50 transition-all">
-                <div className="flex-1">
+                <div className="flex-1 min-w-0 pr-4">
                   <Label className="text-foreground text-sm font-medium cursor-pointer">Tips de Ahorro</Label>
                   <p className="text-xs text-foreground/70 mt-1">
                     Consejos personalizados para ahorrar
@@ -215,12 +215,12 @@ export default function NotificationSettings() {
                 <Switch
                   checked={settings.savings_tips}
                   onCheckedChange={(checked) => updateSetting('savings_tips', checked)}
-                  className="ml-4"
+                  className="flex-shrink-0"
                 />
               </div>
 
               <div className="flex items-center justify-between p-3 rounded-lg hover:bg-blue-50 transition-all">
-                <div className="flex-1">
+                <div className="flex-1 min-w-0 pr-4">
                   <Label className="text-foreground text-sm font-medium cursor-pointer">Recordatorios de Metas</Label>
                   <p className="text-xs text-foreground/70 mt-1">
                     Progreso de tus metas de ahorro
@@ -229,27 +229,27 @@ export default function NotificationSettings() {
                 <Switch
                   checked={settings.goal_reminders}
                   onCheckedChange={(checked) => updateSetting('goal_reminders', checked)}
-                  className="ml-4"
+                  className="flex-shrink-0"
                 />
               </div>
             </div>
           </Card>
 
           {/* Umbrales */}
-          <Card className="bg-white border-blue-100 shadow-xl hover:shadow-glow transition-all hover:scale-105 overflow-hidden rounded-[20px]">
-            <div className="bg-blue-50 px-5 py-4 border-b border-blue-100">
+          <Card className="bg-white border-blue-100 shadow-xl hover:shadow-glow transition-all overflow-hidden rounded-[20px]">
+            <div className="bg-blue-50 px-4 py-4 border-b border-blue-100">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-white border border-blue-100">
+                <div className="p-2 rounded-lg bg-white border border-blue-100 flex-shrink-0">
                   <DollarSign className="h-5 w-5 text-foreground" />
                 </div>
-                <div>
-                  <h3 className="font-bold text-lg text-foreground">Umbrales de Alerta</h3>
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-bold text-base sm:text-lg text-foreground truncate">Umbrales de Alerta</h3>
                   <p className="text-xs text-foreground/70">Define límites personalizados</p>
                 </div>
               </div>
             </div>
 
-            <div className="p-5 space-y-4">
+            <div className="p-4 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="daily_limit" className="text-foreground text-sm font-medium">
                   Límite de Gasto Diario
@@ -291,20 +291,20 @@ export default function NotificationSettings() {
           </Card>
 
           {/* Horarios */}
-          <Card className="bg-white border-blue-100 shadow-xl hover:shadow-glow transition-all hover:scale-105 overflow-hidden rounded-[20px]">
-            <div className="bg-blue-50 px-5 py-4 border-b border-blue-100">
+          <Card className="bg-white border-blue-100 shadow-xl hover:shadow-glow transition-all overflow-hidden rounded-[20px]">
+            <div className="bg-blue-50 px-4 py-4 border-b border-blue-100">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-white border border-blue-100">
+                <div className="p-2 rounded-lg bg-white border border-blue-100 flex-shrink-0">
                   <Clock className="h-5 w-5 text-foreground" />
                 </div>
-                <div>
-                  <h3 className="font-bold text-lg text-foreground">Horarios</h3>
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-bold text-base sm:text-lg text-foreground truncate">Horarios</h3>
                   <p className="text-xs text-foreground/70">Configura cuándo recibir notificaciones</p>
                 </div>
               </div>
             </div>
 
-            <div className="p-5 space-y-4">
+            <div className="p-4 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="preferred_time" className="text-foreground text-sm font-medium">
                   Hora Preferida para Resumen Diario
@@ -314,7 +314,7 @@ export default function NotificationSettings() {
                   type="time"
                   value={settings.preferred_notification_time}
                   onChange={(e) => updateSetting('preferred_notification_time', e.target.value)}
-                  className="bg-white border-blue-100 text-foreground focus:border-primary transition-all"
+                  className="bg-white border-blue-100 text-foreground focus:border-primary transition-all w-full"
                 />
               </div>
 
@@ -333,7 +333,7 @@ export default function NotificationSettings() {
                       type="time"
                       value={settings.quiet_hours_start}
                       onChange={(e) => updateSetting('quiet_hours_start', e.target.value)}
-                      className="bg-white border-blue-100 text-foreground focus:border-primary transition-all"
+                      className="bg-white border-blue-100 text-foreground focus:border-primary transition-all w-full"
                     />
                   </div>
                   <div className="space-y-2">
@@ -345,7 +345,7 @@ export default function NotificationSettings() {
                       type="time"
                       value={settings.quiet_hours_end}
                       onChange={(e) => updateSetting('quiet_hours_end', e.target.value)}
-                      className="bg-white border-blue-100 text-foreground focus:border-primary transition-all"
+                      className="bg-white border-blue-100 text-foreground focus:border-primary transition-all w-full"
                     />
                   </div>
                 </div>
