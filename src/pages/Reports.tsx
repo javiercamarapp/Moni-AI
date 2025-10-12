@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Download, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Download, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -49,7 +49,6 @@ const Reports = () => {
           transactions.map(t => new Date(t.transaction_date).getFullYear())
         )].sort((a, b) => b - a);
         
-        console.log('Loaded years:', years);
         setAvailableYears(years);
       } else {
         setAvailableYears([new Date().getFullYear()]);
@@ -57,36 +56,6 @@ const Reports = () => {
     } catch (error) {
       console.error('Error loading years:', error);
       setAvailableYears([new Date().getFullYear()]);
-    }
-  };
-
-  const handlePreviousYear = () => {
-    const currentIndex = availableYears.indexOf(selectedYear);
-    console.log('Previous - Current index:', currentIndex, 'Current year:', selectedYear, 'Available years:', availableYears);
-    if (currentIndex !== -1 && currentIndex < availableYears.length - 1) {
-      const newYear = availableYears[currentIndex + 1];
-      console.log('Going to previous year:', newYear);
-      setSelectedYear(newYear);
-    } else {
-      console.log('Cannot go to previous year - at the end of array or invalid index');
-    }
-  };
-
-  const handleNextYear = () => {
-    const currentIndex = availableYears.indexOf(selectedYear);
-    const currentYear = new Date().getFullYear();
-    console.log('Next - Current index:', currentIndex, 'Current year:', selectedYear, 'Available years:', availableYears);
-    if (currentIndex !== -1 && currentIndex > 0) {
-      const newYear = availableYears[currentIndex - 1];
-      // No permitir ir más allá del año actual
-      if (newYear <= currentYear) {
-        console.log('Going to next year:', newYear);
-        setSelectedYear(newYear);
-      } else {
-        console.log('Cannot go to future year:', newYear);
-      }
-    } else {
-      console.log('Cannot go to next year - at the start of array or invalid index');
     }
   };
 
@@ -177,45 +146,12 @@ const Reports = () => {
           </div>
         </Card>
 
-        {/* Lista de Meses con Selector de Año */}
+        {/* Lista de Meses */}
         <div className="space-y-3">
-          <div className="flex items-center justify-center gap-3 px-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handlePreviousYear}
-              disabled={
-                availableYears.length <= 1 || 
-                selectedYear === availableYears[availableYears.length - 1]
-              }
-              className="h-8 w-8 rounded-full bg-white shadow-lg border border-blue-100 hover:bg-primary/10 hover:scale-110 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-              title="Año anterior"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-semibold text-foreground">
-                Reportes de
-              </h3>
-              <div className="bg-white rounded-[15px] shadow-lg border border-blue-100 px-4 py-1.5 min-w-[80px] text-center">
-                <span className="text-sm font-bold text-foreground">{selectedYear}</span>
-              </div>
-            </div>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleNextYear}
-              disabled={
-                availableYears.length <= 1 || 
-                selectedYear >= new Date().getFullYear()
-              }
-              className="h-8 w-8 rounded-full bg-white shadow-lg border border-blue-100 hover:bg-primary/10 hover:scale-110 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-              title="Año siguiente"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+          <div className="flex items-center justify-center px-2">
+            <h3 className="text-sm font-semibold text-foreground">
+              Reportes de ingresos y gastos de 2025
+            </h3>
           </div>
           <div className="grid grid-cols-1 gap-2 relative z-0">
             {[...months].reverse().filter((month) => {
