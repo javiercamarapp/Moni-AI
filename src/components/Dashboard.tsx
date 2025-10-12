@@ -816,7 +816,13 @@ const Dashboard = () => {
                 <p className="text-xs text-foreground/80 mb-1 font-medium">Score Moni</p>
                 <p className="text-3xl font-bold text-foreground">{scoreMoni}<span className="text-sm text-foreground/60">/100</span></p>
                 <p className="text-xs text-foreground/80 mt-1">
-                  {scoreMoni >= 70 ? '✅ Excelente' : scoreMoni >= 40 ? '⚠️ Mejorable' : '❌ Crítico'}
+                  {scoreMoni >= 90 ? '✅ Excelente' : 
+                   scoreMoni >= 80 ? '✅ Muy Bueno' :
+                   scoreMoni >= 70 ? '✅ Bueno' :
+                   scoreMoni >= 60 ? '⚠️ Medio' :
+                   scoreMoni >= 40 ? '⚠️ Malo' :
+                   scoreMoni >= 20 ? '❌ Malo' :
+                   '❌ Muy Malo'}
                 </p>
               </div>
               <div className="relative">
@@ -841,7 +847,15 @@ const Dashboard = () => {
                     fill="none" 
                     strokeDasharray={213.628} 
                     strokeDashoffset={213.628 - (213.628 * scoreMoni) / 100} 
-                    className={`transition-all duration-1000 ${scoreMoni >= 70 ? 'text-emerald-600' : scoreMoni >= 40 ? 'text-amber-500' : 'text-red-600'}`}
+                    className={`transition-all duration-1000 ${
+                      scoreMoni >= 90 ? 'text-emerald-700' :
+                      scoreMoni >= 80 ? 'text-emerald-600' :
+                      scoreMoni >= 70 ? 'text-emerald-500' :
+                      scoreMoni >= 60 ? 'text-yellow-500' :
+                      scoreMoni >= 40 ? 'text-orange-500' :
+                      scoreMoni >= 20 ? 'text-red-600' :
+                      'text-red-700'
+                    }`}
                     strokeLinecap="round" 
                   />
                 </svg>
