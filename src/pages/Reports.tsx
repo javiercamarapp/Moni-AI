@@ -150,7 +150,7 @@ const Reports = () => {
         <div className="space-y-3">
           <div className="flex items-center justify-center px-2">
             <h3 className="text-sm font-semibold text-foreground">
-              Reportes de ingresos y gastos de 2025
+              Reportes de ingresos y gastos de {selectedYear}
             </h3>
           </div>
           <div className="grid grid-cols-1 gap-2 relative z-0">
