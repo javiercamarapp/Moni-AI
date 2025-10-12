@@ -12,6 +12,7 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carouse
 import Autoplay from 'embla-carousel-autoplay';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { useToast } from '@/hooks/use-toast';
+import { LoadingScreen } from '@/components/LoadingScreen';
 interface CategoryBalance {
   id: string;
   name: string;
@@ -456,9 +457,7 @@ const Balance = () => {
   };
   // Solo mostrar pantalla de carga si no hay datos iniciales
   if (loading && !hasInitialData) {
-    return <div className="min-h-screen animated-wave-bg flex items-center justify-center">
-        <p className="text-white text-lg">Cargando balance...</p>
-      </div>;
+    return <LoadingScreen />;
   }
   return <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}

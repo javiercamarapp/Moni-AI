@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { LoadingScreen } from '@/components/LoadingScreen';
 interface Category {
   id: string;
   name: string;
@@ -258,12 +259,7 @@ const GestionarCategorias = () => {
       {!isSubcategory && category.subcategories && category.subcategories.map(subcat => renderCategoryCard(subcat, true))}
     </div>;
   if (loading) {
-    return <div className="min-h-screen animated-wave-bg flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white text-lg font-semibold">Cargando categorías...</p>
-        </div>
-      </div>;
+    return <LoadingScreen />;
   }
   return <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}

@@ -33,6 +33,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { LoadingScreen } from '@/components/LoadingScreen';
 
 const Ingresos = () => {
   const navigate = useNavigate();
@@ -278,11 +279,7 @@ const Ingresos = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
-        <p className="text-foreground text-lg">Cargando ingresos...</p>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
