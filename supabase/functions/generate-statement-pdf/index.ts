@@ -166,26 +166,130 @@ serve(async (req) => {
       `;
     };
 
-    // Generate AI insights
+    // Detect subscriptions and daily expenses for gastos reports
+    let subscriptions: any[] = [];
+    let dailyExpenses: any[] = [];
+    let subscriptionsTotal = 0;
+    let dailyExpensesTotal = 0;
+
+    if (type === 'gasto' || !type) {
+      try {
+        // Get all expense transactions for AI analysis
+        const allExpenses = transactions?.filter(t => t.type === 'gasto') || [];
+        
+        if (allExpenses.length > 0) {
+          // Detect subscriptions
+          const { data: subsResult } = await supabase.functions.invoke('detect-subscriptions', {
+            body: { transactions: allExpenses }
+          });
+
+          if (subsResult?.subscriptions) {
+            // Group subscriptions by normalized name
+            const uniqueSubs = new Map();
+            subsResult.subscriptions.forEach((sub: any) => {
+              const normalizedName = sub.description.toLowerCase()
+                .replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '')
+                .replace(/\s*\d{4}$/g, '')
+                .trim();
+              
+              if (!uniqueSubs.has(normalizedName)) {
+                uniqueSubs.set(normalizedName, {
+                  name: sub.description.replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '').trim(),
+                  amount: Number(sub.amount),
+                  frequency: sub.frequency || 'mensual',
+                  category: sub.category || 'Streaming'
+                });
+              }
+            });
+            subscriptions = Array.from(uniqueSubs.values());
+            subscriptionsTotal = subscriptions.reduce((sum, s) => sum + s.amount, 0);
+          }
+
+          // Detect daily expenses
+          const { data: dailyResult } = await supabase.functions.invoke('detect-daily-expenses', {
+            body: { transactions: allExpenses }
+          });
+
+          if (dailyResult?.expenses) {
+            // Group daily expenses by normalized name
+            const uniqueExpenses = new Map();
+            dailyResult.expenses.forEach((exp: any) => {
+              const normalizedName = exp.description.toLowerCase()
+                .replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '')
+                .replace(/\s*\d{4}$/g, '')
+                .replace(/\s*(supercenter|express|plus|premium|básico|básica)\s*/gi, '')
+                .replace(/\s*-\s*.*/gi, '')
+                .trim();
+              
+              if (!uniqueExpenses.has(normalizedName)) {
+                uniqueExpenses.set(normalizedName, {
+                  name: exp.description
+                    .replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '')
+                    .replace(/\s*(supercenter|express|plus|premium|básico|básica)\s*/gi, '')
+                    .replace(/\s*-\s*.*/gi, '')
+                    .trim(),
+                  averageAmount: Number(exp.averageAmount),
+                  minAmount: Number(exp.minAmount),
+                  maxAmount: Number(exp.maxAmount),
+                  occurrences: exp.occurrences || 1,
+                  category: exp.categoryName || 'Servicios'
+                });
+              } else {
+                const existing = uniqueExpenses.get(normalizedName);
+                const totalOccurrences = existing.occurrences + (exp.occurrences || 1);
+                uniqueExpenses.set(normalizedName, {
+                  ...existing,
+                  averageAmount: (existing.averageAmount * existing.occurrences + Number(exp.averageAmount) * (exp.occurrences || 1)) / totalOccurrences,
+                  minAmount: Math.min(existing.minAmount, Number(exp.minAmount)),
+                  maxAmount: Math.max(existing.maxAmount, Number(exp.maxAmount)),
+                  occurrences: totalOccurrences
+                });
+              }
+            });
+            dailyExpenses = Array.from(uniqueExpenses.values());
+            dailyExpensesTotal = dailyExpenses.reduce((sum, e) => sum + e.averageAmount, 0);
+          }
+        }
+      } catch (error) {
+        console.error('Error detecting subscriptions/daily expenses:', error);
+      }
+    }
+
+    // Generate AI insights with subscriptions and daily expenses context
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     let aiInsights = '';
 
     if (LOVABLE_API_KEY) {
       try {
         const typeLabel = type === 'ingreso' ? 'Ingresos' : 'Gastos';
-        const aiPrompt = `Analiza los siguientes datos de ${typeLabel.toLowerCase()} ${viewMode === 'mensual' ? 'mensuales' : 'anuales'} y proporciona conclusiones e insights valiosos:
-
-Período: ${viewMode === 'mensual' ? `${month}/${year}` : year}
+        
+        let contextInfo = `Período: ${viewMode === 'mensual' ? `${month}/${year}` : year}
 Total de ${typeLabel}: $${totalAmount.toFixed(2)}
 Número de transacciones: ${filteredTransactions?.length || 0}
-Categorías principales: ${byCategory.slice(0, 3).map(c => `${c.name} ($${c.total.toFixed(2)})`).join(', ')}
+Categorías principales: ${byCategory.slice(0, 3).map(c => `${c.name} ($${c.total.toFixed(2)})`).join(', ')}`;
+
+        if ((type === 'gasto' || !type) && (subscriptions.length > 0 || dailyExpenses.length > 0)) {
+          contextInfo += `
+
+ANÁLISIS ESPECIAL DE GASTOS RECURRENTES:
+- Suscripciones detectadas: ${subscriptions.length} (Total mensual: $${subscriptionsTotal.toFixed(2)})
+  ${subscriptions.slice(0, 3).map(s => `  • ${s.name}: $${s.amount.toFixed(2)}`).join('\n')}
+- Gastos cotidianos detectados: ${dailyExpenses.length} (Total promedio: $${dailyExpensesTotal.toFixed(2)})
+  ${dailyExpenses.slice(0, 3).map(e => `  • ${e.name}: $${e.averageAmount.toFixed(2)} promedio`).join('\n')}`;
+        }
+
+        const aiPrompt = `Analiza los siguientes datos financieros y proporciona conclusiones e insights valiosos:
+
+${contextInfo}
 
 Proporciona:
-1. Un análisis del desempeño de ${typeLabel.toLowerCase()}
-2. 3-4 conclusiones clave sobre patrones y tendencias
-3. 2-3 recomendaciones específicas y accionables para ${type === 'ingreso' ? 'aumentar ingresos' : 'optimizar gastos'}
+1. Un análisis del desempeño financiero
+2. ${(type === 'gasto' || !type) && subscriptions.length > 0 ? 'Análisis específico de las suscripciones detectadas y recomendaciones de optimización' : ''}
+3. ${(type === 'gasto' || !type) && dailyExpenses.length > 0 ? 'Interpretación de los gastos cotidianos y patrones de consumo' : ''}
+4. 3-4 conclusiones clave sobre patrones y tendencias
+5. 2-3 recomendaciones específicas y accionables
 
-Mantén el tono profesional. Limita tu respuesta a 250 palabras.`;
+Mantén el tono profesional y estructurado. Limita tu respuesta a 300 palabras.`;
 
         const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
           method: 'POST',
@@ -589,6 +693,81 @@ Mantén el tono profesional. Limita tu respuesta a 250 palabras.`;
                 <div class="metric-label">Promedio por Transacción</div>
                 <div class="metric-value">$${filteredTransactions.length > 0 ? (totalAmount / filteredTransactions.length).toLocaleString('es-MX', { minimumFractionDigits: 0 }) : '0'}</div>
               </div>
+            </div>
+          </div>
+          ` : ''}
+
+          <!-- Desglose de Suscripciones (solo para reportes de gastos) -->
+          ${(type === 'gasto' || !type) && subscriptions.length > 0 ? `
+          <div class="section">
+            <h2 class="section-title">🔄 Suscripciones Detectadas</h2>
+            <p style="color: #6b7280; font-size: 13px; margin-bottom: 15px;">Gastos recurrentes pagados durante 3+ meses</p>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 40%;">Servicio</th>
+                    <th style="width: 20%;">Frecuencia</th>
+                    <th style="width: 20%;">Categoría</th>
+                    <th style="width: 20%; text-align: right;">Monto Mensual</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${subscriptions.map(sub => `
+                    <tr>
+                      <td>${sub.name}</td>
+                      <td>${sub.frequency}</td>
+                      <td>${sub.category}</td>
+                      <td style="text-align: right;" class="amount-negative">$${sub.amount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+            <div class="summary-row">
+              <span class="label">Total en Suscripciones:</span>
+              <span class="value amount-negative">$${subscriptionsTotal.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>
+            </div>
+          </div>
+          ` : ''}
+
+          <!-- Desglose de Gastos Cotidianos (solo para reportes de gastos) -->
+          ${(type === 'gasto' || !type) && dailyExpenses.length > 0 ? `
+          <div class="section">
+            <h2 class="section-title">📅 Gastos Cotidianos Detectados</h2>
+            <p style="color: #6b7280; font-size: 13px; margin-bottom: 15px;">Gastos variables pagados durante 6+ meses consecutivos</p>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 35%;">Concepto</th>
+                    <th style="width: 15%;">Categoría</th>
+                    <th style="width: 15%; text-align: right;">Promedio</th>
+                    <th style="width: 15%; text-align: right;">Mínimo</th>
+                    <th style="width: 15%; text-align: right;">Máximo</th>
+                    <th style="width: 5%; text-align: center;">Pagos</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${dailyExpenses.map(exp => {
+                    const variance = ((exp.maxAmount - exp.minAmount) / exp.averageAmount) * 100;
+                    const varianceColor = variance < 20 ? '#10b981' : variance < 50 ? '#f59e0b' : '#ef4444';
+                    return `
+                    <tr>
+                      <td>${exp.name}</td>
+                      <td>${exp.category}</td>
+                      <td style="text-align: right; font-weight: 600;">$${exp.averageAmount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</td>
+                      <td style="text-align: right; color: #10b981;">$${exp.minAmount.toLocaleString('es-MX', { minimumFractionDigits: 0 })}</td>
+                      <td style="text-align: right; color: ${varianceColor};">$${exp.maxAmount.toLocaleString('es-MX', { minimumFractionDigits: 0 })}</td>
+                      <td style="text-align: center; font-size: 12px;">${exp.occurrences}</td>
+                    </tr>
+                  `}).join('')}
+                </tbody>
+              </table>
+            </div>
+            <div class="summary-row">
+              <span class="label">Total Promedio en Gastos Cotidianos:</span>
+              <span class="value amount-negative">$${dailyExpensesTotal.toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>
             </div>
           </div>
           ` : ''}
