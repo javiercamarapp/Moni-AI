@@ -31,11 +31,8 @@ export default function SafeToSpendWidget({
   
   return (
     <Card 
-      className={`p-4 card-glow border-white/20 ${
-        safeToSpend >= 0 
-          ? 'bg-gradient-to-br from-success/90 to-success/70' 
-          : 'bg-gradient-to-br from-danger/90 to-danger/70'
-      }`}
+      className="p-4 card-glow border-white/20"
+      style={{ backgroundColor: '#96ff85' }}
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
