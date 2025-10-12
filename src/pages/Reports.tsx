@@ -74,11 +74,6 @@ const Reports = () => {
         
         // Liberar el objeto URL
         URL.revokeObjectURL(url);
-
-        toast({
-          title: "¡Descarga iniciada!",
-          description: `Descargando reporte de ${months[month - 1].name} ${currentYear}. Abre el archivo y presiona Ctrl+P para guardarlo como PDF.`
-        });
       }
     } catch (error: any) {
       console.error('Error downloading report:', error);
