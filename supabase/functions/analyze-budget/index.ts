@@ -1,3 +1,4 @@
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -23,26 +24,54 @@ serve(async (req) => {
     const percentageOfMonthPassed = (daysIntoMonth / daysInMonth) * 100;
     const expectedSpending = (percentageOfMonthPassed / 100) * budget;
     const isOnTrack = monthlyExpenses <= expectedSpending;
+    
+    // Calcular proyección del gasto total al final del mes
+    const dailyAverageSpent = monthlyExpenses / daysIntoMonth;
+    const projectedTotal = dailyAverageSpent * daysInMonth;
+    const projectedPercentage = (projectedTotal / budget) * 100;
+    const willExceedBudget = projectedTotal > budget;
+    const projectedOverspend = projectedTotal - budget;
+    
+    // Velocidad de gasto comparada con lo esperado
+    const spendingRate = monthlyExpenses / expectedSpending;
+    
+    console.log('📊 Budget Analysis:', {
+      budget,
+      monthlyExpenses,
+      percentageSpent: percentageSpent.toFixed(1) + '%',
+      spendingRate: spendingRate.toFixed(2),
+      dailyAverageSpent: dailyAverageSpent.toFixed(2),
+      projectedTotal: projectedTotal.toFixed(2),
+      projectedPercentage: projectedPercentage.toFixed(1) + '%',
+      willExceedBudget,
+      daysRemaining: daysInMonth - daysIntoMonth
+    });
 
-    const prompt = `Analiza este patrón de gastos mensual y responde SOLO con UNA de estas tres frases exactas:
+    const prompt = `Eres un analista financiero experto. Analiza este presupuesto mensual y PROYECTA si cumplirá o NO el presupuesto al final del mes.
 
-1. "Dentro del presupuesto del mes" - si el patrón es bueno
-2. "Se debe de ahorrar un poco más" - si el patrón es intermedio
-3. "Hay que mejorar o no lograremos el presupuesto del mensual" - si el patrón es malo
-
-DATOS:
-- Presupuesto mensual: $${budget.toFixed(2)}
+DATOS DEL MES ACTUAL:
+- Presupuesto mensual (80% del ingreso): $${budget.toFixed(2)}
 - Gastado hasta ahora: $${monthlyExpenses.toFixed(2)} (${percentageSpent.toFixed(1)}% del presupuesto)
-- Días transcurridos del mes: ${daysIntoMonth} de ${daysInMonth} (${percentageOfMonthPassed.toFixed(1)}%)
+- Días transcurridos: ${daysIntoMonth} de ${daysInMonth} (${percentageOfMonthPassed.toFixed(1)}%)
 - Gasto esperado a esta altura: $${expectedSpending.toFixed(2)}
-- ¿Va bien? ${isOnTrack ? 'Sí' : 'No'}
+- Velocidad de gasto: ${spendingRate > 1 ? 'ACELERADA' : 'CONTROLADA'} (${(spendingRate * 100).toFixed(0)}% de lo esperado)
+- Promedio diario: $${dailyAverageSpent.toFixed(2)}/día
+- PROYECCIÓN FIN DE MES: $${projectedTotal.toFixed(2)} (${projectedPercentage.toFixed(0)}% del presupuesto)
+${willExceedBudget ? `- Se EXCEDERÁ por: $${projectedOverspend.toFixed(2)}` : `- Se AHORRARÁ: $${(budget - projectedTotal).toFixed(2)}`}
 
-CRITERIOS:
-- BUENO: Si el gasto actual es menor o igual al gasto esperado según los días transcurridos
-- INTERMEDIO: Si se está gastando un poco más de lo esperado pero aún es recuperable
-- MALO: Si se está gastando mucho más de lo esperado y difícilmente se cumplirá el presupuesto
+INSTRUCCIONES:
+1. Analiza la PROYECCIÓN de fin de mes
+2. Responde con UNA de estas tres frases EXACTAS con emoji al inicio:
+   - "✅ Cumplirás el presupuesto del mes" - si la proyección indica que SÍ cumplirá
+   - "⚡ Reduce gastos para cumplir el presupuesto" - si hay riesgo pero AÚN puede cumplir
+   - "⚠️ No cumplirás el presupuesto este mes" - si la proyección indica que NO cumplirá
 
-Responde ÚNICAMENTE con una de las tres frases exactas.`;
+CRITERIOS DE DECISIÓN:
+- CUMPLIRÁ (✅): proyección ≤ 100% del presupuesto
+- RIESGO (⚡): proyección entre 100% y 110% del presupuesto
+- NO CUMPLIRÁ (⚠️): proyección > 110% del presupuesto
+
+Responde SOLO con una de las tres frases exactas (incluyendo el emoji al inicio).`;
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -53,10 +82,6 @@ Responde ÚNICAMENTE con una de las tres frases exactas.`;
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
         messages: [
-          {
-            role: 'system',
-            content: 'Eres un asistente financiero experto. Responde SOLO con la frase exacta solicitada, sin explicaciones adicionales.'
-          },
           {
             role: 'user',
             content: prompt
@@ -94,32 +119,32 @@ Responde ÚNICAMENTE con una de las tres frases exactas.`;
     }
 
     const data = await response.json();
-    let message = data.choices?.[0]?.message?.content?.trim() || "Dentro del presupuesto del mes";
+    let message = data.choices?.[0]?.message?.content?.trim() || "";
 
-    // Asegurar que la respuesta sea una de las tres frases exactas
-    if (!message.includes("Dentro del presupuesto del mes") && 
-        !message.includes("Se debe de ahorrar un poco más") && 
-        !message.includes("Hay que mejorar o no lograremos el presupuesto del mensual")) {
-      // Fallback basado en lógica simple
-      if (isOnTrack && percentageSpent < 70) {
-        message = "Dentro del presupuesto del mes";
-      } else if (percentageSpent > 90 || (monthlyExpenses > expectedSpending * 1.3)) {
-        message = "Hay que mejorar o no lograremos el presupuesto del mensual";
+    // Validar que la respuesta sea una de las tres frases exactas
+    const validResponses = [
+      "Cumplirás el presupuesto del mes",
+      "Reduce gastos para cumplir el presupuesto",
+      "No cumplirás el presupuesto este mes"
+    ];
+    
+    const isValidResponse = validResponses.some(phrase => message.includes(phrase));
+    
+    if (!isValidResponse) {
+      // Fallback basado en proyección real
+      if (projectedPercentage <= 100) {
+        message = "✅ Cumplirás el presupuesto del mes";
+      } else if (projectedPercentage <= 110) {
+        message = "⚡ Reduce gastos para cumplir el presupuesto";
       } else {
-        message = "Se debe de ahorrar un poco más";
+        message = "⚠️ No cumplirás el presupuesto este mes";
       }
     }
 
-    // Agregar emoji según el mensaje
-    let icon = "✅";
-    if (message.includes("Hay que mejorar")) {
-      icon = "⚠️";
-    } else if (message.includes("Se debe de ahorrar")) {
-      icon = "⚡";
-    }
+    console.log('🤖 AI Response:', message);
 
     return new Response(
-      JSON.stringify({ message: `${icon} ${message}` }),
+      JSON.stringify({ message }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
