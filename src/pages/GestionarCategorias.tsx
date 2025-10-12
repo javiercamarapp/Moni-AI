@@ -334,19 +334,39 @@ const GestionarCategorias = () => {
                   <div className="flex gap-3">
                     <Button
                       type="button"
-                      onClick={() => setNewCategory({ ...newCategory, type: 'ingreso' })}
+                      onClick={() => setNewCategory({ ...newCategory, type: 'ingreso', parent_id: null })}
                       className={`flex-1 ${newCategory.type === 'ingreso' ? 'bg-primary text-white' : 'bg-white text-foreground border border-blue-100'} hover:bg-primary/80 h-12`}
                     >
                       Ingreso
                     </Button>
                     <Button
                       type="button"
-                      onClick={() => setNewCategory({ ...newCategory, type: 'gasto' })}
+                      onClick={() => setNewCategory({ ...newCategory, type: 'gasto', parent_id: null })}
                       className={`flex-1 ${newCategory.type === 'gasto' ? 'bg-primary text-white' : 'bg-white text-foreground border border-blue-100'} hover:bg-primary/80 h-12`}
                     >
                       Gasto
                     </Button>
                   </div>
+                </div>
+              )}
+
+              {!parentCategoryForSubcategory && (
+                <div className="space-y-2">
+                  <Label className="text-foreground/90 text-base">Categoría Padre (Opcional)</Label>
+                  <select
+                    value={newCategory.parent_id || ''}
+                    onChange={(e) => setNewCategory({ ...newCategory, parent_id: e.target.value || null })}
+                    className="w-full h-14 rounded-lg bg-white border border-blue-100 text-foreground px-4"
+                  >
+                    <option value="">Ninguna (Categoría principal)</option>
+                    {categories
+                      .filter(cat => cat.type === newCategory.type)
+                      .map(cat => (
+                        <option key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </option>
+                      ))}
+                  </select>
                 </div>
               )}
 
