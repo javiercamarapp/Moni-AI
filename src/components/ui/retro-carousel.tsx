@@ -285,7 +285,7 @@ const ScoreCard = ({
     <>
       <AnimatePresence>
         {isExpanded && (
-          <div className="fixed inset-0 h-screen overflow-hidden z-50">
+          <div className="fixed inset-0 h-screen overflow-hidden z-50 flex items-center justify-center">
             <motion.div
               initial={{opacity: 0}}
               animate={{opacity: 1}}
@@ -293,12 +293,12 @@ const ScoreCard = ({
               className="bg-black/50 backdrop-blur-lg h-full w-full fixed inset-0"
             />
             <motion.div
-              initial={{opacity: 0}}
-              animate={{opacity: 1}}
-              exit={{opacity: 0}}
+              initial={{opacity: 0, scale: 0.9}}
+              animate={{opacity: 1, scale: 1}}
+              exit={{opacity: 0, scale: 0.9}}
               ref={containerRef}
               layoutId={layout ? `card-${component.title}` : undefined}
-              className={`max-w-5xl mx-auto bg-gradient-to-b ${colors.gradient} h-full z-[60] p-4 md:p-10 rounded-3xl relative md:mt-10`}
+              className={`max-w-4xl w-full mx-4 bg-gradient-to-b ${colors.gradient} h-3/4 z-[60] p-4 md:p-10 rounded-3xl relative overflow-y-auto`}
             >
               <button
                 className={`sticky top-4 h-8 w-8 right-0 ml-auto rounded-full flex items-center justify-center ${colors.button}`}
@@ -326,8 +326,9 @@ const ScoreCard = ({
           </div>
         )}
       </AnimatePresence>
-      <motion.div
+      <motion.button
         layoutId={layout ? `card-${component.title}` : undefined}
+        onClick={handleExpand}
         className=""
         whileHover={{
           rotateX: 2,
@@ -370,7 +371,7 @@ const ScoreCard = ({
             </motion.p>
           </div>
         </div>
-      </motion.div>
+      </motion.button>
     </>
   );
 };
