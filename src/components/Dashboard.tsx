@@ -1174,7 +1174,7 @@ const Dashboard = () => {
                 </div>
               ) : (
                 <>
-                  <ScrollArea className="flex-1 min-h-0 pr-1">
+                  <ScrollArea className="flex-1 min-h-0 pr-1 [&>div>div[style]]:!pr-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                     <div className="space-y-0.5">
                       {upcomingSubscriptions.map((sub) => (
                         <div 
@@ -1249,7 +1249,7 @@ const Dashboard = () => {
                     </p>
                   </div>
                   
-                  <ScrollArea className="flex-1 min-h-0 pr-1">
+                  <ScrollArea className="flex-1 min-h-0 pr-1 [&>div>div[style]]:!pr-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                     <div className="space-y-0.5">
                       {creditCardDebts.map((card, index) => (
                         <div key={index} className="bg-white/10 rounded py-0.5 sm:py-2 px-1 sm:px-3 backdrop-blur-sm border border-white/20 min-h-[18px] sm:min-h-[50px]">
