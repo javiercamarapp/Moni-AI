@@ -453,7 +453,7 @@ const Profile = () => {
                     <Camera className="h-3 w-3" />
                   </button>
                 </PopoverTrigger>
-                <PopoverContent className="w-48 p-2" align="end">
+                <PopoverContent className="w-48 p-2 bg-white border border-gray-200 shadow-lg z-50" align="end">
                   <div className="space-y-1">
                     <Button
                       variant="ghost"
