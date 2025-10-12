@@ -955,39 +955,35 @@ const Dashboard = () => {
 
       {/* Score Moni - Compacto */}
       {scoreMoni !== null && <div className="mx-4 mb-4">
-          <Card className={`p-4 card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95 relative overflow-hidden ${scoreMoni >= 70 ? 'bg-gradient-to-br from-success/90 to-success/70' : scoreMoni >= 40 ? 'bg-gradient-to-br from-warning/90 to-warning/70' : 'bg-gradient-to-br from-danger/90 to-danger/70'}`}
+          <Card className="p-4 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer border border-blue-100 animate-fade-in"
             onClick={() => navigate('/score-moni')}
           >
-            {/* Efecto brillante */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent" 
-                 style={{
-                   backgroundSize: '200% 100%',
-                   animation: 'shimmer 2s ease-in-out infinite',
-                 }}
-            />
-            
-            <div className="relative z-10 flex items-center justify-between">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-white/90 mb-1">Score Moni</p>
-                <p className="text-3xl font-bold text-white">{scoreMoni}<span className="text-sm text-white/80">/100</span></p>
-                <p className="text-xs text-white/90 mt-1">
+                <p className="text-xs text-foreground/80 mb-1 font-medium">Score Moni</p>
+                <p className="text-3xl font-bold text-foreground">{scoreMoni}<span className="text-sm text-foreground/60">/100</span></p>
+                <p className="text-xs text-foreground/80 mt-1">
                   {scoreMoni >= 70 ? '✅ Excelente' : scoreMoni >= 40 ? '⚠️ Mejorable' : '❌ Crítico'}
                 </p>
               </div>
               <div className="relative">
                 <svg className="w-20 h-20 transform -rotate-90">
-                  <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" className="text-white/30" />
-                  <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" strokeDasharray={`${2 * Math.PI * 34}`} strokeDashoffset={`${2 * Math.PI * 34 * (1 - scoreMoni / 100)}`} className="text-white transition-all" strokeLinecap="round" />
+                  <circle cx="40" cy="40" r="34" stroke="currentColor" strokeWidth="6" fill="none" className="text-muted/30" />
+                  <circle 
+                    cx="40" 
+                    cy="40" 
+                    r="34" 
+                    stroke="currentColor" 
+                    strokeWidth="6" 
+                    fill="none" 
+                    strokeDasharray={`${2 * Math.PI * 34}`} 
+                    strokeDashoffset={`${2 * Math.PI * 34 * (1 - scoreMoni / 100)}`} 
+                    className={`transition-all ${scoreMoni >= 70 ? 'text-emerald-600' : scoreMoni >= 40 ? 'text-amber-500' : 'text-red-600'}`}
+                    strokeLinecap="round" 
+                  />
                 </svg>
               </div>
             </div>
-            
-            <style>{`
-              @keyframes shimmer {
-                0% { transform: translateX(-100%); }
-                100% { transform: translateX(200%); }
-              }
-            `}</style>
           </Card>
         </div>}
 
