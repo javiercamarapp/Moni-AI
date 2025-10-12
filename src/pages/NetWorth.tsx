@@ -352,7 +352,7 @@ export default function NetWorth() {
         {/* Total Líquido */}
         <div className="mb-4 bg-white backdrop-blur-sm rounded-[20px] p-4 border border-blue-100 shadow-xl">
           <p className="text-xs text-foreground/80 mb-1 font-medium">Efectivo Disponible</p>
-          <p className="text-2xl font-bold text-foreground break-words">
+          <p className="text-2xl font-bold text-primary break-words">
             ${assets
               .filter(a => isLiquidAsset(a.category, a.name))
               .filter(a => selectedInstitution === 'All' || a.name.startsWith(selectedInstitution))
