@@ -1311,8 +1311,8 @@ const Dashboard = () => {
           <div className="lg:col-span-2 space-y-6">
             <div>
               <div className="flex flex-row justify-between items-center mb-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-white">Tus Metas</h3>
-                <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-gradient-card card-glow hover:bg-white/30 text-white border-white/30 text-xs sm:text-sm hover:scale-105 transition-transform duration-200">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Tus Metas</h3>
+                <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-green-600 hover:bg-green-700 text-white border-0 text-xs sm:text-sm hover:scale-105 transition-all">
                   <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   Nueva Meta
                 </Button>
@@ -1390,14 +1390,14 @@ const Dashboard = () => {
             {/* Tus Retos Semanales Section */}
             <div>
               <div className="flex flex-row justify-between items-center mb-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-white">Tus Retos Semanales</h3>
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Tus Retos Semanales</h3>
                 <div className="flex gap-2">
                   {challenges.filter(c => c.status === 'active').length < 2 && challenges.some(c => c.status === 'pending') && (
                     <Button 
                       size="sm" 
                       onClick={handleRegenerateChallenges} 
                       disabled={loadingChallenges}
-                      className="bg-white/10 hover:bg-white/20 text-white border-white/30 text-xs"
+                      className="bg-gray-700 hover:bg-gray-800 text-white border-0 text-xs"
                     >
                       <RefreshCw className="w-3 h-3 mr-1" />
                       {loadingChallenges ? "..." : "Otros retos"}
@@ -1408,8 +1408,8 @@ const Dashboard = () => {
 
               {challenges.length === 0 ? (
                 <div className="text-center py-8">
-                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white mb-4"></div>
-                  <p className="text-white/70">Generando tus primeros 2 retos semanales...</p>
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mb-4"></div>
+                  <p className="text-gray-700">Generando tus primeros 2 retos semanales...</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
