@@ -653,20 +653,6 @@ const Balance = () => {
           </Card>
         </div>
 
-        {/* Balance abajo */}
-        <Card className="p-4 rounded-[20px] shadow-xl border-white/20 text-center hover:scale-105 transition-all animate-fade-in active:scale-95" style={{
-          animationDelay: '300ms',
-          backgroundColor: balance >= 0 ? '#10b981' : '#ef4444'
-        }}>
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Wallet className="h-5 w-5 text-black" />
-            <p className="text-sm text-black/90">Balance</p>
-          </div>
-          <p className="text-base font-bold text-black break-words leading-tight overflow-hidden">
-            ${balance.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </p>
-        </Card>
-
         {/* Ingresos por categoría */}
         <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-blue-100 overflow-hidden animate-fade-in">
           <div className="flex items-center gap-2 mb-2">
