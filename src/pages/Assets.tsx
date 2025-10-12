@@ -123,7 +123,7 @@ export default function Assets() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate(-1)}
+              onClick={() => navigate('/net-worth')}
               className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12 flex-shrink-0"
             >
               <ArrowLeft className="h-5 w-5 text-foreground" />
