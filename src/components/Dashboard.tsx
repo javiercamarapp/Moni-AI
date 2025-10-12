@@ -1000,7 +1000,7 @@ const Dashboard = () => {
         {/* Quick Stats - 4 botones horizontales en una línea */}
         <div className="grid grid-cols-4 gap-2 sm:gap-3">
           <button 
-            className="p-3 bg-gradient-to-b from-gray-700 to-gray-900 rounded-xl shadow-xl hover:brightness-105 hover:scale-105 transition-all cursor-pointer animate-fade-in border border-gray-600" 
+            className="p-3 bg-gradient-to-b from-sky-50/50 to-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer animate-fade-in border border-blue-100" 
             onClick={() => navigate('/balance')} 
             style={{ animationDelay: '100ms' }}
           >
@@ -1018,7 +1018,7 @@ const Dashboard = () => {
           </button>
 
           <button 
-            className="p-3 bg-gradient-to-b from-gray-700 to-gray-900 rounded-xl shadow-xl hover:brightness-105 hover:scale-105 transition-all cursor-pointer animate-fade-in border border-gray-600" 
+            className="p-3 bg-gradient-to-b from-sky-50/50 to-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer animate-fade-in border border-blue-100" 
             style={{ animationDelay: '200ms' }}
             onClick={() => navigate('/net-worth')}
           >
@@ -1036,7 +1036,7 @@ const Dashboard = () => {
           </button>
 
           <button 
-            className="p-3 bg-gradient-to-b from-gray-700 to-gray-900 rounded-xl shadow-xl hover:brightness-105 hover:scale-105 transition-all cursor-pointer animate-fade-in border border-gray-600" 
+            className="p-3 bg-gradient-to-b from-sky-50/50 to-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer animate-fade-in border border-blue-100" 
             style={{ animationDelay: '300ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
@@ -1051,7 +1051,7 @@ const Dashboard = () => {
           </button>
 
           <button 
-            className="p-3 bg-gradient-to-b from-gray-700 to-gray-900 rounded-xl shadow-xl hover:brightness-105 hover:scale-105 transition-all cursor-pointer animate-fade-in border border-gray-600" 
+            className="p-3 bg-gradient-to-b from-sky-50/50 to-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer animate-fade-in border border-blue-100" 
             style={{ animationDelay: '400ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
