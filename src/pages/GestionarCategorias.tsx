@@ -251,7 +251,7 @@ const GestionarCategorias = () => {
       {/* Header */}
       <div className="p-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/profile')} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-10 w-10">
+          <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-10 w-10">
             <ArrowLeft className="h-5 w-5 text-foreground" />
           </Button>
           <div>
