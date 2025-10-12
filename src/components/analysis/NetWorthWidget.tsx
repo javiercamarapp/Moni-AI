@@ -31,21 +31,21 @@ export default function NetWorthWidget() {
       {/* Header Section */}
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm font-medium text-white/90 flex items-center gap-2 mb-1">
+          <p className="text-sm font-medium text-foreground/90 flex items-center gap-2 mb-1">
             <Shield className="h-4 w-4" /> Patrimonio Neto
           </p>
-          <p className={`text-3xl sm:text-4xl font-bold ${isPositive ? 'text-white' : 'text-red-300'} break-words`}>
+          <p className={`text-3xl sm:text-4xl font-bold ${isPositive ? 'text-foreground' : 'text-destructive'} break-words`}>
             ${currentNetWorth.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
           </p>
           <div className="flex items-center gap-2 mt-2">
             <span className={cn(
               "text-sm font-medium",
-              percentageChange === 0 ? "text-white/50" : 
-              isPositiveChange ? "text-emerald-300" : "text-red-300"
+              percentageChange === 0 ? "text-muted-foreground" : 
+              isPositiveChange ? "text-emerald-600" : "text-destructive"
             )}>
               {isPositiveChange && percentageChange !== 0 ? '+' : ''}{percentageChange.toFixed(2)}%
             </span>
-            <span className="text-sm text-white/60">
+            <span className="text-sm text-muted-foreground">
               {timeRange === '1M' ? 'último mes' : 
                timeRange === '3M' ? 'últimos 3M' :
                timeRange === '6M' ? 'últimos 6M' :
@@ -55,9 +55,9 @@ export default function NetWorthWidget() {
           </div>
         </div>
         {isPositiveChange ? (
-          <TrendingUp className="h-8 w-8 text-emerald-400" />
+          <TrendingUp className="h-8 w-8 text-emerald-600" />
         ) : (
-          <TrendingDown className="h-8 w-8 text-red-400" />
+          <TrendingDown className="h-8 w-8 text-destructive" />
         )}
       </div>
 
@@ -70,9 +70,9 @@ export default function NetWorthWidget() {
         `}</style>
         {/* High Point Label */}
         {highPoint && (
-          <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/30 z-10">
-            <p className="text-[8px] text-white/70 font-medium">high:</p>
-            <p className="text-[10px] font-bold text-emerald-300 break-all">
+          <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 border border-blue-100 z-10 shadow-lg">
+            <p className="text-[8px] text-muted-foreground font-medium">high:</p>
+            <p className="text-[10px] font-bold text-emerald-600 break-all">
               ${highPoint.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
             </p>
           </div>
@@ -80,9 +80,9 @@ export default function NetWorthWidget() {
         
         {/* Low Point Label */}
         {lowPoint && (
-          <div className="absolute bottom-20 right-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/30 z-10">
-            <p className="text-[8px] text-white/70 font-medium">low:</p>
-            <p className="text-[10px] font-bold text-red-300 break-all">
+          <div className="absolute bottom-20 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 border border-blue-100 z-10 shadow-lg">
+            <p className="text-[8px] text-muted-foreground font-medium">low:</p>
+            <p className="text-[10px] font-bold text-destructive break-all">
               ${lowPoint.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
             </p>
           </div>
@@ -98,9 +98,9 @@ export default function NetWorthWidget() {
             </defs>
             <XAxis 
               dataKey="date" 
-              tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 10 }}
+              tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
               tickLine={false}
-              axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+              axisLine={{ stroke: 'hsl(var(--border))' }}
             />
             <Tooltip
               contentStyle={{ 
@@ -144,8 +144,8 @@ export default function NetWorthWidget() {
             className={cn(
               "h-6 px-2 text-[10px] transition-all rounded-full",
               timeRange === range 
-                ? "bg-white/20 text-white border-white/30 shadow-lg" 
-                : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10 hover:border-white/20"
+                ? "bg-primary text-primary-foreground border-primary shadow-lg" 
+                : "bg-white text-foreground/60 border-blue-100 hover:bg-primary/10 hover:border-primary/30"
             )}
           >
             {range}
@@ -157,19 +157,19 @@ export default function NetWorthWidget() {
       <div className="grid grid-cols-2 gap-3 mt-3">
         <button 
           onClick={() => navigate('/assets')}
-          className="bg-emerald-500/10 backdrop-blur-sm rounded-xl p-3 border border-emerald-500/20 transition-all hover:bg-emerald-500/20 hover:border-emerald-500/30 hover:shadow-lg active:scale-95 cursor-pointer"
+          className="bg-emerald-50 backdrop-blur-sm rounded-[20px] p-4 border border-emerald-200 transition-all hover:bg-emerald-100 hover:border-emerald-300 hover:shadow-xl hover:scale-[1.02] active:scale-95 cursor-pointer"
         >
-          <p className="text-[10px] text-white/70 mb-0.5">Activos</p>
-          <p className="text-base font-bold text-emerald-300 break-words">
+          <p className="text-xs text-muted-foreground mb-1 font-medium">Activos</p>
+          <p className="text-lg font-bold text-emerald-700 break-words">
             ${totalAssets.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
           </p>
         </button>
         <button 
           onClick={() => navigate('/liabilities')}
-          className="bg-red-500/10 backdrop-blur-sm rounded-xl p-3 border border-red-500/20 transition-all hover:bg-red-500/20 hover:border-red-500/30 hover:shadow-lg active:scale-95 cursor-pointer"
+          className="bg-red-50 backdrop-blur-sm rounded-[20px] p-4 border border-red-200 transition-all hover:bg-red-100 hover:border-red-300 hover:shadow-xl hover:scale-[1.02] active:scale-95 cursor-pointer"
         >
-          <p className="text-[10px] text-white/70 mb-0.5">Pasivos</p>
-          <p className="text-base font-bold text-red-300 break-words">
+          <p className="text-xs text-muted-foreground mb-1 font-medium">Pasivos</p>
+          <p className="text-lg font-bold text-destructive break-words">
             ${totalLiabilities.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
           </p>
         </button>
