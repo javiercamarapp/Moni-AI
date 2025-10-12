@@ -1371,33 +1371,66 @@ const Dashboard = () => {
               </div>
 
               <div className="space-y-3 sm:space-y-4">
-                {goals.length === 0 ? <Card className="p-6 bg-gradient-to-br from-[hsl(25,60%,25%)] to-[hsl(25,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(25,70%,45%)]/40 relative overflow-hidden text-center animate-fade-in">
-                    <GlowingEffect
-                      spread={40}
-                      glow={true}
-                      disabled={false}
-                      proximity={64}
-                      inactiveZone={0.01}
-                      borderWidth={2}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
-                    <p className="text-white/90 mb-4 relative z-10 drop-shadow-lg">No tienes metas creadas aún</p>
-                    <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:scale-105 transition-transform duration-200 relative z-10">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Crear tu primera meta
-                    </Button>
-                  </Card> : goals.map((goal, index) => {
+                {goals.length === 0 ? (
+                  <BorderRotate
+                    animationMode="auto-rotate"
+                    animationSpeed={3}
+                    gradientColors={{
+                      primary: '#f97316',
+                      secondary: '#fb923c',
+                      accent: '#fdba74'
+                    }}
+                    backgroundColor="hsl(25, 55%, 15%)"
+                    borderWidth={3}
+                    borderRadius={12}
+                    className="animate-fade-in"
+                  >
+                    <Card className="p-6 bg-gradient-to-br from-[hsl(25,60%,25%)] to-[hsl(25,55%,15%)] shadow-2xl border-0 relative overflow-hidden text-center">
+                      <GlowingEffect
+                        spread={40}
+                        glow={true}
+                        disabled={false}
+                        proximity={64}
+                        inactiveZone={0.01}
+                        borderWidth={2}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
+                      <p className="text-white/90 mb-4 relative z-10 drop-shadow-lg">No tienes metas creadas aún</p>
+                      <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-white/20 hover:bg-white/30 text-white border border-white/30 hover:scale-105 transition-transform duration-200 relative z-10">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Crear tu primera meta
+                      </Button>
+                    </Card>
+                  </BorderRotate>
+                ) : goals.map((goal, index) => {
                 const goalProgress = goal.current / goal.target * 100;
+                const goalColors = [
+                  { primary: '#a855f7', secondary: '#c084fc', accent: '#e9d5ff', bg: 'hsl(280, 55%, 15%)' },
+                  { primary: '#3b82f6', secondary: '#60a5fa', accent: '#93c5fd', bg: 'hsl(200, 55%, 15%)' },
+                  { primary: '#ec4899', secondary: '#f472b6', accent: '#fbcfe8', bg: 'hsl(340, 55%, 15%)' },
+                  { primary: '#10b981', secondary: '#34d399', accent: '#6ee7b7', bg: 'hsl(145, 55%, 15%)' },
+                ];
+                const colors = goalColors[index % goalColors.length];
                 const gradients = [
-                  'from-[hsl(280,60%,25%)] to-[hsl(280,55%,15%)] border-[hsl(280,70%,45%)]/40',
-                  'from-[hsl(200,60%,25%)] to-[hsl(200,55%,15%)] border-[hsl(200,70%,45%)]/40',
-                  'from-[hsl(340,60%,25%)] to-[hsl(340,55%,15%)] border-[hsl(340,70%,45%)]/40',
-                  'from-[hsl(145,60%,25%)] to-[hsl(145,55%,15%)] border-[hsl(145,70%,45%)]/40',
+                  'from-[hsl(280,60%,25%)] to-[hsl(280,55%,15%)]',
+                  'from-[hsl(200,60%,25%)] to-[hsl(200,55%,15%)]',
+                  'from-[hsl(340,60%,25%)] to-[hsl(340,55%,15%)]',
+                  'from-[hsl(145,60%,25%)] to-[hsl(145,55%,15%)]',
                 ];
                 const gradient = gradients[index % gradients.length];
-                return <Card key={goal.id} className={`p-4 sm:p-6 bg-gradient-to-br ${gradient} card-glow shadow-2xl border-2 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in`} style={{
-                  animationDelay: `${index * 100}ms`
-                }}>
+                return (
+                  <BorderRotate
+                    key={goal.id}
+                    animationMode="auto-rotate"
+                    animationSpeed={3}
+                    gradientColors={colors}
+                    backgroundColor={colors.bg}
+                    borderWidth={3}
+                    borderRadius={12}
+                    className="animate-fade-in hover:scale-105 transition-all duration-300"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <Card className={`p-4 sm:p-6 bg-gradient-to-br ${gradient} shadow-2xl border-0 relative overflow-hidden hover:-translate-y-1 transition-all duration-300`}>
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
                         
                         <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-4 relative z-10">
@@ -1444,6 +1477,8 @@ const Dashboard = () => {
                           </div>
                         </div>
                       </Card>
+                    </BorderRotate>
+                );
               })}
               </div>
             </div>
