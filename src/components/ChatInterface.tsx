@@ -783,20 +783,6 @@ const ChatInterface = () => {
                 </div>
               </DropdownMenuItem>
               
-              <DropdownMenuItem 
-                onSelect={(e) => {
-                  e.preventDefault();
-                  openCamera();
-                }}
-                className="flex items-center gap-3 py-3 cursor-pointer"
-              >
-                <Camera className="w-5 h-5 text-primary" />
-                <div className="flex flex-col">
-                  <span className="font-medium">Abrir cámara</span>
-                  <span className="text-xs text-muted-foreground">Toma una foto del ticket directamente</span>
-                </div>
-              </DropdownMenuItem>
-              
               <DropdownMenuSeparator />
               
               <DropdownMenuItem 
@@ -882,6 +868,10 @@ const ChatInterface = () => {
 
           <Button variant="ghost" size="icon" onClick={handleSendMessage} disabled={!message.trim() && uploadedFiles.length === 0} className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex-shrink-0 h-8 w-8 p-0 disabled:opacity-30 transition-all hover:scale-110">
             <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+          </Button>
+
+          <Button variant="ghost" size="icon" onClick={openCamera} className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex-shrink-0 h-8 w-8 p-0 transition-all hover:scale-110">
+            <Camera className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
 
           <Button variant="ghost" size="icon" onClick={isRecording ? stopVoiceRecording : startVoiceRecording} className={`flex-shrink-0 h-8 w-8 p-0 transition-all hover:scale-110 ${isRecording ? 'text-destructive hover:text-destructive/80 animate-pulse' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'}`}>
