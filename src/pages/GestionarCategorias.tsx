@@ -31,6 +31,8 @@ interface Category {
   name: string;
   type: 'ingreso' | 'gasto';
   color: string;
+  parent_id?: string | null;
+  subcategories?: Category[];
 }
 
 const GestionarCategorias = () => {
@@ -41,7 +43,8 @@ const GestionarCategorias = () => {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [deleteCategory, setDeleteCategory] = useState<Category | null>(null);
-  const [newCategory, setNewCategory] = useState({ name: '', type: 'ingreso' as 'ingreso' | 'gasto', color: 'bg-primary/20' });
+  const [newCategory, setNewCategory] = useState({ name: '', type: 'ingreso' as 'ingreso' | 'gasto', color: 'bg-primary/20', parent_id: null as string | null });
+  const [parentCategoryForSubcategory, setParentCategoryForSubcategory] = useState<Category | null>(null);
 
   const colorOptions = [
     'bg-primary/20',
@@ -75,7 +78,17 @@ const GestionarCategorias = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setCategories((data || []) as Category[]);
+      
+      // Organize categories and subcategories
+      const allCategories = (data || []) as Category[];
+      const mainCategories = allCategories.filter(cat => !cat.parent_id);
+      
+      // Attach subcategories to their parents
+      mainCategories.forEach(mainCat => {
+        mainCat.subcategories = allCategories.filter(cat => cat.parent_id === mainCat.id);
+      });
+      
+      setCategories(mainCategories);
     } catch (error) {
       console.error('Error fetching categories:', error);
       toast({
@@ -102,17 +115,19 @@ const GestionarCategorias = () => {
           name: newCategory.name,
           type: newCategory.type,
           color: newCategory.color,
+          parent_id: newCategory.parent_id,
         });
 
       if (error) throw error;
 
       toast({
-        title: "Categoría creada",
-        description: "Tu nueva categoría ha sido creada exitosamente",
+        title: newCategory.parent_id ? "Subcategoría creada" : "Categoría creada",
+        description: newCategory.parent_id ? "Tu nueva subcategoría ha sido creada exitosamente" : "Tu nueva categoría ha sido creada exitosamente",
       });
 
-      setNewCategory({ name: '', type: 'ingreso', color: 'bg-primary/20' });
+      setNewCategory({ name: '', type: 'ingreso', color: 'bg-primary/20', parent_id: null });
       setShowAddDialog(false);
+      setParentCategoryForSubcategory(null);
       fetchCategories();
     } catch (error) {
       console.error('Error adding category:', error);
@@ -187,6 +202,68 @@ const GestionarCategorias = () => {
   const ingresos = categories.filter(c => c.type === 'ingreso');
   const gastos = categories.filter(c => c.type === 'gasto');
 
+  const openAddSubcategoryDialog = (parentCategory: Category) => {
+    setParentCategoryForSubcategory(parentCategory);
+    setNewCategory({ 
+      name: '', 
+      type: parentCategory.type, 
+      color: parentCategory.color, 
+      parent_id: parentCategory.id 
+    });
+    setShowAddDialog(true);
+  };
+
+  const renderCategoryCard = (category: Category, isSubcategory: boolean = false) => (
+    <div key={category.id}>
+      <Card className={`p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in hover:scale-105 transition-all ${isSubcategory ? 'ml-8 mt-2' : ''}`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 flex-1">
+            <div className={`w-12 h-12 rounded-lg ${category.color}`} />
+            <div className="flex-1">
+              <p className="text-lg font-semibold text-foreground">{category.name}</p>
+              {!isSubcategory && category.subcategories && category.subcategories.length > 0 && (
+                <p className="text-xs text-muted-foreground">{category.subcategories.length} subcategorías</p>
+              )}
+            </div>
+          </div>
+          <div className="flex gap-2">
+            {!isSubcategory && (
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => openAddSubcategoryDialog(category)}
+                className="text-primary hover:bg-primary/10 hover:scale-105 transition-all"
+                title="Agregar subcategoría"
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            )}
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => setEditingCategory(category)}
+              className="text-foreground hover:bg-accent/50 hover:scale-105 transition-all"
+            >
+              <Edit2 className="h-4 w-4" />
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => setDeleteCategory(category)}
+              className="text-destructive hover:bg-destructive/10 hover:scale-105 transition-all"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </Card>
+      {/* Render subcategories */}
+      {!isSubcategory && category.subcategories && category.subcategories.map((subcat) => 
+        renderCategoryCard(subcat, true)
+      )}
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="min-h-screen animated-wave-bg flex items-center justify-center">
@@ -228,7 +305,7 @@ const GestionarCategorias = () => {
           <DialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100 max-w-[85%] sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-foreground">
-                Nueva Categoría
+                {parentCategoryForSubcategory ? `Nueva Subcategoría de "${parentCategoryForSubcategory.name}"` : 'Nueva Categoría'}
               </DialogTitle>
             </DialogHeader>
             
@@ -247,25 +324,27 @@ const GestionarCategorias = () => {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-foreground/90 text-base">Tipo</Label>
-                <div className="flex gap-3">
-                  <Button
-                    type="button"
-                    onClick={() => setNewCategory({ ...newCategory, type: 'ingreso' })}
-                    className={`flex-1 ${newCategory.type === 'ingreso' ? 'bg-primary text-white' : 'bg-white text-foreground border border-blue-100'} hover:bg-primary/80 h-12`}
-                  >
-                    Ingreso
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={() => setNewCategory({ ...newCategory, type: 'gasto' })}
-                    className={`flex-1 ${newCategory.type === 'gasto' ? 'bg-primary text-white' : 'bg-white text-foreground border border-blue-100'} hover:bg-primary/80 h-12`}
-                  >
-                    Gasto
-                  </Button>
+              {!parentCategoryForSubcategory && (
+                <div className="space-y-2">
+                  <Label className="text-foreground/90 text-base">Tipo</Label>
+                  <div className="flex gap-3">
+                    <Button
+                      type="button"
+                      onClick={() => setNewCategory({ ...newCategory, type: 'ingreso' })}
+                      className={`flex-1 ${newCategory.type === 'ingreso' ? 'bg-primary text-white' : 'bg-white text-foreground border border-blue-100'} hover:bg-primary/80 h-12`}
+                    >
+                      Ingreso
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={() => setNewCategory({ ...newCategory, type: 'gasto' })}
+                      className={`flex-1 ${newCategory.type === 'gasto' ? 'bg-primary text-white' : 'bg-white text-foreground border border-blue-100'} hover:bg-primary/80 h-12`}
+                    >
+                      Gasto
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="space-y-2">
                 <Label className="text-foreground/90 text-base">Color</Label>
@@ -285,7 +364,7 @@ const GestionarCategorias = () => {
                 type="submit"
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg font-semibold"
               >
-                Crear Categoría
+                {parentCategoryForSubcategory ? 'Crear Subcategoría' : 'Crear Categoría'}
               </Button>
             </form>
           </DialogContent>
@@ -305,65 +384,11 @@ const GestionarCategorias = () => {
           </TabsList>
 
           <TabsContent value="ingresos" className="space-y-3 mt-4">
-            {ingresos.map((category) => (
-              <Card key={category.id} className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in hover:scale-105 transition-all">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3 flex-1">
-                    <div className={`w-12 h-12 rounded-lg ${category.color}`} />
-                    <p className="text-lg font-semibold text-foreground">{category.name}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => setEditingCategory(category)}
-                      className="text-foreground hover:bg-accent/50 hover:scale-105 transition-all"
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => setDeleteCategory(category)}
-                      className="text-destructive hover:bg-destructive/10 hover:scale-105 transition-all"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            ))}
+            {ingresos.map((category) => renderCategoryCard(category))}
           </TabsContent>
 
           <TabsContent value="gastos" className="space-y-3 mt-4">
-            {gastos.map((category) => (
-              <Card key={category.id} className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in hover:scale-105 transition-all">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3 flex-1">
-                    <div className={`w-12 h-12 rounded-lg ${category.color}`} />
-                    <p className="text-lg font-semibold text-foreground">{category.name}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => setEditingCategory(category)}
-                      className="text-foreground hover:bg-accent/50 hover:scale-105 transition-all"
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => setDeleteCategory(category)}
-                      className="text-destructive hover:bg-destructive/10 hover:scale-105 transition-all"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            ))}
+            {gastos.map((category) => renderCategoryCard(category))}
           </TabsContent>
         </Tabs>
       </div>
