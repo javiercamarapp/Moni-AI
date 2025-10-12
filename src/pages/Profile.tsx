@@ -6,8 +6,9 @@ import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { ArrowLeft, ChevronRight, Crown, LogOut, Trash2, Fingerprint } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Crown, LogOut, Trash2, Fingerprint, Camera, Upload } from 'lucide-react';
 import { useBiometricAuth } from '@/hooks/useBiometricAuth';
+import { Camera as CapacitorCamera, CameraResultType, CameraSource } from '@capacitor/camera';
 import {
   Popover,
   PopoverContent,
@@ -30,6 +31,8 @@ const Profile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [user, setUser] = useState<any>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [audioAlerts, setAudioAlerts] = useState(true);
   const [selectedCurrency, setSelectedCurrency] = useState('MXN');
   const [selectedCountry, setSelectedCountry] = useState('México');
@@ -254,6 +257,17 @@ const Profile = () => {
         navigate("/auth");
       } else {
         setUser(session.user);
+        
+        // Load avatar from profile
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('avatar_url')
+          .eq('id', session.user.id)
+          .single();
+        
+        if (profile?.avatar_url) {
+          setAvatarUrl(profile.avatar_url);
+        }
       }
     };
     
@@ -286,6 +300,111 @@ const Profile = () => {
       : name.substring(0, 2).toUpperCase();
   };
 
+  const uploadAvatar = async (file: Blob, fileName: string) => {
+    try {
+      setUploadingAvatar(true);
+      
+      if (!user) return;
+
+      const fileExt = fileName.split('.').pop();
+      const filePath = `${user.id}/avatar.${fileExt}`;
+
+      // Delete old avatar if exists
+      if (avatarUrl) {
+        const oldPath = avatarUrl.split('/').pop();
+        if (oldPath) {
+          await supabase.storage
+            .from('avatars')
+            .remove([`${user.id}/${oldPath}`]);
+        }
+      }
+
+      // Upload new avatar
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      // Update profile
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+
+      setAvatarUrl(publicUrl);
+      toast({
+        title: "Foto actualizada",
+        description: "Tu foto de perfil ha sido actualizada correctamente",
+      });
+    } catch (error: any) {
+      console.error('Error uploading avatar:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar la foto de perfil",
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const handleTakePhoto = async () => {
+    try {
+      const photo = await CapacitorCamera.getPhoto({
+        quality: 90,
+        allowEditing: true,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera,
+      });
+
+      if (photo.webPath) {
+        // Fetch the image and convert to blob
+        const response = await fetch(photo.webPath);
+        const blob = await response.blob();
+        await uploadAvatar(blob, 'camera-photo.jpg');
+      }
+    } catch (error: any) {
+      console.error('Error taking photo:', error);
+      if (error.message !== 'User cancelled photos app') {
+        toast({
+          title: "Error",
+          description: "No se pudo tomar la foto",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const handleUploadFromFiles = async () => {
+    try {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = async (e: any) => {
+        const file = e.target.files[0];
+        if (file) {
+          await uploadAvatar(file, file.name);
+        }
+      };
+      input.click();
+    } catch (error: any) {
+      console.error('Error uploading from files:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo subir la foto",
+        variant: "destructive",
+      });
+    }
+  };
+
   const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Usuario';
   const userEmail = user?.email || '';
 
@@ -313,8 +432,50 @@ const Profile = () => {
         {/* User Profile Section */}
         <Card className="bg-white backdrop-blur border-blue-100 shadow-xl p-6 animate-fade-in rounded-[20px]" style={{ animationDelay: '0ms' }}>
           <div className="flex items-center space-x-4 mb-4">
-            <div className="w-16 h-16 rounded-full bg-gradient-primary flex items-center justify-center">
-              <span className="text-2xl font-bold text-white">{getInitials(userName)}</span>
+            <div className="relative">
+              {avatarUrl ? (
+                <img 
+                  src={avatarUrl} 
+                  alt="Avatar" 
+                  className="w-16 h-16 rounded-full object-cover border-2 border-blue-200"
+                />
+              ) : (
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center border-2 border-blue-200">
+                  <span className="text-2xl font-bold text-gray-600">{getInitials(userName)}</span>
+                </div>
+              )}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button 
+                    className="absolute -bottom-1 -right-1 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-1.5 shadow-lg transition-all hover:scale-110"
+                    disabled={uploadingAvatar}
+                  >
+                    <Camera className="h-3 w-3" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-48 p-2" align="end">
+                  <div className="space-y-1">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start text-sm"
+                      onClick={handleTakePhoto}
+                      disabled={uploadingAvatar}
+                    >
+                      <Camera className="h-4 w-4 mr-2" />
+                      Tomar foto
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start text-sm"
+                      onClick={handleUploadFromFiles}
+                      disabled={uploadingAvatar}
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      Subir desde archivos
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="flex-1">
               <h2 className="text-xl font-bold text-foreground">{userName}</h2>
