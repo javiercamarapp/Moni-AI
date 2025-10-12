@@ -351,8 +351,11 @@ const GestionarCategorias = () => {
               )}
 
               {!parentCategoryForSubcategory && (
-                <div className="space-y-2">
-                  <Label className="text-foreground/90 text-base">Categoría Padre (Opcional)</Label>
+                <div className="space-y-3 p-4 bg-primary/5 rounded-lg border border-primary/20">
+                  <Label className="text-foreground text-base font-semibold">Crear como subcategoría</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Selecciona una categoría padre para organizar mejor tus finanzas
+                  </p>
                   <select
                     value={newCategory.parent_id || ''}
                     onChange={(e) => setNewCategory({ ...newCategory, parent_id: e.target.value || null })}
