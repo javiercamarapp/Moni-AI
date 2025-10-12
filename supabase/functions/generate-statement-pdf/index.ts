@@ -175,7 +175,7 @@ serve(async (req) => {
     if (type === 'gasto' || !type) {
       try {
         // Get ALL historical expense transactions for pattern detection (not just current period)
-        const { data: allHistoricalExpenses } = await supabase
+        const { data: allHistoricalExpenses, error: histError } = await supabase
           .from('transactions')
           .select(`
             *,
@@ -191,13 +191,30 @@ serve(async (req) => {
           .order('transaction_date', { ascending: false });
         
         console.log('=== DETECTING SUBSCRIPTIONS AND DAILY EXPENSES ===');
+        console.log('Querying for user_id:', userId);
+        
+        if (histError) {
+          console.error('Error fetching historical expenses:', histError);
+        }
+        
         console.log('All historical expenses count:', allHistoricalExpenses?.length || 0);
         
-        if (allHistoricalExpenses && allHistoricalExpenses.length > 0) {
+        // Also log the transactions we already have in memory
+        const existingExpenses = transactions?.filter(t => t.type === 'gasto') || [];
+        console.log('Current period expenses count:', existingExpenses.length);
+        
+        // Use existing expenses if historical query failed or returned nothing
+        const expensesToAnalyze = (allHistoricalExpenses && allHistoricalExpenses.length > 0) 
+          ? allHistoricalExpenses 
+          : existingExpenses;
+        
+        console.log('Expenses to analyze:', expensesToAnalyze.length);
+        
+        if (expensesToAnalyze && expensesToAnalyze.length > 0) {
           // Detect subscriptions using all historical data
           console.log('Invoking detect-subscriptions function...');
           const { data: subsResult, error: subsError } = await supabase.functions.invoke('detect-subscriptions', {
-            body: { transactions: allHistoricalExpenses }
+            body: { transactions: expensesToAnalyze }
           });
 
           if (subsError) {
@@ -232,7 +249,7 @@ serve(async (req) => {
           // Detect daily expenses using all historical data
           console.log('Invoking detect-daily-expenses function...');
           const { data: dailyResult, error: dailyError } = await supabase.functions.invoke('detect-daily-expenses', {
-            body: { transactions: allHistoricalExpenses }
+            body: { transactions: expensesToAnalyze }
           });
 
           if (dailyError) {
