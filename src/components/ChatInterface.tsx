@@ -613,7 +613,7 @@ const ChatInterface = () => {
 
   return <PulseBeams 
     beams={beamPaths}
-    background={<div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />}
+    background={<div className="absolute inset-0 animated-wave-bg" />}
     className="text-white"
   >
     <div className="flex flex-col h-screen relative z-10">
