@@ -1235,7 +1235,7 @@ const Dashboard = () => {
                   </div>
                   <Button 
                     onClick={() => navigate('/bank-connection')}
-                    className="bg-green-600 hover:bg-green-700 text-white border-0 font-semibold text-[9px] px-3 py-1.5 h-auto shadow-lg"
+                    className="bg-gray-900 hover:bg-black text-white border-0 font-semibold text-[9px] px-3 py-1.5 h-auto shadow-lg"
                   >
                     Conectar
                   </Button>
