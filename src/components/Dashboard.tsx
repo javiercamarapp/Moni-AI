@@ -1277,7 +1277,7 @@ const Dashboard = () => {
         </div>
 
         {/* WhatsApp Banner */}
-        <Card className="p-3 sm:p-4 bg-gradient-to-br from-[hsl(142,60%,25%)] to-[hsl(142,55%,15%)] card-glow shadow-2xl border-2 border-[hsl(142,70%,45%)]/40 relative overflow-hidden animate-fade-in hover:scale-105 transition-transform duration-200 cursor-pointer" style={{
+        <Card className="p-3 sm:p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden animate-fade-in hover:scale-105 transition-all cursor-pointer" style={{
         animationDelay: '500ms'
       }}>
           <GlowingEffect
@@ -1289,14 +1289,14 @@ const Dashboard = () => {
             borderWidth={2}
           />
             <div className="flex items-center gap-2 sm:gap-3 relative z-10">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center p-2">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 rounded-full bg-green-100 backdrop-blur-sm flex items-center justify-center p-2">
                 <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-white mb-2 leading-relaxed drop-shadow-lg">
+                <p className="text-xs text-foreground mb-2 leading-relaxed">
                   Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
                 </p>
-                <Button size="sm" className="bg-white/20 hover:bg-white/30 text-white border border-white/30 text-xs h-8 font-semibold" onClick={() => navigate('/whatsapp')}>
+                <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white border-0 text-xs h-8 font-semibold" onClick={() => navigate('/whatsapp')}>
                   <MessageCircle className="w-3 h-3 mr-1" />
                   Conectar WhatsApp
                 </Button>
