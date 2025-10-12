@@ -460,7 +460,7 @@ const GestionarCategorias = () => {
               </div>
             </div>
 
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg font-semibold">
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all h-14 text-lg font-semibold">
               Guardar Cambios
             </Button>
           </form>
