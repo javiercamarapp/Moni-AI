@@ -29,7 +29,7 @@ const SignIn2 = () => {
   };
  
   return (
-    <div className="min-h-screen w-full flex items-center justify-center rounded-xl z-1">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center rounded-xl z-1 gap-6">
       <div className="w-full max-w-[320px] bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl shadow-opacity-10 p-6 flex flex-col items-center border border-blue-100 text-black">
         <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg shadow-opacity-5">
           <LogIn className="w-7 h-7 text-black" />
@@ -109,21 +109,21 @@ const SignIn2 = () => {
             />
           </button>
         </div>
-        
-        {/* User testimonials section */}
-        <div className="mt-6 pt-6 border-t border-gray-200 w-full">
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <div className="flex -space-x-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-white"></div>
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 border-2 border-white"></div>
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border-2 border-white"></div>
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 border-2 border-white"></div>
-            </div>
+      </div>
+      
+      {/* User testimonials section - outside card */}
+      <div className="w-full max-w-[320px]">
+        <div className="flex items-center justify-center gap-3 mb-3">
+          <div className="flex -space-x-2">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-white"></div>
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 border-2 border-white"></div>
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border-2 border-white"></div>
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 border-2 border-white"></div>
           </div>
-          <p className="text-xs text-center text-gray-600 font-medium">
-            Únete a los cientos de mexicanos que cuidan sus finanzas
-          </p>
         </div>
+        <p className="text-xs text-center text-white font-medium">
+          Únete a los cientos de mexicanos que cuidan sus finanzas
+        </p>
       </div>
     </div>
   );
