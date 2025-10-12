@@ -509,19 +509,18 @@ const Balance = () => {
 
       <div className="px-4 space-y-4">
         {/* Ahorro destacado */}
-        <Card className="p-6 rounded-[20px] shadow-xl animate-fade-in border-white/20" style={{
-        animationDelay: '0ms',
-        backgroundColor: ahorro >= 0 ? '#10b981' : '#ef4444'
+        <Card className="p-5 bg-white backdrop-blur-sm rounded-[20px] shadow-xl border border-blue-100 animate-fade-in" style={{
+        animationDelay: '0ms'
       }}>
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-3 bg-card/40 backdrop-blur-sm rounded-full border border-border/30">
-              <Wallet className="h-6 w-6 text-black" />
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${ahorro >= 0 ? 'bg-emerald-500/30' : 'bg-red-500/30'}`}>
+              <Wallet className={`h-6 w-6 ${ahorro >= 0 ? 'text-emerald-600' : 'text-destructive'}`} />
             </div>
             <div>
-              <p className="text-sm text-black/90">
+              <p className="text-sm text-foreground/80 font-medium">
                 Ahorro {viewMode === 'mensual' ? 'Mensual' : 'Anual'}
               </p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-black">
+              <h2 className={`text-3xl sm:text-4xl font-bold ${ahorro >= 0 ? 'text-emerald-700' : 'text-destructive'}`}>
                 ${ahorro.toLocaleString('es-MX', {
                 minimumFractionDigits: 2
               })}
@@ -529,16 +528,16 @@ const Balance = () => {
             </div>
           </div>
           <div className="space-y-2">
-            <div className="flex justify-between text-sm text-black/90">
+            <div className="flex justify-between text-sm text-foreground/80">
               <span>Tasa de ahorro:</span>
-              <span className="font-semibold">{tasaAhorro.toFixed(1)}%</span>
+              <span className="font-semibold text-foreground">{tasaAhorro.toFixed(1)}%</span>
             </div>
-            <Progress value={tasaAhorro} className="h-2 bg-card/30" />
+            <Progress value={tasaAhorro} className="h-2 bg-primary/10" />
           </div>
           
           {/* Botón de descarga de PDF */}
-          <div className="mt-4 pt-4 border-t border-white/20">
-            <Button variant="ghost" className="w-full bg-white/20 backdrop-blur-sm rounded-[12px] border border-white/30 text-black hover:bg-white/30 transition-all duration-300 hover:scale-105 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight font-semibold" onClick={async () => {
+          <div className="mt-4 pt-4 border-t border-blue-100">
+            <Button variant="ghost" className="w-full bg-primary/10 backdrop-blur-sm rounded-[20px] border border-blue-100 text-foreground hover:bg-primary/20 transition-all duration-300 hover:scale-105 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight font-semibold shadow-lg" onClick={async () => {
             try {
               // Get current user
               const {
