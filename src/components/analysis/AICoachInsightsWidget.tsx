@@ -148,8 +148,11 @@ export default function AICoachInsightsWidget({
             <CarouselItem key={index} className="pl-1 md:pl-2 basis-full">
               <div className="px-1">
                 <Card 
-                  className="p-3 card-glow border-white/20"
-                  style={{ backgroundColor: insight.isPositive ? '#10b981' : '#ef4444' }}
+                  className={`p-4 rounded-[20px] shadow-xl border transition-all ${
+                    insight.isPositive 
+                      ? 'bg-emerald-500 border-emerald-100' 
+                      : 'bg-red-500 border-red-100'
+                  }`}
                 >
                   <p className="text-xs text-black leading-snug">
                     {insight.emoji} <span className="font-medium">{insight.message}</span>
