@@ -146,33 +146,32 @@ const Reports = () => {
           </div>
         </Card>
 
-        {/* Selector de Año */}
-        <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
-          <label className="text-sm font-semibold text-foreground mb-2 block">
-            Seleccionar Año
-          </label>
-          <Select
-            value={selectedYear.toString()}
-            onValueChange={(value) => setSelectedYear(parseInt(value))}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Selecciona un año" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableYears.map((year) => (
-                <SelectItem key={year} value={year.toString()}>
-                  {year}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Card>
-
-        {/* Lista de Meses */}
-        <div className="space-y-2">
-          <h3 className="text-sm font-semibold text-foreground px-2">
-            Reportes de {selectedYear}
-          </h3>
+        {/* Lista de Meses con Selector de Año */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between px-2">
+            <h3 className="text-sm font-semibold text-foreground">
+              Reportes de {selectedYear}
+            </h3>
+            <Select
+              value={selectedYear.toString()}
+              onValueChange={(value) => setSelectedYear(parseInt(value))}
+            >
+              <SelectTrigger className="w-[120px] h-9 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all">
+                <SelectValue placeholder="Año" />
+              </SelectTrigger>
+              <SelectContent className="bg-white border border-blue-100 rounded-[15px] shadow-xl z-50">
+                {availableYears.filter(year => year <= new Date().getFullYear()).map((year) => (
+                  <SelectItem 
+                    key={year} 
+                    value={year.toString()}
+                    className="hover:bg-primary/10 cursor-pointer rounded-[10px]"
+                  >
+                    {year}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div className="grid grid-cols-1 gap-2">
             {months.map((month) => (
               <Card
