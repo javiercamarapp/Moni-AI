@@ -1084,16 +1084,16 @@ const Dashboard = () => {
           <div className="space-y-3 relative z-10">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-bold text-foreground">💰 Presupuesto Mensual</h3>
-                <p className="text-xs text-foreground/80 font-medium break-words">
+                <h3 className="text-sm font-bold text-white">💰 Presupuesto Mensual</h3>
+                <p className="text-xs text-white/90 font-medium break-words">
                   Gastado: ${monthlyExpenses.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} de ${(monthlyIncome * 0.8).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-2xl font-black text-foreground">
+                <p className="text-2xl font-black text-white">
                   {monthlyIncome > 0 ? ((monthlyExpenses / (monthlyIncome * 0.8)) * 100).toFixed(0) : 0}%
                 </p>
-                <p className="text-xs text-foreground/70 font-semibold">del presupuesto</p>
+                <p className="text-xs text-white/80 font-semibold">del presupuesto</p>
               </div>
             </div>
             
@@ -1125,16 +1125,16 @@ const Dashboard = () => {
               
               {/* Texto sobre la barra */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-black text-foreground drop-shadow-[0_2px_4px_rgba(255,255,255,0.9)] px-2 py-0.5 rounded-full bg-white/30 backdrop-blur-sm break-words">
+                <span className="text-xs font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] px-2 py-0.5 rounded-full bg-black/30 backdrop-blur-sm break-words">
                   ${(monthlyIncome > 0 ? (monthlyIncome * 0.8) - monthlyExpenses : 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} restantes
                 </span>
               </div>
             </div>
             
-            <p className="text-xs text-foreground/80 text-center font-semibold min-h-[32px] flex items-center justify-center">
+            <p className="text-xs text-white/90 text-center font-semibold min-h-[32px] flex items-center justify-center">
               {loadingBudgetMessage ? (
                 <span className="inline-flex items-center gap-2">
-                  <span className="inline-block animate-spin rounded-full h-3 w-3 border-b-2 border-foreground"></span>
+                  <span className="inline-block animate-spin rounded-full h-3 w-3 border-b-2 border-white"></span>
                   Analizando patrón...
                 </span>
               ) : (
