@@ -559,8 +559,9 @@ export default function FinancialAnalysis() {
           <>
             {/* Animated Income & Expense Lines */}
             <Card 
-              className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-4 animate-fade-in" 
+              className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-4 animate-fade-in cursor-pointer hover:scale-105 active:scale-95 transition-all" 
               style={{ animationDelay: '0ms' }}
+              onClick={() => navigate('/balance')}
             >
               {(() => {
                 const income = (analysis?.metrics?.totalIncome ?? quickMetrics?.totalIncome) || 0;
