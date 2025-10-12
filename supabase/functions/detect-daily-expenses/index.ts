@@ -73,6 +73,8 @@ ANÁLISIS REQUERIDO:
    - Identifica la frecuencia más común
    - Cuenta el total de ocurrencias
 
+**CRÍTICO**: Debes incluir el campo `monthsPresent` que indica en cuántos meses DIFERENTES aparece el gasto.
+
 Responde ÚNICAMENTE con un JSON válido:
 {
   "expenses": [
@@ -84,7 +86,7 @@ Responde ÚNICAMENTE con un JSON válido:
       "frequency": "mensual" | "quincenal" | "semanal",
       "categoryName": "categoría si disponible",
       "occurrences": número_total_de_pagos,
-      "monthsPresent": número_de_meses_diferentes_donde_aparece
+      "monthsPresent": número_de_meses_diferentes_donde_aparece (OBLIGATORIO)
     }
   ]
 }

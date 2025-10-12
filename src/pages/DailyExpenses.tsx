@@ -91,6 +91,9 @@ export default function DailyExpenses() {
             .trim();
           
           if (!uniqueExpenses.has(normalizedName)) {
+            // Si monthsPresent no viene en la respuesta, usar occurrences como estimado
+            const monthsPresent = exp.monthsPresent || Math.min(exp.occurrences || 1, 12);
+            
             uniqueExpenses.set(normalizedName, {
               id: `exp-${Date.now()}-${Math.random()}`,
               name: exp.description.replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '').trim(),
@@ -100,7 +103,7 @@ export default function DailyExpenses() {
               frequency: exp.frequency || 'mensual',
               category: exp.categoryName || 'Servicios',
               occurrences: exp.occurrences || 1,
-              monthsPresent: exp.monthsPresent || 0,
+              monthsPresent: monthsPresent,
               icon: getExpenseIcon(exp.description),
             });
           }
