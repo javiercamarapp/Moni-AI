@@ -10,6 +10,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import Autoplay from 'embla-carousel-autoplay';
 import moniLogo from '@/assets/moni-ai-logo.png';
 import { Camera as CapCamera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { SiriOrb } from '@/components/ui/siri-orb';
 const ChatInterface = () => {
   const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
@@ -591,7 +592,11 @@ const ChatInterface = () => {
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto px-3 sm:px-4">
         {messages.length === 0 ? <div className="h-full flex flex-col items-center justify-center pb-32">
-            
+            <SiriOrb 
+              size="192px"
+              animationDuration={15}
+              className="drop-shadow-2xl mb-6"
+            />
             <h1 className="text-2xl sm:text-3xl font-normal text-foreground text-center fade-in-up px-4">¿En qué puedo ayudarte hoy?</h1>
           </div> : <div className="py-4 sm:py-6 space-y-4 sm:space-y-6 max-w-4xl mx-auto">
             {messages.map((msg, index) => <div key={msg.id} className="fade-in-up" style={{
