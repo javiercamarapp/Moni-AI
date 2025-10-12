@@ -225,7 +225,7 @@ const GestionarCategorias = () => {
               <Plus className="h-5 w-5 text-foreground" />
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100 max-w-md">
+          <DialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100 max-w-[85%] sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-foreground">
                 Nueva Categoría
@@ -370,7 +370,7 @@ const GestionarCategorias = () => {
 
       {/* Edit Dialog */}
       <Dialog open={!!editingCategory} onOpenChange={(open) => !open && setEditingCategory(null)}>
-        <DialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100 max-w-md">
+        <DialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100 max-w-[85%] sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-foreground">
               Editar Categoría
