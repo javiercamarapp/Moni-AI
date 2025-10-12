@@ -31,11 +31,11 @@ const SignIn2 = () => {
  
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-start pt-[50vh] rounded-xl z-1">
-      <div className="w-full max-w-[320px] bg-gradient-to-b from-sky-50/50 to-white rounded-t-[40px] shadow-xl shadow-opacity-10 pt-3 px-6 pb-6 flex flex-col items-center border-t border-x border-blue-100 text-black">
-        <div className="flex items-center justify-center w-48 h-20 mb-2">
+      <div className="w-full max-w-[320px] md:max-w-md lg:max-w-lg bg-gradient-to-b from-sky-50/50 to-white rounded-t-[40px] shadow-xl shadow-opacity-10 pt-3 md:pt-6 px-6 md:px-10 pb-6 md:pb-10 flex flex-col items-center border-t border-x border-blue-100 text-black">
+        <div className="flex items-center justify-center w-48 md:w-64 lg:w-72 h-20 md:h-28 mb-2 md:mb-4">
           <img src={moniLogo} alt="Moni AI" className="w-full h-full object-contain" />
         </div>
-        <div className="w-full flex flex-col gap-2 mb-2">
+        <div className="w-full flex flex-col gap-2 md:gap-3 mb-2">
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
               <Mail className="w-4 h-4" />
@@ -44,7 +44,7 @@ const SignIn2 = () => {
               placeholder="Email"
               type="email"
               value={email}
-              className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm"
+              className="w-full pl-10 pr-3 py-2 md:py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm md:text-base"
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
@@ -56,7 +56,7 @@ const SignIn2 = () => {
               placeholder="Password"
               type="password"
               value={password}
-              className="w-full pl-10 pr-10 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm"
+              className="w-full pl-10 pr-10 py-2 md:py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm md:text-base"
               onChange={(e) => setPassword(e.target.value)}
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer text-xs select-none"></span>
@@ -72,7 +72,7 @@ const SignIn2 = () => {
         </div>
         <button
           onClick={handleSignIn}
-          className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 rounded-xl shadow hover:brightness-105 hover:scale-105 cursor-pointer transition-all mb-2 mt-1"
+          className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 md:py-3 text-sm md:text-base rounded-xl shadow hover:brightness-105 hover:scale-105 cursor-pointer transition-all mb-2 mt-1"
         >
           Get Started
         </button>
@@ -82,25 +82,25 @@ const SignIn2 = () => {
           <div className="flex-grow border-t border-dashed border-gray-200"></div>
         </div>
         <div className="flex gap-3 w-full justify-center mt-1">
-          <button className="flex items-center justify-center w-12 h-12 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow">
+          <button className="flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow">
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google"
-              className="w-6 h-6"
+              className="w-6 h-6 md:w-8 md:h-8"
             />
           </button>
-          <button className="flex items-center justify-center w-12 h-12 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow">
+          <button className="flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow">
             <img
               src="https://www.svgrepo.com/show/448224/facebook.svg"
               alt="Facebook"
-              className="w-6 h-6"
+              className="w-6 h-6 md:w-8 md:h-8"
             />
           </button>
-          <button className="flex items-center justify-center w-12 h-12 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow">
+          <button className="flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow">
             <img
               src="https://www.svgrepo.com/show/511330/apple-173.svg"
               alt="Apple"
-              className="w-6 h-6"
+              className="w-6 h-6 md:w-8 md:h-8"
             />
           </button>
         </div>
