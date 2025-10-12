@@ -17,24 +17,24 @@ export default function RiskIndicatorsWidget({ indicators, hasIssues }: RiskIndi
   const getIndicatorStyle = (level: string) => {
     switch (level) {
       case "critical":
-        return "bg-gradient-to-br from-red-600/90 to-red-800/90 border-red-500/30";
+        return "bg-white border-red-200 shadow-lg";
       case "warning":
-        return "bg-gradient-to-br from-yellow-600/90 to-yellow-800/90 border-yellow-500/30";
+        return "bg-white border-yellow-200 shadow-lg";
       case "good":
-        return "bg-gradient-to-br from-emerald-600/90 to-emerald-800/90 border-emerald-500/30";
+        return "bg-white border-green-200 shadow-lg";
       default:
-        return "bg-gradient-card border-white/20";
+        return "bg-white border-border shadow-lg";
     }
   };
 
   const getIcon = (level: string) => {
     switch (level) {
       case "critical":
-        return <AlertCircle className="h-4 w-4 text-red-200" />;
+        return <AlertCircle className="h-4 w-4 text-destructive" />;
       case "warning":
-        return <AlertTriangle className="h-4 w-4 text-yellow-200" />;
+        return <AlertTriangle className="h-4 w-4 text-warning" />;
       case "good":
-        return <CheckCircle className="h-4 w-4 text-emerald-200" />;
+        return <CheckCircle className="h-4 w-4 text-success" />;
       default:
         return null;
     }
@@ -43,19 +43,19 @@ export default function RiskIndicatorsWidget({ indicators, hasIssues }: RiskIndi
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <Sparkles className="h-4 w-4 text-purple-400" />
+        <Sparkles className="h-4 w-4 text-primary" />
         <p className="text-xs font-medium text-foreground">⚡ Análisis de Riesgos IA</p>
       </div>
       
       {!hasIssues ? (
-        <Card className="p-4 bg-gradient-to-br from-emerald-600/90 to-emerald-800/90 card-glow border-emerald-500/30 animate-fade-in">
+        <Card className="p-4 bg-white border-green-200 shadow-lg animate-fade-in rounded-[20px]">
           <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-emerald-200 flex-shrink-0 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-white mb-1">
+              <p className="text-sm font-medium text-foreground mb-1">
                 🎉 ¡Excelente salud financiera!
               </p>
-              <p className="text-xs text-emerald-200 leading-snug">
+              <p className="text-xs text-muted-foreground leading-snug">
                 Tu Moni AI no detectó puntos críticos. Tus métricas están en niveles saludables. 
                 Sigue con el buen trabajo y mantén estos hábitos financieros.
               </p>
@@ -79,13 +79,13 @@ export default function RiskIndicatorsWidget({ indicators, hasIssues }: RiskIndi
             {indicators.map((indicator, index) => (
               <CarouselItem key={index} className="basis-full">
                 <Card 
-                  className={`p-3 card-glow transition-all duration-500 ${getIndicatorStyle(indicator.level)}`}
+                  className={`p-3 transition-all duration-500 rounded-[20px] ${getIndicatorStyle(indicator.level)}`}
                 >
                   <div className="flex items-center gap-2">
                     <div className="flex-shrink-0">
                       {getIcon(indicator.level)}
                     </div>
-                    <p className="text-xs text-white/90 leading-snug flex-1">
+                    <p className="text-xs text-foreground leading-snug flex-1">
                       {indicator.message}
                     </p>
                   </div>
