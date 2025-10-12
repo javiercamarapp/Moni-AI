@@ -177,11 +177,21 @@ serve(async (req) => {
         // Get all expense transactions for AI analysis
         const allExpenses = transactions?.filter(t => t.type === 'gasto') || [];
         
+        console.log('=== DETECTING SUBSCRIPTIONS AND DAILY EXPENSES ===');
+        console.log('All expenses count:', allExpenses.length);
+        
         if (allExpenses.length > 0) {
           // Detect subscriptions
-          const { data: subsResult } = await supabase.functions.invoke('detect-subscriptions', {
+          console.log('Invoking detect-subscriptions function...');
+          const { data: subsResult, error: subsError } = await supabase.functions.invoke('detect-subscriptions', {
             body: { transactions: allExpenses }
           });
+
+          if (subsError) {
+            console.error('Error in detect-subscriptions:', subsError);
+          }
+
+          console.log('Subscriptions result:', subsResult);
 
           if (subsResult?.subscriptions) {
             // Group subscriptions by normalized name
@@ -203,12 +213,20 @@ serve(async (req) => {
             });
             subscriptions = Array.from(uniqueSubs.values());
             subscriptionsTotal = subscriptions.reduce((sum, s) => sum + s.amount, 0);
+            console.log('Subscriptions detected:', subscriptions.length);
           }
 
           // Detect daily expenses
-          const { data: dailyResult } = await supabase.functions.invoke('detect-daily-expenses', {
+          console.log('Invoking detect-daily-expenses function...');
+          const { data: dailyResult, error: dailyError } = await supabase.functions.invoke('detect-daily-expenses', {
             body: { transactions: allExpenses }
           });
+
+          if (dailyError) {
+            console.error('Error in detect-daily-expenses:', dailyError);
+          }
+
+          console.log('Daily expenses result:', dailyResult);
 
           if (dailyResult?.expenses) {
             // Group daily expenses by normalized name
@@ -248,8 +266,13 @@ serve(async (req) => {
             });
             dailyExpenses = Array.from(uniqueExpenses.values());
             dailyExpensesTotal = dailyExpenses.reduce((sum, e) => sum + e.averageAmount, 0);
+            console.log('Daily expenses detected:', dailyExpenses.length);
           }
         }
+        console.log('=== FINAL RESULTS ===');
+        console.log('Subscriptions:', subscriptions.length, 'Total:', subscriptionsTotal);
+        console.log('Daily Expenses:', dailyExpenses.length, 'Total:', dailyExpensesTotal);
+        console.log('=====================');
       } catch (error) {
         console.error('Error detecting subscriptions/daily expenses:', error);
       }
