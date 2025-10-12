@@ -570,7 +570,7 @@ const ChatInterface = () => {
   return <div className="flex flex-col h-screen animated-wave-bg text-white">
       {/* Header */}
       <div className="flex items-center justify-center px-4 py-4 relative border-b border-border/30 bg-card/50 backdrop-blur-sm">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")} className="absolute left-2 text-foreground hover:bg-accent/50 p-2 transition-all hover:scale-105">
+        <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")} className="absolute left-1 text-foreground hover:bg-accent/50 transition-all hover:scale-105">
           <ArrowLeft className="w-6 h-6" />
         </Button>
         <div className="flex items-center gap-3 fade-in-up">
