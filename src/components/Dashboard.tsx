@@ -1129,7 +1129,7 @@ const Dashboard = () => {
                   monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 90 
                     ? 'text-white' 
                     : 'text-gray-900'
-                }`}>
+                }`} style={{ textShadow: 'none' }}>
                   ${(monthlyIncome > 0 ? (monthlyIncome * 0.8) - monthlyExpenses : 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} restantes
                 </span>
               </div>
