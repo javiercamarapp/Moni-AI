@@ -173,7 +173,22 @@ const Reports = () => {
             </Select>
           </div>
           <div className="grid grid-cols-1 gap-2">
-            {[...months].reverse().map((month) => (
+            {[...months].reverse().filter((month) => {
+              const currentDate = new Date();
+              const currentYear = currentDate.getFullYear();
+              const currentMonth = currentDate.getMonth() + 1;
+              
+              // Si es el año actual, solo mostrar meses hasta el mes actual
+              if (selectedYear === currentYear) {
+                return month.number <= currentMonth;
+              }
+              // Si es un año anterior, mostrar todos los meses
+              if (selectedYear < currentYear) {
+                return true;
+              }
+              // Si es un año futuro, no mostrar ningún mes
+              return false;
+            }).map((month) => (
               <Card
                 key={month.number}
                 className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] transition-all"
