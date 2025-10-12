@@ -1174,7 +1174,12 @@ const Dashboard = () => {
                 </div>
               ) : (
                 <>
-                  <ScrollArea className="flex-1 min-h-0 pr-1 [&>div>div[style]]:!pr-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                  <div className="flex-1 min-h-0 overflow-y-auto pr-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    <style>{`
+                      .flex-1.min-h-0.overflow-y-auto::-webkit-scrollbar {
+                        display: none;
+                      }
+                    `}</style>
                     <div className="space-y-0.5">
                       {upcomingSubscriptions.map((sub) => (
                         <div 
@@ -1189,7 +1194,7 @@ const Dashboard = () => {
                         </div>
                       ))}
                     </div>
-                  </ScrollArea>
+                  </div>
                   
                   <div className="pt-2 border-t border-white/20 mt-2 flex-shrink-0">
                     <div className="flex justify-between items-center">
@@ -1249,7 +1254,12 @@ const Dashboard = () => {
                     </p>
                   </div>
                   
-                  <ScrollArea className="flex-1 min-h-0 pr-1 [&>div>div[style]]:!pr-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                  <div className="flex-1 min-h-0 overflow-y-auto pr-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    <style>{`
+                      .flex-1.min-h-0.overflow-y-auto::-webkit-scrollbar {
+                        display: none;
+                      }
+                    `}</style>
                     <div className="space-y-0.5">
                       {creditCardDebts.map((card, index) => (
                         <div key={index} className="bg-white/10 rounded py-0.5 sm:py-2 px-1 sm:px-3 backdrop-blur-sm border border-white/20 min-h-[18px] sm:min-h-[50px]">
@@ -1269,7 +1279,7 @@ const Dashboard = () => {
                         </div>
                       ))}
                     </div>
-                  </ScrollArea>
+                  </div>
                 </>
               )}
             </div>
@@ -1548,7 +1558,12 @@ const Dashboard = () => {
                     <p className="text-[10px] sm:text-[9px] text-foreground/50">Registra tu primer transacción</p>
                   </div>
                 ) : (
-                  <div className="flex-1 min-h-0 overflow-y-auto pr-1">
+                  <div className="flex-1 min-h-0 overflow-y-auto pr-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    <style>{`
+                      .flex-1.min-h-0.overflow-y-auto::-webkit-scrollbar {
+                        display: none;
+                      }
+                    `}</style>
                     <div className="space-y-1 sm:space-y-0.5">
                       {recentTransactions.map((transaction) => (
                         <div 
