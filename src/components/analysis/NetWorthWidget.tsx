@@ -134,7 +134,7 @@ export default function NetWorthWidget() {
       </div>
 
       {/* Time Range Buttons - closer to chart */}
-      <div className="flex gap-1.5 justify-center -mt-2">
+      <div className="flex gap-2 justify-center -mt-2">
         {(['1M', '3M', '6M', '1Y', 'All'] as TimeRange[]).map((range) => (
           <Button
             key={range}
@@ -142,10 +142,10 @@ export default function NetWorthWidget() {
             size="sm"
             onClick={() => setTimeRange(range)}
             className={cn(
-              "h-6 px-2 text-[10px] transition-all rounded-full",
+              "h-9 px-3 text-xs transition-all rounded-[20px] shadow-lg font-semibold border border-blue-100",
               timeRange === range 
-                ? "bg-primary text-primary-foreground border-primary shadow-lg" 
-                : "bg-white text-foreground/60 border-blue-100 hover:bg-primary/10 hover:border-primary/30"
+                ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105" 
+                : "bg-white text-foreground hover:bg-primary/10 hover:scale-105"
             )}
           >
             {range}
