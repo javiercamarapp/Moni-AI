@@ -30,7 +30,7 @@ const SignIn2 = () => {
  
   return (
     <div className="min-h-screen w-full flex items-center justify-center rounded-xl z-1">
-      <div className="w-full max-w-sm bg-gradient-to-b from-sky-50/50 to-white  rounded-3xl shadow-xl shadow-opacity-10 p-8 flex flex-col items-center border border-blue-100 text-black">
+      <div className="w-full max-w-[320px] bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl shadow-opacity-10 p-6 flex flex-col items-center border border-blue-100 text-black">
         <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg shadow-opacity-5">
           <LogIn className="w-7 h-7 text-black" />
         </div>
