@@ -218,66 +218,80 @@ const ScoreCard = ({
   const getColors = (percentage: number) => {
     if (percentage >= 90) return {
       bg: 'bg-emerald-700',
-      text: 'text-emerald-700',
-      gradient: 'from-emerald-50 to-emerald-100',
+      text: 'text-white',
+      gradient: 'from-emerald-600 to-emerald-700',
       ring: 'ring-emerald-700',
-      shadow: 'shadow-emerald-200',
-      button: 'bg-emerald-600 hover:bg-emerald-700',
-      badge: 'bg-emerald-100',
+      shadow: 'shadow-emerald-300',
+      button: 'bg-emerald-700 hover:bg-emerald-800',
+      badge: 'bg-white',
+      badgeText: 'text-emerald-700',
+      overlay: 'bg-emerald-500',
     };
     if (percentage >= 80) return {
       bg: 'bg-emerald-600',
-      text: 'text-emerald-600',
-      gradient: 'from-emerald-50 to-emerald-100',
+      text: 'text-white',
+      gradient: 'from-emerald-500 to-emerald-600',
       ring: 'ring-emerald-600',
-      shadow: 'shadow-emerald-200',
+      shadow: 'shadow-emerald-300',
       button: 'bg-emerald-600 hover:bg-emerald-700',
-      badge: 'bg-emerald-100',
+      badge: 'bg-white',
+      badgeText: 'text-emerald-600',
+      overlay: 'bg-emerald-400',
     };
     if (percentage >= 70) return {
       bg: 'bg-emerald-500',
-      text: 'text-emerald-500',
-      gradient: 'from-emerald-50 to-emerald-100',
+      text: 'text-white',
+      gradient: 'from-emerald-400 to-emerald-500',
       ring: 'ring-emerald-500',
-      shadow: 'shadow-emerald-100',
+      shadow: 'shadow-emerald-200',
       button: 'bg-emerald-500 hover:bg-emerald-600',
-      badge: 'bg-emerald-100',
+      badge: 'bg-white',
+      badgeText: 'text-emerald-500',
+      overlay: 'bg-emerald-300',
     };
     if (percentage >= 60) return {
       bg: 'bg-yellow-500',
-      text: 'text-yellow-600',
-      gradient: 'from-yellow-50 to-yellow-100',
+      text: 'text-white',
+      gradient: 'from-yellow-400 to-yellow-500',
       ring: 'ring-yellow-500',
-      shadow: 'shadow-yellow-100',
+      shadow: 'shadow-yellow-200',
       button: 'bg-yellow-500 hover:bg-yellow-600',
-      badge: 'bg-yellow-100',
+      badge: 'bg-white',
+      badgeText: 'text-yellow-600',
+      overlay: 'bg-yellow-300',
     };
     if (percentage >= 40) return {
       bg: 'bg-orange-500',
-      text: 'text-orange-600',
-      gradient: 'from-orange-50 to-orange-100',
+      text: 'text-white',
+      gradient: 'from-orange-400 to-orange-500',
       ring: 'ring-orange-500',
-      shadow: 'shadow-orange-100',
+      shadow: 'shadow-orange-200',
       button: 'bg-orange-500 hover:bg-orange-600',
-      badge: 'bg-orange-100',
+      badge: 'bg-white',
+      badgeText: 'text-orange-600',
+      overlay: 'bg-orange-300',
     };
     if (percentage >= 20) return {
       bg: 'bg-red-600',
-      text: 'text-red-600',
-      gradient: 'from-red-50 to-red-100',
+      text: 'text-white',
+      gradient: 'from-red-500 to-red-600',
       ring: 'ring-red-600',
-      shadow: 'shadow-red-100',
+      shadow: 'shadow-red-200',
       button: 'bg-red-600 hover:bg-red-700',
-      badge: 'bg-red-100',
+      badge: 'bg-white',
+      badgeText: 'text-red-600',
+      overlay: 'bg-red-400',
     };
     return {
       bg: 'bg-red-700',
-      text: 'text-red-700',
-      gradient: 'from-red-50 to-red-100',
+      text: 'text-white',
+      gradient: 'from-red-600 to-red-700',
       ring: 'ring-red-700',
-      shadow: 'shadow-red-200',
+      shadow: 'shadow-red-300',
       button: 'bg-red-700 hover:bg-red-800',
-      badge: 'bg-red-100',
+      badge: 'bg-white',
+      badgeText: 'text-red-700',
+      overlay: 'bg-red-500',
     };
   };
 
@@ -310,18 +324,18 @@ const ScoreCard = ({
               </button>
               <motion.p
                 layoutId={layout ? `title-${component.title}` : undefined}
-                className={`px-0 md:px-20 text-2xl md:text-4xl font-bold ${colors.text} mt-4`}
+                className={`px-0 md:px-20 text-2xl md:text-4xl font-bold text-white mt-4`}
               >
                 {component.title}
               </motion.p>
               <motion.p
                 layoutId={layout ? `score-${component.title}` : undefined}
-                className={`px-0 md:px-20 text-5xl font-bold ${colors.text} mt-4`}
+                className={`px-0 md:px-20 text-5xl font-bold text-white mt-4`}
               >
                 {component.value}/{component.maxValue} pts
               </motion.p>
-              <div className="py-8 text-foreground/80 px-0 md:px-20 text-lg leading-relaxed">
-                <Quote className={`h-6 w-6 ${colors.text} mb-4`} />
+              <div className="py-8 text-white/90 px-0 md:px-20 text-lg leading-relaxed">
+                <Quote className={`h-6 w-6 text-white mb-4`} />
                 {component.description}
               </div>
             </motion.div>
@@ -341,18 +355,18 @@ const ScoreCard = ({
         }}
       >
         <div
-          className={`${index % 2 === 0 ? "rotate-1" : "-rotate-1"} rounded-3xl bg-gradient-to-b ${colors.gradient} h-[400px] md:h-[450px] w-72 md:w-80 overflow-hidden flex flex-col items-center justify-center relative z-10 ${colors.shadow} shadow-xl border ${colors.ring} border-2`}
+          className={`${index % 2 === 0 ? "rotate-1" : "-rotate-1"} rounded-3xl bg-gradient-to-br ${colors.gradient} h-[400px] md:h-[450px] w-72 md:w-80 overflow-hidden flex flex-col items-center justify-center relative z-10 ${colors.shadow} shadow-2xl border-4 ${colors.ring}`}
         >
-          <div className={`absolute inset-0 opacity-10 ${colors.bg}`} />
+          <div className={`absolute inset-0 opacity-30 ${colors.overlay}`} />
           
           <div className="relative z-10 flex flex-col items-center justify-center p-6">
-            <div className={`w-24 h-24 rounded-full ${colors.badge} flex items-center justify-center mb-4 ring-4 ${colors.ring}`}>
-              <span className={`text-3xl font-bold ${colors.text}`}>{percentage}%</span>
+            <div className={`w-24 h-24 rounded-full ${colors.badge} flex items-center justify-center mb-4 shadow-lg`}>
+              <span className={`text-3xl font-bold ${colors.badgeText}`}>{percentage}%</span>
             </div>
             
             <motion.p
               layoutId={layout ? `title-${component.title}` : undefined}
-              className="text-foreground text-xl md:text-2xl font-bold text-center mt-2"
+              className={`${colors.text} text-xl md:text-2xl font-bold text-center mt-2`}
             >
               {component.title}
             </motion.p>
@@ -365,7 +379,7 @@ const ScoreCard = ({
             </motion.p>
             
             <motion.p
-              className="text-foreground/70 text-sm text-center mt-4 px-4 line-clamp-3"
+              className={`${colors.text} text-sm text-center mt-4 px-4 line-clamp-3`}
             >
               {component.description.length > 80
                 ? `${component.description.slice(0, 80)}...`
