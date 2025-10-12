@@ -471,7 +471,7 @@ const GestionarCategorias = () => {
       <AlertDialog open={!!deleteCategory} onOpenChange={open => !open && setDeleteCategory(null)}>
         <AlertDialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100 max-w-[85%] sm:max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-foreground">¿Eliminar categoría?</AlertDialogTitle>
+            <AlertDialogTitle className="text-2xl font-bold text-foreground">¿Eliminar categoría?</AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground">
               Esta acción no se puede deshacer. La categoría "{deleteCategory?.name}" será eliminada permanentemente.
             </AlertDialogDescription>
