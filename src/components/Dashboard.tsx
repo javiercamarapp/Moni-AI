@@ -1105,7 +1105,10 @@ const Dashboard = () => {
             />
             <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
               {/* Suscripciones - Mitad superior */}
-              <div className="flex-1 flex flex-col min-h-0">
+              <div 
+                className="flex-1 flex flex-col min-h-0 cursor-pointer"
+                onClick={() => navigate('/subscriptions')}
+              >
                 <div className="flex items-center justify-between flex-shrink-0 mb-1">
                   <h3 className="text-[10px] font-bold text-foreground">📅 Suscripciones</h3>
                   <span className="text-[9px] text-foreground/70 font-semibold">{upcomingSubscriptions.length}</span>
