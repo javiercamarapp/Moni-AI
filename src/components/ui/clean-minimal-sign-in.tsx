@@ -109,22 +109,22 @@ const SignIn2 = () => {
             <img
               src="https://i.pravatar.cc/150?img=1"
               alt="User 1"
-              className="w-8 h-8 rounded-full border-2 border-white"
+              className="w-8 h-8 rounded-full"
             />
             <img
               src="https://i.pravatar.cc/150?img=2"
               alt="User 2"
-              className="w-8 h-8 rounded-full border-2 border-white"
+              className="w-8 h-8 rounded-full"
             />
             <img
               src="https://i.pravatar.cc/150?img=3"
               alt="User 3"
-              className="w-8 h-8 rounded-full border-2 border-white"
+              className="w-8 h-8 rounded-full"
             />
             <img
               src="https://i.pravatar.cc/150?img=4"
               alt="User 4"
-              className="w-8 h-8 rounded-full border-2 border-white"
+              className="w-8 h-8 rounded-full"
             />
           </div>
           <p className="text-xs text-white/80 text-center">
