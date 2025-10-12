@@ -855,7 +855,7 @@ const Dashboard = () => {
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-primary/40 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
+                <BarChart3 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
                 <p className="text-[9px] sm:text-xs text-foreground/80 leading-tight">Ingreso vs Gasto</p>
@@ -873,7 +873,7 @@ const Dashboard = () => {
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-success/50 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-success-foreground" />
+                <TrendingUp className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-success-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
                 <p className="text-[9px] sm:text-xs text-foreground/80 leading-tight">Net Worth</p>
@@ -905,7 +905,7 @@ const Dashboard = () => {
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-blue-500/40 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
-                <Wallet className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
+                <CreditCard className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
                 <p className="text-[9px] sm:text-xs text-foreground/80 leading-tight">Presupuestos</p>
