@@ -1107,7 +1107,7 @@ const Dashboard = () => {
               {/* Suscripciones - Mitad superior */}
               <div 
                 className="flex-1 flex flex-col min-h-0 cursor-pointer"
-                onClick={() => navigate('/subscriptions')}
+                onClick={() => navigate('/subscriptions', { state: { from: '/dashboard' } })}
               >
                 <div className="flex items-center justify-between flex-shrink-0 mb-1">
                   <h3 className="text-[10px] font-bold text-foreground">📅 Suscripciones</h3>
@@ -1168,7 +1168,7 @@ const Dashboard = () => {
               {/* Gastos Cotidianos - Mitad inferior */}
               <div 
                 className="flex-1 flex flex-col min-h-0 cursor-pointer"
-                onClick={() => navigate('/daily-expenses')}
+                onClick={() => navigate('/daily-expenses', { state: { from: '/dashboard' } })}
               >
                 <div className="flex items-center justify-between flex-shrink-0 mb-1">
                   <h3 className="text-[10px] font-bold text-foreground">☕ Gastos Cotidianos</h3>

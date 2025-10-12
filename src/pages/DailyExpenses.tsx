@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -44,8 +44,18 @@ const getVariabilityColor = (min: number, max: number, avg: number): string => {
 
 export default function DailyExpenses() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [totalMonthly, setTotalMonthly] = useState(0);
+
+  const handleBack = () => {
+    const from = location.state?.from;
+    if (from) {
+      navigate(from);
+    } else {
+      navigate(-1);
+    }
+  };
 
   const { data: expenses = [], isLoading: loading, refetch } = useQuery({
     queryKey: ['daily-expenses'],
@@ -141,7 +151,7 @@ export default function DailyExpenses() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate('/gastos')}
+            onClick={handleBack}
             className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-12 w-12"
           >
             <ArrowLeft className="h-5 w-5" />
