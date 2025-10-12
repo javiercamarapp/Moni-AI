@@ -298,18 +298,34 @@ const GestionarCategorias = () => {
               {!parentCategoryForSubcategory && <div className="space-y-2">
                   <Label className="text-foreground/90 text-base">Tipo</Label>
                   <div className="flex gap-3">
-                    <Button type="button" onClick={() => setNewCategory({
-                  ...newCategory,
-                  type: 'ingreso',
-                  parent_id: null
-                })} className={`flex-1 ${newCategory.type === 'ingreso' ? 'bg-primary text-white' : 'bg-white text-foreground border border-blue-100'} hover:bg-primary/80 h-12`}>
+                    <Button 
+                      type="button" 
+                      onClick={() => setNewCategory({
+                        ...newCategory,
+                        type: 'ingreso',
+                        parent_id: null
+                      })} 
+                      className={`flex-1 rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all h-12 ${
+                        newCategory.type === 'ingreso' 
+                          ? 'bg-primary text-white hover:bg-primary/90' 
+                          : 'bg-white text-foreground hover:bg-gray-50'
+                      }`}
+                    >
                       Ingreso
                     </Button>
-                    <Button type="button" onClick={() => setNewCategory({
-                  ...newCategory,
-                  type: 'gasto',
-                  parent_id: null
-                })} className={`flex-1 ${newCategory.type === 'gasto' ? 'bg-primary text-white' : 'bg-white text-foreground border border-blue-100'} hover:bg-primary/80 h-12`}>
+                    <Button 
+                      type="button" 
+                      onClick={() => setNewCategory({
+                        ...newCategory,
+                        type: 'gasto',
+                        parent_id: null
+                      })} 
+                      className={`flex-1 rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all h-12 ${
+                        newCategory.type === 'gasto' 
+                          ? 'bg-primary text-white hover:bg-primary/90' 
+                          : 'bg-white text-foreground hover:bg-gray-50'
+                      }`}
+                    >
                       Gasto
                     </Button>
                   </div>
