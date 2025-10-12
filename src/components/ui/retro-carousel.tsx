@@ -141,18 +141,18 @@ const RetroCarousel = ({items, initialScroll = 0}: CarouselProps) => {
       </div>
       <div className="flex justify-end gap-2 mt-4">
         <button
-          className="relative z-40 h-10 w-10 rounded-full bg-purple-600 flex items-center justify-center disabled:opacity-50 hover:bg-purple-700 transition-colors duration-200"
+          className="relative z-40 h-10 w-10 rounded-full bg-foreground/80 flex items-center justify-center disabled:opacity-50 hover:bg-foreground transition-colors duration-200"
           onClick={handleScrollLeft}
           disabled={!canScrollLeft}
         >
-          <ArrowLeft className="h-6 w-6 text-white" />
+          <ArrowLeft className="h-6 w-6 text-background" />
         </button>
         <button
-          className="relative z-40 h-10 w-10 rounded-full bg-purple-600 flex items-center justify-center disabled:opacity-50 hover:bg-purple-700 transition-colors duration-200"
+          className="relative z-40 h-10 w-10 rounded-full bg-foreground/80 flex items-center justify-center disabled:opacity-50 hover:bg-foreground transition-colors duration-200"
           onClick={handleScrollRight}
           disabled={!canScrollRight}
         >
-          <ArrowRight className="h-6 w-6 text-white" />
+          <ArrowRight className="h-6 w-6 text-background" />
         </button>
       </div>
     </div>
@@ -214,6 +214,75 @@ const ScoreCard = ({
 
   const percentage = Math.round((component.value / component.maxValue) * 100);
 
+  // Función para obtener los colores según el porcentaje
+  const getColors = (percentage: number) => {
+    if (percentage >= 90) return {
+      bg: 'bg-emerald-700',
+      text: 'text-emerald-700',
+      gradient: 'from-emerald-50 to-emerald-100',
+      ring: 'ring-emerald-700',
+      shadow: 'shadow-emerald-200',
+      button: 'bg-emerald-600 hover:bg-emerald-700',
+      badge: 'bg-emerald-100',
+    };
+    if (percentage >= 80) return {
+      bg: 'bg-emerald-600',
+      text: 'text-emerald-600',
+      gradient: 'from-emerald-50 to-emerald-100',
+      ring: 'ring-emerald-600',
+      shadow: 'shadow-emerald-200',
+      button: 'bg-emerald-600 hover:bg-emerald-700',
+      badge: 'bg-emerald-100',
+    };
+    if (percentage >= 70) return {
+      bg: 'bg-emerald-500',
+      text: 'text-emerald-500',
+      gradient: 'from-emerald-50 to-emerald-100',
+      ring: 'ring-emerald-500',
+      shadow: 'shadow-emerald-100',
+      button: 'bg-emerald-500 hover:bg-emerald-600',
+      badge: 'bg-emerald-100',
+    };
+    if (percentage >= 60) return {
+      bg: 'bg-yellow-500',
+      text: 'text-yellow-600',
+      gradient: 'from-yellow-50 to-yellow-100',
+      ring: 'ring-yellow-500',
+      shadow: 'shadow-yellow-100',
+      button: 'bg-yellow-500 hover:bg-yellow-600',
+      badge: 'bg-yellow-100',
+    };
+    if (percentage >= 40) return {
+      bg: 'bg-orange-500',
+      text: 'text-orange-600',
+      gradient: 'from-orange-50 to-orange-100',
+      ring: 'ring-orange-500',
+      shadow: 'shadow-orange-100',
+      button: 'bg-orange-500 hover:bg-orange-600',
+      badge: 'bg-orange-100',
+    };
+    if (percentage >= 20) return {
+      bg: 'bg-red-600',
+      text: 'text-red-600',
+      gradient: 'from-red-50 to-red-100',
+      ring: 'ring-red-600',
+      shadow: 'shadow-red-100',
+      button: 'bg-red-600 hover:bg-red-700',
+      badge: 'bg-red-100',
+    };
+    return {
+      bg: 'bg-red-700',
+      text: 'text-red-700',
+      gradient: 'from-red-50 to-red-100',
+      ring: 'ring-red-700',
+      shadow: 'shadow-red-200',
+      button: 'bg-red-700 hover:bg-red-800',
+      badge: 'bg-red-100',
+    };
+  };
+
+  const colors = getColors(percentage);
+
   return (
     <>
       <AnimatePresence>
@@ -231,28 +300,28 @@ const ScoreCard = ({
               exit={{opacity: 0}}
               ref={containerRef}
               layoutId={layout ? `card-${component.title}` : undefined}
-              className="max-w-5xl mx-auto bg-gradient-to-b from-white to-purple-50 h-full z-[60] p-4 md:p-10 rounded-3xl relative md:mt-10"
+              className={`max-w-5xl mx-auto bg-gradient-to-b ${colors.gradient} h-full z-[60] p-4 md:p-10 rounded-3xl relative md:mt-10`}
             >
               <button
-                className="sticky top-4 h-8 w-8 right-0 ml-auto rounded-full flex items-center justify-center bg-purple-600"
+                className={`sticky top-4 h-8 w-8 right-0 ml-auto rounded-full flex items-center justify-center ${colors.button}`}
                 onClick={handleCollapse}
               >
                 <X className="h-6 w-6 text-white absolute" />
               </button>
               <motion.p
                 layoutId={layout ? `title-${component.title}` : undefined}
-                className="px-0 md:px-20 text-2xl md:text-4xl font-bold text-purple-600 mt-4"
+                className={`px-0 md:px-20 text-2xl md:text-4xl font-bold ${colors.text} mt-4`}
               >
                 {component.title}
               </motion.p>
               <motion.p
                 layoutId={layout ? `score-${component.title}` : undefined}
-                className="px-0 md:px-20 text-5xl font-bold text-purple-700 mt-4"
+                className={`px-0 md:px-20 text-5xl font-bold ${colors.text} mt-4`}
               >
                 {component.value}/{component.maxValue} pts
               </motion.p>
               <div className="py-8 text-foreground/80 px-0 md:px-20 text-lg leading-relaxed">
-                <Quote className="h-6 w-6 text-purple-600 mb-4" />
+                <Quote className={`h-6 w-6 ${colors.text} mb-4`} />
                 {component.description}
               </div>
             </motion.div>
@@ -272,13 +341,13 @@ const ScoreCard = ({
         }}
       >
         <div
-          className={`${index % 2 === 0 ? "rotate-1" : "-rotate-1"} rounded-3xl bg-gradient-to-b from-white to-purple-50 h-[400px] md:h-[450px] w-72 md:w-80 overflow-hidden flex flex-col items-center justify-center relative z-10 shadow-xl border border-purple-100`}
+          className={`${index % 2 === 0 ? "rotate-1" : "-rotate-1"} rounded-3xl bg-gradient-to-b ${colors.gradient} h-[400px] md:h-[450px] w-72 md:w-80 overflow-hidden flex flex-col items-center justify-center relative z-10 ${colors.shadow} shadow-xl border ${colors.ring} border-2`}
         >
-          <div className="absolute inset-0 opacity-5 bg-gradient-to-br from-purple-500 to-blue-500" />
+          <div className={`absolute inset-0 opacity-10 ${colors.bg}`} />
           
           <div className="relative z-10 flex flex-col items-center justify-center p-6">
-            <div className="w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center mb-4">
-              <span className="text-3xl font-bold text-purple-600">{percentage}%</span>
+            <div className={`w-24 h-24 rounded-full ${colors.badge} flex items-center justify-center mb-4 ring-4 ${colors.ring}`}>
+              <span className={`text-3xl font-bold ${colors.text}`}>{percentage}%</span>
             </div>
             
             <motion.p
@@ -290,7 +359,7 @@ const ScoreCard = ({
             
             <motion.p
               layoutId={layout ? `score-${component.title}` : undefined}
-              className="text-purple-600 text-2xl font-bold text-center mt-3"
+              className={`${colors.text} text-2xl font-bold text-center mt-3`}
             >
               {component.value}/{component.maxValue}
             </motion.p>
