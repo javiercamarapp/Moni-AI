@@ -164,12 +164,13 @@ const Reports = () => {
                 <SelectValue placeholder="Año" />
               </SelectTrigger>
               <SelectContent 
-                className="bg-white border border-blue-100 rounded-[15px] shadow-2xl min-w-[120px] z-[9999]"
+                className="bg-white border border-blue-100 rounded-[15px] shadow-2xl min-w-[120px]"
                 position="popper"
                 sideOffset={8}
                 align="end"
                 avoidCollisions={true}
                 collisionPadding={20}
+                style={{ zIndex: 9999 }}
               >
                 {availableYears.filter(year => year <= new Date().getFullYear()).map((year) => (
                   <SelectItem 
@@ -183,7 +184,7 @@ const Reports = () => {
               </SelectContent>
             </Select>
           </div>
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-1 gap-2 relative z-0">
             {[...months].reverse().filter((month) => {
               const currentDate = new Date();
               const currentYear = currentDate.getFullYear();
@@ -202,7 +203,7 @@ const Reports = () => {
             }).map((month) => (
               <Card
                 key={month.number}
-                className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] transition-all"
+                className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] transition-all relative z-0"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
