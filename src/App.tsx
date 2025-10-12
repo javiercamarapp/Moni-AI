@@ -29,40 +29,42 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Onboarding />} />
-          <Route path="/home" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/chat" element={<ChatInterface />} />
-          <Route path="/new-goal" element={<NewGoal />} />
-          <Route path="/financial-chat" element={<FinancialChat />} />
-          <Route path="/ingresos" element={<Ingresos />} />
-          <Route path="/gastos" element={<Gastos />} />
-          <Route path="/categorias" element={<GestionarCategorias />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/balance" element={<Balance />} />
-          <Route path="/whatsapp" element={<WhatsAppSetup />} />
-          <Route path="/analysis" element={<FinancialAnalysis />} />
-          <Route path="/bank-connection" element={<BankConnection />} />
-          <Route path="/notifications" element={<NotificationSettings />} />
-          <Route path="/net-worth" element={<NetWorth />} />
-          <Route path="/score-moni" element={<ScoreMoni />} />
-          <Route path="/assets" element={<Assets />} />
-          <Route path="/liabilities" element={<Liabilities />} />
-          
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Onboarding />} />
+            <Route path="/home" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/chat" element={<ChatInterface />} />
+            <Route path="/new-goal" element={<NewGoal />} />
+            <Route path="/financial-chat" element={<FinancialChat />} />
+            <Route path="/ingresos" element={<Ingresos />} />
+            <Route path="/gastos" element={<Gastos />} />
+            <Route path="/categorias" element={<GestionarCategorias />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/balance" element={<Balance />} />
+            <Route path="/whatsapp" element={<WhatsAppSetup />} />
+            <Route path="/analysis" element={<FinancialAnalysis />} />
+            <Route path="/bank-connection" element={<BankConnection />} />
+            <Route path="/notifications" element={<NotificationSettings />} />
+            <Route path="/net-worth" element={<NetWorth />} />
+            <Route path="/score-moni" element={<ScoreMoni />} />
+            <Route path="/assets" element={<Assets />} />
+            <Route path="/liabilities" element={<Liabilities />} />
+            
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
