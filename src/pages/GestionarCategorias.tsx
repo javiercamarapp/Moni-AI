@@ -214,23 +214,23 @@ const GestionarCategorias = () => {
     setShowAddDialog(true);
   };
   const renderCategoryCard = (category: Category, isSubcategory: boolean = false) => <div key={category.id}>
-      <Card className={`p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in hover:scale-105 transition-all ${isSubcategory ? 'ml-8 mt-2' : ''}`}>
+      <Card className={`p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in hover:scale-[1.02] transition-all ${isSubcategory ? 'ml-8 mt-2' : ''}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 flex-1">
-            <div className={`w-12 h-12 rounded-lg ${category.color}`} />
-            <div className="flex-1">
-              <p className="text-lg font-semibold text-foreground">{category.name}</p>
-              {!isSubcategory && category.subcategories && category.subcategories.length > 0 && <p className="text-xs text-muted-foreground">{category.subcategories.length} subcategorías</p>}
+            <div className={`w-12 h-12 rounded-lg ${category.color} flex-shrink-0`} />
+            <div className="flex-1 min-w-0">
+              <p className="text-base font-bold text-foreground truncate">{category.name}</p>
+              {!isSubcategory && category.subcategories && category.subcategories.length > 0 && <p className="text-xs text-foreground/60">{category.subcategories.length} subcategorías</p>}
             </div>
           </div>
-          <div className="flex gap-2">
-            {!isSubcategory && <Button size="icon" variant="ghost" onClick={() => openAddSubcategoryDialog(category)} className="text-primary hover:bg-primary/10 hover:scale-105 transition-all" title="Agregar subcategoría">
+          <div className="flex gap-1 flex-shrink-0">
+            {!isSubcategory && <Button size="icon" variant="ghost" onClick={() => openAddSubcategoryDialog(category)} className="text-primary hover:bg-primary/10 hover:scale-110 transition-all h-8 w-8" title="Agregar subcategoría">
                 <Plus className="h-4 w-4" />
               </Button>}
-            <Button size="icon" variant="ghost" onClick={() => setEditingCategory(category)} className="text-foreground hover:bg-accent/50 hover:scale-105 transition-all">
-              <Edit2 className="h-4 w-4" />
+            <Button size="icon" variant="ghost" onClick={() => setEditingCategory(category)} className="hover:bg-accent hover:scale-110 transition-all h-8 w-8">
+              <Edit2 className="h-4 w-4 text-foreground" />
             </Button>
-            <Button size="icon" variant="ghost" onClick={() => setDeleteCategory(category)} className="text-destructive hover:bg-destructive/10 hover:scale-105 transition-all">
+            <Button size="icon" variant="ghost" onClick={() => setDeleteCategory(category)} className="text-destructive hover:bg-destructive/10 hover:scale-110 transition-all h-8 w-8">
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
@@ -241,21 +241,24 @@ const GestionarCategorias = () => {
     </div>;
   if (loading) {
     return <div className="min-h-screen animated-wave-bg flex items-center justify-center">
-        <p className="text-white text-lg">Cargando...</p>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white text-lg font-semibold">Cargando categorías...</p>
+        </div>
       </div>;
   }
   return <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="p-4 flex items-center justify-between border-b border-border/30 bg-card/50 backdrop-blur-sm">
+      <div className="p-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/profile')} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10">
-            <ArrowLeft className="h-5 w-5" />
+          <Button variant="ghost" size="icon" onClick={() => navigate('/profile')} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-10 w-10">
+            <ArrowLeft className="h-5 w-5 text-foreground" />
           </Button>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+            <h1 className="text-xl sm:text-2xl font-bold text-white">
               Gestionar Categorías
             </h1>
-            <p className="text-sm text-muted-foreground">Personaliza tus categorías</p>
+            <p className="text-sm text-white/80">Personaliza tus categorías</p>
           </div>
         </div>
 
@@ -375,10 +378,10 @@ const GestionarCategorias = () => {
       <div className="px-4">
         <Tabs defaultValue="ingresos" className="w-full">
           <TabsList className="w-full bg-white rounded-[20px] shadow-xl border border-blue-100">
-            <TabsTrigger value="ingresos" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white text-foreground rounded-[16px]">
+            <TabsTrigger value="ingresos" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white rounded-[16px] font-semibold">
               Ingresos ({ingresos.length})
             </TabsTrigger>
-            <TabsTrigger value="gastos" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white text-foreground rounded-[16px]">
+            <TabsTrigger value="gastos" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white rounded-[16px] font-semibold">
               Gastos ({gastos.length})
             </TabsTrigger>
           </TabsList>
