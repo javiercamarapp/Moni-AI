@@ -34,35 +34,24 @@ const Dashboard = () => {
   // Use optimized hook for all dashboard data
   const dashboardData = useDashboardData(selectedMonthOffset);
   
-  const [goals, setGoals] = useState<any[]>([]);
-  const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
-  const [scoreMoni, setScoreMoni] = useState<number | null>(null);
-  const [netWorth, setNetWorth] = useState<number>(0);
-  const [monthlyIncome, setMonthlyIncome] = useState(0);
-  const [monthlyExpenses, setMonthlyExpenses] = useState(0);
-  const [fixedExpenses, setFixedExpenses] = useState(0);
-  const [hasBankConnections, setHasBankConnections] = useState(false);
+  // Destructure data directly from the hook
+  const {
+    goals,
+    scoreMoni,
+    netWorth,
+    monthlyIncome,
+    monthlyExpenses,
+    fixedExpenses,
+    hasBankConnections
+  } = dashboardData;
   
-  // Update state from optimized hook
+  // Keep local state for things that update independently
+  const [recentTransactions, setRecentTransactions] = useState<any[]>(dashboardData.recentTransactions);
+  
+  // Sync recentTransactions when dashboardData updates
   useEffect(() => {
-    setGoals(dashboardData.goals);
     setRecentTransactions(dashboardData.recentTransactions);
-    setScoreMoni(dashboardData.scoreMoni);
-    setNetWorth(dashboardData.netWorth);
-    setMonthlyIncome(dashboardData.monthlyIncome);
-    setMonthlyExpenses(dashboardData.monthlyExpenses);
-    setFixedExpenses(dashboardData.fixedExpenses);
-    setHasBankConnections(dashboardData.hasBankConnections);
-  }, [
-    dashboardData.goals,
-    dashboardData.recentTransactions,
-    dashboardData.scoreMoni,
-    dashboardData.netWorth,
-    dashboardData.monthlyIncome,
-    dashboardData.monthlyExpenses,
-    dashboardData.fixedExpenses,
-    dashboardData.hasBankConnections
-  ]);
+  }, [dashboardData.recentTransactions]);
   
   const [loading, setLoading] = useState(false);
   const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
@@ -171,14 +160,12 @@ const Dashboard = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        // Check for bank connections
+        // Check for bank connections (already handled by dashboardData hook, no need to set)
         const { data: bankData } = await supabase
           .from('bank_connections')
           .select('*')
           .eq('user_id', user.id)
           .eq('is_active', true);
-        
-        setHasBankConnections((bankData?.length || 0) > 0);
 
         // Calculate daily expenses for current month - get specific transactions
         const now = new Date();

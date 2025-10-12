@@ -27,6 +27,7 @@ import Liabilities from "./pages/Liabilities";
 
 import Subscriptions from "./pages/Subscriptions";
 import DailyExpenses from './pages/DailyExpenses';
+import Reports from './pages/Reports';
 
 import NotFound from "./pages/NotFound";
 
@@ -71,6 +72,7 @@ const App = () => {
             <Route path="/liabilities" element={<Liabilities />} />
           <Route path="/subscriptions" element={<Subscriptions />} />
           <Route path="/daily-expenses" element={<DailyExpenses />} />
+          <Route path="/reports" element={<Reports />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
