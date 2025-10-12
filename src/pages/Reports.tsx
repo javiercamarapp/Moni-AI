@@ -154,12 +154,15 @@ const Reports = () => {
               size="icon"
               onClick={() => {
                 const currentIndex = availableYears.indexOf(selectedYear);
-                if (currentIndex < availableYears.length - 1) {
+                if (currentIndex !== -1 && currentIndex < availableYears.length - 1) {
                   setSelectedYear(availableYears[currentIndex + 1]);
                 }
               }}
-              disabled={selectedYear === availableYears[availableYears.length - 1]}
-              className="h-8 w-8 rounded-full bg-white shadow-lg border border-blue-100 hover:bg-primary/10 disabled:opacity-30 disabled:cursor-not-allowed"
+              disabled={
+                availableYears.length === 0 || 
+                selectedYear === availableYears[availableYears.length - 1]
+              }
+              className="h-8 w-8 rounded-full bg-white shadow-lg border border-blue-100 hover:bg-primary/10 hover:scale-110 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -178,12 +181,16 @@ const Reports = () => {
               size="icon"
               onClick={() => {
                 const currentIndex = availableYears.indexOf(selectedYear);
-                if (currentIndex > 0) {
+                if (currentIndex !== -1 && currentIndex > 0) {
                   setSelectedYear(availableYears[currentIndex - 1]);
                 }
               }}
-              disabled={selectedYear === availableYears[0]}
-              className="h-8 w-8 rounded-full bg-white shadow-lg border border-blue-100 hover:bg-primary/10 disabled:opacity-30 disabled:cursor-not-allowed"
+              disabled={
+                availableYears.length === 0 || 
+                selectedYear === availableYears[0] ||
+                selectedYear >= new Date().getFullYear()
+              }
+              className="h-8 w-8 rounded-full bg-white shadow-lg border border-blue-100 hover:bg-primary/10 hover:scale-110 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
