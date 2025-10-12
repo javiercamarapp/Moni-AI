@@ -992,7 +992,7 @@ const Dashboard = () => {
                   }}
                 >
                   {/* Efecto de brillo superior con verde esmeralda */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-emerald-700/30 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/40 via-transparent to-transparent" />
                 </div>
               </div>
               
