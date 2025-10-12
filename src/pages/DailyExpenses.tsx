@@ -127,20 +127,6 @@ export default function DailyExpenses() {
   });
 
   useEffect(() => {
-    if (loading) {
-      toast({
-        title: "Analizando todo tu historial...",
-        description: "IA está detectando gastos consistentes de 6+ meses",
-      });
-    } else if (expenses.length > 0) {
-      toast({
-        title: "¡Listo!",
-        description: `Se detectaron ${expenses.length} gastos cotidianos consistentes`,
-      });
-    }
-  }, [loading]);
-
-  useEffect(() => {
     const total = expenses.reduce((sum: number, exp: DailyExpense) => {
       return sum + exp.averageAmount;
     }, 0);
