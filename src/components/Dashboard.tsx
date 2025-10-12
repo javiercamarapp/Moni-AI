@@ -1000,9 +1000,9 @@ const Dashboard = () => {
         {/* Quick Stats - 4 botones horizontales en una línea */}
         <div className="grid grid-cols-4 gap-2 sm:gap-3">
           <button 
-            className="p-3 rounded-[20px] shadow-2xl hover:scale-105 transition-all cursor-pointer animate-fade-in border-2 border-gray-200" 
-            style={{ animationDelay: '100ms', backgroundColor: '#ffffff' }}
+            className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer animate-fade-in border border-blue-100" 
             onClick={() => navigate('/balance')} 
+            style={{ animationDelay: '100ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
@@ -1018,8 +1018,8 @@ const Dashboard = () => {
           </button>
 
           <button 
-            className="p-3 rounded-[20px] shadow-2xl hover:scale-105 transition-all cursor-pointer animate-fade-in border-2 border-gray-200" 
-            style={{ animationDelay: '200ms', backgroundColor: '#ffffff' }}
+            className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer animate-fade-in border border-blue-100" 
+            style={{ animationDelay: '200ms' }}
             onClick={() => navigate('/net-worth')}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
@@ -1036,8 +1036,8 @@ const Dashboard = () => {
           </button>
 
           <button 
-            className="p-3 rounded-[20px] shadow-2xl hover:scale-105 transition-all cursor-pointer animate-fade-in border-2 border-gray-200" 
-            style={{ animationDelay: '300ms', backgroundColor: '#ffffff' }}
+            className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer animate-fade-in border border-blue-100" 
+            style={{ animationDelay: '300ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-warning/30 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
@@ -1051,8 +1051,8 @@ const Dashboard = () => {
           </button>
 
           <button 
-            className="p-3 rounded-[20px] shadow-2xl hover:scale-105 transition-all cursor-pointer animate-fade-in border-2 border-gray-200" 
-            style={{ animationDelay: '400ms', backgroundColor: '#ffffff' }}
+            className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer animate-fade-in border border-blue-100" 
+            style={{ animationDelay: '400ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
               <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0">
