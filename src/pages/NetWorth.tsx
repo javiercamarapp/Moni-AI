@@ -239,7 +239,7 @@ export default function NetWorth() {
       <div className="px-4 mt-4">
         <Button 
           variant="ghost" 
-          className="w-full bg-primary/10 hover:bg-primary/20 rounded-[20px] text-primary transition-all h-auto py-3 px-4 text-xs font-semibold flex items-center justify-center border border-primary/20"
+          className="w-full bg-primary/10 hover:bg-primary/20 rounded-[20px] text-primary transition-all h-auto py-3 px-4 text-xs font-semibold flex items-center justify-center border border-primary/20 hover:scale-105 active:scale-95"
           onClick={async () => {
             try {
               const { data: { user } } = await supabase.auth.getUser();
