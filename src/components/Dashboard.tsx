@@ -956,9 +956,22 @@ const Dashboard = () => {
 
       {/* Score Moni - Compacto */}
       {scoreMoni !== null && <div className="mx-4 mb-4">
-          <Card className={`p-4 card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95 relative overflow-hidden ${scoreMoni >= 70 ? 'bg-gradient-to-br from-success/90 to-success/70' : scoreMoni >= 40 ? 'bg-gradient-to-br from-warning/90 to-warning/70' : 'bg-gradient-to-br from-danger/90 to-danger/70'}`}
-            onClick={() => navigate('/score-moni')}
+          <BorderRotate
+            animationMode="auto-rotate"
+            animationSpeed={3}
+            gradientColors={{
+              primary: scoreMoni >= 70 ? '#10b981' : scoreMoni >= 40 ? '#f59e0b' : '#ef4444',
+              secondary: scoreMoni >= 70 ? '#34d399' : scoreMoni >= 40 ? '#fbbf24' : '#f87171',
+              accent: scoreMoni >= 70 ? '#6ee7b7' : scoreMoni >= 40 ? '#fde047' : '#fca5a5'
+            }}
+            backgroundColor={scoreMoni >= 70 ? 'hsl(150, 40%, 20%)' : scoreMoni >= 40 ? 'hsl(38, 50%, 25%)' : 'hsl(0, 45%, 25%)'}
+            borderWidth={3}
+            borderRadius={12}
+            className="cursor-pointer hover:scale-105 hover:-translate-y-2 transition-all duration-300"
           >
+            <Card className={`p-4 border-0 relative overflow-hidden ${scoreMoni >= 70 ? 'bg-gradient-to-br from-success/90 to-success/70' : scoreMoni >= 40 ? 'bg-gradient-to-br from-warning/90 to-warning/70' : 'bg-gradient-to-br from-danger/90 to-danger/70'}`}
+              onClick={() => navigate('/score-moni')}
+            >
             {/* Efecto brillante */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent" 
                  style={{
@@ -990,6 +1003,7 @@ const Dashboard = () => {
               }
             `}</style>
           </Card>
+        </BorderRotate>
         </div>}
 
       {/* AI Coach Insights - Carousel de recomendaciones */}
@@ -1076,7 +1090,20 @@ const Dashboard = () => {
         />
 
         {/* Presupuesto Mensual */}
-        <Card className="p-5 bg-gradient-to-br from-[hsl(220,45%,18%)] to-[hsl(240,40%,12%)] card-glow shadow-2xl border-2 border-[hsl(220,50%,35%)]/40 relative overflow-hidden">
+        <BorderRotate
+          animationMode="auto-rotate"
+          animationSpeed={3}
+          gradientColors={{
+            primary: '#3b82f6',
+            secondary: '#60a5fa',
+            accent: '#93c5fd'
+          }}
+          backgroundColor="hsl(240, 40%, 12%)"
+          borderWidth={3}
+          borderRadius={12}
+          className="hover:scale-105 hover:-translate-y-2 transition-all duration-300"
+        >
+          <Card className="p-5 bg-gradient-to-br from-[hsl(220,45%,18%)] to-[hsl(240,40%,12%)] shadow-2xl border-0 relative overflow-hidden">
           <GlowingEffect
             spread={40}
             glow={true}
@@ -1158,6 +1185,7 @@ const Dashboard = () => {
             }
           `}</style>
         </Card>
+      </BorderRotate>
 
         {/* Grid de 2 columnas: Suscripciones y Deudas - Alineados horizontalmente siempre */}
         <div className="grid grid-cols-2 gap-2 sm:gap-4">

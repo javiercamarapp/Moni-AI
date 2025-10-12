@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { BorderRotate } from "@/components/ui/animated-gradient-border";
 import { DollarSign, AlertTriangle } from "lucide-react";
 
 interface SafeToSpendProps {
@@ -30,13 +31,26 @@ export default function SafeToSpendWidget({
   const percentageOfIncome = monthlyIncome > 0 ? (safeToSpend / monthlyIncome * 100) : 0;
   
   return (
-    <Card 
-      className={`p-4 card-glow border-white/20 ${
-        safeToSpend >= 0 
-          ? 'bg-gradient-to-br from-success/90 to-success/70' 
-          : 'bg-gradient-to-br from-danger/90 to-danger/70'
-      }`}
+    <BorderRotate
+      animationMode="auto-rotate"
+      animationSpeed={3}
+      gradientColors={{
+        primary: safeToSpend >= 0 ? '#10b981' : '#ef4444',
+        secondary: safeToSpend >= 0 ? '#34d399' : '#f87171',
+        accent: safeToSpend >= 0 ? '#6ee7b7' : '#fca5a5'
+      }}
+      backgroundColor={safeToSpend >= 0 ? 'hsl(150, 40%, 20%)' : 'hsl(0, 45%, 25%)'}
+      borderWidth={3}
+      borderRadius={12}
+      className="hover:scale-105 hover:-translate-y-2 transition-all duration-300"
     >
+      <Card 
+        className={`p-4 border-0 ${
+          safeToSpend >= 0 
+            ? 'bg-gradient-to-br from-success/90 to-success/70' 
+            : 'bg-gradient-to-br from-danger/90 to-danger/70'
+        }`}
+      >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
@@ -74,5 +88,6 @@ export default function SafeToSpendWidget({
         </div>
       </div>
     </Card>
+  </BorderRotate>
   );
 }
