@@ -1,17 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Download, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const Reports = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [availableYears, setAvailableYears] = useState<number[]>([]);
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
   const [loadingMonth, setLoadingMonth] = useState<number | null>(null);
 
   const months = [
@@ -29,36 +28,6 @@ const Reports = () => {
     { number: 12, name: 'Diciembre' },
   ];
 
-  useEffect(() => {
-    loadAvailableYears();
-  }, []);
-
-  const loadAvailableYears = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data: transactions } = await supabase
-        .from('transactions')
-        .select('transaction_date')
-        .eq('user_id', user.id)
-        .order('transaction_date', { ascending: false });
-
-      if (transactions && transactions.length > 0) {
-        const years = [...new Set(
-          transactions.map(t => new Date(t.transaction_date).getFullYear())
-        )].sort((a, b) => b - a);
-        
-        setAvailableYears(years);
-      } else {
-        setAvailableYears([new Date().getFullYear()]);
-      }
-    } catch (error) {
-      console.error('Error loading years:', error);
-      setAvailableYears([new Date().getFullYear()]);
-    }
-  };
-
   const handleDownloadReport = async (month: number) => {
     setLoadingMonth(month);
     try {
@@ -72,9 +41,9 @@ const Reports = () => {
         return;
       }
 
-      // Calcular rango de fechas para el mes seleccionado
-      const startDate = new Date(selectedYear, month - 1, 1);
-      const endDate = new Date(selectedYear, month, 0);
+      // Calcular rango de fechas para el mes seleccionado del año actual
+      const startDate = new Date(currentYear, month - 1, 1);
+      const endDate = new Date(currentYear, month, 0);
 
       const { data, error } = await supabase.functions.invoke('generate-statement-pdf', {
         body: {
@@ -82,7 +51,7 @@ const Reports = () => {
           startDate: startDate.toISOString().split('T')[0],
           endDate: endDate.toISOString().split('T')[0],
           monthName: months[month - 1].name,
-          year: selectedYear
+          year: currentYear
         }
       });
 
@@ -92,14 +61,14 @@ const Reports = () => {
         // Crear un link temporal y hacer click para descargar
         const link = document.createElement('a');
         link.href = data.pdfUrl;
-        link.download = `Estado_Cuenta_${months[month - 1].name}_${selectedYear}.pdf`;
+        link.download = `Estado_Cuenta_${months[month - 1].name}_${currentYear}.pdf`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
 
         toast({
           title: "¡Descarga iniciada!",
-          description: `Descargando reporte de ${months[month - 1].name} ${selectedYear}`
+          description: `Descargando reporte de ${months[month - 1].name} ${currentYear}`
         });
       }
     } catch (error: any) {
@@ -150,25 +119,13 @@ const Reports = () => {
         <div className="space-y-3">
           <div className="flex items-center justify-center px-2">
             <h3 className="text-sm font-semibold text-foreground">
-              Reportes de ingresos y gastos de {selectedYear}
+              Reportes de ingresos y gastos de {currentYear}
             </h3>
           </div>
           <div className="grid grid-cols-1 gap-2 relative z-0">
             {[...months].reverse().filter((month) => {
-              const currentDate = new Date();
-              const currentYear = currentDate.getFullYear();
-              const currentMonth = currentDate.getMonth() + 1;
-              
-              // Si es el año actual, solo mostrar meses hasta el mes actual
-              if (selectedYear === currentYear) {
-                return month.number <= currentMonth;
-              }
-              // Si es un año anterior, mostrar todos los meses
-              if (selectedYear < currentYear) {
-                return true;
-              }
-              // Si es un año futuro, no mostrar ningún mes
-              return false;
+              // Solo mostrar meses hasta el mes actual del año corriente
+              return month.number <= currentMonth;
             }).map((month) => (
               <Card
                 key={month.number}
@@ -183,7 +140,7 @@ const Reports = () => {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-foreground">
-                        {month.name} {selectedYear}
+                        {month.name} {currentYear}
                       </p>
                       <p className="text-xs text-foreground/60">
                         Estado de cuenta mensual
