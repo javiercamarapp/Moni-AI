@@ -292,32 +292,36 @@ const Profile = () => {
   return (
     <div className="min-h-screen animated-wave-bg pb-4">
       {/* Header */}
-      <div className="p-4 flex items-center justify-between">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate("/dashboard")}
-          className="text-white hover:bg-white/10"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <h1 className="text-xl font-bold text-white">Perfil</h1>
-        <div className="w-10"></div>
+      <div className="bg-background/95 backdrop-blur-sm sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/dashboard")}
+              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12"
+            >
+              <ArrowLeft className="h-5 w-5 text-foreground" />
+            </Button>
+            <h1 className="text-xl font-bold text-foreground">Perfil</h1>
+            <div className="w-12"></div>
+          </div>
+        </div>
       </div>
 
       <div className="px-4 space-y-6">
         {/* User Profile Section */}
-        <Card className="bg-card/80 backdrop-blur border-border/50 p-6 animate-fade-in" style={{ animationDelay: '0ms' }}>
+        <Card className="bg-white backdrop-blur border-blue-100 shadow-xl p-6 animate-fade-in rounded-[20px]" style={{ animationDelay: '0ms' }}>
           <div className="flex items-center space-x-4 mb-4">
             <div className="w-16 h-16 rounded-full bg-gradient-primary flex items-center justify-center">
               <span className="text-2xl font-bold text-white">{getInitials(userName)}</span>
             </div>
             <div className="flex-1">
-              <h2 className="text-xl font-bold text-white">{userName}</h2>
+              <h2 className="text-xl font-bold text-foreground">{userName}</h2>
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-white/70 p-0 h-auto hover:bg-transparent hover:text-white"
+                className="text-foreground/70 p-0 h-auto hover:bg-transparent hover:text-foreground"
               >
                 Editar perfil <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
@@ -325,10 +329,10 @@ const Profile = () => {
           </div>
 
           {/* Plan Section */}
-          <Card className="bg-gradient-card border-border/50 p-4 hover:scale-105 transition-transform duration-200 shadow-card hover:shadow-glow">
+          <Card className="bg-gradient-primary border-blue-100 p-4 hover:scale-105 transition-transform duration-200 shadow-xl rounded-[20px]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-white/70 mb-1">Tu plan</p>
+                <p className="text-sm text-white/90 mb-1">Tu plan</p>
                 <div className="flex items-center gap-2">
                   <Crown className="w-5 h-5 text-white" />
                   <span className="text-lg font-bold text-white">Pro Black</span>
@@ -342,15 +346,15 @@ const Profile = () => {
 
         {/* Preferencias */}
         <div className="space-y-2">
-          <h3 className="text-lg font-bold text-white px-2">Preferencias</h3>
-          <Card className="bg-card/80 backdrop-blur border-border/50 divide-y divide-border animate-fade-in" style={{ animationDelay: '100ms' }}>
+          <h3 className="text-lg font-bold text-foreground px-2">Preferencias</h3>
+          <Card className="bg-white backdrop-blur border-blue-100 shadow-xl divide-y divide-border animate-fade-in rounded-[20px]" style={{ animationDelay: '100ms' }}>
             <Button
               variant="ghost"
               className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
               onClick={() => navigate('/notifications')}
             >
-              <span className="text-white/70">Notificaciones</span>
-              <ChevronRight className="h-5 w-5 text-white/70" />
+              <span className="text-foreground">Notificaciones</span>
+              <ChevronRight className="h-5 w-5 text-foreground/70" />
             </Button>
 
             <Popover>
@@ -359,20 +363,20 @@ const Profile = () => {
                   variant="ghost"
                   className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
                 >
-                  <span className="text-white/70">Divisa</span>
+                  <span className="text-foreground">Divisa</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-white">{currencies.find(c => c.code === selectedCurrency)?.name}</span>
-                    <ChevronRight className="h-5 w-5 text-white/70" />
+                    <span className="text-foreground font-medium">{currencies.find(c => c.code === selectedCurrency)?.name}</span>
+                    <ChevronRight className="h-5 w-5 text-foreground/70" />
                   </div>
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-64 bg-card border-border p-0" align="end">
+              <PopoverContent className="w-64 bg-white border-blue-100 p-0" align="end">
                 <div className="max-h-60 overflow-y-auto p-1">
                   {currencies.map((currency) => (
                     <Button
                       key={currency.code}
                       variant="ghost"
-                      className="w-full justify-start text-white hover:bg-primary/10"
+                      className="w-full justify-start text-foreground hover:bg-primary/10"
                       onClick={() => setSelectedCurrency(currency.code)}
                     >
                       {currency.name}
@@ -388,20 +392,20 @@ const Profile = () => {
                   variant="ghost"
                   className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
                 >
-                  <span className="text-white/70">Ubicación</span>
+                  <span className="text-foreground">Ubicación</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-white">{selectedCountry}</span>
-                    <ChevronRight className="h-5 w-5 text-white/70" />
+                    <span className="text-foreground font-medium">{selectedCountry}</span>
+                    <ChevronRight className="h-5 w-5 text-foreground/70" />
                   </div>
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-64 bg-card border-border p-0" align="end">
+              <PopoverContent className="w-64 bg-white border-blue-100 p-0" align="end">
                 <div className="max-h-60 overflow-y-auto p-1">
                   {countries.map((country) => (
                     <Button
                       key={country}
                       variant="ghost"
-                      className="w-full justify-start text-white hover:bg-primary/10"
+                      className="w-full justify-start text-foreground hover:bg-primary/10"
                       onClick={() => setSelectedCountry(country)}
                     >
                       {country}
@@ -416,28 +420,28 @@ const Profile = () => {
               className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
               onClick={() => navigate('/categorias')}
             >
-              <span className="text-white/70">Mis tarjetas/cuentas</span>
-              <ChevronRight className="h-5 w-5 text-white/70" />
+              <span className="text-foreground">Mis tarjetas/cuentas</span>
+              <ChevronRight className="h-5 w-5 text-foreground/70" />
             </Button>
 
             <Button
               variant="ghost"
               className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
             >
-              <span className="text-white/70">Centro de facturación automática</span>
-              <ChevronRight className="h-5 w-5 text-white/70" />
+              <span className="text-foreground">Centro de facturación automática</span>
+              <ChevronRight className="h-5 w-5 text-foreground/70" />
             </Button>
 
             <div className="flex items-center justify-between py-4 px-4">
-              <span className="text-white/70">Alertas de audio</span>
+              <span className="text-foreground">Alertas de audio</span>
               <Switch checked={audioAlerts} onCheckedChange={setAudioAlerts} />
             </div>
 
             {biometricAvailable && (
               <div className="flex items-center justify-between py-4 px-4">
                 <div className="flex items-center gap-2">
-                  <Fingerprint className="h-5 w-5 text-white/70" />
-                  <span className="text-white/70">{biometryType || 'Autenticación biométrica'}</span>
+                  <Fingerprint className="h-5 w-5 text-foreground/70" />
+                  <span className="text-foreground">{biometryType || 'Autenticación biométrica'}</span>
                 </div>
                 <Switch 
                   checked={faceIdEnabled} 
@@ -467,73 +471,73 @@ const Profile = () => {
 
         {/* Descargas */}
         <div className="space-y-2">
-          <h3 className="text-lg font-bold text-white px-2">Descargas</h3>
-          <Card className="bg-card/80 backdrop-blur border-border/50">
+          <h3 className="text-lg font-bold text-foreground px-2">Descargas</h3>
+          <Card className="bg-white backdrop-blur border-blue-100 shadow-xl rounded-[20px]">
             <Button
               variant="ghost"
               className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
             >
-              <span className="text-white/70">Historial de gastos e ingresos</span>
-              <ChevronRight className="h-5 w-5 text-white/70" />
+              <span className="text-foreground">Historial de gastos e ingresos</span>
+              <ChevronRight className="h-5 w-5 text-foreground/70" />
             </Button>
           </Card>
         </div>
 
         {/* Ayuda */}
         <div className="space-y-2">
-          <h3 className="text-lg font-bold text-white px-2">Ayuda</h3>
-          <Card className="bg-card/80 backdrop-blur border-border/50 divide-y divide-border">
+          <h3 className="text-lg font-bold text-foreground px-2">Ayuda</h3>
+          <Card className="bg-white backdrop-blur border-blue-100 shadow-xl divide-y divide-border rounded-[20px]">
             <Button
               variant="ghost"
               className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
             >
-              <span className="text-white/70">Centro de ayuda</span>
-              <ChevronRight className="h-5 w-5 text-white/70" />
+              <span className="text-foreground">Centro de ayuda</span>
+              <ChevronRight className="h-5 w-5 text-foreground/70" />
             </Button>
             
             <Button
               variant="ghost"
               className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
             >
-              <span className="text-white/70">Preguntas Frecuentes</span>
-              <ChevronRight className="h-5 w-5 text-white/70" />
+              <span className="text-foreground">Preguntas Frecuentes</span>
+              <ChevronRight className="h-5 w-5 text-foreground/70" />
             </Button>
           </Card>
         </div>
 
         {/* Legal */}
         <div className="space-y-2">
-          <h3 className="text-lg font-bold text-white px-2">Legal</h3>
-          <Card className="bg-card/80 backdrop-blur border-border/50 divide-y divide-border">
+          <h3 className="text-lg font-bold text-foreground px-2">Legal</h3>
+          <Card className="bg-white backdrop-blur border-blue-100 shadow-xl divide-y divide-border rounded-[20px]">
             <Button
               variant="ghost"
               className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
             >
-              <span className="text-white/70">Términos y condiciones</span>
-              <ChevronRight className="h-5 w-5 text-white/70" />
+              <span className="text-foreground">Términos y condiciones</span>
+              <ChevronRight className="h-5 w-5 text-foreground/70" />
             </Button>
             
             <Button
               variant="ghost"
               className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
             >
-              <span className="text-white/70">Aviso de privacidad</span>
-              <ChevronRight className="h-5 w-5 text-white/70" />
+              <span className="text-foreground">Aviso de privacidad</span>
+              <ChevronRight className="h-5 w-5 text-foreground/70" />
             </Button>
           </Card>
         </div>
 
         {/* Cuenta */}
         <div className="space-y-2 pb-4">
-          <h3 className="text-lg font-bold text-white px-2">Cuenta</h3>
-          <Card className="bg-card/80 backdrop-blur border-border/50 divide-y divide-border">
+          <h3 className="text-lg font-bold text-foreground px-2">Cuenta</h3>
+          <Card className="bg-white backdrop-blur border-blue-100 shadow-xl divide-y divide-border rounded-[20px]">
             <Button
               variant="ghost"
               className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
               onClick={handleLogout}
             >
-              <span className="text-white/70">Cerrar sesión</span>
-              <ChevronRight className="h-5 w-5 text-white/70" />
+              <span className="text-foreground">Cerrar sesión</span>
+              <ChevronRight className="h-5 w-5 text-foreground/70" />
             </Button>
             
             <AlertDialog>
@@ -546,7 +550,7 @@ const Profile = () => {
                   <ChevronRight className="h-5 w-5 text-destructive" />
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="bg-card">
+              <AlertDialogContent className="bg-white">
                 <AlertDialogHeader>
                   <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
                   <AlertDialogDescription>
