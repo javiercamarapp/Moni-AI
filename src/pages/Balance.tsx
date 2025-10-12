@@ -464,7 +464,7 @@ const Balance = () => {
       {/* Header */}
       <div className="p-4 flex items-center justify-between border-b border-border/30 bg-card/50 backdrop-blur-sm">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')} className="text-foreground hover:bg-accent/50 transition-all hover:scale-105">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10">
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
@@ -491,17 +491,17 @@ const Balance = () => {
       {/* Período selector */}
       <div className="px-4 mb-4">
         <div className="flex items-center justify-between">
-          <Button variant="ghost" size="icon" onClick={handlePreviousPeriod} className="text-foreground hover:bg-accent/50 transition-all hover:scale-105">
+          <Button variant="ghost" size="icon" onClick={handlePreviousPeriod} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10">
             <ChevronLeft className="h-5 w-5" />
           </Button>
           
-          <div className="bg-card/70 backdrop-blur-sm rounded-lg px-4 py-2 border border-border/30 shadow-card">
+          <div className="bg-white rounded-[20px] shadow-xl px-4 py-2 border border-blue-100">
             <p className="text-foreground font-medium capitalize text-center">
               {getPeriodLabel()}
             </p>
           </div>
 
-          <Button variant="ghost" size="icon" onClick={handleNextPeriod} className="text-foreground hover:bg-accent/50 transition-all hover:scale-105">
+          <Button variant="ghost" size="icon" onClick={handleNextPeriod} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10">
             <ChevronRight className="h-5 w-5" />
           </Button>
         </div>
@@ -509,7 +509,7 @@ const Balance = () => {
 
       <div className="px-4 space-y-4">
         {/* Ahorro destacado */}
-        <Card className="p-6 card-glow animate-fade-in shadow-elegant border-white/20" style={{
+        <Card className="p-6 rounded-[20px] shadow-xl animate-fade-in border-white/20" style={{
         animationDelay: '0ms',
         backgroundColor: ahorro >= 0 ? '#10b981' : '#ef4444'
       }}>
@@ -538,7 +538,7 @@ const Balance = () => {
           
           {/* Botón de descarga de PDF */}
           <div className="mt-4 pt-4 border-t border-white/20">
-            <Button variant="ghost" className="w-full bg-card/40 backdrop-blur-sm border border-border/30 text-black hover:bg-card/60 transition-all duration-300 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight" onClick={async () => {
+            <Button variant="ghost" className="w-full bg-white/20 backdrop-blur-sm rounded-[12px] border border-white/30 text-black hover:bg-white/30 transition-all duration-300 hover:scale-105 h-auto py-2.5 px-4 text-xs sm:text-sm leading-tight font-semibold" onClick={async () => {
             try {
               // Get current user
               const {
@@ -629,7 +629,7 @@ const Balance = () => {
 
         {/* Ingresos y Gastos en línea horizontal */}
         <div className="grid grid-cols-2 gap-4">
-          <Card className="p-4 bg-gradient-card card-glow text-center hover-lift shadow-card border border-border/30 animate-fade-in cursor-pointer" style={{
+          <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center hover:scale-105 transition-all animate-fade-in cursor-pointer active:scale-95" style={{
           animationDelay: '100ms'
         }} onClick={() => navigate('/ingresos')}>
             <div className="flex items-center justify-center gap-2 mb-2">
@@ -641,7 +641,7 @@ const Balance = () => {
             </p>
           </Card>
 
-          <Card className="p-4 bg-gradient-card card-glow text-center hover-lift shadow-card border border-border/30 animate-fade-in cursor-pointer" style={{
+          <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center hover:scale-105 transition-all animate-fade-in cursor-pointer active:scale-95" style={{
           animationDelay: '200ms'
         }} onClick={() => navigate('/gastos')}>
             <div className="flex items-center justify-center gap-2 mb-2">
@@ -655,7 +655,7 @@ const Balance = () => {
         </div>
 
         {/* Balance abajo */}
-        <Card className="p-4 card-glow text-center hover-lift shadow-elegant border-white/20 animate-fade-in transition-all duration-300" style={{
+        <Card className="p-4 rounded-[20px] shadow-xl border-white/20 text-center hover:scale-105 transition-all animate-fade-in active:scale-95" style={{
           animationDelay: '300ms',
           backgroundColor: balance >= 0 ? '#10b981' : '#ef4444'
         }}>
@@ -669,7 +669,7 @@ const Balance = () => {
         </Card>
 
         {/* Ingresos por categoría */}
-        <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30 overflow-hidden">
+        <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-blue-100 overflow-hidden animate-fade-in">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="h-5 w-5 text-success" />
             <h3 className="text-lg font-semibold text-card-foreground">Ingresos por Categoría</h3>
@@ -729,7 +729,7 @@ const Balance = () => {
         </Card>
 
         {/* Gastos por categoría */}
-        <Card className="p-5 bg-gradient-card card-glow shadow-elegant border border-border/30 overflow-hidden">
+        <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-blue-100 overflow-hidden animate-fade-in">
           <div className="flex items-center gap-2 mb-2">
             <TrendingDown className="h-5 w-5 text-destructive" />
             <h3 className="text-lg font-semibold text-card-foreground">Gastos por Categoría</h3>
