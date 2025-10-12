@@ -160,10 +160,12 @@ const Reports = () => {
                 <SelectValue placeholder="Año" />
               </SelectTrigger>
               <SelectContent 
-                className="bg-white border border-blue-100 rounded-[15px] shadow-xl min-w-[120px]"
+                className="bg-white border border-blue-100 rounded-[15px] shadow-2xl min-w-[120px] z-[9999]"
                 position="popper"
                 sideOffset={8}
                 align="end"
+                avoidCollisions={true}
+                collisionPadding={20}
               >
                 {availableYears.filter(year => year <= new Date().getFullYear()).map((year) => (
                   <SelectItem 
