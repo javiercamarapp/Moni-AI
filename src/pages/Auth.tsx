@@ -272,7 +272,9 @@ const Auth = () => {
         loop 
         muted 
         playsInline
+        preload="auto"
         className="absolute top-0 left-0 w-full h-full object-cover z-0"
+        style={{ display: 'block' }}
       >
         <source src="/auth-background.mp4" type="video/mp4" />
       </video>
