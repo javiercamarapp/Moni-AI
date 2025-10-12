@@ -91,11 +91,6 @@ export default function Subscriptions() {
       if (expensesError) throw expensesError;
 
       if (allExpenses && allExpenses.length > 0) {
-        toast({
-          title: "Analizando todo tu historial...",
-          description: "IA está detectando suscripciones de 3+ meses",
-        });
-
         // Use AI to detect subscriptions
         const { data: aiResult, error: aiError } = await supabase.functions.invoke('detect-subscriptions', {
           body: { transactions: allExpenses }
@@ -149,11 +144,6 @@ export default function Subscriptions() {
           }
         }, 0);
         setTotalMonthly(total);
-
-        toast({
-          title: "¡Listo!",
-          description: `Se detectaron ${detectedSubs.length} suscripciones activas`,
-        });
       } else {
         toast({
           title: "Sin transacciones",
