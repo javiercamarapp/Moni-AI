@@ -112,7 +112,7 @@ export default function Assets() {
   const displayAssets = 
     filter === 'Liquid' ? liquidAssets :
     filter === 'Fixed' ? fixedAssets :
-    assets;
+    [...liquidAssets, ...fixedAssets]; // Primero líquidos, después fijos
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
