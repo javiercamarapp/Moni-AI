@@ -30,9 +30,9 @@ const SignIn2 = () => {
   };
  
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-start pt-[42vh] md:pt-[50vh] rounded-xl z-1">
-      <div className="w-full max-w-[340px] md:max-w-md lg:max-w-lg bg-white/5 backdrop-blur-3xl rounded-[45px] shadow-2xl shadow-white/30 border-2 border-white/60 animate-pulse pt-6 md:pt-6 px-6 md:px-10 pb-8 md:pb-10 flex flex-col items-center text-white">
-        <div className="flex items-center justify-center w-48 md:w-64 lg:w-72 h-20 md:h-28 mb-2 md:mb-4">
+    <div className="min-h-screen w-full flex flex-col items-center justify-start pt-[38vh] md:pt-[50vh] rounded-xl z-1">
+      <div className="w-full max-w-[340px] md:max-w-md lg:max-w-lg bg-white/5 backdrop-blur-3xl rounded-[45px] shadow-2xl shadow-white/30 border-2 border-white/60 animate-pulse pt-4 md:pt-6 px-6 md:px-10 pb-6 md:pb-10 flex flex-col items-center text-white">
+        <div className="flex items-center justify-center w-40 md:w-64 lg:w-72 h-16 md:h-28 mb-1 md:mb-4">
           <img src={moniLogo} alt="Moni AI" className="w-full h-full object-contain" />
         </div>
         <div className="w-full flex flex-col gap-2 md:gap-3 mb-2">
