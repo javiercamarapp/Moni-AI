@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Fingerprint } from "lucide-react";
 import heroAuth from "@/assets/moni-ai-logo.png";
 import { useBiometricAuth } from "@/hooks/useBiometricAuth";
+import { SignIn2 } from "@/components/ui/clean-minimal-sign-in";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -269,20 +270,7 @@ const Auth = () => {
       <div 
         className="flex-1 flex items-center justify-center py-8 md:py-12 px-2 md:px-4 relative"
       >
-        <div className="w-full max-w-[280px] md:max-w-sm space-y-3 md:space-y-8 relative z-10">
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
-          <div className="grid grid-cols-1">
-            <div className="h-24 md:h-32 w-full">
-              <img 
-                src={heroAuth} 
-                alt="Moni Dashboard" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-        </div>
-
-        </div>
+        <SignIn2 />
       </div>
 
       {/* Footer fijo en la parte inferior */}
