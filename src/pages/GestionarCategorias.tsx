@@ -43,11 +43,14 @@ const GestionarCategorias = () => {
   const fetchCategories = async () => {
     try {
       console.log('Fetching categories...');
-      const {
-        data: {
-          user
-        }
-      } = await supabase.auth.getUser();
+      
+      // Get user with timeout
+      const userPromise = supabase.auth.getUser();
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout getting user')), 5000)
+      );
+      
+      const { data: { user } } = await Promise.race([userPromise, timeoutPromise]) as any;
       
       console.log('User:', user?.id);
       
@@ -85,9 +88,10 @@ const GestionarCategorias = () => {
       console.error('Error fetching categories:', error);
       toast({
         title: "Error",
-        description: "No se pudieron cargar las categorías",
+        description: error instanceof Error ? error.message : "No se pudieron cargar las categorías",
         variant: "destructive"
       });
+      setLoading(false);
     } finally {
       console.log('Setting loading to false');
       setLoading(false);
