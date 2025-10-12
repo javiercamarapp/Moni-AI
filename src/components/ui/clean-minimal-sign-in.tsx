@@ -70,14 +70,14 @@ const SignIn2 = () => {
           {error && (
             <div className="text-sm text-red-500 text-left">{error}</div>
           )}
-            <button className="text-xs  hover:underline font-medium">
+            <button className="text-xs hover:underline font-medium transition-all hover:text-gray-700">
               Forgot password?
             </button>
           </div>
         </div>
         <button
           onClick={handleSignIn}
-          className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 rounded-xl shadow hover:brightness-105 cursor-pointer transition mb-4 mt-2"
+          className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 rounded-xl shadow hover:brightness-105 hover:scale-105 cursor-pointer transition-all mb-4 mt-2"
         >
           Get Started
         </button>
@@ -87,21 +87,21 @@ const SignIn2 = () => {
           <div className="flex-grow border-t border-dashed border-gray-200"></div>
         </div>
         <div className="flex gap-3 w-full justify-center mt-2">
-          <button className="flex items-center justify-center w-12 h-12 rounded-xl bg-white hover:bg-gray-100 transition grow">
+          <button className="flex items-center justify-center w-12 h-12 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow">
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google"
               className="w-6 h-6"
             />
           </button>
-          <button className="flex items-center justify-center w-12 h-12 rounded-xl bg-white hover:bg-gray-100 transition grow">
+          <button className="flex items-center justify-center w-12 h-12 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow">
             <img
               src="https://www.svgrepo.com/show/448224/facebook.svg"
               alt="Facebook"
               className="w-6 h-6"
             />
           </button>
-          <button className="flex items-center justify-center w-12 h-12 rounded-xl bg-white hover:bg-gray-100 transition grow">
+          <button className="flex items-center justify-center w-12 h-12 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow">
             <img
               src="https://www.svgrepo.com/show/511330/apple-173.svg"
               alt="Apple"
