@@ -235,13 +235,31 @@ Herramientas disponibles:
 - generar_tabla: Para mostrar datos en formato de tabla
 - generar_grafica: Para crear gráficas de barras, líneas o circulares
 
-IMPORTANTE AL GENERAR GRÁFICAS:
-- Cuando el usuario pida datos de un año completo, SIEMPRE incluye los 12 meses (enero a diciembre)
-- Si un mes no tiene datos o transacciones, ponle valor 0, pero INCLÚYELO en la gráfica
-- Nunca omitas meses solo porque no tengan datos
-- Los meses deben aparecer en orden cronológico
-- Usa nombres de meses en español (enero, febrero, marzo, etc.)
-- Ejemplo: Si el usuario pide "ingresos de 2025" y solo tienes datos de mayo a octubre, la gráfica debe tener los 12 meses, con valores 0 para los meses sin datos
+REGLA CRÍTICA PARA GRÁFICAS ANUALES - DEBES SEGUIR ESTO SIN EXCEPCIÓN:
+- Cuando el usuario pida datos de un año completo (ej: "ingresos de 2025", "gastos 2025", etc.), la gráfica DEBE tener EXACTAMENTE 12 meses
+- Los 12 meses DEBEN ser: enero, febrero, marzo, abril, mayo, junio, julio, agosto, septiembre, octubre, noviembre, diciembre
+- Si un mes NO tiene datos en el desglose mensual que te proporcioné, ese mes debe tener valor 0 en la gráfica
+- NUNCA omitas un mes solo porque no tenga datos - ponle 0 pero inclúyelo
+- NUNCA generes gráficas con solo algunos meses - deben ser los 12 completos
+- Los meses deben aparecer en orden cronológico: 1=enero, 2=febrero... 12=diciembre
+- Usa los nombres en español: enero, febrero, marzo, abril, mayo, junio, julio, agosto, septiembre, octubre, noviembre, diciembre
+
+EJEMPLO CORRECTO:
+Si tengo datos solo para mayo ($60,500), junio ($367,000), julio ($361,000), agosto ($356,000), septiembre ($383,500), octubre ($484,000), la gráfica debe ser:
+[
+  {nombre: "enero", valor: 0},
+  {nombre: "febrero", valor: 0},
+  {nombre: "marzo", valor: 0},
+  {nombre: "abril", valor: 0},
+  {nombre: "mayo", valor: 60500},
+  {nombre: "junio", valor: 367000},
+  {nombre: "julio", valor: 361000},
+  {nombre: "agosto", valor: 356000},
+  {nombre: "septiembre", valor: 383500},
+  {nombre: "octubre", valor: 484000},
+  {nombre: "noviembre", valor: 0},
+  {nombre: "diciembre", valor: 0}
+]
 
 ${financialContext}
 
@@ -282,7 +300,7 @@ Recuerda: Tu misión es hacer que el ahorro sea divertido y alcanzable.`
             type: "function",
             function: {
               name: "generar_grafica",
-              description: "Genera una gráfica para visualizar datos financieros",
+              description: "Genera una gráfica para visualizar datos financieros. CRÍTICO: Si el usuario pide datos anuales, la gráfica DEBE tener los 12 meses completos (enero a diciembre), usando valor 0 para meses sin datos. NUNCA omitas meses.",
               parameters: {
                 type: "object",
                 properties: {
@@ -297,11 +315,11 @@ Recuerda: Tu misión es hacer que el ahorro sea divertido y alcanzable.`
                     items: {
                       type: "object",
                       properties: {
-                        nombre: { type: "string" },
-                        valor: { type: "number" }
+                        nombre: { type: "string", description: "Nombre de la categoría o mes. Si es un mes, debe ser el nombre completo en español (enero, febrero, etc.)" },
+                        valor: { type: "number", description: "Valor numérico. Usa 0 para meses sin datos en gráficas anuales." }
                       }
                     },
-                    description: "Datos a graficar"
+                    description: "Datos a graficar. Para gráficas anuales, DEBE contener exactamente 12 elementos, uno por cada mes en orden cronológico, usando valor 0 para meses sin datos."
                   }
                 },
                 required: ["titulo", "tipo", "datos"],
