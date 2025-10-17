@@ -43,6 +43,17 @@ serve(async (req) => {
         if (allTransactions.length > 0) {
           console.log('Primera transacción:', allTransactions[0].transaction_date);
           console.log('Última transacción:', allTransactions[allTransactions.length - 1].transaction_date);
+          
+          // Log de tipos únicos de transacciones
+          const uniqueTypes = [...new Set(allTransactions.map((t: any) => t.type))];
+          console.log('Tipos de transacciones encontrados:', uniqueTypes);
+          
+          // Log de algunos ejemplos
+          const ingresoExamples = allTransactions.filter((t: any) => 
+            t.description?.toLowerCase().includes('salario') || 
+            t.description?.toLowerCase().includes('freelance')
+          ).slice(0, 3);
+          console.log('Ejemplos de transacciones de ingreso:', JSON.stringify(ingresoExamples, null, 2));
         }
 
         // Obtener categorías
