@@ -30,16 +30,15 @@ serve(async (req) => {
           'Content-Type': 'application/json'
         };
 
-        // Obtener transacciones del mes actual
+        // Obtener transacciones de los últimos 6 meses
         const now = new Date();
-        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+        const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 6, 1).toISOString().split('T')[0];
         
-        const transactionsRes = await fetch(
-          `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${userId}&transaction_date=gte.${firstDay}&transaction_date=lte.${lastDay}&select=*`,
+        const allTransactionsRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${userId}&transaction_date=gte.${sixMonthsAgo}&order=transaction_date.desc&select=*`,
           { headers: supabaseHeaders }
         );
-        const transactions = await transactionsRes.json();
+        const allTransactions = await allTransactionsRes.json();
 
         // Obtener categorías
         const categoriesRes = await fetch(
@@ -48,40 +47,114 @@ serve(async (req) => {
         );
         const categories = await categoriesRes.json();
 
-        // Calcular estadísticas
-        const totalGastos = transactions
+        // Transacciones del mes actual
+        const firstDayCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const currentMonthTransactions = allTransactions.filter((t: any) => 
+          new Date(t.transaction_date) >= firstDayCurrentMonth
+        );
+
+        // Calcular estadísticas del mes actual
+        const totalGastosActual = currentMonthTransactions
           .filter((t: any) => t.type === 'expense')
           .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
         
-        const totalIngresos = transactions
+        const totalIngresosActual = currentMonthTransactions
           .filter((t: any) => t.type === 'income')
           .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
 
-        // Gastos por categoría
-        const gastosPorCategoria: Record<string, number> = {};
-        transactions
+        // Gastos por categoría del mes actual
+        const gastosPorCategoriaActual: Record<string, number> = {};
+        currentMonthTransactions
           .filter((t: any) => t.type === 'expense')
           .forEach((t: any) => {
             const cat = categories.find((c: any) => c.id === t.category_id);
             const catName = cat?.name || 'Sin categoría';
-            gastosPorCategoria[catName] = (gastosPorCategoria[catName] || 0) + Number(t.amount);
+            gastosPorCategoriaActual[catName] = (gastosPorCategoriaActual[catName] || 0) + Number(t.amount);
+          });
+
+        // Calcular promedios mensuales históricos
+        const monthlyData: Record<string, { gastos: number; ingresos: number; count: number }> = {};
+        allTransactions.forEach((t: any) => {
+          const date = new Date(t.transaction_date);
+          const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+          
+          if (!monthlyData[monthKey]) {
+            monthlyData[monthKey] = { gastos: 0, ingresos: 0, count: 0 };
+          }
+          
+          if (t.type === 'expense') {
+            monthlyData[monthKey].gastos += Number(t.amount);
+          } else if (t.type === 'income') {
+            monthlyData[monthKey].ingresos += Number(t.amount);
+          }
+          monthlyData[monthKey].count++;
+        });
+
+        // Estadísticas históricas
+        const totalGastosHistoricos = allTransactions
+          .filter((t: any) => t.type === 'expense')
+          .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
+        
+        const totalIngresosHistoricos = allTransactions
+          .filter((t: any) => t.type === 'income')
+          .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
+
+        const mesesConDatos = Object.keys(monthlyData).length;
+        const promedioGastosMensual = totalGastosHistoricos / mesesConDatos;
+        const promedioIngresosMensual = totalIngresosHistoricos / mesesConDatos;
+
+        // Top categorías históricas
+        const gastosHistoricosPorCategoria: Record<string, number> = {};
+        allTransactions
+          .filter((t: any) => t.type === 'expense')
+          .forEach((t: any) => {
+            const cat = categories.find((c: any) => c.id === t.category_id);
+            const catName = cat?.name || 'Sin categoría';
+            gastosHistoricosPorCategoria[catName] = (gastosHistoricosPorCategoria[catName] || 0) + Number(t.amount);
           });
 
         financialContext = `
 
-DATOS FINANCIEROS DEL USUARIO (MES ACTUAL):
-Total de gastos: $${totalGastos.toFixed(2)}
-Total de ingresos: $${totalIngresos.toFixed(2)}
-Balance: $${(totalIngresos - totalGastos).toFixed(2)}
-Número de transacciones: ${transactions.length}
+DATOS FINANCIEROS DEL USUARIO:
 
-Gastos por categoría:
-${Object.entries(gastosPorCategoria)
+=== MES ACTUAL (${now.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })}) ===
+Total de gastos: $${totalGastosActual.toFixed(2)}
+Total de ingresos: $${totalIngresosActual.toFixed(2)}
+Balance: $${(totalIngresosActual - totalGastosActual).toFixed(2)}
+Número de transacciones: ${currentMonthTransactions.length}
+
+Gastos por categoría (mes actual):
+${Object.entries(gastosPorCategoriaActual)
   .sort((a, b) => b[1] - a[1])
+  .slice(0, 10)
   .map(([cat, amount]) => `- ${cat}: $${amount.toFixed(2)}`)
   .join('\n')}
 
-IMPORTANTE: Cuando el usuario pida visualizar datos, usa las herramientas generar_tabla o generar_grafica con esta información.
+=== DATOS HISTÓRICOS (últimos ${mesesConDatos} meses) ===
+Total de gastos históricos: $${totalGastosHistoricos.toFixed(2)}
+Total de ingresos históricos: $${totalIngresosHistoricos.toFixed(2)}
+Balance histórico total: $${(totalIngresosHistoricos - totalGastosHistoricos).toFixed(2)}
+Total de transacciones: ${allTransactions.length}
+
+Promedios mensuales:
+- Promedio de gastos mensuales: $${promedioGastosMensual.toFixed(2)}
+- Promedio de ingresos mensuales: $${promedioIngresosMensual.toFixed(2)}
+- Promedio de balance mensual: $${(promedioIngresosMensual - promedioGastosMensual).toFixed(2)}
+
+Top 10 categorías de gastos (histórico):
+${Object.entries(gastosHistoricosPorCategoria)
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 10)
+  .map(([cat, amount]) => `- ${cat}: $${amount.toFixed(2)} (promedio mensual: $${(amount / mesesConDatos).toFixed(2)})`)
+  .join('\n')}
+
+Desglose mensual:
+${Object.entries(monthlyData)
+  .sort((a, b) => b[0].localeCompare(a[0]))
+  .map(([month, data]) => `- ${month}: Gastos $${data.gastos.toFixed(2)}, Ingresos $${data.ingresos.toFixed(2)}, Balance $${(data.ingresos - data.gastos).toFixed(2)} (${data.count} transacciones)`)
+  .join('\n')}
+
+IMPORTANTE: Cuando el usuario pida visualizar datos, comparar meses, analizar tendencias o ver evolución, usa las herramientas generar_tabla o generar_grafica con esta información histórica.
 `;
       } catch (error) {
         console.error('Error fetching financial data:', error);
