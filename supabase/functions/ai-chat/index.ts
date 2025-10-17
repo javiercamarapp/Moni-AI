@@ -169,80 +169,93 @@ serve(async (req) => {
         const promedioIngresos2025 = totalIngresos2025 / 12;
         const promedioGastos2025 = totalGastos2025 / 12;
 
+        console.log('📊 RESUMEN 2025 GENERADO:');
+        console.log(`Total ingresos: $${totalIngresos2025}`);
+        console.log(`Total gastos: $${totalGastos2025}`);
+        console.log('Ingresos por mes:', ingresos2025.filter(m => m.valor > 0));
+
         financialContext = `
 
-DATOS FINANCIEROS DEL USUARIO - ACCESO COMPLETO A INFORMACIÓN HISTÓRICA:
+📊 DATOS FINANCIEROS COMPLETOS DEL USUARIO 📊
 
-=== MES ACTUAL (${now.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })}) ===
+╔══════════════════════════════════════╗
+║   MES ACTUAL (octubre 2025)         ║
+╚══════════════════════════════════════╝
 Total de gastos: $${totalGastosActual.toFixed(2)}
 Total de ingresos: $${totalIngresosActual.toFixed(2)}
 Balance: $${(totalIngresosActual - totalGastosActual).toFixed(2)}
 Número de transacciones: ${currentMonthTransactions.length}
 
-Gastos por categoría (mes actual):
+Gastos por categoría:
 ${Object.entries(gastosPorCategoriaActual)
   .sort((a, b) => b[1] - a[1])
   .slice(0, 10)
   .map(([cat, amount]) => `- ${cat}: $${amount.toFixed(2)}`)
   .join('\n')}
 
-=== RESUMEN 2025 (PARA GRÁFICAS ANUALES) ===
-Total de ingresos 2025: $${totalIngresos2025.toFixed(2)}
-Total de gastos 2025: $${totalGastos2025.toFixed(2)}
-Balance 2025: $${(totalIngresos2025 - totalGastos2025).toFixed(2)}
-Promedio mensual de ingresos: $${promedioIngresos2025.toFixed(2)}
-Promedio mensual de gastos: $${promedioGastos2025.toFixed(2)}
+╔══════════════════════════════════════╗
+║   AÑO 2025 - DATOS COMPLETOS        ║
+╚══════════════════════════════════════╝
 
-INGRESOS 2025 MES POR MES (USA ESTOS VALORES EXACTOS PARA GRÁFICAS):
-${ingresos2025.map(m => `- ${m.mes}: $${m.valor.toFixed(2)}`).join('\n')}
+💰 TOTAL INGRESOS 2025: $${totalIngresos2025.toFixed(2)}
+💸 TOTAL GASTOS 2025: $${totalGastos2025.toFixed(2)}
+📈 BALANCE 2025: $${(totalIngresos2025 - totalGastos2025).toFixed(2)}
+📊 PROMEDIO MENSUAL INGRESOS: $${promedioIngresos2025.toFixed(2)}
+📊 PROMEDIO MENSUAL GASTOS: $${promedioGastos2025.toFixed(2)}
 
-GASTOS 2025 MES POR MES (USA ESTOS VALORES EXACTOS PARA GRÁFICAS):
-${gastos2025.map(m => `- ${m.mes}: $${m.valor.toFixed(2)}`).join('\n')}
+🔢 INGRESOS 2025 - VALORES EXACTOS POR MES:
+${ingresos2025.map(m => `   ${m.mes}: $${m.valor.toFixed(2)}`).join('\n')}
 
-=== DATOS HISTÓRICOS COMPLETOS (${mesesConDatos} meses totales) ===
-Total de gastos históricos: $${totalGastosHistoricos.toFixed(2)}
-Total de ingresos históricos: $${totalIngresosHistoricos.toFixed(2)}
-Balance histórico total: $${(totalIngresosHistoricos - totalGastosHistoricos).toFixed(2)}
-Total de transacciones: ${allTransactions.length}
+💵 GASTOS 2025 - VALORES EXACTOS POR MES:
+${gastos2025.map(m => `   ${m.mes}: $${m.valor.toFixed(2)}`).join('\n')}
+
+╔══════════════════════════════════════╗
+║   DATOS HISTÓRICOS TOTALES          ║
+╚══════════════════════════════════════╝
+Total gastos históricos: $${totalGastosHistoricos.toFixed(2)}
+Total ingresos históricos: $${totalIngresosHistoricos.toFixed(2)}
+Balance histórico: $${(totalIngresosHistoricos - totalGastosHistoricos).toFixed(2)}
+Total transacciones: ${allTransactions.length}
+Meses con datos: ${mesesConDatos}
 
 Promedios mensuales históricos:
-- Promedio de gastos mensuales: $${promedioGastosMensual.toFixed(2)}
-- Promedio de ingresos mensuales: $${promedioIngresosMensual.toFixed(2)}
-- Promedio de balance mensual: $${(promedioIngresosMensual - promedioGastosMensual).toFixed(2)}
+- Gastos: $${promedioGastosMensual.toFixed(2)}
+- Ingresos: $${promedioIngresosMensual.toFixed(2)}
+- Balance: $${(promedioIngresosMensual - promedioGastosMensual).toFixed(2)}
 
 Top 10 categorías de gastos (histórico):
 ${Object.entries(gastosHistoricosPorCategoria)
   .sort((a, b) => b[1] - a[1])
   .slice(0, 10)
-  .map(([cat, amount]) => `- ${cat}: $${amount.toFixed(2)} (promedio mensual: $${(amount / mesesConDatos).toFixed(2)})`)
+  .map(([cat, amount]) => `- ${cat}: $${amount.toFixed(2)} (prom. mensual: $${(amount / mesesConDatos).toFixed(2)})`)
   .join('\n')}
 
-=== DESGLOSE MENSUAL COMPLETO (TODOS LOS MESES CON DATOS) ===
+╔══════════════════════════════════════╗
+║   DESGLOSE MENSUAL DETALLADO        ║
+╚══════════════════════════════════════╝
 ${Object.entries(monthlyData)
   .sort((a, b) => b[0].localeCompare(a[0]))
+  .slice(0, 24)
   .map(([month, data]) => {
     const [year, monthNum] = month.split('-');
     const monthName = new Date(parseInt(year), parseInt(monthNum) - 1, 1)
       .toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
-    return `- ${monthName}: Gastos $${data.gastos.toFixed(2)}, Ingresos $${data.ingresos.toFixed(2)}, Balance $${(data.ingresos - data.gastos).toFixed(2)} (${data.count} transacciones)`;
+    return `${monthName}: Gastos $${data.gastos.toFixed(2)} | Ingresos $${data.ingresos.toFixed(2)} | Balance $${(data.ingresos - data.gastos).toFixed(2)}`;
   })
   .join('\n')}
 
-INSTRUCCIONES CRÍTICAS PARA USAR ESTOS DATOS:
+⚠️ INSTRUCCIONES OBLIGATORIAS ⚠️
 
-1. **Para gráficas de 2025**: USA EXACTAMENTE los valores de las secciones "INGRESOS 2025 MES POR MES" o "GASTOS 2025 MES POR MES"
-   - NO inventes valores
-   - NO uses otros datos que no sean estos
-   - Incluye los 12 meses tal como están listados arriba
-   
-2. **Para preguntas sobre meses específicos**: Busca el mes en el "Desglose mensual completo"
-   - Si un mes NO aparece en el desglose = NO HAY TRANSACCIONES registradas (no datos disponibles)
-   - Si un mes SÍ aparece con ingresos $0.00 = SÍ hay datos pero los ingresos fueron cero
-   
-3. **Para tablas comparativas**: Usa los datos del desglose mensual completo
+CUANDO EL USUARIO PREGUNTE POR 2025:
+1. USA los valores de "INGRESOS 2025 - VALORES EXACTOS POR MES" o "GASTOS 2025 - VALORES EXACTOS POR MES"
+2. INCLUYE TODOS LOS 12 MESES en la gráfica (enero a diciembre)
+3. NO inventes ni calcules otros valores
+4. USA el "TOTAL INGRESOS 2025" y "PROMEDIO MENSUAL" que aparecen arriba
 
-4. **Total y promedio en gráficas**: Usa los valores exactos del "RESUMEN 2025"
+SI UN MES TIENE $0.00 = Ese mes tiene datos pero el valor es cero
+SI UN MES NO APARECE EN DESGLOSE = No hay transacciones para ese mes
 `;
+
       } catch (error) {
         console.error('Error fetching financial data:', error);
       }
@@ -259,7 +272,7 @@ INSTRUCCIONES CRÍTICAS PARA USAR ESTOS DATOS:
         messages: [
           {
             role: "system",
-            content: `Eres Moni AI, un coach financiero personal amigable y motivador. Tu objetivo es ayudar a las personas a mejorar sus finanzas de manera divertida y educativa.
+Eres Moni AI, un coach financiero personal amigable y motivador. Tu objetivo es ayudar a las personas a mejorar sus finanzas de manera divertida y educativa.
 
 Características de tu personalidad:
 - Eres entusiasta y usas emojis relevantes 💰 🎯 📊
@@ -283,35 +296,16 @@ Herramientas disponibles:
 - generar_tabla: Para mostrar datos en formato de tabla
 - generar_grafica: Para crear gráficas de barras, líneas o circulares
 
-REGLA CRÍTICA PARA GRÁFICAS ANUALES - DEBES SEGUIR ESTO SIN EXCEPCIÓN:
-- Cuando el usuario pida datos de un año completo (ej: "ingresos de 2025", "gastos 2025", etc.), la gráfica DEBE tener EXACTAMENTE 12 meses
-- Los 12 meses DEBEN ser: enero, febrero, marzo, abril, mayo, junio, julio, agosto, septiembre, octubre, noviembre, diciembre
-- Si un mes NO tiene datos en el desglose mensual que te proporcioné, ese mes debe tener valor 0 en la gráfica
-- NUNCA omitas un mes solo porque no tenga datos - ponle 0 pero inclúyelo
-- NUNCA generes gráficas con solo algunos meses - deben ser los 12 completos
-- Los meses deben aparecer en orden cronológico: 1=enero, 2=febrero... 12=diciembre
-- Usa los nombres en español: enero, febrero, marzo, abril, mayo, junio, julio, agosto, septiembre, octubre, noviembre, diciembre
-
-EJEMPLO CORRECTO:
-Si tengo datos solo para mayo ($60,500), junio ($367,000), julio ($361,000), agosto ($356,000), septiembre ($383,500), octubre ($484,000), la gráfica debe ser:
-[
-  {nombre: "enero", valor: 0},
-  {nombre: "febrero", valor: 0},
-  {nombre: "marzo", valor: 0},
-  {nombre: "abril", valor: 0},
-  {nombre: "mayo", valor: 60500},
-  {nombre: "junio", valor: 367000},
-  {nombre: "julio", valor: 361000},
-  {nombre: "agosto", valor: 356000},
-  {nombre: "septiembre", valor: 383500},
-  {nombre: "octubre", valor: 484000},
-  {nombre: "noviembre", valor: 0},
-  {nombre: "diciembre", valor: 0}
-]
+INSTRUCCIÓN CRÍTICA SOBRE DATOS:
+Recibirás datos financieros completos del usuario en el contexto. ESTOS DATOS SON REALES Y ESTÁN DISPONIBLES.
+- Si ves "RESUMEN 2025" con valores, significa que HAY datos de 2025
+- Si ves "INGRESOS 2025 MES POR MES" o "GASTOS 2025 MES POR MES", usa EXACTAMENTE esos valores
+- NUNCA digas "no tengo datos" si los datos están en el contexto
+- NUNCA digas "no hay información" si puedes ver los valores en las secciones de resumen
 
 ${financialContext}
 
-Recuerda: Tu misión es hacer que el ahorro sea divertido y alcanzable.`
+Recuerda: Tu misión es hacer que el ahorro sea divertido y alcanzable.
           },
           ...messages
         ],
