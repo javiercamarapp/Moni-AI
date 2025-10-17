@@ -1556,7 +1556,7 @@ const Dashboard = () => {
                       {recentTransactions.map((transaction) => (
                         <div 
                           key={transaction.id}
-                          className="flex items-center gap-1.5 sm:gap-2 py-2 sm:py-2 px-2 sm:px-3 bg-card rounded shadow-card hover:bg-accent/50 transition-smooth min-h-[50px] sm:min-h-[40px]"
+                          className="flex items-center gap-1.5 sm:gap-2 py-2 sm:py-2 px-3 bg-white rounded-[16px] shadow-lg border border-blue-100 hover:scale-105 transition-all min-h-[50px] sm:min-h-[40px]"
                         >
                           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-amber-400 to-yellow-700 flex items-center justify-center text-sm sm:text-base shadow-lg shrink-0">
                             {transaction.type === 'ingreso' ? '💰' : '💳'}
