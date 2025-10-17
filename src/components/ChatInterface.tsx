@@ -12,6 +12,11 @@ import moniLogo from '@/assets/moni-ai-logo.png';
 import { Camera as CapCamera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { PulseBeams } from '@/components/ui/pulse-beams';
 
+// Function to remove asterisks from text
+const removeAsterisks = (text: string): string => {
+  return text.replace(/\*/g, '');
+};
+
 const ChatInterface = () => {
   const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
@@ -678,7 +683,7 @@ const ChatInterface = () => {
                     {msg.content && (
                       <div className="bg-white rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 border border-blue-100 shadow-lg">
                         <p className="text-foreground text-sm sm:text-base leading-relaxed whitespace-pre-wrap break-words">
-                          {msg.content}
+                          {removeAsterisks(msg.content)}
                         </p>
                       </div>
                     )}
