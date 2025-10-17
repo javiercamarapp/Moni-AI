@@ -11,11 +11,15 @@ import Autoplay from 'embla-carousel-autoplay';
 import moniLogo from '@/assets/moni-ai-logo.png';
 import { Camera as CapCamera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { PulseBeams } from '@/components/ui/pulse-beams';
+import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 // Function to remove asterisks from text
 const removeAsterisks = (text: string): string => {
   return text.replace(/\*/g, '');
 };
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
 const ChatInterface = () => {
   const [user, setUser] = useState<any>(null);
@@ -29,6 +33,10 @@ const ChatInterface = () => {
     type: string;
     content: string;
     files?: Array<{name: string; type: string; data: string}>;
+    toolCall?: {
+      type: 'tabla' | 'grafica';
+      data: any;
+    };
   }>>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [suggestionCards, setSuggestionCards] = useState<Array<{
@@ -206,6 +214,8 @@ const ChatInterface = () => {
       let streamDone = false;
       let assistantMessage = '';
       let assistantId = Date.now() + 1;
+      let currentToolCall: any = null;
+      
       while (!streamDone) {
         const {
           done,
@@ -230,6 +240,8 @@ const ChatInterface = () => {
           try {
             const parsed = JSON.parse(jsonStr);
             const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            const toolCalls = parsed.choices?.[0]?.delta?.tool_calls;
+            
             if (content) {
               assistantMessage += content;
               setMessages(prev => {
@@ -237,15 +249,50 @@ const ChatInterface = () => {
                 if (last?.type === 'ai' && last.id === assistantId) {
                   return prev.map((m, i) => i === prev.length - 1 ? {
                     ...m,
-                    content: assistantMessage
+                    content: assistantMessage,
+                    toolCall: currentToolCall
                   } : m);
                 }
                 return [...prev, {
                   id: assistantId,
                   type: 'ai',
-                  content: assistantMessage
+                  content: assistantMessage,
+                  toolCall: currentToolCall
                 }];
               });
+            }
+            
+            if (toolCalls && toolCalls[0]?.function?.name && toolCalls[0]?.function?.arguments) {
+              try {
+                const funcName = toolCalls[0].function.name;
+                const args = JSON.parse(toolCalls[0].function.arguments);
+                
+                if (funcName === 'generar_tabla') {
+                  currentToolCall = { type: 'tabla' as const, data: args };
+                } else if (funcName === 'generar_grafica') {
+                  currentToolCall = { type: 'grafica' as const, data: args };
+                }
+                
+                if (currentToolCall) {
+                  setMessages(prev => {
+                    const last = prev[prev.length - 1];
+                    if (last?.type === 'ai' && last.id === assistantId) {
+                      return prev.map((m, i) => i === prev.length - 1 ? {
+                        ...m,
+                        toolCall: currentToolCall
+                      } : m);
+                    }
+                    return [...prev, {
+                      id: assistantId,
+                      type: 'ai',
+                      content: assistantMessage,
+                      toolCall: currentToolCall
+                    }];
+                  });
+                }
+              } catch (parseError) {
+                console.error('Error parsing tool call:', parseError);
+              }
             }
           } catch {
             textBuffer = line + '\n' + textBuffer;
@@ -685,6 +732,77 @@ const ChatInterface = () => {
                         <p className="text-foreground text-sm sm:text-base leading-relaxed whitespace-pre-wrap break-words">
                           {removeAsterisks(msg.content)}
                         </p>
+                      </div>
+                    )}
+                    
+                    {msg.toolCall && msg.toolCall.type === 'tabla' && (
+                      <div className="bg-white rounded-2xl p-4 border border-blue-100 shadow-lg mt-2">
+                        <h3 className="font-semibold text-lg mb-3 text-foreground">{msg.toolCall.data.titulo}</h3>
+                        <div className="overflow-x-auto">
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                {msg.toolCall.data.columnas.map((col: string, idx: number) => (
+                                  <TableHead key={idx} className="font-semibold">{col}</TableHead>
+                                ))}
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {msg.toolCall.data.filas.map((fila: string[], idx: number) => (
+                                <TableRow key={idx}>
+                                  {fila.map((celda: string, cellIdx: number) => (
+                                    <TableCell key={cellIdx}>{celda}</TableCell>
+                                  ))}
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {msg.toolCall && msg.toolCall.type === 'grafica' && (
+                      <div className="bg-white rounded-2xl p-4 border border-blue-100 shadow-lg mt-2">
+                        <h3 className="font-semibold text-lg mb-3 text-foreground">{msg.toolCall.data.titulo}</h3>
+                        <ResponsiveContainer width="100%" height={300}>
+                          {msg.toolCall.data.tipo === 'barras' ? (
+                            <BarChart data={msg.toolCall.data.datos}>
+                              <CartesianGrid strokeDasharray="3 3" />
+                              <XAxis dataKey="nombre" />
+                              <YAxis />
+                              <Tooltip />
+                              <Legend />
+                              <Bar dataKey="valor" fill="#0088FE" />
+                            </BarChart>
+                          ) : msg.toolCall.data.tipo === 'linea' ? (
+                            <LineChart data={msg.toolCall.data.datos}>
+                              <CartesianGrid strokeDasharray="3 3" />
+                              <XAxis dataKey="nombre" />
+                              <YAxis />
+                              <Tooltip />
+                              <Legend />
+                              <Line type="monotone" dataKey="valor" stroke="#0088FE" strokeWidth={2} />
+                            </LineChart>
+                          ) : (
+                            <PieChart>
+                              <Pie
+                                data={msg.toolCall.data.datos}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                label={({ nombre, percent }) => `${nombre}: ${(percent * 100).toFixed(0)}%`}
+                                outerRadius={80}
+                                fill="#8884d8"
+                                dataKey="valor"
+                              >
+                                {msg.toolCall.data.datos.map((_: any, index: number) => (
+                                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                ))}
+                              </Pie>
+                              <Tooltip />
+                            </PieChart>
+                          )}
+                        </ResponsiveContainer>
                       </div>
                     )}
                   </div>

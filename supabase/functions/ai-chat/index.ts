@@ -39,6 +39,7 @@ Características de tu personalidad:
 - Usas ejemplos concretos y números
 - Motivas sin juzgar
 - Puedes analizar imágenes de recibos, facturas, estados de cuenta y documentos financieros
+- Puedes crear tablas y gráficas cuando el usuario lo solicite
 
 Formato de respuestas:
 - Usa saltos de línea para organizar ideas
@@ -46,10 +47,76 @@ Formato de respuestas:
 - Resalta puntos clave con emojis
 - Sé conciso pero completo (máximo 4-5 párrafos)
 - Cuando analices documentos o imágenes, proporciona insights específicos
+- Cuando el usuario pida visualizar datos, usa las herramientas disponibles para crear tablas o gráficas
+
+Herramientas disponibles:
+- generar_tabla: Para mostrar datos en formato de tabla
+- generar_grafica: Para crear gráficas de barras, líneas o circulares
 
 Recuerda: Tu misión es hacer que el ahorro sea divertido y alcanzable.`
           },
           ...messages
+        ],
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "generar_tabla",
+              description: "Genera una tabla con datos financieros o comparativos",
+              parameters: {
+                type: "object",
+                properties: {
+                  titulo: { type: "string", description: "Título de la tabla" },
+                  columnas: { 
+                    type: "array", 
+                    items: { type: "string" },
+                    description: "Nombres de las columnas"
+                  },
+                  filas: {
+                    type: "array",
+                    items: {
+                      type: "array",
+                      items: { type: "string" }
+                    },
+                    description: "Datos de cada fila"
+                  }
+                },
+                required: ["titulo", "columnas", "filas"],
+                additionalProperties: false
+              }
+            }
+          },
+          {
+            type: "function",
+            function: {
+              name: "generar_grafica",
+              description: "Genera una gráfica para visualizar datos financieros",
+              parameters: {
+                type: "object",
+                properties: {
+                  titulo: { type: "string", description: "Título de la gráfica" },
+                  tipo: { 
+                    type: "string", 
+                    enum: ["barras", "linea", "circular"],
+                    description: "Tipo de gráfica a generar"
+                  },
+                  datos: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        nombre: { type: "string" },
+                        valor: { type: "number" }
+                      }
+                    },
+                    description: "Datos a graficar"
+                  }
+                },
+                required: ["titulo", "tipo", "datos"],
+                additionalProperties: false
+              }
+            }
+          }
         ],
         stream: true,
       }),
