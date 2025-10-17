@@ -60,17 +60,17 @@ serve(async (req) => {
 
         // Calcular estadísticas del mes actual
         const totalGastosActual = currentMonthTransactions
-          .filter((t: any) => t.type === 'expense')
+          .filter((t: any) => t.type === 'expense' || t.type === 'gasto')
           .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
         
         const totalIngresosActual = currentMonthTransactions
-          .filter((t: any) => t.type === 'income')
+          .filter((t: any) => t.type === 'income' || t.type === 'ingreso')
           .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
 
         // Gastos por categoría del mes actual
         const gastosPorCategoriaActual: Record<string, number> = {};
         currentMonthTransactions
-          .filter((t: any) => t.type === 'expense')
+          .filter((t: any) => t.type === 'expense' || t.type === 'gasto')
           .forEach((t: any) => {
             const cat = categories.find((c: any) => c.id === t.category_id);
             const catName = cat?.name || 'Sin categoría';
@@ -87,9 +87,9 @@ serve(async (req) => {
             monthlyData[monthKey] = { gastos: 0, ingresos: 0, count: 0 };
           }
           
-          if (t.type === 'expense') {
+          if (t.type === 'expense' || t.type === 'gasto') {
             monthlyData[monthKey].gastos += Number(t.amount);
-          } else if (t.type === 'income') {
+          } else if (t.type === 'income' || t.type === 'ingreso') {
             monthlyData[monthKey].ingresos += Number(t.amount);
           }
           monthlyData[monthKey].count++;
@@ -100,11 +100,11 @@ serve(async (req) => {
 
         // Estadísticas históricas
         const totalGastosHistoricos = allTransactions
-          .filter((t: any) => t.type === 'expense')
+          .filter((t: any) => t.type === 'expense' || t.type === 'gasto')
           .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
         
         const totalIngresosHistoricos = allTransactions
-          .filter((t: any) => t.type === 'income')
+          .filter((t: any) => t.type === 'income' || t.type === 'ingreso')
           .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
 
         const mesesConDatos = Object.keys(monthlyData).length || 1;
@@ -114,7 +114,7 @@ serve(async (req) => {
         // Top categorías históricas
         const gastosHistoricosPorCategoria: Record<string, number> = {};
         allTransactions
-          .filter((t: any) => t.type === 'expense')
+          .filter((t: any) => t.type === 'expense' || t.type === 'gasto')
           .forEach((t: any) => {
             const cat = categories.find((c: any) => c.id === t.category_id);
             const catName = cat?.name || 'Sin categoría';
