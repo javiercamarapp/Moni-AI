@@ -11,11 +11,81 @@ serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json();
+    const { messages, userId } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
+    }
+
+    // Obtener datos financieros del usuario si está disponible
+    let financialContext = '';
+    if (userId && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+      try {
+        const supabaseHeaders = {
+          'apikey': SUPABASE_SERVICE_ROLE_KEY,
+          'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+          'Content-Type': 'application/json'
+        };
+
+        // Obtener transacciones del mes actual
+        const now = new Date();
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+        
+        const transactionsRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${userId}&transaction_date=gte.${firstDay}&transaction_date=lte.${lastDay}&select=*`,
+          { headers: supabaseHeaders }
+        );
+        const transactions = await transactionsRes.json();
+
+        // Obtener categorías
+        const categoriesRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/categories?user_id=eq.${userId}&select=*`,
+          { headers: supabaseHeaders }
+        );
+        const categories = await categoriesRes.json();
+
+        // Calcular estadísticas
+        const totalGastos = transactions
+          .filter((t: any) => t.type === 'expense')
+          .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
+        
+        const totalIngresos = transactions
+          .filter((t: any) => t.type === 'income')
+          .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
+
+        // Gastos por categoría
+        const gastosPorCategoria: Record<string, number> = {};
+        transactions
+          .filter((t: any) => t.type === 'expense')
+          .forEach((t: any) => {
+            const cat = categories.find((c: any) => c.id === t.category_id);
+            const catName = cat?.name || 'Sin categoría';
+            gastosPorCategoria[catName] = (gastosPorCategoria[catName] || 0) + Number(t.amount);
+          });
+
+        financialContext = `
+
+DATOS FINANCIEROS DEL USUARIO (MES ACTUAL):
+Total de gastos: $${totalGastos.toFixed(2)}
+Total de ingresos: $${totalIngresos.toFixed(2)}
+Balance: $${(totalIngresos - totalGastos).toFixed(2)}
+Número de transacciones: ${transactions.length}
+
+Gastos por categoría:
+${Object.entries(gastosPorCategoria)
+  .sort((a, b) => b[1] - a[1])
+  .map(([cat, amount]) => `- ${cat}: $${amount.toFixed(2)}`)
+  .join('\n')}
+
+IMPORTANTE: Cuando el usuario pida visualizar datos, usa las herramientas generar_tabla o generar_grafica con esta información.
+`;
+      } catch (error) {
+        console.error('Error fetching financial data:', error);
+      }
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -52,6 +122,8 @@ Formato de respuestas:
 Herramientas disponibles:
 - generar_tabla: Para mostrar datos en formato de tabla
 - generar_grafica: Para crear gráficas de barras, líneas o circulares
+
+${financialContext}
 
 Recuerda: Tu misión es hacer que el ahorro sea divertido y alcanzable.`
           },

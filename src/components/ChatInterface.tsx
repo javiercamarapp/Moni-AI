@@ -187,7 +187,8 @@ const ChatInterface = () => {
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`
         },
         body: JSON.stringify({
-          messages: conversationHistory
+          messages: conversationHistory,
+          userId: user?.id
         })
       });
       if (!resp.ok) {
