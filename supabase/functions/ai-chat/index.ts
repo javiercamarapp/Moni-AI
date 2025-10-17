@@ -225,6 +225,14 @@ Herramientas disponibles:
 - generar_tabla: Para mostrar datos en formato de tabla
 - generar_grafica: Para crear gráficas de barras, líneas o circulares
 
+IMPORTANTE AL GENERAR GRÁFICAS:
+- Cuando el usuario pida datos de un año completo, SIEMPRE incluye los 12 meses (enero a diciembre)
+- Si un mes no tiene datos o transacciones, ponle valor 0, pero INCLÚYELO en la gráfica
+- Nunca omitas meses solo porque no tengan datos
+- Los meses deben aparecer en orden cronológico
+- Usa nombres de meses en español (enero, febrero, marzo, etc.)
+- Ejemplo: Si el usuario pide "ingresos de 2025" y solo tienes datos de mayo a octubre, la gráfica debe tener los 12 meses, con valores 0 para los meses sin datos
+
 ${financialContext}
 
 Recuerda: Tu misión es hacer que el ahorro sea divertido y alcanzable.`

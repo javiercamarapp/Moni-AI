@@ -764,36 +764,80 @@ const ChatInterface = () => {
                     
                     {msg.toolCall && msg.toolCall.type === 'grafica' && (
                       <div className="bg-white rounded-[20px] p-4 sm:p-6 border border-blue-100 shadow-xl mt-2 animate-fade-in">
-                        <h3 className="font-bold text-lg sm:text-xl mb-4 text-foreground">{msg.toolCall.data.titulo}</h3>
+                        <div className="mb-4">
+                          <h3 className="font-bold text-lg sm:text-xl text-foreground">{msg.toolCall.data.titulo}</h3>
+                          {msg.toolCall.data.datos && msg.toolCall.data.datos.length > 0 && (
+                            <div className="mt-2 flex flex-wrap gap-3 text-xs">
+                              <span className="text-muted-foreground">
+                                Total: <span className="font-bold text-foreground">
+                                  ${msg.toolCall.data.datos.reduce((sum: number, item: any) => sum + item.valor, 0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                </span>
+                              </span>
+                              <span className="text-muted-foreground">
+                                Promedio: <span className="font-bold text-foreground">
+                                  ${(msg.toolCall.data.datos.reduce((sum: number, item: any) => sum + item.valor, 0) / msg.toolCall.data.datos.length).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                </span>
+                              </span>
+                            </div>
+                          )}
+                        </div>
                         <ResponsiveContainer width="100%" height={300}>
                           {msg.toolCall.data.tipo === 'barras' ? (
                             <BarChart data={msg.toolCall.data.datos}>
                               <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
-                              <XAxis dataKey="nombre" stroke="hsl(var(--foreground))" />
-                              <YAxis stroke="hsl(var(--foreground))" />
+                              <XAxis 
+                                dataKey="nombre" 
+                                stroke="hsl(var(--foreground))" 
+                                tick={{ fontSize: 11 }}
+                                angle={-45}
+                                textAnchor="end"
+                                height={80}
+                              />
+                              <YAxis 
+                                stroke="hsl(var(--foreground))" 
+                                tick={{ fontSize: 11 }}
+                                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                              />
                               <Tooltip 
                                 contentStyle={{ 
                                   backgroundColor: 'white', 
                                   border: '1px solid hsl(var(--border))',
-                                  borderRadius: '8px'
-                                }} 
+                                  borderRadius: '8px',
+                                  fontSize: '12px'
+                                }}
+                                formatter={(value: any) => [`$${Number(value).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 'Monto']}
+                                labelFormatter={(label) => `📅 ${label}`}
                               />
-                              <Legend />
+                              <Legend wrapperStyle={{ fontSize: '12px' }} />
                               <Bar dataKey="valor" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
                             </BarChart>
                           ) : msg.toolCall.data.tipo === 'linea' ? (
                             <LineChart data={msg.toolCall.data.datos}>
                               <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
-                              <XAxis dataKey="nombre" stroke="hsl(var(--foreground))" />
-                              <YAxis stroke="hsl(var(--foreground))" />
+                              <XAxis 
+                                dataKey="nombre" 
+                                stroke="hsl(var(--foreground))" 
+                                tick={{ fontSize: 11 }}
+                                angle={-45}
+                                textAnchor="end"
+                                height={80}
+                              />
+                              <YAxis 
+                                stroke="hsl(var(--foreground))" 
+                                tick={{ fontSize: 11 }}
+                                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                              />
                               <Tooltip 
                                 contentStyle={{ 
                                   backgroundColor: 'white', 
                                   border: '1px solid hsl(var(--border))',
-                                  borderRadius: '8px'
-                                }} 
+                                  borderRadius: '8px',
+                                  fontSize: '12px'
+                                }}
+                                formatter={(value: any) => [`$${Number(value).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 'Monto']}
+                                labelFormatter={(label) => `📅 ${label}`}
                               />
-                              <Legend />
+                              <Legend wrapperStyle={{ fontSize: '12px' }} />
                               <Line type="monotone" dataKey="valor" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 4 }} />
                             </LineChart>
                           ) : (
@@ -816,8 +860,10 @@ const ChatInterface = () => {
                                 contentStyle={{ 
                                   backgroundColor: 'white', 
                                   border: '1px solid hsl(var(--border))',
-                                  borderRadius: '8px'
+                                  borderRadius: '8px',
+                                  fontSize: '12px'
                                 }} 
+                                formatter={(value: any) => [`$${Number(value).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 'Monto']}
                               />
                             </PieChart>
                           )}
