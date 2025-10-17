@@ -148,13 +148,23 @@ ${Object.entries(gastosHistoricosPorCategoria)
   .map(([cat, amount]) => `- ${cat}: $${amount.toFixed(2)} (promedio mensual: $${(amount / mesesConDatos).toFixed(2)})`)
   .join('\n')}
 
-Desglose mensual:
+        // Desglose mensual:
 ${Object.entries(monthlyData)
   .sort((a, b) => b[0].localeCompare(a[0]))
-  .map(([month, data]) => `- ${month}: Gastos $${data.gastos.toFixed(2)}, Ingresos $${data.ingresos.toFixed(2)}, Balance $${(data.ingresos - data.gastos).toFixed(2)} (${data.count} transacciones)`)
+  .map(([month, data]) => {
+    const [year, monthNum] = month.split('-');
+    const monthName = new Date(parseInt(year), parseInt(monthNum) - 1, 1)
+      .toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
+    return `- ${monthName}: Gastos $${data.gastos.toFixed(2)}, Ingresos $${data.ingresos.toFixed(2)}, Balance $${(data.ingresos - data.gastos).toFixed(2)} (${data.count} transacciones)`;
+  })
   .join('\n')}
 
-IMPORTANTE: Cuando el usuario pida visualizar datos, comparar meses, analizar tendencias o ver evolución, usa las herramientas generar_tabla o generar_grafica con esta información histórica.
+IMPORTANTE: 
+- Si el usuario pregunta por un mes específico, busca ese mes en el "Desglose mensual" arriba
+- Si un mes NO aparece en el desglose, significa que NO HAY TRANSACCIONES registradas para ese mes (no es que no haya ingresos, es que no hay datos)
+- NUNCA digas "no tuviste ingresos" a menos que el mes exista en el desglose Y los ingresos sean $0.00
+- Si preguntan por el "mes anterior" y no está en los datos, di: "No tengo transacciones registradas para ese mes en mi sistema"
+- Cuando el usuario pida visualizar datos, comparar meses, analizar tendencias o ver evolución, usa las herramientas generar_tabla o generar_grafica con esta información histórica.
 `;
       } catch (error) {
         console.error('Error fetching financial data:', error);
