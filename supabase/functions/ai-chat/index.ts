@@ -30,15 +30,20 @@ serve(async (req) => {
           'Content-Type': 'application/json'
         };
 
-        // Obtener transacciones de los últimos 6 meses
+        // Obtener TODAS las transacciones del usuario (sin límite de fecha)
         const now = new Date();
-        const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 6, 1).toISOString().split('T')[0];
         
         const allTransactionsRes = await fetch(
-          `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${userId}&transaction_date=gte.${sixMonthsAgo}&order=transaction_date.desc&select=*`,
+          `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${userId}&order=transaction_date.desc&select=*`,
           { headers: supabaseHeaders }
         );
         const allTransactions = await allTransactionsRes.json();
+        
+        console.log(`Total transacciones obtenidas: ${allTransactions.length}`);
+        if (allTransactions.length > 0) {
+          console.log('Primera transacción:', allTransactions[0].transaction_date);
+          console.log('Última transacción:', allTransactions[allTransactions.length - 1].transaction_date);
+        }
 
         // Obtener categorías
         const categoriesRes = await fetch(
@@ -89,6 +94,9 @@ serve(async (req) => {
           }
           monthlyData[monthKey].count++;
         });
+        
+        console.log('Meses con datos:', Object.keys(monthlyData).sort());
+        console.log('Datos mensuales:', JSON.stringify(monthlyData, null, 2));
 
         // Estadísticas históricas
         const totalGastosHistoricos = allTransactions
@@ -99,9 +107,9 @@ serve(async (req) => {
           .filter((t: any) => t.type === 'income')
           .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
 
-        const mesesConDatos = Object.keys(monthlyData).length;
-        const promedioGastosMensual = totalGastosHistoricos / mesesConDatos;
-        const promedioIngresosMensual = totalIngresosHistoricos / mesesConDatos;
+        const mesesConDatos = Object.keys(monthlyData).length || 1;
+        const promedioGastosMensual = mesesConDatos > 0 ? totalGastosHistoricos / mesesConDatos : 0;
+        const promedioIngresosMensual = mesesConDatos > 0 ? totalIngresosHistoricos / mesesConDatos : 0;
 
         // Top categorías históricas
         const gastosHistoricosPorCategoria: Record<string, number> = {};
