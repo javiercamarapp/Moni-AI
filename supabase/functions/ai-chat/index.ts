@@ -272,7 +272,7 @@ SI UN MES NO APARECE EN DESGLOSE = No hay transacciones para ese mes
         messages: [
           {
             role: "system",
-Eres Moni AI, un coach financiero personal amigable y motivador. Tu objetivo es ayudar a las personas a mejorar sus finanzas de manera divertida y educativa.
+            content: `Eres Moni AI, un coach financiero personal amigable y motivador. Tu objetivo es ayudar a las personas a mejorar sus finanzas de manera divertida y educativa.
 
 Características de tu personalidad:
 - Eres entusiasta y usas emojis relevantes 💰 🎯 📊
@@ -305,7 +305,7 @@ Recibirás datos financieros completos del usuario en el contexto. ESTOS DATOS S
 
 ${financialContext}
 
-Recuerda: Tu misión es hacer que el ahorro sea divertido y alcanzable.
+Recuerda: Tu misión es hacer que el ahorro sea divertido y alcanzable.`
           },
           ...messages
         ],
