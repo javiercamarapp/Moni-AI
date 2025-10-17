@@ -152,13 +152,13 @@ export default function DailyExpenses() {
             variant="ghost"
             size="icon"
             onClick={handleBack}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-12 w-12"
+            className="bg-card rounded-[20px] shadow-card hover:shadow-elegant text-foreground hover:scale-105 transition-smooth border border-border h-12 w-12"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-foreground">Gastos Cotidianos</h1>
-            <p className="text-xs sm:text-sm text-foreground/70">Pagados 6+ meses consecutivos</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">Pagados 6+ meses consecutivos</p>
           </div>
         </div>
         <Button
@@ -166,7 +166,7 @@ export default function DailyExpenses() {
           size="icon"
           onClick={() => refetch()}
           disabled={loading}
-          className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
+          className="bg-card rounded-[20px] shadow-card hover:shadow-elegant text-foreground hover:scale-105 transition-smooth border border-border h-10 w-10"
         >
           <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
         </Button>
@@ -174,20 +174,20 @@ export default function DailyExpenses() {
 
       <div className="p-4 space-y-4">
         {/* Total mensual */}
-        <Card className="p-6 rounded-[20px] shadow-xl animate-fade-in border-blue-100 bg-gradient-to-br from-orange-50 to-white">
+        <Card className="p-6 rounded-[20px] shadow-elegant animate-fade-in border-accent/30 bg-gradient-card hover-lift">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-3 bg-orange-100 rounded-full border border-orange-200">
-              <Activity className="h-6 w-6 text-orange-600" />
+            <div className="p-3 bg-accent/20 rounded-full border border-accent/30">
+              <Activity className="h-6 w-6 text-accent-foreground" />
             </div>
             <div>
-              <p className="text-sm text-foreground/70">Suma de Promedios</p>
+              <p className="text-sm text-muted-foreground">Suma de Promedios</p>
               <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
                 ${totalMonthly.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
               </h2>
-              <p className="text-xs text-foreground/50 mt-1">Promedio de todos los gastos cotidianos</p>
+              <p className="text-xs text-muted-foreground/70 mt-1">Promedio de todos los gastos cotidianos</p>
             </div>
           </div>
-          <div className="flex justify-between text-sm text-foreground/70">
+          <div className="flex justify-between text-sm text-muted-foreground">
             <span>Gastos variables:</span>
             <span className="font-semibold text-foreground">{expenses.length}</span>
           </div>
@@ -195,18 +195,18 @@ export default function DailyExpenses() {
 
         {/* Loading state */}
         {loading && (
-          <Card className="p-8 text-center bg-white rounded-[20px] shadow-xl border border-blue-100">
+          <Card className="p-8 text-center bg-card rounded-[20px] shadow-card border border-border">
             <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-            <p className="text-foreground/70 mb-2">Analizando todo tu historial...</p>
-            <p className="text-xs text-foreground/50">Esto puede tomar unos segundos al detectar patrones de 6+ meses</p>
+            <p className="text-muted-foreground mb-2">Analizando todo tu historial...</p>
+            <p className="text-xs text-muted-foreground/70">Esto puede tomar unos segundos al detectar patrones de 6+ meses</p>
           </Card>
         )}
 
         {/* Empty state */}
         {!loading && expenses.length === 0 && (
-          <Card className="p-8 text-center bg-white rounded-[20px] shadow-xl border border-blue-100">
-            <p className="text-foreground/70 mb-4">No se detectaron gastos cotidianos consistentes</p>
-            <p className="text-sm text-foreground/50">La IA requiere gastos pagados en 6+ meses diferentes para identificar patrones</p>
+          <Card className="p-8 text-center bg-card rounded-[20px] shadow-card border border-border">
+            <p className="text-muted-foreground mb-4">No se detectaron gastos cotidianos consistentes</p>
+            <p className="text-sm text-muted-foreground/70">La IA requiere gastos pagados en 6+ meses diferentes para identificar patrones</p>
           </Card>
         )}
 
@@ -214,12 +214,12 @@ export default function DailyExpenses() {
         {!loading && expenses.map((expense, index) => (
           <Card 
             key={expense.id}
-            className="p-3 bg-white rounded-[16px] shadow-lg border border-blue-100 hover:scale-105 transition-all animate-fade-in"
+            className="p-3 bg-card rounded-[16px] shadow-card hover:shadow-elegant border border-border hover-lift animate-fade-in"
             style={{ animationDelay: `${index * 100}ms` }}
           >
             <div className="flex items-start gap-3">
               {/* Icon */}
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center flex-shrink-0 border border-orange-300">
+              <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 border border-accent/30">
                 <span className="text-xl">{expense.icon}</span>
               </div>
 
@@ -227,15 +227,15 @@ export default function DailyExpenses() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2 mb-1.5">
                   <h3 className="font-bold text-foreground text-base truncate">{expense.name}</h3>
-                  <Badge className="bg-orange-100 text-orange-800 shrink-0 text-xs">
+                  <Badge className="bg-accent/20 text-accent-foreground border-accent/30 shrink-0 text-xs">
                     {expense.frequency}
                   </Badge>
                 </div>
 
-                <div className="space-y-1.5 text-xs text-foreground/70">
+                <div className="space-y-1.5 text-xs text-muted-foreground">
                   {/* Average amount */}
                   <div className="flex items-center gap-2">
-                    <Activity className="h-3.5 w-3.5 text-orange-500" />
+                    <Activity className="h-3.5 w-3.5 text-accent-foreground" />
                     <span className="font-semibold text-foreground text-base">
                       ${expense.averageAmount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                     </span>
@@ -245,14 +245,14 @@ export default function DailyExpenses() {
                   {/* Range */}
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1">
-                      <TrendingDown className="h-3.5 w-3.5 text-green-500" />
+                      <TrendingDown className="h-3.5 w-3.5 text-success" />
                       <span className={getVariabilityColor(expense.minAmount, expense.maxAmount, expense.averageAmount)}>
                         ${expense.minAmount.toLocaleString('es-MX', { minimumFractionDigits: 0 })}
                       </span>
                     </div>
                     <span>-</span>
                     <div className="flex items-center gap-1">
-                      <TrendingUp className="h-3.5 w-3.5 text-red-500" />
+                      <TrendingUp className="h-3.5 w-3.5 text-danger" />
                       <span className={getVariabilityColor(expense.minAmount, expense.maxAmount, expense.averageAmount)}>
                         ${expense.maxAmount.toLocaleString('es-MX', { minimumFractionDigits: 0 })}
                       </span>
@@ -260,7 +260,7 @@ export default function DailyExpenses() {
                   </div>
 
                   {/* Occurrences */}
-                  <div className="text-[10px] text-foreground/50">
+                  <div className="text-[10px] text-muted-foreground/70">
                     Detectado en {expense.monthsPresent} meses • {expense.occurrences} {expense.occurrences === 1 ? 'pago' : 'pagos'} • {expense.category}
                   </div>
                 </div>

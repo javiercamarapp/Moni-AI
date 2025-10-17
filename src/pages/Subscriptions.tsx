@@ -197,13 +197,13 @@ export default function Subscriptions() {
             variant="ghost"
             size="icon"
             onClick={handleBack}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-12 w-12"
+            className="bg-card rounded-[20px] shadow-card hover:shadow-elegant text-foreground hover:scale-105 transition-smooth border border-border h-12 w-12"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-foreground">Suscripciones</h1>
-            <p className="text-xs sm:text-sm text-foreground/70">Pagadas 3+ meses • Monto fijo</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">Pagadas 3+ meses • Monto fijo</p>
           </div>
         </div>
         <Button
@@ -211,7 +211,7 @@ export default function Subscriptions() {
           size="icon"
           onClick={loadSubscriptions}
           disabled={loading}
-          className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
+          className="bg-card rounded-[20px] shadow-card hover:shadow-elegant text-foreground hover:scale-105 transition-smooth border border-border h-10 w-10"
         >
           <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
         </Button>
@@ -219,19 +219,19 @@ export default function Subscriptions() {
 
       <div className="p-4 space-y-4">
         {/* Total mensual */}
-        <Card className="p-6 rounded-[20px] shadow-xl animate-fade-in border-blue-100 bg-gradient-to-br from-blue-50 to-white">
+        <Card className="p-6 rounded-[20px] shadow-elegant animate-fade-in border-primary/20 bg-gradient-card hover-lift">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-3 bg-blue-100 rounded-full border border-blue-200">
-              <TrendingDown className="h-6 w-6 text-blue-600" />
+            <div className="p-3 bg-primary/10 rounded-full border border-primary/20">
+              <TrendingDown className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <p className="text-sm text-foreground/70">Gasto Mensual Total</p>
+              <p className="text-sm text-muted-foreground">Gasto Mensual Total</p>
               <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
                 ${totalMonthly.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
               </h2>
             </div>
           </div>
-          <div className="flex justify-between text-sm text-foreground/70">
+          <div className="flex justify-between text-sm text-muted-foreground">
             <span>Suscripciones activas:</span>
             <span className="font-semibold text-foreground">{subscriptions.length}</span>
           </div>
@@ -239,17 +239,17 @@ export default function Subscriptions() {
 
         {/* Loading state */}
         {loading && (
-          <Card className="p-8 text-center bg-white rounded-[20px] shadow-xl border border-blue-100">
+          <Card className="p-8 text-center bg-card rounded-[20px] shadow-card border border-border">
             <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-            <p className="text-foreground/70">Analizando tus transacciones...</p>
+            <p className="text-muted-foreground">Analizando tus transacciones...</p>
           </Card>
         )}
 
         {/* Empty state */}
         {!loading && subscriptions.length === 0 && (
-          <Card className="p-8 text-center bg-white rounded-[20px] shadow-xl border border-blue-100">
-            <p className="text-foreground/70 mb-4">No se detectaron suscripciones activas</p>
-            <p className="text-sm text-foreground/50">La IA requiere suscripciones pagadas en 3+ meses para detectarlas</p>
+          <Card className="p-8 text-center bg-card rounded-[20px] shadow-card border border-border">
+            <p className="text-muted-foreground mb-4">No se detectaron suscripciones activas</p>
+            <p className="text-sm text-muted-foreground/70">La IA requiere suscripciones pagadas en 3+ meses para detectarlas</p>
           </Card>
         )}
 
@@ -257,12 +257,12 @@ export default function Subscriptions() {
         {!loading && subscriptions.map((sub, index) => (
           <Card 
             key={sub.id}
-            className="p-3 bg-white rounded-[16px] shadow-lg border border-blue-100 hover:scale-105 transition-all animate-fade-in"
+            className="p-3 bg-card rounded-[16px] shadow-card hover:shadow-elegant border border-border hover-lift animate-fade-in"
             style={{ animationDelay: `${index * 100}ms` }}
           >
             <div className="flex items-start gap-3">
               {/* Icon */}
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center flex-shrink-0 border border-blue-300">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
                 <span className="text-xl">{sub.icon}</span>
               </div>
 
@@ -275,9 +275,9 @@ export default function Subscriptions() {
                   </Badge>
                 </div>
 
-                <div className="space-y-1.5 text-xs text-foreground/70">
+                <div className="space-y-1.5 text-xs text-muted-foreground">
                   <div className="flex items-center gap-2">
-                    <TrendingDown className="h-3.5 w-3.5 text-red-500" />
+                    <TrendingDown className="h-3.5 w-3.5 text-danger" />
                     <span className="font-semibold text-foreground text-base">
                       ${sub.amount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                     </span>
@@ -293,7 +293,7 @@ export default function Subscriptions() {
                     <span>Próximo cargo: <span className="font-medium text-foreground">{sub.nextPaymentDate}</span></span>
                   </div>
 
-                  <div className="text-[10px] text-foreground/50">
+                  <div className="text-[10px] text-muted-foreground/70">
                     Último pago: {sub.lastPaymentDate}
                   </div>
                 </div>
