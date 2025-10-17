@@ -98,13 +98,23 @@ serve(async (req) => {
             monthlyData[monthKey] = { gastos: 0, ingresos: 0, count: 0 };
           }
           
+          const amount = Number(t.amount);
           if (t.type === 'expense' || t.type === 'gasto') {
-            monthlyData[monthKey].gastos += Number(t.amount);
+            monthlyData[monthKey].gastos += amount;
           } else if (t.type === 'income' || t.type === 'ingreso') {
-            monthlyData[monthKey].ingresos += Number(t.amount);
+            monthlyData[monthKey].ingresos += amount;
           }
           monthlyData[monthKey].count++;
         });
+        
+        // Log detallado de 2025
+        const data2025 = Object.entries(monthlyData)
+          .filter(([key]) => key.startsWith('2025'))
+          .reduce((acc, [key, val]) => {
+            acc[key] = val;
+            return acc;
+          }, {} as any);
+        console.log('Datos de 2025:', JSON.stringify(data2025, null, 2));
         
         console.log('Meses con datos:', Object.keys(monthlyData).sort());
         console.log('Datos mensuales:', JSON.stringify(monthlyData, null, 2));
