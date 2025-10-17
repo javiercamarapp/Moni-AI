@@ -697,19 +697,19 @@ const ChatInterface = () => {
             {messages.map((msg, index) => <div key={msg.id} className="fade-in-up" style={{
           animationDelay: `${index * 0.1}s`
         }}>
-                <div className="flex items-start gap-2 sm:gap-3 mb-2">
+                <div className={`flex items-start gap-2 sm:gap-3 mb-2 ${msg.type === 'user' ? 'flex-row-reverse' : ''}`}>
                   {msg.type === 'ai' ? <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-card flex items-center justify-center flex-shrink-0 shadow-glow border border-border/50 hover-lift p-1 mt-0.5">
                       <img src={moniLogo} alt="AI" className="w-full h-full object-contain" />
                     </div> : <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-muted flex items-center justify-center flex-shrink-0 border border-border/50 hover-lift mt-0.5">
                       <span className="text-xs font-medium text-foreground">Tú</span>
                     </div>}
-                  <div className="flex-1 min-w-0">
-                    <span className="text-xs sm:text-sm font-medium text-muted-foreground block mb-1.5">
+                  <div className={`flex-1 min-w-0 ${msg.type === 'user' ? 'flex flex-col items-end' : ''}`}>
+                    <span className={`text-xs sm:text-sm font-medium text-muted-foreground block mb-1.5 ${msg.type === 'user' ? 'text-right' : ''}`}>
                       {msg.type === 'ai' ? 'MONI AI+' : 'Tú'}
                     </span>
                     
                     {msg.files && msg.files.length > 0 && (
-                      <div className="mb-2 flex flex-wrap gap-2">
+                      <div className={`mb-2 flex flex-wrap gap-2 ${msg.type === 'user' ? 'justify-end' : ''}`}>
                         {msg.files.map((file, idx) => (
                           <div key={idx} className="bg-muted/50 rounded-lg overflow-hidden border border-border/30">
                             {file.type.startsWith('image/') ? (
@@ -729,7 +729,7 @@ const ChatInterface = () => {
                     )}
                     
                     {msg.content && (
-                      <div className="bg-white rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 border border-blue-100 shadow-lg">
+                      <div className={`bg-white rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 border border-blue-100 shadow-lg ${msg.type === 'user' ? 'max-w-[85%]' : ''}`}>
                         <p className="text-foreground text-sm sm:text-base leading-relaxed whitespace-pre-wrap break-words">
                           {removeAsterisks(msg.content)}
                         </p>
