@@ -676,7 +676,7 @@ const ChatInterface = () => {
                     )}
                     
                     {msg.content && (
-                      <div className="bg-card/30 rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 border border-border/20">
+                      <div className="bg-white rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 border border-blue-100 shadow-lg">
                         <p className="text-foreground text-sm sm:text-base leading-relaxed whitespace-pre-wrap break-words">
                           {msg.content}
                         </p>
@@ -693,7 +693,7 @@ const ChatInterface = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <span className="text-xs sm:text-sm font-medium text-muted-foreground block mb-1.5">MONI AI+</span>
-                    <div className="bg-card/30 rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 border border-border/20 inline-block">
+                    <div className="bg-white rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 border border-blue-100 shadow-lg inline-block">
                       <div className="flex gap-1">
                         <div className="w-2 h-2 bg-accent rounded-full animate-bounce" />
                         <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{
