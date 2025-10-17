@@ -737,22 +737,22 @@ const ChatInterface = () => {
                     )}
                     
                     {msg.toolCall && msg.toolCall.type === 'tabla' && (
-                      <div className="bg-white rounded-2xl p-4 border border-blue-100 shadow-lg mt-2">
-                        <h3 className="font-semibold text-lg mb-3 text-foreground">{msg.toolCall.data.titulo}</h3>
+                      <div className="bg-white rounded-[20px] p-4 sm:p-6 border border-blue-100 shadow-xl mt-2 animate-fade-in">
+                        <h3 className="font-bold text-lg sm:text-xl mb-4 text-foreground">{msg.toolCall.data.titulo}</h3>
                         <div className="overflow-x-auto">
                           <Table>
                             <TableHeader>
-                              <TableRow>
+                              <TableRow className="border-border/30">
                                 {msg.toolCall.data.columnas.map((col: string, idx: number) => (
-                                  <TableHead key={idx} className="font-semibold">{col}</TableHead>
+                                  <TableHead key={idx} className="font-bold text-foreground bg-muted/30">{col}</TableHead>
                                 ))}
                               </TableRow>
                             </TableHeader>
                             <TableBody>
                               {msg.toolCall.data.filas.map((fila: string[], idx: number) => (
-                                <TableRow key={idx}>
+                                <TableRow key={idx} className="border-border/20 hover:bg-muted/20 transition-colors">
                                   {fila.map((celda: string, cellIdx: number) => (
-                                    <TableCell key={cellIdx}>{celda}</TableCell>
+                                    <TableCell key={cellIdx} className="text-foreground">{celda}</TableCell>
                                   ))}
                                 </TableRow>
                               ))}
@@ -763,26 +763,38 @@ const ChatInterface = () => {
                     )}
                     
                     {msg.toolCall && msg.toolCall.type === 'grafica' && (
-                      <div className="bg-white rounded-2xl p-4 border border-blue-100 shadow-lg mt-2">
-                        <h3 className="font-semibold text-lg mb-3 text-foreground">{msg.toolCall.data.titulo}</h3>
+                      <div className="bg-white rounded-[20px] p-4 sm:p-6 border border-blue-100 shadow-xl mt-2 animate-fade-in">
+                        <h3 className="font-bold text-lg sm:text-xl mb-4 text-foreground">{msg.toolCall.data.titulo}</h3>
                         <ResponsiveContainer width="100%" height={300}>
                           {msg.toolCall.data.tipo === 'barras' ? (
                             <BarChart data={msg.toolCall.data.datos}>
-                              <CartesianGrid strokeDasharray="3 3" />
-                              <XAxis dataKey="nombre" />
-                              <YAxis />
-                              <Tooltip />
+                              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                              <XAxis dataKey="nombre" stroke="hsl(var(--foreground))" />
+                              <YAxis stroke="hsl(var(--foreground))" />
+                              <Tooltip 
+                                contentStyle={{ 
+                                  backgroundColor: 'white', 
+                                  border: '1px solid hsl(var(--border))',
+                                  borderRadius: '8px'
+                                }} 
+                              />
                               <Legend />
-                              <Bar dataKey="valor" fill="#0088FE" />
+                              <Bar dataKey="valor" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
                             </BarChart>
                           ) : msg.toolCall.data.tipo === 'linea' ? (
                             <LineChart data={msg.toolCall.data.datos}>
-                              <CartesianGrid strokeDasharray="3 3" />
-                              <XAxis dataKey="nombre" />
-                              <YAxis />
-                              <Tooltip />
+                              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+                              <XAxis dataKey="nombre" stroke="hsl(var(--foreground))" />
+                              <YAxis stroke="hsl(var(--foreground))" />
+                              <Tooltip 
+                                contentStyle={{ 
+                                  backgroundColor: 'white', 
+                                  border: '1px solid hsl(var(--border))',
+                                  borderRadius: '8px'
+                                }} 
+                              />
                               <Legend />
-                              <Line type="monotone" dataKey="valor" stroke="#0088FE" strokeWidth={2} />
+                              <Line type="monotone" dataKey="valor" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 4 }} />
                             </LineChart>
                           ) : (
                             <PieChart>
@@ -792,7 +804,7 @@ const ChatInterface = () => {
                                 cy="50%"
                                 labelLine={false}
                                 label={({ nombre, percent }) => `${nombre}: ${(percent * 100).toFixed(0)}%`}
-                                outerRadius={80}
+                                outerRadius={100}
                                 fill="#8884d8"
                                 dataKey="valor"
                               >
@@ -800,7 +812,13 @@ const ChatInterface = () => {
                                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                 ))}
                               </Pie>
-                              <Tooltip />
+                              <Tooltip 
+                                contentStyle={{ 
+                                  backgroundColor: 'white', 
+                                  border: '1px solid hsl(var(--border))',
+                                  borderRadius: '8px'
+                                }} 
+                              />
                             </PieChart>
                           )}
                         </ResponsiveContainer>
