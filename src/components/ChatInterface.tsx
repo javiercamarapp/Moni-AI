@@ -1023,7 +1023,50 @@ const ChatInterface = () => {
           </div>
         )}
 
-        <div className="flex items-center gap-1 sm:gap-2 bg-card rounded-[30px] px-2 sm:px-4 py-2.5 sm:py-3 shadow-elegant border border-border/30 hover:border-border/50 transition-all">
+        {isVoiceChatOpen ? (
+          /* Voice Recording Interface - Replaces bottom bar */
+          <div className="flex items-center gap-2 bg-card rounded-[30px] px-3 sm:px-4 py-3 sm:py-3.5 shadow-elegant border border-border/30 hover:border-border/50 transition-all">
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={closeVoiceChat}
+              className="h-7 w-7 sm:h-8 sm:w-8 rounded-full hover:bg-accent/50 flex-shrink-0"
+            >
+              <Plus className="w-4 h-4 rotate-45" />
+            </Button>
+
+            <AudioWaveVisualizer 
+              isRecording={isRecording} 
+              bars={40}
+              className="flex-1 h-8"
+            />
+
+            {isRecording && (
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => {
+                  stopVoiceRecording();
+                  closeVoiceChat();
+                }}
+                className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-primary/10 hover:bg-primary/20 text-primary flex-shrink-0"
+              >
+                <Check className="w-4 h-4" />
+              </Button>
+            )}
+            
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={closeVoiceChat}
+              className="h-7 w-7 sm:h-8 sm:w-8 rounded-full hover:bg-accent/50 flex-shrink-0"
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+        ) : (
+          /* Normal Chat Input */
+          <div className="flex items-center gap-1 sm:gap-2 bg-card rounded-[30px] px-2 sm:px-4 py-2.5 sm:py-3 shadow-elegant border border-border/30 hover:border-border/50 transition-all">
           <input
             ref={fileInputRef}
             type="file"
@@ -1189,88 +1232,23 @@ const ChatInterface = () => {
             <Circle className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isVoiceActive ? 'fill-current' : ''}`} />
           </Button>
         </div>
+        )}
         
         <p className="text-center text-xs text-muted-foreground mt-3">Verifica la información importante.</p>
       </div>
 
-      {/* Voice Recording Modal - Mini Version */}
-      <Dialog open={isRecording && !isVoiceChatOpen} onOpenChange={(open) => !open && stopVoiceRecording()}>
-        <DialogContent className="sm:max-w-md max-w-[90vw] border-none bg-background/95 backdrop-blur-sm p-2">
-          <AIVoiceInput 
-            onStart={() => console.log('Grabación iniciada')}
-            onStop={(duration) => console.log('Grabación detenida:', duration)}
-            className="py-2"
-          />
-        </DialogContent>
-      </Dialog>
-
-      {/* Voice Chat Modal - ChatGPT Style */}
-      <Dialog open={isVoiceChatOpen} onOpenChange={(open) => !open && closeVoiceChat()}>
-        <DialogContent className="max-w-full w-screen h-screen p-0 border-none bg-black/98 backdrop-blur-xl flex items-center justify-center">
-          <div className="flex flex-col items-center justify-between w-full h-full px-6 py-8 relative">
-            {/* Header Controls */}
-            <div className="flex items-center justify-between w-full max-w-4xl">
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={closeVoiceChat}
-                className="h-10 w-10 rounded-full bg-white/5 hover:bg-white/10 text-white border-none"
-              >
-                <Plus className="w-5 h-5 rotate-45" />
-              </Button>
-
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={closeVoiceChat}
-                className="h-10 w-10 rounded-full bg-white/5 hover:bg-white/10 text-white border-none"
-              >
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
-
-            {/* Center Content - Wave Visualizer */}
-            <div className="flex flex-col items-center justify-center gap-8 flex-1">
-              <AudioWaveVisualizer 
-                isRecording={isRecording} 
-                bars={60}
-                className="w-full max-w-3xl"
-              />
-            </div>
-
-            {/* Bottom Controls */}
-            <div className="flex items-center justify-center gap-6 pb-8">
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={handleVoiceToggle}
-                className={cn(
-                  "h-14 w-14 rounded-full transition-all border-none",
-                  isRecording 
-                    ? 'bg-red-500/20 hover:bg-red-500/30 text-red-500' 
-                    : 'bg-white/5 hover:bg-white/10 text-white'
-                )}
-              >
-                <Mic className="w-6 h-6" />
-              </Button>
-
-              {isRecording && (
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  onClick={() => {
-                    stopVoiceRecording();
-                    closeVoiceChat();
-                  }}
-                  className="h-14 w-14 rounded-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-500 border-none transition-all"
-                >
-                  <Check className="w-6 h-6" />
-                </Button>
-              )}
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Voice Recording Modal - Mini Version - Hidden when full voice chat is active */}
+      {!isVoiceChatOpen && (
+        <Dialog open={isRecording && !isVoiceChatOpen} onOpenChange={(open) => !open && stopVoiceRecording()}>
+          <DialogContent className="sm:max-w-md max-w-[90vw] border-none bg-background/95 backdrop-blur-sm p-2">
+            <AIVoiceInput 
+              onStart={() => console.log('Grabación iniciada')}
+              onStop={(duration) => console.log('Grabación detenida:', duration)}
+              className="py-2"
+            />
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   </PulseBeams>;
 };
