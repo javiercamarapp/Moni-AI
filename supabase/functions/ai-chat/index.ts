@@ -128,12 +128,11 @@ serve(async (req) => {
           };
         });
 
-        // Obtener los últimos 24 meses para contexto completo
+        // Obtener TODOS los meses históricos ordenados
         const sortedMonths = Object.keys(monthlyStats).sort().reverse();
-        const last24Months = sortedMonths.slice(0, 24);
 
-        console.log('📅 Meses procesados:', sortedMonths.length);
-        console.log('📊 Últimos 24 meses:', last24Months);
+        console.log('📅 Total meses con datos:', sortedMonths.length);
+        console.log('📊 Rango:', sortedMonths[sortedMonths.length - 1], 'hasta', sortedMonths[0]);
 
         // Log para verificar meses específicos de 2025
         console.log('🔍 Verificando datos de 2025:');
@@ -158,12 +157,13 @@ serve(async (req) => {
 ═══════════════════════════════════════════════════════════════
 
 📝 TOTAL TRANSACCIONES HISTÓRICAS: ${allTransactions.length}
+📅 PERÍODO COMPLETO: ${sortedMonths.length} meses de datos
 
 ┌─────────────────────────────────────────────────────────────┐
-│  RESUMEN MENSUAL (Últimos 24 meses)
+│  RESUMEN MENSUAL COMPLETO (Todos los meses históricos)
 └─────────────────────────────────────────────────────────────┘
 
-${last24Months.map(monthKey => {
+${sortedMonths.map(monthKey => {
   const stats = monthlyStats[monthKey];
   return `📅 ${stats.mes}:
    💰 Ingresos: $${stats.ingresos.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
@@ -176,7 +176,7 @@ ${last24Months.map(monthKey => {
 │  TRANSACCIONES DE LOS ÚLTIMOS 6 MESES (Detalle completo)
 └─────────────────────────────────────────────────────────────┘
 
-${last24Months.slice(0, 6).map(monthKey => {
+${sortedMonths.slice(0, 6).map(monthKey => {
   const stats = monthlyStats[monthKey];
   return `
 🗓️  ${stats.mes} - ${stats.numTransacciones} transacciones:
