@@ -34,7 +34,7 @@ export function AudioWaveVisualizer({
           key={i}
           className={cn(
             "w-1 rounded-full transition-all duration-150",
-            isRecording ? "bg-white/70" : "bg-white/20"
+            isRecording ? "bg-foreground" : "bg-muted-foreground/30"
           )}
           style={{
             height: isRecording ? `${heights[i] || 4}%` : '4px',

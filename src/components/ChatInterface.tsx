@@ -1033,25 +1033,23 @@ const ChatInterface = () => {
               className="flex-1 h-8"
             />
 
-            {isRecording && (
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={() => {
-                  stopVoiceRecording();
-                  closeVoiceChat();
-                }}
-                className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-primary/10 hover:bg-primary/20 text-primary flex-shrink-0 transition-all"
-              >
-                <Check className="w-4 h-4 sm:w-5 sm:h-5" />
-              </Button>
-            )}
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => {
+                stopVoiceRecording();
+                closeVoiceChat();
+              }}
+              className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-primary/10 hover:bg-primary/20 text-primary flex-shrink-0 transition-all"
+            >
+              <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+            </Button>
             
             <Button 
               variant="ghost" 
               size="icon"
               onClick={closeVoiceChat}
-              className="h-8 w-8 sm:h-9 sm:w-9 rounded-full hover:bg-accent/50 flex-shrink-0 transition-all"
+              className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-destructive/10 hover:bg-destructive/20 text-destructive flex-shrink-0 transition-all"
             >
               <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
