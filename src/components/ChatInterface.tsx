@@ -1026,11 +1026,11 @@ const ChatInterface = () => {
 
         {isVoiceChatOpen ? (
           /* Voice Recording Interface - Replaces bottom bar */
-          <div className="flex items-center gap-2 sm:gap-3 bg-card rounded-[30px] px-3 sm:px-4 py-3 sm:py-3.5 shadow-elegant border border-border/30 hover:border-border/50 transition-all">
+          <div className="flex items-center gap-1.5 sm:gap-3 bg-card rounded-[30px] px-2 sm:px-4 py-2 sm:py-3.5 shadow-elegant border border-border/30 hover:border-border/50 transition-all">
             <AudioWaveVisualizer 
               isRecording={isRecording} 
-              bars={45}
-              className="flex-1 h-8"
+              bars={25}
+              className="flex-1 h-6 sm:h-8"
             />
 
             <Button 
@@ -1040,18 +1040,18 @@ const ChatInterface = () => {
                 stopVoiceRecording();
                 closeVoiceChat();
               }}
-              className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-primary/10 hover:bg-primary/20 text-primary flex-shrink-0 transition-all"
+              className="h-7 w-7 sm:h-9 sm:w-9 rounded-full bg-primary/10 hover:bg-primary/20 text-primary flex-shrink-0 transition-all"
             >
-              <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+              <Check className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
             </Button>
             
             <Button 
               variant="ghost" 
               size="icon"
               onClick={closeVoiceChat}
-              className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-destructive/10 hover:bg-destructive/20 text-destructive flex-shrink-0 transition-all"
+              className="h-7 w-7 sm:h-9 sm:w-9 rounded-full bg-destructive/10 hover:bg-destructive/20 text-destructive flex-shrink-0 transition-all"
             >
-              <X className="w-4 h-4 sm:w-5 sm:h-5" />
+              <X className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
             </Button>
           </div>
         ) : (
