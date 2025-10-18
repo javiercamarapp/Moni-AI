@@ -388,9 +388,11 @@ const ChatInterface = () => {
     }
   };
   const handleVoiceToggle = () => {
+    console.log('🎤 handleVoiceToggle llamado, isRecording:', isRecording, 'isVoiceChatOpen:', isVoiceChatOpen);
     if (isRecording) {
       stopVoiceRecording();
     } else {
+      console.log('🔄 Activando interfaz de voz...');
       setIsVoiceChatOpen(true);
       startVoiceRecording();
     }
@@ -1026,7 +1028,7 @@ const ChatInterface = () => {
 
         {isVoiceChatOpen ? (
           /* Voice Recording Interface - Replaces bottom bar */
-          <div className="flex items-center gap-2 sm:gap-3 bg-card rounded-[30px] px-3 sm:px-4 py-3 sm:py-3.5 shadow-elegant border border-border/30 hover:border-border/50 transition-all">
+          <div className="flex items-center gap-3 bg-card rounded-[30px] px-4 py-3.5 shadow-elegant border-2 border-primary/50 transition-all">
             <AudioWaveVisualizer 
               isRecording={isRecording} 
               bars={45}
@@ -1037,21 +1039,25 @@ const ChatInterface = () => {
               variant="ghost" 
               size="icon"
               onClick={() => {
+                console.log('✅ Botón de confirmar presionado');
                 stopVoiceRecording();
                 closeVoiceChat();
               }}
-              className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-primary/10 hover:bg-primary/20 text-primary flex-shrink-0 transition-all"
+              className="h-10 w-10 rounded-full bg-green-500/20 hover:bg-green-500/30 text-green-600 dark:text-green-400 flex-shrink-0 transition-all border-2 border-green-500/50"
             >
-              <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+              <Check className="w-5 h-5" />
             </Button>
             
             <Button 
               variant="ghost" 
               size="icon"
-              onClick={closeVoiceChat}
-              className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-destructive/10 hover:bg-destructive/20 text-destructive flex-shrink-0 transition-all"
+              onClick={() => {
+                console.log('❌ Botón de cancelar presionado');
+                closeVoiceChat();
+              }}
+              className="h-10 w-10 rounded-full bg-red-500/20 hover:bg-red-500/30 text-red-600 dark:text-red-400 flex-shrink-0 transition-all border-2 border-red-500/50"
             >
-              <X className="w-4 h-4 sm:w-5 sm:h-5" />
+              <X className="w-5 h-5" />
             </Button>
           </div>
         ) : (
