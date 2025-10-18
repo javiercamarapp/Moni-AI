@@ -33,8 +33,9 @@ serve(async (req) => {
         // Obtener TODAS las transacciones del usuario (sin límite de fecha)
         const now = new Date();
         
+        // Obtener transacciones desde 2024 en adelante (filtra datos de prueba muy al futuro)
         const allTransactionsRes = await fetch(
-          `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${userId}&order=transaction_date.desc&select=*`,
+          `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${userId}&transaction_date=gte.2024-01-01&order=transaction_date.desc&select=*`,
           { headers: supabaseHeaders }
         );
         const allTransactions = await allTransactionsRes.json();
