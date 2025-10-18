@@ -30,13 +30,11 @@ serve(async (req) => {
           'Content-Type': 'application/json'
         };
 
-        // Obtener TODAS las transacciones del usuario (sin límite de fecha)
+        // Obtener TODAS las transacciones históricas del usuario
         const now = new Date();
         
-        // Obtener transacciones desde 2024 en adelante (filtra datos de prueba muy al futuro)
-        // IMPORTANTE: Agregamos limit alto para asegurar que traemos todos los datos reales
         const allTransactionsRes = await fetch(
-          `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${userId}&transaction_date=gte.2024-01-01&transaction_date=lt.2026-01-01&order=transaction_date.desc&limit=5000&select=*`,
+          `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${userId}&order=transaction_date.desc&select=*`,
           { headers: supabaseHeaders }
         );
         const allTransactions = await allTransactionsRes.json();
@@ -83,116 +81,7 @@ serve(async (req) => {
         );
         const netWorthSnapshots = await netWorthSnapshotsRes.json();
 
-        // Transacciones del mes actual
-        const firstDayCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const currentMonthTransactions = allTransactions.filter((t: any) => 
-          new Date(t.transaction_date) >= firstDayCurrentMonth
-        );
-
-        // Calcular estadísticas del mes actual
-        const totalGastosActual = currentMonthTransactions
-          .filter((t: any) => t.type === 'expense' || t.type === 'gasto')
-          .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
-        
-        const totalIngresosActual = currentMonthTransactions
-          .filter((t: any) => t.type === 'income' || t.type === 'ingreso')
-          .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
-
-        // Gastos por categoría del mes actual
-        const gastosPorCategoriaActual: Record<string, number> = {};
-        currentMonthTransactions
-          .filter((t: any) => t.type === 'expense' || t.type === 'gasto')
-          .forEach((t: any) => {
-            const cat = categories.find((c: any) => c.id === t.category_id);
-            const catName = cat?.name || 'Sin categoría';
-            gastosPorCategoriaActual[catName] = (gastosPorCategoriaActual[catName] || 0) + Number(t.amount);
-          });
-
-        // Calcular promedios mensuales históricos
-        const monthlyData: Record<string, { gastos: number; ingresos: number; count: number }> = {};
-        allTransactions.forEach((t: any) => {
-          const date = new Date(t.transaction_date);
-          const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-          
-          if (!monthlyData[monthKey]) {
-            monthlyData[monthKey] = { gastos: 0, ingresos: 0, count: 0 };
-          }
-          
-          const amount = Number(t.amount);
-          if (t.type === 'expense' || t.type === 'gasto') {
-            monthlyData[monthKey].gastos += amount;
-          } else if (t.type === 'income' || t.type === 'ingreso') {
-            monthlyData[monthKey].ingresos += amount;
-          }
-          monthlyData[monthKey].count++;
-        });
-
-        // Estadísticas históricas
-        const totalGastosHistoricos = allTransactions
-          .filter((t: any) => t.type === 'expense' || t.type === 'gasto')
-          .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
-        
-        const totalIngresosHistoricos = allTransactions
-          .filter((t: any) => t.type === 'income' || t.type === 'ingreso')
-          .reduce((sum: number, t: any) => sum + Number(t.amount), 0);
-
-        const mesesConDatos = Object.keys(monthlyData).length || 1;
-        const promedioGastosMensual = mesesConDatos > 0 ? totalGastosHistoricos / mesesConDatos : 0;
-        const promedioIngresosMensual = mesesConDatos > 0 ? totalIngresosHistoricos / mesesConDatos : 0;
-
-        // Top categorías históricas
-        const gastosHistoricosPorCategoria: Record<string, number> = {};
-        allTransactions
-          .filter((t: any) => t.type === 'expense' || t.type === 'gasto')
-          .forEach((t: any) => {
-            const cat = categories.find((c: any) => c.id === t.category_id);
-            const catName = cat?.name || 'Sin categoría';
-            gastosHistoricosPorCategoria[catName] = (gastosHistoricosPorCategoria[catName] || 0) + Number(t.amount);
-          });
-
-        // Extraer datos específicos de 2025 para gráficas
-        const meses2025 = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-        const nombresMeses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-        
-        const ingresos2025 = meses2025.map((mes, idx) => {
-          const key = `2025-${mes}`;
-          const data = monthlyData[key];
-          return {
-            mes: nombresMeses[idx],
-            valor: data ? data.ingresos : 0
-          };
-        });
-        
-        const gastos2025 = meses2025.map((mes, idx) => {
-          const key = `2025-${mes}`;
-          const data = monthlyData[key];
-          return {
-            mes: nombresMeses[idx],
-            valor: data ? data.gastos : 0
-          };
-        });
-
-        const totalIngresos2025 = ingresos2025.reduce((sum, m) => sum + m.valor, 0);
-        const totalGastos2025 = gastos2025.reduce((sum, m) => sum + m.valor, 0);
-        const mesesConIngresos2025 = ingresos2025.filter(m => m.valor > 0).length;
-        const promedioIngresos2025 = mesesConIngresos2025 > 0 ? totalIngresos2025 / mesesConIngresos2025 : 0;
-        const promedioGastos2025 = totalGastos2025 / 12;
-
-        // 🔍 LOG CRÍTICO: Verificar datos de 2025
-        console.log('🔍 DEBUG - Datos de 2025 generados:');
-        console.log('Total transacciones cargadas:', allTransactions.length);
-        console.log('Meses en monthlyData:', Object.keys(monthlyData).filter(k => k.startsWith('2025')));
-        console.log('Ingresos por mes 2025:');
-        ingresos2025.forEach(m => {
-          if (m.valor > 0) console.log(`  ${m.mes}: $${m.valor}`);
-        });
-        console.log('Total ingresos 2025:', totalIngresos2025);
-        
-        // Verificar enero-abril específicamente
-        ['2025-01', '2025-02', '2025-03', '2025-04'].forEach(key => {
-          const data = monthlyData[key];
-          console.log(`${key}: ingresos=$${data?.ingresos || 0}, gastos=$${data?.gastos || 0}, count=${data?.count || 0}`);
-        });
+        console.log(`📊 Total transacciones históricas cargadas: ${allTransactions.length}`);
 
         // Calcular totales de patrimonio
         const totalActivos = assets.reduce((sum: number, a: any) => sum + Number(a.value), 0);
@@ -202,142 +91,58 @@ serve(async (req) => {
         financialContext = `
 
 ═══════════════════════════════════════════════════════════════
-📊 INFORMACIÓN FINANCIERA COMPLETA DEL USUARIO
+📊 BASE DE DATOS COMPLETA DEL USUARIO
 ═══════════════════════════════════════════════════════════════
 
-┌─────────────────────────────────────────────────────────────┐
-│  MES ACTUAL (${now.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })})
-└─────────────────────────────────────────────────────────────┘
-💸 Gastos: $${totalGastosActual.toFixed(2)}
-💰 Ingresos: $${totalIngresosActual.toFixed(2)}
-📈 Balance: $${(totalIngresosActual - totalGastosActual).toFixed(2)}
-📝 Transacciones: ${currentMonthTransactions.length}
+📝 TODAS LAS TRANSACCIONES HISTÓRICAS (${allTransactions.length} transacciones):
+${JSON.stringify(allTransactions, null, 2)}
 
-Gastos por categoría:
-${Object.entries(gastosPorCategoriaActual)
-  .sort((a, b) => b[1] - a[1])
-  .slice(0, 10)
-  .map(([cat, amount]) => `  • ${cat}: $${amount.toFixed(2)}`)
-  .join('\n')}
+🎯 METAS FINANCIERAS:
+${JSON.stringify(goals, null, 2)}
 
-┌─────────────────────────────────────────────────────────────┐
-│  AÑO 2025 - DATOS MENSUALES COMPLETOS
-└─────────────────────────────────────────────────────────────┘
+💎 ACTIVOS:
+${JSON.stringify(assets, null, 2)}
 
-💰 TOTAL INGRESOS 2025: $${totalIngresos2025.toFixed(2)}
-💸 TOTAL GASTOS 2025: $${totalGastos2025.toFixed(2)}
-📈 BALANCE 2025: $${(totalIngresos2025 - totalGastos2025).toFixed(2)}
-📊 PROMEDIO MENSUAL INGRESOS (meses con ingresos): $${promedioIngresos2025.toFixed(2)}
-📊 PROMEDIO MENSUAL GASTOS: $${promedioGastos2025.toFixed(2)}
+💳 PASIVOS:
+${JSON.stringify(liabilities, null, 2)}
 
-🔢 INGRESOS 2025 MES POR MES:
-${ingresos2025.map(m => `  ${m.mes}: $${m.valor.toFixed(2)}`).join('\n')}
+🎮 DESAFÍOS ACTIVOS:
+${JSON.stringify(challenges, null, 2)}
 
-💵 GASTOS 2025 MES POR MES:
-${gastos2025.map(m => `  ${m.mes}: $${m.valor.toFixed(2)}`).join('\n')}
+🏦 HISTORIAL DE PATRIMONIO NETO:
+${JSON.stringify(netWorthSnapshots, null, 2)}
 
-┌─────────────────────────────────────────────────────────────┐
-│  METAS FINANCIERAS
-└─────────────────────────────────────────────────────────────┘
-${goals.length > 0 ? goals.map((g: any) => `
-🎯 ${g.title}
-   Tipo: ${g.type}
-   Objetivo: $${Number(g.target).toFixed(2)}
-   Actual: $${Number(g.current).toFixed(2)}
-   Progreso: ${((Number(g.current) / Number(g.target)) * 100).toFixed(1)}%
-   ${g.deadline ? `Fecha límite: ${g.deadline}` : ''}`).join('\n') : 'No hay metas registradas'}
-
-┌─────────────────────────────────────────────────────────────┐
-│  PATRIMONIO NETO
-└─────────────────────────────────────────────────────────────┘
-💎 Total Activos: $${totalActivos.toFixed(2)}
-💳 Total Pasivos: $${totalPasivos.toFixed(2)}
-🏦 Patrimonio Neto: $${patrimonioNeto.toFixed(2)}
-
-ACTIVOS:
-${assets.length > 0 ? assets.map((a: any) => `  • ${a.name} (${a.category}): $${Number(a.value).toFixed(2)}`).join('\n') : '  No hay activos registrados'}
-
-PASIVOS:
-${liabilities.length > 0 ? liabilities.map((l: any) => `  • ${l.name} (${l.category}): $${Number(l.value).toFixed(2)}`).join('\n') : '  No hay pasivos registrados'}
-
-HISTORIAL PATRIMONIO NETO (últimos 30 días):
-${netWorthSnapshots.length > 0 ? netWorthSnapshots.slice(0, 10).map((s: any) => 
-  `  ${s.snapshot_date}: $${Number(s.net_worth).toFixed(2)}`).join('\n') : '  No hay historial disponible'}
-
-┌─────────────────────────────────────────────────────────────┐
-│  DESAFÍOS Y RETOS
-└─────────────────────────────────────────────────────────────┘
-${challenges.length > 0 ? challenges.map((c: any) => `
-🎮 ${c.title}
-   Categoría: ${c.category}
-   Estado: ${c.status}
-   Período: ${c.period}
-   Objetivo: $${Number(c.target_amount).toFixed(2)}
-   Actual: $${Number(c.current_amount).toFixed(2)}
-   Progreso: ${((Number(c.current_amount) / Number(c.target_amount)) * 100).toFixed(1)}%
-   ${c.start_date} → ${c.end_date}`).join('\n') : 'No hay desafíos activos'}
-
-┌─────────────────────────────────────────────────────────────┐
-│  DATOS HISTÓRICOS TOTALES
-└─────────────────────────────────────────────────────────────┘
-💸 Total gastos históricos: $${totalGastosHistoricos.toFixed(2)}
-💰 Total ingresos históricos: $${totalIngresosHistoricos.toFixed(2)}
-📈 Balance histórico: $${(totalIngresosHistoricos - totalGastosHistoricos).toFixed(2)}
-📝 Total transacciones: ${allTransactions.length}
-📅 Meses con datos: ${mesesConDatos}
-
-Promedios mensuales históricos:
-  • Gastos: $${promedioGastosMensual.toFixed(2)}
-  • Ingresos: $${promedioIngresosMensual.toFixed(2)}
-  • Balance: $${(promedioIngresosMensual - promedioGastosMensual).toFixed(2)}
-
-Top 10 categorías de gastos (histórico):
-${Object.entries(gastosHistoricosPorCategoria)
-  .sort((a, b) => b[1] - a[1])
-  .slice(0, 10)
-  .map(([cat, amount]) => `  • ${cat}: $${amount.toFixed(2)} (prom. mensual: $${(amount / mesesConDatos).toFixed(2)})`)
-  .join('\n')}
-
-┌─────────────────────────────────────────────────────────────┐
-│  DESGLOSE MENSUAL DETALLADO (últimos 24 meses)
-└─────────────────────────────────────────────────────────────┘
-${Object.entries(monthlyData)
-  .sort((a, b) => b[0].localeCompare(a[0]))
-  .slice(0, 24)
-  .map(([month, data]) => {
-    const [year, monthNum] = month.split('-');
-    const monthName = new Date(parseInt(year), parseInt(monthNum) - 1, 1)
-      .toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
-    return `${monthName}:
-  Gastos: $${data.gastos.toFixed(2)}
-  Ingresos: $${data.ingresos.toFixed(2)}
-  Balance: $${(data.ingresos - data.gastos).toFixed(2)}
-  Transacciones: ${data.count}`;
-  })
-  .join('\n')}
+📂 CATEGORÍAS:
+${JSON.stringify(categories, null, 2)}
 
 ═══════════════════════════════════════════════════════════════
-⚠️  INSTRUCCIONES CRÍTICAS PARA INTERPRETAR LOS DATOS
+⚠️  INSTRUCCIONES CRÍTICAS
 ═══════════════════════════════════════════════════════════════
 
-1. CUANDO EL USUARIO PREGUNTE POR DATOS DE 2025:
-   ✅ USA la sección "INGRESOS 2025 MES POR MES" o "GASTOS 2025 MES POR MES"
-   ✅ Si un mes muestra $0.00 significa que NO hubo movimientos ese mes
-   ✅ NUNCA digas "no tengo datos" - los datos están arriba
-   ✅ Explica claramente: "En [meses] no tuviste ingresos, pero en [otros meses] sí"
+🔴 OBLIGATORIO: DEBES ANALIZAR TODAS LAS TRANSACCIONES HISTÓRICAS
 
-2. PARA CREAR GRÁFICAS ANUALES:
-   ✅ INCLUYE TODOS los 12 meses del año
-   ✅ Usa valor 0 para meses sin movimientos
-   ✅ Los nombres de meses deben ser en español completos
+Para responder CUALQUIER pregunta financiera del usuario:
 
-3. INTERPRETACIÓN DE VALORES:
-   ✅ $0.00 = Hay registro del mes pero sin movimientos
-   ✅ Si un mes no aparece en "Desglose mensual" = No existe en la BD
+1. ✅ ANALIZA el array completo de transacciones
+2. ✅ FILTRA por fecha, tipo, categoría según la pregunta
+3. ✅ CALCULA los totales tú mismo sumando los amounts
+4. ✅ AGRUPA por mes/año según sea necesario
 
-4. DATOS DISPONIBLES:
-   ✅ Tienes acceso a: transacciones, metas, activos, pasivos, desafíos, patrimonio neto
-   ✅ TODA esta información está disponible para análisis
+Ejemplos:
+- "¿Cuánto gané en enero 2025?"
+  → Filtra: type='income' AND transaction_date empieza con '2025-01'
+  → Suma todos los amounts
+
+- "¿Cuánto gasté este año?"
+  → Filtra: type='expense' AND transaction_date empieza con '2025'
+  → Suma todos los amounts
+
+- "Muestra mis ingresos de 2025"
+  → Filtra por type='income' y año 2025
+  → Agrupa por mes
+  → Crea gráfica con 12 meses
+
+🔴 NO inventes datos, NO asumas valores, ANALIZA las transacciones reales
 `;
 
       } catch (error) {
@@ -356,7 +161,16 @@ ${Object.entries(monthlyData)
         messages: [
           {
             role: "system",
-            content: `Eres Moni AI, un coach financiero personal amigable y motivador. Tu objetivo es ayudar a las personas a mejorar sus finanzas de manera divertida y educativa.
+            content: `Eres Moni AI, un coach financiero personal amigable y motivador.
+
+🔴 REGLA FUNDAMENTAL: Tienes acceso a TODAS las transacciones históricas del usuario en formato JSON.
+Para responder CUALQUIER pregunta financiera, DEBES:
+1. Analizar el array completo de transacciones
+2. Filtrar por fecha/tipo/categoría según la pregunta
+3. Calcular los totales sumando los amounts
+4. Nunca inventar o asumir valores
+
+Tu personalidad:
 
 Características de tu personalidad:
 - Eres entusiasta y usas emojis relevantes 💰 🎯 📊
