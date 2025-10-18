@@ -1140,10 +1140,11 @@ const ChatInterface = () => {
 
       {/* Voice Recording Modal */}
       <Dialog open={isRecording} onOpenChange={(open) => !open && stopVoiceRecording()}>
-        <DialogContent className="sm:max-w-lg border-none bg-background/95 backdrop-blur-sm">
+        <DialogContent className="sm:max-w-md max-w-[90vw] border-none bg-background/95 backdrop-blur-sm p-2">
           <AIVoiceInput 
             onStart={() => console.log('Grabación iniciada')}
             onStop={(duration) => console.log('Grabación detenida:', duration)}
+            className="py-2"
           />
         </DialogContent>
       </Dialog>
