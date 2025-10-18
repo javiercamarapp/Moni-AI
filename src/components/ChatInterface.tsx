@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from "@/hooks/use-toast";
-import { Send, Plus, Mic, ArrowLeft, Circle, Paperclip, TrendingUp, Calculator, PiggyBank, Lightbulb, Target, Receipt, Sparkles, Camera } from 'lucide-react';
+import { Send, Plus, Mic, ArrowLeft, Circle, Paperclip, TrendingUp, Calculator, PiggyBank, Lightbulb, Target, Receipt, Sparkles, Camera, X } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import Autoplay from 'embla-carousel-autoplay';
@@ -15,6 +15,7 @@ import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, Cart
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AIVoiceInput } from '@/components/ui/ai-voice-input';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { SiriOrb } from '@/components/ui/siri-orb';
 
 // Function to remove asterisks from text
 const removeAsterisks = (text: string): string => {
@@ -49,6 +50,7 @@ const ChatInterface = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isVoiceChatOpen, setIsVoiceChatOpen] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -372,6 +374,16 @@ const ChatInterface = () => {
     } else {
       startVoiceRecording();
     }
+  };
+  
+  const openVoiceChat = () => {
+    setIsVoiceChatOpen(true);
+    startVoiceRecording();
+  };
+  
+  const closeVoiceChat = () => {
+    setIsVoiceChatOpen(false);
+    stopVoiceRecording();
   };
   const processVoiceInput = async (audioBlob: Blob) => {
     try {
@@ -1126,11 +1138,11 @@ const ChatInterface = () => {
             <Camera className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
 
-          <Button variant="ghost" size="icon" onClick={handleVoiceToggle} className={`flex-shrink-0 h-8 w-8 p-0 transition-all hover:scale-110 ${isRecording ? 'text-destructive hover:text-destructive/80 animate-pulse' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'}`}>
+          <Button variant="ghost" size="icon" onClick={handleVoiceToggle} className={`flex-shrink-0 h-8 w-8 p-0 transition-all hover:scale-110 ${isRecording && !isVoiceChatOpen ? 'text-destructive hover:text-destructive/80 animate-pulse' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'}`}>
             <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
 
-          <Button variant="ghost" size="icon" onClick={toggleVoiceMode} disabled={isSpeaking} className={`flex-shrink-0 h-8 w-8 p-0 rounded-full transition-all hover:scale-110 ${isVoiceActive ? 'bg-gradient-primary text-foreground shadow-glow hover:shadow-elegant' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'} ${isSpeaking ? 'animate-pulse' : ''}`}>
+          <Button variant="ghost" size="icon" onClick={openVoiceChat} disabled={isSpeaking} className={`flex-shrink-0 h-8 w-8 p-0 rounded-full transition-all hover:scale-110 ${isVoiceActive ? 'bg-gradient-primary text-foreground shadow-glow hover:shadow-elegant' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'} ${isSpeaking ? 'animate-pulse' : ''}`}>
             <Circle className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isVoiceActive ? 'fill-current' : ''}`} />
           </Button>
         </div>
@@ -1138,14 +1150,55 @@ const ChatInterface = () => {
         <p className="text-center text-xs text-muted-foreground mt-3">Verifica la información importante.</p>
       </div>
 
-      {/* Voice Recording Modal */}
-      <Dialog open={isRecording} onOpenChange={(open) => !open && stopVoiceRecording()}>
+      {/* Voice Recording Modal - Mini Version */}
+      <Dialog open={isRecording && !isVoiceChatOpen} onOpenChange={(open) => !open && stopVoiceRecording()}>
         <DialogContent className="sm:max-w-md max-w-[90vw] border-none bg-background/95 backdrop-blur-sm p-2">
           <AIVoiceInput 
             onStart={() => console.log('Grabación iniciada')}
             onStop={(duration) => console.log('Grabación detenida:', duration)}
             className="py-2"
           />
+        </DialogContent>
+      </Dialog>
+
+      {/* Voice Chat Modal - Full Screen Orb */}
+      <Dialog open={isVoiceChatOpen} onOpenChange={(open) => !open && closeVoiceChat()}>
+        <DialogContent className="max-w-full w-screen h-screen p-0 border-none bg-black/95 backdrop-blur-sm flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center gap-12 w-full h-full relative">
+            {/* Orb Central */}
+            <SiriOrb 
+              size="320px" 
+              className="drop-shadow-2xl"
+              colors={{
+                bg: "transparent",
+                c1: "oklch(75% 0.15 220)",
+                c2: "oklch(80% 0.12 200)",
+                c3: "oklch(78% 0.14 240)"
+              }}
+              animationDuration={isRecording ? 15 : 25}
+            />
+
+            {/* Controles en la parte inferior */}
+            <div className="flex gap-6 items-center">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={handleVoiceToggle}
+                className="h-16 w-16 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-all"
+              >
+                <Mic className="w-6 h-6" />
+              </Button>
+
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={closeVoiceChat}
+                className="h-16 w-16 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-all"
+              >
+                <X className="w-6 h-6" />
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
