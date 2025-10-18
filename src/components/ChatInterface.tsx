@@ -13,6 +13,8 @@ import { Camera as CapCamera, CameraResultType, CameraSource } from '@capacitor/
 import { PulseBeams } from '@/components/ui/pulse-beams';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { AIVoiceInput } from '@/components/ui/ai-voice-input';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 // Function to remove asterisks from text
 const removeAsterisks = (text: string): string => {
@@ -362,6 +364,13 @@ const ChatInterface = () => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
+    }
+  };
+  const handleVoiceToggle = () => {
+    if (isRecording) {
+      stopVoiceRecording();
+    } else {
+      startVoiceRecording();
     }
   };
   const processVoiceInput = async (audioBlob: Blob) => {
@@ -1117,7 +1126,7 @@ const ChatInterface = () => {
             <Camera className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
 
-          <Button variant="ghost" size="icon" onClick={isRecording ? stopVoiceRecording : startVoiceRecording} className={`flex-shrink-0 h-8 w-8 p-0 transition-all hover:scale-110 ${isRecording ? 'text-destructive hover:text-destructive/80 animate-pulse' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'}`}>
+          <Button variant="ghost" size="icon" onClick={handleVoiceToggle} className={`flex-shrink-0 h-8 w-8 p-0 transition-all hover:scale-110 ${isRecording ? 'text-destructive hover:text-destructive/80 animate-pulse' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'}`}>
             <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
 
@@ -1128,6 +1137,16 @@ const ChatInterface = () => {
         
         <p className="text-center text-xs text-muted-foreground mt-3">Verifica la información importante.</p>
       </div>
+
+      {/* Voice Recording Modal */}
+      <Dialog open={isRecording} onOpenChange={(open) => !open && stopVoiceRecording()}>
+        <DialogContent className="sm:max-w-lg border-none bg-background/95 backdrop-blur-sm">
+          <AIVoiceInput 
+            onStart={() => console.log('Grabación iniciada')}
+            onStop={(duration) => console.log('Grabación detenida:', duration)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   </PulseBeams>;
 };
