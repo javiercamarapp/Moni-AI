@@ -333,37 +333,54 @@ const ChatInterface = () => {
   };
   const startVoiceRecording = async () => {
     try {
+      console.log('🎤 Solicitando acceso al micrófono...');
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: true
       });
+      console.log('✅ Acceso al micrófono concedido');
+      
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
+      
       mediaRecorder.ondataavailable = event => {
         if (event.data.size > 0) {
+          console.log('📊 Audio chunk recibido:', event.data.size, 'bytes');
           audioChunksRef.current.push(event.data);
         }
       };
+      
       mediaRecorder.onstop = async () => {
+        console.log('🛑 Grabación detenida, procesando audio...');
         const audioBlob = new Blob(audioChunksRef.current, {
           type: 'audio/webm'
         });
+        console.log('📦 Blob de audio creado:', audioBlob.size, 'bytes');
         await processVoiceInput(audioBlob);
         stream.getTracks().forEach(track => track.stop());
       };
+      
       mediaRecorder.start();
       setIsRecording(true);
+      console.log('🔴 Grabación iniciada');
+      
+      toast({
+        title: "Grabando",
+        description: "Habla ahora. Presiona de nuevo para enviar.",
+      });
     } catch (error) {
-      console.error('Error accessing microphone:', error);
+      console.error('❌ Error accessing microphone:', error);
       toast({
         title: "Error",
-        description: "No se pudo acceder al micrófono",
+        description: "No se pudo acceder al micrófono. Verifica los permisos.",
         variant: "destructive"
       });
     }
   };
+  
   const stopVoiceRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
+      console.log('⏹️ Deteniendo grabación...');
       mediaRecorderRef.current.stop();
       setIsRecording(false);
     }
@@ -387,11 +404,22 @@ const ChatInterface = () => {
   };
   const processVoiceInput = async (audioBlob: Blob) => {
     try {
+      console.log('🔄 Procesando entrada de voz...');
       const reader = new FileReader();
       reader.readAsDataURL(audioBlob);
       reader.onloadend = async () => {
         const base64Audio = reader.result?.toString().split(',')[1];
-        if (!base64Audio) return;
+        if (!base64Audio) {
+          console.error('❌ No se pudo convertir audio a base64');
+          return;
+        }
+        
+        console.log('📤 Enviando audio a transcribir...');
+        toast({
+          title: "Transcribiendo",
+          description: "Procesando tu mensaje...",
+        });
+        
         const {
           data,
           error
@@ -400,14 +428,27 @@ const ChatInterface = () => {
             audio: base64Audio
           }
         });
-        if (error) throw error;
+        
+        if (error) {
+          console.error('❌ Error en transcripción:', error);
+          throw error;
+        }
+        
         if (data?.text) {
+          console.log('✅ Texto transcrito:', data.text);
           setMessage(data.text);
           setTimeout(() => handleSendMessage(), 100);
+        } else {
+          console.warn('⚠️ No se recibió texto transcrito');
+          toast({
+            title: "Sin audio",
+            description: "No se detectó voz. Intenta de nuevo.",
+            variant: "destructive"
+          });
         }
       };
     } catch (error) {
-      console.error('Error processing voice:', error);
+      console.error('❌ Error processing voice:', error);
       toast({
         title: "Error",
         description: "No se pudo procesar el audio",
@@ -1175,11 +1216,11 @@ const ChatInterface = () => {
                 c2: "oklch(80% 0.12 200)",
                 c3: "oklch(78% 0.14 240)"
               }}
-              animationDuration={isRecording ? 15 : 25}
+              animationDuration={isRecording ? 8 : 25}
             />
 
-            <p className="text-center text-sm text-muted-foreground">
-              {isRecording ? 'Escuchando...' : 'Presiona el micrófono para hablar'}
+            <p className="text-center text-base font-medium text-foreground">
+              {isRecording ? '🔴 Escuchando... Presiona de nuevo para enviar' : 'Presiona el micrófono para hablar'}
             </p>
 
             {/* Controles */}
