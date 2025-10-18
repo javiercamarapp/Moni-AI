@@ -391,6 +391,7 @@ const ChatInterface = () => {
     if (isRecording) {
       stopVoiceRecording();
     } else {
+      setIsVoiceChatOpen(true);
       startVoiceRecording();
     }
   };
@@ -1025,19 +1026,10 @@ const ChatInterface = () => {
 
         {isVoiceChatOpen ? (
           /* Voice Recording Interface - Replaces bottom bar */
-          <div className="flex items-center gap-2 bg-card rounded-[30px] px-3 sm:px-4 py-3 sm:py-3.5 shadow-elegant border border-border/30 hover:border-border/50 transition-all">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={closeVoiceChat}
-              className="h-7 w-7 sm:h-8 sm:w-8 rounded-full hover:bg-accent/50 flex-shrink-0"
-            >
-              <Plus className="w-4 h-4 rotate-45" />
-            </Button>
-
+          <div className="flex items-center gap-2 sm:gap-3 bg-card rounded-[30px] px-3 sm:px-4 py-3 sm:py-3.5 shadow-elegant border border-border/30 hover:border-border/50 transition-all">
             <AudioWaveVisualizer 
               isRecording={isRecording} 
-              bars={40}
+              bars={45}
               className="flex-1 h-8"
             />
 
@@ -1049,9 +1041,9 @@ const ChatInterface = () => {
                   stopVoiceRecording();
                   closeVoiceChat();
                 }}
-                className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-primary/10 hover:bg-primary/20 text-primary flex-shrink-0"
+                className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-primary/10 hover:bg-primary/20 text-primary flex-shrink-0 transition-all"
               >
-                <Check className="w-4 h-4" />
+                <Check className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             )}
             
@@ -1059,9 +1051,9 @@ const ChatInterface = () => {
               variant="ghost" 
               size="icon"
               onClick={closeVoiceChat}
-              className="h-7 w-7 sm:h-8 sm:w-8 rounded-full hover:bg-accent/50 flex-shrink-0"
+              className="h-8 w-8 sm:h-9 sm:w-9 rounded-full hover:bg-accent/50 flex-shrink-0 transition-all"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
           </div>
         ) : (
@@ -1224,11 +1216,11 @@ const ChatInterface = () => {
             <Camera className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
 
-          <Button variant="ghost" size="icon" onClick={handleVoiceToggle} className={`flex-shrink-0 h-8 w-8 p-0 transition-all hover:scale-110 ${isRecording && !isVoiceChatOpen ? 'text-destructive hover:text-destructive/80 animate-pulse' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'}`}>
+          <Button variant="ghost" size="icon" onClick={handleVoiceToggle} className={`flex-shrink-0 h-8 w-8 p-0 transition-all hover:scale-110 text-muted-foreground hover:text-foreground hover:bg-accent/50`}>
             <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
 
-          <Button variant="ghost" size="icon" onClick={openVoiceChat} disabled={isSpeaking} className={`flex-shrink-0 h-8 w-8 p-0 rounded-full transition-all hover:scale-110 ${isVoiceActive ? 'bg-gradient-primary text-foreground shadow-glow hover:shadow-elegant' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'} ${isSpeaking ? 'animate-pulse' : ''}`}>
+          <Button variant="ghost" size="icon" onClick={toggleVoiceMode} disabled={isSpeaking} className={`flex-shrink-0 h-8 w-8 p-0 rounded-full transition-all hover:scale-110 ${isVoiceActive ? 'bg-gradient-primary text-foreground shadow-glow hover:shadow-elegant' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'} ${isSpeaking ? 'animate-pulse' : ''}`}>
             <Circle className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isVoiceActive ? 'fill-current' : ''}`} />
           </Button>
         </div>
