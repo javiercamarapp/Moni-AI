@@ -1161,13 +1161,13 @@ const ChatInterface = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Voice Chat Modal - Centered with Chat Background */}
+      {/* Voice Chat Modal - Centered with App Background */}
       <Dialog open={isVoiceChatOpen} onOpenChange={(open) => !open && closeVoiceChat()}>
-        <DialogContent className="max-w-2xl w-[90vw] max-h-[80vh] border border-border/50 bg-background/98 backdrop-blur-md flex items-center justify-center p-8">
-          <div className="flex flex-col items-center justify-center gap-8 w-full relative">
+        <DialogContent className="max-w-xl w-[85vw] max-h-[75vh] border-none bg-gradient-to-br from-background via-background to-primary/5 backdrop-blur-xl flex items-center justify-center p-6 shadow-2xl">
+          <div className="flex flex-col items-center justify-center gap-6 w-full relative">
             {/* Orb Central */}
             <SiriOrb 
-              size="240px" 
+              size="180px" 
               className="drop-shadow-2xl"
               colors={{
                 bg: "transparent",
@@ -1188,7 +1188,7 @@ const ChatInterface = () => {
                 variant="ghost" 
                 size="icon"
                 onClick={handleVoiceToggle}
-                className={`h-14 w-14 rounded-full transition-all ${
+                className={`h-12 w-12 rounded-full transition-all ${
                   isRecording 
                     ? 'bg-destructive/10 hover:bg-destructive/20 text-destructive border border-destructive/30' 
                     : 'bg-accent hover:bg-accent/80 text-foreground border border-border'
@@ -1201,7 +1201,7 @@ const ChatInterface = () => {
                 variant="ghost" 
                 size="icon"
                 onClick={closeVoiceChat}
-                className="h-14 w-14 rounded-full bg-accent hover:bg-accent/80 text-foreground border border-border transition-all"
+                className="h-12 w-12 rounded-full bg-accent hover:bg-accent/80 text-foreground border border-border transition-all"
               >
                 <X className="w-5 h-5" />
               </Button>
