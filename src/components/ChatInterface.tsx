@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from "@/hooks/use-toast";
-import { Send, Plus, Mic, ArrowLeft, Circle, Paperclip, TrendingUp, Calculator, PiggyBank, Lightbulb, Target, Receipt, Sparkles, Camera, X } from 'lucide-react';
+import { Send, Plus, Mic, ArrowLeft, Circle, Paperclip, TrendingUp, Calculator, PiggyBank, Lightbulb, Target, Receipt, Sparkles, Camera, X, Check } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import Autoplay from 'embla-carousel-autoplay';
@@ -16,6 +16,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { AIVoiceInput } from '@/components/ui/ai-voice-input';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { SiriOrb } from '@/components/ui/siri-orb';
+import { AudioWaveVisualizer } from '@/components/ui/audio-wave-visualizer';
+import { cn } from '@/lib/utils';
 
 // Function to remove asterisks from text
 const removeAsterisks = (text: string): string => {
@@ -1202,50 +1204,69 @@ const ChatInterface = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Voice Chat Modal - Centered with App Background */}
+      {/* Voice Chat Modal - ChatGPT Style */}
       <Dialog open={isVoiceChatOpen} onOpenChange={(open) => !open && closeVoiceChat()}>
-        <DialogContent className="max-w-xl w-[85vw] max-h-[75vh] border-none bg-gradient-to-br from-background via-background to-primary/5 backdrop-blur-xl flex items-center justify-center p-6 shadow-2xl">
-          <div className="flex flex-col items-center justify-center gap-6 w-full relative">
-            {/* Orb Central */}
-            <SiriOrb 
-              size="180px" 
-              className="drop-shadow-2xl"
-              colors={{
-                bg: "transparent",
-                c1: "oklch(75% 0.15 220)",
-                c2: "oklch(80% 0.12 200)",
-                c3: "oklch(78% 0.14 240)"
-              }}
-              animationDuration={isRecording ? 8 : 25}
-            />
-
-            <p className="text-center text-base font-medium text-foreground">
-              {isRecording ? '🔴 Escuchando... Presiona de nuevo para enviar' : 'Presiona el micrófono para hablar'}
-            </p>
-
-            {/* Controles */}
-            <div className="flex gap-4 items-center">
+        <DialogContent className="max-w-full w-screen h-screen p-0 border-none bg-black/98 backdrop-blur-xl flex items-center justify-center">
+          <div className="flex flex-col items-center justify-between w-full h-full px-6 py-8 relative">
+            {/* Header Controls */}
+            <div className="flex items-center justify-between w-full max-w-4xl">
               <Button 
                 variant="ghost" 
                 size="icon"
-                onClick={handleVoiceToggle}
-                className={`h-12 w-12 rounded-full transition-all ${
-                  isRecording 
-                    ? 'bg-destructive/10 hover:bg-destructive/20 text-destructive border border-destructive/30' 
-                    : 'bg-accent hover:bg-accent/80 text-foreground border border-border'
-                }`}
+                onClick={closeVoiceChat}
+                className="h-10 w-10 rounded-full bg-white/5 hover:bg-white/10 text-white border-none"
               >
-                <Mic className="w-5 h-5" />
+                <Plus className="w-5 h-5 rotate-45" />
               </Button>
 
               <Button 
                 variant="ghost" 
                 size="icon"
                 onClick={closeVoiceChat}
-                className="h-12 w-12 rounded-full bg-accent hover:bg-accent/80 text-foreground border border-border transition-all"
+                className="h-10 w-10 rounded-full bg-white/5 hover:bg-white/10 text-white border-none"
               >
                 <X className="w-5 h-5" />
               </Button>
+            </div>
+
+            {/* Center Content - Wave Visualizer */}
+            <div className="flex flex-col items-center justify-center gap-8 flex-1">
+              <AudioWaveVisualizer 
+                isRecording={isRecording} 
+                bars={60}
+                className="w-full max-w-3xl"
+              />
+            </div>
+
+            {/* Bottom Controls */}
+            <div className="flex items-center justify-center gap-6 pb-8">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={handleVoiceToggle}
+                className={cn(
+                  "h-14 w-14 rounded-full transition-all border-none",
+                  isRecording 
+                    ? 'bg-red-500/20 hover:bg-red-500/30 text-red-500' 
+                    : 'bg-white/5 hover:bg-white/10 text-white'
+                )}
+              >
+                <Mic className="w-6 h-6" />
+              </Button>
+
+              {isRecording && (
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => {
+                    stopVoiceRecording();
+                    closeVoiceChat();
+                  }}
+                  className="h-14 w-14 rounded-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-500 border-none transition-all"
+                >
+                  <Check className="w-6 h-6" />
+                </Button>
+              )}
             </div>
           </div>
         </DialogContent>
