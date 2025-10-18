@@ -1161,13 +1161,13 @@ const ChatInterface = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Voice Chat Modal - Full Screen Orb */}
+      {/* Voice Chat Modal - Centered with Chat Background */}
       <Dialog open={isVoiceChatOpen} onOpenChange={(open) => !open && closeVoiceChat()}>
-        <DialogContent className="max-w-full w-screen h-screen p-0 border-none bg-black/95 backdrop-blur-sm flex items-center justify-center">
-          <div className="flex flex-col items-center justify-center gap-12 w-full h-full relative">
+        <DialogContent className="max-w-2xl w-[90vw] max-h-[80vh] border border-border/50 bg-background/98 backdrop-blur-md flex items-center justify-center p-8">
+          <div className="flex flex-col items-center justify-center gap-8 w-full relative">
             {/* Orb Central */}
             <SiriOrb 
-              size="320px" 
+              size="240px" 
               className="drop-shadow-2xl"
               colors={{
                 bg: "transparent",
@@ -1178,24 +1178,32 @@ const ChatInterface = () => {
               animationDuration={isRecording ? 15 : 25}
             />
 
-            {/* Controles en la parte inferior */}
-            <div className="flex gap-6 items-center">
+            <p className="text-center text-sm text-muted-foreground">
+              {isRecording ? 'Escuchando...' : 'Presiona el micrófono para hablar'}
+            </p>
+
+            {/* Controles */}
+            <div className="flex gap-4 items-center">
               <Button 
                 variant="ghost" 
                 size="icon"
                 onClick={handleVoiceToggle}
-                className="h-16 w-16 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-all"
+                className={`h-14 w-14 rounded-full transition-all ${
+                  isRecording 
+                    ? 'bg-destructive/10 hover:bg-destructive/20 text-destructive border border-destructive/30' 
+                    : 'bg-accent hover:bg-accent/80 text-foreground border border-border'
+                }`}
               >
-                <Mic className="w-6 h-6" />
+                <Mic className="w-5 h-5" />
               </Button>
 
               <Button 
                 variant="ghost" 
                 size="icon"
                 onClick={closeVoiceChat}
-                className="h-16 w-16 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-all"
+                className="h-14 w-14 rounded-full bg-accent hover:bg-accent/80 text-foreground border border-border transition-all"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </Button>
             </div>
           </div>
