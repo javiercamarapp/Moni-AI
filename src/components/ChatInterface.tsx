@@ -366,11 +366,6 @@ const ChatInterface = () => {
       mediaRecorder.start();
       setIsRecording(true);
       console.log('🔴 Grabación iniciada');
-      
-      toast({
-        title: "Grabando",
-        description: "Habla ahora. Presiona de nuevo para enviar.",
-      });
     } catch (error) {
       console.error('❌ Error accessing microphone:', error);
       toast({
