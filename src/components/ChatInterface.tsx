@@ -431,7 +431,7 @@ const ChatInterface = () => {
         
         if (error) {
           console.error('❌ Error en transcripción:', error);
-          throw error;
+          return;
         }
         
         if (data?.text) {
@@ -440,20 +440,10 @@ const ChatInterface = () => {
           setTimeout(() => handleSendMessage(), 100);
         } else {
           console.warn('⚠️ No se recibió texto transcrito');
-          toast({
-            title: "Sin audio",
-            description: "No se detectó voz. Intenta de nuevo.",
-            variant: "destructive"
-          });
         }
       };
     } catch (error) {
       console.error('❌ Error processing voice:', error);
-      toast({
-        title: "Error",
-        description: "No se pudo procesar el audio",
-        variant: "destructive"
-      });
     }
   };
   
