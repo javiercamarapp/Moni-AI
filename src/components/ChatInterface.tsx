@@ -55,6 +55,7 @@ const ChatInterface = () => {
   const [isVoiceChatOpen, setIsVoiceChatOpen] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+  const audioRecordingRef = useRef<Blob | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -353,12 +354,12 @@ const ChatInterface = () => {
       };
       
       mediaRecorder.onstop = async () => {
-        console.log('🛑 Grabación detenida, procesando audio...');
+        console.log('🛑 Grabación detenida, guardando audio...');
         const audioBlob = new Blob(audioChunksRef.current, {
           type: 'audio/webm'
         });
         console.log('📦 Blob de audio creado:', audioBlob.size, 'bytes');
-        await processVoiceInput(audioBlob);
+        audioRecordingRef.current = audioBlob;
         stream.getTracks().forEach(track => track.stop());
       };
       
@@ -418,10 +419,6 @@ const ChatInterface = () => {
         }
         
         console.log('📤 Enviando audio a transcribir...');
-        toast({
-          title: "Transcribiendo",
-          description: "Procesando tu mensaje...",
-        });
         
         const {
           data,
@@ -458,6 +455,14 @@ const ChatInterface = () => {
         variant: "destructive"
       });
     }
+  };
+  
+  const handleConfirmVoiceRecording = async () => {
+    if (audioRecordingRef.current) {
+      await processVoiceInput(audioRecordingRef.current);
+      audioRecordingRef.current = null;
+    }
+    closeVoiceChat();
   };
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -1036,10 +1041,7 @@ const ChatInterface = () => {
             <Button 
               variant="ghost" 
               size="icon"
-              onClick={() => {
-                stopVoiceRecording();
-                closeVoiceChat();
-              }}
+              onClick={handleConfirmVoiceRecording}
               className="h-7 w-7 sm:h-9 sm:w-9 rounded-full bg-primary/10 hover:bg-primary/20 text-primary flex-shrink-0 transition-all"
             >
               <Check className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
@@ -1048,7 +1050,10 @@ const ChatInterface = () => {
             <Button 
               variant="ghost" 
               size="icon"
-              onClick={closeVoiceChat}
+              onClick={() => {
+                audioRecordingRef.current = null;
+                closeVoiceChat();
+              }}
               className="h-7 w-7 sm:h-9 sm:w-9 rounded-full bg-destructive/10 hover:bg-destructive/20 text-destructive flex-shrink-0 transition-all"
             >
               <X className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
