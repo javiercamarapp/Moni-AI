@@ -34,8 +34,9 @@ serve(async (req) => {
         const now = new Date();
         
         // Obtener transacciones desde 2024 en adelante (filtra datos de prueba muy al futuro)
+        // IMPORTANTE: Agregamos limit alto para asegurar que traemos todos los datos reales
         const allTransactionsRes = await fetch(
-          `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${userId}&transaction_date=gte.2024-01-01&order=transaction_date.desc&select=*`,
+          `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${userId}&transaction_date=gte.2024-01-01&transaction_date=lt.2026-01-01&order=transaction_date.desc&limit=5000&select=*`,
           { headers: supabaseHeaders }
         );
         const allTransactions = await allTransactionsRes.json();
@@ -176,6 +177,22 @@ serve(async (req) => {
         const mesesConIngresos2025 = ingresos2025.filter(m => m.valor > 0).length;
         const promedioIngresos2025 = mesesConIngresos2025 > 0 ? totalIngresos2025 / mesesConIngresos2025 : 0;
         const promedioGastos2025 = totalGastos2025 / 12;
+
+        // 🔍 LOG CRÍTICO: Verificar datos de 2025
+        console.log('🔍 DEBUG - Datos de 2025 generados:');
+        console.log('Total transacciones cargadas:', allTransactions.length);
+        console.log('Meses en monthlyData:', Object.keys(monthlyData).filter(k => k.startsWith('2025')));
+        console.log('Ingresos por mes 2025:');
+        ingresos2025.forEach(m => {
+          if (m.valor > 0) console.log(`  ${m.mes}: $${m.valor}`);
+        });
+        console.log('Total ingresos 2025:', totalIngresos2025);
+        
+        // Verificar enero-abril específicamente
+        ['2025-01', '2025-02', '2025-03', '2025-04'].forEach(key => {
+          const data = monthlyData[key];
+          console.log(`${key}: ingresos=$${data?.ingresos || 0}, gastos=$${data?.gastos || 0}, count=${data?.count || 0}`);
+        });
 
         // Calcular totales de patrimonio
         const totalActivos = assets.reduce((sum: number, a: any) => sum + Number(a.value), 0);
