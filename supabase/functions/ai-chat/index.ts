@@ -30,11 +30,11 @@ serve(async (req) => {
           'Content-Type': 'application/json'
         };
 
-        // Obtener TODAS las transacciones históricas del usuario
+        // Obtener transacciones SOLO hasta diciembre 2025 (excluir datos de prueba futuros)
         const now = new Date();
         
         const allTransactionsRes = await fetch(
-          `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${userId}&order=transaction_date.desc&select=*`,
+          `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${userId}&transaction_date=lte.2025-12-31&order=transaction_date.desc&select=*`,
           { headers: supabaseHeaders }
         );
         const allTransactions = await allTransactionsRes.json();
