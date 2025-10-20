@@ -95,14 +95,6 @@ export default function FinancialQuotesCarousel() {
 
         {/* Navigation Buttons */}
         <div className="flex items-center justify-center gap-3 mt-2">
-          <button
-            onClick={handlePrev}
-            className="w-6 h-6 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-all hover:scale-110 active:scale-95"
-            aria-label="Previous quote"
-          >
-            <ChevronLeft className="h-2.5 w-2.5 text-primary" />
-          </button>
-
           {/* Dots Navigation */}
           <div className="flex gap-1.5">
             {quotes.map((_, index) => (
@@ -118,14 +110,6 @@ export default function FinancialQuotesCarousel() {
               />
             ))}
           </div>
-
-          <button
-            onClick={handleNext}
-            className="w-6 h-6 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-all hover:scale-110 active:scale-95"
-            aria-label="Next quote"
-          >
-            <ChevronRight className="h-2.5 w-2.5 text-primary" />
-          </button>
         </div>
       </Card>
     </div>
