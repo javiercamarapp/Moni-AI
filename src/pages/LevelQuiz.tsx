@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import moniOwl from "@/assets/moni-owl-circle.png";
+import { useHasNetWorthData } from "@/hooks/useNetWorth";
+import networthIntro from "@/assets/networth-intro.jpg";
 
 const questions = [
   {
@@ -57,6 +59,7 @@ export default function LevelQuiz() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [isCompleting, setIsCompleting] = useState(false);
+  const { data: hasNetWorthData, isLoading: checkingNetWorth } = useHasNetWorthData();
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
 
@@ -98,6 +101,67 @@ export default function LevelQuiz() {
 
   const isQuizComplete = Object.keys(answers).length === questions.length;
 
+  // Verificar estado de net worth antes de mostrar el quiz
+  if (checkingNetWorth) {
+    return (
+      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
+        <p className="text-foreground">Cargando...</p>
+      </div>
+    );
+  }
+
+  // Si NO tiene datos de net worth, mostrar página de aviso
+  if (!hasNetWorthData) {
+    return (
+      <div className="min-h-screen animated-wave-bg flex flex-col pb-20">
+        {/* Header con flecha de regreso */}
+        <div className="p-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/dashboard")}
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        </div>
+
+        {/* Contenido centrado */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6 pb-8">
+          {/* Imagen */}
+          <div className="w-full max-w-md mb-8">
+            <img 
+              src={networthIntro} 
+              alt="Net Worth" 
+              className="w-full h-auto rounded-3xl shadow-xl"
+            />
+          </div>
+
+          {/* Mensaje */}
+          <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 px-8 py-6 rounded-3xl mb-8">
+            <p className="text-center text-lg font-bold text-foreground mb-2">
+              ¡Completa tu información financiera!
+            </p>
+            <p className="text-center text-sm text-muted-foreground">
+              Debes responder el quiz de información financiera para conocer tu Net Worth antes de continuar con el quiz de nivel
+            </p>
+          </Card>
+        </div>
+
+        {/* Botón de ir al quiz de net worth */}
+        <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 z-20">
+          <Button
+            onClick={() => navigate("/net-worth")}
+            className="w-full h-14 bg-white/95 hover:bg-white text-foreground font-bold text-lg rounded-[20px] shadow-xl hover:scale-[1.02] transition-all border border-blue-100"
+          >
+            Ir al Quiz de Net Worth
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Si tiene datos de net worth y está en la intro, mostrar página de bienvenida
   if (showIntro) {
     return (
       <div className="min-h-screen animated-wave-bg flex flex-col pb-20">
