@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 function FloatingPaths({ position }: { position: number }) {
   const paths = Array.from({ length: 36 }, (_, i) => ({
@@ -20,6 +21,7 @@ function FloatingPaths({ position }: { position: number }) {
         className="w-full h-full text-primary/60"
         viewBox="0 0 696 316"
         fill="none"
+        preserveAspectRatio="xMidYMid slice"
       >
         <title>Background Paths</title>
         {paths.map((path) => (
@@ -48,29 +50,42 @@ function FloatingPaths({ position }: { position: number }) {
 }
 
 export function FloatingPathsBackground() {
+  const [sections, setSections] = useState(3);
+
+  useEffect(() => {
+    const updateSections = () => {
+      const contentHeight = document.documentElement.scrollHeight;
+      const viewportHeight = window.innerHeight;
+      const neededSections = Math.ceil(contentHeight / viewportHeight) + 1;
+      setSections(neededSections);
+    };
+
+    updateSections();
+    window.addEventListener('resize', updateSections);
+    // Actualizar cuando cambie el contenido
+    const observer = new MutationObserver(updateSections);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      window.removeEventListener('resize', updateSections);
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Repetir el patrón múltiples veces para cubrir toda la altura */}
-      <div className="absolute top-0 left-0 w-full h-full">
-        <FloatingPaths position={1} />
-        <FloatingPaths position={-1} />
-      </div>
-      <div className="absolute top-[50%] left-0 w-full h-full">
-        <FloatingPaths position={1} />
-        <FloatingPaths position={-1} />
-      </div>
-      <div className="absolute top-[100%] left-0 w-full h-full">
-        <FloatingPaths position={1} />
-        <FloatingPaths position={-1} />
-      </div>
-      <div className="absolute top-[150%] left-0 w-full h-full">
-        <FloatingPaths position={1} />
-        <FloatingPaths position={-1} />
-      </div>
-      <div className="absolute top-[200%] left-0 w-full h-full">
-        <FloatingPaths position={1} />
-        <FloatingPaths position={-1} />
-      </div>
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ height: '100%' }}>
+      {Array.from({ length: sections }).map((_, index) => (
+        <div
+          key={index}
+          className="absolute left-0 w-full"
+          style={{
+            top: `${index * 100}vh`,
+            height: '100vh'
+          }}
+        >
+          <FloatingPaths position={index % 2 === 0 ? 1 : -1} />
+        </div>
+      ))}
     </div>
   );
 }
