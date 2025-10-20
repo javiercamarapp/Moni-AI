@@ -203,25 +203,38 @@ export default function LevelQuiz() {
     };
 
     const isAspComplete = Object.keys(aspirationalAnswers).length === aspirationalQuestions.length;
+    const aspirationalProgress = (Object.keys(aspirationalAnswers).length / aspirationalQuestions.length) * 100;
 
     return (
       <div className="min-h-screen animated-wave-bg flex flex-col">
         {/* Header fijado */}
         <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm shadow-lg border-b border-blue-100">
-          {/* Botón de regreso */}
-          <div className="p-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate("/dashboard")}
-              className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </div>
+          {/* Botón de regreso y barra de progreso */}
+          <div className="p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate("/dashboard")}
+                className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              
+              {/* Barra de progreso */}
+              <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                <div 
+                  className="h-full transition-all duration-500 ease-out"
+                  style={{ 
+                    width: `${aspirationalProgress}%`,
+                    background: 'linear-gradient(90deg, #8B7355 0%, #A0826D 50%, #8B7355 100%)',
+                    boxShadow: '0 0 10px rgba(139, 115, 85, 0.5)'
+                  }}
+                />
+              </div>
+            </div>
 
-          {/* Moni y mensaje */}
-          <div className="px-4 pb-4">
+            {/* Moni y mensaje */}
             <div className="flex items-center gap-3">
               <div className="w-16 h-16 flex-shrink-0">
                 <img 
@@ -232,7 +245,7 @@ export default function LevelQuiz() {
               </div>
               <Card className="flex-1 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 px-4 py-3 rounded-[20px]">
                 <p className="text-sm font-bold text-foreground">
-                  Te ayudaré a visualizar el futuro que quieres!!
+                  Te voy a ayudar a visualizar tus metas financieras!!
                 </p>
               </Card>
             </div>
