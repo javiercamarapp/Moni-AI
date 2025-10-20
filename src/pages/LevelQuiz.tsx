@@ -141,7 +141,7 @@ export default function LevelQuiz() {
         </div>
 
         {/* Continue button */}
-        <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 bg-gradient-to-t from-background/80 to-transparent backdrop-blur-sm z-20">
+        <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 z-20">
           <Button
             onClick={() => setShowIntro(false)}
             className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg rounded-[20px] shadow-xl hover:scale-[1.02] transition-all"
