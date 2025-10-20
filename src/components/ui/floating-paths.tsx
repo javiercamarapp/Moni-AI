@@ -50,8 +50,27 @@ function FloatingPaths({ position }: { position: number }) {
 export function FloatingPathsBackground() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <FloatingPaths position={1} />
-      <FloatingPaths position={-1} />
+      {/* Repetir el patrón múltiples veces para cubrir toda la altura */}
+      <div className="absolute top-0 left-0 w-full h-full">
+        <FloatingPaths position={1} />
+        <FloatingPaths position={-1} />
+      </div>
+      <div className="absolute top-[50%] left-0 w-full h-full">
+        <FloatingPaths position={1} />
+        <FloatingPaths position={-1} />
+      </div>
+      <div className="absolute top-[100%] left-0 w-full h-full">
+        <FloatingPaths position={1} />
+        <FloatingPaths position={-1} />
+      </div>
+      <div className="absolute top-[150%] left-0 w-full h-full">
+        <FloatingPaths position={1} />
+        <FloatingPaths position={-1} />
+      </div>
+      <div className="absolute top-[200%] left-0 w-full h-full">
+        <FloatingPaths position={1} />
+        <FloatingPaths position={-1} />
+      </div>
     </div>
   );
 }
