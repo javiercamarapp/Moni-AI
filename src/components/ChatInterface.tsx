@@ -55,6 +55,8 @@ const ChatInterface = () => {
   const [isVoiceChatMode, setIsVoiceChatMode] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isVoiceChatOpen, setIsVoiceChatOpen] = useState(false);
+  const [currentUserMessage, setCurrentUserMessage] = useState('');
+  const [isProcessingVoice, setIsProcessingVoice] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const audioRecordingRef = useRef<Blob | null>(null);
@@ -62,6 +64,7 @@ const ChatInterface = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadedFiles, setUploadedFiles] = useState<Array<{name: string; type: string; data: string}>>([]);
+  const voiceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const autoplayPlugin = useRef(Autoplay({
     delay: 3000,
     stopOnInteraction: true
@@ -639,22 +642,19 @@ const ChatInterface = () => {
 
   const toggleVoiceMode = async () => {
     if (isVoiceChatMode) {
-      // Detener modo de chat por voz
-      stopContinuousListening();
-      setIsVoiceChatMode(false);
-      setIsVoiceActive(false);
-      setIsListening(false);
+      // Detener modo de chat por voz en tiempo real
+      stopRealtimeVoiceChat();
     } else {
-      // Iniciar modo de chat por voz
-      setIsVoiceChatMode(true);
-      setIsVoiceActive(true);
-      await startContinuousListening();
+      // Iniciar modo de chat por voz en tiempo real
+      await startRealtimeVoiceChat();
     }
   };
 
-  const startContinuousListening = async () => {
+  // Nuevo sistema de chat de voz en tiempo real
+  const startRealtimeVoiceChat = async () => {
     try {
-      console.log('🎤 Iniciando escucha continua...');
+      console.log('🎤 Iniciando chat de voz en tiempo real...');
+      
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
           echoCancellation: true,
@@ -663,54 +663,39 @@ const ChatInterface = () => {
         }
       });
       
-      const mediaRecorder = new MediaRecorder(stream);
+      setIsVoiceChatMode(true);
+      setIsVoiceActive(true);
+      setIsListening(true);
+      
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm'
+      });
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
 
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
+      // Procesar audio en tiempo real
+      mediaRecorder.ondataavailable = async (event) => {
+        if (event.data.size > 0 && !isSpeaking) {
           audioChunksRef.current.push(event.data);
-        }
-      };
-
-      mediaRecorder.onstop = async () => {
-        console.log('⏸️ Grabación detenida, procesando...');
-        if (audioChunksRef.current.length > 0 && !isSpeaking) {
-          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-          audioChunksRef.current = [];
           
-          // Procesar si hay suficiente audio y la IA no está hablando
-          if (audioBlob.size > 1000) {
-            await processVoiceInput(audioBlob);
+          // Transcribir inmediatamente cada chunk
+          const audioBlob = new Blob([event.data], { type: 'audio/webm' });
+          if (audioBlob.size > 500) {
+            await transcribeRealtimeChunk(audioBlob);
           }
-        } else {
-          audioChunksRef.current = [];
-        }
-        
-        // Reiniciar grabación más rápido si aún está en modo de chat por voz
-        if (isVoiceChatMode && mediaRecorderRef.current && !isSpeaking) {
-          setTimeout(() => {
-            if (isVoiceChatMode && !isSpeaking) {
-              startContinuousListening();
-            }
-          }, 200);
         }
       };
 
-      mediaRecorder.start();
-      setIsListening(true);
-      console.log('✅ Grabación iniciada');
-
-      // Procesar en segmentos más cortos (3 segundos) para respuesta más rápida
-      setTimeout(() => {
-        if (mediaRecorder.state === 'recording' && !isSpeaking) {
-          console.log('⏰ Procesando segmento de voz...');
-          mediaRecorder.stop();
-        }
-      }, 3000);
+      // Capturar audio en chunks muy pequeños (500ms) para respuesta instantánea
+      mediaRecorder.start(500);
+      
+      toast({
+        title: "Chat de voz activado",
+        description: "Habla naturalmente, tu mensaje aparecerá en tiempo real",
+      });
 
     } catch (error) {
-      console.error('Error al iniciar escucha continua:', error);
+      console.error('Error al iniciar chat de voz:', error);
       toast({
         title: "Error",
         description: "No se pudo acceder al micrófono",
@@ -721,8 +706,84 @@ const ChatInterface = () => {
     }
   };
 
-  const stopContinuousListening = () => {
-    console.log('🛑 Deteniendo escucha continua...');
+  const transcribeRealtimeChunk = async (audioBlob: Blob) => {
+    if (isProcessingVoice || isSpeaking) return;
+    
+    try {
+      setIsProcessingVoice(true);
+      
+      const reader = new FileReader();
+      reader.readAsDataURL(audioBlob);
+      reader.onloadend = async () => {
+        const base64Audio = reader.result?.toString().split(',')[1];
+        if (!base64Audio) return;
+        
+        const { data } = await supabase.functions.invoke('transcribe-audio', {
+          body: { audio: base64Audio }
+        });
+        
+        if (data?.text && data.text.trim()) {
+          const newText = data.text.trim();
+          
+          // Agregar al mensaje actual que se está formando
+          setCurrentUserMessage(prev => {
+            const updated = prev ? `${prev} ${newText}` : newText;
+            
+            // Actualizar el último mensaje del usuario en tiempo real
+            setMessages(prevMessages => {
+              const lastMsg = prevMessages[prevMessages.length - 1];
+              if (lastMsg?.type === 'user' && lastMsg.id === Date.now()) {
+                return prevMessages.map((m, i) => 
+                  i === prevMessages.length - 1 ? { ...m, content: updated } : m
+                );
+              } else {
+                return [...prevMessages, {
+                  id: Date.now(),
+                  type: 'user',
+                  content: updated
+                }];
+              }
+            });
+            
+            return updated;
+          });
+          
+          // Reiniciar timeout para enviar mensaje
+          if (voiceTimeoutRef.current) {
+            clearTimeout(voiceTimeoutRef.current);
+          }
+          
+          voiceTimeoutRef.current = setTimeout(() => {
+            sendCurrentVoiceMessage();
+          }, 1500); // Enviar después de 1.5 segundos de silencio
+        }
+        
+        setIsProcessingVoice(false);
+      };
+    } catch (error) {
+      console.error('Error transcribiendo chunk:', error);
+      setIsProcessingVoice(false);
+    }
+  };
+
+  const sendCurrentVoiceMessage = async () => {
+    if (!currentUserMessage.trim() || isSpeaking) return;
+    
+    const messageToSend = currentUserMessage;
+    setCurrentUserMessage('');
+    
+    // Enviar a la AI
+    setIsTyping(true);
+    await sendToAI([...messages]);
+  };
+
+  const stopRealtimeVoiceChat = () => {
+    console.log('🛑 Deteniendo chat de voz en tiempo real...');
+    
+    if (voiceTimeoutRef.current) {
+      clearTimeout(voiceTimeoutRef.current);
+    }
+    
     if (mediaRecorderRef.current) {
       if (mediaRecorderRef.current.state === 'recording') {
         mediaRecorderRef.current.stop();
@@ -731,13 +792,24 @@ const ChatInterface = () => {
         mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
       }
     }
+    
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
     }
+    
+    setIsVoiceChatMode(false);
+    setIsVoiceActive(false);
     setIsListening(false);
     setIsSpeaking(false);
+    setCurrentUserMessage('');
+    
+    toast({
+      title: "Chat de voz desactivado",
+      description: "Conversación finalizada",
+    });
   };
+
 
   const sendToAI = async (conversationHistory: Array<any>) => {
     try {
@@ -823,9 +895,15 @@ const ChatInterface = () => {
       
       setIsTyping(false);
       
-      // En modo de chat por voz, hablar la respuesta
+      // En modo de chat por voz, hablar la respuesta y reiniciar escucha
       if (isVoiceChatMode && assistantMessage) {
         await speakText(assistantMessage);
+        // Reiniciar la escucha después de que termine de hablar
+        if (isVoiceChatMode) {
+          setTimeout(() => {
+            setIsListening(true);
+          }, 500);
+        }
       }
     } catch (error) {
       console.error('Error al enviar a AI:', error);
@@ -1416,21 +1494,21 @@ const ChatInterface = () => {
             onClick={toggleVoiceMode} 
             className={`flex-shrink-0 h-10 w-10 p-0 rounded-full transition-all hover:scale-110 ${
               isVoiceChatMode 
-                ? 'bg-gradient-primary text-foreground shadow-glow hover:shadow-elegant' 
+                ? 'bg-gradient-primary text-white shadow-glow hover:shadow-elegant animate-pulse' 
                 : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
-            } ${isListening ? 'animate-pulse' : ''}`}
+            }`}
           >
             {isVoiceChatMode ? (
-              <div className="relative">
-                <Circle className="w-5 h-5 fill-current" />
-                {isListening && (
+              <div className="relative flex items-center justify-center w-full h-full">
+                <Circle className="w-6 h-6 fill-current" />
+                {isListening && !isSpeaking && (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-2 h-2 bg-background rounded-full animate-pulse" />
+                    <div className="w-3 h-3 bg-white rounded-full animate-ping" />
                   </div>
                 )}
               </div>
             ) : (
-              <Circle className="w-4 h-4" />
+              <Circle className="w-5 h-5" />
             )}
           </Button>
         </div>
