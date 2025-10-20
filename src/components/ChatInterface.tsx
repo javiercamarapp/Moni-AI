@@ -494,19 +494,9 @@ const ChatInterface = () => {
       // Auto-analizar si es una imagen (potencial ticket)
       const imageFiles = loadedFiles.filter(f => f.type.startsWith('image/'));
       if (imageFiles.length > 0) {
-        toast({
-          title: "Analizando ticket...",
-          description: "La IA está procesando tu imagen"
-        });
-        
         // Analizar el primer archivo de imagen
         const imageFile = imageFiles[0];
         await analyzeReceipt(imageFile);
-      } else {
-        toast({
-          title: "Archivos cargados",
-          description: `${loadedFiles.length} archivo(s) listo(s) para enviar`
-        });
       }
     } catch (error) {
       console.error('Error reading files:', error);
@@ -555,11 +545,6 @@ const ChatInterface = () => {
         };
         
         setMessages(prev => [...prev, successMessage]);
-        
-        toast({
-          title: "¡Ticket procesado!",
-          description: `$${receiptData.amount} en ${receiptData.category}`,
-        });
       }
       
       setIsTyping(false);
@@ -596,11 +581,6 @@ const ChatInterface = () => {
           data: image.dataUrl
         };
         
-        toast({
-          title: "Analizando ticket...",
-          description: "La IA está procesando tu foto"
-        });
-        
         await analyzeReceipt(imageFile);
       }
     } catch (error: any) {
@@ -628,11 +608,6 @@ const ChatInterface = () => {
         audioRef.current = null;
       }
       setIsSpeaking(false);
-    } else {
-      toast({
-        title: "Modo de voz activado",
-        description: "Tus respuestas serán leídas en voz alta"
-      });
     }
   };
   const speakText = async (text: string) => {
