@@ -239,7 +239,7 @@ export default function LevelQuiz() {
   return (
     <div className="min-h-screen animated-wave-bg flex flex-col">
       {/* Header fijado */}
-      <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm shadow-lg border-b border-blue-100">
+      <div className="sticky top-0 z-20 animated-wave-bg">
         {/* Botón de regreso y barra de progreso */}
         <div className="p-4">
           <div className="flex items-center gap-3 mb-3">
