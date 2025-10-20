@@ -25,9 +25,10 @@ import BottomNav from '@/components/BottomNav';
 
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
-  const [currentXP] = useState(0);
+  const [currentXP, setCurrentXP] = useState(0);
   const [nextLevelXP] = useState(100);
-  const [level] = useState(1);
+  const [level, setLevel] = useState(1);
+  const [levelQuizCompleted, setLevelQuizCompleted] = useState(false);
   const [api, setApi] = useState<CarouselApi>();
   const [selectedMonthOffset, setSelectedMonthOffset] = useState(0);
   
@@ -140,6 +141,38 @@ const Dashboard = () => {
     }, 4000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          navigate("/auth");
+          return;
+        }
+        
+        setUser(user);
+        
+        // Get profile data including xp, level, and quiz completion
+        const profileResponse: any = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        
+        const profile = profileResponse.data;
+        if (profile) {
+          setCurrentXP(profile.xp || 0);
+          setLevel(profile.level || 1);
+          setLevelQuizCompleted(profile.level_quiz_completed || false);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    getUserData();
+  }, [navigate]);
 
   // Auto-scroll carousel
   useEffect(() => {
@@ -824,7 +857,11 @@ const Dashboard = () => {
         {/* Puntos y nivel + Notificaciones */}
         <div className="flex gap-2 items-center">
           {/* Botón de puntos y nivel */}
-          <Button variant="ghost" className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 px-3 gap-2 hover:scale-105 transition-all border border-blue-100">
+          <Button 
+            variant="ghost" 
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 px-3 gap-2 hover:scale-105 transition-all border border-blue-100"
+            onClick={() => navigate(levelQuizCompleted ? "/level-details" : "/level-quiz")}
+          >
             <span className="text-sm font-bold">{currentXP} pts</span>
             <span className="text-xs opacity-80">Nivel {level}</span>
           </Button>

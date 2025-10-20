@@ -430,7 +430,10 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          level: number | null
+          level_quiz_completed: boolean | null
           updated_at: string
+          xp: number | null
         }
         Insert: {
           avatar_url?: string | null
@@ -438,7 +441,10 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          level?: number | null
+          level_quiz_completed?: boolean | null
           updated_at?: string
+          xp?: number | null
         }
         Update: {
           avatar_url?: string | null
@@ -446,7 +452,10 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          level?: number | null
+          level_quiz_completed?: boolean | null
           updated_at?: string
+          xp?: number | null
         }
         Relationships: []
       }
