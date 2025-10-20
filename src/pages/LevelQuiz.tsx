@@ -74,69 +74,39 @@ export default function LevelQuiz() {
   const aspirationalQuestions = [
     {
       id: 1,
-      question: "¿Cuánto quieres tener en propiedades?",
+      question: "¿Cuánto quieres tener en propiedades? (en pesos)",
       icon: Home,
-      options: [
-        { value: "0-500k", label: "Hasta $500,000" },
-        { value: "500k-1m", label: "$500,000 - $1 millón" },
-        { value: "1m-3m", label: "$1 - $3 millones" },
-        { value: "3m+", label: "Más de $3 millones" }
-      ]
+      placeholder: "Ejemplo: 1000000"
     },
     {
       id: 2,
-      question: "¿Cuánto quieres tener en vehículos?",
+      question: "¿Cuánto quieres tener en vehículos? (en pesos)",
       icon: Car,
-      options: [
-        { value: "0-200k", label: "Hasta $200,000" },
-        { value: "200k-500k", label: "$200,000 - $500,000" },
-        { value: "500k-1m", label: "$500,000 - $1 millón" },
-        { value: "1m+", label: "Más de $1 millón" }
-      ]
+      placeholder: "Ejemplo: 500000"
     },
     {
       id: 3,
-      question: "¿Cuánto quieres tener en ahorros?",
+      question: "¿Cuánto quieres tener en ahorros? (en pesos)",
       icon: PiggyBank,
-      options: [
-        { value: "0-100k", label: "Hasta $100,000" },
-        { value: "100k-500k", label: "$100,000 - $500,000" },
-        { value: "500k-1m", label: "$500,000 - $1 millón" },
-        { value: "1m+", label: "Más de $1 millón" }
-      ]
+      placeholder: "Ejemplo: 300000"
     },
     {
       id: 4,
-      question: "¿Cuánto quieres tener en inversiones?",
+      question: "¿Cuánto quieres tener en inversiones? (en pesos)",
       icon: TrendingUp,
-      options: [
-        { value: "0-200k", label: "Hasta $200,000" },
-        { value: "200k-500k", label: "$200,000 - $500,000" },
-        { value: "500k-2m", label: "$500,000 - $2 millones" },
-        { value: "2m+", label: "Más de $2 millones" }
-      ]
+      placeholder: "Ejemplo: 800000"
     },
     {
       id: 5,
       question: "¿Cuántos viajes quieres hacer al año?",
       icon: Plane,
-      options: [
-        { value: "1-2", label: "1-2 viajes al año" },
-        { value: "3-5", label: "3-5 viajes al año" },
-        { value: "6-10", label: "6-10 viajes al año" },
-        { value: "10+", label: "Más de 10 viajes al año" }
-      ]
+      placeholder: "Ejemplo: 3"
     },
     {
       id: 6,
-      question: "¿Qué nivel de educación quieres para tu familia?",
+      question: "¿Cuánto quieres invertir en educación familiar anualmente? (en pesos)",
       icon: GraduationCap,
-      options: [
-        { value: "basica", label: "Educación básica completa" },
-        { value: "universidad", label: "Universidad completa" },
-        { value: "posgrado", label: "Posgrados y especializaciones" },
-        { value: "elite", label: "Instituciones de élite" }
-      ]
+      placeholder: "Ejemplo: 100000"
     }
   ];
 
@@ -297,29 +267,20 @@ export default function LevelQuiz() {
             const Icon = q.icon;
             return (
               <Card key={q.id} className="p-5 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
-                <h3 className="text-base font-bold text-foreground mb-4">
-                  {q.question}
-                </h3>
-                <div className="space-y-2">
-                  {q.options.map((option) => (
-                    <Button
-                      key={option.value}
-                      variant={aspirationalAnswers[q.id] === option.value ? "default" : "outline"}
-                      onClick={() => handleAspAnswer(q.id, option.value)}
-                      className={cn(
-                        "w-full justify-start text-left h-auto py-3 px-4 rounded-[15px] transition-all",
-                        aspirationalAnswers[q.id] === option.value
-                          ? "shadow-lg bg-primary text-primary-foreground"
-                          : "hover:bg-primary/5 bg-white border-blue-100"
-                      )}
-                    >
-                      <span className="flex-1 text-sm font-medium">{option.label}</span>
-                      {aspirationalAnswers[q.id] === option.value && (
-                        <CheckCircle2 className="h-4 w-4 ml-2 flex-shrink-0" />
-                      )}
-                    </Button>
-                  ))}
+                <div className="flex items-center gap-3 mb-4">
+                  <Icon className="h-6 w-6 text-primary flex-shrink-0" />
+                  <h3 className="text-base font-bold text-foreground">
+                    {q.question}
+                  </h3>
                 </div>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  placeholder={q.placeholder}
+                  value={aspirationalAnswers[q.id] || ""}
+                  onChange={(e) => handleAspAnswer(q.id, e.target.value)}
+                  className="w-full px-4 py-3 text-base rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground"
+                />
               </Card>
             );
           })}
