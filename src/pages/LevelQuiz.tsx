@@ -264,7 +264,7 @@ export default function LevelQuiz() {
           {aspirationalQuestions.map((q) => {
             const Icon = q.icon;
             return (
-              <Card key={q.id} className="p-5 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
+              <div key={q.id}>
                 {q.id === 1 && (
                   <div className="flex items-center gap-3 mb-4">
                     <img 
@@ -277,21 +277,23 @@ export default function LevelQuiz() {
                     </p>
                   </div>
                 )}
-                <div className="flex items-center gap-3 mb-4">
-                  <Icon className="h-6 w-6 text-primary flex-shrink-0" />
-                  <h3 className="text-base font-bold text-foreground">
-                    {q.question}
-                  </h3>
-                </div>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  placeholder={q.placeholder}
-                  value={aspirationalAnswers[q.id] || ""}
-                  onChange={(e) => handleAspAnswer(q.id, e.target.value)}
-                  className="w-full px-4 py-3 text-base rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground"
-                />
-              </Card>
+                <Card className="p-5 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Icon className="h-6 w-6 text-primary flex-shrink-0" />
+                    <h3 className="text-base font-bold text-foreground">
+                      {q.question}
+                    </h3>
+                  </div>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    placeholder={q.placeholder}
+                    value={aspirationalAnswers[q.id] || ""}
+                    onChange={(e) => handleAspAnswer(q.id, e.target.value)}
+                    className="w-full px-4 py-3 text-base rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground"
+                  />
+                </Card>
+              </div>
             );
           })}
         </div>
