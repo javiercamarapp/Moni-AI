@@ -284,14 +284,31 @@ export default function LevelQuiz() {
                       {q.question}
                     </h3>
                   </div>
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    placeholder={q.placeholder}
-                    value={aspirationalAnswers[q.id] || ""}
-                    onChange={(e) => handleAspAnswer(q.id, e.target.value)}
-                    className="w-full px-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground"
-                  />
+                  {/* Input con signo de pesos para valores monetarios */}
+                  {q.id !== 5 ? (
+                    <div className="relative">
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-foreground font-medium">
+                        $
+                      </span>
+                      <input
+                        type="number"
+                        inputMode="numeric"
+                        placeholder={q.placeholder}
+                        value={aspirationalAnswers[q.id] || ""}
+                        onChange={(e) => handleAspAnswer(q.id, e.target.value)}
+                        className="w-full pl-5 pr-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground"
+                      />
+                    </div>
+                  ) : (
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      placeholder={q.placeholder}
+                      value={aspirationalAnswers[q.id] || ""}
+                      onChange={(e) => handleAspAnswer(q.id, e.target.value)}
+                      className="w-full px-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground"
+                    />
+                  )}
                 </Card>
               </div>
             );
