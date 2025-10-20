@@ -6,7 +6,6 @@ import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
-import heroAuth from '@/assets/moni-ai-logo.png';
 
 const questions = [
   {
@@ -99,24 +98,17 @@ export default function LevelQuiz() {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
-      {/* Header superior con logo y botón de regreso */}
-      <div className="p-2 flex justify-between items-start">
-        {/* Logo banner - esquina superior izquierda */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden w-16 h-10">
-          <img src={heroAuth} alt="Moni" className="w-full h-full object-cover" />
-        </div>
-        
+      {/* Header superior con botón de regreso */}
+      <div className="p-2 flex justify-start items-start">
         {/* Botón de regreso */}
-        <div className="flex gap-2 items-center">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/dashboard")}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate("/dashboard")}
+          className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
       </div>
 
       {/* Contenido principal */}
