@@ -47,11 +47,13 @@ const Dashboard = () => {
   } = dashboardData;
   
   // Keep local state for things that update independently
-  const [recentTransactions, setRecentTransactions] = useState<any[]>(dashboardData.recentTransactions);
+  const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
   
-  // Sync recentTransactions when dashboardData updates
+  // Sync recentTransactions when dashboardData updates - use ref to avoid infinite loop
   useEffect(() => {
-    setRecentTransactions(dashboardData.recentTransactions);
+    if (JSON.stringify(recentTransactions) !== JSON.stringify(dashboardData.recentTransactions)) {
+      setRecentTransactions(dashboardData.recentTransactions);
+    }
   }, [dashboardData.recentTransactions]);
   
   const [loading, setLoading] = useState(false);
@@ -154,13 +156,12 @@ const Dashboard = () => {
         setUser(user);
         
         // Get profile data including xp, level, and quiz completion
-        const profileResponse: any = await supabase
+        const { data: profile } = await supabase
           .from("profiles")
-          .select("*")
-          .eq("user_id", user.id)
-          .maybeSingle();
+          .select("id, xp, level, level_quiz_completed")
+          .eq("id", user.id)
+          .single();
         
-        const profile = profileResponse.data;
         if (profile) {
           setCurrentXP(profile.xp || 0);
           setLevel(profile.level || 1);

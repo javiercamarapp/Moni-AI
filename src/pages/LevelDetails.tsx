@@ -32,15 +32,14 @@ export default function LevelDetails() {
       }
 
       // Obtener información del usuario
-      const profileResponse: any = await supabase
+      const { data: profile, error } = await supabase
         .from("profiles")
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
+        .select("id, xp, level")
+        .eq("id", user.id)
+        .single();
 
-      if (profileResponse.error) throw profileResponse.error;
+      if (error) throw error;
 
-      const profile = profileResponse.data;
       const currentXP = profile?.xp || 0;
       const currentLevel = profile?.level || 1;
       const xpForNextLevel = currentLevel * 100;

@@ -77,12 +77,12 @@ export default function LevelQuiz() {
       }
 
       // Actualizar el perfil marcando el quiz como completado
-      const updateResponse: any = await supabase
+      const { error } = await supabase
         .from("profiles")
-        .update({ level_quiz_completed: true } as any)
-        .eq("user_id", user.id);
+        .update({ level_quiz_completed: true })
+        .eq("id", user.id);
 
-      if (updateResponse.error) throw updateResponse.error;
+      if (error) throw error;
 
       toast.success("¡Quiz completado! Ahora puedes ver tu progreso de nivel");
       navigate("/level-details");
