@@ -10,6 +10,7 @@ import moniOwl from "@/assets/moni-owl-circle.png";
 import { useHasNetWorthData } from "@/hooks/useNetWorth";
 import moniAspirational from "@/assets/moni-aspirational.png";
 import { cn } from "@/lib/utils";
+import FinancialQuotesCarousel from "@/components/FinancialQuotesCarousel";
 
 const questions = [
   {
@@ -255,12 +256,8 @@ export default function LevelQuiz() {
       {/* Contenido scrolleable */}
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-24">
         <div className="max-w-2xl mx-auto space-y-6">
-          {/* Recuadro explicativo */}
-          <Card className="p-6 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
-            <p className="text-base font-bold text-foreground leading-relaxed">
-              No ahorres lo que te queda después de gastar; gasta lo que te queda después de ahorrar. – Warren Buffett
-            </p>
-          </Card>
+          {/* Carrusel de frases financieras */}
+          <FinancialQuotesCarousel />
 
           {/* Lista de preguntas */}
           {aspirationalQuestions.map((q) => {
