@@ -76,7 +76,7 @@ export default function LevelQuiz() {
   const aspirationalQuestions = [
     {
       id: 1,
-      question: "¿Cuánto quieres tener en propiedades? (en pesos)",
+      question: "¿Cuánto vale la casa de tus sueños?",
       icon: Home,
       placeholder: "Ejemplo: 1000000"
     },
