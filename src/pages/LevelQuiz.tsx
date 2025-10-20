@@ -247,14 +247,9 @@ export default function LevelQuiz() {
               const Icon = q.icon;
               return (
                 <Card key={q.id} className="p-5 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
-                  <div className="flex items-start gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <h3 className="text-base font-bold text-foreground flex-1 pt-1">
-                      {q.question}
-                    </h3>
-                  </div>
+                  <h3 className="text-base font-bold text-foreground mb-4">
+                    {q.question}
+                  </h3>
                   <div className="space-y-2">
                     {q.options.map((option) => (
                       <Button
