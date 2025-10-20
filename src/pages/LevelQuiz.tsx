@@ -144,7 +144,7 @@ export default function LevelQuiz() {
         <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 z-20">
           <Button
             onClick={() => setShowIntro(false)}
-            className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg rounded-[20px] shadow-xl hover:scale-[1.02] transition-all"
+            className="w-full h-14 bg-white/95 hover:bg-white text-foreground font-bold text-lg rounded-[20px] shadow-xl hover:scale-[1.02] transition-all border border-blue-100"
           >
             Continuar
           </Button>
