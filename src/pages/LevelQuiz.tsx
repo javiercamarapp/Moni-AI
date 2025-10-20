@@ -290,11 +290,11 @@ export default function LevelQuiz() {
                   <div className="flex flex-row-reverse items-center gap-3 mb-4">
                     <img 
                       src={moniCarAspiration} 
-                      alt="El auto de mis sueños" 
+                      alt="El coche de mis sueños" 
                       className="w-16 h-16 object-contain flex-shrink-0"
                     />
                     <p className="text-base font-bold text-foreground text-right">
-                      El auto de mis sueños
+                      El coche de mis sueños
                     </p>
                   </div>
                 )}
