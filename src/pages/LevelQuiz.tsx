@@ -244,7 +244,7 @@ export default function LevelQuiz() {
               />
             </div>
             <Card className="flex-1 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 px-4 py-3 rounded-[20px]">
-              <p className="text-sm font-bold text-foreground">
+              <p className="text-xs font-bold text-foreground">
                 Cuéntame las aspiraciones financieras que tienes para tu vida...
               </p>
             </Card>
