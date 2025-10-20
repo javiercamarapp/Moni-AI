@@ -9,6 +9,7 @@ import { ArrowLeft, CheckCircle2, Home, Car, PiggyBank, TrendingUp, Plane, Gradu
 import moniOwl from "@/assets/moni-owl-circle.png";
 import { useHasNetWorthData } from "@/hooks/useNetWorth";
 import moniAspirational from "@/assets/moni-aspirational.png";
+import moniHouseAspiration from "@/assets/moni-house-aspiration.png";
 import { cn } from "@/lib/utils";
 import FinancialQuotesCarousel from "@/components/FinancialQuotesCarousel";
 
@@ -264,6 +265,18 @@ export default function LevelQuiz() {
             const Icon = q.icon;
             return (
               <Card key={q.id} className="p-5 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
+                {q.id === 1 && (
+                  <div className="flex items-center gap-3 mb-4">
+                    <img 
+                      src={moniHouseAspiration} 
+                      alt="Mi futura casa" 
+                      className="w-16 h-16 object-contain flex-shrink-0"
+                    />
+                    <p className="text-base font-bold text-foreground">
+                      Mi futura casa...
+                    </p>
+                  </div>
+                )}
                 <div className="flex items-center gap-3 mb-4">
                   <Icon className="h-6 w-6 text-primary flex-shrink-0" />
                   <h3 className="text-base font-bold text-foreground">
