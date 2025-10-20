@@ -285,6 +285,13 @@ export default function LevelQuiz() {
       {/* Contenido scrolleable */}
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-24">
         <div className="max-w-2xl mx-auto space-y-6">
+          {/* Recuadro explicativo */}
+          <Card className="p-6 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
+            <p className="text-sm text-foreground leading-relaxed">
+              Este cuestionario busca recabar la información necesaria para saber tus aspiraciones financieras en la vida. ¡Recuerda que yo te ayudaré todos los días a lograr estos objetivos!
+            </p>
+          </Card>
+
           {/* Lista de preguntas */}
           {aspirationalQuestions.map((q) => {
             const Icon = q.icon;
