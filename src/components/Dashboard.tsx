@@ -861,7 +861,7 @@ const Dashboard = () => {
           <Button 
             variant="ghost" 
             className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 px-3 gap-2 hover:scale-105 transition-all border border-blue-100"
-            onClick={() => navigate(levelQuizCompleted ? "/level-details" : "/level-quiz")}
+            onClick={() => navigate("/level-quiz")}
           >
             <span className="text-sm font-bold">{currentXP} pts</span>
             <span className="text-xs opacity-80">Nivel {level}</span>
