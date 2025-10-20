@@ -91,7 +91,7 @@ export default function LevelQuiz() {
       id: 7,
       question: "¿Cuánto cuesta el coche que quieres darle a tu cónyuge?",
       icon: Car,
-      placeholder: "Ejemplo: 400000                                            (opcional)"
+      placeholder: "Ejemplo: 400000  (opcional)"
     },
     {
       id: 3,
