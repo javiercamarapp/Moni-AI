@@ -11,6 +11,7 @@ import { useHasNetWorthData } from "@/hooks/useNetWorth";
 import moniAspirational from "@/assets/moni-aspirational.png";
 import moniHouseAspiration from "@/assets/moni-house-aspiration.png";
 import moniCarAspiration from "@/assets/moni-car-aspiration.png";
+import moniSavings from "@/assets/moni-savings.png";
 import { cn } from "@/lib/utils";
 import FinancialQuotesCarousel from "@/components/FinancialQuotesCarousel";
 
@@ -305,6 +306,18 @@ export default function LevelQuiz() {
                     />
                     <p className="text-base font-bold text-foreground text-right">
                       El coche de mis sueños
+                    </p>
+                  </div>
+                )}
+                {q.id === 3 && (
+                  <div className="flex items-center gap-3 mb-4">
+                    <img 
+                      src={moniSavings} 
+                      alt="Mi caja de ahorros" 
+                      className="w-16 h-16 object-contain flex-shrink-0"
+                    />
+                    <p className="text-base font-bold text-foreground">
+                      Mi caja de ahorros
                     </p>
                   </div>
                 )}
