@@ -89,9 +89,9 @@ export default function LevelQuiz() {
     },
     {
       id: 7,
-      question: "¿Cuánto cuesta el coche que quieres darle a tu cónyuge? (opcional)",
+      question: "¿Cuánto cuesta el coche que quieres darle a tu cónyuge?",
       icon: Car,
-      placeholder: "Ejemplo: 400000"
+      placeholder: "Ejemplo: 400000                                            (opcional)"
     },
     {
       id: 3,
@@ -279,6 +279,9 @@ export default function LevelQuiz() {
           {/* Lista de preguntas */}
           {aspirationalQuestions.map((q) => {
             const Icon = q.icon;
+            // Filtrar pregunta 7 ya que se mostrará dentro del card de pregunta 2
+            if (q.id === 7) return null;
+            
             return (
               <div key={q.id}>
                 {q.id === 1 && (
@@ -340,6 +343,39 @@ export default function LevelQuiz() {
                       className="w-full px-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground"
                     />
                   )}
+                  
+                  {/* Pregunta adicional para el cónyuge dentro del mismo card */}
+                  {q.id === 2 && (() => {
+                    const spouseCarQuestion = aspirationalQuestions.find(sq => sq.id === 7);
+                    if (!spouseCarQuestion) return null;
+                    const SpouseIcon = spouseCarQuestion.icon;
+                    return (
+                      <>
+                        <div className="flex items-center gap-2 mb-2 mt-4">
+                          <SpouseIcon className="h-3 w-3 text-primary flex-shrink-0" />
+                          <h3 className="text-xs font-bold text-foreground">
+                            {spouseCarQuestion.question}
+                          </h3>
+                        </div>
+                        <div className="relative">
+                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-foreground font-medium">
+                            $
+                          </span>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            placeholder={spouseCarQuestion.placeholder}
+                            value={formatNumberWithCommas(aspirationalAnswers[7] || "")}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/[^0-9]/g, '');
+                              handleAspAnswer(7, value);
+                            }}
+                            className="w-full pl-5 pr-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground/60"
+                          />
+                        </div>
+                      </>
+                    );
+                  })()}
                 </Card>
               </div>
             );
