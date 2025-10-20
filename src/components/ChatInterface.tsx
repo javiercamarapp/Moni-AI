@@ -403,49 +403,113 @@ const ChatInterface = () => {
   };
   const processVoiceInput = async (audioBlob: Blob) => {
     try {
-      console.log('🔄 Procesando entrada de voz...');
+      console.log('🔄 Procesando entrada de voz...', 'Tamaño del blob:', audioBlob.size, 'bytes');
+      
+      if (audioBlob.size === 0) {
+        console.error('❌ El blob de audio está vacío');
+        toast({
+          title: "Error",
+          description: "No se grabó audio. Intenta de nuevo.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
       const reader = new FileReader();
       reader.readAsDataURL(audioBlob);
       reader.onloadend = async () => {
-        const base64Audio = reader.result?.toString().split(',')[1];
-        if (!base64Audio) {
-          console.error('❌ No se pudo convertir audio a base64');
-          return;
-        }
-        
-        console.log('📤 Enviando audio a transcribir...');
-        
-        const {
-          data,
-          error
-        } = await supabase.functions.invoke('transcribe-audio', {
-          body: {
-            audio: base64Audio
+        try {
+          const base64Audio = reader.result?.toString().split(',')[1];
+          if (!base64Audio) {
+            console.error('❌ No se pudo convertir audio a base64');
+            toast({
+              title: "Error",
+              description: "Error al procesar el audio",
+              variant: "destructive"
+            });
+            return;
           }
+          
+          console.log('📤 Enviando audio a transcribir... (tamaño base64:', base64Audio.length, 'caracteres)');
+          
+          const {
+            data,
+            error
+          } = await supabase.functions.invoke('transcribe-audio', {
+            body: {
+              audio: base64Audio
+            }
+          });
+          
+          if (error) {
+            console.error('❌ Error en transcripción:', error);
+            toast({
+              title: "Error de transcripción",
+              description: error.message || "No se pudo transcribir el audio",
+              variant: "destructive"
+            });
+            return;
+          }
+          
+          if (data?.text) {
+            console.log('✅ Texto transcrito:', data.text);
+            setMessage(data.text);
+            setTimeout(() => handleSendMessage(), 100);
+          } else if (data?.error) {
+            console.error('❌ Error desde el servidor:', data.error);
+            toast({
+              title: "Error",
+              description: data.error,
+              variant: "destructive"
+            });
+          } else {
+            console.warn('⚠️ No se recibió texto transcrito');
+            toast({
+              title: "Sin transcripción",
+              description: "No se detectó voz en el audio",
+              variant: "destructive"
+            });
+          }
+        } catch (innerError) {
+          console.error('❌ Error en el procesamiento:', innerError);
+          toast({
+            title: "Error",
+            description: "Error al procesar la transcripción",
+            variant: "destructive"
+          });
+        }
+      };
+      
+      reader.onerror = () => {
+        console.error('❌ Error al leer el archivo de audio');
+        toast({
+          title: "Error",
+          description: "No se pudo leer el audio grabado",
+          variant: "destructive"
         });
-        
-        if (error) {
-          console.error('❌ Error en transcripción:', error);
-          return;
-        }
-        
-        if (data?.text) {
-          console.log('✅ Texto transcrito:', data.text);
-          setMessage(data.text);
-          setTimeout(() => handleSendMessage(), 100);
-        } else {
-          console.warn('⚠️ No se recibió texto transcrito');
-        }
       };
     } catch (error) {
       console.error('❌ Error processing voice:', error);
+      toast({
+        title: "Error",
+        description: "Error al procesar la voz",
+        variant: "destructive"
+      });
     }
   };
   
   const handleConfirmVoiceRecording = async () => {
+    console.log('✅ Confirmando grabación...', 'Audio disponible:', !!audioRecordingRef.current);
     if (audioRecordingRef.current) {
       await processVoiceInput(audioRecordingRef.current);
       audioRecordingRef.current = null;
+    } else {
+      console.error('❌ No hay audio grabado en audioRecordingRef');
+      toast({
+        title: "Error",
+        description: "No se encontró audio grabado. Intenta grabar de nuevo.",
+        variant: "destructive"
+      });
     }
     closeVoiceChat();
   };
