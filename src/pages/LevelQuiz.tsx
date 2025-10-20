@@ -316,14 +316,14 @@ export default function LevelQuiz() {
   // Si tiene datos de net worth y está en la intro, mostrar página de bienvenida
   if (showIntro) {
     return (
-      <div className="min-h-screen animated-wave-bg flex flex-col pb-20">
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex flex-col pb-20">
         {/* Header con flecha de regreso */}
-        <div className="p-2">
+        <div className="p-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/dashboard")}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
+            className="bg-slate-800 rounded-[20px] hover:bg-slate-700 text-white h-10 w-10 hover:scale-105 transition-all border border-slate-700"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -331,24 +331,28 @@ export default function LevelQuiz() {
 
         {/* Contenido centrado */}
         <div className="flex-1 flex flex-col items-center justify-center px-6 pb-8">
-          {/* Speech bubble */}
-          <div className="relative mb-8">
-            <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 px-8 py-6 rounded-3xl">
-              <p className="text-center text-xl font-bold text-foreground">
-                ¡Hola! Soy Moni,<br />tu coach financiero
-              </p>
-            </Card>
-            <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[15px] border-t-white/95"></div>
-          </div>
-
-          {/* Moni owl character */}
-          <div className="relative">
-            <div className="w-64 h-64 rounded-full flex items-center justify-center">
-              <img 
-                src={moniOwl} 
-                alt="Moni" 
-                className="w-full h-full object-contain"
-              />
+          {/* Moni con speech bubble */}
+          <div className="mb-12">
+            <div className="flex items-start gap-4">
+              {/* Moni */}
+              <div className="w-32 h-32 flex-shrink-0 animate-scale-in">
+                <img 
+                  src={moniAspirational} 
+                  alt="Moni" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              
+              {/* Speech bubble */}
+              <div className="relative flex-1 animate-fade-in">
+                <Card className="bg-slate-800/80 backdrop-blur-sm border-slate-700 px-6 py-5 rounded-3xl">
+                  <p className="text-white text-xl font-bold leading-relaxed">
+                    Te ayudaré a visualizar el futuro que quieres!!
+                  </p>
+                </Card>
+                {/* Triangle */}
+                <div className="absolute left-0 top-8 -translate-x-2 w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[12px] border-r-slate-800/80"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -357,7 +361,7 @@ export default function LevelQuiz() {
         <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 z-20">
           <Button
             onClick={() => setShowIntro(false)}
-            className="w-full h-14 bg-white/95 hover:bg-white text-foreground font-bold text-lg rounded-[20px] shadow-xl hover:scale-[1.02] transition-all border border-blue-100"
+            className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg rounded-[20px] shadow-xl hover:scale-[1.02] transition-all"
           >
             Continuar
           </Button>
