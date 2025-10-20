@@ -33,7 +33,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FloatingPathsBackground } from "@/components/ui/floating-paths";
 
 // Mapeo de categorías a emojis
 const categoryEmojis: Record<string, string> = {
@@ -323,10 +322,9 @@ const Gastos = () => {
   };
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-20 relative overflow-hidden">
-      <FloatingPathsBackground />
+    <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="p-4 flex items-center justify-between border-b border-border/30 bg-card/50 backdrop-blur-sm relative z-10">
+      <div className="p-4 flex items-center justify-between border-b border-border/30 bg-card/50 backdrop-blur-sm">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"

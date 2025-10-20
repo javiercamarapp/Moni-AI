@@ -26,7 +26,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { FloatingPathsBackground } from "@/components/ui/floating-paths";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -410,8 +409,7 @@ const Profile = () => {
   const userEmail = user?.email || '';
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-4 relative overflow-hidden">
-      <FloatingPathsBackground />
+    <div className="min-h-screen animated-wave-bg pb-4">
       {/* Header */}
       <div className="bg-background/95 backdrop-blur-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-4">

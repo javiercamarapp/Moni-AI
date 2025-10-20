@@ -7,7 +7,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import moniOwl from "@/assets/moni-owl-circle.png";
-import { FloatingPathsBackground } from "@/components/ui/floating-paths";
 
 const questions = [
   {
@@ -101,11 +100,9 @@ export default function LevelQuiz() {
 
   if (showIntro) {
     return (
-      <div className="min-h-screen animated-wave-bg flex flex-col pb-20 relative overflow-hidden">
-        <FloatingPathsBackground />
-        
+      <div className="min-h-screen animated-wave-bg flex flex-col pb-20">
         {/* Header con flecha de regreso */}
-        <div className="p-2 relative z-10">
+        <div className="p-2">
           <Button
             variant="ghost"
             size="icon"
@@ -117,7 +114,7 @@ export default function LevelQuiz() {
         </div>
 
         {/* Contenido centrado */}
-        <div className="flex-1 flex flex-col items-center justify-center px-6 pb-8 relative z-10">
+        <div className="flex-1 flex flex-col items-center justify-center px-6 pb-8">
           {/* Speech bubble */}
           <div className="relative mb-8">
             <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 px-8 py-6 rounded-3xl">
@@ -154,11 +151,9 @@ export default function LevelQuiz() {
   }
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-20 relative overflow-hidden">
-      <FloatingPathsBackground />
-      
+    <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header superior con botón de regreso */}
-      <div className="p-2 flex justify-start items-start relative z-10">
+      <div className="p-2 flex justify-start items-start">
         <Button
           variant="ghost"
           size="icon"
@@ -170,7 +165,7 @@ export default function LevelQuiz() {
       </div>
 
       {/* Contenido principal */}
-      <div className="max-w-2xl mx-auto px-4 pt-2 relative z-10">
+      <div className="max-w-2xl mx-auto px-4 pt-2">
         {/* Título y descripción */}
         <div className="mb-4">
           <h1 className="text-2xl font-bold text-foreground mb-1">Quiz de Nivel</h1>
