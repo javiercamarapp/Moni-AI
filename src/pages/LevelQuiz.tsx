@@ -182,26 +182,16 @@ export default function LevelQuiz() {
       }
     ];
 
-    const [currentAspQuestion, setCurrentAspQuestion] = useState(0);
     const [aspirationalAnswers, setAspirationalAnswers] = useState<Record<number, string>>({});
     const [isSavingAsp, setIsSavingAsp] = useState(false);
 
-    const currentQ = aspirationalQuestions[currentAspQuestion];
-    const Icon = currentQ.icon;
-    const aspProgress = ((currentAspQuestion + 1) / aspirationalQuestions.length) * 100;
-    const isAspComplete = Object.keys(aspirationalAnswers).length === aspirationalQuestions.length;
-
-    const handleAspAnswer = (value: string) => {
-      setAspirationalAnswers({ ...aspirationalAnswers, [currentQ.id]: value });
-      if (currentAspQuestion < aspirationalQuestions.length - 1) {
-        setTimeout(() => setCurrentAspQuestion(currentAspQuestion + 1), 300);
-      }
+    const handleAspAnswer = (questionId: number, value: string) => {
+      setAspirationalAnswers({ ...aspirationalAnswers, [questionId]: value });
     };
 
     const handleCompleteAsp = async () => {
       setIsSavingAsp(true);
       try {
-        // Aquí guardamos las aspiraciones y redirigimos al quiz de net worth
         toast.success("¡Aspiraciones guardadas! Ahora completa tu información financiera");
         navigate("/net-worth");
       } catch (error: any) {
@@ -212,103 +202,97 @@ export default function LevelQuiz() {
       }
     };
 
+    const isAspComplete = Object.keys(aspirationalAnswers).length === aspirationalQuestions.length;
+
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex flex-col pb-20">
-        {/* Header con flecha de regreso y progreso */}
-        <div className="p-4">
-          <div className="flex items-center gap-4">
+      <div className="min-h-screen animated-wave-bg flex flex-col">
+        {/* Header fijado */}
+        <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm shadow-lg border-b border-blue-100">
+          {/* Botón de regreso */}
+          <div className="p-2">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate("/dashboard")}
-              className="bg-slate-800 rounded-[20px] hover:bg-slate-700 text-white h-10 w-10 hover:scale-105 transition-all border border-slate-700"
+              className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <div className="flex-1 h-3 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
-              <div 
-                className="h-full bg-gradient-to-r from-primary to-primary/80 transition-all duration-300"
-                style={{ width: `${aspProgress}%` }}
-              />
-            </div>
           </div>
-        </div>
 
-        {/* Contenido principal */}
-        <div className="flex-1 flex flex-col items-center justify-center px-6 pb-8 max-w-2xl mx-auto w-full">
-          {/* Moni con speech bubble */}
-          <div className="mb-8">
-            <div className="flex items-start gap-4">
-              {/* Moni */}
-              <div className="w-24 h-24 flex-shrink-0">
+          {/* Moni y mensaje */}
+          <div className="px-4 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-16 h-16 flex-shrink-0">
                 <img 
                   src={moniAspirational} 
                   alt="Moni" 
                   className="w-full h-full object-contain"
                 />
               </div>
-              
-              {/* Speech bubble */}
-              <div className="relative flex-1">
-                <Card className="bg-slate-800/80 backdrop-blur-sm border-slate-700 px-6 py-4 rounded-3xl">
-                  <p className="text-white text-lg font-semibold">
-                    Te ayudaré a visualizar el futuro que quieres!!
-                  </p>
-                </Card>
-                {/* Triangle */}
-                <div className="absolute left-0 top-6 -translate-x-2 w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[12px] border-r-slate-800/80"></div>
-              </div>
+              <Card className="flex-1 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 px-4 py-3 rounded-[20px]">
+                <p className="text-sm font-bold text-foreground">
+                  Te ayudaré a visualizar el futuro que quieres!!
+                </p>
+              </Card>
             </div>
           </div>
-
-          {/* Pregunta actual */}
-          <div className="w-full space-y-4">
-            {/* Icono y pregunta */}
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                <Icon className="h-6 w-6 text-primary" />
-              </div>
-              <h2 className="text-xl font-bold text-white">
-                {currentQ.question}
-              </h2>
-            </div>
-
-            {/* Opciones */}
-            <div className="space-y-3">
-              {currentQ.options.map((option) => (
-                <Button
-                  key={option.value}
-                  variant="outline"
-                  onClick={() => handleAspAnswer(option.value)}
-                  className={cn(
-                    "w-full justify-start text-left h-auto py-4 px-6 rounded-[20px] transition-all border-2",
-                    aspirationalAnswers[currentQ.id] === option.value
-                      ? "bg-primary/20 border-primary text-white"
-                      : "bg-slate-800/50 border-slate-700 text-slate-300 hover:bg-slate-700/50 hover:border-slate-600"
-                  )}
-                >
-                  <span className="flex-1 font-medium">{option.label}</span>
-                  {aspirationalAnswers[currentQ.id] === option.value && (
-                    <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
-                  )}
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          {/* Botones de navegación */}
-          {isAspComplete && (
-            <div className="w-full mt-8">
-              <Button
-                onClick={handleCompleteAsp}
-                disabled={isSavingAsp}
-                className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg rounded-[20px] shadow-xl hover:scale-[1.02] transition-all"
-              >
-                {isSavingAsp ? "Guardando..." : "Continuar →"}
-              </Button>
-            </div>
-          )}
         </div>
+
+        {/* Contenido scrolleable */}
+        <div className="flex-1 overflow-y-auto px-4 pt-4 pb-24">
+          <div className="max-w-2xl mx-auto space-y-6">
+            {/* Lista de preguntas */}
+            {aspirationalQuestions.map((q) => {
+              const Icon = q.icon;
+              return (
+                <Card key={q.id} className="p-5 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
+                  <div className="flex items-start gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="text-base font-bold text-foreground flex-1 pt-1">
+                      {q.question}
+                    </h3>
+                  </div>
+                  <div className="space-y-2">
+                    {q.options.map((option) => (
+                      <Button
+                        key={option.value}
+                        variant={aspirationalAnswers[q.id] === option.value ? "default" : "outline"}
+                        onClick={() => handleAspAnswer(q.id, option.value)}
+                        className={cn(
+                          "w-full justify-start text-left h-auto py-3 px-4 rounded-[15px] transition-all",
+                          aspirationalAnswers[q.id] === option.value
+                            ? "shadow-lg bg-primary text-primary-foreground"
+                            : "hover:bg-primary/5 bg-white border-blue-100"
+                        )}
+                      >
+                        <span className="flex-1 text-sm font-medium">{option.label}</span>
+                        {aspirationalAnswers[q.id] === option.value && (
+                          <CheckCircle2 className="h-4 w-4 ml-2 flex-shrink-0" />
+                        )}
+                      </Button>
+                    ))}
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Botón continuar fijo abajo */}
+        {isAspComplete && (
+          <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-sm border-t border-blue-100 z-20">
+            <Button
+              onClick={handleCompleteAsp}
+              disabled={isSavingAsp}
+              className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg rounded-[20px] shadow-xl hover:scale-[1.02] transition-all"
+            >
+              {isSavingAsp ? "Guardando..." : "Continuar al Quiz de Net Worth"}
+            </Button>
+          </div>
+        )}
       </div>
     );
   }
@@ -316,14 +300,14 @@ export default function LevelQuiz() {
   // Si tiene datos de net worth y está en la intro, mostrar página de bienvenida
   if (showIntro) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex flex-col pb-20">
+      <div className="min-h-screen animated-wave-bg flex flex-col pb-20">
         {/* Header con flecha de regreso */}
-        <div className="p-4">
+        <div className="p-2">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/dashboard")}
-            className="bg-slate-800 rounded-[20px] hover:bg-slate-700 text-white h-10 w-10 hover:scale-105 transition-all border border-slate-700"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -331,28 +315,24 @@ export default function LevelQuiz() {
 
         {/* Contenido centrado */}
         <div className="flex-1 flex flex-col items-center justify-center px-6 pb-8">
-          {/* Moni con speech bubble */}
-          <div className="mb-12">
-            <div className="flex items-start gap-4">
-              {/* Moni */}
-              <div className="w-32 h-32 flex-shrink-0 animate-scale-in">
-                <img 
-                  src={moniAspirational} 
-                  alt="Moni" 
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              
-              {/* Speech bubble */}
-              <div className="relative flex-1 animate-fade-in">
-                <Card className="bg-slate-800/80 backdrop-blur-sm border-slate-700 px-6 py-5 rounded-3xl">
-                  <p className="text-white text-xl font-bold leading-relaxed">
-                    Te ayudaré a visualizar el futuro que quieres!!
-                  </p>
-                </Card>
-                {/* Triangle */}
-                <div className="absolute left-0 top-8 -translate-x-2 w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[12px] border-r-slate-800/80"></div>
-              </div>
+          {/* Speech bubble */}
+          <div className="relative mb-8">
+            <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 px-8 py-6 rounded-3xl">
+              <p className="text-center text-xl font-bold text-foreground">
+                ¡Hola! Soy Moni,<br />tu coach financiero
+              </p>
+            </Card>
+            <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[15px] border-t-white/95"></div>
+          </div>
+
+          {/* Moni owl character */}
+          <div className="relative">
+            <div className="w-64 h-64 rounded-full flex items-center justify-center">
+              <img 
+                src={moniOwl} 
+                alt="Moni" 
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
         </div>
@@ -361,7 +341,7 @@ export default function LevelQuiz() {
         <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 z-20">
           <Button
             onClick={() => setShowIntro(false)}
-            className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg rounded-[20px] shadow-xl hover:scale-[1.02] transition-all"
+            className="w-full h-14 bg-white/95 hover:bg-white text-foreground font-bold text-lg rounded-[20px] shadow-xl hover:scale-[1.02] transition-all border border-blue-100"
           >
             Continuar
           </Button>
