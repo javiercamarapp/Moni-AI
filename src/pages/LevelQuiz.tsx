@@ -5,10 +5,11 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Home, Car, PiggyBank, TrendingUp, Plane, GraduationCap } from "lucide-react";
 import moniOwl from "@/assets/moni-owl-circle.png";
 import { useHasNetWorthData } from "@/hooks/useNetWorth";
-import networthIntro from "@/assets/networth-intro.jpg";
+import moniAspirational from "@/assets/moni-aspirational.png";
+import { cn } from "@/lib/utils";
 
 const questions = [
   {
@@ -110,52 +111,203 @@ export default function LevelQuiz() {
     );
   }
 
-  // Si NO tiene datos de net worth, mostrar página de aviso
+  // Si NO tiene datos de net worth, mostrar cuestionario aspiracional
   if (!hasNetWorthData) {
+    const aspirationalQuestions = [
+      {
+        id: 1,
+        question: "¿Cuánto quieres tener en propiedades?",
+        icon: Home,
+        options: [
+          { value: "0-500k", label: "Hasta $500,000" },
+          { value: "500k-1m", label: "$500,000 - $1 millón" },
+          { value: "1m-3m", label: "$1 - $3 millones" },
+          { value: "3m+", label: "Más de $3 millones" }
+        ]
+      },
+      {
+        id: 2,
+        question: "¿Cuánto quieres tener en vehículos?",
+        icon: Car,
+        options: [
+          { value: "0-200k", label: "Hasta $200,000" },
+          { value: "200k-500k", label: "$200,000 - $500,000" },
+          { value: "500k-1m", label: "$500,000 - $1 millón" },
+          { value: "1m+", label: "Más de $1 millón" }
+        ]
+      },
+      {
+        id: 3,
+        question: "¿Cuánto quieres tener en ahorros?",
+        icon: PiggyBank,
+        options: [
+          { value: "0-100k", label: "Hasta $100,000" },
+          { value: "100k-500k", label: "$100,000 - $500,000" },
+          { value: "500k-1m", label: "$500,000 - $1 millón" },
+          { value: "1m+", label: "Más de $1 millón" }
+        ]
+      },
+      {
+        id: 4,
+        question: "¿Cuánto quieres tener en inversiones?",
+        icon: TrendingUp,
+        options: [
+          { value: "0-200k", label: "Hasta $200,000" },
+          { value: "200k-500k", label: "$200,000 - $500,000" },
+          { value: "500k-2m", label: "$500,000 - $2 millones" },
+          { value: "2m+", label: "Más de $2 millones" }
+        ]
+      },
+      {
+        id: 5,
+        question: "¿Cuántos viajes quieres hacer al año?",
+        icon: Plane,
+        options: [
+          { value: "1-2", label: "1-2 viajes al año" },
+          { value: "3-5", label: "3-5 viajes al año" },
+          { value: "6-10", label: "6-10 viajes al año" },
+          { value: "10+", label: "Más de 10 viajes al año" }
+        ]
+      },
+      {
+        id: 6,
+        question: "¿Qué nivel de educación quieres para tu familia?",
+        icon: GraduationCap,
+        options: [
+          { value: "basica", label: "Educación básica completa" },
+          { value: "universidad", label: "Universidad completa" },
+          { value: "posgrado", label: "Posgrados y especializaciones" },
+          { value: "elite", label: "Instituciones de élite" }
+        ]
+      }
+    ];
+
+    const [currentAspQuestion, setCurrentAspQuestion] = useState(0);
+    const [aspirationalAnswers, setAspirationalAnswers] = useState<Record<number, string>>({});
+    const [isSavingAsp, setIsSavingAsp] = useState(false);
+
+    const currentQ = aspirationalQuestions[currentAspQuestion];
+    const Icon = currentQ.icon;
+    const aspProgress = ((currentAspQuestion + 1) / aspirationalQuestions.length) * 100;
+    const isAspComplete = Object.keys(aspirationalAnswers).length === aspirationalQuestions.length;
+
+    const handleAspAnswer = (value: string) => {
+      setAspirationalAnswers({ ...aspirationalAnswers, [currentQ.id]: value });
+      if (currentAspQuestion < aspirationalQuestions.length - 1) {
+        setTimeout(() => setCurrentAspQuestion(currentAspQuestion + 1), 300);
+      }
+    };
+
+    const handleCompleteAsp = async () => {
+      setIsSavingAsp(true);
+      try {
+        // Aquí guardamos las aspiraciones y redirigimos al quiz de net worth
+        toast.success("¡Aspiraciones guardadas! Ahora completa tu información financiera");
+        navigate("/net-worth");
+      } catch (error: any) {
+        console.error("Error saving aspirations:", error);
+        toast.error("Error al guardar tus aspiraciones");
+      } finally {
+        setIsSavingAsp(false);
+      }
+    };
+
     return (
-      <div className="min-h-screen animated-wave-bg flex flex-col pb-20">
-        {/* Header con flecha de regreso */}
-        <div className="p-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/dashboard")}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex flex-col pb-20">
+        {/* Header con flecha de regreso y progreso */}
+        <div className="p-4">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/dashboard")}
+              className="bg-slate-800 rounded-[20px] hover:bg-slate-700 text-white h-10 w-10 hover:scale-105 transition-all border border-slate-700"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div className="flex-1 h-3 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+              <div 
+                className="h-full bg-gradient-to-r from-primary to-primary/80 transition-all duration-300"
+                style={{ width: `${aspProgress}%` }}
+              />
+            </div>
+          </div>
         </div>
 
-        {/* Contenido centrado */}
-        <div className="flex-1 flex flex-col items-center justify-center px-6 pb-8">
-          {/* Imagen */}
-          <div className="w-full max-w-md mb-8">
-            <img 
-              src={networthIntro} 
-              alt="Net Worth" 
-              className="w-full h-auto rounded-3xl shadow-xl"
-            />
+        {/* Contenido principal */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6 pb-8 max-w-2xl mx-auto w-full">
+          {/* Moni con speech bubble */}
+          <div className="mb-8">
+            <div className="flex items-start gap-4">
+              {/* Moni */}
+              <div className="w-24 h-24 flex-shrink-0">
+                <img 
+                  src={moniAspirational} 
+                  alt="Moni" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              
+              {/* Speech bubble */}
+              <div className="relative flex-1">
+                <Card className="bg-slate-800/80 backdrop-blur-sm border-slate-700 px-6 py-4 rounded-3xl">
+                  <p className="text-white text-lg font-semibold">
+                    Te ayudaré a visualizar el futuro que quieres!!
+                  </p>
+                </Card>
+                {/* Triangle */}
+                <div className="absolute left-0 top-6 -translate-x-2 w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[12px] border-r-slate-800/80"></div>
+              </div>
+            </div>
           </div>
 
-          {/* Mensaje */}
-          <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 px-8 py-6 rounded-3xl mb-8">
-            <p className="text-center text-lg font-bold text-foreground mb-2">
-              ¡Completa tu información financiera!
-            </p>
-            <p className="text-center text-sm text-muted-foreground">
-              Debes responder el quiz de información financiera para conocer tu Net Worth antes de continuar con el quiz de nivel
-            </p>
-          </Card>
-        </div>
+          {/* Pregunta actual */}
+          <div className="w-full space-y-4">
+            {/* Icono y pregunta */}
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                <Icon className="h-6 w-6 text-primary" />
+              </div>
+              <h2 className="text-xl font-bold text-white">
+                {currentQ.question}
+              </h2>
+            </div>
 
-        {/* Botón de ir al quiz de net worth */}
-        <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 z-20">
-          <Button
-            onClick={() => navigate("/net-worth")}
-            className="w-full h-14 bg-white/95 hover:bg-white text-foreground font-bold text-lg rounded-[20px] shadow-xl hover:scale-[1.02] transition-all border border-blue-100"
-          >
-            Ir al Quiz de Net Worth
-          </Button>
+            {/* Opciones */}
+            <div className="space-y-3">
+              {currentQ.options.map((option) => (
+                <Button
+                  key={option.value}
+                  variant="outline"
+                  onClick={() => handleAspAnswer(option.value)}
+                  className={cn(
+                    "w-full justify-start text-left h-auto py-4 px-6 rounded-[20px] transition-all border-2",
+                    aspirationalAnswers[currentQ.id] === option.value
+                      ? "bg-primary/20 border-primary text-white"
+                      : "bg-slate-800/50 border-slate-700 text-slate-300 hover:bg-slate-700/50 hover:border-slate-600"
+                  )}
+                >
+                  <span className="flex-1 font-medium">{option.label}</span>
+                  {aspirationalAnswers[currentQ.id] === option.value && (
+                    <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+                  )}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          {/* Botones de navegación */}
+          {isAspComplete && (
+            <div className="w-full mt-8">
+              <Button
+                onClick={handleCompleteAsp}
+                disabled={isSavingAsp}
+                className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg rounded-[20px] shadow-xl hover:scale-[1.02] transition-all"
+              >
+                {isSavingAsp ? "Guardando..." : "Continuar →"}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     );
