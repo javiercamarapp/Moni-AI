@@ -5,7 +5,8 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Bell } from "lucide-react";
+import heroAuth from '@/assets/moni-ai-logo.png';
 
 const questions = [
   {
@@ -97,51 +98,79 @@ export default function LevelQuiz() {
   const isQuizComplete = Object.keys(answers).length === questions.length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4">
-      <div className="max-w-2xl mx-auto pt-6">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
+    <div className="min-h-screen animated-wave-bg pb-20">
+      {/* Header superior con logo y botón de regreso */}
+      <div className="p-2 flex justify-between items-start">
+        {/* Logo banner - esquina superior izquierda */}
+        <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden w-16 h-10">
+          <img src={heroAuth} alt="Moni" className="w-full h-full object-cover" />
+        </div>
+        
+        {/* Botón de regreso y notificaciones */}
+        <div className="flex gap-2 items-center">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/dashboard")}
-            className="rounded-full"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <div>
-            <h1 className="text-2xl font-bold">Quiz de Nivel</h1>
-            <p className="text-sm text-muted-foreground">
-              Responde estas preguntas para personalizar tu experiencia
-            </p>
-          </div>
+          
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
+          >
+            <Bell className="h-5 w-5" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Contenido principal */}
+      <div className="max-w-2xl mx-auto px-4 pt-4">
+        {/* Título y descripción */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Quiz de Nivel</h1>
+          <p className="text-muted-foreground">
+            Responde estas preguntas para personalizar tu experiencia
+          </p>
         </div>
 
         {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium">Progreso</span>
-            <span className="text-sm text-muted-foreground">
+        <Card className="p-6 mb-6 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-sm font-semibold text-foreground">Progreso del Quiz</span>
+            <span className="text-sm font-bold text-primary">
               {currentQuestion + 1} de {questions.length}
             </span>
           </div>
-          <Progress value={progress} className="h-2" />
-        </div>
+          <Progress value={progress} className="h-3" />
+        </Card>
 
         {/* Question Card */}
-        <Card className="p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-6">
-            {questions[currentQuestion].question}
-          </h2>
+        <Card className="p-8 mb-6 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100">
+          <div className="mb-6">
+            <span className="text-xs font-semibold text-primary uppercase tracking-wide">
+              Pregunta {currentQuestion + 1}
+            </span>
+            <h2 className="text-2xl font-bold text-foreground mt-2">
+              {questions[currentQuestion].question}
+            </h2>
+          </div>
           <div className="space-y-3">
             {questions[currentQuestion].options.map((option, index) => (
               <Button
                 key={index}
                 variant={answers[questions[currentQuestion].id] === option ? "default" : "outline"}
-                className="w-full justify-start text-left h-auto py-4 px-6"
+                className={`w-full justify-start text-left h-auto py-4 px-6 transition-all hover:scale-[1.02] ${
+                  answers[questions[currentQuestion].id] === option 
+                    ? "shadow-lg" 
+                    : "hover:bg-primary/5"
+                }`}
                 onClick={() => handleAnswer(option)}
               >
-                <span className="flex-1">{option}</span>
+                <span className="flex-1 font-medium">{option}</span>
                 {answers[questions[currentQuestion].id] === option && (
                   <CheckCircle2 className="h-5 w-5 ml-2" />
                 )}
@@ -151,41 +180,51 @@ export default function LevelQuiz() {
         </Card>
 
         {/* Navigation Buttons */}
-        <div className="flex gap-3">
+        <div className="flex gap-3 mb-6">
           {currentQuestion > 0 && (
             <Button
               variant="outline"
               onClick={() => setCurrentQuestion(currentQuestion - 1)}
-              className="flex-1"
+              className="flex-1 h-12 font-semibold hover:scale-105 transition-all shadow-md"
             >
-              Anterior
+              ← Anterior
             </Button>
           )}
           {isQuizComplete && (
             <Button
               onClick={handleComplete}
               disabled={isCompleting}
-              className="flex-1"
+              className="flex-1 h-12 font-semibold hover:scale-105 transition-all shadow-lg"
             >
-              {isCompleting ? "Guardando..." : "Completar Quiz"}
+              {isCompleting ? "Guardando..." : "Completar Quiz ✓"}
             </Button>
           )}
         </div>
 
         {/* Answers Summary */}
-        <div className="mt-8 p-4 bg-card rounded-lg border">
-          <h3 className="text-sm font-medium mb-3">Tus respuestas:</h3>
-          <div className="space-y-2">
+        <Card className="p-6 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100">
+          <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+            📋 Resumen de Respuestas
+          </h3>
+          <div className="space-y-3">
             {questions.map((q, idx) => (
-              <div key={q.id} className="text-sm">
-                <span className="text-muted-foreground">Pregunta {idx + 1}: </span>
-                <span className={answers[q.id] ? "text-foreground" : "text-muted-foreground"}>
-                  {answers[q.id] || "Sin responder"}
+              <div key={q.id} className="flex items-start gap-3 p-3 rounded-lg bg-secondary/20">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
+                  {idx + 1}
                 </span>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-muted-foreground mb-1">{q.question}</p>
+                  <p className={`text-sm font-semibold ${answers[q.id] ? "text-foreground" : "text-muted-foreground/50"}`}>
+                    {answers[q.id] || "Sin responder"}
+                  </p>
+                </div>
+                {answers[q.id] && (
+                  <CheckCircle2 className="flex-shrink-0 h-5 w-5 text-primary" />
+                )}
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );
