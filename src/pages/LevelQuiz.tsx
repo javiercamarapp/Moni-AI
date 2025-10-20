@@ -258,7 +258,7 @@ export default function LevelQuiz() {
           {/* Recuadro explicativo */}
           <Card className="p-6 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
             <p className="text-base font-bold text-foreground leading-relaxed">
-              Este cuestionario busca recabar la información necesaria para saber tus aspiraciones financieras en la vida. ¡Recuerda que yo te ayudaré todos los días a lograr estos objetivos!
+              No ahorres lo que te queda después de gastar; gasta lo que te queda después de ahorrar. – Warren Buffett
             </p>
           </Card>
 
