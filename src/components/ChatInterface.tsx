@@ -52,6 +52,8 @@ const ChatInterface = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isVoiceChatMode, setIsVoiceChatMode] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const [isVoiceChatOpen, setIsVoiceChatOpen] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -453,8 +455,24 @@ const ChatInterface = () => {
           
           if (data?.text) {
             console.log('✅ Texto transcrito:', data.text);
-            setMessage(data.text);
-            setTimeout(() => handleSendMessage(), 100);
+            
+            if (isVoiceChatMode) {
+              // En modo de chat por voz, enviar directamente
+              const userMessage = {
+                id: Date.now(),
+                type: 'user',
+                content: data.text
+              };
+              setMessages(prev => [...prev, userMessage]);
+              
+              // Enviar a AI automáticamente
+              setIsTyping(true);
+              sendToAI([...messages, userMessage]);
+            } else {
+              // Modo regular - llenar el input
+              setMessage(data.text);
+              setTimeout(() => handleSendMessage(), 100);
+            }
           } else if (data?.error) {
             console.error('❌ Error desde el servidor:', data.error);
             toast({
@@ -663,15 +681,202 @@ const ChatInterface = () => {
     }
   };
 
-  const toggleVoiceMode = () => {
-    setIsVoiceActive(!isVoiceActive);
-    if (isVoiceActive) {
-      stopVoiceRecording();
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
+  const toggleVoiceMode = async () => {
+    if (isVoiceChatMode) {
+      // Detener modo de chat por voz
+      stopContinuousListening();
+      setIsVoiceChatMode(false);
+      setIsVoiceActive(false);
+      setIsListening(false);
+    } else {
+      // Iniciar modo de chat por voz
+      setIsVoiceChatMode(true);
+      setIsVoiceActive(true);
+      await startContinuousListening();
+    }
+  };
+
+  const startContinuousListening = async () => {
+    try {
+      console.log('🎤 Iniciando escucha continua...');
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      });
+      
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = async () => {
+        console.log('⏸️ Grabación detenida, procesando...');
+        if (audioChunksRef.current.length > 0) {
+          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+          audioChunksRef.current = [];
+          
+          // Solo procesar si hay suficiente audio
+          if (audioBlob.size > 1000) {
+            await processVoiceInput(audioBlob);
+          }
+        }
+        
+        // Reiniciar grabación si aún está en modo de chat por voz
+        if (isVoiceChatMode && mediaRecorderRef.current) {
+          setTimeout(() => {
+            if (isVoiceChatMode) {
+              startContinuousListening();
+            }
+          }, 500);
+        }
+      };
+
+      mediaRecorder.start();
+      setIsListening(true);
+      console.log('✅ Grabación iniciada');
+
+      // Auto-detener después de 10 segundos para procesar
+      setTimeout(() => {
+        if (mediaRecorder.state === 'recording') {
+          console.log('⏰ Tiempo límite alcanzado, procesando segmento...');
+          mediaRecorder.stop();
+        }
+      }, 10000);
+
+    } catch (error) {
+      console.error('Error al iniciar escucha continua:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo acceder al micrófono",
+        variant: "destructive"
+      });
+      setIsVoiceChatMode(false);
+      setIsVoiceActive(false);
+    }
+  };
+
+  const stopContinuousListening = () => {
+    console.log('🛑 Deteniendo escucha continua...');
+    if (mediaRecorderRef.current) {
+      if (mediaRecorderRef.current.state === 'recording') {
+        mediaRecorderRef.current.stop();
       }
-      setIsSpeaking(false);
+      if (mediaRecorderRef.current.stream) {
+        mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      }
+    }
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    setIsListening(false);
+    setIsSpeaking(false);
+  };
+
+  const sendToAI = async (conversationHistory: Array<any>) => {
+    try {
+      const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`;
+      
+      const formattedMessages = conversationHistory.map(msg => ({
+        role: msg.type === 'user' ? 'user' : 'assistant',
+        content: [{
+          type: 'text',
+          text: msg.content
+        }]
+      }));
+
+      const resp = await fetch(CHAT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`
+        },
+        body: JSON.stringify({
+          messages: formattedMessages,
+          userId: user?.id
+        })
+      });
+
+      if (!resp.ok || !resp.body) {
+        throw new Error('Failed to get response');
+      }
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let textBuffer = '';
+      let streamDone = false;
+      let assistantMessage = '';
+      let assistantId = Date.now() + 1;
+      
+      while (!streamDone) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        textBuffer += decoder.decode(value, { stream: true });
+        let newlineIndex: number;
+        
+        while ((newlineIndex = textBuffer.indexOf('\n')) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
+          if (line.endsWith('\r')) line = line.slice(0, -1);
+          if (line.startsWith(':') || line.trim() === '') continue;
+          if (!line.startsWith('data: ')) continue;
+          
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === '[DONE]') {
+            streamDone = true;
+            break;
+          }
+          
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            
+            if (content) {
+              assistantMessage += content;
+              setMessages(prev => {
+                const last = prev[prev.length - 1];
+                if (last?.type === 'ai' && last.id === assistantId) {
+                  return prev.map((m, i) => i === prev.length - 1 ? {
+                    ...m,
+                    content: assistantMessage
+                  } : m);
+                }
+                return [...prev, {
+                  id: assistantId,
+                  type: 'ai',
+                  content: assistantMessage
+                }];
+              });
+            }
+          } catch {
+            // Ignorar errores de parsing
+          }
+        }
+      }
+      
+      setIsTyping(false);
+      
+      // En modo de chat por voz, hablar la respuesta
+      if (isVoiceChatMode && assistantMessage) {
+        await speakText(assistantMessage);
+      }
+    } catch (error) {
+      console.error('Error al enviar a AI:', error);
+      setIsTyping(false);
+      toast({
+        title: "Error",
+        description: "No se pudo obtener respuesta",
+        variant: "destructive"
+      });
     }
   };
   const speakText = async (text: string) => {
@@ -1247,8 +1452,28 @@ const ChatInterface = () => {
             <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
 
-          <Button variant="ghost" size="icon" onClick={toggleVoiceMode} disabled={isSpeaking} className={`flex-shrink-0 h-8 w-8 p-0 rounded-full transition-all hover:scale-110 ${isVoiceActive ? 'bg-gradient-primary text-foreground shadow-glow hover:shadow-elegant' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'} ${isSpeaking ? 'animate-pulse' : ''}`}>
-            <Circle className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isVoiceActive ? 'fill-current' : ''}`} />
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleVoiceMode} 
+            className={`flex-shrink-0 h-10 w-10 p-0 rounded-full transition-all hover:scale-110 ${
+              isVoiceChatMode 
+                ? 'bg-gradient-primary text-foreground shadow-glow hover:shadow-elegant' 
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+            } ${isListening ? 'animate-pulse' : ''}`}
+          >
+            {isVoiceChatMode ? (
+              <div className="relative">
+                <Circle className="w-5 h-5 fill-current" />
+                {isListening && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-2 h-2 bg-background rounded-full animate-pulse" />
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Circle className="w-4 h-4" />
+            )}
           </Button>
         </div>
         )}
