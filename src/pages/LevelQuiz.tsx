@@ -96,13 +96,13 @@ export default function LevelQuiz() {
     },
     {
       id: 3,
-      question: "¿Cuánto quieres tener en ahorros? (en pesos)",
+      question: "¿Cuánto quieres tener en ahorros?",
       icon: PiggyBank,
       placeholder: "Ejemplo: 300000"
     },
     {
       id: 4,
-      question: "¿Cuánto quieres tener en inversiones? (en pesos)",
+      question: "¿Cuánto quieres tener en inversiones?",
       icon: TrendingUp,
       placeholder: "Ejemplo: 800000"
     },
@@ -114,7 +114,7 @@ export default function LevelQuiz() {
     },
     {
       id: 6,
-      question: "¿Cuánto quieres invertir en educación familiar anualmente? (en pesos)",
+      question: "¿Cuánto quieres invertir en educación familiar anualmente?",
       icon: GraduationCap,
       placeholder: "Ejemplo: 100000"
     }
