@@ -322,13 +322,17 @@ export default function LevelQuiz() {
 
       {/* Botón continuar fijo abajo */}
       {isAspComplete && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-sm border-t border-blue-100 z-20">
+        <div className="fixed bottom-0 left-0 right-0 p-4 animated-wave-bg z-20">
           <Button
             onClick={handleCompleteAsp}
             disabled={isSavingAsp}
-            className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg rounded-[20px] shadow-xl hover:scale-[1.02] transition-all"
+            className="w-full h-14 text-white font-bold text-lg rounded-[20px] shadow-2xl hover:scale-[1.05] active:scale-[0.98] transition-all duration-300 animate-pulse hover:animate-none"
+            style={{
+              background: 'linear-gradient(135deg, #8B7355 0%, #A0826D 50%, #8B7355 100%)',
+              boxShadow: '0 8px 25px rgba(139, 115, 85, 0.4), 0 0 20px rgba(160, 130, 109, 0.3)',
+            }}
           >
-            {isSavingAsp ? "Guardando..." : hasNetWorthData ? "Completar Quiz ✓" : "Continuar al Quiz de Net Worth"}
+            {isSavingAsp ? "Guardando..." : "Enviar cuestionario"}
           </Button>
         </div>
       )}
