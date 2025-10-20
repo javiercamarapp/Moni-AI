@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import moniOwl from "@/assets/moni-owl.png";
 
 const questions = [
   {
@@ -52,6 +53,7 @@ const questions = [
 
 export default function LevelQuiz() {
   const navigate = useNavigate();
+  const [showIntro, setShowIntro] = useState(true);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [isCompleting, setIsCompleting] = useState(false);
@@ -95,6 +97,56 @@ export default function LevelQuiz() {
   };
 
   const isQuizComplete = Object.keys(answers).length === questions.length;
+
+  if (showIntro) {
+    return (
+      <div className="min-h-screen bg-[#1f2937] flex flex-col">
+        {/* Header con flecha de regreso */}
+        <div className="p-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/dashboard")}
+            className="text-gray-400 hover:text-white hover:bg-transparent"
+          >
+            <ArrowLeft className="h-6 w-6" />
+          </Button>
+        </div>
+
+        {/* Contenido centrado */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6 pb-32">
+          {/* Speech bubble */}
+          <div className="relative mb-8">
+            <div className="bg-[#374151] text-white px-8 py-4 rounded-2xl text-center text-xl font-medium">
+              ¡Hola! Soy Moni,<br />tu coach financiero
+            </div>
+            <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[12px] border-t-[#374151]"></div>
+          </div>
+
+          {/* Moni owl character */}
+          <div className="relative">
+            <div className="w-48 h-48 rounded-full bg-[#374151] flex items-center justify-center">
+              <img 
+                src={moniOwl} 
+                alt="Moni" 
+                className="w-40 h-40 object-contain"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Continue button */}
+        <div className="fixed bottom-0 left-0 right-0 p-6 pb-8">
+          <Button
+            onClick={() => setShowIntro(false)}
+            className="w-full h-14 bg-[#58cc02] hover:bg-[#4caf00] text-[#1f2937] font-bold text-lg rounded-2xl uppercase tracking-wide shadow-lg"
+          >
+            Continuar
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
