@@ -57,6 +57,8 @@ const questions = [
 export default function LevelQuiz() {
   const navigate = useNavigate();
   const [showIntro, setShowIntro] = useState(true);
+  const [aspirationalAnswers, setAspirationalAnswers] = useState<Record<number, string>>({});
+  const [isSavingAsp, setIsSavingAsp] = useState(false);
   const { data: hasNetWorthData, isLoading: checkingNetWorth } = useHasNetWorthData();
 
   // Verificar estado de net worth antes de mostrar el quiz
@@ -137,9 +139,6 @@ export default function LevelQuiz() {
       ]
     }
   ];
-
-  const [aspirationalAnswers, setAspirationalAnswers] = useState<Record<number, string>>({});
-  const [isSavingAsp, setIsSavingAsp] = useState(false);
 
   const handleAspAnswer = (questionId: number, value: string) => {
     setAspirationalAnswers({ ...aspirationalAnswers, [questionId]: value });
