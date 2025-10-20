@@ -57,50 +57,7 @@ const questions = [
 export default function LevelQuiz() {
   const navigate = useNavigate();
   const [showIntro, setShowIntro] = useState(true);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, string>>({});
-  const [isCompleting, setIsCompleting] = useState(false);
   const { data: hasNetWorthData, isLoading: checkingNetWorth } = useHasNetWorthData();
-
-  const progress = ((currentQuestion + 1) / questions.length) * 100;
-
-  const handleAnswer = (answer: string) => {
-    setAnswers({ ...answers, [questions[currentQuestion].id]: answer });
-    
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    }
-  };
-
-  const handleComplete = async () => {
-    setIsCompleting(true);
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        toast.error("Error de autenticación");
-        return;
-      }
-
-      // Actualizar el perfil marcando el quiz como completado
-      const { error } = await supabase
-        .from("profiles")
-        .update({ level_quiz_completed: true })
-        .eq("id", user.id);
-
-      if (error) throw error;
-
-      toast.success("¡Quiz completado! Ahora puedes ver tu progreso de nivel");
-      navigate("/level-details");
-    } catch (error: any) {
-      console.error("Error completing quiz:", error);
-      toast.error("Error al guardar tus respuestas");
-    } finally {
-      setIsCompleting(false);
-    }
-  };
-
-  const isQuizComplete = Object.keys(answers).length === questions.length;
 
   // Verificar estado de net worth antes de mostrar el quiz
   if (checkingNetWorth) {
@@ -111,164 +68,121 @@ export default function LevelQuiz() {
     );
   }
 
-  // Si NO tiene datos de net worth, mostrar cuestionario aspiracional
-  if (!hasNetWorthData) {
-    const aspirationalQuestions = [
-      {
-        id: 1,
-        question: "¿Cuánto quieres tener en propiedades?",
-        icon: Home,
-        options: [
-          { value: "0-500k", label: "Hasta $500,000" },
-          { value: "500k-1m", label: "$500,000 - $1 millón" },
-          { value: "1m-3m", label: "$1 - $3 millones" },
-          { value: "3m+", label: "Más de $3 millones" }
-        ]
-      },
-      {
-        id: 2,
-        question: "¿Cuánto quieres tener en vehículos?",
-        icon: Car,
-        options: [
-          { value: "0-200k", label: "Hasta $200,000" },
-          { value: "200k-500k", label: "$200,000 - $500,000" },
-          { value: "500k-1m", label: "$500,000 - $1 millón" },
-          { value: "1m+", label: "Más de $1 millón" }
-        ]
-      },
-      {
-        id: 3,
-        question: "¿Cuánto quieres tener en ahorros?",
-        icon: PiggyBank,
-        options: [
-          { value: "0-100k", label: "Hasta $100,000" },
-          { value: "100k-500k", label: "$100,000 - $500,000" },
-          { value: "500k-1m", label: "$500,000 - $1 millón" },
-          { value: "1m+", label: "Más de $1 millón" }
-        ]
-      },
-      {
-        id: 4,
-        question: "¿Cuánto quieres tener en inversiones?",
-        icon: TrendingUp,
-        options: [
-          { value: "0-200k", label: "Hasta $200,000" },
-          { value: "200k-500k", label: "$200,000 - $500,000" },
-          { value: "500k-2m", label: "$500,000 - $2 millones" },
-          { value: "2m+", label: "Más de $2 millones" }
-        ]
-      },
-      {
-        id: 5,
-        question: "¿Cuántos viajes quieres hacer al año?",
-        icon: Plane,
-        options: [
-          { value: "1-2", label: "1-2 viajes al año" },
-          { value: "3-5", label: "3-5 viajes al año" },
-          { value: "6-10", label: "6-10 viajes al año" },
-          { value: "10+", label: "Más de 10 viajes al año" }
-        ]
-      },
-      {
-        id: 6,
-        question: "¿Qué nivel de educación quieres para tu familia?",
-        icon: GraduationCap,
-        options: [
-          { value: "basica", label: "Educación básica completa" },
-          { value: "universidad", label: "Universidad completa" },
-          { value: "posgrado", label: "Posgrados y especializaciones" },
-          { value: "elite", label: "Instituciones de élite" }
-        ]
+  // Cuestionario aspiracional
+  const aspirationalQuestions = [
+    {
+      id: 1,
+      question: "¿Cuánto quieres tener en propiedades?",
+      icon: Home,
+      options: [
+        { value: "0-500k", label: "Hasta $500,000" },
+        { value: "500k-1m", label: "$500,000 - $1 millón" },
+        { value: "1m-3m", label: "$1 - $3 millones" },
+        { value: "3m+", label: "Más de $3 millones" }
+      ]
+    },
+    {
+      id: 2,
+      question: "¿Cuánto quieres tener en vehículos?",
+      icon: Car,
+      options: [
+        { value: "0-200k", label: "Hasta $200,000" },
+        { value: "200k-500k", label: "$200,000 - $500,000" },
+        { value: "500k-1m", label: "$500,000 - $1 millón" },
+        { value: "1m+", label: "Más de $1 millón" }
+      ]
+    },
+    {
+      id: 3,
+      question: "¿Cuánto quieres tener en ahorros?",
+      icon: PiggyBank,
+      options: [
+        { value: "0-100k", label: "Hasta $100,000" },
+        { value: "100k-500k", label: "$100,000 - $500,000" },
+        { value: "500k-1m", label: "$500,000 - $1 millón" },
+        { value: "1m+", label: "Más de $1 millón" }
+      ]
+    },
+    {
+      id: 4,
+      question: "¿Cuánto quieres tener en inversiones?",
+      icon: TrendingUp,
+      options: [
+        { value: "0-200k", label: "Hasta $200,000" },
+        { value: "200k-500k", label: "$200,000 - $500,000" },
+        { value: "500k-2m", label: "$500,000 - $2 millones" },
+        { value: "2m+", label: "Más de $2 millones" }
+      ]
+    },
+    {
+      id: 5,
+      question: "¿Cuántos viajes quieres hacer al año?",
+      icon: Plane,
+      options: [
+        { value: "1-2", label: "1-2 viajes al año" },
+        { value: "3-5", label: "3-5 viajes al año" },
+        { value: "6-10", label: "6-10 viajes al año" },
+        { value: "10+", label: "Más de 10 viajes al año" }
+      ]
+    },
+    {
+      id: 6,
+      question: "¿Qué nivel de educación quieres para tu familia?",
+      icon: GraduationCap,
+      options: [
+        { value: "basica", label: "Educación básica completa" },
+        { value: "universidad", label: "Universidad completa" },
+        { value: "posgrado", label: "Posgrados y especializaciones" },
+        { value: "elite", label: "Instituciones de élite" }
+      ]
+    }
+  ];
+
+  const [aspirationalAnswers, setAspirationalAnswers] = useState<Record<number, string>>({});
+  const [isSavingAsp, setIsSavingAsp] = useState(false);
+
+  const handleAspAnswer = (questionId: number, value: string) => {
+    setAspirationalAnswers({ ...aspirationalAnswers, [questionId]: value });
+  };
+
+  const handleCompleteAsp = async () => {
+    setIsSavingAsp(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast.error("Error de autenticación");
+        return;
       }
-    ];
 
-    const [aspirationalAnswers, setAspirationalAnswers] = useState<Record<number, string>>({});
-    const [isSavingAsp, setIsSavingAsp] = useState(false);
+      // Si ya tiene net worth, marcar quiz como completado y redirigir a level-details
+      if (hasNetWorthData) {
+        const { error } = await supabase
+          .from("profiles")
+          .update({ level_quiz_completed: true })
+          .eq("id", user.id);
 
-    const handleAspAnswer = (questionId: number, value: string) => {
-      setAspirationalAnswers({ ...aspirationalAnswers, [questionId]: value });
-    };
+        if (error) throw error;
 
-    const handleCompleteAsp = async () => {
-      setIsSavingAsp(true);
-      try {
+        toast.success("¡Aspiraciones guardadas! Ahora puedes ver tu progreso de nivel");
+        navigate("/level-details");
+      } else {
+        // Si no tiene net worth, redirigir al quiz de net worth
         toast.success("¡Aspiraciones guardadas! Ahora completa tu información financiera");
         navigate("/net-worth");
-      } catch (error: any) {
-        console.error("Error saving aspirations:", error);
-        toast.error("Error al guardar tus aspiraciones");
-      } finally {
-        setIsSavingAsp(false);
       }
-    };
+    } catch (error: any) {
+      console.error("Error saving aspirations:", error);
+      toast.error("Error al guardar tus aspiraciones");
+    } finally {
+      setIsSavingAsp(false);
+    }
+  };
 
-    const isAspComplete = Object.keys(aspirationalAnswers).length === aspirationalQuestions.length;
-    const aspirationalProgress = (Object.keys(aspirationalAnswers).length / aspirationalQuestions.length) * 100;
+  const isAspComplete = Object.keys(aspirationalAnswers).length === aspirationalQuestions.length;
+  const aspirationalProgress = (Object.keys(aspirationalAnswers).length / aspirationalQuestions.length) * 100;
 
-    return (
-      <div className="min-h-screen animated-wave-bg flex flex-col">
-        {/* Header fijado */}
-        <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm shadow-lg border-b border-blue-100">
-          {/* Botón de regreso y barra de progreso */}
-          <div className="p-4">
-            <div className="flex items-center gap-3 mb-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate("/dashboard")}
-                className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              
-              {/* Barra de progreso */}
-              <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
-                <div 
-                  className="h-full transition-all duration-500 ease-out"
-                  style={{ 
-                    width: `${aspirationalProgress}%`,
-                    background: 'linear-gradient(90deg, #8B7355 0%, #A0826D 50%, #8B7355 100%)',
-                    boxShadow: '0 0 10px rgba(139, 115, 85, 0.5)'
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Moni y mensaje */}
-            <div className="flex items-center gap-3">
-              <div className="w-16 h-16 flex-shrink-0">
-                <img 
-                  src={moniAspirational} 
-                  alt="Moni" 
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <Card className="flex-1 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 px-4 py-3 rounded-[20px]">
-                <p className="text-sm font-bold text-foreground">
-                  Te voy a ayudar a visualizar tus metas financieras!!
-                </p>
-              </Card>
-            </div>
-          </div>
-        </div>
-
-        {/* Botón continuar fijo abajo */}
-        {isAspComplete && (
-          <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-sm border-t border-blue-100 z-20">
-            <Button
-              onClick={handleCompleteAsp}
-              disabled={isSavingAsp}
-              className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg rounded-[20px] shadow-xl hover:scale-[1.02] transition-all"
-            >
-              {isSavingAsp ? "Guardando..." : "Continuar al Quiz de Net Worth"}
-            </Button>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  // Si tiene datos de net worth y está en la intro, mostrar página de bienvenida
+  // Si está en la intro, mostrar página de bienvenida
   if (showIntro) {
     return (
       <div className="min-h-screen animated-wave-bg flex flex-col pb-20">
@@ -321,8 +235,9 @@ export default function LevelQuiz() {
     );
   }
 
+  // Mostrar cuestionario aspiracional
   return (
-    <div className="min-h-screen animated-wave-bg flex flex-col pb-20">
+    <div className="min-h-screen animated-wave-bg flex flex-col">
       {/* Header fijado */}
       <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm shadow-lg border-b border-blue-100">
         {/* Botón de regreso y barra de progreso */}
@@ -342,7 +257,7 @@ export default function LevelQuiz() {
               <div 
                 className="h-full transition-all duration-500 ease-out"
                 style={{ 
-                  width: `${progress}%`,
+                  width: `${aspirationalProgress}%`,
                   background: 'linear-gradient(90deg, #8B7355 0%, #A0826D 50%, #8B7355 100%)',
                   boxShadow: '0 0 10px rgba(139, 115, 85, 0.5)'
                 }}
@@ -369,63 +284,54 @@ export default function LevelQuiz() {
       </div>
 
       {/* Contenido scrolleable */}
-      <div className="flex-1 overflow-y-auto px-4 pt-4">
-        <div className="max-w-2xl mx-auto space-y-4">
-
-        {/* Question Card */}
-        <Card className="p-6 mb-4 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
-          <div className="mb-4">
-            <span className="text-[10px] font-bold text-primary uppercase tracking-wider">
-              Pregunta {currentQuestion + 1}
-            </span>
-            <h2 className="text-xl font-bold text-foreground mt-2">
-              {questions[currentQuestion].question}
-            </h2>
-          </div>
-          <div className="space-y-2">
-            {questions[currentQuestion].options.map((option, index) => (
-              <Button
-                key={index}
-                variant={answers[questions[currentQuestion].id] === option ? "default" : "outline"}
-                className={`w-full justify-start text-left h-auto py-3 px-5 rounded-[15px] transition-all hover:scale-[1.02] font-medium text-sm ${
-                  answers[questions[currentQuestion].id] === option 
-                    ? "shadow-lg bg-primary text-primary-foreground" 
-                    : "hover:bg-primary/5 bg-white border-blue-100"
-                }`}
-                onClick={() => handleAnswer(option)}
-              >
-                <span className="flex-1">{option}</span>
-                {answers[questions[currentQuestion].id] === option && (
-                  <CheckCircle2 className="h-4 w-4 ml-2 flex-shrink-0" />
-                )}
-              </Button>
-            ))}
-          </div>
-        </Card>
-
-        {/* Navigation Buttons */}
-        <div className="flex gap-3 mb-4">
-          {currentQuestion > 0 && (
-            <Button
-              variant="outline"
-              onClick={() => setCurrentQuestion(currentQuestion - 1)}
-              className="flex-1 h-12 font-bold rounded-[20px] hover:scale-[1.02] transition-all shadow-md border-blue-100 bg-white text-foreground"
-            >
-              ← Anterior
-            </Button>
-          )}
-          {isQuizComplete && (
-            <Button
-              onClick={handleComplete}
-              disabled={isCompleting}
-              className="flex-1 h-12 font-bold rounded-[20px] hover:scale-[1.02] transition-all shadow-xl bg-primary text-primary-foreground"
-            >
-              {isCompleting ? "Guardando..." : "Completar Quiz ✓"}
-            </Button>
-          )}
-        </div>
+      <div className="flex-1 overflow-y-auto px-4 pt-4 pb-24">
+        <div className="max-w-2xl mx-auto space-y-6">
+          {/* Lista de preguntas */}
+          {aspirationalQuestions.map((q) => {
+            const Icon = q.icon;
+            return (
+              <Card key={q.id} className="p-5 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
+                <h3 className="text-base font-bold text-foreground mb-4">
+                  {q.question}
+                </h3>
+                <div className="space-y-2">
+                  {q.options.map((option) => (
+                    <Button
+                      key={option.value}
+                      variant={aspirationalAnswers[q.id] === option.value ? "default" : "outline"}
+                      onClick={() => handleAspAnswer(q.id, option.value)}
+                      className={cn(
+                        "w-full justify-start text-left h-auto py-3 px-4 rounded-[15px] transition-all",
+                        aspirationalAnswers[q.id] === option.value
+                          ? "shadow-lg bg-primary text-primary-foreground"
+                          : "hover:bg-primary/5 bg-white border-blue-100"
+                      )}
+                    >
+                      <span className="flex-1 text-sm font-medium">{option.label}</span>
+                      {aspirationalAnswers[q.id] === option.value && (
+                        <CheckCircle2 className="h-4 w-4 ml-2 flex-shrink-0" />
+                      )}
+                    </Button>
+                  ))}
+                </div>
+              </Card>
+            );
+          })}
         </div>
       </div>
+
+      {/* Botón continuar fijo abajo */}
+      {isAspComplete && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-sm border-t border-blue-100 z-20">
+          <Button
+            onClick={handleCompleteAsp}
+            disabled={isSavingAsp}
+            className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg rounded-[20px] shadow-xl hover:scale-[1.02] transition-all"
+          >
+            {isSavingAsp ? "Guardando..." : hasNetWorthData ? "Completar Quiz ✓" : "Continuar al Quiz de Net Worth"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
