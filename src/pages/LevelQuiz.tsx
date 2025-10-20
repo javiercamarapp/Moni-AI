@@ -88,6 +88,12 @@ export default function LevelQuiz() {
       placeholder: "Ejemplo: 500000"
     },
     {
+      id: 7,
+      question: "¿Cuánto cuesta el coche que quieres darle a tu cónyuge? (opcional)",
+      icon: Car,
+      placeholder: "Ejemplo: 400000"
+    },
+    {
       id: 3,
       question: "¿Cuánto quieres tener en ahorros? (en pesos)",
       icon: PiggyBank,
@@ -159,7 +165,8 @@ export default function LevelQuiz() {
     }
   };
 
-  const isAspComplete = Object.keys(aspirationalAnswers).length === aspirationalQuestions.length;
+  const isAspComplete = Object.keys(aspirationalAnswers).length === aspirationalQuestions.length ||
+    (Object.keys(aspirationalAnswers).length >= aspirationalQuestions.length - 1 && !aspirationalAnswers[7]);
   const aspirationalProgress = (Object.keys(aspirationalAnswers).length / aspirationalQuestions.length) * 100;
 
   // Si está en la intro, mostrar página de bienvenida
