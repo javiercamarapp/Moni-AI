@@ -395,31 +395,6 @@ export default function LevelQuiz() {
             </Button>
           )}
         </div>
-
-        {/* Answers Summary */}
-        <Card className="p-5 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
-          <h3 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
-            📋 Resumen de Respuestas
-          </h3>
-          <div className="space-y-2">
-            {questions.map((q, idx) => (
-              <div key={q.id} className="flex items-start gap-3 p-3 rounded-[15px] bg-secondary/10 border border-blue-50">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">
-                  {idx + 1}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-muted-foreground mb-0.5">{q.question}</p>
-                  <p className={`text-xs font-bold ${answers[q.id] ? "text-foreground" : "text-muted-foreground/40"}`}>
-                    {answers[q.id] || "Sin responder"}
-                  </p>
-                </div>
-                {answers[q.id] && (
-                  <CheckCircle2 className="flex-shrink-0 h-4 w-4 text-primary mt-0.5" />
-                )}
-              </div>
-            ))}
-          </div>
-        </Card>
       </div>
     </div>
   );
