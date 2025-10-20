@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, CheckCircle2, Bell } from "lucide-react";
+import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import heroAuth from '@/assets/moni-ai-logo.png';
 
 const questions = [
@@ -106,7 +106,7 @@ export default function LevelQuiz() {
           <img src={heroAuth} alt="Moni" className="w-full h-full object-cover" />
         </div>
         
-        {/* Botón de regreso y notificaciones */}
+        {/* Botón de regreso */}
         <div className="flex gap-2 items-center">
           <Button
             variant="ghost"
@@ -115,14 +115,6 @@ export default function LevelQuiz() {
             className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
           >
             <ArrowLeft className="h-5 w-5" />
-          </Button>
-          
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
-          >
-            <Bell className="h-5 w-5" />
           </Button>
         </div>
       </div>
