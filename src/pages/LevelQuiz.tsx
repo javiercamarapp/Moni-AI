@@ -83,7 +83,7 @@ export default function LevelQuiz() {
     },
     {
       id: 2,
-      question: "¿Cuánto quieres tener en vehículos? (en pesos)",
+      question: "¿Cuánto cuesta el coche de tus sueños?",
       icon: Car,
       placeholder: "Ejemplo: 500000"
     },
