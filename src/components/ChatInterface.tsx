@@ -409,11 +409,6 @@ const ChatInterface = () => {
       
       if (audioBlob.size === 0) {
         console.error('❌ El blob de audio está vacío');
-        toast({
-          title: "Error",
-          description: "No se grabó audio. Intenta de nuevo.",
-          variant: "destructive"
-        });
         return;
       }
       
@@ -424,11 +419,6 @@ const ChatInterface = () => {
           const base64Audio = reader.result?.toString().split(',')[1];
           if (!base64Audio) {
             console.error('❌ No se pudo convertir audio a base64');
-            toast({
-              title: "Error",
-              description: "Error al procesar el audio",
-              variant: "destructive"
-            });
             return;
           }
           
@@ -445,15 +435,10 @@ const ChatInterface = () => {
           
           if (error) {
             console.error('❌ Error en transcripción:', error);
-            toast({
-              title: "Error de transcripción",
-              description: error.message || "No se pudo transcribir el audio",
-              variant: "destructive"
-            });
             return;
           }
           
-          if (data?.text) {
+          if (data?.text && data.text.trim()) {
             console.log('✅ Texto transcrito:', data.text);
             
             if (isVoiceChatMode) {
@@ -473,46 +458,17 @@ const ChatInterface = () => {
               setMessage(data.text);
               setTimeout(() => handleSendMessage(), 100);
             }
-          } else if (data?.error) {
-            console.error('❌ Error desde el servidor:', data.error);
-            toast({
-              title: "Error",
-              description: data.error,
-              variant: "destructive"
-            });
-          } else {
-            console.warn('⚠️ No se recibió texto transcrito');
-            toast({
-              title: "Sin transcripción",
-              description: "No se detectó voz en el audio",
-              variant: "destructive"
-            });
           }
         } catch (innerError) {
           console.error('❌ Error en el procesamiento:', innerError);
-          toast({
-            title: "Error",
-            description: "Error al procesar la transcripción",
-            variant: "destructive"
-          });
         }
       };
       
       reader.onerror = () => {
         console.error('❌ Error al leer el archivo de audio');
-        toast({
-          title: "Error",
-          description: "No se pudo leer el audio grabado",
-          variant: "destructive"
-        });
       };
     } catch (error) {
       console.error('❌ Error processing voice:', error);
-      toast({
-        title: "Error",
-        description: "Error al procesar la voz",
-        variant: "destructive"
-      });
     }
   };
   
@@ -719,23 +675,25 @@ const ChatInterface = () => {
 
       mediaRecorder.onstop = async () => {
         console.log('⏸️ Grabación detenida, procesando...');
-        if (audioChunksRef.current.length > 0) {
+        if (audioChunksRef.current.length > 0 && !isSpeaking) {
           const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
           audioChunksRef.current = [];
           
-          // Solo procesar si hay suficiente audio
+          // Procesar si hay suficiente audio y la IA no está hablando
           if (audioBlob.size > 1000) {
             await processVoiceInput(audioBlob);
           }
+        } else {
+          audioChunksRef.current = [];
         }
         
-        // Reiniciar grabación si aún está en modo de chat por voz
-        if (isVoiceChatMode && mediaRecorderRef.current) {
+        // Reiniciar grabación más rápido si aún está en modo de chat por voz
+        if (isVoiceChatMode && mediaRecorderRef.current && !isSpeaking) {
           setTimeout(() => {
-            if (isVoiceChatMode) {
+            if (isVoiceChatMode && !isSpeaking) {
               startContinuousListening();
             }
-          }, 500);
+          }, 200);
         }
       };
 
@@ -743,13 +701,13 @@ const ChatInterface = () => {
       setIsListening(true);
       console.log('✅ Grabación iniciada');
 
-      // Auto-detener después de 10 segundos para procesar
+      // Procesar en segmentos más cortos (3 segundos) para respuesta más rápida
       setTimeout(() => {
-        if (mediaRecorder.state === 'recording') {
-          console.log('⏰ Tiempo límite alcanzado, procesando segmento...');
+        if (mediaRecorder.state === 'recording' && !isSpeaking) {
+          console.log('⏰ Procesando segmento de voz...');
           mediaRecorder.stop();
         }
-      }, 10000);
+      }, 3000);
 
     } catch (error) {
       console.error('Error al iniciar escucha continua:', error);
