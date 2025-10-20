@@ -287,13 +287,13 @@ export default function LevelQuiz() {
                   </div>
                 )}
                 {q.id === 2 && (
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex flex-row-reverse items-center gap-3 mb-4">
                     <img 
                       src={moniCarAspiration} 
                       alt="El auto de mis sueños" 
                       className="w-16 h-16 object-contain flex-shrink-0"
                     />
-                    <p className="text-base font-bold text-foreground">
+                    <p className="text-base font-bold text-foreground text-right">
                       El auto de mis sueños...
                     </p>
                   </div>
