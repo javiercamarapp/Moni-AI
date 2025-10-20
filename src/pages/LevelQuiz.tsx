@@ -277,10 +277,10 @@ export default function LevelQuiz() {
                     </p>
                   </div>
                 )}
-                <Card className="p-5 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Icon className="h-6 w-6 text-primary flex-shrink-0" />
-                    <h3 className="text-base font-bold text-foreground">
+                <Card className="p-3 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Icon className="h-3 w-3 text-primary flex-shrink-0" />
+                    <h3 className="text-xs font-bold text-foreground">
                       {q.question}
                     </h3>
                   </div>
@@ -290,7 +290,7 @@ export default function LevelQuiz() {
                     placeholder={q.placeholder}
                     value={aspirationalAnswers[q.id] || ""}
                     onChange={(e) => handleAspAnswer(q.id, e.target.value)}
-                    className="w-full px-4 py-3 text-base rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground"
+                    className="w-full px-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground"
                   />
                 </Card>
               </div>
