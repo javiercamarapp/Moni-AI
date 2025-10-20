@@ -73,46 +73,46 @@ export default function FinancialQuotesCarousel() {
 
   return (
     <div className="relative">
-      <Card className="p-6 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px] overflow-hidden">
+      <Card className="p-4 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px] overflow-hidden">
         {/* Animated background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-50" />
         
         {/* Content */}
-        <div className="relative min-h-[120px] flex flex-col justify-center">
+        <div className="relative min-h-[60px] flex flex-col justify-center">
           <div
             className={`transition-all duration-500 ${
               isAnimating ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"
             }`}
           >
-            <p className="text-base font-bold text-foreground leading-relaxed mb-3 text-center italic">
+            <p className="text-xs font-bold text-foreground leading-relaxed mb-2 text-center italic">
               "{quotes[currentIndex].text}"
             </p>
-            <p className="text-sm font-semibold text-primary text-center">
+            <p className="text-[10px] font-semibold text-primary text-center">
               – {quotes[currentIndex].author}
             </p>
           </div>
         </div>
 
         {/* Navigation Buttons */}
-        <div className="flex items-center justify-center gap-4 mt-4">
+        <div className="flex items-center justify-center gap-3 mt-2">
           <button
             onClick={handlePrev}
-            className="w-8 h-8 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+            className="w-6 h-6 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-all hover:scale-110 active:scale-95"
             aria-label="Previous quote"
           >
-            <ChevronLeft className="h-4 w-4 text-primary" />
+            <ChevronLeft className="h-3 w-3 text-primary" />
           </button>
 
           {/* Dots Navigation */}
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             {quotes.map((_, index) => (
               <button
                 key={index}
                 onClick={() => handleDotClick(index)}
                 className={`transition-all duration-300 rounded-full ${
                   index === currentIndex
-                    ? "w-8 h-2 bg-primary"
-                    : "w-2 h-2 bg-primary/30 hover:bg-primary/50"
+                    ? "w-6 h-1.5 bg-primary"
+                    : "w-1.5 h-1.5 bg-primary/30 hover:bg-primary/50"
                 }`}
                 aria-label={`Go to quote ${index + 1}`}
               />
@@ -121,10 +121,10 @@ export default function FinancialQuotesCarousel() {
 
           <button
             onClick={handleNext}
-            className="w-8 h-8 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+            className="w-6 h-6 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-all hover:scale-110 active:scale-95"
             aria-label="Next quote"
           >
-            <ChevronRight className="h-4 w-4 text-primary" />
+            <ChevronRight className="h-3 w-3 text-primary" />
           </button>
         </div>
       </Card>
