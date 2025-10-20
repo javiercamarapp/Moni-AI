@@ -322,39 +322,55 @@ export default function LevelQuiz() {
   }
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-20">
-      {/* Header superior con botón de regreso */}
-      <div className="p-2 flex justify-start items-start">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setShowIntro(true)}
-          className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
+    <div className="min-h-screen animated-wave-bg flex flex-col pb-20">
+      {/* Header fijado */}
+      <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm shadow-lg border-b border-blue-100">
+        {/* Botón de regreso y barra de progreso */}
+        <div className="p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowIntro(true)}
+              className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            
+            {/* Barra de progreso */}
+            <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+              <div 
+                className="h-full transition-all duration-500 ease-out"
+                style={{ 
+                  width: `${progress}%`,
+                  background: 'linear-gradient(90deg, #8B7355 0%, #A0826D 50%, #8B7355 100%)',
+                  boxShadow: '0 0 10px rgba(139, 115, 85, 0.5)'
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Moni y mensaje */}
+          <div className="flex items-center gap-3">
+            <div className="w-16 h-16 flex-shrink-0">
+              <img 
+                src={moniAspirational} 
+                alt="Moni" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <Card className="flex-1 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 px-4 py-3 rounded-[20px]">
+              <p className="text-sm font-bold text-foreground">
+                Te voy a ayudar a visualizar tus metas financieras!!
+              </p>
+            </Card>
+          </div>
+        </div>
       </div>
 
-      {/* Contenido principal */}
-      <div className="max-w-2xl mx-auto px-4 pt-2">
-        {/* Título y descripción */}
-        <div className="mb-4">
-          <h1 className="text-2xl font-bold text-foreground mb-1">Quiz de Nivel</h1>
-          <p className="text-sm text-muted-foreground">
-            Responde estas preguntas para personalizar tu experiencia
-          </p>
-        </div>
-
-        {/* Progress Bar */}
-        <Card className="p-4 mb-4 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-bold text-foreground">Progreso del Quiz</span>
-            <span className="text-xs font-bold text-primary">
-              {currentQuestion + 1} de {questions.length}
-            </span>
-          </div>
-          <Progress value={progress} className="h-2" />
-        </Card>
+      {/* Contenido scrolleable */}
+      <div className="flex-1 overflow-y-auto px-4 pt-4">
+        <div className="max-w-2xl mx-auto space-y-4">
 
         {/* Question Card */}
         <Card className="p-6 mb-4 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
@@ -407,6 +423,7 @@ export default function LevelQuiz() {
               {isCompleting ? "Guardando..." : "Completar Quiz ✓"}
             </Button>
           )}
+        </div>
         </div>
       </div>
     </div>
