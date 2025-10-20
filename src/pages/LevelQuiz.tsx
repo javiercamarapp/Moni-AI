@@ -113,7 +113,15 @@ export default function LevelQuiz() {
   ];
 
   const handleAspAnswer = (questionId: number, value: string) => {
-    setAspirationalAnswers({ ...aspirationalAnswers, [questionId]: value });
+    // Remover comas para guardar el valor numérico
+    const numericValue = value.replace(/,/g, '');
+    setAspirationalAnswers({ ...aspirationalAnswers, [questionId]: numericValue });
+  };
+
+  const formatNumberWithCommas = (value: string) => {
+    if (!value) return '';
+    // Formatear con comas cada 3 dígitos
+    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
   const handleCompleteAsp = async () => {
@@ -291,11 +299,14 @@ export default function LevelQuiz() {
                         $
                       </span>
                       <input
-                        type="number"
+                        type="text"
                         inputMode="numeric"
                         placeholder={q.placeholder}
-                        value={aspirationalAnswers[q.id] || ""}
-                        onChange={(e) => handleAspAnswer(q.id, e.target.value)}
+                        value={formatNumberWithCommas(aspirationalAnswers[q.id] || "")}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9]/g, '');
+                          handleAspAnswer(q.id, value);
+                        }}
                         className="w-full pl-5 pr-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground"
                       />
                     </div>
