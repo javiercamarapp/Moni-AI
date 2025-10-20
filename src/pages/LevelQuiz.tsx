@@ -239,43 +239,6 @@ export default function LevelQuiz() {
           </div>
         </div>
 
-        {/* Contenido scrolleable */}
-        <div className="flex-1 overflow-y-auto px-4 pt-4 pb-24">
-          <div className="max-w-2xl mx-auto space-y-6">
-            {/* Lista de preguntas */}
-            {aspirationalQuestions.map((q) => {
-              const Icon = q.icon;
-              return (
-                <Card key={q.id} className="p-5 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
-                  <h3 className="text-base font-bold text-foreground mb-4">
-                    {q.question}
-                  </h3>
-                  <div className="space-y-2">
-                    {q.options.map((option) => (
-                      <Button
-                        key={option.value}
-                        variant={aspirationalAnswers[q.id] === option.value ? "default" : "outline"}
-                        onClick={() => handleAspAnswer(q.id, option.value)}
-                        className={cn(
-                          "w-full justify-start text-left h-auto py-3 px-4 rounded-[15px] transition-all",
-                          aspirationalAnswers[q.id] === option.value
-                            ? "shadow-lg bg-primary text-primary-foreground"
-                            : "hover:bg-primary/5 bg-white border-blue-100"
-                        )}
-                      >
-                        <span className="flex-1 text-sm font-medium">{option.label}</span>
-                        {aspirationalAnswers[q.id] === option.value && (
-                          <CheckCircle2 className="h-4 w-4 ml-2 flex-shrink-0" />
-                        )}
-                      </Button>
-                    ))}
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-
         {/* Botón continuar fijo abajo */}
         {isAspComplete && (
           <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-sm border-t border-blue-100 z-20">
