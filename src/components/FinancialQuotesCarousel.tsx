@@ -92,25 +92,6 @@ export default function FinancialQuotesCarousel() {
             </p>
           </div>
         </div>
-
-        {/* Navigation Buttons */}
-        <div className="flex items-center justify-center gap-3 mt-2">
-          {/* Dots Navigation */}
-          <div className="flex gap-1.5">
-            {quotes.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => handleDotClick(index)}
-                className={`transition-all duration-300 rounded-full ${
-                  index === currentIndex
-                    ? "w-6 h-1.5 bg-primary"
-                    : "w-1.5 h-1.5 bg-primary/30 hover:bg-primary/50"
-                }`}
-                aria-label={`Go to quote ${index + 1}`}
-              />
-            ))}
-          </div>
-        </div>
       </Card>
     </div>
   );
