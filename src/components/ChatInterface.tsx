@@ -676,18 +676,22 @@ const ChatInterface = () => {
       // Procesar audio en tiempo real
       mediaRecorder.ondataavailable = async (event) => {
         if (event.data.size > 0 && !isSpeaking) {
-          audioChunksRef.current.push(event.data);
+          console.log('🎙️ Chunk de audio capturado:', event.data.size, 'bytes');
           
-          // Transcribir inmediatamente cada chunk
+          // Transcribir inmediatamente cada chunk si tiene suficiente tamaño
           const audioBlob = new Blob([event.data], { type: 'audio/webm' });
-          if (audioBlob.size > 500) {
+          if (audioBlob.size > 3000) {
+            console.log('✅ Chunk suficientemente grande, transcribiendo...');
             await transcribeRealtimeChunk(audioBlob);
+          } else {
+            console.log('⏭️ Chunk muy pequeño, esperando más audio...');
           }
         }
       };
 
-      // Capturar audio en chunks muy pequeños (500ms) para respuesta instantánea
-      mediaRecorder.start(500);
+      // Capturar audio en chunks de 2 segundos para mejor calidad
+      mediaRecorder.start(2000);
+      console.log('✅ Grabación iniciada con chunks de 2 segundos');
 
     } catch (error) {
       console.error('Error al iniciar chat de voz:', error);
@@ -697,7 +701,10 @@ const ChatInterface = () => {
   };
 
   const transcribeRealtimeChunk = async (audioBlob: Blob) => {
-    if (isProcessingVoice || isSpeaking) return;
+    if (isProcessingVoice || isSpeaking) {
+      console.log('⏸️ Transcripción en pausa (procesando o AI hablando)');
+      return;
+    }
     
     try {
       setIsProcessingVoice(true);
@@ -707,15 +714,22 @@ const ChatInterface = () => {
       reader.onloadend = async () => {
         const base64Audio = reader.result?.toString().split(',')[1];
         if (!base64Audio) {
+          console.error('❌ No se pudo convertir audio a base64');
           setIsProcessingVoice(false);
           return;
         }
         
-        console.log('📤 Transcribiendo chunk de audio...');
+        console.log('📤 Transcribiendo chunk de audio... (tamaño base64:', base64Audio.length, 'caracteres)');
         
-        const { data } = await supabase.functions.invoke('transcribe-audio', {
+        const { data, error } = await supabase.functions.invoke('transcribe-audio', {
           body: { audio: base64Audio }
         });
+        
+        if (error) {
+          console.error('❌ Error en transcripción:', error);
+          setIsProcessingVoice(false);
+          return;
+        }
         
         if (data?.text && data.text.trim()) {
           const newText = data.text.trim();
@@ -724,21 +738,23 @@ const ChatInterface = () => {
           // Agregar al mensaje actual
           setCurrentUserMessage(prev => {
             const updated = prev ? `${prev} ${newText}` : newText;
+            console.log('📝 Mensaje actualizado:', updated);
             
             // Crear o actualizar mensaje del usuario en tiempo real
             setMessages(prevMessages => {
               const lastMsg = prevMessages[prevMessages.length - 1];
-              const userMsgId = voiceTimeoutRef.current ? Date.now() - 1000 : Date.now();
               
               if (lastMsg?.type === 'user' && !lastMsg.toolCall) {
+                console.log('✏️ Actualizando último mensaje de usuario');
                 // Actualizar último mensaje de usuario
                 return prevMessages.map((m, i) => 
                   i === prevMessages.length - 1 ? { ...m, content: updated } : m
                 );
               } else {
+                console.log('➕ Creando nuevo mensaje de usuario');
                 // Crear nuevo mensaje de usuario
                 return [...prevMessages, {
-                  id: userMsgId,
+                  id: Date.now(),
                   type: 'user',
                   content: updated
                 }];
@@ -754,14 +770,17 @@ const ChatInterface = () => {
           }
           
           voiceTimeoutRef.current = setTimeout(() => {
+            console.log('⏱️ Timeout alcanzado, enviando mensaje...');
             sendCurrentVoiceMessage();
-          }, 2000); // Enviar después de 2 segundos de silencio
+          }, 3000); // Enviar después de 3 segundos de silencio
+        } else {
+          console.log('⚠️ No se recibió texto de la transcripción');
         }
         
         setIsProcessingVoice(false);
       };
     } catch (error) {
-      console.error('Error transcribiendo chunk:', error);
+      console.error('❌ Error transcribiendo chunk:', error);
       setIsProcessingVoice(false);
     }
   };
