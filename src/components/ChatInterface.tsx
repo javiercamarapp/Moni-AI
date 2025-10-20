@@ -688,19 +688,9 @@ const ChatInterface = () => {
 
       // Capturar audio en chunks muy pequeños (500ms) para respuesta instantánea
       mediaRecorder.start(500);
-      
-      toast({
-        title: "Chat de voz activado",
-        description: "Habla naturalmente, tu mensaje aparecerá en tiempo real",
-      });
 
     } catch (error) {
       console.error('Error al iniciar chat de voz:', error);
-      toast({
-        title: "Error",
-        description: "No se pudo acceder al micrófono",
-        variant: "destructive"
-      });
       setIsVoiceChatMode(false);
       setIsVoiceActive(false);
     }
@@ -716,7 +706,12 @@ const ChatInterface = () => {
       reader.readAsDataURL(audioBlob);
       reader.onloadend = async () => {
         const base64Audio = reader.result?.toString().split(',')[1];
-        if (!base64Audio) return;
+        if (!base64Audio) {
+          setIsProcessingVoice(false);
+          return;
+        }
+        
+        console.log('📤 Transcribiendo chunk de audio...');
         
         const { data } = await supabase.functions.invoke('transcribe-audio', {
           body: { audio: base64Audio }
@@ -724,21 +719,26 @@ const ChatInterface = () => {
         
         if (data?.text && data.text.trim()) {
           const newText = data.text.trim();
+          console.log('✅ Texto transcrito:', newText);
           
-          // Agregar al mensaje actual que se está formando
+          // Agregar al mensaje actual
           setCurrentUserMessage(prev => {
             const updated = prev ? `${prev} ${newText}` : newText;
             
-            // Actualizar el último mensaje del usuario en tiempo real
+            // Crear o actualizar mensaje del usuario en tiempo real
             setMessages(prevMessages => {
               const lastMsg = prevMessages[prevMessages.length - 1];
-              if (lastMsg?.type === 'user' && lastMsg.id === Date.now()) {
+              const userMsgId = voiceTimeoutRef.current ? Date.now() - 1000 : Date.now();
+              
+              if (lastMsg?.type === 'user' && !lastMsg.toolCall) {
+                // Actualizar último mensaje de usuario
                 return prevMessages.map((m, i) => 
                   i === prevMessages.length - 1 ? { ...m, content: updated } : m
                 );
               } else {
+                // Crear nuevo mensaje de usuario
                 return [...prevMessages, {
-                  id: Date.now(),
+                  id: userMsgId,
                   type: 'user',
                   content: updated
                 }];
@@ -755,7 +755,7 @@ const ChatInterface = () => {
           
           voiceTimeoutRef.current = setTimeout(() => {
             sendCurrentVoiceMessage();
-          }, 1500); // Enviar después de 1.5 segundos de silencio
+          }, 2000); // Enviar después de 2 segundos de silencio
         }
         
         setIsProcessingVoice(false);
@@ -769,12 +769,23 @@ const ChatInterface = () => {
   const sendCurrentVoiceMessage = async () => {
     if (!currentUserMessage.trim() || isSpeaking) return;
     
+    console.log('📨 Enviando mensaje completo a la AI:', currentUserMessage);
+    
     const messageToSend = currentUserMessage;
     setCurrentUserMessage('');
     
-    // Enviar a la AI
+    // Enviar a la AI con el mensaje completo
     setIsTyping(true);
-    await sendToAI([...messages]);
+    
+    const fullMessages = [...messages];
+    const lastMsg = fullMessages[fullMessages.length - 1];
+    
+    // Asegurar que el último mensaje tenga el contenido completo
+    if (lastMsg?.type === 'user') {
+      lastMsg.content = messageToSend;
+    }
+    
+    await sendToAI(fullMessages);
   };
 
   const stopRealtimeVoiceChat = () => {
@@ -803,11 +814,6 @@ const ChatInterface = () => {
     setIsListening(false);
     setIsSpeaking(false);
     setCurrentUserMessage('');
-    
-    toast({
-      title: "Chat de voz desactivado",
-      description: "Conversación finalizada",
-    });
   };
 
 
