@@ -11,6 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { LoadingScreen } from '@/components/LoadingScreen';
+import { FloatingPathsBackground } from '@/components/ui/floating-paths';
 interface Category {
   id: string;
   name: string;
@@ -261,9 +262,10 @@ const GestionarCategorias = () => {
   if (loading) {
     return <LoadingScreen />;
   }
-  return <div className="min-h-screen animated-wave-bg pb-20">
+  return <div className="min-h-screen animated-wave-bg pb-20 relative overflow-hidden">
+      <FloatingPathsBackground />
       {/* Header */}
-      <div className="p-4 flex items-center justify-between">
+      <div className="bg-background/95 backdrop-blur-sm sticky top-0 z-40">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12">
             <ArrowLeft className="h-5 w-5 text-foreground" />

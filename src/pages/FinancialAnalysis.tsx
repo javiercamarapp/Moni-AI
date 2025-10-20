@@ -28,6 +28,7 @@ import CategoryBreakdownWidget from "@/components/analysis/CategoryBreakdownWidg
 import FinancialHealthPieWidget from "@/components/analysis/FinancialHealthPieWidget";
 import LiquidityGaugeWidget from "@/components/analysis/LiquidityGaugeWidget";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import { FloatingPathsBackground } from "@/components/ui/floating-paths";
 export default function FinancialAnalysis() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -563,8 +564,9 @@ export default function FinancialAnalysis() {
   };
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-24">
-      <div className="mx-4 space-y-4">
+    <div className="min-h-screen animated-wave-bg pb-24 relative overflow-hidden">
+      <FloatingPathsBackground />
+      <div className="mx-4 space-y-4 relative z-10">
         {/* Header */}
         <div className="flex items-center justify-between pt-4 mb-4">
           <div>

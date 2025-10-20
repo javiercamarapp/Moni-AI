@@ -13,6 +13,7 @@ import Autoplay from 'embla-carousel-autoplay';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { useToast } from '@/hooks/use-toast';
 import { LoadingScreen } from '@/components/LoadingScreen';
+import { FloatingPathsBackground } from '@/components/ui/floating-paths';
 interface CategoryBalance {
   id: string;
   name: string;
@@ -459,7 +460,8 @@ const Balance = () => {
   if (loading && !hasInitialData) {
     return <LoadingScreen />;
   }
-  return <div className="min-h-screen animated-wave-bg pb-20">
+  return <div className="min-h-screen animated-wave-bg pb-20 relative overflow-hidden">
+      <FloatingPathsBackground />
       {/* Header */}
       <div className="bg-background/95 backdrop-blur-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-4">

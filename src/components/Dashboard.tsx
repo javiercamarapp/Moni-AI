@@ -22,6 +22,7 @@ import moniLogo from '/moni-logo.png';
 import SafeToSpendWidget from '@/components/analysis/SafeToSpendWidget';
 import AICoachInsightsWidget from '@/components/analysis/AICoachInsightsWidget';
 import BottomNav from '@/components/BottomNav';
+import { FloatingPathsBackground } from '@/components/ui/floating-paths';
 
 const Dashboard = () => {
   const [user, setUser] = useState<any>(null);
@@ -847,9 +848,11 @@ const Dashboard = () => {
   const achievements: any[] = []; // Los logros se implementarán en el futuro basados en la actividad del usuario
   
   return (
-    <div className="min-h-screen animated-wave-bg pb-20">
+    <div className="min-h-screen animated-wave-bg pb-20 relative overflow-hidden">
+      <FloatingPathsBackground />
+      
       {/* Header superior con logo y notificaciones */}
-      <div className="p-2 flex justify-between items-start">
+      <div className="p-2 flex justify-between items-start relative z-10">
         {/* Logo banner - esquina superior izquierda */}
         <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden w-16 h-10">
           <img src={heroAuth} alt="Moni" className="w-full h-full object-cover" />
