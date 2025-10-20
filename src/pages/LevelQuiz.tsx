@@ -6,7 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
-import moniOwl from "@/assets/moni-owl.png";
+import moniOwl from "@/assets/moni-owl-circle.png";
 
 const questions = [
   {
@@ -127,13 +127,13 @@ export default function LevelQuiz() {
 
           {/* Moni owl character */}
           <div className="relative">
-            <Card className="w-52 h-52 rounded-full bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 flex items-center justify-center p-4">
+            <div className="w-64 h-64 rounded-full flex items-center justify-center">
               <img 
                 src={moniOwl} 
                 alt="Moni" 
-                className="w-44 h-44 object-contain"
+                className="w-full h-full object-contain"
               />
-            </Card>
+            </div>
           </div>
         </div>
 
