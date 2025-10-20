@@ -30,11 +30,9 @@ serve(async (req) => {
           'Content-Type': 'application/json'
         };
 
-        // Obtener transacciones SOLO hasta diciembre 2025 (excluir datos de prueba futuros)
-        const now = new Date();
-        
+        // Obtener transacciones de 2025 y últimos 6 meses de 2024 para contexto
         const allTransactionsRes = await fetch(
-          `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${userId}&transaction_date=lte.2025-12-31&order=transaction_date.desc&select=*`,
+          `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${userId}&transaction_date=gte.2024-07-01&transaction_date=lte.2025-12-31&order=transaction_date.desc&limit=5000&select=*`,
           { headers: supabaseHeaders }
         );
         const allTransactions = await allTransactionsRes.json();
@@ -82,6 +80,14 @@ serve(async (req) => {
         const netWorthSnapshots = await netWorthSnapshotsRes.json();
 
         console.log(`📊 Total transacciones históricas cargadas: ${allTransactions.length}`);
+        
+        // DEBUG: Ver primeras 10 transacciones
+        console.log('🔍 Primeras 10 transacciones:', JSON.stringify(allTransactions.slice(0, 10).map(t => ({
+          date: t.transaction_date,
+          type: t.type,
+          amount: t.amount,
+          description: t.description
+        })), null, 2));
 
         // Procesar todas las transacciones para resumen
         const transactionsByMonth: Record<string, any[]> = {};
@@ -94,6 +100,8 @@ serve(async (req) => {
           }
           transactionsByMonth[monthKey].push(t);
         });
+        
+        console.log('🗂️ Meses procesados:', Object.keys(transactionsByMonth).sort());
 
         // Calcular estadísticas mensuales
         const monthlyStats: Record<string, { 
