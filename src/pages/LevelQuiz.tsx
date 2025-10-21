@@ -83,6 +83,12 @@ export default function LevelQuiz() {
       placeholder: "Ejemplo: 1000000"
     },
     {
+      id: 8,
+      question: "¿Quieres tener una segunda propiedad? ¿Cuánto costaría?",
+      icon: Home,
+      placeholder: "Ejemplo: 800000 (opcional)"
+    },
+    {
       id: 2,
       question: "¿Cuánto cuesta el coche de tus sueños?",
       icon: Car,
@@ -167,7 +173,7 @@ export default function LevelQuiz() {
   };
 
   const isAspComplete = Object.keys(aspirationalAnswers).length === aspirationalQuestions.length ||
-    (Object.keys(aspirationalAnswers).length >= aspirationalQuestions.length - 1 && !aspirationalAnswers[7]);
+    (Object.keys(aspirationalAnswers).length >= aspirationalQuestions.length - 2 && !aspirationalAnswers[7] && !aspirationalAnswers[8]);
   const aspirationalProgress = (Object.keys(aspirationalAnswers).length / aspirationalQuestions.length) * 100;
 
   // Si está en la intro, mostrar página de bienvenida
