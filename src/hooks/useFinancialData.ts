@@ -84,15 +84,25 @@ export const useNetWorth = () => {
       if (!user) throw new Error('No user');
 
       // Fetch both assets and liabilities in parallel
-      const [{ data: assetsData }, { data: liabilitiesData }] = await Promise.all([
+      const [{ data: assetsData, error: assetsError }, { data: liabilitiesData, error: liabilitiesError }] = await Promise.all([
         supabase.from('assets').select('value').eq('user_id', user.id),
         supabase.from('liabilities').select('value').eq('user_id', user.id),
       ]);
 
+      if (assetsError) {
+        console.error('Error fetching assets:', assetsError);
+      }
+      if (liabilitiesError) {
+        console.error('Error fetching liabilities:', liabilitiesError);
+      }
+
       const totalAssets = assetsData?.reduce((sum, a) => sum + Number(a.value), 0) || 0;
       const totalLiabilities = liabilitiesData?.reduce((sum, l) => sum + Number(l.value), 0) || 0;
       
-      return totalAssets - totalLiabilities;
+      const netWorth = totalAssets - totalLiabilities;
+      console.log('Net Worth calculated:', { totalAssets, totalLiabilities, netWorth });
+      
+      return netWorth;
     },
     staleTime: STALE_TIME,
   });
