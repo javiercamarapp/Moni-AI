@@ -209,7 +209,7 @@ export default function LevelQuiz() {
   };
 
   const isAspComplete = Object.keys(aspirationalAnswers).length === aspirationalQuestions.length ||
-    (Object.keys(aspirationalAnswers).length >= 6 && 
+    (Object.keys(aspirationalAnswers).length >= 7 && 
      aspirationalAnswers[1] && aspirationalAnswers[2] && aspirationalAnswers[3] && 
      aspirationalAnswers[4] && aspirationalAnswers[5] && aspirationalAnswers[6]);
   const aspirationalProgress = (Object.keys(aspirationalAnswers).length / aspirationalQuestions.length) * 100;
@@ -325,7 +325,7 @@ export default function LevelQuiz() {
           {aspirationalQuestions.map((q) => {
             const Icon = q.icon;
             // Filtrar preguntas que se mostrarán dentro de sus respectivos cards
-            if (q.id === 7 || q.id === 8 || q.id === 9 || q.id === 10 || q.id === 11 || q.id === 12 || q.id === 13 || q.id === 14) return null;
+            if (q.id === 4 || q.id === 7 || q.id === 8 || q.id === 9 || q.id === 10 || q.id === 11 || q.id === 12 || q.id === 13 || q.id === 14) return null;
             
             return (
               <div key={q.id}>
@@ -403,6 +403,7 @@ export default function LevelQuiz() {
                   
                   {/* Preguntas adicionales para inversiones dentro del mismo card */}
                   {q.id === 3 && (() => {
+                    const stocksQuestion = aspirationalQuestions.find(sq => sq.id === 4);
                     const emergencyFundQuestion = aspirationalQuestions.find(sq => sq.id === 11);
                     const cryptoQuestion = aspirationalQuestions.find(sq => sq.id === 12);
                     const retirementQuestion = aspirationalQuestions.find(sq => sq.id === 13);
@@ -410,6 +411,36 @@ export default function LevelQuiz() {
                     
                     return (
                       <>
+                        {stocksQuestion && (() => {
+                          const StocksIcon = stocksQuestion.icon;
+                          return (
+                            <>
+                              <div className="flex items-center gap-2 mb-2 mt-4">
+                                <StocksIcon className="h-3 w-3 text-primary flex-shrink-0" />
+                                <h3 className="text-xs font-bold text-foreground">
+                                  {stocksQuestion.question}
+                                </h3>
+                              </div>
+                              <div className="relative">
+                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-foreground font-medium">
+                                  $
+                                </span>
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  placeholder={stocksQuestion.placeholder}
+                                  value={formatNumberWithCommas(aspirationalAnswers[4] || "")}
+                                  onChange={(e) => {
+                                    const value = e.target.value.replace(/[^0-9]/g, '');
+                                    handleAspAnswer(4, value);
+                                  }}
+                                  className="w-full pl-5 pr-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground/60"
+                                />
+                              </div>
+                            </>
+                          );
+                        })()}
+                        
                         {emergencyFundQuestion && (() => {
                           const EmergencyIcon = emergencyFundQuestion.icon;
                           return (
