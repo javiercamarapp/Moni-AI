@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, CheckCircle2, Home, Car, PiggyBank, TrendingUp, Plane, GraduationCap, Building2, MapPin } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Home, Car, PiggyBank, TrendingUp, Plane, GraduationCap, Building2, MapPin, Wallet, Shield, LineChart, Bitcoin, Landmark, Briefcase } from "lucide-react";
 import moniOwl from "@/assets/moni-owl-circle.png";
 import { useHasNetWorthData } from "@/hooks/useNetWorth";
 import moniAspirational from "@/assets/moni-aspirational.png";
@@ -114,15 +114,39 @@ export default function LevelQuiz() {
     },
     {
       id: 3,
-      question: "¿Cuánto quieres tener en ahorros?",
-      icon: PiggyBank,
+      question: "¿Cuánto quieres tener en ahorros disponibles (cuentas bancarias)?",
+      icon: Wallet,
       placeholder: "Ejemplo: 300000"
     },
     {
+      id: 11,
+      question: "¿Cuánto quieres tener en tu fondo de emergencia?",
+      icon: Shield,
+      placeholder: "Ejemplo: 150000 (opcional)"
+    },
+    {
       id: 4,
-      question: "¿Cuánto quieres tener en inversiones?",
-      icon: TrendingUp,
+      question: "¿Cuánto quieres tener en inversiones en bolsa o fondos (indexados, ETFs, etc)?",
+      icon: LineChart,
       placeholder: "Ejemplo: 800000"
+    },
+    {
+      id: 12,
+      question: "¿Cuánto quieres tener en criptomonedas?",
+      icon: Bitcoin,
+      placeholder: "Ejemplo: 200000 (opcional)"
+    },
+    {
+      id: 13,
+      question: "¿Cuánto quieres tener en aportaciones a retiro (AFORE, IRA, etc)?",
+      icon: Landmark,
+      placeholder: "Ejemplo: 500000 (opcional)"
+    },
+    {
+      id: 14,
+      question: "¿Cuánto quieres tener en participaciones en empresas o startups?",
+      icon: Briefcase,
+      placeholder: "Ejemplo: 400000 (opcional)"
     },
     {
       id: 5,
@@ -185,7 +209,9 @@ export default function LevelQuiz() {
   };
 
   const isAspComplete = Object.keys(aspirationalAnswers).length === aspirationalQuestions.length ||
-    (Object.keys(aspirationalAnswers).length >= aspirationalQuestions.length - 2 && !aspirationalAnswers[7] && !aspirationalAnswers[8]);
+    (Object.keys(aspirationalAnswers).length >= 6 && 
+     aspirationalAnswers[1] && aspirationalAnswers[2] && aspirationalAnswers[3] && 
+     aspirationalAnswers[4] && aspirationalAnswers[5] && aspirationalAnswers[6]);
   const aspirationalProgress = (Object.keys(aspirationalAnswers).length / aspirationalQuestions.length) * 100;
 
   // Si está en la intro, mostrar página de bienvenida
@@ -298,8 +324,8 @@ export default function LevelQuiz() {
           {/* Lista de preguntas */}
           {aspirationalQuestions.map((q) => {
             const Icon = q.icon;
-            // Filtrar preguntas 7, 8, 9 y 10 ya que se mostrarán dentro de sus respectivos cards
-            if (q.id === 7 || q.id === 8 || q.id === 9 || q.id === 10) return null;
+            // Filtrar preguntas que se mostrarán dentro de sus respectivos cards
+            if (q.id === 7 || q.id === 8 || q.id === 9 || q.id === 10 || q.id === 11 || q.id === 12 || q.id === 13 || q.id === 14) return null;
             
             return (
               <div key={q.id}>
@@ -374,6 +400,138 @@ export default function LevelQuiz() {
                       className="w-full px-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground"
                     />
                   )}
+                  
+                  {/* Preguntas adicionales para inversiones dentro del mismo card */}
+                  {q.id === 3 && (() => {
+                    const emergencyFundQuestion = aspirationalQuestions.find(sq => sq.id === 11);
+                    const cryptoQuestion = aspirationalQuestions.find(sq => sq.id === 12);
+                    const retirementQuestion = aspirationalQuestions.find(sq => sq.id === 13);
+                    const startupQuestion = aspirationalQuestions.find(sq => sq.id === 14);
+                    
+                    return (
+                      <>
+                        {emergencyFundQuestion && (() => {
+                          const EmergencyIcon = emergencyFundQuestion.icon;
+                          return (
+                            <>
+                              <div className="flex items-center gap-2 mb-2 mt-4">
+                                <EmergencyIcon className="h-3 w-3 text-primary flex-shrink-0" />
+                                <h3 className="text-xs font-bold text-foreground">
+                                  {emergencyFundQuestion.question}
+                                </h3>
+                              </div>
+                              <div className="relative">
+                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-foreground font-medium">
+                                  $
+                                </span>
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  placeholder={emergencyFundQuestion.placeholder}
+                                  value={formatNumberWithCommas(aspirationalAnswers[11] || "")}
+                                  onChange={(e) => {
+                                    const value = e.target.value.replace(/[^0-9]/g, '');
+                                    handleAspAnswer(11, value);
+                                  }}
+                                  className="w-full pl-5 pr-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground/60"
+                                />
+                              </div>
+                            </>
+                          );
+                        })()}
+                        
+                        {cryptoQuestion && (() => {
+                          const CryptoIcon = cryptoQuestion.icon;
+                          return (
+                            <>
+                              <div className="flex items-center gap-2 mb-2 mt-4">
+                                <CryptoIcon className="h-3 w-3 text-primary flex-shrink-0" />
+                                <h3 className="text-xs font-bold text-foreground">
+                                  {cryptoQuestion.question}
+                                </h3>
+                              </div>
+                              <div className="relative">
+                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-foreground font-medium">
+                                  $
+                                </span>
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  placeholder={cryptoQuestion.placeholder}
+                                  value={formatNumberWithCommas(aspirationalAnswers[12] || "")}
+                                  onChange={(e) => {
+                                    const value = e.target.value.replace(/[^0-9]/g, '');
+                                    handleAspAnswer(12, value);
+                                  }}
+                                  className="w-full pl-5 pr-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground/60"
+                                />
+                              </div>
+                            </>
+                          );
+                        })()}
+                        
+                        {retirementQuestion && (() => {
+                          const RetirementIcon = retirementQuestion.icon;
+                          return (
+                            <>
+                              <div className="flex items-center gap-2 mb-2 mt-4">
+                                <RetirementIcon className="h-3 w-3 text-primary flex-shrink-0" />
+                                <h3 className="text-xs font-bold text-foreground">
+                                  {retirementQuestion.question}
+                                </h3>
+                              </div>
+                              <div className="relative">
+                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-foreground font-medium">
+                                  $
+                                </span>
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  placeholder={retirementQuestion.placeholder}
+                                  value={formatNumberWithCommas(aspirationalAnswers[13] || "")}
+                                  onChange={(e) => {
+                                    const value = e.target.value.replace(/[^0-9]/g, '');
+                                    handleAspAnswer(13, value);
+                                  }}
+                                  className="w-full pl-5 pr-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground/60"
+                                />
+                              </div>
+                            </>
+                          );
+                        })()}
+                        
+                        {startupQuestion && (() => {
+                          const StartupIcon = startupQuestion.icon;
+                          return (
+                            <>
+                              <div className="flex items-center gap-2 mb-2 mt-4">
+                                <StartupIcon className="h-3 w-3 text-primary flex-shrink-0" />
+                                <h3 className="text-xs font-bold text-foreground">
+                                  {startupQuestion.question}
+                                </h3>
+                              </div>
+                              <div className="relative">
+                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-foreground font-medium">
+                                  $
+                                </span>
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  placeholder={startupQuestion.placeholder}
+                                  value={formatNumberWithCommas(aspirationalAnswers[14] || "")}
+                                  onChange={(e) => {
+                                    const value = e.target.value.replace(/[^0-9]/g, '');
+                                    handleAspAnswer(14, value);
+                                  }}
+                                  className="w-full pl-5 pr-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground/60"
+                                />
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </>
+                    );
+                  })()}
                   
                   {/* Pregunta adicional para segunda propiedad dentro del mismo card */}
                   {q.id === 1 && (() => {
