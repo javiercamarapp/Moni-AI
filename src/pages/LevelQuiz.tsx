@@ -197,7 +197,7 @@ export default function LevelQuiz() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setShowIntro(false)}
+            onClick={() => navigate("/dashboard")}
             className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
           >
             <ArrowLeft className="h-5 w-5" />
