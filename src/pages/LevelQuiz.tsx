@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, CheckCircle2, Home, Car, PiggyBank, TrendingUp, Plane, GraduationCap } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Home, Car, PiggyBank, TrendingUp, Plane, GraduationCap, Building2, MapPin } from "lucide-react";
 import moniOwl from "@/assets/moni-owl-circle.png";
 import { useHasNetWorthData } from "@/hooks/useNetWorth";
 import moniAspirational from "@/assets/moni-aspirational.png";
@@ -87,6 +87,18 @@ export default function LevelQuiz() {
       question: "¿Quieres tener una segunda propiedad? ¿Cuánto costaría?",
       icon: Home,
       placeholder: "Ejemplo: 800000 (opcional)"
+    },
+    {
+      id: 9,
+      question: "¿Quieres tener propiedades de inversión (terrenos, departamentos o casas en renta)? ¿Cuál sería su valor deseado?",
+      icon: Building2,
+      placeholder: "Ejemplo: 1500000 (opcional)"
+    },
+    {
+      id: 10,
+      question: "¿Quieres tener terrenos u otros bienes raíces? ¿Cuál sería su valor deseado?",
+      icon: MapPin,
+      placeholder: "Ejemplo: 600000 (opcional)"
     },
     {
       id: 2,
@@ -366,32 +378,100 @@ export default function LevelQuiz() {
                   {/* Pregunta adicional para segunda propiedad dentro del mismo card */}
                   {q.id === 1 && (() => {
                     const secondHomeQuestion = aspirationalQuestions.find(sq => sq.id === 8);
-                    if (!secondHomeQuestion) return null;
-                    const SecondHomeIcon = secondHomeQuestion.icon;
+                    const investmentPropertyQuestion = aspirationalQuestions.find(sq => sq.id === 9);
+                    const landPropertyQuestion = aspirationalQuestions.find(sq => sq.id === 10);
+                    
                     return (
                       <>
-                        <div className="flex items-center gap-2 mb-2 mt-4">
-                          <SecondHomeIcon className="h-3 w-3 text-primary flex-shrink-0" />
-                          <h3 className="text-xs font-bold text-foreground">
-                            {secondHomeQuestion.question}
-                          </h3>
-                        </div>
-                        <div className="relative">
-                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-foreground font-medium">
-                            $
-                          </span>
-                          <input
-                            type="text"
-                            inputMode="numeric"
-                            placeholder={secondHomeQuestion.placeholder}
-                            value={formatNumberWithCommas(aspirationalAnswers[8] || "")}
-                            onChange={(e) => {
-                              const value = e.target.value.replace(/[^0-9]/g, '');
-                              handleAspAnswer(8, value);
-                            }}
-                            className="w-full pl-5 pr-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground/60"
-                          />
-                        </div>
+                        {secondHomeQuestion && (() => {
+                          const SecondHomeIcon = secondHomeQuestion.icon;
+                          return (
+                            <>
+                              <div className="flex items-center gap-2 mb-2 mt-4">
+                                <SecondHomeIcon className="h-3 w-3 text-primary flex-shrink-0" />
+                                <h3 className="text-xs font-bold text-foreground">
+                                  {secondHomeQuestion.question}
+                                </h3>
+                              </div>
+                              <div className="relative">
+                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-foreground font-medium">
+                                  $
+                                </span>
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  placeholder={secondHomeQuestion.placeholder}
+                                  value={formatNumberWithCommas(aspirationalAnswers[8] || "")}
+                                  onChange={(e) => {
+                                    const value = e.target.value.replace(/[^0-9]/g, '');
+                                    handleAspAnswer(8, value);
+                                  }}
+                                  className="w-full pl-5 pr-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground/60"
+                                />
+                              </div>
+                            </>
+                          );
+                        })()}
+                        
+                        {investmentPropertyQuestion && (() => {
+                          const InvestmentIcon = investmentPropertyQuestion.icon;
+                          return (
+                            <>
+                              <div className="flex items-center gap-2 mb-2 mt-4">
+                                <InvestmentIcon className="h-3 w-3 text-primary flex-shrink-0" />
+                                <h3 className="text-xs font-bold text-foreground">
+                                  {investmentPropertyQuestion.question}
+                                </h3>
+                              </div>
+                              <div className="relative">
+                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-foreground font-medium">
+                                  $
+                                </span>
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  placeholder={investmentPropertyQuestion.placeholder}
+                                  value={formatNumberWithCommas(aspirationalAnswers[9] || "")}
+                                  onChange={(e) => {
+                                    const value = e.target.value.replace(/[^0-9]/g, '');
+                                    handleAspAnswer(9, value);
+                                  }}
+                                  className="w-full pl-5 pr-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground/60"
+                                />
+                              </div>
+                            </>
+                          );
+                        })()}
+                        
+                        {landPropertyQuestion && (() => {
+                          const LandIcon = landPropertyQuestion.icon;
+                          return (
+                            <>
+                              <div className="flex items-center gap-2 mb-2 mt-4">
+                                <LandIcon className="h-3 w-3 text-primary flex-shrink-0" />
+                                <h3 className="text-xs font-bold text-foreground">
+                                  {landPropertyQuestion.question}
+                                </h3>
+                              </div>
+                              <div className="relative">
+                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-foreground font-medium">
+                                  $
+                                </span>
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  placeholder={landPropertyQuestion.placeholder}
+                                  value={formatNumberWithCommas(aspirationalAnswers[10] || "")}
+                                  onChange={(e) => {
+                                    const value = e.target.value.replace(/[^0-9]/g, '');
+                                    handleAspAnswer(10, value);
+                                  }}
+                                  className="w-full pl-5 pr-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground/60"
+                                />
+                              </div>
+                            </>
+                          );
+                        })()}
                       </>
                     );
                   })()}
