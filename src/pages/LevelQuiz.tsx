@@ -299,7 +299,7 @@ export default function LevelQuiz() {
                       className="w-16 h-16 object-contain flex-shrink-0"
                     />
                     <p className="text-base font-bold text-foreground">
-                      Mi futura casa...
+                      🏠 Bienes raíces
                     </p>
                   </div>
                 )}
