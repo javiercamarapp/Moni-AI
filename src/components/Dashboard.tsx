@@ -996,7 +996,10 @@ const Dashboard = () => {
               <div className="flex-1 min-w-0 text-center sm:text-left">
                 <p className="text-[9px] sm:text-xs text-foreground/80 leading-tight">Net Worth</p>
                 <p className="text-xs sm:text-base font-bold text-foreground leading-tight">
-                  ${(netWorth / 1000).toFixed(0)}k
+                  {netWorth >= 1000000 
+                    ? `$${(netWorth / 1000000).toFixed(1)}M`
+                    : `$${(netWorth / 1000).toFixed(0)}k`
+                  }
                 </p>
               </div>
             </div>
