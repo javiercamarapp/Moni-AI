@@ -298,8 +298,8 @@ export default function LevelQuiz() {
           {/* Lista de preguntas */}
           {aspirationalQuestions.map((q) => {
             const Icon = q.icon;
-            // Filtrar preguntas 7 y 8 ya que se mostrarán dentro de sus respectivos cards
-            if (q.id === 7 || q.id === 8) return null;
+            // Filtrar preguntas 7, 8, 9 y 10 ya que se mostrarán dentro de sus respectivos cards
+            if (q.id === 7 || q.id === 8 || q.id === 9 || q.id === 10) return null;
             
             return (
               <div key={q.id}>
