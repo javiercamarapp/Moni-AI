@@ -286,8 +286,8 @@ export default function LevelQuiz() {
           {/* Lista de preguntas */}
           {aspirationalQuestions.map((q) => {
             const Icon = q.icon;
-            // Filtrar pregunta 7 ya que se mostrará dentro del card de pregunta 2
-            if (q.id === 7) return null;
+            // Filtrar preguntas 7 y 8 ya que se mostrarán dentro de sus respectivos cards
+            if (q.id === 7 || q.id === 8) return null;
             
             return (
               <div key={q.id}>
@@ -362,6 +362,39 @@ export default function LevelQuiz() {
                       className="w-full px-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground"
                     />
                   )}
+                  
+                  {/* Pregunta adicional para segunda propiedad dentro del mismo card */}
+                  {q.id === 1 && (() => {
+                    const secondHomeQuestion = aspirationalQuestions.find(sq => sq.id === 8);
+                    if (!secondHomeQuestion) return null;
+                    const SecondHomeIcon = secondHomeQuestion.icon;
+                    return (
+                      <>
+                        <div className="flex items-center gap-2 mb-2 mt-4">
+                          <SecondHomeIcon className="h-3 w-3 text-primary flex-shrink-0" />
+                          <h3 className="text-xs font-bold text-foreground">
+                            {secondHomeQuestion.question}
+                          </h3>
+                        </div>
+                        <div className="relative">
+                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-foreground font-medium">
+                            $
+                          </span>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            placeholder={secondHomeQuestion.placeholder}
+                            value={formatNumberWithCommas(aspirationalAnswers[8] || "")}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/[^0-9]/g, '');
+                              handleAspAnswer(8, value);
+                            }}
+                            className="w-full pl-5 pr-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground/60"
+                          />
+                        </div>
+                      </>
+                    );
+                  })()}
                   
                   {/* Pregunta adicional para el cónyuge dentro del mismo card */}
                   {q.id === 2 && (() => {
