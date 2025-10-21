@@ -90,13 +90,13 @@ export default function LevelQuiz() {
     },
     {
       id: 9,
-      question: "¿Quieres tener propiedades de inversión (terrenos, departamentos o casas en renta)? ¿Cuál sería su valor deseado?",
+      question: "¿Quieres tener propiedades de inversión (terrenos, departamentos o casas en renta)?",
       icon: Building2,
       placeholder: "Ejemplo: 1500000 (opcional)"
     },
     {
       id: 10,
-      question: "¿Quieres tener terrenos u otros bienes raíces? ¿Cuál sería su valor deseado?",
+      question: "¿Quieres tener terrenos u otros bienes raíces?",
       icon: MapPin,
       placeholder: "Ejemplo: 600000 (opcional)"
     },
