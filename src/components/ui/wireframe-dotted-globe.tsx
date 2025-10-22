@@ -142,9 +142,9 @@ export default function RotatingEarth({ width = 800, height = 600, className = "
       // Draw ocean (globe background)
       context.beginPath()
       context.arc(containerWidth / 2, containerHeight / 2, currentScale, 0, 2 * Math.PI)
-      context.fillStyle = "#000000"
+      context.fillStyle = "#ffffff"
       context.fill()
-      context.strokeStyle = "#ffffff"
+      context.strokeStyle = "#000000"
       context.lineWidth = 2 * scaleFactor
       context.stroke()
 
@@ -153,7 +153,7 @@ export default function RotatingEarth({ width = 800, height = 600, className = "
         const graticule = d3.geoGraticule()
         context.beginPath()
         path(graticule())
-        context.strokeStyle = "#ffffff"
+        context.strokeStyle = "#000000"
         context.lineWidth = 1 * scaleFactor
         context.globalAlpha = 0.25
         context.stroke()
@@ -164,7 +164,7 @@ export default function RotatingEarth({ width = 800, height = 600, className = "
         landFeatures.features.forEach((feature: any) => {
           path(feature)
         })
-        context.strokeStyle = "#ffffff"
+        context.strokeStyle = "#000000"
         context.lineWidth = 1 * scaleFactor
         context.stroke()
 
@@ -180,7 +180,7 @@ export default function RotatingEarth({ width = 800, height = 600, className = "
           ) {
             context.beginPath()
             context.arc(projected[0], projected[1], 1.2 * scaleFactor, 0, 2 * Math.PI)
-            context.fillStyle = "#999999"
+            context.fillStyle = "#333333"
             context.fill()
           }
         })
@@ -266,16 +266,7 @@ export default function RotatingEarth({ width = 800, height = 600, className = "
       document.addEventListener("mouseup", handleMouseUp)
     }
 
-    const handleWheel = (event: WheelEvent) => {
-      event.preventDefault()
-      const scaleFactor = event.deltaY > 0 ? 0.9 : 1.1
-      const newRadius = Math.max(radius * 0.5, Math.min(radius * 3, projection.scale() * scaleFactor))
-      projection.scale(newRadius)
-      render()
-    }
-
     canvas.addEventListener("mousedown", handleMouseDown)
-    canvas.addEventListener("wheel", handleWheel)
 
     // Load the world data
     loadWorldData()
@@ -284,7 +275,6 @@ export default function RotatingEarth({ width = 800, height = 600, className = "
     return () => {
       rotationTimer.stop()
       canvas.removeEventListener("mousedown", handleMouseDown)
-      canvas.removeEventListener("wheel", handleWheel)
     }
   }, [width, height])
 
