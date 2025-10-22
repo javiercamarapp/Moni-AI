@@ -163,7 +163,7 @@ export default function FinancialJourney() {
     return badges.sort((a, b) => a.level - b.level);
   };
 
-  const getBadgePosition = (level: number, index: number) => {
+  const getBadgePosition = (level: number, index: number, badgesAtLevel: number, badgeIndexAtLevel: number) => {
     // Calcular el índice del nodo que corresponde exactamente a este nivel
     // Cada nodo representa 50 niveles (10000 niveles / 200 nodos = 50)
     // Restamos 1 para alinear correctamente con el nodo del nivel exacto
@@ -175,7 +175,14 @@ export default function FinancialJourney() {
     // Alternar las insignias entre izquierda y derecha para evitar choques
     const side = index % 2 === 0 ? 'left' : 'right';
     
-    return { y: baseY, side };
+    // Si hay múltiples insignias en el mismo nivel, ajustar verticalmente
+    let yOffset = 0;
+    if (badgesAtLevel > 1) {
+      // Desplazar verticalmente cada insignia adicional
+      yOffset = (badgeIndexAtLevel - (badgesAtLevel - 1) / 2) * 45;
+    }
+    
+    return { y: baseY + yOffset, side };
   };
 
   const generateNodes = () => {
@@ -489,14 +496,24 @@ export default function FinancialJourney() {
 
           <div className="relative z-10 px-4">
             {/* Renderizar Insignias */}
-            {getBadges().map((badge, index) => {
-              const isUnlocked = currentLevel >= badge.level;
-              const BadgeIcon = badge.icon;
-              const position = getBadgePosition(badge.level, index);
+            {(() => {
+              const allBadges = getBadges();
+              
+              return allBadges.map((badge, index) => {
+                const isUnlocked = currentLevel >= badge.level;
+                const BadgeIcon = badge.icon;
+                
+                // Contar cuántas insignias hay en este nivel
+                const badgesAtThisLevel = allBadges.filter(b => b.level === badge.level);
+                const badgeIndexAtLevel = badgesAtThisLevel.findIndex(b => 
+                  b.name === badge.name && b.type === badge.type
+                );
+                
+                const position = getBadgePosition(badge.level, index, badgesAtThisLevel.length, badgeIndexAtLevel);
               
               return (
                 <div
-                  key={`badge-${badge.level}`}
+                  key={`badge-${badge.level}-${badge.name}-${badge.type}`}
                   className={`absolute transition-all duration-300 ${expandedBadge === badge.level ? 'z-[100]' : 'z-20'} ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
                   style={{
                     [position.side]: position.side === 'left' ? '1%' : 'auto',
@@ -655,7 +672,8 @@ export default function FinancialJourney() {
                   </div>
                 </div>
               );
-            })}
+            });
+            })()}
 
             {/* Renderizar Nodos */}
             {journeyNodes.map((node) => (
