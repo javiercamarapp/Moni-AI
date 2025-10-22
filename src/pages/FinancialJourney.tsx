@@ -437,21 +437,22 @@ export default function FinancialJourney() {
               return (
                 <div
                   key={`badge-${badge.level}`}
-                  className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'}`}
+                  className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
                   style={{
-                    [position.side]: '2%',
+                    [position.side]: position.side === 'left' ? '1%' : 'auto',
+                    [position.side === 'right' ? 'right' : 'left']: position.side === 'right' ? '1%' : 'auto',
                     top: `${position.y}px`,
                     transform: 'translateY(-50%)',
                     zIndex: 20
                   }}
                 >
-                  <div className="flex flex-col items-center gap-0.5">
+                  <div className="flex flex-col items-center gap-0.5 relative">
                     <div
                       className={`
                         relative rounded-full flex items-center justify-center
                         transition-all duration-300 border-2 border-white
-                        ${badge.type === 'mega' ? 'w-14 h-14 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 shadow-xl' : 
-                          'w-9 h-9 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg'}
+                        ${badge.type === 'mega' ? 'w-12 h-12 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 shadow-xl' : 
+                          'w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg'}
                         ${isUnlocked ? 'shadow-lg hover:scale-110' : 'grayscale'}
                       `}
                     >
@@ -459,18 +460,21 @@ export default function FinancialJourney() {
                         <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-30" />
                       )}
                       <BadgeIcon 
-                        className={`${badge.type === 'mega' ? 'w-7 h-7' : 'w-5 h-5'} text-white relative z-10 drop-shadow-md`}
+                        className={`${badge.type === 'mega' ? 'w-6 h-6' : 'w-4 h-4'} text-white relative z-10 drop-shadow-md`}
                       />
                     </div>
-                    <span 
+                    {/* Tooltip al hacer hover en desktop */}
+                    <div 
                       className={`
-                        text-[9px] font-bold text-center whitespace-nowrap px-1 py-0.5 rounded-full
-                        ${badge.type === 'mega' ? 'text-[10px] bg-yellow-100' : 'bg-white/80'}
+                        absolute top-full mt-1 hidden md:group-hover:block
+                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                        ${badge.type === 'mega' ? 'bg-yellow-100' : 'bg-white'}
                         ${isUnlocked ? badge.color : 'text-gray-400'}
+                        shadow-md z-30
                       `}
                     >
                       {badge.name}
-                    </span>
+                    </div>
                   </div>
                 </div>
               );
