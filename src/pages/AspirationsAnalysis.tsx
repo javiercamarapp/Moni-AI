@@ -110,15 +110,35 @@ export default function AspirationsAnalysis() {
       .replace(/\\/g, '')          // Remove backslashes \
       .trim();
     
-    // Split by numbered sections (1., 2., 3., etc.)
+    // Split by numbered sections (1., 2., 3., etc.) - mejorado para capturar todo el contenido
     const sections: { title: string; content: string }[] = [];
-    const sectionRegex = /(\d+)\.\s*([A-ZÁÉÍÓÚÑ\s]+)\n([\s\S]*?)(?=\d+\.\s*[A-ZÁÉÍÓÚÑ]|\n*$)/g;
+    
+    // Encontrar todos los inicios de sección
+    const sectionStarts: { index: number; number: string; title: string }[] = [];
+    const sectionStartRegex = /^(\d+)\.\s*([A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ\s]+)$/gm;
     
     let match;
-    while ((match = sectionRegex.exec(cleanedText)) !== null) {
-      const number = match[1];
-      const title = match[2].trim();
-      let content = match[3].trim();
+    while ((match = sectionStartRegex.exec(cleanedText)) !== null) {
+      sectionStarts.push({
+        index: match.index,
+        number: match[1],
+        title: match[2].trim()
+      });
+    }
+    
+    // Extraer contenido entre secciones
+    for (let i = 0; i < sectionStarts.length; i++) {
+      const currentSection = sectionStarts[i];
+      const nextSection = sectionStarts[i + 1];
+      
+      // Calcular donde termina el título de la sección actual
+      const titleEnd = currentSection.index + currentSection.number.length + 2 + currentSection.title.length;
+      
+      // Extraer contenido desde el final del título hasta el inicio de la siguiente sección (o el final del texto)
+      const contentStart = titleEnd;
+      const contentEnd = nextSection ? nextSection.index : cleanedText.length;
+      
+      let content = cleanedText.substring(contentStart, contentEnd).trim();
       
       // Clean content again to be sure
       content = content
@@ -134,7 +154,7 @@ export default function AspirationsAnalysis() {
         .trim();
       
       sections.push({
-        title: `${number}. ${title}`,
+        title: `${currentSection.number}. ${currentSection.title}`,
         content: content
       });
     }
@@ -146,6 +166,8 @@ export default function AspirationsAnalysis() {
         content: cleanedText
       });
     }
+    
+    console.log('Parsed sections:', sections.length, 'Total chars:', cleanedText.length);
     
     return sections;
   };
