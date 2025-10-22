@@ -383,7 +383,7 @@ export default function FinancialJourney() {
                 {/* Node Info Card */}
                 <Card 
                   className={`
-                    mt-2 p-2 w-full max-w-[200px] text-center transition-all duration-300 rounded-[16px] shadow-lg
+                    mt-2 px-2 py-1 w-full max-w-[200px] text-center transition-all duration-300 rounded-[16px] shadow-lg
                     ${node.isCurrent 
                       ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400' 
                       : node.isUnlocked
@@ -393,30 +393,30 @@ export default function FinancialJourney() {
                   `}
                 >
                   <h3 className={`
-                    font-bold mb-1 text-xs
+                    font-bold mb-0.5 text-xs leading-none
                     ${node.isCurrent ? 'text-green-600' : node.isUnlocked ? 'text-foreground' : 'text-gray-400'}
                   `}>
                     {node.title}
                   </h3>
                   <p className={`
-                    text-xs leading-tight
+                    text-[10px] leading-snug
                     ${node.isUnlocked ? 'text-foreground/70' : 'text-gray-400'}
                   `}>
                     {node.description}
                   </p>
                   
                   {node.isCurrent && (
-                    <div className="mt-2 pt-2 border-t border-green-200">
-                      <div className="flex items-center justify-center gap-1 text-[10px] text-green-600">
-                        <TrendingUp className="h-2.5 w-2.5" />
+                    <div className="mt-1 pt-1 border-t border-green-200">
+                      <div className="flex items-center justify-center gap-1 text-[9px] text-green-600">
+                        <TrendingUp className="h-2 w-2" />
                         <span className="font-semibold">Nivel Actual</span>
                       </div>
                     </div>
                   )}
 
                   {node.isCompleted && (
-                    <div className="mt-1.5 flex items-center justify-center gap-1 text-[10px] text-green-600">
-                      <Star className="h-2.5 w-2.5 fill-current" />
+                    <div className="mt-1 flex items-center justify-center gap-1 text-[9px] text-green-600">
+                      <Star className="h-2 w-2 fill-current" />
                       <span>Completado</span>
                     </div>
                   )}
