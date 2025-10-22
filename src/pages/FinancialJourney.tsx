@@ -129,7 +129,7 @@ export default function FinancialJourney() {
   const currentLevel = journeyNodes.findIndex(node => node.isCurrent) + 1;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 pb-20">
+    <div className="min-h-screen animated-wave-bg pb-4">
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -137,44 +137,44 @@ export default function FinancialJourney() {
             variant="ghost"
             size="icon"
             onClick={() => navigate("/aspirations-analysis")}
-            className="hover:bg-white/10 text-white"
+            className="bg-white rounded-full shadow-xl hover:bg-white/90 text-foreground h-12 w-12 hover:scale-105 transition-all border border-blue-100"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-orange-500/20 px-3 py-1.5 rounded-full">
-              <Gem className="h-4 w-4 text-orange-400" />
-              <span className="text-sm font-bold text-orange-400">{Math.round(currentProgress)}</span>
+            <div className="flex items-center gap-2 bg-orange-100 px-3 py-1.5 rounded-full border border-orange-200">
+              <Gem className="h-4 w-4 text-orange-600" />
+              <span className="text-sm font-bold text-orange-600">{Math.round(currentProgress)}%</span>
             </div>
-            <div className="flex items-center gap-2 bg-blue-500/20 px-3 py-1.5 rounded-full">
-              <Trophy className="h-4 w-4 text-blue-400" />
-              <span className="text-sm font-bold text-blue-400">Nivel {currentLevel}</span>
+            <div className="flex items-center gap-2 bg-blue-100 px-3 py-1.5 rounded-full border border-blue-200">
+              <Trophy className="h-4 w-4 text-blue-600" />
+              <span className="text-sm font-bold text-blue-600">Nivel {currentLevel}</span>
             </div>
           </div>
         </div>
 
         {/* Section Header */}
-        <Card className="p-6 mb-8 bg-gradient-to-r from-green-500 to-emerald-600 border-0 text-white">
-          <p className="text-xs font-bold uppercase tracking-wider opacity-90 mb-1">
+        <Card className="p-6 mb-8 bg-gradient-to-br from-green-50 to-emerald-50 border-0 shadow-xl rounded-[20px]">
+          <p className="text-xs font-bold uppercase tracking-wider text-green-700 mb-1">
             Tu Camino Financiero
           </p>
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-2xl font-bold text-foreground">
             Hacia la Libertad Financiera
           </h1>
           <div className="mt-4">
-            <div className="flex justify-between text-sm mb-2">
+            <div className="flex justify-between text-sm mb-2 text-foreground/70">
               <span>Progreso Total</span>
-              <span className="font-bold">{currentProgress.toFixed(1)}%</span>
+              <span className="font-bold text-foreground">{currentProgress.toFixed(1)}%</span>
             </div>
-            <Progress value={currentProgress} className="h-3 bg-white/30" />
+            <Progress value={currentProgress} className="h-3" />
           </div>
         </Card>
 
         {/* Journey Path */}
         <div className="relative">
           {/* Vertical line connecting nodes */}
-          <div className="absolute left-[50%] top-0 bottom-0 w-1 bg-slate-700 -translate-x-1/2 z-0" />
+          <div className="absolute left-[50%] top-0 bottom-0 w-1 bg-gradient-to-b from-blue-200 via-purple-200 to-green-200 -translate-x-1/2 z-0" />
 
           {/* Journey Nodes */}
           <div className="space-y-12 relative z-10">
@@ -184,7 +184,7 @@ export default function FinancialJourney() {
                 <div className="relative">
                   {/* Pulse animation for current node */}
                   {node.isCurrent && (
-                    <div className="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-20" />
+                    <div className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-30" />
                   )}
                   
                   <div
@@ -192,12 +192,12 @@ export default function FinancialJourney() {
                       relative w-24 h-24 rounded-full flex items-center justify-center
                       transition-all duration-300 z-10
                       ${node.isCompleted
-                        ? 'bg-gradient-to-br from-green-400 to-green-600 shadow-lg shadow-green-500/50'
+                        ? 'bg-gradient-to-br from-green-400 to-green-600 shadow-xl shadow-green-400/40'
                         : node.isCurrent
-                        ? 'bg-gradient-to-br from-green-500 to-emerald-600 shadow-xl shadow-green-500/60 scale-110'
+                        ? 'bg-gradient-to-br from-green-500 to-emerald-600 shadow-2xl shadow-green-500/60 scale-110'
                         : node.isUnlocked
-                        ? 'bg-gradient-to-br from-blue-500 to-blue-600 shadow-md shadow-blue-500/40'
-                        : 'bg-slate-700 border-2 border-slate-600'
+                        ? 'bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg shadow-blue-400/40'
+                        : 'bg-white border-2 border-gray-200 shadow-md'
                       }
                     `}
                   >
@@ -213,7 +213,7 @@ export default function FinancialJourney() {
                     ) : node.isUnlocked ? (
                       <Target className="h-10 w-10 text-white" />
                     ) : (
-                      <Lock className="h-8 w-8 text-slate-500" />
+                      <Lock className="h-8 w-8 text-gray-400" />
                     )}
                   </div>
 
@@ -225,7 +225,7 @@ export default function FinancialJourney() {
                         cy="50"
                         r="45"
                         fill="none"
-                        stroke="rgba(255,255,255,0.2)"
+                        stroke="rgba(255,255,255,0.3)"
                         strokeWidth="4"
                       />
                       <circle
@@ -246,31 +246,31 @@ export default function FinancialJourney() {
                 {/* Node Info Card */}
                 <Card 
                   className={`
-                    mt-4 p-4 w-full max-w-xs text-center transition-all duration-300
+                    mt-4 p-4 w-full max-w-xs text-center transition-all duration-300 rounded-[20px] shadow-xl
                     ${node.isCurrent 
-                      ? 'bg-gradient-to-br from-slate-800 to-slate-700 border-2 border-green-500 shadow-lg shadow-green-500/20' 
+                      ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400' 
                       : node.isUnlocked
-                      ? 'bg-slate-800 border-slate-700'
-                      : 'bg-slate-800/50 border-slate-700/50 opacity-60'
+                      ? 'bg-white border border-blue-100'
+                      : 'bg-white/50 border border-gray-200 opacity-60'
                     }
                   `}
                 >
                   <h3 className={`
                     font-bold mb-1
-                    ${node.isCurrent ? 'text-green-400' : node.isUnlocked ? 'text-white' : 'text-slate-500'}
+                    ${node.isCurrent ? 'text-green-600' : node.isUnlocked ? 'text-foreground' : 'text-gray-400'}
                   `}>
                     {node.title}
                   </h3>
                   <p className={`
                     text-sm
-                    ${node.isUnlocked ? 'text-slate-300' : 'text-slate-600'}
+                    ${node.isUnlocked ? 'text-foreground/70' : 'text-gray-400'}
                   `}>
                     {node.description}
                   </p>
                   
                   {node.isCurrent && (
-                    <div className="mt-3 pt-3 border-t border-slate-700">
-                      <div className="flex items-center justify-center gap-2 text-xs text-green-400">
+                    <div className="mt-3 pt-3 border-t border-green-200">
+                      <div className="flex items-center justify-center gap-2 text-xs text-green-600">
                         <TrendingUp className="h-3 w-3" />
                         <span className="font-semibold">Nivel Actual</span>
                       </div>
@@ -278,7 +278,7 @@ export default function FinancialJourney() {
                   )}
 
                   {node.isCompleted && (
-                    <div className="mt-2 flex items-center justify-center gap-1 text-xs text-green-400">
+                    <div className="mt-2 flex items-center justify-center gap-1 text-xs text-green-600">
                       <Star className="h-3 w-3 fill-current" />
                       <span>Completado</span>
                     </div>
@@ -287,7 +287,7 @@ export default function FinancialJourney() {
 
                 {/* Connector line to next node (except for last node) */}
                 {index < journeyNodes.length - 1 && (
-                  <div className="h-8 w-1 bg-slate-700 mt-4" />
+                  <div className="h-8 w-1 bg-gradient-to-b from-blue-200 via-purple-200 to-green-200 mt-4" />
                 )}
               </div>
             ))}
@@ -295,22 +295,22 @@ export default function FinancialJourney() {
         </div>
 
         {/* Bottom Summary */}
-        <Card className="mt-12 p-6 bg-slate-800 border-slate-700">
+        <Card className="mt-12 p-6 bg-gradient-to-br from-purple-50 to-blue-50 border-0 shadow-xl rounded-[20px]">
           <div className="text-center">
-            <h3 className="text-lg font-bold text-white mb-2">Tu Progreso</h3>
-            <p className="text-slate-300 text-sm mb-4">
+            <h3 className="text-lg font-bold text-foreground mb-2">Tu Progreso</h3>
+            <p className="text-foreground/70 text-sm mb-4">
               Estás en el nivel {currentLevel} de 8. ¡Sigue así!
             </p>
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="bg-slate-700/50 p-3 rounded-lg">
-                <p className="text-slate-400 text-xs">Net Worth Actual</p>
-                <p className="text-white font-bold mt-1">
+              <div className="bg-white/60 p-3 rounded-xl border border-blue-100">
+                <p className="text-foreground/60 text-xs">Net Worth Actual</p>
+                <p className="text-foreground font-bold mt-1">
                   ${currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0 })}
                 </p>
               </div>
-              <div className="bg-slate-700/50 p-3 rounded-lg">
-                <p className="text-slate-400 text-xs">Meta Aspiracional</p>
-                <p className="text-blue-400 font-bold mt-1">
+              <div className="bg-white/60 p-3 rounded-xl border border-purple-100">
+                <p className="text-foreground/60 text-xs">Meta Aspiracional</p>
+                <p className="text-blue-600 font-bold mt-1">
                   ${totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0 })}
                 </p>
               </div>
@@ -321,8 +321,7 @@ export default function FinancialJourney() {
         {/* Action Button */}
         <Button
           onClick={() => navigate("/dashboard")}
-          variant="outline"
-          className="w-full mt-6 h-12 border-slate-700 hover:bg-slate-800 text-white"
+          className="w-full mt-6 h-12 bg-white/95 hover:bg-white text-foreground font-bold rounded-[20px] shadow-xl hover:scale-[1.02] transition-all border border-blue-100"
         >
           Volver al Dashboard
         </Button>
