@@ -338,7 +338,7 @@ export default function FinancialJourney() {
                   {expandedNode === node.id && (
                     <Card 
                       className={`
-                        mt-2 px-3 py-2 w-44 text-center animate-scale-in rounded-[16px] shadow-xl
+                        mt-2 px-3 py-2 w-44 text-center animate-scale-in rounded-[16px] shadow-xl z-50 relative
                         ${node.isCurrent 
                           ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400' 
                           : node.isUnlocked
