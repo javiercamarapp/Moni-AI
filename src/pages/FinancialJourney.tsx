@@ -110,10 +110,12 @@ export default function FinancialJourney() {
   };
 
   const getBadgePosition = (level: number, index: number) => {
-    // Calcular la posición Y exacta basada en el nivel de la insignia
-    const progressPercent = (level / 10000) * 100;
-    const nodeIndex = progressPercent / 0.5; // Cada nodo representa 0.5% de progreso (50 niveles)
-    const baseY = 40 + (nodeIndex * 35); // Misma fórmula que los nodos
+    // Calcular el índice del nodo que corresponde exactamente a este nivel
+    // Cada nodo representa 50 niveles (10000 niveles / 200 nodos = 50)
+    const nodeIndex = level / 50;
+    
+    // Usar la misma fórmula base que los nodos (sin el offset aleatorio)
+    const baseY = 40 + (nodeIndex * 35);
     
     // Alternar las insignias entre izquierda y derecha para evitar choques
     const side = index % 2 === 0 ? 'left' : 'right';
