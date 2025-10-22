@@ -584,11 +584,12 @@ export default function FinancialJourney() {
                       )}
                     </button>
                     
-                    {/* Tooltip al hacer hover en desktop */}
+                    {/* Tooltip al hacer hover */}
                     <div 
                       className={`
-                        absolute top-full mt-1 hidden md:group-hover:block
+                        absolute top-full mt-1 opacity-0 group-hover:opacity-100 pointer-events-none
                         text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                        transition-opacity duration-200
                         ${badge.type === 'diamond' ? 'bg-cyan-100' : 
                           badge.type === 'gold' ? 'bg-yellow-100' : 
                           badge.type === 'mega' ? 'bg-yellow-100' :
