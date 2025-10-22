@@ -307,11 +307,11 @@ export default function FinancialJourney() {
         <div className="container mx-auto px-4 max-w-2xl">
           <div className="relative w-full pb-4 pt-2" style={{ minHeight: '7200px' }}>
           {/* 9 Secciones de fondo */}
-          <div className="absolute inset-0 w-full h-full">
+          <div className="absolute inset-0 w-full h-full pointer-events-none">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((section) => (
               <div
                 key={`section-${section}`}
-                className="w-full h-[800px] relative"
+                className="w-full h-[800px] relative pointer-events-none"
                 style={{
                   // Aquí puedes agregar imágenes o videos de fondo
                   // backgroundImage: `url('/path-to-image-${section}.jpg')`,
