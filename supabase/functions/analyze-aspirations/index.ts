@@ -63,47 +63,56 @@ Deno.serve(async (req) => {
       aspirationsCount: aspirations.length
     })
 
-    const prompt = `Eres un asesor financiero experto. Analiza las aspiraciones financieras del usuario y proporciona recomendaciones personalizadas y motivadoras.
+    const prompt = `Eres un asesor financiero experto certificado con amplia experiencia en planificación patrimonial. Analiza de manera exhaustiva las aspiraciones financieras del usuario y proporciona un análisis comparativo detallado.
 
-INFORMACIÓN DEL USUARIO:
+INFORMACIÓN FINANCIERA DEL USUARIO:
 - Net Worth Actual: $${currentNetWorth.toLocaleString('es-MX')}
 - Net Worth Aspiracional: $${totalAspiration.toLocaleString('es-MX')}
 - Brecha a cerrar: $${gap.toLocaleString('es-MX')} (${gapPercentage}%)
 
-ASPIRACIONES DEL USUARIO:
+ASPIRACIONES DETALLADAS:
 ${aspirationsList}
 
+INSTRUCCIONES PARA EL ANÁLISIS:
+
+Como experto financiero, debes realizar un análisis comparativo exhaustivo entre la situación actual y las aspiraciones. Compara cada aspiración con su valor actual, identifica brechas específicas, y proporciona estrategias concretas y priorizadas para cerrar cada una.
+
+Debes incluir:
+- Análisis detallado de viabilidad de cada aspiración
+- Comparativas específicas entre situación actual y metas
+- Timeframes realistas basados en el perfil financiero
+- Estrategias de ahorro e inversión específicas con montos
+- Priorización basada en urgencia, viabilidad y retorno
+- Plan de acción paso a paso con fechas estimadas
+- Recomendaciones para hacer cada aspiración factible
+
 REGLAS DE FORMATO ESTRICTAS:
-- PROHIBIDO usar asteriscos (*)
-- PROHIBIDO usar hashtags (#)
-- PROHIBIDO usar guiones (-)
-- PROHIBIDO usar barras (/)
-- PROHIBIDO usar markdown
-- SOLO usa texto plano y saltos de línea
-- Las listas deben ser con números o letras, no con guiones o asteriscos
+- PROHIBIDO usar asteriscos, hashtags, guiones, barras diagonales o cualquier símbolo de markdown
+- SOLO usa texto plano, números para listas y saltos de línea
+- Usa números (1, 2, 3) o letras (a, b, c) para enumerar, nunca guiones o asteriscos
 
 FORMATO DE RESPUESTA REQUERIDO:
-Proporciona tu análisis dividido en 6 secciones numeradas. Cada sección debe comenzar con un número seguido de un punto y el título en MAYÚSCULAS, seguido del contenido en texto plano.
+Divide tu análisis en 6 secciones numeradas. Cada sección debe comenzar con número, punto, título en MAYÚSCULAS y contenido detallado en texto plano:
 
 1. EVALUACIÓN REALISTA Y MOTIVADORA DE TUS METAS
-Tu evaluación aquí, incluyendo el net worth actual de ${currentNetWorth.toLocaleString('es-MX')} pesos. Usa solo texto plano, sin símbolos especiales.
+Analiza el net worth actual de ${currentNetWorth.toLocaleString('es-MX')} pesos versus la meta de ${totalAspiration.toLocaleString('es-MX')} pesos. Evalúa la viabilidad general y el perfil de riesgo. Sé motivador pero realista sobre los timeframes.
 
-2. ASPIRACIONES MÁS IMPORTANTES Y VIABLES
-Tu análisis aquí en texto plano.
+2. ASPIRACIONES MAS IMPORTANTES Y VIABLES
+Identifica cuáles aspiraciones son más alcanzables a corto, mediano y largo plazo. Compara el valor de cada aspiración con su importancia estratégica para el patrimonio familiar.
 
 3. ESTRATEGIAS CONCRETAS PARA CERRAR LA BRECHA
-Tus estrategias aquí en texto plano. Si necesitas hacer una lista, usa números (1, 2, 3) o letras (a, b, c).
+Proporciona estrategias específicas con montos. Ejemplo: aumentar ahorro mensual en X cantidad, invertir en Y instrumento con retorno esperado de Z porcentaje. Incluye al menos 4 estrategias concretas.
 
-4. PLAN DE ACCIÓN PASO A PASO
-Tu plan aquí en texto plano. Usa números para los pasos.
+4. PLAN DE ACCION PASO A PASO
+Detalla un plan con fechas estimadas. Ejemplo: Mes 1 a 6 hacer X, Mes 7 a 12 lograr Y, Año 2 alcanzar Z. Incluye al menos 5 pasos priorizados con timeframes.
 
-5. PRIORIZACIÓN DE ASPIRACIONES
-Tus consejos aquí en texto plano.
+5. PRIORIZACION DE ASPIRACIONES
+Recomienda qué aspiraciones atacar primero y por qué. Justifica con análisis de urgencia, costo oportunidad, viabilidad financiera y beneficio familiar. Ordena las aspiraciones de mayor a menor prioridad.
 
-6. RECOMENDACIONES DE AHORRO E INVERSIÓN
-Tus recomendaciones aquí en texto plano.
+6. RECOMENDACIONES DE AHORRO E INVERSION
+Proporciona recomendaciones específicas: porcentajes de ahorro sugeridos, instrumentos de inversión recomendados (CETES, fondos indexados, etc), estrategias de reducción de gastos, y proyecciones de crecimiento patrimonial esperado.
 
-El tono debe ser positivo, motivador y práctico. Máximo 600 palabras en total. RECUERDA: SOLO TEXTO PLANO, SIN SÍMBOLOS DE MARKDOWN.`
+TONO: Profesional, motivador y práctico. Máximo 700 palabras. Recuerda: SOLO TEXTO PLANO sin símbolos de markdown.`
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
