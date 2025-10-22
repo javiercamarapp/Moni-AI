@@ -7,7 +7,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNetWorth } from "@/hooks/useNetWorth";
 import { Progress } from "@/components/ui/progress";
 import treasureChest from "@/assets/treasure-chest.png";
-import BottomNav from "@/components/BottomNav";
 
 interface JourneyNode {
   id: number;
@@ -533,8 +532,6 @@ export default function FinancialJourney() {
             </div>
           </div>
         </Card>
-
-        <BottomNav />
       </div>
     </div>
   );
