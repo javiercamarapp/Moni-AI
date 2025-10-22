@@ -383,7 +383,7 @@ export default function FinancialJourney() {
                 {/* Node Info Card */}
                 <Card 
                   className={`
-                    mt-2 px-2 py-1 w-full max-w-[200px] text-center transition-all duration-300 rounded-[16px] shadow-lg
+                    mt-2 px-3 py-1 w-full max-w-sm text-center transition-all duration-300 rounded-[16px] shadow-lg
                     ${node.isCurrent 
                       ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400' 
                       : node.isUnlocked
