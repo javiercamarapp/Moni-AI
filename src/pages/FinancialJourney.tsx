@@ -43,6 +43,11 @@ export default function FinancialJourney() {
           opacity: 0.7;
         }
       }
+      @keyframes dash {
+        to {
+          stroke-dashoffset: -24;
+        }
+      }
     `;
     document.head.appendChild(style);
     
@@ -343,6 +348,11 @@ export default function FinancialJourney() {
                 <stop offset="50%" stopColor="#22c55e" />
                 <stop offset="100%" stopColor="#34d399" />
               </linearGradient>
+              <linearGradient id="lockedGray" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#d1d5db" />
+                <stop offset="50%" stopColor="#9ca3af" />
+                <stop offset="100%" stopColor="#6b7280" />
+              </linearGradient>
               <filter id="glow">
                 <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
                 <feMerge>
@@ -355,11 +365,15 @@ export default function FinancialJourney() {
               if (index === 0) return null;
               const prevNode = journeyNodes[index - 1];
               
-              // Dibujar líneas entre nodos completados O si el nodo actual está en progreso
-              const shouldDrawLine = (node.isCompleted && prevNode.isCompleted) || 
-                                    (node.isCurrent && prevNode.isCompleted);
+              // Determinar si ambos nodos están desbloqueados/completados
+              const bothUnlocked = (node.isCompleted && prevNode.isCompleted) || 
+                                  (node.isCurrent && prevNode.isCompleted);
               
-              if (!shouldDrawLine) return null;
+              // Determinar si ambos nodos están bloqueados
+              const bothLocked = !node.isUnlocked && !prevNode.isUnlocked;
+              
+              // Solo dibujar líneas si ambos nodos están en el mismo estado (desbloqueados o bloqueados)
+              if (!bothUnlocked && !bothLocked) return null;
               
               const x1 = prevNode.position.x;
               const y1 = prevNode.position.y;
@@ -373,11 +387,16 @@ export default function FinancialJourney() {
                   y1={y1}
                   x2={`${x2}%`}
                   y2={y2}
-                  stroke="url(#electricGreen)"
-                  strokeWidth="5"
+                  stroke={bothUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth={bothUnlocked ? "5" : "3"}
                   strokeLinecap="round"
-                  filter="url(#glow)"
-                  className="animate-pulse"
+                  strokeDasharray={bothLocked ? "8,4" : undefined}
+                  filter={bothUnlocked ? "url(#glow)" : undefined}
+                  className={bothUnlocked ? "animate-pulse" : ""}
+                  style={bothLocked ? {
+                    animation: 'dash 2s linear infinite',
+                    opacity: 0.4
+                  } : undefined}
                 />
               );
             })}
