@@ -2223,7 +2223,7 @@ export default function FinancialJourney() {
             {(() => {
               const level4750 = 4750;
               const nodeIndex = level4750 / 50;
-              const badgeY = 40 + (nodeIndex * 35) - 30; // 30px arriba del nodo
+              const badgeY = 40 + (nodeIndex * 35) - 60; // 60px arriba del nodo
               const isUnlocked = currentLevel >= level4750;
               
               return (
