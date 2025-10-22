@@ -209,22 +209,46 @@ export default function LevelQuiz() {
         return;
       }
 
+      console.log("Aspirational answers:", aspirationalAnswers);
+
+      // Validar que haya al menos 4 respuestas de las preguntas obligatorias
+      const mandatoryQuestions = [1, 2, 3, 4]; // Casa, Coche, Ahorros, Inversiones
+      const answeredMandatory = mandatoryQuestions.filter(q => 
+        aspirationalAnswers[q] && parseFloat(aspirationalAnswers[q]) > 0
+      );
+
+      if (answeredMandatory.length < 4) {
+        toast.error("Por favor completa las 4 preguntas principales (Casa, Coche, Ahorros e Inversiones)");
+        setIsSavingAsp(false);
+        return;
+      }
+
       // Guardar aspiraciones en la base de datos
-      const aspirationsToSave = Object.entries(aspirationalAnswers).map(([questionId, value]) => ({
-        user_id: user.id,
-        question_id: parseInt(questionId),
-        value: parseFloat(value)
-      }));
+      const aspirationsToSave = Object.entries(aspirationalAnswers)
+        .filter(([_, value]) => value && parseFloat(value) > 0) // Solo guardar valores válidos
+        .map(([questionId, value]) => ({
+          user_id: user.id,
+          question_id: parseInt(questionId),
+          value: parseFloat(value)
+        }));
+
+      console.log("Saving aspirations:", aspirationsToSave);
 
       // Usar upsert para insertar o actualizar
-      const { error: aspirationsError } = await supabase
+      const { data: insertedData, error: aspirationsError } = await supabase
         .from("user_aspirations")
         .upsert(aspirationsToSave, { 
           onConflict: 'user_id,question_id',
           ignoreDuplicates: false 
-        });
+        })
+        .select();
 
-      if (aspirationsError) throw aspirationsError;
+      console.log("Insert result:", { data: insertedData, error: aspirationsError });
+
+      if (aspirationsError) {
+        console.error("Error inserting aspirations:", aspirationsError);
+        throw aspirationsError;
+      }
 
       // Marcar quiz como completado
       const { error: profileError } = await supabase
@@ -232,7 +256,10 @@ export default function LevelQuiz() {
         .update({ level_quiz_completed: true })
         .eq("id", user.id);
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error("Error updating profile:", profileError);
+        throw profileError;
+      }
 
       // Si ya tiene net worth, redirigir al análisis de aspiraciones
       if (hasNetWorthData) {
@@ -245,7 +272,7 @@ export default function LevelQuiz() {
       }
     } catch (error: any) {
       console.error("Error saving aspirations:", error);
-      toast.error("Error al guardar tus aspiraciones");
+      toast.error("Error al guardar tus aspiraciones: " + (error.message || "Error desconocido"));
     } finally {
       setIsSavingAsp(false);
     }
@@ -253,7 +280,9 @@ export default function LevelQuiz() {
 
   // Solo las preguntas obligatorias (1, 2, 3, 4) son requeridas
   const requiredQuestionsIds = [1, 2, 3, 4];
-  const answeredRequiredQuestions = requiredQuestionsIds.filter(id => aspirationalAnswers[id]).length;
+  const answeredRequiredQuestions = requiredQuestionsIds.filter(id => 
+    aspirationalAnswers[id] && parseFloat(aspirationalAnswers[id]) > 0
+  ).length;
   
   const isAspComplete = answeredRequiredQuestions === requiredQuestionsIds.length;
   
