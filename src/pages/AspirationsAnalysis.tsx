@@ -286,6 +286,59 @@ export default function AspirationsAnalysis() {
           </div>
         </Card>
 
+        {/* Bar Chart */}
+        <Card className="p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
+          <h3 className="text-base font-bold text-foreground mb-4">Desglose de Aspiraciones</h3>
+          
+          <div className="h-[400px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart 
+                data={chartData} 
+                layout="vertical"
+                margin={{ top: 5, right: 20, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis 
+                  type="number"
+                  tick={{ fontSize: 11 }}
+                  tickFormatter={(value) => 
+                    value >= 1000000 
+                      ? `${(value / 1000000).toFixed(1)}M` 
+                      : value >= 1000 
+                        ? `${(value / 1000).toFixed(0)}k`
+                        : value.toString()
+                  }
+                />
+                <YAxis 
+                  type="category" 
+                  dataKey="name" 
+                  width={100}
+                  tick={{ fontSize: 10 }}
+                  tickFormatter={(value) => value.length > 12 ? value.substring(0, 12) + '...' : value}
+                />
+                <Tooltip 
+                  formatter={(value: number) => 
+                    value >= 1000000 
+                      ? `$${(value / 1000000).toFixed(1)}M` 
+                      : `$${value.toLocaleString('es-MX')}`
+                  }
+                  contentStyle={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    border: 'none',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                  }}
+                />
+                <Bar dataKey="value" radius={[0, 8, 8, 0]}>
+                  {chartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
         {/* Tabla Comparativa */}
         <Card className="p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
           <h3 className="text-base font-bold text-foreground mb-4">Comparativa Actual vs Aspiracional</h3>
