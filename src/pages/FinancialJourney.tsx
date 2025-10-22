@@ -392,7 +392,7 @@ export default function FinancialJourney() {
           </div>
         </div>
 
-        <Card className="mt-12 p-6 bg-gradient-to-br from-purple-50 to-blue-50 border-0 shadow-xl rounded-[20px]">
+        <Card className="mt-4 p-6 bg-gradient-to-br from-purple-50 to-blue-50 border-0 shadow-xl rounded-[20px]">
           <div className="text-center">
             <h3 className="text-lg font-bold text-foreground mb-2">Tu Progreso</h3>
             <p className="text-foreground/70 text-sm mb-4">
