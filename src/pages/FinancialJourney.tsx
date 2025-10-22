@@ -509,30 +509,6 @@ export default function FinancialJourney() {
             ))}
           </div>
         </div>
-
-        <Card className="mt-8 p-6 bg-white/95 backdrop-blur-sm border-0 shadow-xl rounded-[20px] hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
-          <GlowingEffect disabled={false} spread={30} />
-          <div className="text-center relative z-10">
-            <h3 className="text-lg font-bold text-foreground mb-2">Tu Progreso</h3>
-            <p className="text-foreground/70 text-sm mb-4">
-              Estás en el nivel {currentLevel} de {targetLevel}. ¡Sigue así!
-            </p>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="bg-white/80 p-3 rounded-xl border border-blue-100 hover:scale-[1.02] transition-all">
-                <p className="text-foreground/60 text-xs">Net Worth Actual</p>
-                <p className="text-foreground font-bold mt-1">
-                  ${currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0 })}
-                </p>
-              </div>
-              <div className="bg-white/80 p-3 rounded-xl border border-purple-100 hover:scale-[1.02] transition-all">
-                <p className="text-foreground/60 text-xs">Meta Aspiracional</p>
-                <p className="text-blue-600 font-bold mt-1">
-                  ${totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0 })}
-                </p>
-              </div>
-            </div>
-          </div>
-        </Card>
       </div>
     </div>
   );
