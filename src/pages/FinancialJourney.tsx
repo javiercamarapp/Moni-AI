@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Star, Lock, Trophy, TrendingUp, Target, Gem } from "lucide-react";
+import { Star, Lock, Trophy, TrendingUp, Target, Gem } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNetWorth } from "@/hooks/useNetWorth";
 import { Progress } from "@/components/ui/progress";
@@ -132,16 +132,7 @@ export default function FinancialJourney() {
     <div className="min-h-screen animated-wave-bg pb-4">
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/aspirations-analysis")}
-            className="bg-white rounded-full shadow-xl hover:bg-white/90 text-foreground h-12 w-12 hover:scale-105 transition-all border border-blue-100"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          
+        <div className="flex items-center justify-end mb-6">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 bg-orange-100 px-3 py-1.5 rounded-full border border-orange-200">
               <Gem className="h-4 w-4 text-orange-600" />
