@@ -227,7 +227,7 @@ export default function FinancialJourney() {
           </div>
         </Card>
 
-        <div className="relative w-full overflow-x-hidden pb-4 pt-4" style={{ minHeight: 'auto' }}>
+        <div className="relative min-h-[12600px] w-full overflow-x-hidden pb-20 pt-4">
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
             <defs>
               <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -259,7 +259,7 @@ export default function FinancialJourney() {
             })}
           </svg>
 
-          <div className="relative z-10 px-4" style={{ paddingBottom: '100px' }}>
+          <div className="relative z-10 px-4">
             {journeyNodes.map((node) => (
               <div 
                 key={node.id}
@@ -338,7 +338,7 @@ export default function FinancialJourney() {
                   {expandedNode === node.id && (
                     <Card 
                       className={`
-                        absolute px-3 py-2 w-44 text-center animate-scale-in rounded-[16px] shadow-xl z-50
+                        mt-2 px-3 py-2 w-44 text-center animate-scale-in rounded-[16px] shadow-xl z-50 relative
                         ${node.isCurrent 
                           ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400' 
                           : node.isUnlocked
@@ -346,15 +346,6 @@ export default function FinancialJourney() {
                           : 'bg-white/50 border border-gray-200 opacity-60'
                         }
                       `}
-                      style={{
-                        // Posicionar según la ubicación del nodo
-                        ...(node.position.x < 35 
-                          ? { left: '40px', top: '-80px' } // Si está a la izquierda, mostrar arriba a la derecha
-                          : node.position.x > 65
-                          ? { right: '40px', top: '-80px' } // Si está a la derecha, mostrar arriba a la izquierda
-                          : { left: '50%', transform: 'translateX(-50%)', top: '40px' } // Centrado debajo
-                        )
-                      }}
                     >
                       <h3 className={`
                         font-bold mb-1 text-sm
@@ -392,7 +383,7 @@ export default function FinancialJourney() {
           </div>
         </div>
 
-        <Card className="mt-4 p-6 bg-gradient-to-br from-purple-50 to-blue-50 border-0 shadow-xl rounded-[20px]">
+        <Card className="mt-12 p-6 bg-gradient-to-br from-purple-50 to-blue-50 border-0 shadow-xl rounded-[20px]">
           <div className="text-center">
             <h3 className="text-lg font-bold text-foreground mb-2">Tu Progreso</h3>
             <p className="text-foreground/70 text-sm mb-4">
