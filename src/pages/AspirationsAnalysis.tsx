@@ -340,45 +340,124 @@ export default function AspirationsAnalysis() {
         </Card>
 
         {/* Tabla Comparativa */}
-        <Card className="p-4 sm:p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0 overflow-hidden">
+        <Card className="p-4 sm:p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
           <h3 className="text-sm sm:text-base font-bold text-foreground mb-3 sm:mb-4">Comparativa Actual vs Aspiracional</h3>
           
-          <div className="overflow-x-auto -mx-4 sm:mx-0">
-            <div className="px-4 sm:px-0 min-w-[500px]">
-            <table className="w-full text-xs sm:text-sm">
+          {/* Vista Móvil - Cards */}
+          <div className="block sm:hidden space-y-3">
+            {comparativeData.map((item, index) => (
+              <div key={index} className="bg-slate-50/50 rounded-[12px] p-3 border border-slate-200">
+                <h4 className="font-bold text-foreground mb-2 text-sm">{item.category}</h4>
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div>
+                    <p className="text-muted-foreground mb-1">Actual</p>
+                    <p className="font-bold text-blue-600">
+                      ${item.current >= 1000000 
+                        ? `${(item.current / 1000000).toFixed(1)}M` 
+                        : item.current >= 1000
+                          ? `${(item.current / 1000).toFixed(0)}k`
+                          : item.current.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+                      }
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground mb-1">Meta</p>
+                    <p className="font-bold text-purple-600">
+                      ${item.aspiration >= 1000000 
+                        ? `${(item.aspiration / 1000000).toFixed(1)}M` 
+                        : item.aspiration >= 1000
+                          ? `${(item.aspiration / 1000).toFixed(0)}k`
+                          : item.aspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+                      }
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground mb-1">Brecha</p>
+                    <p className="font-bold text-orange-600">
+                      ${item.gap >= 1000000 
+                        ? `${(item.gap / 1000000).toFixed(1)}M` 
+                        : item.gap >= 1000
+                          ? `${(item.gap / 1000).toFixed(0)}k`
+                          : item.gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+                      }
+                    </p>
+                    <p className="text-[10px] text-orange-500 mt-0.5">{item.gapPercentage}%</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+            
+            {/* Total Card */}
+            <div className="bg-slate-100 rounded-[12px] p-3 border border-slate-300">
+              <h4 className="font-bold text-foreground mb-2 text-sm">TOTAL</h4>
+              <div className="grid grid-cols-3 gap-2 text-xs">
+                <div>
+                  <p className="text-muted-foreground mb-1">Actual</p>
+                  <p className="font-bold text-blue-600">
+                    ${currentNetWorth >= 1000000 
+                      ? `${(currentNetWorth / 1000000).toFixed(1)}M` 
+                      : currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+                    }
+                  </p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground mb-1">Meta</p>
+                  <p className="font-bold text-purple-600">
+                    ${totalAspiration >= 1000000 
+                      ? `${(totalAspiration / 1000000).toFixed(1)}M` 
+                      : totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+                    }
+                  </p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground mb-1">Brecha</p>
+                  <p className="font-bold text-orange-600">
+                    ${gap >= 1000000 
+                      ? `${(gap / 1000000).toFixed(1)}M` 
+                      : gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+                    }
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Vista Desktop - Tabla */}
+          <div className="hidden sm:block overflow-x-auto">
+            <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200">
-                  <th className="text-left py-2 sm:py-3 px-1 sm:px-2 font-semibold text-foreground whitespace-nowrap">Categoría</th>
-                  <th className="text-right py-2 sm:py-3 px-1 sm:px-2 font-semibold text-blue-600 whitespace-nowrap">Actual</th>
-                  <th className="text-right py-2 sm:py-3 px-1 sm:px-2 font-semibold text-purple-600 whitespace-nowrap">Meta</th>
-                  <th className="text-right py-2 sm:py-3 px-1 sm:px-2 font-semibold text-orange-600 whitespace-nowrap">Brecha</th>
+                  <th className="text-left py-3 px-2 font-semibold text-foreground">Categoría</th>
+                  <th className="text-right py-3 px-2 font-semibold text-blue-600">Actual</th>
+                  <th className="text-right py-3 px-2 font-semibold text-purple-600">Meta</th>
+                  <th className="text-right py-3 px-2 font-semibold text-orange-600">Brecha</th>
                 </tr>
               </thead>
               <tbody>
                 {comparativeData.map((item, index) => (
                   <tr key={index} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
-                    <td className="py-2 sm:py-3 px-1 sm:px-2 font-medium text-foreground whitespace-nowrap">{item.category}</td>
-                    <td className="py-2 sm:py-3 px-1 sm:px-2 text-right text-blue-600 font-semibold whitespace-nowrap">
+                    <td className="py-3 px-2 font-medium text-foreground">{item.category}</td>
+                    <td className="py-3 px-2 text-right text-blue-600 font-semibold">
                       ${item.current >= 1000000 
                         ? `${(item.current / 1000000).toFixed(1)}M` 
                         : item.current.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                       }
                     </td>
-                    <td className="py-2 sm:py-3 px-1 sm:px-2 text-right text-purple-600 font-semibold whitespace-nowrap">
+                    <td className="py-3 px-2 text-right text-purple-600 font-semibold">
                       ${item.aspiration >= 1000000 
                         ? `${(item.aspiration / 1000000).toFixed(1)}M` 
                         : item.aspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                       }
                     </td>
-                    <td className="py-2 sm:py-3 px-1 sm:px-2 text-right">
-                      <div className="flex flex-col items-end gap-0.5 sm:gap-1">
-                        <span className="text-orange-600 font-bold whitespace-nowrap">
+                    <td className="py-3 px-2 text-right">
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="text-orange-600 font-bold">
                           ${item.gap >= 1000000 
                             ? `${(item.gap / 1000000).toFixed(1)}M` 
                             : item.gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                           }
                         </span>
-                        <span className="text-[10px] sm:text-xs text-orange-500">
+                        <span className="text-xs text-orange-500">
                           {item.gapPercentage}%
                         </span>
                       </div>
@@ -388,20 +467,20 @@ export default function AspirationsAnalysis() {
                 
                 {/* Total Row */}
                 <tr className="bg-slate-50 font-bold">
-                  <td className="py-2 sm:py-3 px-1 sm:px-2 text-foreground whitespace-nowrap">TOTAL</td>
-                  <td className="py-2 sm:py-3 px-1 sm:px-2 text-right text-blue-600 whitespace-nowrap">
+                  <td className="py-3 px-2 text-foreground">TOTAL</td>
+                  <td className="py-3 px-2 text-right text-blue-600">
                     ${currentNetWorth >= 1000000 
                       ? `${(currentNetWorth / 1000000).toFixed(1)}M` 
                       : currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                     }
                   </td>
-                  <td className="py-2 sm:py-3 px-1 sm:px-2 text-right text-purple-600 whitespace-nowrap">
+                  <td className="py-3 px-2 text-right text-purple-600">
                     ${totalAspiration >= 1000000 
                       ? `${(totalAspiration / 1000000).toFixed(1)}M` 
                       : totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                     }
                   </td>
-                  <td className="py-2 sm:py-3 px-1 sm:px-2 text-right text-orange-600 whitespace-nowrap">
+                  <td className="py-3 px-2 text-right text-orange-600">
                     ${gap >= 1000000 
                       ? `${(gap / 1000000).toFixed(1)}M` 
                       : gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
@@ -410,7 +489,6 @@ export default function AspirationsAnalysis() {
                 </tr>
               </tbody>
             </table>
-            </div>
           </div>
 
           {/* Leyenda */}
