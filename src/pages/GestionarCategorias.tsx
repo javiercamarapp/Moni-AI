@@ -263,145 +263,130 @@ const GestionarCategorias = () => {
   }
   return <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="bg-background/95 backdrop-blur-sm sticky top-0 z-40">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12">
-            <ArrowLeft className="h-5 w-5 text-foreground" />
-          </Button>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-foreground drop-shadow-lg">
-              Gestionar Categorías
-            </h1>
-            <p className="text-sm text-foreground/80 drop-shadow-md font-medium">Personaliza tus categorías</p>
+      <div className="bg-background/95 backdrop-blur-sm sticky top-0 z-40 border-b border-border/50 shadow-sm">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4 flex-1">
+              <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12">
+                <ArrowLeft className="h-5 w-5 text-foreground" />
+              </Button>
+              <div className="flex-1">
+                <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+                  Gestionar Categorías
+                </h1>
+                <p className="text-sm text-muted-foreground">Personaliza tus categorías</p>
+              </div>
+            </div>
+
+            <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+              <DialogTrigger asChild>
+                <Button size="icon" onClick={() => {
+                  setParentCategoryForSubcategory(null);
+                  setSubcategoryNames([]);
+                  setNewCategory({
+                    name: '',
+                    type: 'ingreso',
+                    color: 'bg-primary/20',
+                    parent_id: null
+                  });
+                }} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-12 w-12 flex-shrink-0">
+                  <Plus className="h-5 w-5 text-foreground" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100 max-w-[85%] sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-bold text-foreground">
+                    {parentCategoryForSubcategory ? `Nueva Subcategoría de "${parentCategoryForSubcategory.name}"` : 'Nueva Categoría'}
+                  </DialogTitle>
+                </DialogHeader>
+                
+                <form onSubmit={handleAddCategory} className="space-y-5">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-card-foreground/90 text-base">
+                      Nombre de la categoría
+                    </Label>
+                    <Input id="name" placeholder="Ej: Educación, Entretenimiento..." value={newCategory.name} onChange={e => setNewCategory({
+                    ...newCategory,
+                    name: e.target.value
+                  })} required className="bg-white border-blue-100 text-foreground placeholder:text-muted-foreground h-14" />
+                  </div>
+
+                  {!parentCategoryForSubcategory && <div className="space-y-2">
+                      <Label className="text-foreground/90 text-base">Tipo</Label>
+                      <div className="flex gap-3">
+                        <Button 
+                          type="button" 
+                          onClick={() => setNewCategory({
+                            ...newCategory,
+                            type: 'ingreso',
+                            parent_id: null
+                          })} 
+                          className={`flex-1 rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all h-12 ${
+                            newCategory.type === 'ingreso' 
+                              ? 'bg-primary text-white hover:bg-primary/90' 
+                              : 'bg-white text-foreground hover:bg-gray-50'
+                          }`}
+                        >
+                          Ingreso
+                        </Button>
+                        <Button 
+                          type="button" 
+                          onClick={() => setNewCategory({
+                            ...newCategory,
+                            type: 'gasto',
+                            parent_id: null
+                          })} 
+                          className={`flex-1 rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all h-12 ${
+                            newCategory.type === 'gasto' 
+                              ? 'bg-primary text-white hover:bg-primary/90' 
+                              : 'bg-white text-foreground hover:bg-gray-50'
+                          }`}
+                        >
+                          Gasto
+                        </Button>
+                      </div>
+                    </div>}
+
+                  {!parentCategoryForSubcategory && <div className="space-y-2">
+                      <Label className="text-foreground/90 text-base">Subcategorías (opcional)</Label>
+                      <div className="space-y-2">
+                        {subcategoryNames.map((name, index) => <div key={index} className="flex gap-2">
+                            <Input value={name} onChange={e => {
+                            const newNames = [...subcategoryNames];
+                            newNames[index] = e.target.value;
+                            setSubcategoryNames(newNames);
+                          }} placeholder="Nombre de subcategoría..." className="bg-white border-blue-100 text-foreground h-12" />
+                            <Button type="button" size="icon" variant="ghost" onClick={() => {
+                            setSubcategoryNames(subcategoryNames.filter((_, i) => i !== index));
+                          }} className="text-destructive hover:bg-destructive/10 h-12 w-12">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>)}
+                        <Button type="button" variant="outline" onClick={() => setSubcategoryNames([...subcategoryNames, ''])} className="w-full bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-gray-50 hover:scale-105 transition-all h-12">
+                          <Plus className="h-4 w-4 mr-2" />
+                          Agregar Subcategoría
+                        </Button>
+                      </div>
+                    </div>}
+
+                  <div className="space-y-2">
+                    <Label className="text-foreground/90 text-base">Color</Label>
+                    <div className="grid grid-cols-5 gap-2">
+                      {colorOptions.map(color => <button key={color} type="button" onClick={() => setNewCategory({
+                      ...newCategory,
+                      color
+                    })} className={`w-full h-12 rounded-lg ${color} border-2 ${newCategory.color === color ? 'border-primary' : 'border-blue-100'} hover:border-primary/50 transition-colors`} />)}
+                    </div>
+                  </div>
+
+                  <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 hover:shadow-2xl transition-all duration-200 h-14 text-lg font-semibold">
+                    {parentCategoryForSubcategory ? 'Crear Subcategoría' : 'Crear Categoría'}
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
-
-        <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-          <DialogTrigger asChild>
-            <Button size="icon" onClick={() => {
-              setParentCategoryForSubcategory(null);
-              setSubcategoryNames([]);
-              setNewCategory({
-                name: '',
-                type: 'ingreso',
-                color: 'bg-primary/20',
-                parent_id: null
-              });
-            }} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10">
-              <Plus className="h-5 w-5 text-foreground" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100 max-w-[85%] sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-bold text-foreground">
-                {parentCategoryForSubcategory ? `Nueva Subcategoría de "${parentCategoryForSubcategory.name}"` : 'Nueva Categoría'}
-              </DialogTitle>
-            </DialogHeader>
-            
-            <form onSubmit={handleAddCategory} className="space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-card-foreground/90 text-base">
-                  Nombre de la categoría
-                </Label>
-                <Input id="name" placeholder="Ej: Educación, Entretenimiento..." value={newCategory.name} onChange={e => setNewCategory({
-                ...newCategory,
-                name: e.target.value
-              })} required className="bg-white border-blue-100 text-foreground placeholder:text-muted-foreground h-14" />
-              </div>
-
-              {!parentCategoryForSubcategory && <div className="space-y-2">
-                  <Label className="text-foreground/90 text-base">Tipo</Label>
-                  <div className="flex gap-3">
-                    <Button 
-                      type="button" 
-                      onClick={() => setNewCategory({
-                        ...newCategory,
-                        type: 'ingreso',
-                        parent_id: null
-                      })} 
-                      className={`flex-1 rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all h-12 ${
-                        newCategory.type === 'ingreso' 
-                          ? 'bg-primary text-white hover:bg-primary/90' 
-                          : 'bg-white text-foreground hover:bg-gray-50'
-                      }`}
-                    >
-                      Ingreso
-                    </Button>
-                    <Button 
-                      type="button" 
-                      onClick={() => setNewCategory({
-                        ...newCategory,
-                        type: 'gasto',
-                        parent_id: null
-                      })} 
-                      className={`flex-1 rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all h-12 ${
-                        newCategory.type === 'gasto' 
-                          ? 'bg-primary text-white hover:bg-primary/90' 
-                          : 'bg-white text-foreground hover:bg-gray-50'
-                      }`}
-                    >
-                      Gasto
-                    </Button>
-                  </div>
-                </div>}
-
-              {!parentCategoryForSubcategory && <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-foreground/90 text-base">Subcategorías</Label>
-                    <Button 
-                      type="button"
-                      size="sm"
-                      onClick={() => setSubcategoryNames([...subcategoryNames, ''])}
-                      className="bg-primary/10 hover:bg-primary/20 text-primary h-8 gap-1"
-                    >
-                      <Plus className="h-3 w-3" />
-                      Agregar
-                    </Button>
-                  </div>
-                  
-                  {subcategoryNames.map((subName, index) => (
-                    <div key={index} className="flex gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                      <Input
-                        placeholder={`Subcategoría ${index + 1}`}
-                        value={subName}
-                        onChange={(e) => {
-                          const updated = [...subcategoryNames];
-                          updated[index] = e.target.value;
-                          setSubcategoryNames(updated);
-                        }}
-                        className="bg-white border-blue-100 text-foreground h-12"
-                      />
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => {
-                          setSubcategoryNames(subcategoryNames.filter((_, i) => i !== index));
-                        }}
-                        className="text-destructive hover:bg-destructive/10 h-12 w-12"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>}
-
-              <div className="space-y-2">
-                <Label className="text-foreground/90 text-base">Color</Label>
-                <div className="grid grid-cols-5 gap-2">
-                  {colorOptions.map(color => <button key={color} type="button" onClick={() => setNewCategory({
-                  ...newCategory,
-                  color
-                })} className={`w-full h-12 rounded-lg ${color} border-2 ${newCategory.color === color ? 'border-primary' : 'border-blue-100'} hover:border-primary/50 transition-colors`} />)}
-                </div>
-              </div>
-
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 hover:shadow-2xl transition-all duration-200 h-14 text-lg font-semibold">
-                {parentCategoryForSubcategory ? 'Crear Subcategoría' : 'Crear Categoría'}
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
       </div>
 
       {/* Tabs: Ingresos y Gastos */}
