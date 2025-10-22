@@ -31,6 +31,7 @@ const Dashboard = () => {
   const [levelQuizCompleted, setLevelQuizCompleted] = useState(false);
   const [hasAspirations, setHasAspirations] = useState(false);
   const [hasNetWorthData, setHasNetWorthData] = useState(false);
+  const [totalAspiration, setTotalAspiration] = useState(0);
   const [api, setApi] = useState<CarouselApi>();
   const [selectedMonthOffset, setSelectedMonthOffset] = useState(0);
   
@@ -170,14 +171,18 @@ const Dashboard = () => {
           setLevelQuizCompleted(profile.level_quiz_completed || false);
         }
 
-        // Check if user has aspirations
+        // Check if user has aspirations and calculate total
         const { data: aspirationsData } = await supabase
           .from("user_aspirations")
-          .select("id")
-          .eq("user_id", user.id)
-          .limit(1);
+          .select("*")
+          .eq("user_id", user.id);
         
         setHasAspirations((aspirationsData?.length || 0) > 0);
+        
+        if (aspirationsData && aspirationsData.length > 0) {
+          const total = aspirationsData.reduce((sum, asp) => sum + Number(asp.value), 0);
+          setTotalAspiration(total);
+        }
 
         // Check if user has net worth data
         const { data: assetsData } = await supabase
@@ -883,31 +888,16 @@ const Dashboard = () => {
         
         {/* Puntos y nivel + Notificaciones */}
         <div className="flex gap-2 items-center">
-          {/* Botón de puntos y nivel */}
+          {/* Botón de nivel financiero */}
           <Button 
             variant="ghost" 
             className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 px-3 gap-2 hover:scale-105 transition-all border border-blue-100"
-            onClick={() => {
-              // Si tiene ambos quizzes completos (aspiraciones y net worth), ir a análisis
-              if (hasAspirations && hasNetWorthData) {
-                navigate("/aspirations-analysis");
-              } 
-              // Si tiene net worth pero no aspiraciones, ir al quiz de aspiraciones
-              else if (hasNetWorthData && !hasAspirations) {
-                navigate("/level-quiz");
-              }
-              // Si no tiene net worth, ir al quiz de net worth primero
-              else if (!hasNetWorthData) {
-                navigate("/net-worth");
-              }
-              // Por defecto ir al quiz
-              else {
-                navigate("/level-quiz");
-              }
-            }}
+            onClick={() => navigate("/financial-journey")}
           >
-            <span className="text-sm font-bold">{currentXP} pts</span>
-            <span className="text-xs opacity-80">Nivel {level}</span>
+            <Trophy className="h-4 w-4 text-yellow-500" />
+            <span className="text-xs font-bold">
+              Nivel {totalAspiration > 0 ? Math.floor((netWorth / totalAspiration) * 10000) : 0}
+            </span>
           </Button>
           
           {/* Botón de notificaciones */}
