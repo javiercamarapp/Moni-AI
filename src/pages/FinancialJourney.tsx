@@ -237,7 +237,7 @@ export default function FinancialJourney() {
   const journeyNodes = generateNodes();
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-20">
+    <div className="min-h-screen animated-wave-bg pb-4">
       {/* Botón de regresar */}
       <div className="p-4">
         <Button
@@ -270,7 +270,7 @@ export default function FinancialJourney() {
           </div>
         </Card>
 
-        <div className="relative min-h-[7300px] w-full overflow-x-hidden pb-20 pt-2">
+        <div className="relative min-h-[7200px] w-full overflow-x-hidden pb-4 pt-2">
           {/* 9 Secciones de fondo */}
           <div className="absolute inset-0 w-full h-full">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((section) => (
