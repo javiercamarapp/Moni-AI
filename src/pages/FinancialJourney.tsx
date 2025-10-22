@@ -227,7 +227,7 @@ export default function FinancialJourney() {
           </div>
         </Card>
 
-        <div className="relative min-h-[12600px] w-full overflow-x-hidden pb-20 pt-4">
+        <div className="relative w-full overflow-x-hidden pb-4 pt-4" style={{ minHeight: 'auto' }}>
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
             <defs>
               <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -259,7 +259,7 @@ export default function FinancialJourney() {
             })}
           </svg>
 
-          <div className="relative z-10 px-4">
+          <div className="relative z-10 px-4" style={{ paddingBottom: '100px' }}>
             {journeyNodes.map((node) => (
               <div 
                 key={node.id}
