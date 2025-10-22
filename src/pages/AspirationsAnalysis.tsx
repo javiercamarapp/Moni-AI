@@ -83,19 +83,52 @@ export default function AspirationsAnalysis() {
     }
   };
 
+  const parseAnalysisIntoSections = (text: string) => {
+    // Split by numbered sections (1., 2., 3., etc.)
+    const sections: { title: string; content: string }[] = [];
+    const sectionRegex = /(\d+)\.\s+([A-ZÁÉÍÓÚÑ\s]+)\n([\s\S]*?)(?=\d+\.\s+[A-ZÁÉÍÓÚÑ]|\n*$)/g;
+    
+    let match;
+    while ((match = sectionRegex.exec(text)) !== null) {
+      const number = match[1];
+      const title = match[2].trim();
+      const content = match[3].trim();
+      
+      sections.push({
+        title: `${number}. ${title}`,
+        content: content
+      });
+    }
+    
+    // If no sections found, return the whole text as one section
+    if (sections.length === 0) {
+      sections.push({
+        title: "Análisis Completo",
+        content: text
+      });
+    }
+    
+    return sections;
+  };
+
   const generateAnalysis = async (aspirationsData: any[], total: number) => {
     setIsLoadingAnalysis(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      console.log("Generating analysis with:", { aspirationsData, total, currentNetWorth });
+      console.log("Generating analysis with:", { 
+        aspirationsData, 
+        total, 
+        currentNetWorth,
+        netWorthIsValid: currentNetWorth !== undefined && currentNetWorth !== null
+      });
 
       const response = await supabase.functions.invoke("analyze-aspirations", {
         body: {
           aspirations: aspirationsData,
           totalAspiration: total,
-          currentNetWorth: currentNetWorth
+          currentNetWorth: currentNetWorth || 0
         }
       });
 
@@ -552,24 +585,35 @@ export default function AspirationsAnalysis() {
         </Card>
 
         {/* AI Analysis */}
-        <Card className="p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-3">
             <div className="bg-purple-500/10 p-2 rounded-full">
               <Sparkles className="h-5 w-5 text-purple-600" />
             </div>
-            <h3 className="text-base font-bold text-foreground">Análisis e Insights</h3>
+            <h3 className="text-base sm:text-lg font-bold text-foreground">Análisis e Insights</h3>
           </div>
           
           {isLoadingAnalysis ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-            </div>
+            <Card className="p-6 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+              </div>
+            </Card>
           ) : (
-            <div className="text-sm text-foreground/80 whitespace-pre-line leading-relaxed">
-              {analysis}
+            <div className="space-y-3">
+              {parseAnalysisIntoSections(analysis).map((section, index) => (
+                <Card key={index} className="p-4 bg-white/95 backdrop-blur-sm rounded-[15px] shadow-md border border-purple-100">
+                  <h4 className="text-xs sm:text-sm font-bold text-purple-700 mb-2">
+                    {section.title}
+                  </h4>
+                  <p className="text-[11px] sm:text-xs text-foreground/80 leading-relaxed whitespace-pre-line">
+                    {section.content}
+                  </p>
+                </Card>
+              ))}
             </div>
           )}
-        </Card>
+        </div>
 
         {/* Action Buttons */}
         <div className="flex flex-col gap-3 px-2">

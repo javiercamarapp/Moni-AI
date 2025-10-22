@@ -56,25 +56,47 @@ Deno.serve(async (req) => {
     const gap = totalAspiration - currentNetWorth
     const gapPercentage = currentNetWorth > 0 ? ((gap / totalAspiration) * 100).toFixed(1) : 100
 
+    console.log('Analyzing aspirations with data:', {
+      currentNetWorth,
+      totalAspiration,
+      gap,
+      aspirationsCount: aspirations.length
+    })
+
     const prompt = `Eres un asesor financiero experto. Analiza las aspiraciones financieras del usuario y proporciona recomendaciones personalizadas y motivadoras.
 
-Información del usuario:
+INFORMACIÓN DEL USUARIO:
 - Net Worth Actual: $${currentNetWorth.toLocaleString('es-MX')}
 - Net Worth Aspiracional: $${totalAspiration.toLocaleString('es-MX')}
 - Brecha a cerrar: $${gap.toLocaleString('es-MX')} (${gapPercentage}%)
 
-Aspiraciones del usuario:
+ASPIRACIONES DEL USUARIO:
 ${aspirationsList}
 
-Proporciona un análisis detallado que incluya:
-1. Una evaluación realista pero motivadora de sus metas
-2. Identificación de las aspiraciones más importantes y viables
-3. Estrategias concretas y priorizadas para cerrar la brecha
-4. Un plan de acción paso a paso con timeframes realistas
-5. Consejos sobre qué aspiraciones atacar primero y por qué
-6. Recomendaciones de ahorro e inversión específicas
+FORMATO DE RESPUESTA REQUERIDO:
+Proporciona tu análisis dividido en 6 secciones numeradas. Cada sección debe comenzar con un número seguido de un punto y el título en MAYÚSCULAS, seguido del contenido.
 
-El tono debe ser positivo, motivador y práctico. Máximo 600 palabras.`
+NO uses markdown, NO uses asteriscos, NO uses hashtags, NO uses guiones para listas. Usa solo texto plano con saltos de línea.
+
+1. EVALUACIÓN REALISTA Y MOTIVADORA DE TUS METAS
+[Tu evaluación aquí, incluyendo el net worth actual de ${currentNetWorth.toLocaleString('es-MX')} pesos]
+
+2. ASPIRACIONES MÁS IMPORTANTES Y VIABLES
+[Tu análisis aquí]
+
+3. ESTRATEGIAS CONCRETAS PARA CERRAR LA BRECHA
+[Tus estrategias aquí]
+
+4. PLAN DE ACCIÓN PASO A PASO
+[Tu plan aquí]
+
+5. PRIORIZACIÓN DE ASPIRACIONES
+[Tus consejos aquí]
+
+6. RECOMENDACIONES DE AHORRO E INVERSIÓN
+[Tus recomendaciones aquí]
+
+El tono debe ser positivo, motivador y práctico. Máximo 600 palabras en total.`
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -99,6 +121,8 @@ El tono debe ser positivo, motivador y práctico. Máximo 600 palabras.`
     }
 
     const analysis = data.choices[0].message.content
+
+    console.log('Generated analysis length:', analysis.length)
 
     return new Response(
       JSON.stringify({ analysis }),
