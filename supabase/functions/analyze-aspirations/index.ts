@@ -63,56 +63,42 @@ Deno.serve(async (req) => {
       aspirationsCount: aspirations.length
     })
 
-    const prompt = `Eres un asesor financiero experto certificado con amplia experiencia en planificación patrimonial. Analiza de manera exhaustiva las aspiraciones financieras del usuario y proporciona un análisis comparativo detallado.
+    const prompt = `Eres el mejor asesor financiero del mundo, un verdadero experto que transforma vidas financieras con planes concretos y motivación inspiradora.
 
-INFORMACIÓN FINANCIERA DEL USUARIO:
+SITUACIÓN FINANCIERA:
 - Net Worth Actual: $${currentNetWorth.toLocaleString('es-MX')}
-- Net Worth Aspiracional: $${totalAspiration.toLocaleString('es-MX')}
-- Brecha a cerrar: $${gap.toLocaleString('es-MX')} (${gapPercentage}%)
+- Meta Aspiracional: $${totalAspiration.toLocaleString('es-MX')}
+- Brecha: $${gap.toLocaleString('es-MX')} (${gapPercentage}%)
 
-ASPIRACIONES DETALLADAS:
-${aspirationsList}
+Sus principales aspiraciones incluyen: ${aspirationsList}
 
-INSTRUCCIONES PARA EL ANÁLISIS:
+TU MISIÓN:
+Analiza la brecha entre su net worth actual y su meta aspiracional. NO analices cada aspiración por separado. En su lugar, proporciona un análisis claro, conciso, motivacional y super accionable sobre CÓMO cerrar esa brecha.
 
-Como experto financiero, debes realizar un análisis comparativo exhaustivo entre la situación actual y las aspiraciones. Compara cada aspiración con su valor actual, identifica brechas específicas, y proporciona estrategias concretas y priorizadas para cerrar cada una.
+ESTRUCTURA OBLIGATORIA (4 secciones cortas y poderosas):
 
-Debes incluir:
-- Análisis detallado de viabilidad de cada aspiración
-- Comparativas específicas entre situación actual y metas
-- Timeframes realistas basados en el perfil financiero
-- Estrategias de ahorro e inversión específicas con montos
-- Priorización basada en urgencia, viabilidad y retorno
-- Plan de acción paso a paso con fechas estimadas
-- Recomendaciones para hacer cada aspiración factible
+1. TU SITUACION HOY
+En 2 a 3 oraciones máximo: evalúa la brecha de manera realista pero motivadora. Menciona si es alcanzable y en qué timeframe aproximado.
 
-REGLAS DE FORMATO ESTRICTAS:
-- PROHIBIDO usar asteriscos, hashtags, guiones, barras diagonales o cualquier símbolo de markdown
-- SOLO usa texto plano, números para listas y saltos de línea
-- Usa números (1, 2, 3) o letras (a, b, c) para enumerar, nunca guiones o asteriscos
+2. ESTRATEGIA MAESTRA PARA LOGRARLO
+En 4 a 5 puntos concretos y cortos, describe las acciones más importantes que debe tomar. Incluye cifras específicas cuando sea posible. Ejemplo: Aumenta tu ahorro mensual a 15,000 pesos. Invierte en fondos indexados con retorno esperado del 10 por ciento anual. Reduce gastos hormiga en 3,000 pesos al mes.
 
-FORMATO DE RESPUESTA REQUERIDO:
-Divide tu análisis en 6 secciones numeradas. Cada sección debe comenzar con número, punto, título en MAYÚSCULAS y contenido detallado en texto plano:
+3. PLAN DE ACCION CON FECHAS
+En 4 a 5 pasos con timeframes claros. Ejemplo: Mes 1 a 3: Construir fondo de emergencia de 50,000 pesos. Mes 4 a 12: Invertir 10,000 pesos mensuales en CETES. Año 2: Aumentar inversiones a 15,000 mensuales.
 
-1. EVALUACIÓN REALISTA Y MOTIVADORA DE TUS METAS
-Analiza el net worth actual de ${currentNetWorth.toLocaleString('es-MX')} pesos versus la meta de ${totalAspiration.toLocaleString('es-MX')} pesos. Evalúa la viabilidad general y el perfil de riesgo. Sé motivador pero realista sobre los timeframes.
+4. TU CAMINO AL EXITO
+En 2 a 3 oraciones, cierra con un mensaje motivador y realista que lo inspire a actuar HOY.
 
-2. ASPIRACIONES MAS IMPORTANTES Y VIABLES
-Identifica cuáles aspiraciones son más alcanzables a corto, mediano y largo plazo. Compara el valor de cada aspiración con su importancia estratégica para el patrimonio familiar.
+REGLAS ESTRICTAS:
+- PROHIBIDO usar asteriscos, hashtags, guiones largos, barras diagonales o cualquier símbolo de markdown
+- SOLO texto plano, números para listas y saltos de línea
+- Máximo 400 palabras TOTAL
+- Cada sección DEBE ser CORTA y CONCRETA
+- Usa números para enumerar dentro de cada sección
+- Enfócate en la BRECHA TOTAL, no en aspiraciones individuales
+- Sé ULTRA ESPECÍFICO con cifras, porcentajes y plazos
 
-3. ESTRATEGIAS CONCRETAS PARA CERRAR LA BRECHA
-Proporciona estrategias específicas con montos. Ejemplo: aumentar ahorro mensual en X cantidad, invertir en Y instrumento con retorno esperado de Z porcentaje. Incluye al menos 4 estrategias concretas.
-
-4. PLAN DE ACCION PASO A PASO
-Detalla un plan con fechas estimadas. Ejemplo: Mes 1 a 6 hacer X, Mes 7 a 12 lograr Y, Año 2 alcanzar Z. Incluye al menos 5 pasos priorizados con timeframes.
-
-5. PRIORIZACION DE ASPIRACIONES
-Recomienda qué aspiraciones atacar primero y por qué. Justifica con análisis de urgencia, costo oportunidad, viabilidad financiera y beneficio familiar. Ordena las aspiraciones de mayor a menor prioridad.
-
-6. RECOMENDACIONES DE AHORRO E INVERSION
-Proporciona recomendaciones específicas: porcentajes de ahorro sugeridos, instrumentos de inversión recomendados (CETES, fondos indexados, etc), estrategias de reducción de gastos, y proyecciones de crecimiento patrimonial esperado.
-
-TONO: Profesional, motivador y práctico. Máximo 700 palabras. Recuerda: SOLO TEXTO PLANO sin símbolos de markdown.`
+TONO: Directo, motivador, inspirador, como un coach financiero de élite que realmente se preocupa por el éxito de su cliente.`
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
