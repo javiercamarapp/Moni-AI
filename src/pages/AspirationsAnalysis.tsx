@@ -588,6 +588,42 @@ export default function AspirationsAnalysis() {
           </div>
         </Card>
 
+        {/* AI Financial Analysis */}
+        <Card className="p-6 mb-4 bg-gradient-to-br from-purple-50 via-blue-50 to-white backdrop-blur-sm rounded-[20px] shadow-xl border-0">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="bg-gradient-to-br from-purple-500 to-blue-500 p-3 rounded-full shadow-lg">
+              <Sparkles className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg sm:text-xl font-bold text-foreground">Análisis Financiero Integral</h3>
+              <p className="text-xs text-foreground/60">Basado en tu historial completo</p>
+            </div>
+          </div>
+          
+          {isLoadingAnalysis ? (
+            <div className="flex flex-col items-center justify-center py-12 gap-3">
+              <div className="relative">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-200 border-t-purple-600"></div>
+                <Sparkles className="h-5 w-5 text-purple-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+              </div>
+              <p className="text-sm text-foreground/60 animate-pulse">Analizando tu situación financiera completa...</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="bg-white/50 p-4 rounded-xl border border-purple-100">
+                <p className="text-sm sm:text-base text-foreground/90 leading-relaxed whitespace-pre-line">
+                  {cleanAnalysisText(analysis)}
+                </p>
+              </div>
+              
+              <div className="flex items-center gap-2 text-xs text-foreground/50 pt-2 border-t border-purple-100">
+                <Sparkles className="h-3 w-3" />
+                <span>Análisis generado por IA con base en ingresos, gastos, activos, pasivos y metas</span>
+              </div>
+            </div>
+          )}
+        </Card>
+
         {/* Action Buttons */}
         <div className="flex flex-col gap-3 px-2">
           <Button
