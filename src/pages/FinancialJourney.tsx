@@ -218,7 +218,7 @@ export default function FinancialJourney() {
     
     for (let i = 0; i <= 200; i++) {
       const progressPercent = i * 0.5;
-      const levelNumber = Math.floor((progressPercent / 100) * 10000);
+      const levelNumber = Math.round((progressPercent / 100) * 10000);
       const position = getNodePosition(i);
       
       nodes.push({
