@@ -25,7 +25,7 @@ interface Badge {
   name: string;
   description: string;
   icon: any;
-  type: 'bronze' | 'silver' | 'gold' | 'diamond';
+  type: 'bronze' | 'silver' | 'gold' | 'diamond' | 'regular' | 'special' | 'mega';
   color: string;
 }
 
@@ -86,9 +86,34 @@ export default function FinancialJourney() {
   const getBadges = (): Badge[] => {
     const badges: Badge[] = [];
     
-    // Medallas de Bronce cada 250 niveles (excepto los que coinciden con plata/oro/diamante)
+    // Insignias especiales originales
+    badges.push(
+      { level: 500, name: "Primer Paso", description: "Has dado tu primer paso hacia la libertad financiera. Cada gran viaje comienza con una decisión valiente.", icon: Sparkles, type: 'regular', color: 'text-blue-500' },
+      { level: 1000, name: "Persistente", description: "Tu constancia demuestra verdadera fortaleza. Has superado las primeras barreras y sigues adelante.", icon: Shield, type: 'special', color: 'text-purple-500' },
+      { level: 1500, name: "Disciplinado", description: "La disciplina es tu aliada. Has demostrado que puedes mantener el rumbo incluso en momentos difíciles.", icon: Target, type: 'regular', color: 'text-green-500' },
+      { level: 2000, name: "Constructor", description: "Estás construyendo las bases sólidas de tu imperio financiero. Cada decisión suma al resultado final.", icon: TrendingUp, type: 'regular', color: 'text-orange-500' },
+      { level: 2500, name: "Visionario", description: "¡Logro importante! Tu visión es clara y tu camino está marcado. Has alcanzado un hito significativo.", icon: Crown, type: 'mega', color: 'text-yellow-500' },
+      { level: 3000, name: "Determinado", description: "Tu determinación te distingue del resto. No hay obstáculo que pueda detenerte ahora.", icon: Zap, type: 'regular', color: 'text-cyan-500' },
+      { level: 3500, name: "Guerrero", description: "Has enfrentado cada desafío con valentía. Tu espíritu guerrero te llevará a la victoria.", icon: Medal, type: 'regular', color: 'text-red-500' },
+      { level: 4000, name: "Estratega", description: "Tus decisiones estratégicas están dando frutos. Cada movimiento está calculado hacia el éxito.", icon: Award, type: 'regular', color: 'text-indigo-500' },
+      { level: 4500, name: "Campeón", description: "Eres un verdadero campeón financiero. Tu dedicación es inspiración para otros.", icon: Trophy, type: 'regular', color: 'text-amber-500' },
+      { level: 5500, name: "Invencible", description: "Tu momentum es imparable. Has desarrollado una mentalidad inquebrantable hacia el éxito.", icon: Rocket, type: 'regular', color: 'text-pink-500' },
+      { level: 6000, name: "Líder", description: "Te has convertido en un líder financiero. Tu ejemplo inspira a quienes te rodean.", icon: Star, type: 'regular', color: 'text-violet-500' },
+      { level: 6500, name: "Sabio", description: "La sabiduría financiera que has adquirido es invaluable. Cada decisión refleja tu experiencia.", icon: Sparkles, type: 'regular', color: 'text-teal-500' },
+      { level: 7000, name: "Innovador", description: "Tu enfoque innovador te diferencia. Has encontrado formas únicas de acelerar tu crecimiento.", icon: Diamond, type: 'regular', color: 'text-fuchsia-500' },
+      { level: 7500, name: "Maestro", description: "Has alcanzado la maestría financiera. Tu dominio es evidente en cada resultado.", icon: Award, type: 'regular', color: 'text-lime-500' },
+      { level: 8000, name: "Titán", description: "Como un titán, tu presencia financiera es formidable. Pocas personas llegan a este nivel.", icon: Shield, type: 'regular', color: 'text-rose-500' },
+      { level: 8500, name: "Legendario", description: "Tu historia es legendaria. Has superado todas las expectativas y alcanzado lo extraordinario.", icon: Medal, type: 'regular', color: 'text-sky-500' },
+      { level: 9000, name: "Élite", description: "Perteneces a la élite financiera. Tu éxito es testimonio de tu excelencia sostenida.", icon: Gem, type: 'regular', color: 'text-amber-600' },
+      { level: 9500, name: "Excepcional", description: "Tu desempeño es excepcional en todos los sentidos. Estás a un paso de la cumbre absoluta.", icon: Trophy, type: 'regular', color: 'text-purple-600' }
+    );
+    
+    // Medallas de Bronce cada 250 niveles
     for (let level = 250; level < 10000; level += 250) {
-      if (level % 500 !== 0) { // Excluir niveles que son plata o superiores
+      // Solo agregar si no hay una insignia especial o medalla superior en ese nivel
+      const hasSpecialBadge = badges.some(b => b.level === level);
+      const isSilverOrAbove = level % 500 === 0;
+      if (!hasSpecialBadge && !isSilverOrAbove) {
         badges.push({
           level,
           name: `Bronce ${level}`,
@@ -100,9 +125,11 @@ export default function FinancialJourney() {
       }
     }
     
-    // Medallas de Plata cada 500 niveles (excepto los que coinciden con oro/diamante)
+    // Medallas de Plata cada 500 niveles
     for (let level = 500; level <= 10000; level += 500) {
-      if (level % 1000 !== 0) { // Excluir niveles que son oro o diamante
+      const hasSpecialBadge = badges.some(b => b.level === level);
+      const isGoldOrAbove = level % 1000 === 0;
+      if (!hasSpecialBadge && !isGoldOrAbove) {
         badges.push({
           level,
           name: `Plata ${level}`,
@@ -114,9 +141,11 @@ export default function FinancialJourney() {
       }
     }
     
-    // Medallas de Oro cada 1,000 niveles (excepto los que coinciden con diamante)
+    // Medallas de Oro cada 1,000 niveles
     for (let level = 1000; level <= 10000; level += 1000) {
-      if (level % 5000 !== 0) { // Excluir niveles que son diamante
+      const hasSpecialBadge = badges.some(b => b.level === level);
+      const isDiamond = level % 5000 === 0;
+      if (!hasSpecialBadge && !isDiamond) {
         badges.push({
           level,
           name: `Oro ${level}`,
@@ -129,18 +158,10 @@ export default function FinancialJourney() {
     }
     
     // Diamantes cada 5,000 niveles
-    for (let level = 5000; level <= 10000; level += 5000) {
-      badges.push({
-        level,
-        name: level === 10000 ? 'Diamante Supremo' : `Diamante ${level}`,
-        description: level === 10000 
-          ? '¡Medalla Diamante Suprema! Has alcanzado la libertad financiera total. Eres inspiración pura.' 
-          : `Medalla de diamante por alcanzar el nivel ${level}. Un logro extraordinario.`,
-        icon: Gem,
-        type: 'diamond',
-        color: 'text-cyan-400'
-      });
-    }
+    badges.push(
+      { level: 5000, name: "Diamante 5000", description: "Medalla de diamante por alcanzar el nivel 5000. Un logro extraordinario.", icon: Gem, type: 'diamond', color: 'text-cyan-400' },
+      { level: 10000, name: "Diamante Supremo", description: "¡Medalla Diamante Suprema! Has alcanzado la libertad financiera total. Eres inspiración pura.", icon: Gem, type: 'diamond', color: 'text-cyan-400' }
+    );
     
     // Ordenar por nivel
     return badges.sort((a, b) => a.level - b.level);
@@ -506,7 +527,10 @@ export default function FinancialJourney() {
                           ${badge.type === 'diamond' ? 'w-14 h-14 bg-gradient-to-br from-cyan-300 via-blue-400 to-purple-400 shadow-2xl' : 
                             badge.type === 'gold' ? 'w-11 h-11 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 shadow-xl' : 
                             badge.type === 'silver' ? 'w-9 h-9 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 shadow-lg' :
-                            'w-8 h-8 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800 shadow-md'}
+                            badge.type === 'bronze' ? 'w-8 h-8 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800 shadow-md' :
+                            badge.type === 'mega' ? 'w-12 h-12 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 shadow-xl' : 
+                            badge.type === 'special' ? 'w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 shadow-lg' :
+                            'w-9 h-9 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg'}
                           ${isUnlocked ? 'shadow-lg hover:scale-110 animate-pulse' : 'grayscale cursor-not-allowed opacity-50'}
                         `}
                       >
@@ -515,7 +539,10 @@ export default function FinancialJourney() {
                             badge.type === 'diamond' ? 'bg-cyan-400' : 
                             badge.type === 'gold' ? 'bg-yellow-400' :
                             badge.type === 'silver' ? 'bg-gray-400' :
-                            'bg-amber-600'
+                            badge.type === 'bronze' ? 'bg-amber-600' :
+                            badge.type === 'mega' ? 'bg-yellow-400' :
+                            badge.type === 'special' ? 'bg-purple-400' :
+                            'bg-blue-400'
                           } animate-ping opacity-30`} />
                         )}
                         <BadgeIcon 
@@ -523,7 +550,10 @@ export default function FinancialJourney() {
                             badge.type === 'diamond' ? 'w-7 h-7' :
                             badge.type === 'gold' ? 'w-6 h-6' : 
                             badge.type === 'silver' ? 'w-5 h-5' :
-                            'w-4 h-4'
+                            badge.type === 'bronze' ? 'w-4 h-4' :
+                            badge.type === 'mega' ? 'w-6 h-6' :
+                            badge.type === 'special' ? 'w-5 h-5' :
+                            'w-5 h-5'
                           } text-white relative z-10 drop-shadow-md`}
                         />
                       </div>
@@ -540,7 +570,11 @@ export default function FinancialJourney() {
                       className={`
                         absolute top-full mt-1 hidden md:group-hover:block
                         text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        ${badge.type === 'diamond' ? 'bg-cyan-100' : badge.type === 'gold' ? 'bg-yellow-100' : 'bg-white'}
+                        ${badge.type === 'diamond' ? 'bg-cyan-100' : 
+                          badge.type === 'gold' ? 'bg-yellow-100' : 
+                          badge.type === 'mega' ? 'bg-yellow-100' :
+                          badge.type === 'special' ? 'bg-purple-100' :
+                          'bg-white'}
                         ${isUnlocked ? badge.color : 'text-gray-400'}
                         shadow-md z-30
                       `}
@@ -580,12 +614,16 @@ export default function FinancialJourney() {
                                 ${badge.type === 'diamond' ? 'w-14 h-14 bg-gradient-to-br from-cyan-300 via-blue-400 to-purple-400' : 
                                   badge.type === 'gold' ? 'w-12 h-12 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500' : 
                                   badge.type === 'silver' ? 'w-10 h-10 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500' :
-                                  'w-10 h-10 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800'}
+                                  badge.type === 'bronze' ? 'w-10 h-10 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800' :
+                                  badge.type === 'mega' ? 'w-12 h-12 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500' :
+                                  badge.type === 'special' ? 'w-11 h-11 bg-gradient-to-br from-purple-400 to-purple-600' :
+                                  'w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600'}
                               `}
                             >
                               <BadgeIcon className={`${
                                 badge.type === 'diamond' ? 'w-7 h-7' :
                                 badge.type === 'gold' ? 'w-6 h-6' : 
+                                badge.type === 'mega' ? 'w-6 h-6' :
                                 'w-5 h-5'
                               } text-white`} />
                             </div>
@@ -593,16 +631,20 @@ export default function FinancialJourney() {
                               <h3 className={`font-bold ${
                                 badge.type === 'diamond' ? 'text-base' : 
                                 badge.type === 'gold' ? 'text-sm' : 
+                                badge.type === 'mega' ? 'text-base' :
                                 'text-sm'
                               } ${badge.color} truncate`}>
                                 {badge.name}
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                Nivel {badge.level} • Medalla de {
+                                Nivel {badge.level} • {
                                   badge.type === 'diamond' ? 'Diamante' :
                                   badge.type === 'gold' ? 'Oro' :
                                   badge.type === 'silver' ? 'Plata' :
-                                  'Bronce'
+                                  badge.type === 'bronze' ? 'Bronce' :
+                                  badge.type === 'mega' ? 'Insignia Especial' :
+                                  badge.type === 'special' ? 'Insignia Premium' :
+                                  'Insignia'
                                 }
                               </p>
                             </div>
