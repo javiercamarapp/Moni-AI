@@ -246,20 +246,19 @@ export default function FinancialJourney() {
         
         // Scroll al nodo actual después de un pequeño delay
         setTimeout(() => {
-          const scrollPosition = currentNode.position.y - 200; // 200px de offset para que no quede pegado arriba
-          window.scrollTo({
-            top: scrollPosition,
-            behavior: 'smooth'
-          });
+          const element = document.getElementById(`node-${currentNode.id}`);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
         }, 300);
       }
     }
   }, [totalAspiration, currentNetWorth]); // Se ejecuta cuando cambian estos valores
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-4 overflow-y-auto">
-      {/* Header fijo con botón de regresar integrado */}
-      <div className="sticky top-0 z-40 bg-transparent backdrop-blur-sm pt-4 pb-2">
+    <div className="min-h-screen animated-wave-bg flex flex-col">
+      {/* Header completamente fijo */}
+      <div className="fixed top-0 left-0 right-0 z-40 bg-transparent backdrop-blur-sm pt-4 pb-2">
         <div className="container mx-auto px-4 max-w-2xl">
           {/* Botón de regresar arriba del card */}
           <div className="mb-3">
@@ -305,9 +304,10 @@ export default function FinancialJourney() {
         </div>
       </div>
 
-      {/* Contenedor deslizante del camino */}
-      <div className="container mx-auto px-4 max-w-2xl mt-4">
-        <div className="relative w-full pb-4 pt-2" style={{ minHeight: '7200px' }}>
+      {/* Zona desplazable de niveles - con altura fija */}
+      <div className="flex-1 overflow-y-auto" style={{ marginTop: '180px' }}>
+        <div className="container mx-auto px-4 max-w-2xl">
+          <div className="relative w-full pb-4 pt-2" style={{ minHeight: '7200px' }}>
           {/* 9 Secciones de fondo */}
           <div className="absolute inset-0 w-full h-full">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((section) => (
@@ -536,7 +536,7 @@ export default function FinancialJourney() {
                         </div>
                       )}
 
-                      {node.isCompleted && (
+                       {node.isCompleted && (
                         <div className="mt-2 flex items-center justify-center gap-1 text-xs text-green-600">
                           <Star className="h-3 w-3 fill-current" />
                           <span>Completado</span>
@@ -551,6 +551,7 @@ export default function FinancialJourney() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
