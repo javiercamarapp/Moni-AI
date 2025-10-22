@@ -283,7 +283,7 @@ export default function FinancialJourney() {
                 Tu Camino Financiero
               </p>
               <h1 className="text-2xl font-bold text-foreground">
-                Hacia la Libertad Financiera
+                Tu deseo, tu realidad
               </h1>
               <div className="mt-4">
                 <div className="flex justify-between text-sm mb-2 text-foreground/70">
