@@ -27,6 +27,7 @@ import Liabilities from "./pages/Liabilities";
 import LevelQuiz from "./pages/LevelQuiz";
 import LevelDetails from "./pages/LevelDetails";
 import AspirationsAnalysis from "./pages/AspirationsAnalysis";
+import FinancialJourney from "./pages/FinancialJourney";
 
 import Subscriptions from "./pages/Subscriptions";
 import DailyExpenses from './pages/DailyExpenses';
@@ -76,6 +77,7 @@ const App = () => {
             <Route path="/level-quiz" element={<LevelQuiz />} />
             <Route path="/level-details" element={<LevelDetails />} />
             <Route path="/aspirations-analysis" element={<AspirationsAnalysis />} />
+            <Route path="/financial-journey" element={<FinancialJourney />} />
           <Route path="/subscriptions" element={<Subscriptions />} />
           <Route path="/daily-expenses" element={<DailyExpenses />} />
           <Route path="/reports" element={<Reports />} />

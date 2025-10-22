@@ -232,10 +232,10 @@ export default function AspirationsAnalysis() {
         {/* Action Buttons */}
         <div className="flex flex-col gap-3">
           <Button
-            onClick={() => navigate("/level-details")}
+            onClick={() => navigate("/financial-journey")}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white h-12"
           >
-            Ver Mi Progreso de Nivel
+            Ver Mi Camino Financiero
           </Button>
           <Button
             variant="outline"
