@@ -147,6 +147,12 @@ export default function LevelQuiz() {
       question: "¿Cuánto quieres tener en participaciones en empresas o startups?",
       icon: Briefcase,
       placeholder: "Ejemplo: 400000 (opcional)"
+    },
+    {
+      id: 15,
+      question: "¿Cuántos vehículos extras quisieras tener? Valor total",
+      icon: Car,
+      placeholder: "Ejemplo: 300000 (opcional)"
     }
   ];
 
@@ -313,7 +319,7 @@ export default function LevelQuiz() {
           {aspirationalQuestions.map((q) => {
             const Icon = q.icon;
             // Filtrar preguntas que se mostrarán dentro de sus respectivos cards
-            if (q.id === 4 || q.id === 5 || q.id === 6 || q.id === 7 || q.id === 8 || q.id === 9 || q.id === 10 || q.id === 11 || q.id === 12 || q.id === 13 || q.id === 14) return null;
+            if (q.id === 4 || q.id === 5 || q.id === 6 || q.id === 7 || q.id === 8 || q.id === 9 || q.id === 10 || q.id === 11 || q.id === 12 || q.id === 13 || q.id === 14 || q.id === 15) return null;
             
             return (
               <div key={q.id}>
@@ -656,32 +662,69 @@ export default function LevelQuiz() {
                   {/* Pregunta adicional para el cónyuge dentro del mismo card */}
                   {q.id === 2 && (() => {
                     const spouseCarQuestion = aspirationalQuestions.find(sq => sq.id === 7);
-                    if (!spouseCarQuestion) return null;
-                    const SpouseIcon = spouseCarQuestion.icon;
+                    const extraVehiclesQuestion = aspirationalQuestions.find(sq => sq.id === 15);
+                    
                     return (
                       <>
-                        <div className="flex items-center gap-2 mb-2 mt-4">
-                          <SpouseIcon className="h-3 w-3 text-primary flex-shrink-0" />
-                          <h3 className="text-xs font-bold text-foreground">
-                            {spouseCarQuestion.question}
-                          </h3>
-                        </div>
-                        <div className="relative">
-                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-foreground font-medium">
-                            $
-                          </span>
-                          <input
-                            type="text"
-                            inputMode="numeric"
-                            placeholder={spouseCarQuestion.placeholder}
-                            value={formatNumberWithCommas(aspirationalAnswers[7] || "")}
-                            onChange={(e) => {
-                              const value = e.target.value.replace(/[^0-9]/g, '');
-                              handleAspAnswer(7, value);
-                            }}
-                            className="w-full pl-5 pr-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground/60"
-                          />
-                        </div>
+                        {spouseCarQuestion && (() => {
+                          const SpouseIcon = spouseCarQuestion.icon;
+                          return (
+                            <>
+                              <div className="flex items-center gap-2 mb-2 mt-4">
+                                <SpouseIcon className="h-3 w-3 text-primary flex-shrink-0" />
+                                <h3 className="text-xs font-bold text-foreground">
+                                  {spouseCarQuestion.question}
+                                </h3>
+                              </div>
+                              <div className="relative">
+                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-foreground font-medium">
+                                  $
+                                </span>
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  placeholder={spouseCarQuestion.placeholder}
+                                  value={formatNumberWithCommas(aspirationalAnswers[7] || "")}
+                                  onChange={(e) => {
+                                    const value = e.target.value.replace(/[^0-9]/g, '');
+                                    handleAspAnswer(7, value);
+                                  }}
+                                  className="w-full pl-5 pr-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground/60"
+                                />
+                              </div>
+                            </>
+                          );
+                        })()}
+                        
+                        {extraVehiclesQuestion && (() => {
+                          const ExtraVehiclesIcon = extraVehiclesQuestion.icon;
+                          return (
+                            <>
+                              <div className="flex items-center gap-2 mb-2 mt-4">
+                                <ExtraVehiclesIcon className="h-3 w-3 text-primary flex-shrink-0" />
+                                <h3 className="text-xs font-bold text-foreground">
+                                  {extraVehiclesQuestion.question}
+                                </h3>
+                              </div>
+                              <div className="relative">
+                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-foreground font-medium">
+                                  $
+                                </span>
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  placeholder={extraVehiclesQuestion.placeholder}
+                                  value={formatNumberWithCommas(aspirationalAnswers[15] || "")}
+                                  onChange={(e) => {
+                                    const value = e.target.value.replace(/[^0-9]/g, '');
+                                    handleAspAnswer(15, value);
+                                  }}
+                                  className="w-full pl-5 pr-2 py-1.5 text-xs rounded-[15px] border border-blue-100 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary bg-white text-foreground placeholder:text-muted-foreground/60"
+                                />
+                              </div>
+                            </>
+                          );
+                        })()}
                       </>
                     );
                   })()}
