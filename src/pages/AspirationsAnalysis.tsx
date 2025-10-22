@@ -167,22 +167,18 @@ export default function AspirationsAnalysis() {
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-[15px] p-4 border border-blue-200">
               <p className="text-xs text-muted-foreground mb-1">Net Worth Actual</p>
               <p className="text-xl font-bold text-foreground">
-                ${currentNetWorth >= 1000000 
+                ${currentNetWorth >= 10000000 
                   ? `${(currentNetWorth / 1000000).toFixed(1)}M` 
-                  : currentNetWorth >= 1000 
-                  ? `${(currentNetWorth / 1000).toFixed(0)}k`
-                  : currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0 })
+                  : currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                 }
               </p>
             </div>
             <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-[15px] p-4 border border-purple-200">
               <p className="text-xs text-muted-foreground mb-1">Meta Aspiracional</p>
               <p className="text-xl font-bold text-purple-600">
-                ${totalAspiration >= 1000000 
+                ${totalAspiration >= 10000000 
                   ? `${(totalAspiration / 1000000).toFixed(1)}M` 
-                  : totalAspiration >= 1000 
-                  ? `${(totalAspiration / 1000).toFixed(0)}k`
-                  : totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0 })
+                  : totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                 }
               </p>
             </div>
@@ -194,11 +190,9 @@ export default function AspirationsAnalysis() {
               <p className="text-xs font-semibold text-orange-600">{gapPercentage}%</p>
             </div>
             <p className="text-lg font-bold text-orange-600">
-              ${gap >= 1000000 
+              ${gap >= 10000000 
                 ? `${(gap / 1000000).toFixed(1)}M` 
-                : gap >= 1000 
-                ? `${(gap / 1000).toFixed(0)}k`
-                : gap.toLocaleString('es-MX', { minimumFractionDigits: 0 })
+                : gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
               }
             </p>
           </div>
