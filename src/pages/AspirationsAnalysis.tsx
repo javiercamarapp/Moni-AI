@@ -493,7 +493,7 @@ export default function AspirationsAnalysis() {
 
           {/* Leyenda */}
           <div className="mt-4 pt-4 border-t border-slate-200">
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[10px] text-muted-foreground text-center">
               <span className="font-semibold">Nota:</span> Los valores actuales muestran el neto (activos - pasivos relacionados). Por ejemplo: Propiedades - Hipoteca = Equity en propiedades.
             </p>
           </div>
