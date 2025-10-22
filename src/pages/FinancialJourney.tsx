@@ -2128,10 +2128,10 @@ export default function FinancialJourney() {
               
               return (
                 <div
-                  className={`absolute left-1/2 -translate-x-1/2 transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  className={`absolute left-[10px] transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
                   style={{
                     top: `${badgeY}px`,
-                    transform: 'translate(-50%, -50%)',
+                    transform: 'translateY(-50%)',
                     zIndex: expandedBadge === 'silvermastery4500' ? 100 : 20
                   }}
                 >
