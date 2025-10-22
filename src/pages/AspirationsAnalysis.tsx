@@ -17,6 +17,8 @@ export default function AspirationsAnalysis() {
   const [analysis, setAnalysis] = useState<string>("");
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [assets, setAssets] = useState<any[]>([]);
+  const [liabilities, setLiabilities] = useState<any[]>([]);
   const netWorthData = useNetWorth("1Y");
   const currentNetWorth = netWorthData.data?.currentNetWorth || 0;
 
@@ -38,6 +40,7 @@ export default function AspirationsAnalysis() {
 
   useEffect(() => {
     fetchAspirations();
+    fetchAssetsAndLiabilities();
   }, []);
 
   useEffect(() => {
@@ -115,6 +118,91 @@ export default function AspirationsAnalysis() {
       setIsLoadingAnalysis(false);
     }
   };
+
+  const fetchAssetsAndLiabilities = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: assetsData } = await supabase
+        .from("assets")
+        .select("*")
+        .eq("user_id", user.id);
+
+      const { data: liabilitiesData } = await supabase
+        .from("liabilities")
+        .select("*")
+        .eq("user_id", user.id);
+
+      setAssets(assetsData || []);
+      setLiabilities(liabilitiesData || []);
+    } catch (error) {
+      console.error("Error fetching assets and liabilities:", error);
+    }
+  };
+
+  // Mapear y comparar categorías
+  const getComparativeData = () => {
+    const categoryMapping: Record<string, { aspirationIds: number[], assetCategories: string[], liabilityCategories: string[] }> = {
+      "Propiedades": {
+        aspirationIds: [1, 8, 9, 10],
+        assetCategories: ["Propiedad", "Inmuebles", "Casa", "Terreno"],
+        liabilityCategories: ["Hipoteca", "Crédito Hipotecario"]
+      },
+      "Vehículos": {
+        aspirationIds: [2, 7, 15],
+        assetCategories: ["Vehículo", "Auto", "Coche"],
+        liabilityCategories: ["Crédito Automotriz"]
+      },
+      "Ahorros": {
+        aspirationIds: [3, 11],
+        assetCategories: ["Cuenta de Ahorros", "Cuenta Bancaria", "Efectivo"],
+        liabilityCategories: []
+      },
+      "Inversiones": {
+        aspirationIds: [4, 12, 13, 14],
+        assetCategories: ["Inversiones", "Acciones", "Fondos", "Criptomonedas", "AFORE", "Negocio"],
+        liabilityCategories: []
+      }
+    };
+
+    return Object.entries(categoryMapping).map(([category, mapping]) => {
+      // Calcular aspiración
+      const aspirationValue = aspirations
+        .filter(asp => mapping.aspirationIds.includes(asp.question_id))
+        .reduce((sum, asp) => sum + Number(asp.value), 0);
+
+      // Calcular activos
+      const assetsValue = assets
+        .filter(asset => mapping.assetCategories.some(cat => 
+          asset.category.toLowerCase().includes(cat.toLowerCase()) ||
+          asset.name.toLowerCase().includes(cat.toLowerCase())
+        ))
+        .reduce((sum, asset) => sum + Number(asset.value), 0);
+
+      // Calcular pasivos
+      const liabilitiesValue = liabilities
+        .filter(liability => mapping.liabilityCategories.some(cat =>
+          liability.category.toLowerCase().includes(cat.toLowerCase()) ||
+          liability.name.toLowerCase().includes(cat.toLowerCase())
+        ))
+        .reduce((sum, liability) => sum + Number(liability.value), 0);
+
+      // Net worth neto (activos - pasivos)
+      const currentNet = assetsValue - liabilitiesValue;
+      const gap = aspirationValue - currentNet;
+
+      return {
+        category,
+        current: currentNet,
+        aspiration: aspirationValue,
+        gap: gap,
+        gapPercentage: aspirationValue > 0 ? ((gap / aspirationValue) * 100).toFixed(0) : 0
+      };
+    }).filter(item => item.aspiration > 0 || item.current > 0);
+  };
+
+  const comparativeData = getComparativeData();
 
   const chartData = aspirations
     .filter(asp => asp.value > 0)
@@ -198,55 +286,84 @@ export default function AspirationsAnalysis() {
           </div>
         </Card>
 
-        {/* Bar Chart */}
+        {/* Tabla Comparativa */}
         <Card className="p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
-          <h3 className="text-base font-bold text-foreground mb-4">Desglose de Aspiraciones</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={chartData} layout="vertical" margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis 
-                type="number" 
-                tick={{ fontSize: 11 }}
-                tickFormatter={(value) => 
-                  value >= 1000000 
-                    ? `$${(value / 1000000).toFixed(1)}M` 
-                    : value >= 1000 
-                    ? `$${(value / 1000).toFixed(0)}k`
-                    : `$${value}`
-                }
-              />
-              <YAxis 
-                type="category" 
-                dataKey="name" 
-                width={100}
-                tick={{ fontSize: 10 }}
-                tickFormatter={(value) => {
-                  const maxLength = 12;
-                  return value.length > maxLength ? value.substring(0, maxLength) + '...' : value;
-                }}
-              />
-              <Tooltip 
-                formatter={(value: number) => [
-                  value >= 10000000 
-                    ? `$${(value / 1000000).toFixed(1)}M` 
-                    : `$${value.toLocaleString('es-MX')}`,
-                  'Valor'
-                ]}
-                contentStyle={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                  border: 'none',
-                  borderRadius: '12px',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                  fontSize: '12px'
-                }}
-              />
-              <Bar dataKey="value" radius={[0, 8, 8, 0]}>
-                {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+          <h3 className="text-base font-bold text-foreground mb-4">Comparativa Actual vs Aspiracional</h3>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-200">
+                  <th className="text-left py-3 px-2 font-semibold text-foreground">Categoría</th>
+                  <th className="text-right py-3 px-2 font-semibold text-blue-600">Actual</th>
+                  <th className="text-right py-3 px-2 font-semibold text-purple-600">Meta</th>
+                  <th className="text-right py-3 px-2 font-semibold text-orange-600">Brecha</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparativeData.map((item, index) => (
+                  <tr key={index} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
+                    <td className="py-3 px-2 font-medium text-foreground">{item.category}</td>
+                    <td className="py-3 px-2 text-right text-blue-600 font-semibold">
+                      ${item.current >= 10000000 
+                        ? `${(item.current / 1000000).toFixed(1)}M` 
+                        : item.current.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+                      }
+                    </td>
+                    <td className="py-3 px-2 text-right text-purple-600 font-semibold">
+                      ${item.aspiration >= 10000000 
+                        ? `${(item.aspiration / 1000000).toFixed(1)}M` 
+                        : item.aspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+                      }
+                    </td>
+                    <td className="py-3 px-2 text-right">
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="text-orange-600 font-bold">
+                          ${item.gap >= 10000000 
+                            ? `${(item.gap / 1000000).toFixed(1)}M` 
+                            : item.gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+                          }
+                        </span>
+                        <span className="text-xs text-orange-500">
+                          {item.gapPercentage}%
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
                 ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+                
+                {/* Total Row */}
+                <tr className="bg-slate-50 font-bold">
+                  <td className="py-3 px-2 text-foreground">TOTAL</td>
+                  <td className="py-3 px-2 text-right text-blue-600">
+                    ${currentNetWorth >= 10000000 
+                      ? `${(currentNetWorth / 1000000).toFixed(1)}M` 
+                      : currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+                    }
+                  </td>
+                  <td className="py-3 px-2 text-right text-purple-600">
+                    ${totalAspiration >= 10000000 
+                      ? `${(totalAspiration / 1000000).toFixed(1)}M` 
+                      : totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+                    }
+                  </td>
+                  <td className="py-3 px-2 text-right text-orange-600">
+                    ${gap >= 10000000 
+                      ? `${(gap / 1000000).toFixed(1)}M` 
+                      : gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+                    }
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Leyenda */}
+          <div className="mt-4 pt-4 border-t border-slate-200">
+            <p className="text-xs text-muted-foreground">
+              <span className="font-semibold">Nota:</span> Los valores actuales muestran el neto (activos - pasivos relacionados). Por ejemplo: Propiedades - Hipoteca = Equity en propiedades.
+            </p>
+          </div>
         </Card>
 
         {/* AI Analysis */}
