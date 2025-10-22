@@ -66,8 +66,8 @@ export default function FinancialJourney() {
       const baseX = 20 + (seed1 * 0.6); // De 20% a 80%
       const offsetX = ((seed2 % 20) - 10); // Variación adicional más controlada
       
-      // Posición vertical con más espacio para evitar colisiones (60px entre nodos)
-      const baseY = index * 60; // 60px entre cada nodo para que no choquen
+      // Posición vertical con más espacio y offset inicial para el primer nivel
+      const baseY = 100 + (index * 60); // Comenzar en 100px para que el nivel 0 sea visible
       const offsetY = (seed3 % 15) - 7; // Variación sutil vertical
       
       return {
@@ -227,7 +227,7 @@ export default function FinancialJourney() {
           </div>
         </Card>
 
-        <div className="relative min-h-[12500px] w-full overflow-x-hidden pb-20">
+        <div className="relative min-h-[12600px] w-full overflow-x-hidden pb-20 pt-4">
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
             <defs>
               <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
