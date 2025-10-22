@@ -309,17 +309,66 @@ export default function FinancialJourney() {
           </div>
         </Card>
 
-        {/* Journey Path */}
+        {/* Journey Path - Zigzag Design */}
         <div className="relative">
-          {/* Vertical line connecting nodes */}
-          <div className="absolute left-[50%] top-0 bottom-0 w-1 bg-gradient-to-b from-blue-200 via-purple-200 to-green-200 -translate-x-1/2 z-0" />
-
           {/* Journey Nodes */}
-          <div className="space-y-2 relative z-10">
-            {journeyNodes.map((node, index) => (
-              <div key={node.id} className="flex flex-col items-center">
-                {/* Node Circle */}
-                <div className="relative">
+          <div className="relative z-10">
+            {journeyNodes.map((node, index) => {
+              // Crear patrón zigzag: 5 nodos por fila
+              const row = Math.floor(index / 5);
+              const col = index % 5;
+              const isEvenRow = row % 2 === 0;
+              const position = isEvenRow ? col : 4 - col; // Alternar dirección
+              
+              return (
+                <div 
+                  key={node.id} 
+                  className="inline-block"
+                  style={{
+                    width: '20%',
+                    verticalAlign: 'top',
+                    marginBottom: col === 4 ? '1rem' : '0'
+                  }}
+                >
+                  <div className="flex flex-col items-center relative">
+                    {/* Connector line to next node */}
+                    {index < journeyNodes.length - 1 && (
+                      <svg 
+                        className="absolute top-3 left-1/2 w-full h-12 pointer-events-none"
+                        style={{
+                          zIndex: 0,
+                          transform: col === 4 ? 'translateY(100%)' : 'translateX(50%)'
+                        }}
+                      >
+                        {col === 4 ? (
+                          // Línea vertical al final de fila
+                          <path
+                            d="M 0 0 Q 0 20, 0 40"
+                            stroke="url(#gradient)"
+                            strokeWidth="2"
+                            fill="none"
+                          />
+                        ) : (
+                          // Línea horizontal
+                          <path
+                            d="M 0 0 L 100 0"
+                            stroke="url(#gradient)"
+                            strokeWidth="2"
+                            fill="none"
+                          />
+                        )}
+                        <defs>
+                          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="rgb(191, 219, 254)" />
+                            <stop offset="50%" stopColor="rgb(221, 214, 254)" />
+                            <stop offset="100%" stopColor="rgb(187, 247, 208)" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                    )}
+
+                    {/* Node Circle */}
+                    <div className="relative z-10">
                   {/* Pulse animation for current node */}
                   {node.isCurrent && (
                     <div className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-30" />
@@ -381,54 +430,50 @@ export default function FinancialJourney() {
                   )}
                 </div>
 
-                {/* Node Info Card */}
-                <Card 
-                  className={`
-                    mt-1 px-3 py-1 w-full max-w-sm text-center transition-all duration-300 rounded-[16px] shadow-lg
-                    ${node.isCurrent 
-                      ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400' 
-                      : node.isUnlocked
-                      ? 'bg-white border border-blue-100'
-                      : 'bg-white/50 border border-gray-200 opacity-60'
-                    }
-                  `}
-                >
-                  <h3 className={`
-                    font-bold mb-0.5 text-xs leading-none
-                    ${node.isCurrent ? 'text-green-600' : node.isUnlocked ? 'text-foreground' : 'text-gray-400'}
-                  `}>
-                    {node.title}
-                  </h3>
-                  <p className={`
-                    text-[10px] leading-snug
-                    ${node.isUnlocked ? 'text-foreground/70' : 'text-gray-400'}
-                  `}>
-                    {node.description}
-                  </p>
-                  
-                  {node.isCurrent && (
-                    <div className="mt-1 pt-1 border-t border-green-200">
-                      <div className="flex items-center justify-center gap-1 text-[9px] text-green-600">
-                        <TrendingUp className="h-2 w-2" />
-                        <span className="font-semibold">Nivel Actual</span>
-                      </div>
-                    </div>
-                  )}
+                    {/* Node Info Card */}
+                    <Card 
+                      className={`
+                        mt-1 px-2 py-1 w-full text-center transition-all duration-300 rounded-[12px] shadow-lg
+                        ${node.isCurrent 
+                          ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400' 
+                          : node.isUnlocked
+                          ? 'bg-white border border-blue-100'
+                          : 'bg-white/50 border border-gray-200 opacity-60'
+                        }
+                      `}
+                    >
+                      <h3 className={`
+                        font-bold mb-0.5 text-[9px] leading-none
+                        ${node.isCurrent ? 'text-green-600' : node.isUnlocked ? 'text-foreground' : 'text-gray-400'}
+                      `}>
+                        {node.title}
+                      </h3>
+                      <p className={`
+                        text-[8px] leading-tight line-clamp-2
+                        ${node.isUnlocked ? 'text-foreground/70' : 'text-gray-400'}
+                      `}>
+                        {node.description}
+                      </p>
+                      
+                      {node.isCurrent && (
+                        <div className="mt-0.5 pt-0.5 border-t border-green-200">
+                          <div className="flex items-center justify-center gap-0.5 text-[8px] text-green-600">
+                            <TrendingUp className="h-1.5 w-1.5" />
+                            <span className="font-semibold">Actual</span>
+                          </div>
+                        </div>
+                      )}
 
-                  {node.isCompleted && (
-                    <div className="mt-1 flex items-center justify-center gap-1 text-[9px] text-green-600">
-                      <Star className="h-2 w-2 fill-current" />
-                      <span>Completado</span>
-                    </div>
-                  )}
-                </Card>
-
-                {/* Connector line to next node (except for last node) */}
-                {index < journeyNodes.length - 1 && (
-                  <div className="h-2 w-1 bg-gradient-to-b from-blue-200 via-purple-200 to-green-200 mt-1" />
-                )}
-              </div>
-            ))}
+                      {node.isCompleted && (
+                        <div className="mt-0.5 flex items-center justify-center gap-0.5 text-[8px] text-green-600">
+                          <Star className="h-1.5 w-1.5 fill-current" />
+                        </div>
+                      )}
+                    </Card>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
