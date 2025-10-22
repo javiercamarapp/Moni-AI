@@ -258,8 +258,8 @@ export default function FinancialJourney() {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-4">
-      {/* Botón de regresar */}
-      <div className="p-4">
+      {/* Botón de regresar - fijo en la esquina */}
+      <div className="fixed top-4 left-4 z-50">
         <Button
           onClick={() => navigate(-1)}
           variant="ghost"
@@ -270,26 +270,53 @@ export default function FinancialJourney() {
         </Button>
       </div>
 
-      <div className="container mx-auto px-4 py-2 max-w-2xl">
-        <Card className="p-6 mb-6 bg-white/95 backdrop-blur-sm border-0 shadow-xl rounded-[20px] hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
-          <GlowingEffect disabled={false} spread={30} />
-          <div className="relative z-10">
-            <p className="text-xs font-bold uppercase tracking-wider text-green-600 mb-1">
-              Tu Camino Financiero
-            </p>
-            <h1 className="text-2xl font-bold text-foreground">
-              Hacia la Libertad Financiera
-            </h1>
-            <div className="mt-4">
-              <div className="flex justify-between text-sm mb-2 text-foreground/70">
-                <span>Progreso Total</span>
-                <span className="font-bold text-foreground">{currentProgress.toFixed(1)}%</span>
+      {/* Header fijo */}
+      <div className="sticky top-0 z-40 bg-transparent backdrop-blur-sm pt-4 pb-2">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <Card className="p-6 bg-white/95 backdrop-blur-sm border-0 shadow-xl rounded-[20px] hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+            <GlowingEffect disabled={false} spread={30} />
+            <div className="relative z-10">
+              <p className="text-xs font-bold uppercase tracking-wider text-green-600 mb-1">
+                Tu Camino Financiero
+              </p>
+              <h1 className="text-2xl font-bold text-foreground">
+                Hacia la Libertad Financiera
+              </h1>
+              <div className="mt-4">
+                <div className="flex justify-between text-sm mb-2 text-foreground/70">
+                  <span>Progreso Total</span>
+                  <span className="font-bold text-foreground">{currentProgress.toFixed(1)}%</span>
+                </div>
+                <Progress value={currentProgress} className="h-3" />
               </div>
-              <Progress value={currentProgress} className="h-3" />
+              
+              {/* Botón para ir al nivel actual */}
+              <Button
+                onClick={() => {
+                  const currentNode = journeyNodes.find(node => node.isCurrent);
+                  if (currentNode) {
+                    setExpandedNode(currentNode.id);
+                    setTimeout(() => {
+                      const scrollPosition = currentNode.position.y - 200;
+                      window.scrollTo({
+                        top: scrollPosition,
+                        behavior: 'smooth'
+                      });
+                    }, 100);
+                  }
+                }}
+                className="w-full mt-3 bg-green-500 hover:bg-green-600 text-white rounded-[20px] shadow-xl hover:scale-105 transition-all"
+              >
+                <Target className="h-4 w-4 mr-2" />
+                Ver Mi Nivel Actual
+              </Button>
             </div>
-          </div>
-        </Card>
+          </Card>
+        </div>
+      </div>
 
+      {/* Contenedor deslizante del camino */}
+      <div className="container mx-auto px-4 max-w-2xl mt-4">
         <div className="relative min-h-[7200px] w-full overflow-x-hidden pb-4 pt-2">
           {/* 9 Secciones de fondo */}
           <div className="absolute inset-0 w-full h-full">
