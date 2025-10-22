@@ -177,8 +177,8 @@ export default function FinancialJourney() {
     // Si hay múltiples insignias en el mismo nivel, espaciarlas verticalmente
     let yOffset = 0;
     if (badgesAtLevel > 1) {
-      // Espaciar más para evitar choques (60px entre cada insignia)
-      yOffset = (badgeIndexAtLevel - (badgesAtLevel - 1) / 2) * 60;
+      // Espaciar más para evitar choques (70px entre cada insignia)
+      yOffset = (badgeIndexAtLevel - (badgesAtLevel - 1) / 2) * 70;
     }
     
     return { y: baseY + yOffset, side };
@@ -528,7 +528,8 @@ export default function FinancialJourney() {
                       key={`badge-${badgeUniqueId}`}
                       className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
                       style={{
-                        [position.side]: '1%',
+                        [position.side]: position.side === 'left' ? '0%' : 'auto',
+                        [position.side === 'right' ? 'right' : 'left']: position.side === 'right' ? '0%' : 'auto',
                         top: `${position.y}px`,
                         transform: 'translateY(-50%)',
                         zIndex: expandedBadge === badgeUniqueId ? 100 : 20
