@@ -140,56 +140,58 @@ export default function AspirationsAnalysis() {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
-      <div className="container mx-auto px-4 py-6 max-w-4xl">
+      <div className="container mx-auto px-4 py-6 max-w-2xl">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/dashboard")}
-            className="hover:bg-white/20"
+            className="hover:bg-white/20 rounded-full"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-5 w-5 text-foreground" />
           </Button>
-          <h1 className="text-2xl font-bold text-foreground">Análisis de Aspiraciones</h1>
+          <h1 className="text-xl font-bold text-foreground">Análisis de Aspiraciones</h1>
         </div>
 
         {/* Net Worth Comparison Card */}
-        <Card className="p-6 mb-6 bg-gradient-to-br from-blue-500/10 to-purple-500/10 border-2 border-blue-200">
+        <Card className="p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
           <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="h-6 w-6 text-blue-600" />
-            <h2 className="text-xl font-semibold text-foreground">Tu Meta Financiera</h2>
+            <div className="bg-blue-500/10 p-2 rounded-full">
+              <TrendingUp className="h-5 w-5 text-blue-600" />
+            </div>
+            <h2 className="text-lg font-bold text-foreground">Tu Meta Financiera</h2>
           </div>
           
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="bg-white/50 rounded-lg p-4">
-              <p className="text-sm text-muted-foreground mb-1">Net Worth Actual</p>
-              <p className="text-2xl font-bold text-foreground">
-                ${currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+          <div className="grid grid-cols-2 gap-3 mb-3">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-[15px] p-4 border border-blue-200">
+              <p className="text-xs text-muted-foreground mb-1">Net Worth Actual</p>
+              <p className="text-xl font-bold text-foreground">
+                ${currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0 })}
               </p>
             </div>
-            <div className="bg-white/50 rounded-lg p-4">
-              <p className="text-sm text-muted-foreground mb-1">Net Worth Aspiracional</p>
-              <p className="text-2xl font-bold text-blue-600">
-                ${totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-[15px] p-4 border border-purple-200">
+              <p className="text-xs text-muted-foreground mb-1">Meta Aspiracional</p>
+              <p className="text-xl font-bold text-purple-600">
+                ${totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0 })}
               </p>
             </div>
           </div>
 
-          <div className="bg-white/50 rounded-lg p-4">
-            <div className="flex justify-between items-center mb-2">
-              <p className="text-sm text-muted-foreground">Brecha a cerrar</p>
-              <p className="text-sm font-semibold text-orange-600">{gapPercentage}%</p>
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-[15px] p-4 border border-orange-200">
+            <div className="flex justify-between items-center mb-1">
+              <p className="text-xs text-muted-foreground">Brecha a cerrar</p>
+              <p className="text-xs font-semibold text-orange-600">{gapPercentage}%</p>
             </div>
-            <p className="text-xl font-bold text-orange-600">
-              ${gap.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+            <p className="text-lg font-bold text-orange-600">
+              ${gap.toLocaleString('es-MX', { minimumFractionDigits: 0 })}
             </p>
           </div>
         </Card>
 
         {/* Pie Chart */}
-        <Card className="p-6 mb-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Desglose de Aspiraciones</h3>
+        <Card className="p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
+          <h3 className="text-base font-bold text-foreground mb-4">Desglose de Aspiraciones</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -212,10 +214,12 @@ export default function AspirationsAnalysis() {
         </Card>
 
         {/* AI Analysis */}
-        <Card className="p-6 mb-6">
+        <Card className="p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
           <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="h-6 w-6 text-purple-600" />
-            <h3 className="text-lg font-semibold text-foreground">Análisis e Insights</h3>
+            <div className="bg-purple-500/10 p-2 rounded-full">
+              <Sparkles className="h-5 w-5 text-purple-600" />
+            </div>
+            <h3 className="text-base font-bold text-foreground">Análisis e Insights</h3>
           </div>
           
           {isLoadingAnalysis ? (
@@ -223,24 +227,24 @@ export default function AspirationsAnalysis() {
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
             </div>
           ) : (
-            <div className="prose prose-sm max-w-none text-foreground/80 whitespace-pre-line">
+            <div className="text-sm text-foreground/80 whitespace-pre-line leading-relaxed">
               {analysis}
             </div>
           )}
         </Card>
 
         {/* Action Buttons */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 px-2">
           <Button
             onClick={() => navigate("/financial-journey")}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white h-12"
+            className="w-full bg-white/95 hover:bg-white text-foreground font-bold h-12 rounded-[20px] shadow-xl hover:scale-[1.02] transition-all border border-blue-100"
           >
             Ver Mi Camino Financiero
           </Button>
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={() => navigate("/dashboard")}
-            className="w-full h-12"
+            className="w-full h-12 text-foreground/60 hover:text-foreground hover:bg-white/50 rounded-[20px]"
           >
             Ir al Dashboard
           </Button>
