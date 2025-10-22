@@ -208,57 +208,63 @@ Deno.serve(async (req) => {
       aspirationsCount: aspirations.length
     })
 
-    const prompt = `Eres el mejor asesor financiero del mundo. Tu misión es recomendar las FORMAS MÁS RÁPIDAS de alcanzar la meta financiera, aprovechando el poder del crecimiento exponencial e inversiones.
+    const prompt = `ERES UN ASESOR FINANCIERO EXPERTO EN INVERSIONES Y CRECIMIENTO EXPONENCIAL.
 
-ANÁLISIS DEL FLUJO ACTUAL:
-- Ingresos mensuales: $${Math.round(monthlyIncome).toLocaleString('es-MX')}
-- Gastos mensuales: $${Math.round(monthlyExpenses).toLocaleString('es-MX')}
-- Ahorro mensual actual: $${Math.round(monthlySavings).toLocaleString('es-MX')}
-- Meta aspiracional: $${totalAspiration.toLocaleString('es-MX')}
-- Patrimonio actual: $${currentNetWorth.toLocaleString('es-MX')}
-- Brecha a cubrir: $${gap.toLocaleString('es-MX')}
-- Tiempo SIN INVERSIONES: ${Math.round(gap / monthlySavings)} meses (${(gap / monthlySavings / 12).toFixed(1)} años)
+DATOS DEL USUARIO:
+- Ahorro mensual: $${Math.round(monthlySavings).toLocaleString('es-MX')}
+- Meta: $${totalAspiration.toLocaleString('es-MX')}
+- Brecha: $${gap.toLocaleString('es-MX')}
+- Tiempo ahorrando sin invertir: ${(gap / monthlySavings / 12).toFixed(1)} años
 
-🎯 TU MISIÓN: Mostrar cómo REDUCIR DRÁSTICAMENTE este tiempo usando el PODER DEL INTERÉS COMPUESTO
+🚨 INSTRUCCIÓN CRÍTICA: Tu respuesta DEBE incluir OBLIGATORIAMENTE todos estos elementos:
 
-INSTRUCCIONES OBLIGATORIAS:
-
-1. CALCULAR ESCENARIOS DE INVERSIÓN (mínimo 2 escenarios):
+1. CÁLCULO CON INTERÉS COMPUESTO (OBLIGATORIO):
+   Debes calcular EXACTAMENTE cuánto tiempo tarda en llegar a la meta si invierte los $${Math.round(monthlySavings).toLocaleString('es-MX')} mensuales con diferentes tasas:
    
-   Escenario A - Conservador (5-7% anual):
-   - Invirtiendo los $${Math.round(monthlySavings).toLocaleString('es-MX')} mensuales en CETES, bonos, o fondos indexados
-   - Con rendimiento del 6% anual compuesto
-   - Tiempo para alcanzar meta: X años (en lugar de ${(gap / monthlySavings / 12).toFixed(1)} años)
+   - CETES (6% anual): Con esta tasa conservadora, alcanzaría $${totalAspiration.toLocaleString('es-MX')} en X años
+   - Fondos indexados S&P 500 (10% anual): Con esta tasa moderada, alcanzaría la meta en Y años  
+   - ETFs diversificados (12% anual): Combinando diferentes ETFs, alcanzaría la meta en Z años
    
-   Escenario B - Moderado (10-12% anual):
-   - Invirtiendo en fondos de inversión diversificados, ETFs, o bienes raíces
-   - Con rendimiento del 10% anual compuesto
-   - Tiempo para alcanzar meta: Y años (en lugar de ${(gap / monthlySavings / 12).toFixed(1)} años)
-   
-   Escenario C - Agresivo (15%+ anual):
-   - Combinación de acciones, startups, o negocios propios
-   - Con rendimiento del 15% anual compuesto
-   - Tiempo para alcanzar meta: Z años (en lugar de ${(gap / monthlySavings / 12).toFixed(1)} años)
+   IMPORTANTE: Debes mencionar los años ESPECÍFICOS con cada tasa.
 
-2. MOSTRAR EL PODER DEL INTERÉS COMPUESTO:
-   Explica cómo $${Math.round(monthlySavings).toLocaleString('es-MX')} mensuales invertidos a X% anual se convierten en Y pesos en Z años, versus solo $${(monthlySavings * 12 * (gap / monthlySavings / 12)).toLocaleString('es-MX')} sin invertir.
+2. COMPARACIÓN DRAMÁTICA (OBLIGATORIO):
+   Debes mostrar la diferencia:
+   - Sin invertir: ${(gap / monthlySavings / 12).toFixed(1)} años
+   - Invirtiendo al 10%: [CALCULAR] años
+   - Ahorro de tiempo: [DIFERENCIA] años menos
 
-3. RECOMENDAR ESTRATEGIAS ESPECÍFICAS:
-   - Dónde invertir el ahorro mensual (nombres específicos: CETES, S&P 500, fondos GBM, etc)
-   - Cómo diversificar (porcentajes: 60% renta variable, 30% fondos, 10% alternativas)
-   - Qué hacer con activos actuales para generar rendimientos
+3. RECOMENDACIONES ESPECÍFICAS DE INSTRUMENTOS (OBLIGATORIO):
+   Debes mencionar AL MENOS 3 de estos:
+   - CETES (gobierno mexicano, bajo riesgo)
+   - Fondos indexados como S&P 500 o MSCI World
+   - ETFs (VTI, VOO, o similares)
+   - Fondos de inversión en GBM o similares
+   - Bienes raíces (REITs)
 
-4. CALCULAR IMPACTO TOTAL:
-   Si combina optimizar flujo (ahorro de $${Math.round(monthlySavings * 1.2).toLocaleString('es-MX')}) + inversión moderada (10% anual), alcanzaría meta en SOLO X años, recortando Y años del tiempo original.
+4. ESTRATEGIA DE DIVERSIFICACIÓN (OBLIGATORIO):
+   Ejemplo: "Recomiendo dividir tu ahorro mensual así: 50% en fondos indexados S&P 500, 30% en CETES para seguridad, 20% en ETFs internacionales"
 
-FORMATO CRÍTICO:
-- Máximo 250 palabras
-- NO uses markdown ni símbolos especiales
-- Texto plano con saltos de línea
-- ENFÓCATE en INVERSIONES y CRECIMIENTO EXPONENCIAL
-- Incluye CÁLCULOS EXACTOS con diferentes tasas de rendimiento
-- Menciona instrumentos de inversión ESPECÍFICOS
-- Muestra la DIFERENCIA en años entre ahorrar e invertir`
+EJEMPLO DE RESPUESTA QUE DEBES SEGUIR:
+
+Tu ahorro mensual actual es de $${Math.round(monthlySavings).toLocaleString('es-MX')}. Si solo ahorras sin invertir, te tomará ${(gap / monthlySavings / 12).toFixed(1)} años alcanzar tu meta.
+
+PERO el poder del interés compuesto cambia TODO:
+
+Invirtiendo en CETES (6 por ciento anual): Llegarías a tu meta en [CALCULAR CON FÓRMULA] años, ahorrando [DIFERENCIA] años.
+
+Invirtiendo en fondos indexados S&P 500 (10 por ciento anual): Alcanzarías tu meta en [CALCULAR] años, reduciendo el tiempo a menos de la mitad.
+
+Invirtiendo en ETFs diversificados (12 por ciento anual): Lograrías tu objetivo en solo [CALCULAR] años.
+
+MI RECOMENDACIÓN: Divide tu ahorro así: 50 por ciento en fondos indexados S&P 500 (mejor rendimiento histórico), 30 por ciento en CETES (seguridad), 20 por ciento en ETFs internacionales (diversificación). Con esta estrategia y rendimiento promedio de 9 por ciento anual, alcanzarías tu meta en aproximadamente [CALCULAR] años en lugar de ${(gap / monthlySavings / 12).toFixed(1)} años.
+
+FORMATO:
+- Máximo 300 palabras
+- NO uses símbolos markdown
+- DEBES mencionar tasas de interés específicas (6%, 10%, 12%)
+- DEBES mencionar instrumentos específicos (CETES, ETFs, fondos indexados)
+- DEBES calcular años con cada escenario
+- DEBES mostrar el ahorro de tiempo`
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -269,7 +275,7 @@ FORMATO CRÍTICO:
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
         messages: [
-          { role: 'system', content: 'Eres un asesor financiero experto que se especializa en optimización de flujo de efectivo y reducción de tiempos para alcanzar metas financieras.' },
+          { role: 'system', content: 'Eres un asesor financiero experto en inversiones, interés compuesto y crecimiento exponencial. SIEMPRE incluyes cálculos matemáticos específicos con tasas de rendimiento y mencionas instrumentos de inversión concretos como CETES, ETFs y fondos indexados. Tu especialidad es mostrar cómo el interés compuesto reduce drásticamente el tiempo para alcanzar metas financieras.' },
           { role: 'user', content: prompt }
         ],
       }),
