@@ -54,7 +54,7 @@ export default function FinancialJourney() {
   const currentLevel = totalAspiration > 0 ? Math.floor((currentNetWorth / totalAspiration) * 10000) : 0;
   const targetLevel = 10000;
 
-  // Generar nodos cada 0.01% (10000 nodos en total para cubrir del 0% al 100%)
+  // Generar 500 nodos que representen los 10,000 niveles (cada nodo = 20 niveles = 0.2%)
   const generateNodes = () => {
     const nodes: JourneyNode[] = [];
     
@@ -265,14 +265,14 @@ export default function FinancialJourney() {
       ];
       
       // Usar el índice basado en el porcentaje para seleccionar el insight
-      // Para 10,000 niveles, ciclamos a través de los insights
-      const index = Math.floor(percent * 100) % insights.length;
+      // Para 500 recuadros, ciclamos a través de los insights
+      const index = Math.floor(percent * 5) % insights.length;
       return insights[index];
     };
     
-    for (let i = 0; i <= 10000; i++) {
-      const progressPercent = i * 0.01;
-      const levelNumber = Math.floor((progressPercent / 100) * 10000);
+    for (let i = 0; i <= 500; i++) {
+      const progressPercent = i * 0.2; // 500 nodos x 0.2% = 100%
+      const levelNumber = Math.floor((progressPercent / 100) * 10000); // De 0 a 10,000
       
       nodes.push({
         id: i + 1,
@@ -280,8 +280,8 @@ export default function FinancialJourney() {
         description: getInsight(progressPercent),
         requiredProgress: progressPercent,
         isUnlocked: currentProgress >= progressPercent,
-        isCurrent: currentProgress >= progressPercent && currentProgress < (progressPercent + 0.01),
-        isCompleted: currentProgress >= (progressPercent + 0.01)
+        isCurrent: currentProgress >= progressPercent && currentProgress < (progressPercent + 0.2),
+        isCompleted: currentProgress >= (progressPercent + 0.2)
       });
     }
     return nodes;
