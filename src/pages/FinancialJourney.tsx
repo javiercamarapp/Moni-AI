@@ -238,19 +238,15 @@ export default function FinancialJourney() {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
-      {/* Header superior con logo */}
-      <div className="p-2 flex justify-between items-start">
-        <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden w-16 h-10">
-          <img src="/moni-logo.png" alt="Moni" className="w-full h-full object-cover" />
-        </div>
-        
+      {/* Botón de regresar */}
+      <div className="p-4">
         <Button
-          onClick={() => navigate("/dashboard")}
+          onClick={() => navigate(-1)}
           variant="ghost"
           className="bg-white rounded-[20px] shadow-xl hover:bg-white/95 text-foreground h-10 px-4 hover:scale-[1.02] transition-all border border-blue-100 relative overflow-hidden"
         >
           <GlowingEffect disabled={false} />
-          <span className="relative z-10">Dashboard</span>
+          <span className="relative z-10">← Regresar</span>
         </Button>
       </div>
 
