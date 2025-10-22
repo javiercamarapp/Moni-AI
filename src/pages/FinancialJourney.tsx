@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, Lock, Trophy, TrendingUp, Target, ArrowLeft } from "lucide-react";
+import { Star, Lock, Trophy, TrendingUp, Target, ArrowLeft, Award, Crown, Gem, Sparkles, Medal, Zap, Rocket, Shield, Diamond } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNetWorth } from "@/hooks/useNetWorth";
 import { Progress } from "@/components/ui/progress";
@@ -18,6 +18,14 @@ interface JourneyNode {
   isCurrent: boolean;
   isCompleted: boolean;
   position: { x: number; y: number };
+}
+
+interface Badge {
+  level: number;
+  name: string;
+  icon: any;
+  type: 'regular' | 'special' | 'mega';
+  color: string;
 }
 
 export default function FinancialJourney() {
@@ -72,6 +80,40 @@ export default function FinancialJourney() {
   const currentProgress = totalAspiration > 0 ? (currentNetWorth / totalAspiration) * 100 : 0;
   const currentLevel = totalAspiration > 0 ? Math.floor((currentNetWorth / totalAspiration) * 10000) : 0;
   const targetLevel = 10000;
+
+  const getBadges = (): Badge[] => {
+    const badges: Badge[] = [
+      { level: 500, name: "Primer Paso", icon: Sparkles, type: 'regular', color: 'text-blue-500' },
+      { level: 1000, name: "Persistente", icon: Shield, type: 'special', color: 'text-purple-500' },
+      { level: 1500, name: "Disciplinado", icon: Target, type: 'regular', color: 'text-green-500' },
+      { level: 2000, name: "Constructor", icon: TrendingUp, type: 'special', color: 'text-orange-500' },
+      { level: 2500, name: "Visionario", icon: Crown, type: 'mega', color: 'text-yellow-500' },
+      { level: 3000, name: "Determinado", icon: Zap, type: 'special', color: 'text-cyan-500' },
+      { level: 3500, name: "Guerrero", icon: Medal, type: 'regular', color: 'text-red-500' },
+      { level: 4000, name: "Estratega", icon: Award, type: 'special', color: 'text-indigo-500' },
+      { level: 4500, name: "Campeón", icon: Trophy, type: 'regular', color: 'text-amber-500' },
+      { level: 5000, name: "Conquistador", icon: Gem, type: 'mega', color: 'text-emerald-500' },
+      { level: 5500, name: "Invencible", icon: Rocket, type: 'regular', color: 'text-pink-500' },
+      { level: 6000, name: "Líder", icon: Star, type: 'special', color: 'text-violet-500' },
+      { level: 6500, name: "Sabio", icon: Sparkles, type: 'regular', color: 'text-teal-500' },
+      { level: 7000, name: "Innovador", icon: Diamond, type: 'special', color: 'text-fuchsia-500' },
+      { level: 7500, name: "Maestro", icon: Award, type: 'regular', color: 'text-lime-500' },
+      { level: 8000, name: "Titán", icon: Shield, type: 'special', color: 'text-rose-500' },
+      { level: 8500, name: "Legendario", icon: Medal, type: 'regular', color: 'text-sky-500' },
+      { level: 9000, name: "Élite", icon: Gem, type: 'special', color: 'text-amber-600' },
+      { level: 9500, name: "Excepcional", icon: Trophy, type: 'regular', color: 'text-purple-600' },
+      { level: 10000, name: "LIBERTAD TOTAL", icon: Crown, type: 'mega', color: 'text-yellow-400' },
+    ];
+    return badges;
+  };
+
+  const getBadgePosition = (level: number) => {
+    // Calcular la posición Y basada en el nivel
+    const progressPercent = (level / 10000) * 100;
+    const nodeIndex = Math.floor(progressPercent / 0.5);
+    const baseY = 40 + (nodeIndex * 35);
+    return baseY;
+  };
 
   const generateNodes = () => {
     const nodes: JourneyNode[] = [];
@@ -383,6 +425,56 @@ export default function FinancialJourney() {
           </svg>
 
           <div className="relative z-10 px-4">
+            {/* Renderizar Insignias */}
+            {getBadges().map((badge) => {
+              const isUnlocked = currentLevel >= badge.level;
+              const BadgeIcon = badge.icon;
+              const badgeY = getBadgePosition(badge.level);
+              
+              return (
+                <div
+                  key={`badge-${badge.level}`}
+                  className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100' : 'opacity-30'}`}
+                  style={{
+                    right: badge.type === 'mega' ? '5%' : badge.type === 'special' ? '8%' : '10%',
+                    top: `${badgeY}px`,
+                    transform: 'translateY(-50%)',
+                    zIndex: 20
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-1">
+                    <div
+                      className={`
+                        relative rounded-full flex items-center justify-center
+                        transition-all duration-300
+                        ${badge.type === 'mega' ? 'w-16 h-16 bg-gradient-to-br from-yellow-300 to-yellow-600' : 
+                          badge.type === 'special' ? 'w-12 h-12 bg-gradient-to-br from-purple-300 to-purple-600' : 
+                          'w-10 h-10 bg-gradient-to-br from-blue-300 to-blue-500'}
+                        ${isUnlocked ? 'shadow-lg' : 'grayscale'}
+                      `}
+                    >
+                      {isUnlocked && badge.type === 'mega' && (
+                        <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-40" />
+                      )}
+                      <BadgeIcon 
+                        className={`${badge.type === 'mega' ? 'w-8 h-8' : badge.type === 'special' ? 'w-6 h-6' : 'w-5 h-5'} text-white relative z-10`}
+                      />
+                    </div>
+                    <span 
+                      className={`
+                        text-xs font-bold text-center whitespace-nowrap
+                        ${badge.type === 'mega' ? 'text-sm' : ''}
+                        ${isUnlocked ? badge.color : 'text-gray-400'}
+                      `}
+                    >
+                      {badge.name}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Renderizar Nodos */}
             {journeyNodes.map((node) => (
               <div 
                 key={node.id}
