@@ -11,16 +11,18 @@ interface JourneyNode {
   id: number;
   title: string;
   description: string;
-  requiredProgress: number; // Porcentaje de progreso requerido (0-100)
+  requiredProgress: number;
   isUnlocked: boolean;
   isCurrent: boolean;
   isCompleted: boolean;
+  position: { x: number; y: number };
 }
 
 export default function FinancialJourney() {
   const navigate = useNavigate();
   const [totalAspiration, setTotalAspiration] = useState(0);
   const [nodes, setNodes] = useState<JourneyNode[]>([]);
+  const [expandedNode, setExpandedNode] = useState<number | null>(null);
   const netWorthData = useNetWorth("1Y");
   const currentNetWorth = netWorthData.data?.currentNetWorth || 0;
 
@@ -47,18 +49,27 @@ export default function FinancialJourney() {
     }
   };
 
-  // Calcular progreso actual (0-100)
   const currentProgress = totalAspiration > 0 ? (currentNetWorth / totalAspiration) * 100 : 0;
-  
-  // Calcular nivel actual de 10000
   const currentLevel = totalAspiration > 0 ? Math.floor((currentNetWorth / totalAspiration) * 10000) : 0;
   const targetLevel = 10000;
 
-  // Generar 500 nodos que representen los 10,000 niveles (cada nodo = 20 niveles = 0.2%)
   const generateNodes = () => {
     const nodes: JourneyNode[] = [];
     
-    // Función para generar un insight único basado en el porcentaje
+    const getNodePosition = (index: number) => {
+      const baseRow = Math.floor(index / 4);
+      const col = index % 4;
+      
+      const seed = (index * 7919) % 100;
+      const offsetX = (seed % 30) - 15;
+      const offsetY = ((seed * 13) % 20) - 10;
+      
+      return {
+        x: col * 25 + offsetX,
+        y: baseRow * 20 + offsetY
+      };
+    };
+    
     const getInsight = (percent: number): string => {
       const insights = [
         "¡El inicio de tu viaje financiero comienza aquí!",
@@ -163,116 +174,17 @@ export default function FinancialJourney() {
         "Estás a centímetros de la cima.",
         "Tu determinación ha vencido todo.",
         "El éxito total está aquí.",
-        "¡LIBERTAD FINANCIERA ALCANZADA! Lo lograste.",
-        "Has superado tu meta original. ¡Increíble!",
-        "Tu éxito rebasa las expectativas.",
-        "Estás en territorio de abundancia extrema.",
-        "Tu legado supera tus sueños iniciales.",
-        "Has alcanzado la élite del 1%.",
-        "Tu riqueza continúa multiplicándose.",
-        "El cielo es solo el comienzo.",
-        "Tu imperio sigue expandiéndose.",
-        "Has trascendido tus aspiraciones.",
-        "Tu éxito no tiene límites.",
-        "La abundancia te persigue.",
-        "Tu visión siempre fue más grande.",
-        "Has redefinido el éxito financiero.",
-        "Tu legado es legendario.",
-        "Estás escribiendo historia financiera.",
-        "Tu impacto trasciende lo monetario.",
-        "Has alcanzado la maestría absoluta.",
-        "Tu éxito es un faro para otros.",
-        "La abundancia es tu estado natural.",
-        "Tu imperio es un modelo a seguir.",
-        "Has superado lo imaginable.",
-        "Tu visión cambió tu realidad.",
-        "Estás en otra dimensión de riqueza.",
-        "Tu legado inspirará por siglos.",
-        "Has alcanzado la inmortalidad financiera.",
-        "Tu éxito desafía toda lógica.",
-        "La abundancia te reconoce como maestro.",
-        "Tu imperio es indestructible.",
-        "Has trascendido las limitaciones humanas.",
-        "Tu visión se ha multiplicado exponencialmente.",
-        "Estás en el olimpo financiero.",
-        "Tu legado es eterno.",
-        "Has alcanzado la perfección financiera.",
-        "Tu éxito es incomparable.",
-        "La abundancia infinita es tuya.",
-        "Tu imperio domina el horizonte.",
-        "Has superado a los grandes.",
-        "Tu visión era profética.",
-        "Estás en la cúspide absoluta.",
-        "Tu legado reescribe la historia.",
-        "Has alcanzado la trascendencia financiera.",
-        "Tu éxito es mítico.",
-        "La abundancia total te pertenece.",
-        "Tu imperio es inmortal.",
-        "Has superado toda posibilidad.",
-        "Tu visión cambió el juego.",
-        "Estás más allá de la comprensión común.",
-        "Tu legado es divino.",
-        "Has alcanzado el nirvana financiero.",
-        "Tu éxito es sobrenatural.",
-        "La abundancia universal fluye hacia ti.",
-        "Tu imperio trasciende dimensiones.",
-        "Has superado la realidad misma.",
-        "Tu visión era cósmica.",
-        "Estás en el reino de lo imposible hecho realidad.",
-        "Tu legado es infinito.",
-        "Has alcanzado la omnipotencia financiera.",
-        "Tu éxito desafía las leyes de la física.",
-        "La abundancia cuántica es tuya.",
-        "Tu imperio existe en múltiples universos.",
-        "Has superado a los dioses del dinero.",
-        "Tu visión creó nuevas realidades.",
-        "Estás más allá del tiempo y el espacio.",
-        "Tu legado es interdimensional.",
-        "Has alcanzado la singularidad financiera.",
-        "Tu éxito es un fenómeno universal.",
-        "La abundancia cósmica te reconoce.",
-        "Tu imperio es el centro del universo financiero.",
-        "Has superado toda existencia conocida.",
-        "Tu visión es el origen de nuevos mundos.",
-        "Estás en el corazón de la abundancia absoluta.",
-        "Tu legado redefine la existencia misma.",
-        "Has alcanzado la eternidad financiera.",
-        "Tu éxito es la nueva realidad universal.",
-        "La abundancia infinita y eterna es tuya para siempre.",
-        "Tu imperio es el alfa y omega de la riqueza.",
-        "Has superado el concepto mismo de superación.",
-        "Tu visión es la luz que guía a la humanidad.",
-        "Estás en el centro de todo lo que existe.",
-        "Tu legado es el fundamento del universo.",
-        "Has alcanzado lo inalcanzable y más allá.",
-        "Tu éxito es la definición de perfección absoluta.",
-        "La abundancia total y completa reside en ti.",
-        "Tu imperio es eterno e infinito en todas las dimensiones.",
-        "Has superado la imaginación más salvaje de la humanidad.",
-        "Tu visión es la esencia de la abundancia universal.",
-        "Estás en el punto omega de la riqueza infinita.",
-        "Tu legado vivirá por toda la eternidad.",
-        "Has alcanzado el estado más puro de abundancia.",
-        "Tu éxito es la culminación de todo lo posible.",
-        "La abundancia suprema y definitiva es tuya.",
-        "Tu imperio reina sobre todos los reinos.",
-        "Has superado el concepto mismo de límites.",
-        "Tu visión es la verdad absoluta de la riqueza.",
-        "Estás en el trono del universo financiero.",
-        "Tu legado es la leyenda máxima.",
-        "Has alcanzado la gloria eterna e infinita.",
-        "Tu éxito es la obra maestra del universo."
+        "¡LIBERTAD FINANCIERA ALCANZADA! Lo lograste."
       ];
       
-      // Usar el índice basado en el porcentaje para seleccionar el insight
-      // Para 500 recuadros, ciclamos a través de los insights
       const index = Math.floor(percent * 5) % insights.length;
       return insights[index];
     };
     
     for (let i = 0; i <= 500; i++) {
-      const progressPercent = i * 0.2; // 500 nodos x 0.2% = 100%
-      const levelNumber = Math.floor((progressPercent / 100) * 10000); // De 0 a 10,000
+      const progressPercent = i * 0.2;
+      const levelNumber = Math.floor((progressPercent / 100) * 10000);
+      const position = getNodePosition(i);
       
       nodes.push({
         id: i + 1,
@@ -281,7 +193,8 @@ export default function FinancialJourney() {
         requiredProgress: progressPercent,
         isUnlocked: currentProgress >= progressPercent,
         isCurrent: currentProgress >= progressPercent && currentProgress < (progressPercent + 0.2),
-        isCompleted: currentProgress >= (progressPercent + 0.2)
+        isCompleted: currentProgress >= (progressPercent + 0.2),
+        position
       });
     }
     return nodes;
@@ -292,7 +205,6 @@ export default function FinancialJourney() {
   return (
     <div className="min-h-screen animated-wave-bg pb-4">
       <div className="container mx-auto px-4 py-6 max-w-2xl">
-        {/* Section Header */}
         <Card className="p-6 mb-8 bg-gradient-to-br from-green-50 to-emerald-50 border-0 shadow-xl rounded-[20px]">
           <p className="text-xs font-bold uppercase tracking-wider text-green-700 mb-1">
             Tu Camino Financiero
@@ -309,131 +221,115 @@ export default function FinancialJourney() {
           </div>
         </Card>
 
-        {/* Journey Path - Zigzag Design */}
-        <div className="relative">
-          {/* Journey Nodes */}
-          <div className="relative z-10">
+        <div className="relative min-h-[2000px]">
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
+            <defs>
+              <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="rgb(96, 165, 250)" />
+                <stop offset="50%" stopColor="rgb(167, 139, 250)" />
+                <stop offset="100%" stopColor="rgb(34, 197, 94)" />
+              </linearGradient>
+            </defs>
             {journeyNodes.map((node, index) => {
-              // Crear patrón zigzag: 5 nodos por fila
-              const row = Math.floor(index / 5);
-              const col = index % 5;
-              const isEvenRow = row % 2 === 0;
-              const position = isEvenRow ? col : 4 - col; // Alternar dirección
+              if (index === 0 || !node.isCompleted) return null;
+              const prevNode = journeyNodes[index - 1];
+              if (!prevNode.isCompleted) return null;
               
               return (
-                <div 
-                  key={node.id} 
-                  className="inline-block"
-                  style={{
-                    width: '20%',
-                    verticalAlign: 'top',
-                    marginBottom: col === 4 ? '1rem' : '0'
-                  }}
-                >
-                  <div className="flex flex-col items-center relative">
-                    {/* Connector line to next node */}
-                    {index < journeyNodes.length - 1 && (
-                      <svg 
-                        className="absolute top-3 left-1/2 w-full h-12 pointer-events-none"
-                        style={{
-                          zIndex: 0,
-                          transform: col === 4 ? 'translateY(100%)' : 'translateX(50%)'
-                        }}
-                      >
-                        {col === 4 ? (
-                          // Línea vertical al final de fila
-                          <path
-                            d="M 0 0 Q 0 20, 0 40"
-                            stroke="url(#gradient)"
-                            strokeWidth="2"
-                            fill="none"
-                          />
-                        ) : (
-                          // Línea horizontal
-                          <path
-                            d="M 0 0 L 100 0"
-                            stroke="url(#gradient)"
-                            strokeWidth="2"
-                            fill="none"
-                          />
-                        )}
-                        <defs>
-                          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="rgb(191, 219, 254)" />
-                            <stop offset="50%" stopColor="rgb(221, 214, 254)" />
-                            <stop offset="100%" stopColor="rgb(187, 247, 208)" />
-                          </linearGradient>
-                        </defs>
+                <line
+                  key={`line-${node.id}`}
+                  x1={`${prevNode.position.x}%`}
+                  y1={prevNode.position.y}
+                  x2={`${node.position.x}%`}
+                  y2={node.position.y}
+                  stroke="url(#pathGradient)"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  className="transition-all duration-500"
+                />
+              );
+            })}
+          </svg>
+
+          <div className="relative z-10">
+            {journeyNodes.map((node) => (
+              <div 
+                key={node.id}
+                className="absolute transition-all duration-300"
+                style={{
+                  left: `${node.position.x}%`,
+                  top: `${node.position.y}px`,
+                  transform: 'translate(-50%, -50%)'
+                }}
+              >
+                <div className="flex flex-col items-center">
+                  <button
+                    onClick={() => setExpandedNode(expandedNode === node.id ? null : node.id)}
+                    className="relative focus:outline-none"
+                  >
+                    {node.isCurrent && (
+                      <div className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-30" />
+                    )}
+                    
+                    <div
+                      className={`
+                        relative w-8 h-8 rounded-full flex items-center justify-center cursor-pointer
+                        transition-all duration-300 z-10
+                        ${node.isCompleted
+                          ? 'bg-gradient-to-br from-green-400 to-green-600 shadow-lg shadow-green-400/40 hover:scale-110'
+                          : node.isCurrent
+                          ? 'bg-gradient-to-br from-green-500 to-emerald-600 shadow-xl shadow-green-500/60 scale-110 hover:scale-125'
+                          : node.isUnlocked
+                          ? 'bg-gradient-to-br from-blue-400 to-blue-600 shadow-md shadow-blue-400/40 hover:scale-110'
+                          : 'bg-white border-2 border-gray-200 shadow-sm hover:scale-105'
+                        }
+                      `}
+                    >
+                      {node.isCompleted ? (
+                        <Star className="h-4 w-4 text-white fill-white" />
+                      ) : node.isCurrent ? (
+                        <div className="relative">
+                          <Star className="h-4 w-4 text-white" />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-6 h-6 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                          </div>
+                        </div>
+                      ) : node.isUnlocked ? (
+                        <Target className="h-4 w-4 text-white" />
+                      ) : (
+                        <Lock className="h-3 w-3 text-gray-400" />
+                      )}
+                    </div>
+
+                    {node.isCurrent && (
+                      <svg className="absolute inset-0 w-8 h-8 -rotate-90 pointer-events-none" viewBox="0 0 100 100">
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="45"
+                          fill="none"
+                          stroke="rgba(255,255,255,0.3)"
+                          strokeWidth="4"
+                        />
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="45"
+                          fill="none"
+                          stroke="white"
+                          strokeWidth="4"
+                          strokeDasharray={`${2 * Math.PI * 45}`}
+                          strokeDashoffset={`${2 * Math.PI * 45 * (1 - (currentProgress - node.requiredProgress) / 10)}`}
+                          className="transition-all duration-500"
+                        />
                       </svg>
                     )}
+                  </button>
 
-                    {/* Node Circle */}
-                    <div className="relative z-10">
-                  {/* Pulse animation for current node */}
-                  {node.isCurrent && (
-                    <div className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-30" />
-                  )}
-                  
-                  <div
-                    className={`
-                      relative w-6 h-6 rounded-full flex items-center justify-center
-                      transition-all duration-300 z-10
-                      ${node.isCompleted
-                        ? 'bg-gradient-to-br from-green-400 to-green-600 shadow-lg shadow-green-400/40'
-                        : node.isCurrent
-                        ? 'bg-gradient-to-br from-green-500 to-emerald-600 shadow-xl shadow-green-500/60 scale-110'
-                        : node.isUnlocked
-                        ? 'bg-gradient-to-br from-blue-400 to-blue-600 shadow-md shadow-blue-400/40'
-                        : 'bg-white border-2 border-gray-200 shadow-sm'
-                      }
-                    `}
-                  >
-                    {node.isCompleted ? (
-                      <Star className="h-3 w-3 text-white fill-white" />
-                    ) : node.isCurrent ? (
-                      <div className="relative">
-                        <Star className="h-3 w-3 text-white" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-4 h-4 rounded-full border border-white/30 border-t-white animate-spin" />
-                        </div>
-                      </div>
-                    ) : node.isUnlocked ? (
-                      <Target className="h-3 w-3 text-white" />
-                    ) : (
-                      <Lock className="h-2 w-2 text-gray-400" />
-                    )}
-                  </div>
-
-                  {/* Progress ring for current node */}
-                  {node.isCurrent && (
-                    <svg className="absolute inset-0 w-6 h-6 -rotate-90" viewBox="0 0 100 100">
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="45"
-                        fill="none"
-                        stroke="rgba(255,255,255,0.3)"
-                        strokeWidth="4"
-                      />
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="45"
-                        fill="none"
-                        stroke="white"
-                        strokeWidth="4"
-                        strokeDasharray={`${2 * Math.PI * 45}`}
-                        strokeDashoffset={`${2 * Math.PI * 45 * (1 - (currentProgress - node.requiredProgress) / 10)}`}
-                        className="transition-all duration-500"
-                      />
-                    </svg>
-                  )}
-                </div>
-
-                    {/* Node Info Card */}
+                  {expandedNode === node.id && (
                     <Card 
                       className={`
-                        mt-1 px-2 py-1 w-full text-center transition-all duration-300 rounded-[12px] shadow-lg
+                        mt-2 px-3 py-2 w-48 text-center animate-scale-in rounded-[16px] shadow-xl
                         ${node.isCurrent 
                           ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400' 
                           : node.isUnlocked
@@ -443,41 +339,41 @@ export default function FinancialJourney() {
                       `}
                     >
                       <h3 className={`
-                        font-bold mb-0.5 text-[9px] leading-none
+                        font-bold mb-1 text-sm
                         ${node.isCurrent ? 'text-green-600' : node.isUnlocked ? 'text-foreground' : 'text-gray-400'}
                       `}>
                         {node.title}
                       </h3>
                       <p className={`
-                        text-[8px] leading-tight line-clamp-2
+                        text-xs leading-tight
                         ${node.isUnlocked ? 'text-foreground/70' : 'text-gray-400'}
                       `}>
                         {node.description}
                       </p>
                       
                       {node.isCurrent && (
-                        <div className="mt-0.5 pt-0.5 border-t border-green-200">
-                          <div className="flex items-center justify-center gap-0.5 text-[8px] text-green-600">
-                            <TrendingUp className="h-1.5 w-1.5" />
-                            <span className="font-semibold">Actual</span>
+                        <div className="mt-2 pt-2 border-t border-green-200">
+                          <div className="flex items-center justify-center gap-1 text-xs text-green-600">
+                            <TrendingUp className="h-3 w-3" />
+                            <span className="font-semibold">Nivel Actual</span>
                           </div>
                         </div>
                       )}
 
                       {node.isCompleted && (
-                        <div className="mt-0.5 flex items-center justify-center gap-0.5 text-[8px] text-green-600">
-                          <Star className="h-1.5 w-1.5 fill-current" />
+                        <div className="mt-2 flex items-center justify-center gap-1 text-xs text-green-600">
+                          <Star className="h-3 w-3 fill-current" />
+                          <span>Completado</span>
                         </div>
                       )}
                     </Card>
-                  </div>
+                  )}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Bottom Summary */}
         <Card className="mt-12 p-6 bg-gradient-to-br from-purple-50 to-blue-50 border-0 shadow-xl rounded-[20px]">
           <div className="text-center">
             <h3 className="text-lg font-bold text-foreground mb-2">Tu Progreso</h3>
@@ -501,7 +397,6 @@ export default function FinancialJourney() {
           </div>
         </Card>
 
-        {/* Action Button */}
         <Button
           onClick={() => navigate("/dashboard")}
           className="w-full mt-6 h-12 bg-white/95 hover:bg-white text-foreground font-bold rounded-[20px] shadow-xl hover:scale-[1.02] transition-all border border-blue-100"
