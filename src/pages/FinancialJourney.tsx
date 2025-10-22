@@ -165,21 +165,20 @@ export default function FinancialJourney() {
 
   const getBadgePosition = (level: number, index: number, badgesAtLevel: number, badgeIndexAtLevel: number) => {
     // Calcular el índice del nodo que corresponde exactamente a este nivel
-    // Cada nodo representa 50 niveles (10000 niveles / 200 nodos = 50)
-    // Restamos 1 para alinear correctamente con el nodo del nivel exacto
     const nodeIndex = (level / 50) - 1;
     
-    // Usar la misma fórmula base que los nodos (sin el offset aleatorio)
+    // Usar la misma fórmula base que los nodos
     const baseY = 40 + (nodeIndex * 35);
     
-    // Alternar las insignias entre izquierda y derecha para evitar choques
-    const side = index % 2 === 0 ? 'left' : 'right';
+    // Determinar el lado basado en el índice de la insignia en ese nivel
+    // Si hay múltiples insignias, alternar entre izquierda y derecha
+    const side = badgeIndexAtLevel % 2 === 0 ? 'left' : 'right';
     
-    // Si hay múltiples insignias en el mismo nivel, ajustar verticalmente
+    // Si hay múltiples insignias en el mismo nivel, espaciarlas verticalmente
     let yOffset = 0;
     if (badgesAtLevel > 1) {
-      // Desplazar verticalmente cada insignia adicional
-      yOffset = (badgeIndexAtLevel - (badgesAtLevel - 1) / 2) * 45;
+      // Espaciar más para evitar choques (60px entre cada insignia)
+      yOffset = (badgeIndexAtLevel - (badgesAtLevel - 1) / 2) * 60;
     }
     
     return { y: baseY + yOffset, side };
@@ -499,29 +498,36 @@ export default function FinancialJourney() {
             {(() => {
               const allBadges = getBadges();
               
-              return allBadges.map((badge, index) => {
-                const isUnlocked = currentLevel >= badge.level;
-                const BadgeIcon = badge.icon;
-                
-                // Contar cuántas insignias hay en este nivel
-                const badgesAtThisLevel = allBadges.filter(b => b.level === badge.level);
-                const badgeIndexAtLevel = badgesAtThisLevel.findIndex(b => 
-                  b.name === badge.name && b.type === badge.type
-                );
-                
-                const position = getBadgePosition(badge.level, index, badgesAtThisLevel.length, badgeIndexAtLevel);
+              // Agrupar insignias por nivel para manejar duplicados
+              const badgesByLevel = new Map<number, Badge[]>();
+              allBadges.forEach(badge => {
+                if (!badgesByLevel.has(badge.level)) {
+                  badgesByLevel.set(badge.level, []);
+                }
+                badgesByLevel.get(badge.level)!.push(badge);
+              });
               
-              return (
-                <div
-                  key={`badge-${badge.level}-${badge.name}-${badge.type}`}
-                  className={`absolute transition-all duration-300 ${expandedBadge === badge.level ? 'z-[100]' : 'z-20'} ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
-                  style={{
-                    [position.side]: position.side === 'left' ? '1%' : 'auto',
-                    [position.side === 'right' ? 'right' : 'left']: position.side === 'right' ? '1%' : 'auto',
-                    top: `${position.y}px`,
-                    transform: 'translateY(-50%)',
-                  }}
-                >
+              // Renderizar todas las insignias agrupadas
+              const renderedBadges: JSX.Element[] = [];
+              let globalIndex = 0;
+              
+              badgesByLevel.forEach((badgesAtLevel, level) => {
+                badgesAtLevel.forEach((badge, badgeIndexAtLevel) => {
+                  const isUnlocked = currentLevel >= badge.level;
+                  const BadgeIcon = badge.icon;
+                  const position = getBadgePosition(badge.level, globalIndex, badgesAtLevel.length, badgeIndexAtLevel);
+                  
+                  renderedBadges.push(
+                    <div
+                      key={`badge-${badge.level}-${badge.type}-${badge.name}`}
+                      className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                      style={{
+                        [position.side]: '1%',
+                        top: `${position.y}px`,
+                        transform: 'translateY(-50%)',
+                        zIndex: 20
+                      }}
+                    >
                   <div className="flex flex-col items-center gap-0.5 relative">
                     <button
                       onClick={() => {
@@ -671,9 +677,13 @@ export default function FinancialJourney() {
                     )}
                   </div>
                 </div>
-              );
-            });
-            })()}
+                      );
+                      globalIndex++;
+                    });
+                  });
+                  
+                  return renderedBadges;
+                })()}
 
             {/* Renderizar Nodos */}
             {journeyNodes.map((node) => (
