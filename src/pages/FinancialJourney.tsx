@@ -2177,10 +2177,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'silvermastery4500' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden left-full ml-3 top-1/2 -translate-y-1/2"
-                        style={{
-                          top: '0'
-                        }}
+                          border-0 w-56 max-w-[calc(100vw-80px)] animate-scale-in overflow-hidden left-full ml-2 top-1/2 -translate-y-1/2"
                       >
                         <GlowingEffect disabled={false} spread={20} />
                         <div className="relative p-3">
