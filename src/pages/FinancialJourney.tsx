@@ -586,6 +586,107 @@ export default function FinancialJourney() {
               );
             })()}
 
+            {/* Medalla de Bronce 750 #2 */}
+            {(() => {
+              const level750 = 750;
+              const nodeIndex = level750 / 50;
+              const badgeY = 40 + (nodeIndex * 35) + 45; // 45px abajo del nodo
+              const isUnlocked = currentLevel >= level750;
+              
+              return (
+                <div
+                  className={`absolute right-[10px] transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  style={{
+                    top: `${badgeY}px`,
+                    transform: 'translateY(-50%)',
+                    zIndex: expandedBadge === 'bronze750' ? 100 : 20
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-0.5 relative">
+                    <button
+                      onClick={() => {
+                        if (isUnlocked) {
+                          setExpandedBadge(expandedBadge === 'bronze750' ? null : 'bronze750');
+                          setExpandedNode(null);
+                        }
+                      }}
+                      disabled={!isUnlocked}
+                      className="focus:outline-none relative"
+                    >
+                      <div
+                        className={`
+                          relative w-10 h-10 rounded-full flex items-center justify-center
+                          transition-all duration-300 border-2 border-white cursor-pointer
+                          bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800 shadow-md
+                          ${isUnlocked ? 'shadow-lg hover:scale-110' : 'grayscale cursor-not-allowed opacity-50'}
+                        `}
+                      >
+                        {isUnlocked && (
+                          <div className="absolute inset-0 rounded-full bg-amber-600 animate-ping opacity-20" />
+                        )}
+                        <Medal className="w-5 h-5 text-white relative z-10 drop-shadow-md" />
+                      </div>
+                    </button>
+                    
+                    {/* Tooltip al hacer hover */}
+                    <div 
+                      className={`
+                        absolute top-full mt-1 opacity-0 group-hover:opacity-100 pointer-events-none
+                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                        transition-opacity duration-200 bg-amber-100 text-amber-700
+                        shadow-md z-30
+                      `}
+                    >
+                      Bronce 750 #2
+                    </div>
+
+                    {/* Card de descripción expandida */}
+                    {expandedBadge === 'bronze750' && isUnlocked && (
+                      <Card 
+                        className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
+                          border-0 w-64 animate-scale-in overflow-hidden right-full mr-3"
+                        style={{
+                          top: '50%',
+                          transform: 'translateY(-50%)'
+                        }}
+                      >
+                        <GlowingEffect disabled={false} spread={20} />
+                        <div className="relative p-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedBadge(null);
+                            }}
+                            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors z-10"
+                          >
+                            ✕
+                          </button>
+                          
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800">
+                              <Medal className="w-5 h-5 text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-bold text-sm text-amber-700 truncate">
+                                Medalla de Bronce #2
+                              </h3>
+                              <p className="text-[10px] text-muted-foreground">
+                                750 puntos
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <p className="text-xs text-foreground/80 leading-relaxed">
+                            Medalla de Bronce 750 puntos
+                          </p>
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Renderizar Nodos */}
             {journeyNodes.map((node) => (
               <div 
