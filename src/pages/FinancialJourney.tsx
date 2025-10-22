@@ -50,15 +50,15 @@ export default function FinancialJourney() {
   // Calcular progreso actual (0-100)
   const currentProgress = totalAspiration > 0 ? (currentNetWorth / totalAspiration) * 100 : 0;
   
-  // Calcular nivel actual de 2500
-  const currentLevel = totalAspiration > 0 ? Math.floor((currentNetWorth / totalAspiration) * 2500) : 0;
-  const targetLevel = 2500;
+  // Calcular nivel actual de 10000
+  const currentLevel = totalAspiration > 0 ? Math.floor((currentNetWorth / totalAspiration) * 10000) : 0;
+  const targetLevel = 10000;
 
-  // Generar nodos cada 0.5% (200 nodos en total para cubrir del 0% al 100%)
+  // Generar nodos cada 0.01% (10000 nodos en total para cubrir del 0% al 100%)
   const generateNodes = () => {
     const nodes: JourneyNode[] = [];
     
-    // Función para generar un insight único para cada porcentaje exacto
+    // Función para generar un insight único basado en el porcentaje
     const getInsight = (percent: number): string => {
       const insights = [
         "¡El inicio de tu viaje financiero comienza aquí!",
@@ -265,13 +265,14 @@ export default function FinancialJourney() {
       ];
       
       // Usar el índice basado en el porcentaje para seleccionar el insight
-      const index = Math.floor(percent * 2);
-      return insights[Math.min(index, insights.length - 1)];
+      // Para 10,000 niveles, ciclamos a través de los insights
+      const index = Math.floor(percent * 100) % insights.length;
+      return insights[index];
     };
     
-    for (let i = 0; i <= 200; i++) {
-      const progressPercent = i * 0.5;
-      const levelNumber = Math.floor((progressPercent / 100) * 2500);
+    for (let i = 0; i <= 10000; i++) {
+      const progressPercent = i * 0.01;
+      const levelNumber = Math.floor((progressPercent / 100) * 10000);
       
       nodes.push({
         id: i + 1,
@@ -279,8 +280,8 @@ export default function FinancialJourney() {
         description: getInsight(progressPercent),
         requiredProgress: progressPercent,
         isUnlocked: currentProgress >= progressPercent,
-        isCurrent: currentProgress >= progressPercent && currentProgress < (progressPercent + 0.5),
-        isCompleted: currentProgress >= (progressPercent + 0.5)
+        isCurrent: currentProgress >= progressPercent && currentProgress < (progressPercent + 0.01),
+        isCompleted: currentProgress >= (progressPercent + 0.01)
       });
     }
     return nodes;
