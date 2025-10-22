@@ -433,6 +433,7 @@ const Gastos = () => {
                       <SelectValue placeholder="Escoge o agrega tu tarjeta/cuenta" />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border/30 z-50">
+                      <SelectItem value="efectivo" className="text-card-foreground">Efectivo</SelectItem>
                       <SelectItem value="banco1" className="text-card-foreground">Cuenta Principal</SelectItem>
                       <SelectItem value="banco2" className="text-card-foreground">Cuenta de Ahorros</SelectItem>
                       <SelectItem value="banco3" className="text-card-foreground">Tarjeta Nómina</SelectItem>
