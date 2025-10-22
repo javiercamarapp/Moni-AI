@@ -2321,14 +2321,16 @@ export default function FinancialJourney() {
             {(() => {
               const level5000 = 5000;
               const nodeIndex = level5000 / 50;
-              const badgeY = 40 + (nodeIndex * 35) - 50; // 50px arriba del nodo
+              const badgeY = 40 + (nodeIndex * 35) - 75; // 75px arriba del nodo
+              const badgeX = 35; // 35% desde la izquierda
               const isUnlocked = currentLevel >= level5000;
               
               return (
                 <div
-                  className={`absolute left-1/2 -translate-x-1/2 transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
                   style={{
                     top: `${badgeY}px`,
+                    left: `${badgeX}%`,
                     transform: 'translate(-50%, -50%)',
                     zIndex: expandedBadge === 'diamondmastery5000' ? 100 : 20
                   }}
