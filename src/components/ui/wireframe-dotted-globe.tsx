@@ -293,7 +293,7 @@ export default function RotatingEarth({ width = 800, height = 600, className = "
     <div className={`relative ${className}`}>
       <canvas
         ref={canvasRef}
-        className="w-full h-auto rounded-2xl bg-background dark"
+        className="w-full h-auto rounded-2xl bg-white"
         style={{ maxWidth: "100%", height: "auto" }}
       />
     </div>
