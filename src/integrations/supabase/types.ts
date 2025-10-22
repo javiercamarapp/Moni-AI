@@ -548,6 +548,33 @@ export type Database = {
           },
         ]
       }
+      user_aspirations: {
+        Row: {
+          created_at: string
+          id: string
+          question_id: number
+          updated_at: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          question_id: number
+          updated_at?: string
+          user_id: string
+          value: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          question_id?: number
+          updated_at?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: []
+      }
       user_scores: {
         Row: {
           last_calculated_at: string | null

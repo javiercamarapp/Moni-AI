@@ -178,15 +178,33 @@ export default function LevelQuiz() {
         return;
       }
 
-      // Si ya tiene net worth, marcar quiz como completado y redirigir a level-details
+      // Guardar aspiraciones en la base de datos
+      const aspirationsToSave = Object.entries(aspirationalAnswers).map(([questionId, value]) => ({
+        user_id: user.id,
+        question_id: parseInt(questionId),
+        value: parseFloat(value)
+      }));
+
+      // Usar upsert para insertar o actualizar
+      const { error: aspirationsError } = await supabase
+        .from("user_aspirations")
+        .upsert(aspirationsToSave, { 
+          onConflict: 'user_id,question_id',
+          ignoreDuplicates: false 
+        });
+
+      if (aspirationsError) throw aspirationsError;
+
+      // Marcar quiz como completado
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ level_quiz_completed: true })
+        .eq("id", user.id);
+
+      if (profileError) throw profileError;
+
+      // Si ya tiene net worth, redirigir a level-details
       if (hasNetWorthData) {
-        const { error } = await supabase
-          .from("profiles")
-          .update({ level_quiz_completed: true })
-          .eq("id", user.id);
-
-        if (error) throw error;
-
         toast.success("¡Aspiraciones guardadas! Ahora puedes ver tu progreso de nivel");
         navigate("/level-details");
       } else {
