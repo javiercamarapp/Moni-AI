@@ -246,6 +246,35 @@ export default function FinancialJourney() {
         </Card>
 
         <div className="relative min-h-[7200px] w-full overflow-x-hidden pb-20 pt-2">
+          {/* 9 Secciones de fondo */}
+          <div className="absolute inset-0 w-full h-full">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((section) => (
+              <div
+                key={`section-${section}`}
+                className="w-full h-[800px] relative"
+                style={{
+                  // Aquí puedes agregar imágenes o videos de fondo
+                  // backgroundImage: `url('/path-to-image-${section}.jpg')`,
+                  // backgroundSize: 'cover',
+                  // backgroundPosition: 'center',
+                  backgroundColor: section % 2 === 0 ? 'rgba(240, 253, 244, 0.3)' : 'rgba(239, 246, 255, 0.3)'
+                }}
+              >
+                {/* Para video de fondo, descomenta esto:
+                <video
+                  className="absolute inset-0 w-full h-full object-cover"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                >
+                  <source src={`/path-to-video-${section}.mp4`} type="video/mp4" />
+                </video>
+                */}
+              </div>
+            ))}
+          </div>
+
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
             <defs>
               <linearGradient id="electricGreen" x1="0%" y1="0%" x2="0%" y2="100%">
