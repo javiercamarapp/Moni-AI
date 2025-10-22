@@ -340,44 +340,44 @@ export default function AspirationsAnalysis() {
         </Card>
 
         {/* Tabla Comparativa */}
-        <Card className="p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
-          <h3 className="text-base font-bold text-foreground mb-4">Comparativa Actual vs Aspiracional</h3>
+        <Card className="p-4 sm:p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
+          <h3 className="text-sm sm:text-base font-bold text-foreground mb-3 sm:mb-4">Comparativa Actual vs Aspiracional</h3>
           
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+            <table className="w-full text-xs sm:text-sm min-w-[500px]">
               <thead>
                 <tr className="border-b border-slate-200">
-                  <th className="text-left py-3 px-2 font-semibold text-foreground">Categoría</th>
-                  <th className="text-right py-3 px-2 font-semibold text-blue-600">Actual</th>
-                  <th className="text-right py-3 px-2 font-semibold text-purple-600">Meta</th>
-                  <th className="text-right py-3 px-2 font-semibold text-orange-600">Brecha</th>
+                  <th className="text-left py-2 sm:py-3 px-1 sm:px-2 font-semibold text-foreground whitespace-nowrap">Categoría</th>
+                  <th className="text-right py-2 sm:py-3 px-1 sm:px-2 font-semibold text-blue-600 whitespace-nowrap">Actual</th>
+                  <th className="text-right py-2 sm:py-3 px-1 sm:px-2 font-semibold text-purple-600 whitespace-nowrap">Meta</th>
+                  <th className="text-right py-2 sm:py-3 px-1 sm:px-2 font-semibold text-orange-600 whitespace-nowrap">Brecha</th>
                 </tr>
               </thead>
               <tbody>
                 {comparativeData.map((item, index) => (
                   <tr key={index} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
-                    <td className="py-3 px-2 font-medium text-foreground">{item.category}</td>
-                    <td className="py-3 px-2 text-right text-blue-600 font-semibold">
+                    <td className="py-2 sm:py-3 px-1 sm:px-2 font-medium text-foreground whitespace-nowrap">{item.category}</td>
+                    <td className="py-2 sm:py-3 px-1 sm:px-2 text-right text-blue-600 font-semibold whitespace-nowrap">
                       ${item.current >= 1000000 
                         ? `${(item.current / 1000000).toFixed(1)}M` 
                         : item.current.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                       }
                     </td>
-                    <td className="py-3 px-2 text-right text-purple-600 font-semibold">
+                    <td className="py-2 sm:py-3 px-1 sm:px-2 text-right text-purple-600 font-semibold whitespace-nowrap">
                       ${item.aspiration >= 1000000 
                         ? `${(item.aspiration / 1000000).toFixed(1)}M` 
                         : item.aspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                       }
                     </td>
-                    <td className="py-3 px-2 text-right">
-                      <div className="flex flex-col items-end gap-1">
-                        <span className="text-orange-600 font-bold">
+                    <td className="py-2 sm:py-3 px-1 sm:px-2 text-right">
+                      <div className="flex flex-col items-end gap-0.5 sm:gap-1">
+                        <span className="text-orange-600 font-bold whitespace-nowrap">
                           ${item.gap >= 1000000 
                             ? `${(item.gap / 1000000).toFixed(1)}M` 
                             : item.gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                           }
                         </span>
-                        <span className="text-xs text-orange-500">
+                        <span className="text-[10px] sm:text-xs text-orange-500">
                           {item.gapPercentage}%
                         </span>
                       </div>
@@ -387,20 +387,20 @@ export default function AspirationsAnalysis() {
                 
                 {/* Total Row */}
                 <tr className="bg-slate-50 font-bold">
-                  <td className="py-3 px-2 text-foreground">TOTAL</td>
-                  <td className="py-3 px-2 text-right text-blue-600">
+                  <td className="py-2 sm:py-3 px-1 sm:px-2 text-foreground whitespace-nowrap">TOTAL</td>
+                  <td className="py-2 sm:py-3 px-1 sm:px-2 text-right text-blue-600 whitespace-nowrap">
                     ${currentNetWorth >= 1000000 
                       ? `${(currentNetWorth / 1000000).toFixed(1)}M` 
                       : currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                     }
                   </td>
-                  <td className="py-3 px-2 text-right text-purple-600">
+                  <td className="py-2 sm:py-3 px-1 sm:px-2 text-right text-purple-600 whitespace-nowrap">
                     ${totalAspiration >= 1000000 
                       ? `${(totalAspiration / 1000000).toFixed(1)}M` 
                       : totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                     }
                   </td>
-                  <td className="py-3 px-2 text-right text-orange-600">
+                  <td className="py-2 sm:py-3 px-1 sm:px-2 text-right text-orange-600 whitespace-nowrap">
                     ${gap >= 1000000 
                       ? `${(gap / 1000000).toFixed(1)}M` 
                       : gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
@@ -419,9 +419,9 @@ export default function AspirationsAnalysis() {
           </div>
 
           {/* Gráfica de Barras Comparativa */}
-          <div className="mt-6">
-            <h4 className="text-sm font-bold text-foreground mb-3">Visualización Comparativa</h4>
-            <div className="h-[300px] w-full">
+          <div className="mt-4 sm:mt-6">
+            <h4 className="text-xs sm:text-sm font-bold text-foreground mb-2 sm:mb-3">Visualización Comparativa</h4>
+            <div className="h-[250px] sm:h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart 
                   data={comparativeData} 
@@ -431,7 +431,7 @@ export default function AspirationsAnalysis() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis 
                     type="number"
-                    tick={{ fontSize: 11 }}
+                    tick={{ fontSize: 9 }}
                     tickFormatter={(value) => 
                       value >= 1000000 
                         ? `${(value / 1000000).toFixed(1)}M` 
@@ -443,8 +443,8 @@ export default function AspirationsAnalysis() {
                   <YAxis 
                     type="category" 
                     dataKey="category" 
-                    width={75}
-                    tick={{ fontSize: 10 }}
+                    width={60}
+                    tick={{ fontSize: 9 }}
                   />
                   <Tooltip 
                     formatter={(value: number) => 
