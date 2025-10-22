@@ -258,21 +258,21 @@ export default function FinancialJourney() {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-4">
-      {/* Botón de regresar - fijo en la esquina */}
-      <div className="fixed top-4 left-4 z-50">
-        <Button
-          onClick={() => navigate(-1)}
-          variant="ghost"
-          size="icon"
-          className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-      </div>
-
-      {/* Header fijo */}
+      {/* Header fijo con botón de regresar integrado */}
       <div className="sticky top-0 z-40 bg-transparent backdrop-blur-sm pt-4 pb-2">
         <div className="container mx-auto px-4 max-w-2xl">
+          {/* Botón de regresar arriba del card */}
+          <div className="mb-3">
+            <Button
+              onClick={() => navigate(-1)}
+              variant="ghost"
+              size="icon"
+              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </div>
+          
           <Card className="p-6 bg-white/95 backdrop-blur-sm border-0 shadow-xl rounded-[20px] hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
             <GlowingEffect disabled={false} spread={30} />
             <div className="relative z-10">
