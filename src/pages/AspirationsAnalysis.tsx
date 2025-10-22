@@ -44,11 +44,18 @@ export default function AspirationsAnalysis() {
   }, []);
 
   useEffect(() => {
-    // Generar análisis cuando tengamos todos los datos
-    if (aspirations.length > 0 && totalAspiration > 0 && !isLoadingAnalysis && !analysis && currentNetWorth >= 0) {
+    // Generar análisis cuando tengamos todos los datos, incluyendo el net worth cargado
+    if (
+      aspirations.length > 0 && 
+      totalAspiration > 0 && 
+      !isLoadingAnalysis && 
+      !analysis && 
+      !netWorthData.isLoading &&
+      netWorthData.data?.currentNetWorth !== undefined
+    ) {
       generateAnalysis(aspirations, totalAspiration);
     }
-  }, [aspirations, totalAspiration, currentNetWorth, isLoadingAnalysis, analysis]);
+  }, [aspirations, totalAspiration, netWorthData.isLoading, netWorthData.data?.currentNetWorth, isLoadingAnalysis, analysis]);
 
   const fetchAspirations = async () => {
     try {
@@ -153,14 +160,18 @@ export default function AspirationsAnalysis() {
         aspirationsData, 
         total, 
         currentNetWorth,
-        netWorthIsValid: currentNetWorth !== undefined && currentNetWorth !== null
+        netWorthIsValid: currentNetWorth !== undefined && currentNetWorth !== null,
+        netWorthFromHook: netWorthData.data?.currentNetWorth
       });
+
+      // Usar el valor del hook directamente para asegurar que no sea 0
+      const actualNetWorth = netWorthData.data?.currentNetWorth || 0;
 
       const response = await supabase.functions.invoke("analyze-aspirations", {
         body: {
           aspirations: aspirationsData,
           totalAspiration: total,
-          currentNetWorth: currentNetWorth || 0
+          currentNetWorth: actualNetWorth
         }
       });
 
