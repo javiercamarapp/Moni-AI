@@ -263,7 +263,7 @@ export default function FinancialJourney() {
             {journeyNodes.map((node) => (
               <div 
                 key={node.id}
-                className="absolute transition-all duration-300"
+                className={`absolute transition-all duration-300 ${expandedNode === node.id ? 'z-[100]' : 'z-10'}`}
                 style={{
                   left: `${node.position.x}%`,
                   top: `${node.position.y}px`,
