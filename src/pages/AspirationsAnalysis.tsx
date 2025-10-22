@@ -340,11 +340,12 @@ export default function AspirationsAnalysis() {
         </Card>
 
         {/* Tabla Comparativa */}
-        <Card className="p-4 sm:p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
+        <Card className="p-4 sm:p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0 overflow-hidden">
           <h3 className="text-sm sm:text-base font-bold text-foreground mb-3 sm:mb-4">Comparativa Actual vs Aspiracional</h3>
           
-          <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
-            <table className="w-full text-xs sm:text-sm min-w-[500px]">
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <div className="px-4 sm:px-0 min-w-[500px]">
+            <table className="w-full text-xs sm:text-sm">
               <thead>
                 <tr className="border-b border-slate-200">
                   <th className="text-left py-2 sm:py-3 px-1 sm:px-2 font-semibold text-foreground whitespace-nowrap">Categoría</th>
@@ -409,6 +410,7 @@ export default function AspirationsAnalysis() {
                 </tr>
               </tbody>
             </table>
+            </div>
           </div>
 
           {/* Leyenda */}
