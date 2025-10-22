@@ -108,12 +108,10 @@ export default function FinancialJourney() {
       { level: 9500, name: "Excepcional", description: "Tu desempeño es excepcional en todos los sentidos. Estás a un paso de la cumbre absoluta.", icon: Trophy, type: 'regular', color: 'text-purple-600' }
     );
     
-    // Medallas de Bronce cada 250 niveles
+    // Medallas de Bronce cada 250 niveles (SIEMPRE, sin excluir)
     for (let level = 250; level < 10000; level += 250) {
-      // Solo agregar si no hay una insignia especial o medalla superior en ese nivel
-      const hasSpecialBadge = badges.some(b => b.level === level);
-      const isSilverOrAbove = level % 500 === 0;
-      if (!hasSpecialBadge && !isSilverOrAbove) {
+      // Solo si no es múltiplo de 500 (para no repetir con plata/oro)
+      if (level % 500 !== 0) {
         badges.push({
           level,
           name: `Bronce ${level}`,
@@ -125,11 +123,10 @@ export default function FinancialJourney() {
       }
     }
     
-    // Medallas de Plata cada 500 niveles
+    // Medallas de Plata cada 500 niveles (SIEMPRE, incluso si hay insignia)
     for (let level = 500; level <= 10000; level += 500) {
-      const hasSpecialBadge = badges.some(b => b.level === level);
-      const isGoldOrAbove = level % 1000 === 0;
-      if (!hasSpecialBadge && !isGoldOrAbove) {
+      // Solo si no es múltiplo de 1000 (para no repetir con oro)
+      if (level % 1000 !== 0) {
         badges.push({
           level,
           name: `Plata ${level}`,
@@ -141,11 +138,10 @@ export default function FinancialJourney() {
       }
     }
     
-    // Medallas de Oro cada 1,000 niveles
+    // Medallas de Oro cada 1,000 niveles (SIEMPRE, incluso si hay insignia)
     for (let level = 1000; level <= 10000; level += 1000) {
-      const hasSpecialBadge = badges.some(b => b.level === level);
-      const isDiamond = level % 5000 === 0;
-      if (!hasSpecialBadge && !isDiamond) {
+      // Solo si no es diamante
+      if (level % 5000 !== 0) {
         badges.push({
           level,
           name: `Oro ${level}`,
@@ -157,7 +153,7 @@ export default function FinancialJourney() {
       }
     }
     
-    // Diamantes cada 5,000 niveles
+    // Diamantes cada 5,000 niveles (SIEMPRE, incluso si hay insignia)
     badges.push(
       { level: 5000, name: "Diamante 5000", description: "Medalla de diamante por alcanzar el nivel 5000. Un logro extraordinario.", icon: Gem, type: 'diamond', color: 'text-cyan-400' },
       { level: 10000, name: "Diamante Supremo", description: "¡Medalla Diamante Suprema! Has alcanzado la libertad financiera total. Eres inspiración pura.", icon: Gem, type: 'diamond', color: 'text-cyan-400' }
