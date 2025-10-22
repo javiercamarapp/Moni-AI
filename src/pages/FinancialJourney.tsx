@@ -1173,7 +1173,7 @@ export default function FinancialJourney() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-yellow-700 truncate">
-                                Medalla de Oro #2
+                                Medalla de Oro 2000 #2
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
                                 2000 puntos
@@ -1183,6 +1183,107 @@ export default function FinancialJourney() {
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
                             Medalla de Oro 2000 puntos
+                          </p>
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Maestría Bronce 2250 #2 */}
+            {(() => {
+              const level2250 = 2250;
+              const nodeIndex = level2250 / 50;
+              const badgeY = 40 + (nodeIndex * 35) - 20; // 20px arriba del nodo
+              const isUnlocked = currentLevel >= level2250;
+              
+              return (
+                <div
+                  className={`absolute left-[10px] transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  style={{
+                    top: `${badgeY}px`,
+                    transform: 'translateY(-50%)',
+                    zIndex: expandedBadge === 'mastery2250' ? 100 : 20
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-0.5 relative">
+                    <button
+                      onClick={() => {
+                        if (isUnlocked) {
+                          setExpandedBadge(expandedBadge === 'mastery2250' ? null : 'mastery2250');
+                          setExpandedNode(null);
+                        }
+                      }}
+                      disabled={!isUnlocked}
+                      className="focus:outline-none relative"
+                    >
+                      <div
+                        className={`
+                          relative w-11 h-11 rounded-full flex items-center justify-center
+                          transition-all duration-300 border-2 border-white cursor-pointer
+                          bg-gradient-to-br from-amber-600 via-amber-700 to-amber-900 shadow-lg
+                          ${isUnlocked ? 'shadow-lg hover:scale-110' : 'grayscale cursor-not-allowed opacity-50'}
+                        `}
+                      >
+                        {isUnlocked && (
+                          <div className="absolute inset-0 rounded-full bg-amber-600 animate-ping opacity-20" />
+                        )}
+                        <Crown className="w-6 h-6 text-white relative z-10 drop-shadow-md" />
+                      </div>
+                    </button>
+                    
+                    {/* Tooltip al hacer hover */}
+                    <div 
+                      className={`
+                        absolute top-full mt-1 opacity-0 group-hover:opacity-100 pointer-events-none
+                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                        transition-opacity duration-200 bg-amber-100 text-amber-700
+                        shadow-md z-30
+                      `}
+                    >
+                      Maestría Bronce 2250 #2
+                    </div>
+
+                    {/* Card de descripción expandida */}
+                    {expandedBadge === 'mastery2250' && isUnlocked && (
+                      <Card 
+                        className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
+                          border-0 w-64 animate-scale-in overflow-hidden left-full ml-3"
+                        style={{
+                          top: '50%',
+                          transform: 'translateY(-50%)'
+                        }}
+                      >
+                        <GlowingEffect disabled={false} spread={20} />
+                        <div className="relative p-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedBadge(null);
+                            }}
+                            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors z-10"
+                          >
+                            ✕
+                          </button>
+                          
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-900">
+                              <Crown className="w-6 h-6 text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-bold text-sm text-amber-700 truncate">
+                                Insignia de Maestría Bronce #2
+                              </h3>
+                              <p className="text-[10px] text-muted-foreground">
+                                2250 puntos
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <p className="text-xs text-foreground/80 leading-relaxed">
+                            Insignia de Maestría Bronce 2250 puntos
                           </p>
                         </div>
                       </Card>
