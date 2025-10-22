@@ -62,16 +62,16 @@ export default function FinancialJourney() {
       const seed2 = (index * 3571) % 100;
       const seed3 = (index * 9241) % 100;
       
-      // Posición horizontal aleatoria pero dentro de márgenes seguros (20% - 80%)
-      const baseX = 20 + (seed1 * 0.6); // De 20% a 80%
-      const offsetX = ((seed2 % 20) - 10); // Variación adicional más controlada
+      // Posición horizontal aleatoria usando más ancho (10% - 90%)
+      const baseX = 10 + (seed1 * 0.8); // De 10% a 90% para usar más ancho
+      const offsetX = ((seed2 % 20) - 10); // Variación adicional
       
-      // Posición vertical con más espacio y offset inicial para el primer nivel
-      const baseY = 100 + (index * 60); // Comenzar en 100px para que el nivel 0 sea visible
+      // Posición vertical más comprimida
+      const baseY = 100 + (index * 35); // Reducido de 60 a 35 para menos altura
       const offsetY = (seed3 % 15) - 7; // Variación sutil vertical
       
       return {
-        x: Math.min(Math.max(baseX + offsetX, 20), 80), // Asegurar que esté dentro del rango
+        x: Math.min(Math.max(baseX + offsetX, 10), 90), // Rango más amplio
         y: baseY + offsetY
       };
     };
@@ -227,7 +227,7 @@ export default function FinancialJourney() {
           </div>
         </Card>
 
-        <div className="relative min-h-[12600px] w-full overflow-x-hidden pb-20 pt-4">
+        <div className="relative min-h-[7200px] w-full overflow-x-hidden pb-20 pt-4">
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
             <defs>
               <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
