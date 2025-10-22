@@ -588,26 +588,6 @@ export default function AspirationsAnalysis() {
           </div>
         </Card>
 
-        {/* AI Analysis - Single Card */}
-        <Card className="p-6 mb-4 bg-gradient-to-br from-purple-50 to-white backdrop-blur-sm rounded-[20px] shadow-xl border-0">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="bg-purple-500/10 p-2 rounded-full">
-              <Sparkles className="h-5 w-5 text-purple-600" />
-            </div>
-            <h3 className="text-base sm:text-lg font-bold text-foreground">Tu Plan Financiero</h3>
-          </div>
-          
-          {isLoadingAnalysis ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-            </div>
-          ) : (
-            <p className="text-sm sm:text-base text-foreground/90 leading-relaxed whitespace-pre-line">
-              {cleanAnalysisText(analysis)}
-            </p>
-          )}
-        </Card>
-
         {/* Action Buttons */}
         <div className="flex flex-col gap-3 px-2">
           <Button
