@@ -184,9 +184,30 @@ export default function FinancialJourney() {
       yOffset = (index % 2 === 0) ? -30 : 30;
     }
     
-    // Ajuste específico para nivel 1850
+    // Ajustes específicos para niveles que chocan
+    if (level === 1000) {
+      yOffset -= 50;
+    }
     if (level === 1850) {
       yOffset -= 70;
+    }
+    if (level === 2400) {
+      yOffset -= 50;
+    }
+    if (level === 4750) {
+      yOffset -= 50;
+    }
+    if (level === 6000) {
+      yOffset -= 50;
+    }
+    if (level === 6850) {
+      yOffset -= 50;
+    }
+    if (level === 7400) {
+      yOffset -= 50;
+    }
+    if (level === 7750) {
+      yOffset -= 50;
     }
     
     return { y: baseY + yOffset, side };
