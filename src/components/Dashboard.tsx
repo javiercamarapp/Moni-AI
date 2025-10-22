@@ -29,6 +29,8 @@ const Dashboard = () => {
   const [nextLevelXP] = useState(100);
   const [level, setLevel] = useState(1);
   const [levelQuizCompleted, setLevelQuizCompleted] = useState(false);
+  const [hasAspirations, setHasAspirations] = useState(false);
+  const [hasNetWorthData, setHasNetWorthData] = useState(false);
   const [api, setApi] = useState<CarouselApi>();
   const [selectedMonthOffset, setSelectedMonthOffset] = useState(0);
   
@@ -167,6 +169,30 @@ const Dashboard = () => {
           setLevel(profile.level || 1);
           setLevelQuizCompleted(profile.level_quiz_completed || false);
         }
+
+        // Check if user has aspirations
+        const { data: aspirationsData } = await supabase
+          .from("user_aspirations")
+          .select("id")
+          .eq("user_id", user.id)
+          .limit(1);
+        
+        setHasAspirations((aspirationsData?.length || 0) > 0);
+
+        // Check if user has net worth data
+        const { data: assetsData } = await supabase
+          .from("assets")
+          .select("id")
+          .eq("user_id", user.id)
+          .limit(1);
+        
+        const { data: liabilitiesData } = await supabase
+          .from("liabilities")
+          .select("id")
+          .eq("user_id", user.id)
+          .limit(1);
+        
+        setHasNetWorthData((assetsData?.length || 0) > 0 || (liabilitiesData?.length || 0) > 0);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -861,7 +887,24 @@ const Dashboard = () => {
           <Button 
             variant="ghost" 
             className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 px-3 gap-2 hover:scale-105 transition-all border border-blue-100"
-            onClick={() => navigate("/level-quiz")}
+            onClick={() => {
+              // Si tiene ambos quizzes completos (aspiraciones y net worth), ir a análisis
+              if (hasAspirations && hasNetWorthData) {
+                navigate("/aspirations-analysis");
+              } 
+              // Si tiene net worth pero no aspiraciones, ir al quiz de aspiraciones
+              else if (hasNetWorthData && !hasAspirations) {
+                navigate("/level-quiz");
+              }
+              // Si no tiene net worth, ir al quiz de net worth primero
+              else if (!hasNetWorthData) {
+                navigate("/net-worth");
+              }
+              // Por defecto ir al quiz
+              else {
+                navigate("/level-quiz");
+              }
+            }}
           >
             <span className="text-sm font-bold">{currentXP} pts</span>
             <span className="text-xs opacity-80">Nivel {level}</span>
