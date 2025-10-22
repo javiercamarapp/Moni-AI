@@ -454,8 +454,8 @@ export default function FinancialJourney() {
                   {expandedNode === node.id && (
                     <Card 
                       className={`
-                        px-3 py-2 w-44 text-center animate-scale-in rounded-[16px] shadow-xl z-50 absolute
-                        hover:shadow-2xl transition-all duration-300 relative overflow-hidden
+                        px-3 py-2 w-44 text-center animate-scale-in rounded-[16px] shadow-xl z-50 fixed
+                        hover:shadow-2xl transition-all duration-300 overflow-hidden
                         ${node.isCurrent 
                           ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400' 
                           : node.isUnlocked
@@ -464,16 +464,11 @@ export default function FinancialJourney() {
                         }
                       `}
                       style={{
-                        ...(!node.isUnlocked
-                          ? { left: '50%', transform: 'translateX(-50%)', top: '-100px' }
-                          : node.position.y < 80
-                          ? { left: '40px', top: '20px' }
-                          : node.position.x < 35 
-                          ? { left: '40px', top: '-80px' }
-                          : node.position.x > 65
-                          ? { right: '40px', top: '-80px' }
-                          : { left: '50%', transform: 'translateX(-50%)', top: '35px' }
-                        )
+                        left: '50%',
+                        top: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        maxWidth: 'calc(100vw - 32px)',
+                        maxHeight: 'calc(100vh - 32px)'
                       }}
                     >
                       {node.isCurrent && <GlowingEffect disabled={false} spread={15} />}
