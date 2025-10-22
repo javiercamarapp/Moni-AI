@@ -189,7 +189,7 @@ export default function FinancialJourney() {
       yOffset -= 40;
     }
     if (level === 1850) {
-      yOffset -= 45;
+      yOffset -= 70;
     }
     
     return { y: baseY + yOffset, side };
