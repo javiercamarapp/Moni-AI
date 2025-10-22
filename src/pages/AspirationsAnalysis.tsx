@@ -201,15 +201,15 @@ export default function AspirationsAnalysis() {
         {/* Pie Chart */}
         <Card className="p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
           <h3 className="text-base font-bold text-foreground mb-4">Desglose de Aspiraciones</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={280}>
             <PieChart>
               <Pie
                 data={chartData}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                outerRadius={80}
+                label={false}
+                outerRadius={70}
                 fill="#8884d8"
                 dataKey="value"
               >
@@ -217,7 +217,28 @@ export default function AspirationsAnalysis() {
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value: number) => `$${value.toLocaleString('es-MX')}`} />
+              <Tooltip 
+                formatter={(value: number) => `$${value.toLocaleString('es-MX')}`}
+                contentStyle={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  border: 'none',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                  fontSize: '12px'
+                }}
+              />
+              <Legend 
+                verticalAlign="bottom" 
+                height={36}
+                wrapperStyle={{
+                  fontSize: '11px',
+                  paddingTop: '10px'
+                }}
+                formatter={(value) => {
+                  const maxLength = 15;
+                  return value.length > maxLength ? value.substring(0, maxLength) + '...' : value;
+                }}
+              />
             </PieChart>
           </ResponsiveContainer>
         </Card>
