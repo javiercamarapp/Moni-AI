@@ -178,10 +178,6 @@ export default function FinancialJourney() {
     if (badgesAtLevel > 1) {
       // Espaciar 100px entre cada insignia cuando hay múltiples
       yOffset = (badgeIndexAtLevel - (badgesAtLevel - 1) / 2) * 100;
-      // Ajuste adicional hacia arriba para insignias múltiples en lado izquierdo
-      if (side === 'left') {
-        yOffset -= 40;
-      }
     } else {
       // Si solo hay una insignia, desplazarla ligeramente arriba o abajo alternando
       yOffset = (index % 2 === 0) ? -20 : 20;
