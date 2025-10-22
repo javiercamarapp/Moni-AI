@@ -160,25 +160,6 @@ export default function FinancialJourney() {
   return (
     <div className="min-h-screen animated-wave-bg pb-4">
       <div className="container mx-auto px-4 py-6 max-w-2xl">
-        {/* Header */}
-        <div className="flex items-center justify-center mb-6">
-          <div className="grid grid-cols-3 gap-4 w-full max-w-lg">
-            <div className="text-center bg-white/90 p-3 rounded-xl border border-blue-100 shadow-md">
-              <p className="text-xs text-foreground/60 font-semibold mb-1">NIVELES</p>
-              <p className="text-xl font-bold text-foreground">{targetLevel}</p>
-            </div>
-            <div className="text-center bg-gradient-to-br from-green-50 to-emerald-50 p-3 rounded-xl border-2 border-green-400 shadow-lg">
-              <p className="text-xs text-green-700 font-semibold mb-1">NIVEL ACTUAL</p>
-              <p className="text-xl font-bold text-green-600">{currentLevel}</p>
-              <p className="text-[10px] text-green-600/70">NET WORTH</p>
-            </div>
-            <div className="text-center bg-white/90 p-3 rounded-xl border border-purple-100 shadow-md">
-              <p className="text-xs text-foreground/60 font-semibold mb-1">NIVEL ESPERADO</p>
-              <p className="text-xl font-bold text-blue-600">{targetLevel}</p>
-            </div>
-          </div>
-        </div>
-
         {/* Section Header */}
         <Card className="p-6 mb-8 bg-gradient-to-br from-green-50 to-emerald-50 border-0 shadow-xl rounded-[20px]">
           <p className="text-xs font-bold uppercase tracking-wider text-green-700 mb-1">
