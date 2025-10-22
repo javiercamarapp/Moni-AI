@@ -208,7 +208,7 @@ Deno.serve(async (req) => {
       aspirationsCount: aspirations.length
     })
 
-    const prompt = `Eres el mejor asesor financiero del mundo. Tu misión es recomendar formas ESPECÍFICAS de recortar el tiempo necesario para alcanzar la meta financiera.
+    const prompt = `Eres el mejor asesor financiero del mundo. Tu misión es recomendar las FORMAS MÁS RÁPIDAS de alcanzar la meta financiera, aprovechando el poder del crecimiento exponencial e inversiones.
 
 ANÁLISIS DEL FLUJO ACTUAL:
 - Ingresos mensuales: $${Math.round(monthlyIncome).toLocaleString('es-MX')}
@@ -217,38 +217,48 @@ ANÁLISIS DEL FLUJO ACTUAL:
 - Meta aspiracional: $${totalAspiration.toLocaleString('es-MX')}
 - Patrimonio actual: $${currentNetWorth.toLocaleString('es-MX')}
 - Brecha a cubrir: $${gap.toLocaleString('es-MX')}
-- Tiempo estimado actual: ${Math.round(gap / monthlySavings)} meses (${(gap / monthlySavings / 12).toFixed(1)} años)
+- Tiempo SIN INVERSIONES: ${Math.round(gap / monthlySavings)} meses (${(gap / monthlySavings / 12).toFixed(1)} años)
+
+🎯 TU MISIÓN: Mostrar cómo REDUCIR DRÁSTICAMENTE este tiempo usando el PODER DEL INTERÉS COMPUESTO
 
 INSTRUCCIONES OBLIGATORIAS:
 
-1. RECOMENDAR FORMAS DE AUMENTAR INGRESOS (2-3 ideas concretas y accionables):
-   Ejemplo: Puede buscar ingresos adicionales mediante freelancing, venta de servicios profesionales, monetizar habilidades existentes, inversiones que generen rendimientos, etc.
+1. CALCULAR ESCENARIOS DE INVERSIÓN (mínimo 2 escenarios):
+   
+   Escenario A - Conservador (5-7% anual):
+   - Invirtiendo los $${Math.round(monthlySavings).toLocaleString('es-MX')} mensuales en CETES, bonos, o fondos indexados
+   - Con rendimiento del 6% anual compuesto
+   - Tiempo para alcanzar meta: X años (en lugar de ${(gap / monthlySavings / 12).toFixed(1)} años)
+   
+   Escenario B - Moderado (10-12% anual):
+   - Invirtiendo en fondos de inversión diversificados, ETFs, o bienes raíces
+   - Con rendimiento del 10% anual compuesto
+   - Tiempo para alcanzar meta: Y años (en lugar de ${(gap / monthlySavings / 12).toFixed(1)} años)
+   
+   Escenario C - Agresivo (15%+ anual):
+   - Combinación de acciones, startups, o negocios propios
+   - Con rendimiento del 15% anual compuesto
+   - Tiempo para alcanzar meta: Z años (en lugar de ${(gap / monthlySavings / 12).toFixed(1)} años)
 
-2. RECOMENDAR FORMAS DE REDUCIR GASTOS (2-3 acciones específicas):
-   Ejemplo: Optimizar gastos hormiga, cancelar suscripciones innecesarias, refinanciar deudas con mejores tasas, eliminar gastos no esenciales, etc.
+2. MOSTRAR EL PODER DEL INTERÉS COMPUESTO:
+   Explica cómo $${Math.round(monthlySavings).toLocaleString('es-MX')} mensuales invertidos a X% anual se convierten en Y pesos en Z años, versus solo $${(monthlySavings * 12 * (gap / monthlySavings / 12)).toLocaleString('es-MX')} sin invertir.
 
-3. CALCULAR IMPACTO MATEMÁTICO DE CADA OPTIMIZACIÓN:
-   - Si logra aumentar ingresos 20 por ciento: nuevos ingresos serían X pesos, nuevo ahorro Y pesos, tiempo Z años
-   - Si logra reducir gastos 15 por ciento: nuevos gastos serían X pesos, nuevo ahorro Y pesos, tiempo Z años
-   - Si logra AMBAS optimizaciones: ahorro combinado sería X pesos mensuales, alcanzaría meta en solo Y años en lugar de Z años
+3. RECOMENDAR ESTRATEGIAS ESPECÍFICAS:
+   - Dónde invertir el ahorro mensual (nombres específicos: CETES, S&P 500, fondos GBM, etc)
+   - Cómo diversificar (porcentajes: 60% renta variable, 30% fondos, 10% alternativas)
+   - Qué hacer con activos actuales para generar rendimientos
 
-Ejemplo de estructura de respuesta ideal:
-
-Tu flujo mensual actual es de XXX pesos de ingresos menos YYY pesos de gastos igual ZZZ pesos de ahorro. Con este ritmo alcanzarías tu meta en W años.
-
-PERO si logras:
-1. Aumentar tus ingresos a AAA pesos mensuales (mediante BBB y CCC)
-2. Reducir gastos a DDD pesos (eliminando EEE y FFF)
-
-Tu ahorro sería de GGG pesos mensuales y alcanzarías tu meta en solo HH años en lugar de WW años, recortando II años del tiempo total.
+4. CALCULAR IMPACTO TOTAL:
+   Si combina optimizar flujo (ahorro de $${Math.round(monthlySavings * 1.2).toLocaleString('es-MX')}) + inversión moderada (10% anual), alcanzaría meta en SOLO X años, recortando Y años del tiempo original.
 
 FORMATO CRÍTICO:
-- Máximo 200 palabras
+- Máximo 250 palabras
 - NO uses markdown ni símbolos especiales
 - Texto plano con saltos de línea
-- ENFÓCATE 100 por ciento en recomendaciones ACCIONABLES para optimizar el flujo
-- Incluye CÁLCULOS MATEMÁTICOS EXACTOS de impacto en años
-- Usa cifras y números específicos`
+- ENFÓCATE en INVERSIONES y CRECIMIENTO EXPONENCIAL
+- Incluye CÁLCULOS EXACTOS con diferentes tasas de rendimiento
+- Menciona instrumentos de inversión ESPECÍFICOS
+- Muestra la DIFERENCIA en años entre ahorrar e invertir`
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
