@@ -147,9 +147,9 @@ export default function AspirationsAnalysis() {
             variant="ghost"
             size="icon"
             onClick={() => navigate("/dashboard")}
-            className="hover:bg-white/20 rounded-full"
+            className="bg-white rounded-full shadow-xl hover:bg-white/90 text-foreground h-12 w-12 hover:scale-105 transition-all border border-blue-100"
           >
-            <ArrowLeft className="h-5 w-5 text-foreground" />
+            <ArrowLeft className="h-5 w-5" />
           </Button>
           <h1 className="text-xl font-bold text-foreground">Análisis de Aspiraciones</h1>
         </div>
