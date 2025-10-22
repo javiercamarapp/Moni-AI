@@ -236,6 +236,26 @@ export default function FinancialJourney() {
 
   const journeyNodes = generateNodes();
 
+  // Scroll automático al nivel actual cuando se carga la página
+  useEffect(() => {
+    if (journeyNodes.length > 0 && currentProgress > 0) {
+      const currentNode = journeyNodes.find(node => node.isCurrent);
+      if (currentNode) {
+        // Expandir el nodo actual automáticamente
+        setExpandedNode(currentNode.id);
+        
+        // Scroll al nodo actual después de un pequeño delay
+        setTimeout(() => {
+          const scrollPosition = currentNode.position.y - 200; // 200px de offset para que no quede pegado arriba
+          window.scrollTo({
+            top: scrollPosition,
+            behavior: 'smooth'
+          });
+        }, 300);
+      }
+    }
+  }, [totalAspiration, currentNetWorth]); // Se ejecuta cuando cambian estos valores
+
   return (
     <div className="min-h-screen animated-wave-bg pb-4">
       {/* Botón de regresar */}
