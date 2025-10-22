@@ -34,7 +34,7 @@ export default function FinancialJourney() {
   const [totalAspiration, setTotalAspiration] = useState(0);
   const [nodes, setNodes] = useState<JourneyNode[]>([]);
   const [expandedNode, setExpandedNode] = useState<number | null>(null);
-  const [expandedBadge, setExpandedBadge] = useState<number | null>(null);
+  const [expandedBadge, setExpandedBadge] = useState<string | null>(null);
   const netWorthData = useNetWorth("1Y");
   const currentNetWorth = netWorthData.data?.currentNetWorth || 0;
 
@@ -516,23 +516,24 @@ export default function FinancialJourney() {
                   const isUnlocked = currentLevel >= badge.level;
                   const BadgeIcon = badge.icon;
                   const position = getBadgePosition(badge.level, globalIndex, badgesAtLevel.length, badgeIndexAtLevel);
+                  const badgeUniqueId = `${badge.level}-${badge.type}-${badge.name}`;
                   
                   renderedBadges.push(
                     <div
-                      key={`badge-${badge.level}-${badge.type}-${badge.name}`}
+                      key={`badge-${badgeUniqueId}`}
                       className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
                       style={{
                         [position.side]: '1%',
                         top: `${position.y}px`,
                         transform: 'translateY(-50%)',
-                        zIndex: 20
+                        zIndex: expandedBadge === badgeUniqueId ? 100 : 20
                       }}
                     >
                   <div className="flex flex-col items-center gap-0.5 relative">
                     <button
                       onClick={() => {
                         if (isUnlocked) {
-                          setExpandedBadge(expandedBadge === badge.level ? null : badge.level);
+                          setExpandedBadge(expandedBadge === badgeUniqueId ? null : badgeUniqueId);
                           setExpandedNode(null);
                         }
                       }}
@@ -603,7 +604,7 @@ export default function FinancialJourney() {
                     </div>
 
                     {/* Card de descripción expandida */}
-                    {expandedBadge === badge.level && isUnlocked && (
+                    {expandedBadge === badgeUniqueId && isUnlocked && (
                       <Card 
                         className={`
                           absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
