@@ -202,11 +202,14 @@ export default function LevelQuiz() {
     }
   };
 
-  const isAspComplete = Object.keys(aspirationalAnswers).length === aspirationalQuestions.length ||
-    (Object.keys(aspirationalAnswers).length >= 5 && 
-     aspirationalAnswers[1] && aspirationalAnswers[2] && aspirationalAnswers[3] && 
-     aspirationalAnswers[4]);
-  const aspirationalProgress = (Object.keys(aspirationalAnswers).length / aspirationalQuestions.length) * 100;
+  // Solo las preguntas obligatorias (1, 2, 3, 4) son requeridas
+  const requiredQuestionsIds = [1, 2, 3, 4];
+  const answeredRequiredQuestions = requiredQuestionsIds.filter(id => aspirationalAnswers[id]).length;
+  
+  const isAspComplete = answeredRequiredQuestions === requiredQuestionsIds.length;
+  
+  // La barra de progreso solo considera las preguntas obligatorias
+  const aspirationalProgress = (answeredRequiredQuestions / requiredQuestionsIds.length) * 100;
 
   // Si está en la intro, mostrar página de bienvenida
   if (showIntro) {
