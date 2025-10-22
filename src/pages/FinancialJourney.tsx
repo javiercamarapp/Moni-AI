@@ -417,13 +417,6 @@ export default function FinancialJourney() {
                         >
                           <EarthPlanet3D />
                         </div>
-                        {/* Estrellas decorativas flotantes */}
-                        <div className="absolute -top-4 -right-4 w-8 h-8 rounded-full bg-gradient-to-br from-blue-300 to-blue-500 animate-bounce shadow-lg shadow-blue-400/50 flex items-center justify-center text-white text-xl" style={{ animationDelay: '0s', animationDuration: '1.5s' }}>🌟</div>
-                        <div className="absolute -top-6 -left-4 w-6 h-6 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 animate-bounce shadow-lg shadow-purple-500/50 flex items-center justify-center text-white text-sm" style={{ animationDelay: '0.2s', animationDuration: '1.8s' }}>✨</div>
-                        <div className="absolute -bottom-4 -right-6 w-7 h-7 rounded-full bg-gradient-to-br from-cyan-200 to-cyan-400 animate-bounce shadow-lg shadow-cyan-300/50 flex items-center justify-center text-white text-base" style={{ animationDelay: '0.4s', animationDuration: '2s' }}>⭐</div>
-                        <div className="absolute -bottom-6 -left-2 w-5 h-5 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 animate-bounce shadow-lg shadow-indigo-500/50 flex items-center justify-center text-white text-xs" style={{ animationDelay: '0.6s', animationDuration: '1.6s' }}>💫</div>
-                        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-8 text-blue-400 animate-pulse text-2xl">🌍</div>
-                        <div className="absolute bottom-0 right-0 text-green-400 animate-pulse text-xl" style={{ animationDelay: '0.5s' }}>🌎</div>
                       </div>
                     ) : (
                       <div
