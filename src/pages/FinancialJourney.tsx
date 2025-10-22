@@ -315,7 +315,7 @@ export default function FinancialJourney() {
           <div className="absolute left-[50%] top-0 bottom-0 w-1 bg-gradient-to-b from-blue-200 via-purple-200 to-green-200 -translate-x-1/2 z-0" />
 
           {/* Journey Nodes */}
-          <div className="space-y-4 relative z-10">
+          <div className="space-y-2 relative z-10">
             {journeyNodes.map((node, index) => (
               <div key={node.id} className="flex flex-col items-center">
                 {/* Node Circle */}
@@ -384,7 +384,7 @@ export default function FinancialJourney() {
                 {/* Node Info Card */}
                 <Card 
                   className={`
-                    mt-2 px-3 py-1 w-full max-w-sm text-center transition-all duration-300 rounded-[16px] shadow-lg
+                    mt-1 px-3 py-1 w-full max-w-sm text-center transition-all duration-300 rounded-[16px] shadow-lg
                     ${node.isCurrent 
                       ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400' 
                       : node.isUnlocked
@@ -425,7 +425,7 @@ export default function FinancialJourney() {
 
                 {/* Connector line to next node (except for last node) */}
                 {index < journeyNodes.length - 1 && (
-                  <div className="h-3 w-1 bg-gradient-to-b from-blue-200 via-purple-200 to-green-200 mt-2" />
+                  <div className="h-2 w-1 bg-gradient-to-b from-blue-200 via-purple-200 to-green-200 mt-1" />
                 )}
               </div>
             ))}
