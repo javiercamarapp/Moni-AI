@@ -32,58 +32,102 @@ Deno.serve(async (req) => {
       throw new Error('User not authenticated')
     }
 
-    // Obtener TODA la información financiera del usuario
-    const threeMonthsAgo = new Date()
-    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3)
+    // ========== OBTENER TODA LA INFORMACIÓN HISTÓRICA DEL USUARIO ==========
     
-    // Obtener TODAS las transacciones (sin límite de tiempo para tener más datos)
+    // 1. TRANSACCIONES - Todo el historial
     const { data: allTransactions } = await supabase
       .from('transactions')
       .select('*')
       .eq('user_id', user.id)
       .order('transaction_date', { ascending: false })
     
-    // Obtener transacciones de los últimos 3 meses
-    const { data: recentTransactions } = await supabase
-      .from('transactions')
-      .select('*')
-      .eq('user_id', user.id)
-      .gte('transaction_date', threeMonthsAgo.toISOString().split('T')[0])
-    
-    // Obtener assets detallados
+    // 2. ASSETS - Patrimonio actual
     const { data: assets } = await supabase
       .from('assets')
       .select('*')
       .eq('user_id', user.id)
     
-    // Obtener liabilities detallados
+    // 3. LIABILITIES - Deudas actuales
     const { data: liabilities } = await supabase
       .from('liabilities')
       .select('*')
       .eq('user_id', user.id)
+    
+    // 4. NET WORTH SNAPSHOTS - Evolución histórica del patrimonio
+    const { data: netWorthSnapshots } = await supabase
+      .from('net_worth_snapshots')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('snapshot_date', { ascending: false })
+      .limit(12) // Últimos 12 registros
+    
+    // 5. PROFILE - Info del usuario y nivel
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single()
+    
+    // 6. USER SCORE - Score Moni
+    const { data: userScore } = await supabase
+      .from('user_scores')
+      .select('*')
+      .eq('user_id', user.id)
+      .single()
+    
+    // 7. GOALS - Metas del usuario
+    const { data: goals } = await supabase
+      .from('goals')
+      .select('*')
+      .eq('user_id', user.id)
+    
+    // 8. CHALLENGES - Retos activos
+    const { data: challenges } = await supabase
+      .from('challenges')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+    
+    // 9. CATEGORY BUDGETS - Presupuestos configurados
+    const { data: categoryBudgets } = await supabase
+      .from('category_budgets')
+      .select('*, categories(*)')
+      .eq('user_id', user.id)
+    
+    // 10. FIXED EXPENSES CONFIG - Gastos fijos
+    const { data: fixedExpenses } = await supabase
+      .from('fixed_expenses_config')
+      .select('*')
+      .eq('user_id', user.id)
 
-    // Usar transacciones recientes si hay suficientes, si no, usar todas
-    const transactionsToUse = (recentTransactions && recentTransactions.length >= 5) 
-      ? recentTransactions 
-      : allTransactions || []
+    // ========== CALCULAR MÉTRICAS FINANCIERAS ==========
     
-    const monthsToAverage = (recentTransactions && recentTransactions.length >= 5) ? 3 : 12
-
-    // Calcular ingresos y gastos mensuales promedio
-    const incomeTransactions = transactionsToUse.filter(t => t.type === 'income')
-    const expenseTransactions = transactionsToUse.filter(t => t.type === 'expense')
+    // Calcular ingresos y gastos de TODO el historial
+    const incomeTransactions = allTransactions?.filter(t => t.type === 'income') || []
+    const expenseTransactions = allTransactions?.filter(t => t.type === 'expense') || []
     
-    const totalIncome = incomeTransactions.reduce((sum, t) => sum + Number(t.amount), 0)
-    const totalExpenses = expenseTransactions.reduce((sum, t) => sum + Number(t.amount), 0)
+    const totalIncomeAllTime = incomeTransactions.reduce((sum, t) => sum + Number(t.amount), 0)
+    const totalExpensesAllTime = expenseTransactions.reduce((sum, t) => sum + Number(t.amount), 0)
     
-    let monthlyIncome = totalIncome / monthsToAverage
-    let monthlyExpenses = totalExpenses / monthsToAverage
+    // Calcular promedio mensual basado en el rango de fechas real
+    let monthlyIncome = 0
+    let monthlyExpenses = 0
     
-    // Si no hay datos de transacciones, estimar basándose en el net worth
-    if (monthlyIncome === 0 && currentNetWorth > 0) {
-      // Estimación conservadora: 5% del net worth anual = ingreso mensual aproximado
-      monthlyIncome = (currentNetWorth * 0.05) / 12
-      console.log('No income transactions found, estimating based on net worth:', monthlyIncome)
+    if (allTransactions && allTransactions.length > 0) {
+      const oldestDate = new Date(allTransactions[allTransactions.length - 1].transaction_date)
+      const newestDate = new Date(allTransactions[0].transaction_date)
+      const monthsDiff = Math.max(1, (newestDate.getTime() - oldestDate.getTime()) / (1000 * 60 * 60 * 24 * 30))
+      
+      monthlyIncome = totalIncomeAllTime / monthsDiff
+      monthlyExpenses = totalExpensesAllTime / monthsDiff
+    }
+    
+    // Gastos fijos configurados
+    const totalFixedExpenses = fixedExpenses?.reduce((sum, fe) => sum + Number(fe.monthly_amount), 0) || 0
+    
+    // Si hay gastos fijos configurados y no hay transacciones de gastos, usar esos
+    if (monthlyExpenses === 0 && totalFixedExpenses > 0) {
+      monthlyExpenses = totalFixedExpenses
     }
     
     const monthlySavings = monthlyIncome - monthlyExpenses
@@ -92,15 +136,39 @@ Deno.serve(async (req) => {
     const totalAssets = assets?.reduce((sum, a) => sum + Number(a.value), 0) || 0
     const totalLiabilities = liabilities?.reduce((sum, l) => sum + Number(l.value), 0) || 0
     
-    console.log('Financial data:', {
+    // Net Worth Evolution (últimos 6 meses)
+    const netWorthEvolution = netWorthSnapshots?.slice(0, 6).map(snap => ({
+      date: snap.snapshot_date,
+      value: snap.net_worth
+    })) || []
+    
+    // Calcular tendencia de crecimiento del patrimonio
+    let netWorthGrowthRate = 0
+    if (netWorthSnapshots && netWorthSnapshots.length >= 2) {
+      const oldest = netWorthSnapshots[netWorthSnapshots.length - 1]
+      const newest = netWorthSnapshots[0]
+      const monthsDiff = Math.max(1, netWorthSnapshots.length)
+      netWorthGrowthRate = ((newest.net_worth - oldest.net_worth) / oldest.net_worth) * 100 / monthsDiff
+    }
+    
+    console.log('COMPLETE Financial data:', {
       totalTransactions: allTransactions?.length || 0,
-      recentTransactions: recentTransactions?.length || 0,
       incomeTransactions: incomeTransactions.length,
       expenseTransactions: expenseTransactions.length,
+      totalIncomeAllTime,
+      totalExpensesAllTime,
       monthlyIncome,
       monthlyExpenses,
       monthlySavings,
-      monthsToAverage
+      totalAssets,
+      totalLiabilities,
+      netWorthSnapshots: netWorthSnapshots?.length || 0,
+      netWorthGrowthRate,
+      userLevel: profile?.level,
+      scoreMoni: userScore?.score_moni,
+      activeGoals: goals?.length || 0,
+      activeChallenges: challenges?.length || 0,
+      fixedExpensesConfigured: totalFixedExpenses
     })
 
     // Map aspirations to readable format
@@ -134,42 +202,77 @@ Deno.serve(async (req) => {
       aspirationsCount: aspirations.length
     })
 
-    const prompt = `Eres el mejor asesor financiero del mundo. Analiza PROFUNDAMENTE la situación financiera real del usuario.
+    const prompt = `Eres el mejor asesor financiero del mundo. Tienes acceso a TODO el historial financiero del usuario. Analiza PROFUNDAMENTE.
 
-SITUACIÓN FINANCIERA COMPLETA:
+═══════════════════════════════════════════════════════
+INFORMACIÓN COMPLETA DEL USUARIO
+═══════════════════════════════════════════════════════
 
-Net Worth:
-- Actual: $${currentNetWorth.toLocaleString('es-MX')} (Assets: $${totalAssets.toLocaleString('es-MX')} - Liabilities: $${totalLiabilities.toLocaleString('es-MX')})
+📊 NET WORTH:
+- Actual: $${currentNetWorth.toLocaleString('es-MX')}
 - Meta Aspiracional: $${totalAspiration.toLocaleString('es-MX')}
-- Brecha a cerrar: $${gap.toLocaleString('es-MX')} (${gapPercentage}%)
+- Brecha: $${gap.toLocaleString('es-MX')} (${gapPercentage}%)
+- Tasa de crecimiento mensual: ${netWorthGrowthRate.toFixed(2)}%
 
-Flujo de Efectivo Mensual Real:
-- Ingresos promedio: $${monthlyIncome.toLocaleString('es-MX')}/mes
-- Gastos promedio: $${monthlyExpenses.toLocaleString('es-MX')}/mes
-- Ahorro neto mensual: $${monthlySavings.toLocaleString('es-MX')}/mes
+💰 ASSETS (${assets?.length || 0} activos):
+${assets?.map(a => `  • ${a.name}: $${Number(a.value).toLocaleString('es-MX')} (${a.category})`).join('\n') || '  Sin assets'}
+Total: $${totalAssets.toLocaleString('es-MX')}
 
-Assets principales: ${assets?.slice(0, 3).map(a => `${a.name} ($${Number(a.value).toLocaleString('es-MX')})`).join(', ')}
-Liabilities principales: ${liabilities?.slice(0, 3).map(l => `${l.name} ($${Number(l.value).toLocaleString('es-MX')})`).join(', ')}
+💳 LIABILITIES (${liabilities?.length || 0} deudas):
+${liabilities?.map(l => `  • ${l.name}: $${Number(l.value).toLocaleString('es-MX')} (${l.category})`).join('\n') || '  Sin deudas'}
+Total: $${totalLiabilities.toLocaleString('es-MX')}
 
-INSTRUCCIONES:
-Escribe un análisis PERSONALIZADO Y PROFUNDO (máximo 150 palabras) que incluya:
+💵 HISTORIAL DE TRANSACCIONES (${allTransactions?.length || 0} transacciones):
+- Ingresos totales: $${totalIncomeAllTime.toLocaleString('es-MX')} (${incomeTransactions.length} transacciones)
+- Gastos totales: $${totalExpensesAllTime.toLocaleString('es-MX')} (${expenseTransactions.length} transacciones)
+- Promedio mensual ingresos: $${monthlyIncome.toLocaleString('es-MX')}
+- Promedio mensual gastos: $${monthlyExpenses.toLocaleString('es-MX')}
+- Ahorro neto mensual: $${monthlySavings.toLocaleString('es-MX')}
 
-1. Resumen de su situación actual vs aspiracional con los números REALES
-2. CALCULA exactamente cuántos meses/años le tomará llegar a su meta si sigue ahorrando $${monthlySavings.toLocaleString('es-MX')}/mes
-3. Si el ahorro actual es insuficiente, calcula cuánto NECESITA ahorrar mensualmente para lograrlo en un plazo razonable
-4. 3-4 recomendaciones ESPECÍFICAS con cifras exactas basadas en SUS ingresos y gastos reales
-5. Menciona oportunidades concretas para aumentar ahorro (reducir gastos o aumentar ingresos)
-6. Mensaje motivador final basado en su capacidad real
+📈 EVOLUCIÓN DEL PATRIMONIO (últimos 6 registros):
+${netWorthEvolution.map(nw => `  ${nw.date}: $${Number(nw.value).toLocaleString('es-MX')}`).join('\n') || '  No hay historial'}
+
+🎯 METAS ACTIVAS (${goals?.length || 0}):
+${goals?.slice(0, 3).map(g => `  • ${g.title}: $${Number(g.current).toLocaleString('es-MX')}/$${Number(g.target).toLocaleString('es-MX')}`).join('\n') || '  Sin metas'}
+
+💪 RETOS ACTIVOS (${challenges?.length || 0}):
+${challenges?.slice(0, 3).map(c => `  • ${c.title}: $${Number(c.current_amount).toLocaleString('es-MX')}/$${Number(c.target_amount).toLocaleString('es-MX')}`).join('\n') || '  Sin retos'}
+
+📊 GASTOS FIJOS CONFIGURADOS:
+${fixedExpenses?.map(fe => `  • ${fe.category_name}: $${Number(fe.monthly_amount).toLocaleString('es-MX')}`).join('\n') || '  No configurados'}
+Total: $${totalFixedExpenses.toLocaleString('es-MX')}/mes
+
+👤 PERFIL:
+- Nivel: ${profile?.level || 1}
+- XP: ${profile?.xp || 0}
+- Score Moni: ${userScore?.score_moni || 40}
+- Quiz completado: ${profile?.level_quiz_completed ? 'Sí' : 'No'}
+
+═══════════════════════════════════════════════════════
+
+INSTRUCCIONES PARA TU ANÁLISIS:
+
+Escribe un análisis ULTRA PERSONALIZADO (máximo 150 palabras) que:
+
+1. Resuma su situación real usando TODOS los números disponibles arriba
+2. Calcule EXACTAMENTE cuánto tiempo le tomará alcanzar su meta:
+   - Si ahorra $${monthlySavings.toLocaleString('es-MX')}/mes actual
+   - Cuánto necesita ahorrar para lograrlo en 10 años
+   - Cuánto necesita aumentar sus ingresos
+3. Mencione assets/liabilities ESPECÍFICOS por nombre y valor
+4. Use el historial de crecimiento del patrimonio (${netWorthGrowthRate.toFixed(2)}% mensual)
+5. Referencia sus metas y retos activos
+6. Da 3 recomendaciones EXACTAS con cifras de SU situación
 
 REGLAS ABSOLUTAS:
-- USA los números REALES del usuario ($${monthlyIncome.toLocaleString('es-MX')} ingresos, $${monthlyExpenses.toLocaleString('es-MX')} gastos)
-- CALCULA timeframes reales y específicos
-- NO uses asteriscos, hashtags, guiones, barras, ni símbolos de markdown
-- SOLO texto plano con saltos de línea para separar ideas
-- Máximo 150 palabras
-- Sé ultra específico con sus números, no genérico
+✓ USA nombres reales de assets/liabilities
+✓ CITA los números exactos arriba
+✓ CALCULA plazos matemáticamente
+✓ NO uses markdown (*, #, -, /, etc.)
+✓ Máximo 150 palabras
+✓ Texto plano con saltos de línea
 
-Habla directo, con cifras reales de SU situación.`
+Sé ULTRA específico con SUS datos reales.`
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
