@@ -167,25 +167,21 @@ export default function FinancialJourney() {
     // Calcular el índice del nodo que corresponde exactamente a este nivel
     const nodeIndex = (level / 50) - 1;
     
-    // Usar la misma fórmula base que los nodos
+    // Usar la misma fórmula base que los nodos para alineación exacta
     const baseY = 40 + (nodeIndex * 35);
     
     // Determinar el lado basado en el índice de la insignia en ese nivel
     const side = badgeIndexAtLevel % 2 === 0 ? 'left' : 'right';
     
-    // Espaciado vertical para evitar choques con los nodos
+    // Offset mínimo para evitar choques - solo separar ligeramente cuando hay múltiples
     let yOffset = 0;
     
     if (badgesAtLevel > 1) {
       // Cuando hay múltiples insignias en el mismo nivel, separarlas verticalmente
       const baseSpacing = 120;
       yOffset = (badgeIndexAtLevel - (badgesAtLevel - 1) / 2) * baseSpacing;
-    } else {
-      // Cuando hay una sola insignia, alternar arriba/abajo del nivel
-      // para evitar chocar directamente con el nodo
-      const alternatePattern = Math.floor(index / 2) % 2;
-      yOffset = alternatePattern === 0 ? -35 : 35;
     }
+    // Si es una sola insignia, mantenerla alineada exactamente con el nivel (yOffset = 0)
     
     return { y: baseY + yOffset, side };
   };
