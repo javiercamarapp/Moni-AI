@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -63,10 +63,41 @@ export default function LevelQuiz() {
   const [showIntro, setShowIntro] = useState(true);
   const [aspirationalAnswers, setAspirationalAnswers] = useState<Record<number, string>>({});
   const [isSavingAsp, setIsSavingAsp] = useState(false);
+  const [isCheckingAspirations, setIsCheckingAspirations] = useState(true);
   const { data: hasNetWorthData, isLoading: checkingNetWorth } = useHasNetWorthData();
 
+  // Verificar si el usuario ya tiene aspiraciones guardadas
+  useEffect(() => {
+    const checkExistingAspirations = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          navigate("/auth");
+          return;
+        }
+
+        const { data: aspirations } = await supabase
+          .from("user_aspirations")
+          .select("id")
+          .eq("user_id", user.id)
+          .limit(1);
+
+        // Si ya tiene aspiraciones guardadas, redirigir al análisis
+        if (aspirations && aspirations.length > 0) {
+          navigate("/aspirations-analysis");
+        }
+      } catch (error) {
+        console.error("Error checking aspirations:", error);
+      } finally {
+        setIsCheckingAspirations(false);
+      }
+    };
+
+    checkExistingAspirations();
+  }, [navigate]);
+
   // Verificar estado de net worth antes de mostrar el quiz
-  if (checkingNetWorth) {
+  if (checkingNetWorth || isCheckingAspirations) {
     return (
       <div className="min-h-screen animated-wave-bg flex items-center justify-center">
         <p className="text-foreground">Cargando...</p>
