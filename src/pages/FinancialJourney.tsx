@@ -429,7 +429,7 @@ export default function FinancialJourney() {
                     {/* Tooltip al hacer hover */}
                     <div 
                       className={`
-                        absolute top-full mt-1 opacity-0 group-hover:opacity-100 pointer-events-none
+                        absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
                         text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
                         transition-opacity duration-200 bg-amber-100 text-amber-700
                         shadow-md z-30
@@ -530,7 +530,7 @@ export default function FinancialJourney() {
                     {/* Tooltip al hacer hover */}
                     <div 
                       className={`
-                        absolute top-full mt-1 opacity-0 group-hover:opacity-100 pointer-events-none
+                        absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
                         text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
                         transition-opacity duration-200 bg-gray-100 text-gray-600
                         shadow-md z-30
@@ -631,7 +631,7 @@ export default function FinancialJourney() {
                     {/* Tooltip al hacer hover */}
                     <div 
                       className={`
-                        absolute top-full mt-1 opacity-0 group-hover:opacity-100 pointer-events-none
+                        absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
                         text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
                         transition-opacity duration-200 bg-amber-100 text-amber-700
                         shadow-md z-30
@@ -732,7 +732,7 @@ export default function FinancialJourney() {
                     {/* Tooltip al hacer hover */}
                     <div 
                       className={`
-                        absolute top-full mt-1 opacity-0 group-hover:opacity-100 pointer-events-none
+                        absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
                         text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
                         transition-opacity duration-200 bg-yellow-100 text-yellow-700
                         shadow-md z-30
@@ -833,7 +833,7 @@ export default function FinancialJourney() {
                     {/* Tooltip al hacer hover */}
                     <div 
                       className={`
-                        absolute top-full mt-1 opacity-0 group-hover:opacity-100 pointer-events-none
+                        absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
                         text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
                         transition-opacity duration-200 bg-amber-100 text-amber-700
                         shadow-md z-30
@@ -934,7 +934,7 @@ export default function FinancialJourney() {
                     {/* Tooltip al hacer hover */}
                     <div 
                       className={`
-                        absolute top-full mt-1 opacity-0 group-hover:opacity-100 pointer-events-none
+                        absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
                         text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
                         transition-opacity duration-200 bg-gray-100 text-gray-600
                         shadow-md z-30
@@ -1035,7 +1035,7 @@ export default function FinancialJourney() {
                     {/* Tooltip al hacer hover */}
                     <div 
                       className={`
-                        absolute top-full mt-1 opacity-0 group-hover:opacity-100 pointer-events-none
+                        absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
                         text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
                         transition-opacity duration-200 bg-amber-100 text-amber-700
                         shadow-md z-30
@@ -1136,7 +1136,7 @@ export default function FinancialJourney() {
                     {/* Tooltip al hacer hover */}
                     <div 
                       className={`
-                        absolute top-full mt-1 opacity-0 group-hover:opacity-100 pointer-events-none
+                        absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
                         text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
                         transition-opacity duration-200 bg-yellow-100 text-yellow-700
                         shadow-md z-30
@@ -1237,7 +1237,7 @@ export default function FinancialJourney() {
                     {/* Tooltip al hacer hover */}
                     <div 
                       className={`
-                        absolute top-full mt-1 opacity-0 group-hover:opacity-100 pointer-events-none
+                        absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
                         text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
                         transition-opacity duration-200 bg-amber-100 text-amber-700
                         shadow-md z-30
