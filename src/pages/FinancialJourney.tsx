@@ -23,6 +23,7 @@ interface JourneyNode {
 interface Badge {
   level: number;
   name: string;
+  description: string;
   icon: any;
   type: 'regular' | 'special' | 'mega';
   color: string;
@@ -33,6 +34,7 @@ export default function FinancialJourney() {
   const [totalAspiration, setTotalAspiration] = useState(0);
   const [nodes, setNodes] = useState<JourneyNode[]>([]);
   const [expandedNode, setExpandedNode] = useState<number | null>(null);
+  const [expandedBadge, setExpandedBadge] = useState<number | null>(null);
   const netWorthData = useNetWorth("1Y");
   const currentNetWorth = netWorthData.data?.currentNetWorth || 0;
 
@@ -83,26 +85,26 @@ export default function FinancialJourney() {
 
   const getBadges = (): Badge[] => {
     const badges: Badge[] = [
-      { level: 500, name: "Primer Paso", icon: Sparkles, type: 'regular', color: 'text-blue-500' },
-      { level: 1000, name: "Persistente", icon: Shield, type: 'special', color: 'text-purple-500' },
-      { level: 1500, name: "Disciplinado", icon: Target, type: 'regular', color: 'text-green-500' },
-      { level: 2000, name: "Constructor", icon: TrendingUp, type: 'regular', color: 'text-orange-500' },
-      { level: 2500, name: "Visionario", icon: Crown, type: 'mega', color: 'text-yellow-500' },
-      { level: 3000, name: "Determinado", icon: Zap, type: 'regular', color: 'text-cyan-500' },
-      { level: 3500, name: "Guerrero", icon: Medal, type: 'regular', color: 'text-red-500' },
-      { level: 4000, name: "Estratega", icon: Award, type: 'regular', color: 'text-indigo-500' },
-      { level: 4500, name: "Campeón", icon: Trophy, type: 'regular', color: 'text-amber-500' },
-      { level: 5000, name: "Conquistador", icon: Gem, type: 'mega', color: 'text-emerald-500' },
-      { level: 5500, name: "Invencible", icon: Rocket, type: 'regular', color: 'text-pink-500' },
-      { level: 6000, name: "Líder", icon: Star, type: 'regular', color: 'text-violet-500' },
-      { level: 6500, name: "Sabio", icon: Sparkles, type: 'regular', color: 'text-teal-500' },
-      { level: 7000, name: "Innovador", icon: Diamond, type: 'regular', color: 'text-fuchsia-500' },
-      { level: 7500, name: "Maestro", icon: Award, type: 'regular', color: 'text-lime-500' },
-      { level: 8000, name: "Titán", icon: Shield, type: 'regular', color: 'text-rose-500' },
-      { level: 8500, name: "Legendario", icon: Medal, type: 'regular', color: 'text-sky-500' },
-      { level: 9000, name: "Élite", icon: Gem, type: 'regular', color: 'text-amber-600' },
-      { level: 9500, name: "Excepcional", icon: Trophy, type: 'regular', color: 'text-purple-600' },
-      { level: 10000, name: "LIBERTAD TOTAL", icon: Crown, type: 'mega', color: 'text-yellow-400' },
+      { level: 500, name: "Primer Paso", description: "Has dado tu primer paso hacia la libertad financiera. Cada gran viaje comienza con una decisión valiente.", icon: Sparkles, type: 'regular', color: 'text-blue-500' },
+      { level: 1000, name: "Persistente", description: "Tu constancia demuestra verdadera fortaleza. Has superado las primeras barreras y sigues adelante.", icon: Shield, type: 'special', color: 'text-purple-500' },
+      { level: 1500, name: "Disciplinado", description: "La disciplina es tu aliada. Has demostrado que puedes mantener el rumbo incluso en momentos difíciles.", icon: Target, type: 'regular', color: 'text-green-500' },
+      { level: 2000, name: "Constructor", description: "Estás construyendo las bases sólidas de tu imperio financiero. Cada decisión suma al resultado final.", icon: TrendingUp, type: 'regular', color: 'text-orange-500' },
+      { level: 2500, name: "Visionario", description: "¡Logro importante! Tu visión es clara y tu camino está marcado. Has alcanzado un hito significativo.", icon: Crown, type: 'mega', color: 'text-yellow-500' },
+      { level: 3000, name: "Determinado", description: "Tu determinación te distingue del resto. No hay obstáculo que pueda detenerte ahora.", icon: Zap, type: 'regular', color: 'text-cyan-500' },
+      { level: 3500, name: "Guerrero", description: "Has enfrentado cada desafío con valentía. Tu espíritu guerrero te llevará a la victoria.", icon: Medal, type: 'regular', color: 'text-red-500' },
+      { level: 4000, name: "Estratega", description: "Tus decisiones estratégicas están dando frutos. Cada movimiento está calculado hacia el éxito.", icon: Award, type: 'regular', color: 'text-indigo-500' },
+      { level: 4500, name: "Campeón", description: "Eres un verdadero campeón financiero. Tu dedicación es inspiración para otros.", icon: Trophy, type: 'regular', color: 'text-amber-500' },
+      { level: 5000, name: "Conquistador", description: "¡Medio camino conquistado! Has superado lo que muchos solo sueñan. Tu legado está tomando forma.", icon: Gem, type: 'mega', color: 'text-emerald-500' },
+      { level: 5500, name: "Invencible", description: "Tu momentum es imparable. Has desarrollado una mentalidad inquebrantable hacia el éxito.", icon: Rocket, type: 'regular', color: 'text-pink-500' },
+      { level: 6000, name: "Líder", description: "Te has convertido en un líder financiero. Tu ejemplo inspira a quienes te rodean.", icon: Star, type: 'regular', color: 'text-violet-500' },
+      { level: 6500, name: "Sabio", description: "La sabiduría financiera que has adquirido es invaluable. Cada decisión refleja tu experiencia.", icon: Sparkles, type: 'regular', color: 'text-teal-500' },
+      { level: 7000, name: "Innovador", description: "Tu enfoque innovador te diferencia. Has encontrado formas únicas de acelerar tu crecimiento.", icon: Diamond, type: 'regular', color: 'text-fuchsia-500' },
+      { level: 7500, name: "Maestro", description: "Has alcanzado la maestría financiera. Tu dominio es evidente en cada resultado.", icon: Award, type: 'regular', color: 'text-lime-500' },
+      { level: 8000, name: "Titán", description: "Como un titán, tu presencia financiera es formidable. Pocas personas llegan a este nivel.", icon: Shield, type: 'regular', color: 'text-rose-500' },
+      { level: 8500, name: "Legendario", description: "Tu historia es legendaria. Has superado todas las expectativas y alcanzado lo extraordinario.", icon: Medal, type: 'regular', color: 'text-sky-500' },
+      { level: 9000, name: "Élite", description: "Perteneces a la élite financiera. Tu éxito es testimonio de tu excelencia sostenida.", icon: Gem, type: 'regular', color: 'text-amber-600' },
+      { level: 9500, name: "Excepcional", description: "Tu desempeño es excepcional en todos los sentidos. Estás a un paso de la cumbre absoluta.", icon: Trophy, type: 'regular', color: 'text-purple-600' },
+      { level: 10000, name: "LIBERTAD TOTAL", description: "¡LO LOGRASTE! Has alcanzado la libertad financiera completa. Tu dedicación y perseverancia te han llevado a la cima. ¡Eres inspiración pura!", icon: Crown, type: 'mega', color: 'text-yellow-400' },
     ];
     return badges;
   };
@@ -437,32 +439,43 @@ export default function FinancialJourney() {
               return (
                 <div
                   key={`badge-${badge.level}`}
-                  className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  className={`absolute transition-all duration-300 ${expandedBadge === badge.level ? 'z-[100]' : 'z-20'} ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
                   style={{
                     [position.side]: position.side === 'left' ? '1%' : 'auto',
                     [position.side === 'right' ? 'right' : 'left']: position.side === 'right' ? '1%' : 'auto',
                     top: `${position.y}px`,
                     transform: 'translateY(-50%)',
-                    zIndex: 20
                   }}
                 >
                   <div className="flex flex-col items-center gap-0.5 relative">
-                    <div
-                      className={`
-                        relative rounded-full flex items-center justify-center
-                        transition-all duration-300 border-2 border-white
-                        ${badge.type === 'mega' ? 'w-12 h-12 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 shadow-xl' : 
-                          'w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg'}
-                        ${isUnlocked ? 'shadow-lg hover:scale-110' : 'grayscale'}
-                      `}
+                    <button
+                      onClick={() => {
+                        if (isUnlocked) {
+                          setExpandedBadge(expandedBadge === badge.level ? null : badge.level);
+                          setExpandedNode(null);
+                        }
+                      }}
+                      disabled={!isUnlocked}
+                      className="focus:outline-none"
                     >
-                      {isUnlocked && badge.type === 'mega' && (
-                        <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-30" />
-                      )}
-                      <BadgeIcon 
-                        className={`${badge.type === 'mega' ? 'w-6 h-6' : 'w-4 h-4'} text-white relative z-10 drop-shadow-md`}
-                      />
-                    </div>
+                      <div
+                        className={`
+                          relative rounded-full flex items-center justify-center
+                          transition-all duration-300 border-2 border-white cursor-pointer
+                          ${badge.type === 'mega' ? 'w-12 h-12 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 shadow-xl' : 
+                            'w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg'}
+                          ${isUnlocked ? 'shadow-lg hover:scale-110' : 'grayscale cursor-not-allowed'}
+                        `}
+                      >
+                        {isUnlocked && badge.type === 'mega' && (
+                          <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-30" />
+                        )}
+                        <BadgeIcon 
+                          className={`${badge.type === 'mega' ? 'w-6 h-6' : 'w-4 h-4'} text-white relative z-10 drop-shadow-md`}
+                        />
+                      </div>
+                    </button>
+                    
                     {/* Tooltip al hacer hover en desktop */}
                     <div 
                       className={`
@@ -475,6 +488,56 @@ export default function FinancialJourney() {
                     >
                       {badge.name}
                     </div>
+
+                    {/* Card de descripción expandida */}
+                    {expandedBadge === badge.level && isUnlocked && (
+                      <Card 
+                        className={`
+                          absolute bg-white/98 backdrop-blur-sm p-4 rounded-[20px] shadow-2xl
+                          border-2 w-72 animate-scale-in
+                          ${position.side === 'left' ? 'left-full ml-4' : 'right-full mr-4'}
+                          ${badge.type === 'mega' ? 'border-yellow-400' : 'border-blue-400'}
+                        `}
+                        style={{
+                          top: '50%',
+                          transform: 'translateY(-50%)'
+                        }}
+                      >
+                        <div className="relative">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedBadge(null);
+                            }}
+                            className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-600 transition-colors"
+                          >
+                            ✕
+                          </button>
+                          
+                          <div className="flex items-center gap-3 mb-3">
+                            <div
+                              className={`
+                                rounded-full flex items-center justify-center border-2 border-white
+                                ${badge.type === 'mega' ? 'w-16 h-16 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 shadow-xl' : 
+                                  'w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg'}
+                              `}
+                            >
+                              <BadgeIcon className={`${badge.type === 'mega' ? 'w-8 h-8' : 'w-6 h-6'} text-white drop-shadow-md`} />
+                            </div>
+                            <div>
+                              <h3 className={`font-bold ${badge.type === 'mega' ? 'text-lg' : 'text-base'} ${badge.color}`}>
+                                {badge.name}
+                              </h3>
+                              <p className="text-xs text-gray-500">Nivel {badge.level}</p>
+                            </div>
+                          </div>
+                          
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            {badge.description}
+                          </p>
+                        </div>
+                      </Card>
+                    )}
                   </div>
                 </div>
               );
