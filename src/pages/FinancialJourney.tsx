@@ -503,46 +503,46 @@ export default function FinancialJourney() {
                     {expandedBadge === badge.level && isUnlocked && (
                       <Card 
                         className={`
-                          absolute bg-white/98 backdrop-blur-sm p-4 rounded-[20px] shadow-2xl
-                          border-2 w-72 animate-scale-in
-                          ${position.side === 'left' ? 'left-full ml-4' : 'right-full mr-4'}
-                          ${badge.type === 'mega' ? 'border-yellow-400' : 'border-blue-400'}
+                          absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
+                          border-0 w-64 animate-scale-in overflow-hidden
+                          ${position.side === 'left' ? 'left-full ml-3' : 'right-full mr-3'}
                         `}
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
                         }}
                       >
-                        <div className="relative">
+                        <GlowingEffect disabled={false} spread={20} />
+                        <div className="relative p-3">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               setExpandedBadge(null);
                             }}
-                            className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-600 transition-colors"
+                            className="absolute top-1 right-1 w-5 h-5 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors z-10"
                           >
                             ✕
                           </button>
                           
-                          <div className="flex items-center gap-3 mb-3">
+                          <div className="flex items-center gap-2 mb-2">
                             <div
                               className={`
-                                rounded-full flex items-center justify-center border-2 border-white
-                                ${badge.type === 'mega' ? 'w-16 h-16 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 shadow-xl' : 
-                                  'w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg'}
+                                rounded-full flex items-center justify-center border-2 border-white shrink-0
+                                ${badge.type === 'mega' ? 'w-12 h-12 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500' : 
+                                  'w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600'}
                               `}
                             >
-                              <BadgeIcon className={`${badge.type === 'mega' ? 'w-8 h-8' : 'w-6 h-6'} text-white drop-shadow-md`} />
+                              <BadgeIcon className={`${badge.type === 'mega' ? 'w-6 h-6' : 'w-5 h-5'} text-white`} />
                             </div>
-                            <div>
-                              <h3 className={`font-bold ${badge.type === 'mega' ? 'text-lg' : 'text-base'} ${badge.color}`}>
+                            <div className="flex-1 min-w-0">
+                              <h3 className={`font-bold ${badge.type === 'mega' ? 'text-base' : 'text-sm'} ${badge.color} truncate`}>
                                 {badge.name}
                               </h3>
-                              <p className="text-xs text-gray-500">Nivel {badge.level}</p>
+                              <p className="text-[10px] text-muted-foreground">Nivel {badge.level}</p>
                             </div>
                           </div>
                           
-                          <p className="text-sm text-gray-700 leading-relaxed">
+                          <p className="text-xs text-foreground/80 leading-relaxed">
                             {badge.description}
                           </p>
                         </div>
