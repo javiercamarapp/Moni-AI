@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNetWorth } from "@/hooks/useNetWorth";
 import { Progress } from "@/components/ui/progress";
 import treasureChest from "@/assets/treasure-chest.png";
+import BottomNav from "@/components/BottomNav";
 
 interface JourneyNode {
   id: number;
@@ -236,10 +237,25 @@ export default function FinancialJourney() {
   const journeyNodes = generateNodes();
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-4">
-      <div className="container mx-auto px-4 py-6 max-w-2xl">
-        <Card className="p-6 mb-8 bg-gradient-to-br from-green-50 to-emerald-50 border-0 shadow-xl rounded-[20px]">
-          <p className="text-xs font-bold uppercase tracking-wider text-green-700 mb-1">
+    <div className="min-h-screen animated-wave-bg pb-20">
+      {/* Header superior con logo */}
+      <div className="p-2 flex justify-between items-start">
+        <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden w-16 h-10">
+          <img src="/moni-logo.png" alt="Moni" className="w-full h-full object-cover" />
+        </div>
+        
+        <Button
+          onClick={() => navigate("/dashboard")}
+          variant="ghost"
+          className="bg-white rounded-[20px] shadow-xl hover:bg-white/95 text-foreground h-10 px-4 hover:scale-105 transition-all border border-blue-100"
+        >
+          Dashboard
+        </Button>
+      </div>
+
+      <div className="container mx-auto px-4 py-2 max-w-2xl">
+        <Card className="p-6 mb-6 bg-white/95 backdrop-blur-sm border-0 shadow-xl rounded-[20px]">
+          <p className="text-xs font-bold uppercase tracking-wider text-green-600 mb-1">
             Tu Camino Financiero
           </p>
           <h1 className="text-2xl font-bold text-foreground">
@@ -495,20 +511,20 @@ export default function FinancialJourney() {
           </div>
         </div>
 
-        <Card className="mt-12 p-6 bg-gradient-to-br from-purple-50 to-blue-50 border-0 shadow-xl rounded-[20px]">
+        <Card className="mt-8 p-6 bg-white/95 backdrop-blur-sm border-0 shadow-xl rounded-[20px]">
           <div className="text-center">
             <h3 className="text-lg font-bold text-foreground mb-2">Tu Progreso</h3>
             <p className="text-foreground/70 text-sm mb-4">
               Estás en el nivel {currentLevel} de {targetLevel}. ¡Sigue así!
             </p>
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="bg-white/60 p-3 rounded-xl border border-blue-100">
+              <div className="bg-white/80 p-3 rounded-xl border border-blue-100">
                 <p className="text-foreground/60 text-xs">Net Worth Actual</p>
                 <p className="text-foreground font-bold mt-1">
                   ${currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0 })}
                 </p>
               </div>
-              <div className="bg-white/60 p-3 rounded-xl border border-purple-100">
+              <div className="bg-white/80 p-3 rounded-xl border border-purple-100">
                 <p className="text-foreground/60 text-xs">Meta Aspiracional</p>
                 <p className="text-blue-600 font-bold mt-1">
                   ${totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0 })}
@@ -518,12 +534,7 @@ export default function FinancialJourney() {
           </div>
         </Card>
 
-        <Button
-          onClick={() => navigate("/dashboard")}
-          className="w-full mt-6 h-12 bg-white/95 hover:bg-white text-foreground font-bold rounded-[20px] shadow-xl hover:scale-[1.02] transition-all border border-blue-100"
-        >
-          Volver al Dashboard
-        </Button>
+        <BottomNav />
       </div>
     </div>
   );
