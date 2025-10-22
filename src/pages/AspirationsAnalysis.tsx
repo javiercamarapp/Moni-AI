@@ -16,6 +16,7 @@ export default function AspirationsAnalysis() {
   const [totalAspiration, setTotalAspiration] = useState(0);
   const [analysis, setAnalysis] = useState<string>("");
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
   const netWorthData = useNetWorth("1Y");
   const currentNetWorth = netWorthData.data?.currentNetWorth || 0;
 
@@ -39,10 +40,21 @@ export default function AspirationsAnalysis() {
     fetchAspirations();
   }, []);
 
+  useEffect(() => {
+    // Generar análisis cuando tengamos todos los datos
+    if (aspirations.length > 0 && totalAspiration > 0 && !isLoadingAnalysis && !analysis && currentNetWorth >= 0) {
+      generateAnalysis(aspirations, totalAspiration);
+    }
+  }, [aspirations, totalAspiration, currentNetWorth, isLoadingAnalysis, analysis]);
+
   const fetchAspirations = async () => {
     try {
+      setIsLoadingData(true);
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
 
       const { data, error } = await supabase
         .from("user_aspirations")
@@ -51,17 +63,20 @@ export default function AspirationsAnalysis() {
 
       if (error) throw error;
 
-      if (data) {
+      if (data && data.length > 0) {
         setAspirations(data);
         const total = data.reduce((sum, asp) => sum + Number(asp.value), 0);
         setTotalAspiration(total);
-        
-        // Generar análisis con AI
-        generateAnalysis(data, total);
+      } else {
+        toast.error("No se encontraron aspiraciones guardadas");
+        navigate("/level-quiz");
       }
     } catch (error) {
       console.error("Error fetching aspirations:", error);
       toast.error("Error al cargar las aspiraciones");
+      navigate("/level-quiz");
+    } finally {
+      setIsLoadingData(false);
     }
   };
 
@@ -71,6 +86,8 @@ export default function AspirationsAnalysis() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      console.log("Generating analysis with:", { aspirationsData, total, currentNetWorth });
+
       const response = await supabase.functions.invoke("analyze-aspirations", {
         body: {
           aspirations: aspirationsData,
@@ -79,12 +96,21 @@ export default function AspirationsAnalysis() {
         }
       });
 
-      if (response.error) throw response.error;
+      console.log("Analysis response:", response);
+
+      if (response.error) {
+        console.error("Analysis error:", response.error);
+        throw response.error;
+      }
       
-      setAnalysis(response.data.analysis);
+      if (response.data?.analysis) {
+        setAnalysis(response.data.analysis);
+      } else {
+        throw new Error("No analysis returned from function");
+      }
     } catch (error) {
       console.error("Error generating analysis:", error);
-      setAnalysis("No pudimos generar el análisis en este momento. Por favor, intenta más tarde.");
+      setAnalysis("No pudimos generar el análisis en este momento. Sin embargo, puedes ver tu desglose de aspiraciones arriba. Tu net worth aspiracional es de $" + total.toLocaleString('es-MX') + " y tu net worth actual es de $" + currentNetWorth.toLocaleString('es-MX') + ". La brecha a cerrar es de $" + (total - currentNetWorth).toLocaleString('es-MX') + ".");
     } finally {
       setIsLoadingAnalysis(false);
     }
@@ -100,6 +126,17 @@ export default function AspirationsAnalysis() {
 
   const gap = totalAspiration - currentNetWorth;
   const gapPercentage = currentNetWorth > 0 ? ((gap / totalAspiration) * 100).toFixed(1) : 100;
+
+  if (isLoadingData || netWorthData.isLoading) {
+    return (
+      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-foreground">Cargando tu análisis...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">

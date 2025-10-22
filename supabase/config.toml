@@ -68,3 +68,9 @@ verify_jwt = true
 
 [functions.detect-daily-expenses]
 verify_jwt = true
+
+[functions.analyze-aspirations]
+verify_jwt = true
+
+[functions.analyze-score-change]
+verify_jwt = true
