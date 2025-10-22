@@ -263,10 +263,8 @@ export default function FinancialJourney() {
           {/* Botón de regresar arriba del card */}
           <div className="mb-3">
             <Button
-              onClick={(e) => {
-                e.preventDefault();
-                navigate(-1);
-              }}
+              type="button"
+              onClick={() => navigate(-1)}
               variant="ghost"
               size="icon"
               className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
