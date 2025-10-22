@@ -292,26 +292,6 @@ export default function FinancialJourney() {
                 </div>
                 <Progress value={currentProgress} className="h-3" />
               </div>
-              
-              {/* Botón para ir al nivel actual */}
-              <Button
-                onClick={() => {
-                  const currentNode = journeyNodes.find(node => node.isCurrent);
-                  if (currentNode) {
-                    setExpandedNode(currentNode.id);
-                    setTimeout(() => {
-                      const element = document.getElementById(`node-${currentNode.id}`);
-                      if (element) {
-                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                      }
-                    }, 100);
-                  }
-                }}
-                className="w-full mt-3 bg-green-500 hover:bg-green-600 text-white rounded-[20px] shadow-xl hover:scale-105 transition-all"
-              >
-                <Target className="h-4 w-4 mr-2" />
-                Ver Mi Nivel Actual
-              </Button>
             </div>
           </Card>
         </div>
