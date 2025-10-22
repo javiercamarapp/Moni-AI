@@ -128,7 +128,7 @@ Deno.serve(async (req) => {
     const totalIncomeAllTime = incomeTransactions.reduce((sum, t) => sum + Number(t.amount), 0)
     const totalExpensesAllTime = expenseTransactions.reduce((sum, t) => sum + Number(t.amount), 0)
     
-    // Calcular promedio mensual basado en los ÚLTIMOS 12 MESES de transacciones
+    // Calcular promedio mensual basado en los ÚLTIMOS 12 MESES calendario
     let monthlyIncome = 0
     let monthlyExpenses = 0
     
@@ -144,24 +144,15 @@ Deno.serve(async (req) => {
       const recentIncomeTotal = recentIncome.reduce((sum, t) => sum + Number(t.amount), 0)
       const recentExpensesTotal = recentExpenses.reduce((sum, t) => sum + Number(t.amount), 0)
       
-      // Contar cuántos meses únicos tienen transacciones
-      const allRecentTransactions = [...recentIncome, ...recentExpenses]
-      const uniqueMonths = new Set(
-        allRecentTransactions.map(t => {
-          const date = new Date(t.transaction_date)
-          return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
-        })
-      )
-      
-      const monthsCount = Math.max(1, uniqueMonths.size)
-      
-      monthlyIncome = recentIncomeTotal / monthsCount
-      monthlyExpenses = recentExpensesTotal / monthsCount
+      // Dividir entre 12 meses (no importa cuántos meses tengan transacciones)
+      monthlyIncome = recentIncomeTotal / 12
+      monthlyExpenses = recentExpensesTotal / 12
       
       console.log('Last 12 months calculation:', {
         recentIncomeTotal,
         recentExpensesTotal,
-        uniqueMonths: uniqueMonths.size,
+        recentIncomeCount: recentIncome.length,
+        recentExpensesCount: recentExpenses.length,
         monthlyIncome: Math.round(monthlyIncome),
         monthlyExpenses: Math.round(monthlyExpenses)
       })
