@@ -29,20 +29,15 @@ export default function FinancialJourney() {
   useEffect(() => {
     fetchAspirations();
     
-    // Add electric animation keyframes
+    // Add electric pulse animation keyframes
     const style = document.createElement('style');
     style.textContent = `
-      @keyframes electricFlow {
-        0% {
-          stroke-dashoffset: 0;
-          filter: drop-shadow(0 0 5px #00ff41);
+      @keyframes electricPulse {
+        0%, 100% {
+          opacity: 1;
         }
         50% {
-          filter: drop-shadow(0 0 15px #39ff14);
-        }
-        100% {
-          stroke-dashoffset: -15;
-          filter: drop-shadow(0 0 5px #00ff41);
+          opacity: 0.7;
         }
       }
     `;
@@ -251,7 +246,7 @@ export default function FinancialJourney() {
         </Card>
 
         <div className="relative min-h-[7200px] w-full overflow-x-hidden pb-20 pt-2">
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
             <defs>
               <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="rgb(96, 165, 250)" />
@@ -259,43 +254,59 @@ export default function FinancialJourney() {
                 <stop offset="100%" stopColor="rgb(34, 197, 94)" />
               </linearGradient>
               <linearGradient id="electricGreen" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#00ff41" />
-                <stop offset="50%" stopColor="#39ff14" />
-                <stop offset="100%" stopColor="#00ff41" />
+                <stop offset="0%" stopColor="#10b981">
+                  <animate attributeName="stop-color" values="#10b981;#22c55e;#10b981" dur="2s" repeatCount="indefinite"/>
+                </stop>
+                <stop offset="50%" stopColor="#22c55e">
+                  <animate attributeName="stop-color" values="#22c55e;#34d399;#22c55e" dur="2s" repeatCount="indefinite"/>
+                </stop>
+                <stop offset="100%" stopColor="#10b981">
+                  <animate attributeName="stop-color" values="#10b981;#22c55e;#10b981" dur="2s" repeatCount="indefinite"/>
+                </stop>
               </linearGradient>
               <filter id="glow">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
                 <feMerge>
+                  <feMergeNode in="coloredBlur"/>
                   <feMergeNode in="coloredBlur"/>
                   <feMergeNode in="SourceGraphic"/>
                 </feMerge>
               </filter>
             </defs>
             {journeyNodes.map((node, index) => {
-              if (index === 0 || !node.isCompleted) return null;
+              if (index === 0) return null;
               const prevNode = journeyNodes[index - 1];
-              if (!prevNode.isCompleted) return null;
               
-              // Crear curvas suaves entre nodos usando path en lugar de líneas rectas
+              // Crear curvas suaves entre nodos
               const midX = (prevNode.position.x + node.position.x) / 2;
               const midY = (prevNode.position.y + node.position.y) / 2;
               
+              const isCompleted = node.isCompleted && prevNode.isCompleted;
+              
               return (
-                <g key={`line-${node.id}`}>
-                  <path
-                    d={`M ${prevNode.position.x}% ${prevNode.position.y} Q ${midX}% ${midY}, ${node.position.x}% ${node.position.y}`}
-                    stroke="url(#electricGreen)"
-                    strokeWidth="4"
-                    fill="none"
-                    strokeLinecap="round"
-                    filter="url(#glow)"
-                    strokeDasharray="10 5"
-                    className="transition-all duration-500"
-                    style={{
-                      animation: 'electricFlow 1.5s linear infinite'
-                    }}
-                  />
-                </g>
+                <path
+                  key={`line-${node.id}`}
+                  d={`M ${prevNode.position.x}% ${prevNode.position.y} Q ${midX}% ${midY}, ${node.position.x}% ${node.position.y}`}
+                  stroke={isCompleted ? "url(#electricGreen)" : "url(#pathGradient)"}
+                  strokeWidth={isCompleted ? "6" : "3"}
+                  fill="none"
+                  strokeLinecap="round"
+                  filter={isCompleted ? "url(#glow)" : "none"}
+                  strokeDasharray={isCompleted ? "20 10" : "0"}
+                  className="transition-all duration-500"
+                  style={isCompleted ? {
+                    animation: 'electricPulse 1.5s ease-in-out infinite'
+                  } : {}}
+                >
+                  {isCompleted && (
+                    <animate 
+                      attributeName="stroke-dashoffset" 
+                      values="0;-30;0" 
+                      dur="2s" 
+                      repeatCount="indefinite"
+                    />
+                  )}
+                </path>
               );
             })}
           </svg>
