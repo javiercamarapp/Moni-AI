@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, TrendingUp, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart, Bar } from "recharts";
 import { useNetWorth } from "@/hooks/useNetWorth";
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#6366f1'];
@@ -198,27 +198,40 @@ export default function AspirationsAnalysis() {
           </div>
         </Card>
 
-        {/* Pie Chart */}
+        {/* Bar Chart */}
         <Card className="p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
           <h3 className="text-base font-bold text-foreground mb-4">Desglose de Aspiraciones</h3>
-          <ResponsiveContainer width="100%" height={280}>
-            <PieChart>
-              <Pie
-                data={chartData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={false}
-                outerRadius={70}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={chartData} layout="vertical" margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis 
+                type="number" 
+                tick={{ fontSize: 11 }}
+                tickFormatter={(value) => 
+                  value >= 1000000 
+                    ? `$${(value / 1000000).toFixed(1)}M` 
+                    : value >= 1000 
+                    ? `$${(value / 1000).toFixed(0)}k`
+                    : `$${value}`
+                }
+              />
+              <YAxis 
+                type="category" 
+                dataKey="name" 
+                width={100}
+                tick={{ fontSize: 10 }}
+                tickFormatter={(value) => {
+                  const maxLength = 12;
+                  return value.length > maxLength ? value.substring(0, maxLength) + '...' : value;
+                }}
+              />
               <Tooltip 
-                formatter={(value: number) => `$${value.toLocaleString('es-MX')}`}
+                formatter={(value: number) => [
+                  value >= 10000000 
+                    ? `$${(value / 1000000).toFixed(1)}M` 
+                    : `$${value.toLocaleString('es-MX')}`,
+                  'Valor'
+                ]}
                 contentStyle={{
                   backgroundColor: 'rgba(255, 255, 255, 0.95)',
                   border: 'none',
@@ -227,19 +240,12 @@ export default function AspirationsAnalysis() {
                   fontSize: '12px'
                 }}
               />
-              <Legend 
-                verticalAlign="bottom" 
-                height={36}
-                wrapperStyle={{
-                  fontSize: '11px',
-                  paddingTop: '10px'
-                }}
-                formatter={(value) => {
-                  const maxLength = 15;
-                  return value.length > maxLength ? value.substring(0, maxLength) + '...' : value;
-                }}
-              />
-            </PieChart>
+              <Bar dataKey="value" radius={[0, 8, 8, 0]}>
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Bar>
+            </BarChart>
           </ResponsiveContainer>
         </Card>
 
