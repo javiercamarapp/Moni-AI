@@ -128,35 +128,43 @@ Deno.serve(async (req) => {
     const totalIncomeAllTime = incomeTransactions.reduce((sum, t) => sum + Number(t.amount), 0)
     const totalExpensesAllTime = expenseTransactions.reduce((sum, t) => sum + Number(t.amount), 0)
     
-    // Calcular promedio mensual basado en los ÚLTIMOS 6 MESES de transacciones reales
+    // Calcular promedio mensual basado en los ÚLTIMOS 12 MESES de transacciones
     let monthlyIncome = 0
     let monthlyExpenses = 0
     
     if (allTransactions && allTransactions.length > 0) {
-      // Obtener fecha de hace 6 meses
-      const sixMonthsAgo = new Date()
-      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+      // Obtener fecha de hace 12 meses
+      const twelveMonthsAgo = new Date()
+      twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12)
       
-      // Filtrar transacciones de los últimos 6 meses
-      const recentIncome = incomeTransactions.filter(t => new Date(t.transaction_date) >= sixMonthsAgo)
-      const recentExpenses = expenseTransactions.filter(t => new Date(t.transaction_date) >= sixMonthsAgo)
+      // Filtrar transacciones de los últimos 12 meses
+      const recentIncome = incomeTransactions.filter(t => new Date(t.transaction_date) >= twelveMonthsAgo)
+      const recentExpenses = expenseTransactions.filter(t => new Date(t.transaction_date) >= twelveMonthsAgo)
       
       const recentIncomeTotal = recentIncome.reduce((sum, t) => sum + Number(t.amount), 0)
       const recentExpensesTotal = recentExpenses.reduce((sum, t) => sum + Number(t.amount), 0)
       
-      // Calcular cuántos meses reales tienen transacciones en los últimos 6 meses
-      const recentTransactions = [...recentIncome, ...recentExpenses]
-      const monthsWithData = new Set(
-        recentTransactions.map(t => {
+      // Contar cuántos meses únicos tienen transacciones
+      const allRecentTransactions = [...recentIncome, ...recentExpenses]
+      const uniqueMonths = new Set(
+        allRecentTransactions.map(t => {
           const date = new Date(t.transaction_date)
-          return `${date.getFullYear()}-${date.getMonth()}`
+          return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
         })
-      ).size
+      )
       
-      const monthsToAverage = Math.max(1, monthsWithData || 6)
+      const monthsCount = Math.max(1, uniqueMonths.size)
       
-      monthlyIncome = recentIncomeTotal / monthsToAverage
-      monthlyExpenses = recentExpensesTotal / monthsToAverage
+      monthlyIncome = recentIncomeTotal / monthsCount
+      monthlyExpenses = recentExpensesTotal / monthsCount
+      
+      console.log('Last 12 months calculation:', {
+        recentIncomeTotal,
+        recentExpensesTotal,
+        uniqueMonths: uniqueMonths.size,
+        monthlyIncome: Math.round(monthlyIncome),
+        monthlyExpenses: Math.round(monthlyExpenses)
+      })
     }
     
     // Gastos fijos configurados
