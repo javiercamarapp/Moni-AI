@@ -167,47 +167,24 @@ export default function FinancialJourney() {
     // Calcular el índice del nodo que corresponde exactamente a este nivel
     const nodeIndex = (level / 50) - 1;
     
-    // Usar la misma fórmula base que los nodos pero con offset adicional
+    // Usar la misma fórmula base que los nodos
     const baseY = 40 + (nodeIndex * 35);
     
     // Determinar el lado basado en el índice de la insignia en ese nivel
     const side = badgeIndexAtLevel % 2 === 0 ? 'left' : 'right';
     
-    // Espaciado vertical mayor para evitar choques
+    // Espaciado vertical para evitar choques con los nodos
     let yOffset = 0;
+    
     if (badgesAtLevel > 1) {
-      // Espaciar más entre insignias cuando hay múltiples
-      const baseSpacing = side === 'right' ? 120 : 100; // Más espacio para las de la derecha
+      // Cuando hay múltiples insignias en el mismo nivel, separarlas verticalmente
+      const baseSpacing = 120;
       yOffset = (badgeIndexAtLevel - (badgesAtLevel - 1) / 2) * baseSpacing;
     } else {
-      // Si solo hay una insignia, alternar posición con más variación
-      yOffset = (index % 2 === 0) ? -30 : 30;
-    }
-    
-    // Ajustes específicos para niveles que chocan
-    if (level === 1000) {
-      yOffset -= 50;
-    }
-    if (level === 1850) {
-      yOffset -= 70;
-    }
-    if (level === 2400) {
-      yOffset -= 50;
-    }
-    if (level === 4750) {
-      yOffset -= 50;
-    }
-    if (level === 6000) {
-      yOffset -= 50;
-    }
-    if (level === 6850) {
-      yOffset -= 50;
-    }
-    if (level === 7400) {
-      yOffset -= 50;
-    }
-    if (level === 7750) {
-      yOffset -= 50;
+      // Cuando hay una sola insignia, alternar arriba/abajo del nivel
+      // para evitar chocar directamente con el nodo
+      const alternatePattern = Math.floor(index / 2) % 2;
+      yOffset = alternatePattern === 0 ? -35 : 35;
     }
     
     return { y: baseY + yOffset, side };
