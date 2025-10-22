@@ -63,31 +63,29 @@ Deno.serve(async (req) => {
       aspirationsCount: aspirations.length
     })
 
-    const prompt = `Eres el mejor asesor financiero del mundo. Tu misión es analizar la situación financiera del usuario y motivarlo con un plan claro y realista.
+    const prompt = `Eres el mejor asesor financiero del mundo. Analiza la situación del usuario de forma ultra concisa.
 
-SITUACIÓN FINANCIERA:
-- Net Worth Actual: $${currentNetWorth.toLocaleString('es-MX')}
-- Meta Aspiracional: $${totalAspiration.toLocaleString('es-MX')}
-- Brecha: $${gap.toLocaleString('es-MX')} (${gapPercentage}%)
-
-Principales aspiraciones: ${aspirationsList}
+SITUACIÓN:
+- Actual: $${currentNetWorth.toLocaleString('es-MX')}
+- Meta: $${totalAspiration.toLocaleString('es-MX')}
+- Brecha: $${gap.toLocaleString('es-MX')}
 
 INSTRUCCIONES:
-Escribe UN SOLO mensaje motivacional y conciso que:
-1. Compare su situación actual con su meta aspiracional
-2. Sea REALISTA sobre el timeframe necesario
-3. Proporcione 3 a 4 acciones concretas para cerrar la brecha (con cifras específicas)
-4. Termine con motivación que inspire acción inmediata
+Escribe un mensaje SUPER CORTO (máximo 120 palabras) que incluya:
+
+1. Una frase sobre la comparación entre su situación actual y su meta
+2. Timeframe realista para lograrlo
+3. 3 recomendaciones concretas con cifras específicas para cerrar la brecha
+4. Una frase motivadora final
 
 REGLAS ABSOLUTAS:
-- PROHIBIDO usar asteriscos, hashtags, guiones, barras, paréntesis vacíos o símbolos de markdown
-- SOLO texto plano con saltos de línea
-- Máximo 200 palabras
-- NO dividas en secciones numeradas, escribe como un mensaje continuo y fluido
-- Incluye cifras específicas y timeframes realistas
-- Sé ULTRA conciso pero poderoso
+- NO uses asteriscos, hashtags, guiones, barras, ni símbolos de markdown
+- SOLO texto plano fluido con saltos de línea
+- Máximo 120 palabras TOTAL
+- Incluye cifras específicas (montos mensuales, porcentajes, plazos)
+- Sé directo y poderoso
 
-TONO: Motivador, directo, inspirador, como un coach financiero de élite hablando cara a cara con su cliente.`
+Escribe como si le hablaras directamente cara a cara, sin rodeos.`
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
