@@ -73,30 +73,37 @@ INFORMACIÓN DEL USUARIO:
 ASPIRACIONES DEL USUARIO:
 ${aspirationsList}
 
-FORMATO DE RESPUESTA REQUERIDO:
-Proporciona tu análisis dividido en 6 secciones numeradas. Cada sección debe comenzar con un número seguido de un punto y el título en MAYÚSCULAS, seguido del contenido.
+REGLAS DE FORMATO ESTRICTAS:
+- PROHIBIDO usar asteriscos (*)
+- PROHIBIDO usar hashtags (#)
+- PROHIBIDO usar guiones (-)
+- PROHIBIDO usar barras (/)
+- PROHIBIDO usar markdown
+- SOLO usa texto plano y saltos de línea
+- Las listas deben ser con números o letras, no con guiones o asteriscos
 
-NO uses markdown, NO uses asteriscos, NO uses hashtags, NO uses guiones para listas. Usa solo texto plano con saltos de línea.
+FORMATO DE RESPUESTA REQUERIDO:
+Proporciona tu análisis dividido en 6 secciones numeradas. Cada sección debe comenzar con un número seguido de un punto y el título en MAYÚSCULAS, seguido del contenido en texto plano.
 
 1. EVALUACIÓN REALISTA Y MOTIVADORA DE TUS METAS
-[Tu evaluación aquí, incluyendo el net worth actual de ${currentNetWorth.toLocaleString('es-MX')} pesos]
+Tu evaluación aquí, incluyendo el net worth actual de ${currentNetWorth.toLocaleString('es-MX')} pesos. Usa solo texto plano, sin símbolos especiales.
 
 2. ASPIRACIONES MÁS IMPORTANTES Y VIABLES
-[Tu análisis aquí]
+Tu análisis aquí en texto plano.
 
 3. ESTRATEGIAS CONCRETAS PARA CERRAR LA BRECHA
-[Tus estrategias aquí]
+Tus estrategias aquí en texto plano. Si necesitas hacer una lista, usa números (1, 2, 3) o letras (a, b, c).
 
 4. PLAN DE ACCIÓN PASO A PASO
-[Tu plan aquí]
+Tu plan aquí en texto plano. Usa números para los pasos.
 
 5. PRIORIZACIÓN DE ASPIRACIONES
-[Tus consejos aquí]
+Tus consejos aquí en texto plano.
 
 6. RECOMENDACIONES DE AHORRO E INVERSIÓN
-[Tus recomendaciones aquí]
+Tus recomendaciones aquí en texto plano.
 
-El tono debe ser positivo, motivador y práctico. Máximo 600 palabras en total.`
+El tono debe ser positivo, motivador y práctico. Máximo 600 palabras en total. RECUERDA: SOLO TEXTO PLANO, SIN SÍMBOLOS DE MARKDOWN.`
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',

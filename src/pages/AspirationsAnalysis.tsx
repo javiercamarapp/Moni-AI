@@ -84,15 +84,41 @@ export default function AspirationsAnalysis() {
   };
 
   const parseAnalysisIntoSections = (text: string) => {
+    // Clean markdown symbols first
+    let cleanedText = text
+      .replace(/\*\*/g, '')        // Remove bold **
+      .replace(/\*/g, '')          // Remove italic *
+      .replace(/###/g, '')         // Remove heading ###
+      .replace(/##/g, '')          // Remove heading ##
+      .replace(/#/g, '')           // Remove heading #
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')  // Remove links [text](url)
+      .replace(/`/g, '')           // Remove code ticks
+      .replace(/~/g, '')           // Remove strikethrough
+      .replace(/>/g, '')           // Remove blockquotes
+      .replace(/\|/g, '')          // Remove table pipes
+      .replace(/-{3,}/g, '')       // Remove horizontal rules
+      .replace(/_{3,}/g, '')       // Remove horizontal rules
+      .trim();
+    
     // Split by numbered sections (1., 2., 3., etc.)
     const sections: { title: string; content: string }[] = [];
-    const sectionRegex = /(\d+)\.\s+([A-ZÁÉÍÓÚÑ\s]+)\n([\s\S]*?)(?=\d+\.\s+[A-ZÁÉÍÓÚÑ]|\n*$)/g;
+    const sectionRegex = /(\d+)\.\s*([A-ZÁÉÍÓÚÑ\s]+)\n([\s\S]*?)(?=\d+\.\s*[A-ZÁÉÍÓÚÑ]|\n*$)/g;
     
     let match;
-    while ((match = sectionRegex.exec(text)) !== null) {
+    while ((match = sectionRegex.exec(cleanedText)) !== null) {
       const number = match[1];
       const title = match[2].trim();
-      const content = match[3].trim();
+      let content = match[3].trim();
+      
+      // Clean content again to be sure
+      content = content
+        .replace(/\*\*/g, '')
+        .replace(/\*/g, '')
+        .replace(/###/g, '')
+        .replace(/##/g, '')
+        .replace(/#/g, '')
+        .replace(/`/g, '')
+        .trim();
       
       sections.push({
         title: `${number}. ${title}`,
@@ -104,7 +130,7 @@ export default function AspirationsAnalysis() {
     if (sections.length === 0) {
       sections.push({
         title: "Análisis Completo",
-        content: text
+        content: cleanedText
       });
     }
     
