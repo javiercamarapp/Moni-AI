@@ -265,8 +265,11 @@ export default function FinancialJourney() {
               if (index === 0) return null;
               const prevNode = journeyNodes[index - 1];
               
-              // Solo dibujar líneas entre nodos completados
-              if (!node.isCompleted || !prevNode.isCompleted) return null;
+              // Dibujar líneas entre nodos completados O si el nodo actual está en progreso
+              const shouldDrawLine = (node.isCompleted && prevNode.isCompleted) || 
+                                    (node.isCurrent && prevNode.isCompleted);
+              
+              if (!shouldDrawLine) return null;
               
               const x1 = prevNode.position.x;
               const y1 = prevNode.position.y;
