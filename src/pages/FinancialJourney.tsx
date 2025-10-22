@@ -461,7 +461,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'bronze250' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden right-full mr-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden right-full mr-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
@@ -562,7 +562,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'silver500' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden right-full mr-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden right-full mr-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
@@ -663,7 +663,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'bronze750' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden right-full mr-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden right-full mr-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
@@ -764,7 +764,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'gold1000' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden left-full ml-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden left-full ml-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
@@ -865,7 +865,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'bronze1250' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden left-full ml-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden left-full ml-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
@@ -966,7 +966,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'silver1500' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden left-full ml-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden left-full ml-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
@@ -1067,7 +1067,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'mastery1750' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden right-full mr-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden right-full mr-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
@@ -1168,7 +1168,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'gold2000' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden left-full ml-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden left-full ml-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
@@ -1269,7 +1269,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'mastery2250' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden left-full ml-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden left-full ml-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
@@ -1370,7 +1370,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'silver2500' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden right-full mr-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden right-full mr-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
@@ -1471,7 +1471,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'mastery2750' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden right-full mr-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden right-full mr-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
@@ -1572,7 +1572,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'gold3000' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden left-full ml-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden left-full ml-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
@@ -1673,7 +1673,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'ruby3250' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden left-full ml-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden left-full ml-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
@@ -1774,7 +1774,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'silvermastery3500' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden right-full mr-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden right-full mr-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
@@ -1875,7 +1875,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'ruby3750' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden right-full mr-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden right-full mr-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
@@ -1976,7 +1976,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'ruby4250' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden left-full ml-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden left-full ml-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
@@ -2077,7 +2077,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'goldmastery4000' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
+                          border-0 w-64 max-w-[calc(100vw-40px)] animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
                         style={{
                           top: '0'
                         }}
@@ -2177,7 +2177,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'silvermastery4500' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden left-full ml-3 top-1/2 -translate-y-1/2"
                         style={{
                           top: '0'
                         }}
@@ -2277,7 +2277,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'rubymastery4750' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden left-full ml-3"
+                          border-0 w-64 max-w-[calc(100vw-60px)] animate-scale-in overflow-hidden left-full ml-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
