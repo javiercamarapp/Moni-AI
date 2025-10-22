@@ -2204,12 +2204,12 @@ export default function FinancialJourney() {
             {(() => {
               const level4750 = 4750;
               const nodeIndex = level4750 / 50;
-              const badgeY = 40 + (nodeIndex * 35) + 5; // 5px abajo del nodo
+              const badgeY = 40 + (nodeIndex * 35) - 40; // 40px arriba del nodo
               const isUnlocked = currentLevel >= level4750;
               
               return (
                 <div
-                  className={`absolute left-[10px] transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  className={`absolute right-[10px] transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
                   style={{
                     top: `${badgeY}px`,
                     transform: 'translateY(-50%)',
@@ -2245,7 +2245,7 @@ export default function FinancialJourney() {
                     {/* Tooltip al hacer hover */}
                     <div 
                       className={`
-                        absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                        absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
                         text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
                         transition-opacity duration-200 bg-red-100 text-red-700
                         shadow-md z-30
@@ -2258,7 +2258,7 @@ export default function FinancialJourney() {
                     {expandedBadge === 'rubymastery4750' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden left-full ml-3"
+                          border-0 w-64 animate-scale-in overflow-hidden right-full mr-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
