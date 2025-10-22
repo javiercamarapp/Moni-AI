@@ -90,9 +90,9 @@ export default function AspirationsAnalysis() {
     }
   };
 
-  const parseAnalysisIntoSections = (text: string) => {
-    // Clean markdown symbols first
-    let cleanedText = text
+  const cleanAnalysisText = (text: string) => {
+    // Limpiar todos los símbolos de markdown y formateo
+    return text
       .replace(/\*\*/g, '')        // Remove bold **
       .replace(/\*/g, '')          // Remove italic *
       .replace(/###/g, '')         // Remove heading ###
@@ -109,67 +109,6 @@ export default function AspirationsAnalysis() {
       .replace(/\//g, '')          // Remove forward slashes /
       .replace(/\\/g, '')          // Remove backslashes \
       .trim();
-    
-    // Split by numbered sections (1., 2., 3., etc.) - mejorado para capturar todo el contenido
-    const sections: { title: string; content: string }[] = [];
-    
-    // Encontrar todos los inicios de sección
-    const sectionStarts: { index: number; number: string; title: string }[] = [];
-    const sectionStartRegex = /^(\d+)\.\s*([A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ\s]+)$/gm;
-    
-    let match;
-    while ((match = sectionStartRegex.exec(cleanedText)) !== null) {
-      sectionStarts.push({
-        index: match.index,
-        number: match[1],
-        title: match[2].trim()
-      });
-    }
-    
-    // Extraer contenido entre secciones
-    for (let i = 0; i < sectionStarts.length; i++) {
-      const currentSection = sectionStarts[i];
-      const nextSection = sectionStarts[i + 1];
-      
-      // Calcular donde termina el título de la sección actual
-      const titleEnd = currentSection.index + currentSection.number.length + 2 + currentSection.title.length;
-      
-      // Extraer contenido desde el final del título hasta el inicio de la siguiente sección (o el final del texto)
-      const contentStart = titleEnd;
-      const contentEnd = nextSection ? nextSection.index : cleanedText.length;
-      
-      let content = cleanedText.substring(contentStart, contentEnd).trim();
-      
-      // Clean content again to be sure
-      content = content
-        .replace(/\*\*/g, '')
-        .replace(/\*/g, '')
-        .replace(/###/g, '')
-        .replace(/##/g, '')
-        .replace(/#/g, '')
-        .replace(/`/g, '')
-        .replace(/\(\)/g, '')
-        .replace(/\//g, '')
-        .replace(/\\/g, '')
-        .trim();
-      
-      sections.push({
-        title: `${currentSection.number}. ${currentSection.title}`,
-        content: content
-      });
-    }
-    
-    // If no sections found, return the whole text as one section
-    if (sections.length === 0) {
-      sections.push({
-        title: "Análisis Completo",
-        content: cleanedText
-      });
-    }
-    
-    console.log('Parsed sections:', sections.length, 'Total chars:', cleanedText.length);
-    
-    return sections;
   };
 
   const generateAnalysis = async (aspirationsData: any[], total: number) => {
@@ -649,36 +588,25 @@ export default function AspirationsAnalysis() {
           </div>
         </Card>
 
-        {/* AI Analysis */}
-        <div className="mb-4">
-          <div className="flex items-center gap-2 mb-3">
+        {/* AI Analysis - Single Card */}
+        <Card className="p-6 mb-4 bg-gradient-to-br from-purple-50 to-white backdrop-blur-sm rounded-[20px] shadow-xl border-0">
+          <div className="flex items-center gap-2 mb-4">
             <div className="bg-purple-500/10 p-2 rounded-full">
               <Sparkles className="h-5 w-5 text-purple-600" />
             </div>
-            <h3 className="text-base sm:text-lg font-bold text-foreground">Análisis e Insights</h3>
+            <h3 className="text-base sm:text-lg font-bold text-foreground">Tu Plan Financiero</h3>
           </div>
           
           {isLoadingAnalysis ? (
-            <Card className="p-6 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-              </div>
-            </Card>
-          ) : (
-            <div className="space-y-3">
-              {parseAnalysisIntoSections(analysis).map((section, index) => (
-                <Card key={index} className="p-4 bg-white/95 backdrop-blur-sm rounded-[15px] shadow-md border border-purple-100">
-                  <h4 className="text-xs sm:text-sm font-bold text-purple-700 mb-2">
-                    {section.title}
-                  </h4>
-                  <p className="text-[11px] sm:text-xs text-foreground/80 leading-relaxed whitespace-pre-line">
-                    {section.content}
-                  </p>
-                </Card>
-              ))}
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
             </div>
+          ) : (
+            <p className="text-sm sm:text-base text-foreground/90 leading-relaxed whitespace-pre-line">
+              {cleanAnalysisText(analysis)}
+            </p>
           )}
-        </div>
+        </Card>
 
         {/* Action Buttons */}
         <div className="flex flex-col gap-3 px-2">
