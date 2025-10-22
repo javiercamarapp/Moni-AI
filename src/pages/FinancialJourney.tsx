@@ -173,14 +173,15 @@ export default function FinancialJourney() {
     // Determinar el lado basado en el índice de la insignia en ese nivel
     const side = badgeIndexAtLevel % 2 === 0 ? 'left' : 'right';
     
-    // Espaciado vertical mucho mayor para evitar todos los choques
+    // Espaciado vertical mayor para evitar choques
     let yOffset = 0;
     if (badgesAtLevel > 1) {
-      // Espaciar 100px entre cada insignia cuando hay múltiples
-      yOffset = (badgeIndexAtLevel - (badgesAtLevel - 1) / 2) * 100;
+      // Espaciar más entre insignias cuando hay múltiples
+      const baseSpacing = side === 'right' ? 120 : 100; // Más espacio para las de la derecha
+      yOffset = (badgeIndexAtLevel - (badgesAtLevel - 1) / 2) * baseSpacing;
     } else {
-      // Si solo hay una insignia, desplazarla ligeramente arriba o abajo alternando
-      yOffset = (index % 2 === 0) ? -20 : 20;
+      // Si solo hay una insignia, alternar posición con más variación
+      yOffset = (index % 2 === 0) ? -30 : 30;
     }
     
     return { y: baseY + yOffset, side };
@@ -526,12 +527,12 @@ export default function FinancialJourney() {
                   const badgeUniqueId = `${badge.level}-${badge.type}-${badge.name}`;
                   
                   renderedBadges.push(
-                    <div
+                     <div
                       key={`badge-${badgeUniqueId}`}
                       className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
                       style={{
-                        [position.side]: position.side === 'left' ? '0%' : 'auto',
-                        [position.side === 'right' ? 'right' : 'left']: position.side === 'right' ? '0%' : 'auto',
+                        [position.side]: position.side === 'left' ? '10px' : 'auto',
+                        [position.side === 'right' ? 'right' : 'left']: position.side === 'right' ? '10px' : 'auto',
                         top: `${position.y}px`,
                         transform: 'translateY(-50%)',
                         zIndex: expandedBadge === badgeUniqueId ? 100 : 20
