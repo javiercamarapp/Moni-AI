@@ -57,19 +57,22 @@ export default function FinancialJourney() {
     const nodes: JourneyNode[] = [];
     
     const getNodePosition = (index: number) => {
-      // Crear un camino más vertical y serpenteante, optimizado para móvil
-      const row = Math.floor(index / 2); // Solo 2 nodos por fila para evitar colisiones en móvil
-      const col = index % 2;
+      // Crear un camino completamente aleatorio y orgánico (no uniforme)
+      const seed1 = (index * 7919) % 100;
+      const seed2 = (index * 3571) % 100;
+      const seed3 = (index * 9241) % 100;
       
-      // Alternar entre izquierda y derecha con más espacio
-      const positions = [25, 75]; // Más separación horizontal
-      const seed = (index * 7919) % 100;
-      const offsetX = (seed % 8) - 4; // Variación más sutil para evitar choques
-      const offsetY = (row * 150) + ((seed * 13) % 20); // Mayor espacio vertical
+      // Posición horizontal aleatoria pero dentro de márgenes seguros (15% - 85%)
+      const baseX = 15 + (seed1 * 0.7); // De 15% a 85%
+      const offsetX = ((seed2 % 30) - 15); // Variación adicional
+      
+      // Posición vertical más compacta (puntos mucho más cerca)
+      const baseY = index * 40; // Solo 40px entre cada nodo (muy cerca)
+      const offsetY = (seed3 % 20) - 10; // Variación sutil vertical
       
       return {
-        x: positions[col] + offsetX,
-        y: offsetY
+        x: Math.min(Math.max(baseX + offsetX, 15), 85), // Asegurar que esté dentro del rango
+        y: baseY + offsetY
       };
     };
     
@@ -224,7 +227,7 @@ export default function FinancialJourney() {
           </div>
         </Card>
 
-        <div className="relative min-h-[28000px]">
+        <div className="relative min-h-[8500px] w-full overflow-x-hidden">
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
             <defs>
               <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -238,15 +241,17 @@ export default function FinancialJourney() {
               const prevNode = journeyNodes[index - 1];
               if (!prevNode.isCompleted) return null;
               
+              // Crear curvas suaves entre nodos usando path en lugar de líneas rectas
+              const midX = (prevNode.position.x + node.position.x) / 2;
+              const midY = (prevNode.position.y + node.position.y) / 2;
+              
               return (
-                <line
+                <path
                   key={`line-${node.id}`}
-                  x1={`${prevNode.position.x}%`}
-                  y1={prevNode.position.y}
-                  x2={`${node.position.x}%`}
-                  y2={node.position.y}
+                  d={`M ${prevNode.position.x}% ${prevNode.position.y} Q ${midX}% ${midY}, ${node.position.x}% ${node.position.y}`}
                   stroke="url(#pathGradient)"
-                  strokeWidth="2"
+                  strokeWidth="3"
+                  fill="none"
                   strokeLinecap="round"
                   className="transition-all duration-500"
                 />
@@ -277,36 +282,36 @@ export default function FinancialJourney() {
                     
                     <div
                       className={`
-                        relative w-8 h-8 rounded-full flex items-center justify-center cursor-pointer
+                        relative w-7 h-7 rounded-full flex items-center justify-center cursor-pointer
                         transition-all duration-300 z-10
                         ${node.isCompleted
-                          ? 'bg-gradient-to-br from-green-400 to-green-600 shadow-lg shadow-green-400/40 hover:scale-110'
+                          ? 'bg-gradient-to-br from-green-400 to-green-600 shadow-md shadow-green-400/30 hover:scale-110'
                           : node.isCurrent
-                          ? 'bg-gradient-to-br from-green-500 to-emerald-600 shadow-xl shadow-green-500/60 scale-110 hover:scale-125'
+                          ? 'bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/50 scale-110 hover:scale-125'
                           : node.isUnlocked
-                          ? 'bg-gradient-to-br from-blue-400 to-blue-600 shadow-md shadow-blue-400/40 hover:scale-110'
+                          ? 'bg-gradient-to-br from-blue-400 to-blue-600 shadow-md shadow-blue-400/30 hover:scale-110'
                           : 'bg-white border-2 border-gray-200 shadow-sm hover:scale-105'
                         }
                       `}
                     >
                       {node.isCompleted ? (
-                        <Star className="h-4 w-4 text-white fill-white" />
+                        <Star className="h-3.5 w-3.5 text-white fill-white" />
                       ) : node.isCurrent ? (
                         <div className="relative">
-                          <Star className="h-4 w-4 text-white" />
+                          <Star className="h-3.5 w-3.5 text-white" />
                           <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-6 h-6 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                            <div className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
                           </div>
                         </div>
                       ) : node.isUnlocked ? (
-                        <Target className="h-4 w-4 text-white" />
+                        <Target className="h-3.5 w-3.5 text-white" />
                       ) : (
-                        <Lock className="h-3 w-3 text-gray-400" />
+                        <Lock className="h-2.5 w-2.5 text-gray-400" />
                       )}
                     </div>
 
                     {node.isCurrent && (
-                      <svg className="absolute inset-0 w-8 h-8 -rotate-90 pointer-events-none" viewBox="0 0 100 100">
+                      <svg className="absolute inset-0 w-7 h-7 -rotate-90 pointer-events-none" viewBox="0 0 100 100">
                         <circle
                           cx="50"
                           cy="50"
