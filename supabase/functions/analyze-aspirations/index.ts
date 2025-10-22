@@ -34,15 +34,30 @@ Deno.serve(async (req) => {
 
     // ========== OBTENER TODA LA INFORMACIÓN HISTÓRICA DEL USUARIO ==========
     
-    // 1. TRANSACCIONES - Todo el historial (límite de 10,000 para asegurar que trae todo)
-    const { data: allTransactions } = await supabase
-      .from('transactions')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('transaction_date', { ascending: false })
-      .limit(10000)
+    // 1. TRANSACCIONES - TODAS usando múltiples queries para evitar límites
+    let allTransactions: any[] = []
+    let page = 0
+    const pageSize = 1000
+    let hasMore = true
     
-    console.log('Total transactions fetched:', allTransactions?.length || 0)
+    while (hasMore) {
+      const { data: batch } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('transaction_date', { ascending: false })
+        .range(page * pageSize, (page + 1) * pageSize - 1)
+      
+      if (batch && batch.length > 0) {
+        allTransactions = [...allTransactions, ...batch]
+        page++
+        hasMore = batch.length === pageSize // Si trajo menos de pageSize, ya no hay más
+      } else {
+        hasMore = false
+      }
+    }
+    
+    console.log('Total transactions fetched:', allTransactions.length)
     
     // 2. ASSETS - Patrimonio actual
     const { data: assets } = await supabase
