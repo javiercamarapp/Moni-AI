@@ -539,7 +539,10 @@ export default function AspirationsAnalysis() {
                       boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                     }}
                   />
-                  <Legend />
+                  <Legend 
+                    wrapperStyle={{ fontSize: '10px' }}
+                    iconSize={8}
+                  />
                   <Bar dataKey="current" fill="#3b82f6" name="Actual" radius={[0, 4, 4, 0]} />
                   <Bar dataKey="aspiration" fill="#8b5cf6" name="Meta" radius={[0, 4, 4, 0]} />
                 </BarChart>
