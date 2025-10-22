@@ -349,6 +349,8 @@ export default function FinancialJourney() {
                       style={{
                         ...(!node.isUnlocked
                           ? { left: '50%', transform: 'translateX(-50%)', top: '-100px' }
+                          : node.position.y < 80
+                          ? { left: '50%', transform: 'translateX(-50%)', top: '40px' }
                           : node.position.x < 35 
                           ? { left: '40px', top: '-80px' }
                           : node.position.x > 65
