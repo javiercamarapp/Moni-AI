@@ -740,7 +740,7 @@ export default function LevelQuiz() {
 
       {/* Botón continuar fijo abajo */}
       {isAspComplete && (
-        <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 animated-wave-bg z-20">
+        <div className="fixed bottom-0 left-0 right-0 p-6 pb-8 z-20 bg-gradient-to-t from-white/95 via-white/80 to-transparent">
           <Button
             onClick={handleCompleteAsp}
             disabled={isSavingAsp}
