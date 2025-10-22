@@ -6,8 +6,8 @@ import { Star, Lock, Trophy, TrendingUp, Target, ArrowLeft } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client";
 import { useNetWorth } from "@/hooks/useNetWorth";
 import { Progress } from "@/components/ui/progress";
-import treasureChest from "@/assets/treasure-chest.png";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
+import EarthPlanet3D from "@/components/EarthPlanet3D";
 
 interface JourneyNode {
   id: number;
@@ -404,76 +404,26 @@ export default function FinancialJourney() {
                       <div className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-30" />
                     )}
                     
-                    {/* Último nivel especial con cofre de tesoro */}
+                    {/* Último nivel especial con Planeta Tierra 3D */}
                     {node.id === 201 ? (
                       <div className="relative">
-                        <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-40 scale-150" />
+                        <div className="absolute inset-0 rounded-full bg-blue-400 animate-ping opacity-40 scale-150" />
                         <div
                           className="relative w-32 h-32 flex items-center justify-center cursor-pointer
                             hover:scale-110 transition-all duration-300"
+                          style={{ 
+                            filter: 'drop-shadow(0 10px 30px rgba(59, 130, 246, 0.6))'
+                          }}
                         >
-                          {/* SVG Cofre Animado */}
-                          <svg 
-                            viewBox="0 0 120 120" 
-                            className="w-full h-full animate-bounce"
-                            style={{ 
-                              filter: 'drop-shadow(0 10px 30px rgba(234, 179, 8, 0.6))',
-                              animationDuration: '2s'
-                            }}
-                          >
-                            {/* Base del cofre */}
-                            <rect x="20" y="70" width="80" height="40" rx="4" fill="#8B4513" stroke="#654321" strokeWidth="2">
-                              <animate attributeName="opacity" values="1;0.95;1" dur="2s" repeatCount="indefinite" />
-                            </rect>
-                            
-                            {/* Tapa del cofre */}
-                            <path d="M 20 70 Q 60 50 100 70 L 100 60 Q 60 40 20 60 Z" fill="#A0522D" stroke="#654321" strokeWidth="2">
-                              <animate attributeName="d" 
-                                values="M 20 70 Q 60 50 100 70 L 100 60 Q 60 40 20 60 Z;
-                                        M 20 70 Q 60 48 100 70 L 100 60 Q 60 38 20 60 Z;
-                                        M 20 70 Q 60 50 100 70 L 100 60 Q 60 40 20 60 Z" 
-                                dur="3s" 
-                                repeatCount="indefinite" />
-                            </path>
-                            
-                            {/* Cerradura dorada */}
-                            <circle cx="60" cy="75" r="6" fill="#FFD700" stroke="#FFA500" strokeWidth="1.5">
-                              <animate attributeName="fill" values="#FFD700;#FFC700;#FFD700" dur="2s" repeatCount="indefinite" />
-                            </circle>
-                            <rect x="58" y="78" width="4" height="8" rx="1" fill="#FFD700" stroke="#FFA500" strokeWidth="1">
-                              <animate attributeName="fill" values="#FFD700;#FFC700;#FFD700" dur="2s" repeatCount="indefinite" />
-                            </rect>
-                            
-                            {/* Monedas doradas brillantes */}
-                            <circle cx="45" cy="55" r="4" fill="#FFD700" opacity="0.9">
-                              <animate attributeName="cy" values="55;50;55" dur="2.5s" repeatCount="indefinite" />
-                              <animate attributeName="opacity" values="0.9;1;0.9" dur="2.5s" repeatCount="indefinite" />
-                            </circle>
-                            <circle cx="60" cy="50" r="5" fill="#FFA500" opacity="0.9">
-                              <animate attributeName="cy" values="50;45;50" dur="2s" repeatCount="indefinite" />
-                              <animate attributeName="opacity" values="0.9;1;0.9" dur="2s" repeatCount="indefinite" />
-                            </circle>
-                            <circle cx="75" cy="55" r="4" fill="#FFD700" opacity="0.9">
-                              <animate attributeName="cy" values="55;50;55" dur="2.2s" repeatCount="indefinite" />
-                              <animate attributeName="opacity" values="0.9;1;0.9" dur="2.2s" repeatCount="indefinite" />
-                            </circle>
-                            
-                            {/* Destellos de brillo */}
-                            <circle cx="35" cy="45" r="2" fill="#FFF" opacity="0.8">
-                              <animate attributeName="opacity" values="0.8;0;0.8" dur="1.5s" repeatCount="indefinite" />
-                            </circle>
-                            <circle cx="85" cy="48" r="2" fill="#FFF" opacity="0.8">
-                              <animate attributeName="opacity" values="0;0.8;0" dur="1.5s" repeatCount="indefinite" />
-                            </circle>
-                          </svg>
+                          <EarthPlanet3D />
                         </div>
-                        {/* Monedas/galones decorativos flotantes */}
-                        <div className="absolute -top-4 -right-4 w-8 h-8 rounded-full bg-gradient-to-br from-yellow-300 to-yellow-500 animate-bounce shadow-lg shadow-yellow-400/50 flex items-center justify-center text-white font-bold text-xs" style={{ animationDelay: '0s', animationDuration: '1.5s' }}>$</div>
-                        <div className="absolute -top-6 -left-4 w-6 h-6 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 animate-bounce shadow-lg shadow-amber-500/50" style={{ animationDelay: '0.2s', animationDuration: '1.8s' }} />
-                        <div className="absolute -bottom-4 -right-6 w-7 h-7 rounded-full bg-gradient-to-br from-yellow-200 to-yellow-400 animate-bounce shadow-lg shadow-yellow-300/50 flex items-center justify-center text-yellow-700 font-bold text-xs" style={{ animationDelay: '0.4s', animationDuration: '2s' }}>$</div>
-                        <div className="absolute -bottom-6 -left-2 w-5 h-5 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 animate-bounce shadow-lg shadow-yellow-500/50" style={{ animationDelay: '0.6s', animationDuration: '1.6s' }} />
-                        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-8 text-yellow-400 animate-pulse text-2xl">✨</div>
-                        <div className="absolute bottom-0 right-0 text-green-400 animate-pulse text-xl" style={{ animationDelay: '0.5s' }}>💰</div>
+                        {/* Estrellas decorativas flotantes */}
+                        <div className="absolute -top-4 -right-4 w-8 h-8 rounded-full bg-gradient-to-br from-blue-300 to-blue-500 animate-bounce shadow-lg shadow-blue-400/50 flex items-center justify-center text-white text-xl" style={{ animationDelay: '0s', animationDuration: '1.5s' }}>🌟</div>
+                        <div className="absolute -top-6 -left-4 w-6 h-6 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 animate-bounce shadow-lg shadow-purple-500/50 flex items-center justify-center text-white text-sm" style={{ animationDelay: '0.2s', animationDuration: '1.8s' }}>✨</div>
+                        <div className="absolute -bottom-4 -right-6 w-7 h-7 rounded-full bg-gradient-to-br from-cyan-200 to-cyan-400 animate-bounce shadow-lg shadow-cyan-300/50 flex items-center justify-center text-white text-base" style={{ animationDelay: '0.4s', animationDuration: '2s' }}>⭐</div>
+                        <div className="absolute -bottom-6 -left-2 w-5 h-5 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 animate-bounce shadow-lg shadow-indigo-500/50 flex items-center justify-center text-white text-xs" style={{ animationDelay: '0.6s', animationDuration: '1.6s' }}>💫</div>
+                        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-8 text-blue-400 animate-pulse text-2xl">🌍</div>
+                        <div className="absolute bottom-0 right-0 text-green-400 animate-pulse text-xl" style={{ animationDelay: '0.5s' }}>🌎</div>
                       </div>
                     ) : (
                       <div
