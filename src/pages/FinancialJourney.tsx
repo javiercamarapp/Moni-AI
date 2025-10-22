@@ -28,6 +28,29 @@ export default function FinancialJourney() {
 
   useEffect(() => {
     fetchAspirations();
+    
+    // Add electric animation keyframes
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes electricFlow {
+        0% {
+          stroke-dashoffset: 0;
+          filter: drop-shadow(0 0 5px #00ff41);
+        }
+        50% {
+          filter: drop-shadow(0 0 15px #39ff14);
+        }
+        100% {
+          stroke-dashoffset: -15;
+          filter: drop-shadow(0 0 5px #00ff41);
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
   }, []);
 
   const fetchAspirations = async () => {
@@ -235,6 +258,18 @@ export default function FinancialJourney() {
                 <stop offset="50%" stopColor="rgb(167, 139, 250)" />
                 <stop offset="100%" stopColor="rgb(34, 197, 94)" />
               </linearGradient>
+              <linearGradient id="electricGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#00ff41" />
+                <stop offset="50%" stopColor="#39ff14" />
+                <stop offset="100%" stopColor="#00ff41" />
+              </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
             </defs>
             {journeyNodes.map((node, index) => {
               if (index === 0 || !node.isCompleted) return null;
@@ -246,15 +281,21 @@ export default function FinancialJourney() {
               const midY = (prevNode.position.y + node.position.y) / 2;
               
               return (
-                <path
-                  key={`line-${node.id}`}
-                  d={`M ${prevNode.position.x}% ${prevNode.position.y} Q ${midX}% ${midY}, ${node.position.x}% ${node.position.y}`}
-                  stroke="url(#pathGradient)"
-                  strokeWidth="3"
-                  fill="none"
-                  strokeLinecap="round"
-                  className="transition-all duration-500"
-                />
+                <g key={`line-${node.id}`}>
+                  <path
+                    d={`M ${prevNode.position.x}% ${prevNode.position.y} Q ${midX}% ${midY}, ${node.position.x}% ${node.position.y}`}
+                    stroke="url(#electricGreen)"
+                    strokeWidth="4"
+                    fill="none"
+                    strokeLinecap="round"
+                    filter="url(#glow)"
+                    strokeDasharray="10 5"
+                    className="transition-all duration-500"
+                    style={{
+                      animation: 'electricFlow 1.5s linear infinite'
+                    }}
+                  />
+                </g>
               );
             })}
           </svg>
