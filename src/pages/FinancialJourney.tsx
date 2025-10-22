@@ -167,8 +167,8 @@ export default function FinancialJourney() {
     // Calcular el índice del nodo que corresponde exactamente a este nivel
     const nodeIndex = (level / 50) - 1;
     
-    // Usar la misma fórmula base que los nodos pero con offset adicional
-    const baseY = 40 + (nodeIndex * 35);
+    // Usar la misma fórmula base que los nodos pero desplazando más arriba
+    const baseY = 40 + (nodeIndex * 35) - 30; // Mover 30px más arriba
     
     // Determinar el lado basado en el índice de la insignia en ese nivel
     const side = badgeIndexAtLevel % 2 === 0 ? 'left' : 'right';
@@ -178,9 +178,6 @@ export default function FinancialJourney() {
     if (badgesAtLevel > 1) {
       // Espaciar 100px entre cada insignia cuando hay múltiples
       yOffset = (badgeIndexAtLevel - (badgesAtLevel - 1) / 2) * 100;
-    } else {
-      // Si solo hay una insignia, desplazarla ligeramente arriba o abajo alternando
-      yOffset = (index % 2 === 0) ? -20 : 20;
     }
     
     return { y: baseY + yOffset, side };
