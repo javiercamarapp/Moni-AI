@@ -98,6 +98,9 @@ export default function AspirationsAnalysis() {
       .replace(/\|/g, '')          // Remove table pipes
       .replace(/-{3,}/g, '')       // Remove horizontal rules
       .replace(/_{3,}/g, '')       // Remove horizontal rules
+      .replace(/\(\)/g, '')        // Remove empty parentheses ()
+      .replace(/\//g, '')          // Remove forward slashes /
+      .replace(/\\/g, '')          // Remove backslashes \
       .trim();
     
     // Split by numbered sections (1., 2., 3., etc.)
@@ -118,6 +121,9 @@ export default function AspirationsAnalysis() {
         .replace(/##/g, '')
         .replace(/#/g, '')
         .replace(/`/g, '')
+        .replace(/\(\)/g, '')
+        .replace(/\//g, '')
+        .replace(/\\/g, '')
         .trim();
       
       sections.push({
