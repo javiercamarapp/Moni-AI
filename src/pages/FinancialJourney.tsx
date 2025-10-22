@@ -57,15 +57,15 @@ export default function FinancialJourney() {
     const nodes: JourneyNode[] = [];
     
     const getNodePosition = (index: number) => {
-      // Crear un camino más vertical y serpenteante, inspirado en mapas de juegos
-      const row = Math.floor(index / 3); // 3 nodos por "sección"
-      const col = index % 3;
+      // Crear un camino más vertical y serpenteante, optimizado para móvil
+      const row = Math.floor(index / 2); // Solo 2 nodos por fila para evitar colisiones en móvil
+      const col = index % 2;
       
-      // Alternar entre izquierda, centro y derecha para crear serpenteo
-      const positions = [20, 50, 80]; // Porcentajes de posición horizontal
+      // Alternar entre izquierda y derecha con más espacio
+      const positions = [25, 75]; // Más separación horizontal
       const seed = (index * 7919) % 100;
-      const offsetX = (seed % 15) - 7; // Variación más sutil
-      const offsetY = (row * 100) + ((seed * 13) % 30); // Mayor espacio vertical
+      const offsetX = (seed % 8) - 4; // Variación más sutil para evitar choques
+      const offsetY = (row * 150) + ((seed * 13) % 20); // Mayor espacio vertical
       
       return {
         x: positions[col] + offsetX,
@@ -224,7 +224,7 @@ export default function FinancialJourney() {
           </div>
         </Card>
 
-        <div className="relative min-h-[6000px]">
+        <div className="relative min-h-[28000px]">
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
             <defs>
               <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -246,7 +246,7 @@ export default function FinancialJourney() {
                   x2={`${node.position.x}%`}
                   y2={node.position.y}
                   stroke="url(#pathGradient)"
-                  strokeWidth="3"
+                  strokeWidth="2"
                   strokeLinecap="round"
                   className="transition-all duration-500"
                 />
@@ -254,7 +254,7 @@ export default function FinancialJourney() {
             })}
           </svg>
 
-          <div className="relative z-10">
+          <div className="relative z-10 px-2">
             {journeyNodes.map((node) => (
               <div 
                 key={node.id}
@@ -262,7 +262,8 @@ export default function FinancialJourney() {
                 style={{
                   left: `${node.position.x}%`,
                   top: `${node.position.y}px`,
-                  transform: 'translate(-50%, -50%)'
+                  transform: 'translate(-50%, -50%)',
+                  minWidth: '80px' // Asegurar espacio mínimo
                 }}
               >
                 <div className="flex flex-col items-center">
