@@ -25,7 +25,7 @@ export default function FinancialJourney() {
   const [totalAspiration, setTotalAspiration] = useState(0);
   const [nodes, setNodes] = useState<JourneyNode[]>([]);
   const [expandedNode, setExpandedNode] = useState<number | null>(null);
-  const [expandedBadge, setExpandedBadge] = useState<boolean>(false);
+  const [expandedBadge, setExpandedBadge] = useState<string | null>(null);
   const netWorthData = useNetWorth("1Y");
   const currentNetWorth = netWorthData.data?.currentNetWorth || 0;
 
@@ -397,14 +397,14 @@ export default function FinancialJourney() {
                   style={{
                     top: `${badgeY}px`,
                     transform: 'translateY(-50%)',
-                    zIndex: expandedBadge ? 100 : 20
+                    zIndex: expandedBadge === 'bronze250' ? 100 : 20
                   }}
                 >
                   <div className="flex flex-col items-center gap-0.5 relative">
                     <button
                       onClick={() => {
                         if (isUnlocked) {
-                          setExpandedBadge(!expandedBadge);
+                          setExpandedBadge(expandedBadge === 'bronze250' ? null : 'bronze250');
                           setExpandedNode(null);
                         }
                       }}
@@ -439,7 +439,7 @@ export default function FinancialJourney() {
                     </div>
 
                     {/* Card de descripción expandida */}
-                    {expandedBadge && isUnlocked && (
+                    {expandedBadge === 'bronze250' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
                           border-0 w-64 animate-scale-in overflow-hidden right-full mr-3"
@@ -453,7 +453,7 @@ export default function FinancialJourney() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              setExpandedBadge(false);
+                              setExpandedBadge(null);
                             }}
                             className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors z-10"
                           >
@@ -476,6 +476,107 @@ export default function FinancialJourney() {
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
                             Insigna de Bronce 250 puntos
+                          </p>
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Insignia de Plata 500 */}
+            {(() => {
+              const level500 = 500;
+              const nodeIndex = level500 / 50;
+              const badgeY = 40 + (nodeIndex * 35) + 45; // 45px abajo del nodo
+              const isUnlocked = currentLevel >= level500;
+              
+              return (
+                <div
+                  className={`absolute right-[10px] transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  style={{
+                    top: `${badgeY}px`,
+                    transform: 'translateY(-50%)',
+                    zIndex: expandedBadge === 'silver500' ? 100 : 20
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-0.5 relative">
+                    <button
+                      onClick={() => {
+                        if (isUnlocked) {
+                          setExpandedBadge(expandedBadge === 'silver500' ? null : 'silver500');
+                          setExpandedNode(null);
+                        }
+                      }}
+                      disabled={!isUnlocked}
+                      className="focus:outline-none relative"
+                    >
+                      <div
+                        className={`
+                          relative w-11 h-11 rounded-full flex items-center justify-center
+                          transition-all duration-300 border-2 border-white cursor-pointer
+                          bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 shadow-lg
+                          ${isUnlocked ? 'shadow-lg hover:scale-110' : 'grayscale cursor-not-allowed opacity-50'}
+                        `}
+                      >
+                        {isUnlocked && (
+                          <div className="absolute inset-0 rounded-full bg-gray-400 animate-ping opacity-20" />
+                        )}
+                        <Award className="w-6 h-6 text-white relative z-10 drop-shadow-md" />
+                      </div>
+                    </button>
+                    
+                    {/* Tooltip al hacer hover */}
+                    <div 
+                      className={`
+                        absolute top-full mt-1 opacity-0 group-hover:opacity-100 pointer-events-none
+                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                        transition-opacity duration-200 bg-gray-100 text-gray-600
+                        shadow-md z-30
+                      `}
+                    >
+                      Plata 500
+                    </div>
+
+                    {/* Card de descripción expandida */}
+                    {expandedBadge === 'silver500' && isUnlocked && (
+                      <Card 
+                        className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
+                          border-0 w-64 animate-scale-in overflow-hidden right-full mr-3"
+                        style={{
+                          top: '50%',
+                          transform: 'translateY(-50%)'
+                        }}
+                      >
+                        <GlowingEffect disabled={false} spread={20} />
+                        <div className="relative p-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedBadge(null);
+                            }}
+                            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors z-10"
+                          >
+                            ✕
+                          </button>
+                          
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500">
+                              <Award className="w-6 h-6 text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-bold text-sm text-gray-600 truncate">
+                                Insigna de Plata
+                              </h3>
+                              <p className="text-[10px] text-muted-foreground">
+                                500 puntos
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <p className="text-xs text-foreground/80 leading-relaxed">
+                            Insigna de Plata 500 puntos
                           </p>
                         </div>
                       </Card>
