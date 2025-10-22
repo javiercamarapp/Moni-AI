@@ -54,108 +54,27 @@ export default function FinancialJourney() {
   const currentLevel = totalAspiration > 0 ? Math.floor((currentNetWorth / totalAspiration) * 2500) : 0;
   const targetLevel = 2500;
 
-  // Definir los nodos del camino financiero (hitos importantes)
-  const journeyNodes: JourneyNode[] = [
-    {
-      id: 1,
-      title: "Inicio del Camino",
-      description: "Nivel 0 - Primeros pasos",
-      requiredProgress: 0,
-      isUnlocked: true,
-      isCurrent: currentProgress < 10,
-      isCompleted: currentProgress >= 10
-    },
-    {
-      id: 2,
-      title: "Nivel 250",
-      description: "10% de la meta alcanzado",
-      requiredProgress: 10,
-      isUnlocked: currentProgress >= 10,
-      isCurrent: currentProgress >= 10 && currentProgress < 20,
-      isCompleted: currentProgress >= 20
-    },
-    {
-      id: 3,
-      title: "Nivel 500",
-      description: "20% de la meta alcanzado",
-      requiredProgress: 20,
-      isUnlocked: currentProgress >= 20,
-      isCurrent: currentProgress >= 20 && currentProgress < 30,
-      isCompleted: currentProgress >= 30
-    },
-    {
-      id: 4,
-      title: "Nivel 750",
-      description: "30% de la meta alcanzado",
-      requiredProgress: 30,
-      isUnlocked: currentProgress >= 30,
-      isCurrent: currentProgress >= 30 && currentProgress < 40,
-      isCompleted: currentProgress >= 40
-    },
-    {
-      id: 5,
-      title: "Nivel 1000",
-      description: "40% de la meta alcanzado",
-      requiredProgress: 40,
-      isUnlocked: currentProgress >= 40,
-      isCurrent: currentProgress >= 40 && currentProgress < 50,
-      isCompleted: currentProgress >= 50
-    },
-    {
-      id: 6,
-      title: "Nivel 1250",
-      description: "50% - Medio camino",
-      requiredProgress: 50,
-      isUnlocked: currentProgress >= 50,
-      isCurrent: currentProgress >= 50 && currentProgress < 60,
-      isCompleted: currentProgress >= 60
-    },
-    {
-      id: 7,
-      title: "Nivel 1500",
-      description: "60% de la meta alcanzado",
-      requiredProgress: 60,
-      isUnlocked: currentProgress >= 60,
-      isCurrent: currentProgress >= 60 && currentProgress < 70,
-      isCompleted: currentProgress >= 70
-    },
-    {
-      id: 8,
-      title: "Nivel 1750",
-      description: "70% de la meta alcanzado",
-      requiredProgress: 70,
-      isUnlocked: currentProgress >= 70,
-      isCurrent: currentProgress >= 70 && currentProgress < 80,
-      isCompleted: currentProgress >= 80
-    },
-    {
-      id: 9,
-      title: "Nivel 2000",
-      description: "80% de la meta alcanzado",
-      requiredProgress: 80,
-      isUnlocked: currentProgress >= 80,
-      isCurrent: currentProgress >= 80 && currentProgress < 90,
-      isCompleted: currentProgress >= 90
-    },
-    {
-      id: 10,
-      title: "Nivel 2250",
-      description: "90% - Casi en la meta",
-      requiredProgress: 90,
-      isUnlocked: currentProgress >= 90,
-      isCurrent: currentProgress >= 90 && currentProgress < 100,
-      isCompleted: currentProgress >= 100
-    },
-    {
-      id: 11,
-      title: "Nivel 2500",
-      description: "¡Libertad Financiera!",
-      requiredProgress: 100,
-      isUnlocked: currentProgress >= 100,
-      isCurrent: currentProgress >= 100,
-      isCompleted: false
+  // Generar nodos cada 0.5% (200 nodos en total para cubrir del 0% al 100%)
+  const generateNodes = () => {
+    const nodes: JourneyNode[] = [];
+    for (let i = 0; i <= 200; i++) {
+      const progressPercent = i * 0.5;
+      const levelNumber = Math.floor((progressPercent / 100) * 2500);
+      
+      nodes.push({
+        id: i + 1,
+        title: `Nivel ${levelNumber}`,
+        description: `${progressPercent.toFixed(1)}% de la meta`,
+        requiredProgress: progressPercent,
+        isUnlocked: currentProgress >= progressPercent,
+        isCurrent: currentProgress >= progressPercent && currentProgress < (progressPercent + 0.5),
+        isCompleted: currentProgress >= (progressPercent + 0.5)
+      });
     }
-  ];
+    return nodes;
+  };
+
+  const journeyNodes = generateNodes();
 
   return (
     <div className="min-h-screen animated-wave-bg pb-4">
