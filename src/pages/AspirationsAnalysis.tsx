@@ -358,13 +358,13 @@ export default function AspirationsAnalysis() {
                   <tr key={index} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
                     <td className="py-3 px-2 font-medium text-foreground">{item.category}</td>
                     <td className="py-3 px-2 text-right text-blue-600 font-semibold">
-                      ${item.current >= 10000000 
+                      ${item.current >= 1000000 
                         ? `${(item.current / 1000000).toFixed(1)}M` 
                         : item.current.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                       }
                     </td>
                     <td className="py-3 px-2 text-right text-purple-600 font-semibold">
-                      ${item.aspiration >= 10000000 
+                      ${item.aspiration >= 1000000 
                         ? `${(item.aspiration / 1000000).toFixed(1)}M` 
                         : item.aspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                       }
@@ -372,7 +372,7 @@ export default function AspirationsAnalysis() {
                     <td className="py-3 px-2 text-right">
                       <div className="flex flex-col items-end gap-1">
                         <span className="text-orange-600 font-bold">
-                          ${item.gap >= 10000000 
+                          ${item.gap >= 1000000 
                             ? `${(item.gap / 1000000).toFixed(1)}M` 
                             : item.gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                           }
@@ -389,19 +389,19 @@ export default function AspirationsAnalysis() {
                 <tr className="bg-slate-50 font-bold">
                   <td className="py-3 px-2 text-foreground">TOTAL</td>
                   <td className="py-3 px-2 text-right text-blue-600">
-                    ${currentNetWorth >= 10000000 
+                    ${currentNetWorth >= 1000000 
                       ? `${(currentNetWorth / 1000000).toFixed(1)}M` 
                       : currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                     }
                   </td>
                   <td className="py-3 px-2 text-right text-purple-600">
-                    ${totalAspiration >= 10000000 
+                    ${totalAspiration >= 1000000 
                       ? `${(totalAspiration / 1000000).toFixed(1)}M` 
                       : totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                     }
                   </td>
                   <td className="py-3 px-2 text-right text-orange-600">
-                    ${gap >= 10000000 
+                    ${gap >= 1000000 
                       ? `${(gap / 1000000).toFixed(1)}M` 
                       : gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                     }
@@ -416,6 +416,55 @@ export default function AspirationsAnalysis() {
             <p className="text-xs text-muted-foreground">
               <span className="font-semibold">Nota:</span> Los valores actuales muestran el neto (activos - pasivos relacionados). Por ejemplo: Propiedades - Hipoteca = Equity en propiedades.
             </p>
+          </div>
+
+          {/* Gráfica de Barras Comparativa */}
+          <div className="mt-6">
+            <h4 className="text-sm font-bold text-foreground mb-3">Visualización Comparativa</h4>
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart 
+                  data={comparativeData} 
+                  layout="vertical"
+                  margin={{ top: 5, right: 20, left: 80, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis 
+                    type="number"
+                    tick={{ fontSize: 11 }}
+                    tickFormatter={(value) => 
+                      value >= 1000000 
+                        ? `${(value / 1000000).toFixed(1)}M` 
+                        : value >= 1000 
+                          ? `${(value / 1000).toFixed(0)}k`
+                          : value.toString()
+                    }
+                  />
+                  <YAxis 
+                    type="category" 
+                    dataKey="category" 
+                    width={75}
+                    tick={{ fontSize: 10 }}
+                  />
+                  <Tooltip 
+                    formatter={(value: number) => 
+                      value >= 1000000 
+                        ? `$${(value / 1000000).toFixed(1)}M` 
+                        : `$${value.toLocaleString('es-MX')}`
+                    }
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      border: 'none',
+                      borderRadius: '12px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    }}
+                  />
+                  <Legend />
+                  <Bar dataKey="current" fill="#3b82f6" name="Actual" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="aspiration" fill="#8b5cf6" name="Meta" radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </Card>
 
