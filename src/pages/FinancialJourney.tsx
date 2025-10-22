@@ -248,26 +248,14 @@ export default function FinancialJourney() {
         <div className="relative min-h-[7200px] w-full overflow-x-hidden pb-20 pt-2">
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
             <defs>
-              <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="rgb(96, 165, 250)" />
-                <stop offset="50%" stopColor="rgb(167, 139, 250)" />
-                <stop offset="100%" stopColor="rgb(34, 197, 94)" />
-              </linearGradient>
-              <linearGradient id="electricGreen" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#10b981">
-                  <animate attributeName="stop-color" values="#10b981;#22c55e;#10b981" dur="2s" repeatCount="indefinite"/>
-                </stop>
-                <stop offset="50%" stopColor="#22c55e">
-                  <animate attributeName="stop-color" values="#22c55e;#34d399;#22c55e" dur="2s" repeatCount="indefinite"/>
-                </stop>
-                <stop offset="100%" stopColor="#10b981">
-                  <animate attributeName="stop-color" values="#10b981;#22c55e;#10b981" dur="2s" repeatCount="indefinite"/>
-                </stop>
+              <linearGradient id="electricGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#10b981" />
+                <stop offset="50%" stopColor="#22c55e" />
+                <stop offset="100%" stopColor="#34d399" />
               </linearGradient>
               <filter id="glow">
-                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
                 <feMerge>
-                  <feMergeNode in="coloredBlur"/>
                   <feMergeNode in="coloredBlur"/>
                   <feMergeNode in="SourceGraphic"/>
                 </feMerge>
@@ -277,36 +265,27 @@ export default function FinancialJourney() {
               if (index === 0) return null;
               const prevNode = journeyNodes[index - 1];
               
-              // Crear curvas suaves entre nodos
-              const midX = (prevNode.position.x + node.position.x) / 2;
-              const midY = (prevNode.position.y + node.position.y) / 2;
+              // Solo dibujar líneas entre nodos completados
+              if (!node.isCompleted || !prevNode.isCompleted) return null;
               
-              const isCompleted = node.isCompleted && prevNode.isCompleted;
+              const x1 = prevNode.position.x;
+              const y1 = prevNode.position.y;
+              const x2 = node.position.x;
+              const y2 = node.position.y;
               
               return (
-                <path
+                <line
                   key={`line-${node.id}`}
-                  d={`M ${prevNode.position.x}% ${prevNode.position.y} Q ${midX}% ${midY}, ${node.position.x}% ${node.position.y}`}
-                  stroke={isCompleted ? "url(#electricGreen)" : "url(#pathGradient)"}
-                  strokeWidth={isCompleted ? "6" : "3"}
-                  fill="none"
+                  x1={`${x1}%`}
+                  y1={y1}
+                  x2={`${x2}%`}
+                  y2={y2}
+                  stroke="url(#electricGreen)"
+                  strokeWidth="5"
                   strokeLinecap="round"
-                  filter={isCompleted ? "url(#glow)" : "none"}
-                  strokeDasharray={isCompleted ? "20 10" : "0"}
-                  className="transition-all duration-500"
-                  style={isCompleted ? {
-                    animation: 'electricPulse 1.5s ease-in-out infinite'
-                  } : {}}
-                >
-                  {isCompleted && (
-                    <animate 
-                      attributeName="stroke-dashoffset" 
-                      values="0;-30;0" 
-                      dur="2s" 
-                      repeatCount="indefinite"
-                    />
-                  )}
-                </path>
+                  filter="url(#glow)"
+                  className="animate-pulse"
+                />
               );
             })}
           </svg>
