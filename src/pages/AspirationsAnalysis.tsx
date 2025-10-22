@@ -632,13 +632,6 @@ export default function AspirationsAnalysis() {
           >
             Ver Mi Camino Financiero
           </Button>
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/dashboard")}
-            className="w-full h-12 text-foreground/60 hover:text-foreground hover:bg-white/50 rounded-[20px]"
-          >
-            Ir al Dashboard
-          </Button>
         </div>
       </div>
     </div>
