@@ -67,7 +67,7 @@ export default function FinancialJourney() {
       const offsetX = ((seed2 % 20) - 10); // Variación adicional
       
       // Posición vertical más comprimida
-      const baseY = 100 + (index * 35); // Reducido de 60 a 35 para menos altura
+      const baseY = 40 + (index * 35); // Reducido a 40 para estar más cerca del recuadro
       const offsetY = (seed3 % 15) - 7; // Variación sutil vertical
       
       return {
@@ -227,7 +227,7 @@ export default function FinancialJourney() {
           </div>
         </Card>
 
-        <div className="relative min-h-[7200px] w-full overflow-x-hidden pb-20 pt-4">
+        <div className="relative min-h-[7200px] w-full overflow-x-hidden pb-20 pt-2">
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
             <defs>
               <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
