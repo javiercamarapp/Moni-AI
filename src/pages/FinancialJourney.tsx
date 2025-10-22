@@ -6,6 +6,7 @@ import { Star, Lock, Trophy, TrendingUp, Target } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNetWorth } from "@/hooks/useNetWorth";
 import { Progress } from "@/components/ui/progress";
+import treasureChest from "@/assets/treasure-chest.png";
 
 interface JourneyNode {
   id: number;
@@ -351,25 +352,31 @@ export default function FinancialJourney() {
                       <div className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-30" />
                     )}
                     
-                    {/* Último nivel especial con mina de oro */}
+                    {/* Último nivel especial con cofre de tesoro */}
                     {node.id === 201 ? (
                       <div className="relative">
-                        <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-40" />
+                        <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-40 scale-150" />
                         <div
-                          className="relative w-20 h-20 rounded-full flex items-center justify-center cursor-pointer
-                            bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 shadow-2xl shadow-yellow-500/60
-                            hover:scale-110 transition-all duration-300 animate-pulse border-4 border-yellow-300"
+                          className="relative w-32 h-32 flex items-center justify-center cursor-pointer
+                            hover:scale-110 transition-all duration-300"
                         >
-                          <div className="text-center">
-                            <Trophy className="h-10 w-10 text-white mb-1 mx-auto" />
-                            <div className="text-xs font-bold text-white">LIBERTAD</div>
-                          </div>
+                          <img 
+                            src={treasureChest} 
+                            alt="Cofre del Tesoro - Libertad Financiera" 
+                            className="w-full h-full object-contain animate-bounce"
+                            style={{ 
+                              filter: 'drop-shadow(0 10px 30px rgba(234, 179, 8, 0.6))',
+                              animationDuration: '2s'
+                            }}
+                          />
                         </div>
-                        {/* Monedas/galones decorativos */}
-                        <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-yellow-400 animate-bounce" style={{ animationDelay: '0s' }} />
-                        <div className="absolute -top-3 -left-2 w-5 h-5 rounded-full bg-amber-500 animate-bounce" style={{ animationDelay: '0.2s' }} />
-                        <div className="absolute -bottom-2 -right-3 w-5 h-5 rounded-full bg-yellow-300 animate-bounce" style={{ animationDelay: '0.4s' }} />
-                        <div className="absolute -bottom-3 -left-1 w-4 h-4 rounded-full bg-yellow-500 animate-bounce" style={{ animationDelay: '0.6s' }} />
+                        {/* Monedas/galones decorativos flotantes */}
+                        <div className="absolute -top-4 -right-4 w-8 h-8 rounded-full bg-yellow-400 animate-bounce shadow-lg shadow-yellow-400/50" style={{ animationDelay: '0s', animationDuration: '1.5s' }} />
+                        <div className="absolute -top-6 -left-4 w-6 h-6 rounded-full bg-amber-500 animate-bounce shadow-lg shadow-amber-500/50" style={{ animationDelay: '0.2s', animationDuration: '1.8s' }} />
+                        <div className="absolute -bottom-4 -right-6 w-7 h-7 rounded-full bg-yellow-300 animate-bounce shadow-lg shadow-yellow-300/50" style={{ animationDelay: '0.4s', animationDuration: '2s' }} />
+                        <div className="absolute -bottom-6 -left-2 w-5 h-5 rounded-full bg-yellow-500 animate-bounce shadow-lg shadow-yellow-500/50" style={{ animationDelay: '0.6s', animationDuration: '1.6s' }} />
+                        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-8 text-yellow-400 animate-pulse text-2xl">✨</div>
+                        <div className="absolute bottom-0 right-0 text-yellow-300 animate-pulse text-xl" style={{ animationDelay: '0.5s' }}>💎</div>
                       </div>
                     ) : (
                       <div
