@@ -165,7 +165,8 @@ export default function FinancialJourney() {
 
   const getBadgePosition = (level: number, index: number, badgesAtLevel: number, badgeIndexAtLevel: number) => {
     // Calcular el índice del nodo que corresponde exactamente a este nivel
-    const nodeIndex = (level / 50) - 1;
+    // Cada nodo representa 50 niveles (0.5% de 10000)
+    const nodeIndex = level / 50;
     
     // Usar la misma fórmula base que los nodos para alineación exacta
     const baseY = 40 + (nodeIndex * 35);
