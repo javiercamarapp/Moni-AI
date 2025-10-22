@@ -32,6 +32,44 @@ Deno.serve(async (req) => {
       throw new Error('User not authenticated')
     }
 
+    // Obtener TODA la información financiera del usuario
+    const threeMonthsAgo = new Date()
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3)
+    
+    // Obtener transacciones de los últimos 3 meses
+    const { data: transactions } = await supabase
+      .from('transactions')
+      .select('*')
+      .eq('user_id', user.id)
+      .gte('transaction_date', threeMonthsAgo.toISOString().split('T')[0])
+    
+    // Obtener assets detallados
+    const { data: assets } = await supabase
+      .from('assets')
+      .select('*')
+      .eq('user_id', user.id)
+    
+    // Obtener liabilities detallados
+    const { data: liabilities } = await supabase
+      .from('liabilities')
+      .select('*')
+      .eq('user_id', user.id)
+
+    // Calcular ingresos y gastos mensuales promedio
+    const incomeTransactions = transactions?.filter(t => t.type === 'income') || []
+    const expenseTransactions = transactions?.filter(t => t.type === 'expense') || []
+    
+    const totalIncome = incomeTransactions.reduce((sum, t) => sum + Number(t.amount), 0)
+    const totalExpenses = expenseTransactions.reduce((sum, t) => sum + Number(t.amount), 0)
+    
+    const monthlyIncome = totalIncome / 3 // Promedio de 3 meses
+    const monthlyExpenses = totalExpenses / 3
+    const monthlySavings = monthlyIncome - monthlyExpenses
+    
+    // Assets y liabilities totales
+    const totalAssets = assets?.reduce((sum, a) => sum + Number(a.value), 0) || 0
+    const totalLiabilities = liabilities?.reduce((sum, l) => sum + Number(l.value), 0) || 0
+
     // Map aspirations to readable format
     const aspirationLabels: Record<number, string> = {
       1: "Casa principal",
@@ -63,29 +101,42 @@ Deno.serve(async (req) => {
       aspirationsCount: aspirations.length
     })
 
-    const prompt = `Eres el mejor asesor financiero del mundo. Analiza la situación del usuario de forma ultra concisa.
+    const prompt = `Eres el mejor asesor financiero del mundo. Analiza PROFUNDAMENTE la situación financiera real del usuario.
 
-SITUACIÓN:
-- Actual: $${currentNetWorth.toLocaleString('es-MX')}
-- Meta: $${totalAspiration.toLocaleString('es-MX')}
-- Brecha: $${gap.toLocaleString('es-MX')}
+SITUACIÓN FINANCIERA COMPLETA:
+
+Net Worth:
+- Actual: $${currentNetWorth.toLocaleString('es-MX')} (Assets: $${totalAssets.toLocaleString('es-MX')} - Liabilities: $${totalLiabilities.toLocaleString('es-MX')})
+- Meta Aspiracional: $${totalAspiration.toLocaleString('es-MX')}
+- Brecha a cerrar: $${gap.toLocaleString('es-MX')} (${gapPercentage}%)
+
+Flujo de Efectivo Mensual Real:
+- Ingresos promedio: $${monthlyIncome.toLocaleString('es-MX')}/mes
+- Gastos promedio: $${monthlyExpenses.toLocaleString('es-MX')}/mes
+- Ahorro neto mensual: $${monthlySavings.toLocaleString('es-MX')}/mes
+
+Assets principales: ${assets?.slice(0, 3).map(a => `${a.name} ($${Number(a.value).toLocaleString('es-MX')})`).join(', ')}
+Liabilities principales: ${liabilities?.slice(0, 3).map(l => `${l.name} ($${Number(l.value).toLocaleString('es-MX')})`).join(', ')}
 
 INSTRUCCIONES:
-Escribe un mensaje SUPER CORTO (máximo 120 palabras) que incluya:
+Escribe un análisis PERSONALIZADO Y PROFUNDO (máximo 150 palabras) que incluya:
 
-1. Una frase sobre la comparación entre su situación actual y su meta
-2. Timeframe realista para lograrlo
-3. 3 recomendaciones concretas con cifras específicas para cerrar la brecha
-4. Una frase motivadora final
+1. Resumen de su situación actual vs aspiracional con los números REALES
+2. CALCULA exactamente cuántos meses/años le tomará llegar a su meta si sigue ahorrando $${monthlySavings.toLocaleString('es-MX')}/mes
+3. Si el ahorro actual es insuficiente, calcula cuánto NECESITA ahorrar mensualmente para lograrlo en un plazo razonable
+4. 3-4 recomendaciones ESPECÍFICAS con cifras exactas basadas en SUS ingresos y gastos reales
+5. Menciona oportunidades concretas para aumentar ahorro (reducir gastos o aumentar ingresos)
+6. Mensaje motivador final basado en su capacidad real
 
 REGLAS ABSOLUTAS:
+- USA los números REALES del usuario ($${monthlyIncome.toLocaleString('es-MX')} ingresos, $${monthlyExpenses.toLocaleString('es-MX')} gastos)
+- CALCULA timeframes reales y específicos
 - NO uses asteriscos, hashtags, guiones, barras, ni símbolos de markdown
-- SOLO texto plano fluido con saltos de línea
-- Máximo 120 palabras TOTAL
-- Incluye cifras específicas (montos mensuales, porcentajes, plazos)
-- Sé directo y poderoso
+- SOLO texto plano con saltos de línea para separar ideas
+- Máximo 150 palabras
+- Sé ultra específico con sus números, no genérico
 
-Escribe como si le hablaras directamente cara a cara, sin rodeos.`
+Habla directo, con cifras reales de SU situación.`
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
