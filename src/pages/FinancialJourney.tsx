@@ -456,7 +456,7 @@ export default function FinancialJourney() {
                         }
                       }}
                       disabled={!isUnlocked}
-                      className="focus:outline-none"
+                      className="focus:outline-none relative"
                     >
                       <div
                         className={`
@@ -464,16 +464,22 @@ export default function FinancialJourney() {
                           transition-all duration-300 border-2 border-white cursor-pointer
                           ${badge.type === 'mega' ? 'w-12 h-12 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 shadow-xl' : 
                             'w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg'}
-                          ${isUnlocked ? 'shadow-lg hover:scale-110' : 'grayscale cursor-not-allowed'}
+                          ${isUnlocked ? 'shadow-lg hover:scale-110 animate-pulse' : 'grayscale cursor-not-allowed opacity-50'}
                         `}
                       >
-                        {isUnlocked && badge.type === 'mega' && (
-                          <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-30" />
+                        {isUnlocked && (
+                          <div className={`absolute inset-0 rounded-full ${badge.type === 'mega' ? 'bg-yellow-400' : 'bg-blue-400'} animate-ping opacity-30`} />
                         )}
                         <BadgeIcon 
                           className={`${badge.type === 'mega' ? 'w-6 h-6' : 'w-4 h-4'} text-white relative z-10 drop-shadow-md`}
                         />
                       </div>
+                      {/* Indicador "¡NUEVA!" para insignias recién desbloqueadas */}
+                      {isUnlocked && currentLevel < badge.level + 500 && (
+                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full animate-bounce">
+                          ¡NEW!
+                        </span>
+                      )}
                     </button>
                     
                     {/* Tooltip al hacer hover en desktop */}
