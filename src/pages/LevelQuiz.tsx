@@ -147,18 +147,6 @@ export default function LevelQuiz() {
       question: "¿Cuánto quieres tener en participaciones en empresas o startups?",
       icon: Briefcase,
       placeholder: "Ejemplo: 400000 (opcional)"
-    },
-    {
-      id: 5,
-      question: "¿Cuántos viajes quieres hacer al año?",
-      icon: Plane,
-      placeholder: "Ejemplo: 3"
-    },
-    {
-      id: 6,
-      question: "¿Cuánto quieres invertir en educación familiar anualmente?",
-      icon: GraduationCap,
-      placeholder: "Ejemplo: 100000"
     }
   ];
 
@@ -209,9 +197,9 @@ export default function LevelQuiz() {
   };
 
   const isAspComplete = Object.keys(aspirationalAnswers).length === aspirationalQuestions.length ||
-    (Object.keys(aspirationalAnswers).length >= 7 && 
+    (Object.keys(aspirationalAnswers).length >= 5 && 
      aspirationalAnswers[1] && aspirationalAnswers[2] && aspirationalAnswers[3] && 
-     aspirationalAnswers[4] && aspirationalAnswers[5] && aspirationalAnswers[6]);
+     aspirationalAnswers[4]);
   const aspirationalProgress = (Object.keys(aspirationalAnswers).length / aspirationalQuestions.length) * 100;
 
   // Si está en la intro, mostrar página de bienvenida
@@ -325,7 +313,7 @@ export default function LevelQuiz() {
           {aspirationalQuestions.map((q) => {
             const Icon = q.icon;
             // Filtrar preguntas que se mostrarán dentro de sus respectivos cards
-            if (q.id === 4 || q.id === 7 || q.id === 8 || q.id === 9 || q.id === 10 || q.id === 11 || q.id === 12 || q.id === 13 || q.id === 14) return null;
+            if (q.id === 4 || q.id === 5 || q.id === 6 || q.id === 7 || q.id === 8 || q.id === 9 || q.id === 10 || q.id === 11 || q.id === 12 || q.id === 13 || q.id === 14) return null;
             
             return (
               <div key={q.id}>
