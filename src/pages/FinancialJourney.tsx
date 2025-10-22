@@ -314,7 +314,7 @@ export default function FinancialJourney() {
           <div className="absolute left-[50%] top-0 bottom-0 w-1 bg-gradient-to-b from-blue-200 via-purple-200 to-green-200 -translate-x-1/2 z-0" />
 
           {/* Journey Nodes */}
-          <div className="space-y-12 relative z-10">
+          <div className="space-y-4 relative z-10">
             {journeyNodes.map((node, index) => (
               <div key={node.id} className="flex flex-col items-center">
                 {/* Node Circle */}
@@ -326,7 +326,7 @@ export default function FinancialJourney() {
                   
                   <div
                     className={`
-                      relative w-12 h-12 rounded-full flex items-center justify-center
+                      relative w-6 h-6 rounded-full flex items-center justify-center
                       transition-all duration-300 z-10
                       ${node.isCompleted
                         ? 'bg-gradient-to-br from-green-400 to-green-600 shadow-lg shadow-green-400/40'
@@ -339,24 +339,24 @@ export default function FinancialJourney() {
                     `}
                   >
                     {node.isCompleted ? (
-                      <Star className="h-5 w-5 text-white fill-white" />
+                      <Star className="h-3 w-3 text-white fill-white" />
                     ) : node.isCurrent ? (
                       <div className="relative">
-                        <Star className="h-5 w-5 text-white" />
+                        <Star className="h-3 w-3 text-white" />
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-8 h-8 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                          <div className="w-4 h-4 rounded-full border border-white/30 border-t-white animate-spin" />
                         </div>
                       </div>
                     ) : node.isUnlocked ? (
-                      <Target className="h-5 w-5 text-white" />
+                      <Target className="h-3 w-3 text-white" />
                     ) : (
-                      <Lock className="h-4 w-4 text-gray-400" />
+                      <Lock className="h-2 w-2 text-gray-400" />
                     )}
                   </div>
 
                   {/* Progress ring for current node */}
                   {node.isCurrent && (
-                    <svg className="absolute inset-0 w-12 h-12 -rotate-90" viewBox="0 0 100 100">
+                    <svg className="absolute inset-0 w-6 h-6 -rotate-90" viewBox="0 0 100 100">
                       <circle
                         cx="50"
                         cy="50"
@@ -383,7 +383,7 @@ export default function FinancialJourney() {
                 {/* Node Info Card */}
                 <Card 
                   className={`
-                    mt-4 p-4 w-full max-w-xs text-center transition-all duration-300 rounded-[20px] shadow-xl
+                    mt-2 p-3 w-full max-w-xs text-center transition-all duration-300 rounded-[20px] shadow-xl
                     ${node.isCurrent 
                       ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400' 
                       : node.isUnlocked
@@ -424,7 +424,7 @@ export default function FinancialJourney() {
 
                 {/* Connector line to next node (except for last node) */}
                 {index < journeyNodes.length - 1 && (
-                  <div className="h-8 w-1 bg-gradient-to-b from-blue-200 via-purple-200 to-green-200 mt-4" />
+                  <div className="h-3 w-1 bg-gradient-to-b from-blue-200 via-purple-200 to-green-200 mt-2" />
                 )}
               </div>
             ))}
