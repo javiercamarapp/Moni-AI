@@ -203,10 +203,10 @@ export default function LevelQuiz() {
 
       if (profileError) throw profileError;
 
-      // Si ya tiene net worth, redirigir a level-details
+      // Si ya tiene net worth, redirigir al análisis de aspiraciones
       if (hasNetWorthData) {
-        toast.success("¡Aspiraciones guardadas! Ahora puedes ver tu progreso de nivel");
-        navigate("/level-details");
+        toast.success("¡Aspiraciones guardadas! Ahora veamos tu análisis");
+        navigate("/aspirations-analysis");
       } else {
         // Si no tiene net worth, redirigir al quiz de net worth
         toast.success("¡Aspiraciones guardadas! Ahora completa tu información financiera");
