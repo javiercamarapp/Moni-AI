@@ -624,7 +624,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-600 animate-ping opacity-20" />
                         )}
-                        <Medal className="w-5 h-5 text-white relative z-10 drop-shadow-md" />
+                        <Trophy className="w-5 h-5 text-white relative z-10 drop-shadow-md" />
                       </div>
                     </button>
                     
@@ -664,7 +664,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800">
-                              <Medal className="w-5 h-5 text-white" />
+                              <Trophy className="w-5 h-5 text-white" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-amber-700 truncate">
