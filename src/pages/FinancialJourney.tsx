@@ -393,7 +393,7 @@ export default function FinancialJourney() {
               
               return (
                 <div
-                  className={`absolute left-[10px] transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  className={`absolute right-[10px] transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
                   style={{
                     top: `${badgeY}px`,
                     transform: 'translateY(-50%)',
@@ -442,7 +442,7 @@ export default function FinancialJourney() {
                     {expandedBadge && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden left-full ml-3"
+                          border-0 w-64 animate-scale-in overflow-hidden right-full mr-3"
                         style={{
                           top: '50%',
                           transform: 'translateY(-50%)'
