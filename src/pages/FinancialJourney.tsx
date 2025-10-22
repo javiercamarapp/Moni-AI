@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNetWorth } from "@/hooks/useNetWorth";
 import { Progress } from "@/components/ui/progress";
 import treasureChest from "@/assets/treasure-chest.png";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 interface JourneyNode {
   id: number;
@@ -246,26 +247,30 @@ export default function FinancialJourney() {
         <Button
           onClick={() => navigate("/dashboard")}
           variant="ghost"
-          className="bg-white rounded-[20px] shadow-xl hover:bg-white/95 text-foreground h-10 px-4 hover:scale-105 transition-all border border-blue-100"
+          className="bg-white rounded-[20px] shadow-xl hover:bg-white/95 text-foreground h-10 px-4 hover:scale-[1.02] transition-all border border-blue-100 relative overflow-hidden"
         >
-          Dashboard
+          <GlowingEffect disabled={false} />
+          <span className="relative z-10">Dashboard</span>
         </Button>
       </div>
 
       <div className="container mx-auto px-4 py-2 max-w-2xl">
-        <Card className="p-6 mb-6 bg-white/95 backdrop-blur-sm border-0 shadow-xl rounded-[20px]">
-          <p className="text-xs font-bold uppercase tracking-wider text-green-600 mb-1">
-            Tu Camino Financiero
-          </p>
-          <h1 className="text-2xl font-bold text-foreground">
-            Hacia la Libertad Financiera
-          </h1>
-          <div className="mt-4">
-            <div className="flex justify-between text-sm mb-2 text-foreground/70">
-              <span>Progreso Total</span>
-              <span className="font-bold text-foreground">{currentProgress.toFixed(1)}%</span>
+        <Card className="p-6 mb-6 bg-white/95 backdrop-blur-sm border-0 shadow-xl rounded-[20px] hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+          <GlowingEffect disabled={false} spread={30} />
+          <div className="relative z-10">
+            <p className="text-xs font-bold uppercase tracking-wider text-green-600 mb-1">
+              Tu Camino Financiero
+            </p>
+            <h1 className="text-2xl font-bold text-foreground">
+              Hacia la Libertad Financiera
+            </h1>
+            <div className="mt-4">
+              <div className="flex justify-between text-sm mb-2 text-foreground/70">
+                <span>Progreso Total</span>
+                <span className="font-bold text-foreground">{currentProgress.toFixed(1)}%</span>
+              </div>
+              <Progress value={currentProgress} className="h-3" />
             </div>
-            <Progress value={currentProgress} className="h-3" />
           </div>
         </Card>
 
@@ -454,6 +459,7 @@ export default function FinancialJourney() {
                     <Card 
                       className={`
                         px-3 py-2 w-44 text-center animate-scale-in rounded-[16px] shadow-xl z-50 absolute
+                        hover:shadow-2xl transition-all duration-300 relative overflow-hidden
                         ${node.isCurrent 
                           ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400' 
                           : node.isUnlocked
@@ -474,6 +480,8 @@ export default function FinancialJourney() {
                         )
                       }}
                     >
+                      {node.isCurrent && <GlowingEffect disabled={false} spread={15} />}
+                      <div className="relative z-10">
                       <h3 className={`
                         font-bold mb-1 text-sm
                         ${node.isCurrent ? 'text-green-600' : node.isUnlocked ? 'text-foreground' : 'text-gray-400'}
@@ -502,6 +510,7 @@ export default function FinancialJourney() {
                           <span>Completado</span>
                         </div>
                       )}
+                      </div>
                     </Card>
                   )}
                 </div>
@@ -510,20 +519,21 @@ export default function FinancialJourney() {
           </div>
         </div>
 
-        <Card className="mt-8 p-6 bg-white/95 backdrop-blur-sm border-0 shadow-xl rounded-[20px]">
-          <div className="text-center">
+        <Card className="mt-8 p-6 bg-white/95 backdrop-blur-sm border-0 shadow-xl rounded-[20px] hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+          <GlowingEffect disabled={false} spread={30} />
+          <div className="text-center relative z-10">
             <h3 className="text-lg font-bold text-foreground mb-2">Tu Progreso</h3>
             <p className="text-foreground/70 text-sm mb-4">
               Estás en el nivel {currentLevel} de {targetLevel}. ¡Sigue así!
             </p>
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="bg-white/80 p-3 rounded-xl border border-blue-100">
+              <div className="bg-white/80 p-3 rounded-xl border border-blue-100 hover:scale-[1.02] transition-all">
                 <p className="text-foreground/60 text-xs">Net Worth Actual</p>
                 <p className="text-foreground font-bold mt-1">
                   ${currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0 })}
                 </p>
               </div>
-              <div className="bg-white/80 p-3 rounded-xl border border-purple-100">
+              <div className="bg-white/80 p-3 rounded-xl border border-purple-100 hover:scale-[1.02] transition-all">
                 <p className="text-foreground/60 text-xs">Meta Aspiracional</p>
                 <p className="text-blue-600 font-bold mt-1">
                   ${totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0 })}
