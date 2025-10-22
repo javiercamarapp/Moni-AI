@@ -103,8 +103,9 @@ Deno.serve(async (req) => {
     // ========== CALCULAR MÉTRICAS FINANCIERAS ==========
     
     // Calcular ingresos y gastos de TODO el historial
-    const incomeTransactions = allTransactions?.filter(t => t.type === 'income') || []
-    const expenseTransactions = allTransactions?.filter(t => t.type === 'expense') || []
+    // IMPORTANTE: En la DB los tipos están en español: "ingreso" y "gasto"
+    const incomeTransactions = allTransactions?.filter(t => t.type === 'ingreso' || t.type === 'income') || []
+    const expenseTransactions = allTransactions?.filter(t => t.type === 'gasto' || t.type === 'expense') || []
     
     const totalIncomeAllTime = incomeTransactions.reduce((sum, t) => sum + Number(t.amount), 0)
     const totalExpensesAllTime = expenseTransactions.reduce((sum, t) => sum + Number(t.amount), 0)
