@@ -36,8 +36,15 @@ Deno.serve(async (req) => {
     const threeMonthsAgo = new Date()
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3)
     
+    // Obtener TODAS las transacciones (sin límite de tiempo para tener más datos)
+    const { data: allTransactions } = await supabase
+      .from('transactions')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('transaction_date', { ascending: false })
+    
     // Obtener transacciones de los últimos 3 meses
-    const { data: transactions } = await supabase
+    const { data: recentTransactions } = await supabase
       .from('transactions')
       .select('*')
       .eq('user_id', user.id)
@@ -55,20 +62,46 @@ Deno.serve(async (req) => {
       .select('*')
       .eq('user_id', user.id)
 
+    // Usar transacciones recientes si hay suficientes, si no, usar todas
+    const transactionsToUse = (recentTransactions && recentTransactions.length >= 5) 
+      ? recentTransactions 
+      : allTransactions || []
+    
+    const monthsToAverage = (recentTransactions && recentTransactions.length >= 5) ? 3 : 12
+
     // Calcular ingresos y gastos mensuales promedio
-    const incomeTransactions = transactions?.filter(t => t.type === 'income') || []
-    const expenseTransactions = transactions?.filter(t => t.type === 'expense') || []
+    const incomeTransactions = transactionsToUse.filter(t => t.type === 'income')
+    const expenseTransactions = transactionsToUse.filter(t => t.type === 'expense')
     
     const totalIncome = incomeTransactions.reduce((sum, t) => sum + Number(t.amount), 0)
     const totalExpenses = expenseTransactions.reduce((sum, t) => sum + Number(t.amount), 0)
     
-    const monthlyIncome = totalIncome / 3 // Promedio de 3 meses
-    const monthlyExpenses = totalExpenses / 3
+    let monthlyIncome = totalIncome / monthsToAverage
+    let monthlyExpenses = totalExpenses / monthsToAverage
+    
+    // Si no hay datos de transacciones, estimar basándose en el net worth
+    if (monthlyIncome === 0 && currentNetWorth > 0) {
+      // Estimación conservadora: 5% del net worth anual = ingreso mensual aproximado
+      monthlyIncome = (currentNetWorth * 0.05) / 12
+      console.log('No income transactions found, estimating based on net worth:', monthlyIncome)
+    }
+    
     const monthlySavings = monthlyIncome - monthlyExpenses
     
     // Assets y liabilities totales
     const totalAssets = assets?.reduce((sum, a) => sum + Number(a.value), 0) || 0
     const totalLiabilities = liabilities?.reduce((sum, l) => sum + Number(l.value), 0) || 0
+    
+    console.log('Financial data:', {
+      totalTransactions: allTransactions?.length || 0,
+      recentTransactions: recentTransactions?.length || 0,
+      incomeTransactions: incomeTransactions.length,
+      expenseTransactions: expenseTransactions.length,
+      monthlyIncome,
+      monthlyExpenses,
+      monthlySavings,
+      monthsToAverage
+    })
 
     // Map aspirations to readable format
     const aspirationLabels: Record<number, string> = {
