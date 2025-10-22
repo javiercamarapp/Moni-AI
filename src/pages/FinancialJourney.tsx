@@ -167,8 +167,8 @@ export default function FinancialJourney() {
     // Calcular el índice del nodo que corresponde exactamente a este nivel
     const nodeIndex = (level / 50) - 1;
     
-    // Usar la misma fórmula base que los nodos pero desplazando más arriba
-    const baseY = 40 + (nodeIndex * 35) - 30; // Mover 30px más arriba
+    // Usar la misma fórmula base que los nodos pero desplazando mucho más arriba
+    const baseY = 40 + (nodeIndex * 35) - 50; // Mover 50px más arriba para evitar choques
     
     // Determinar el lado basado en el índice de la insignia en ese nivel
     const side = badgeIndexAtLevel % 2 === 0 ? 'left' : 'right';
