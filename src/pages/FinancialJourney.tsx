@@ -62,16 +62,16 @@ export default function FinancialJourney() {
       const seed2 = (index * 3571) % 100;
       const seed3 = (index * 9241) % 100;
       
-      // Posición horizontal aleatoria pero dentro de márgenes seguros (15% - 85%)
-      const baseX = 15 + (seed1 * 0.7); // De 15% a 85%
-      const offsetX = ((seed2 % 30) - 15); // Variación adicional
+      // Posición horizontal aleatoria pero dentro de márgenes seguros (20% - 80%)
+      const baseX = 20 + (seed1 * 0.6); // De 20% a 80%
+      const offsetX = ((seed2 % 20) - 10); // Variación adicional más controlada
       
-      // Posición vertical más compacta (puntos mucho más cerca)
-      const baseY = index * 40; // Solo 40px entre cada nodo (muy cerca)
-      const offsetY = (seed3 % 20) - 10; // Variación sutil vertical
+      // Posición vertical con más espacio para evitar colisiones (60px entre nodos)
+      const baseY = index * 60; // 60px entre cada nodo para que no choquen
+      const offsetY = (seed3 % 15) - 7; // Variación sutil vertical
       
       return {
-        x: Math.min(Math.max(baseX + offsetX, 15), 85), // Asegurar que esté dentro del rango
+        x: Math.min(Math.max(baseX + offsetX, 20), 80), // Asegurar que esté dentro del rango
         y: baseY + offsetY
       };
     };
@@ -227,7 +227,7 @@ export default function FinancialJourney() {
           </div>
         </Card>
 
-        <div className="relative min-h-[8500px] w-full overflow-x-hidden">
+        <div className="relative min-h-[12500px] w-full overflow-x-hidden pb-20">
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
             <defs>
               <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -259,7 +259,7 @@ export default function FinancialJourney() {
             })}
           </svg>
 
-          <div className="relative z-10 px-2">
+          <div className="relative z-10 px-4">
             {journeyNodes.map((node) => (
               <div 
                 key={node.id}
@@ -268,7 +268,7 @@ export default function FinancialJourney() {
                   left: `${node.position.x}%`,
                   top: `${node.position.y}px`,
                   transform: 'translate(-50%, -50%)',
-                  minWidth: '80px' // Asegurar espacio mínimo
+                  minWidth: '60px' // Asegurar espacio mínimo
                 }}
               >
                 <div className="flex flex-col items-center">
@@ -338,7 +338,7 @@ export default function FinancialJourney() {
                   {expandedNode === node.id && (
                     <Card 
                       className={`
-                        mt-2 px-3 py-2 w-48 text-center animate-scale-in rounded-[16px] shadow-xl
+                        mt-2 px-3 py-2 w-44 text-center animate-scale-in rounded-[16px] shadow-xl
                         ${node.isCurrent 
                           ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400' 
                           : node.isUnlocked
