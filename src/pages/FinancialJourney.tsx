@@ -511,6 +511,11 @@ export default function FinancialJourney() {
               const renderedBadges: JSX.Element[] = [];
               let globalIndex = 0;
               
+              // Encontrar la última insignia desbloqueada
+              const unlockedBadges = allBadges.filter(b => currentLevel >= b.level);
+              const lastUnlockedBadge = unlockedBadges.length > 0 ? unlockedBadges[unlockedBadges.length - 1] : null;
+              const lastUnlockedId = lastUnlockedBadge ? `${lastUnlockedBadge.level}-${lastUnlockedBadge.type}-${lastUnlockedBadge.name}` : null;
+              
               badgesByLevel.forEach((badgesAtLevel, level) => {
                 badgesAtLevel.forEach((badge, badgeIndexAtLevel) => {
                   const isUnlocked = currentLevel >= badge.level;
@@ -551,7 +556,7 @@ export default function FinancialJourney() {
                             badge.type === 'mega' ? 'w-12 h-12 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 shadow-xl' : 
                             badge.type === 'special' ? 'w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 shadow-lg' :
                             'w-9 h-9 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg'}
-                          ${isUnlocked ? 'shadow-lg hover:scale-110 animate-pulse' : 'grayscale cursor-not-allowed opacity-50'}
+                          ${isUnlocked ? 'shadow-lg hover:scale-110' : 'grayscale cursor-not-allowed opacity-50'}
                         `}
                       >
                         {isUnlocked && (
@@ -563,7 +568,7 @@ export default function FinancialJourney() {
                             badge.type === 'mega' ? 'bg-yellow-400' :
                             badge.type === 'special' ? 'bg-purple-400' :
                             'bg-blue-400'
-                          } animate-ping opacity-30`} />
+                          } animate-ping opacity-20`} />
                         )}
                         <BadgeIcon 
                           className={`${
@@ -577,10 +582,10 @@ export default function FinancialJourney() {
                           } text-white relative z-10 drop-shadow-md`}
                         />
                       </div>
-                      {/* Indicador "¡NUEVA!" para insignias recién desbloqueadas */}
-                      {isUnlocked && currentLevel < badge.level + 500 && (
-                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full animate-bounce">
-                          ¡NEW!
+                      {/* Indicador "¡NUEVA!" solo para la última insignia desbloqueada */}
+                      {isUnlocked && badgeUniqueId === lastUnlockedId && (
+                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full animate-bounce shadow-md">
+                          NEW
                         </span>
                       )}
                     </button>
