@@ -255,7 +255,7 @@ export default function AspirationsAnalysis() {
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-[15px] p-4 border border-blue-200">
               <p className="text-xs text-muted-foreground mb-1">Net Worth Actual</p>
               <p className="text-xl font-bold text-foreground">
-                ${currentNetWorth >= 10000000 
+                ${currentNetWorth >= 1000000 
                   ? `${(currentNetWorth / 1000000).toFixed(1)}M` 
                   : currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                 }
@@ -264,7 +264,7 @@ export default function AspirationsAnalysis() {
             <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-[15px] p-4 border border-purple-200">
               <p className="text-xs text-muted-foreground mb-1">Meta Aspiracional</p>
               <p className="text-xl font-bold text-purple-600">
-                ${totalAspiration >= 10000000 
+                ${totalAspiration >= 1000000 
                   ? `${(totalAspiration / 1000000).toFixed(1)}M` 
                   : totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                 }
@@ -278,7 +278,7 @@ export default function AspirationsAnalysis() {
               <p className="text-xs font-semibold text-orange-600">{gapPercentage}%</p>
             </div>
             <p className="text-lg font-bold text-orange-600">
-              ${gap >= 10000000 
+              ${gap >= 1000000 
                 ? `${(gap / 1000000).toFixed(1)}M` 
                 : gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
               }
