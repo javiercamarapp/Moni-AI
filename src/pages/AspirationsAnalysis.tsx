@@ -264,7 +264,7 @@ export default function AspirationsAnalysis() {
   }
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-20">
+    <div className="min-h-screen animated-wave-bg pb-4">
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
