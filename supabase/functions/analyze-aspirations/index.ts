@@ -216,63 +216,71 @@ INFORMACIÓN COMPLETA DEL USUARIO
 
 💰 ASSETS (${assets?.length || 0} activos):
 ${assets?.map(a => `  • ${a.name}: $${Number(a.value).toLocaleString('es-MX')} (${a.category})`).join('\n') || '  Sin assets'}
-Total: $${totalAssets.toLocaleString('es-MX')}
+Total Assets: $${totalAssets.toLocaleString('es-MX')}
 
 💳 LIABILITIES (${liabilities?.length || 0} deudas):
 ${liabilities?.map(l => `  • ${l.name}: $${Number(l.value).toLocaleString('es-MX')} (${l.category})`).join('\n') || '  Sin deudas'}
-Total: $${totalLiabilities.toLocaleString('es-MX')}
+Total Liabilities: $${totalLiabilities.toLocaleString('es-MX')}
 
-💵 HISTORIAL DE TRANSACCIONES (${allTransactions?.length || 0} transacciones):
-- Ingresos totales: $${totalIncomeAllTime.toLocaleString('es-MX')} (${incomeTransactions.length} transacciones)
-- Gastos totales: $${totalExpensesAllTime.toLocaleString('es-MX')} (${expenseTransactions.length} transacciones)
+💵 FLUJO DE EFECTIVO:
+${allTransactions && allTransactions.length > 0 ? `
+- Total transacciones registradas: ${allTransactions.length}
+- Ingresos totales históricos: $${totalIncomeAllTime.toLocaleString('es-MX')} (${incomeTransactions.length} transacciones)
+- Gastos totales históricos: $${totalExpensesAllTime.toLocaleString('es-MX')} (${expenseTransactions.length} transacciones)
 - Promedio mensual ingresos: $${monthlyIncome.toLocaleString('es-MX')}
 - Promedio mensual gastos: $${monthlyExpenses.toLocaleString('es-MX')}
-- Ahorro neto mensual: $${monthlySavings.toLocaleString('es-MX')}
+- Capacidad de ahorro mensual: $${monthlySavings.toLocaleString('es-MX')}
+` : `
+⚠️ No hay transacciones registradas aún
+ESTIMACIÓN BASADA EN PATRIMONIO:
+- Con $${totalAssets.toLocaleString('es-MX')} en assets, se estima un ingreso mensual conservador de: $${((totalAssets * 0.05) / 12).toLocaleString('es-MX')}
+- Esto es ~5% anual del valor de tus assets
+- Tu patrimonio neto actual ($${currentNetWorth.toLocaleString('es-MX')}) sugiere que TIENES capacidad de generar ingresos
+`}
 
-📈 EVOLUCIÓN DEL PATRIMONIO (últimos 6 registros):
-${netWorthEvolution.map(nw => `  ${nw.date}: $${Number(nw.value).toLocaleString('es-MX')}`).join('\n') || '  No hay historial'}
+📈 EVOLUCIÓN DEL PATRIMONIO:
+${netWorthEvolution.length > 0 ? netWorthEvolution.map(nw => `  ${nw.date}: $${Number(nw.value).toLocaleString('es-MX')}`).join('\n') : '  Aún no hay suficiente historial'}
 
-🎯 METAS ACTIVAS (${goals?.length || 0}):
-${goals?.slice(0, 3).map(g => `  • ${g.title}: $${Number(g.current).toLocaleString('es-MX')}/$${Number(g.target).toLocaleString('es-MX')}`).join('\n') || '  Sin metas'}
-
-💪 RETOS ACTIVOS (${challenges?.length || 0}):
-${challenges?.slice(0, 3).map(c => `  • ${c.title}: $${Number(c.current_amount).toLocaleString('es-MX')}/$${Number(c.target_amount).toLocaleString('es-MX')}`).join('\n') || '  Sin retos'}
-
-📊 GASTOS FIJOS CONFIGURADOS:
-${fixedExpenses?.map(fe => `  • ${fe.category_name}: $${Number(fe.monthly_amount).toLocaleString('es-MX')}`).join('\n') || '  No configurados'}
-Total: $${totalFixedExpenses.toLocaleString('es-MX')}/mes
-
-👤 PERFIL:
-- Nivel: ${profile?.level || 1}
-- XP: ${profile?.xp || 0}
-- Score Moni: ${userScore?.score_moni || 40}
-- Quiz completado: ${profile?.level_quiz_completed ? 'Sí' : 'No'}
+🎯 CONTEXTO ADICIONAL:
+${goals && goals.length > 0 ? `- Metas activas: ${goals.length}` : ''}
+${challenges && challenges.length > 0 ? `- Retos activos: ${challenges.length}` : ''}
+${profile ? `- Nivel: ${profile.level}, XP: ${profile.xp}` : ''}
+${userScore ? `- Score Moni: ${userScore.score_moni}` : ''}
 
 ═══════════════════════════════════════════════════════
 
-INSTRUCCIONES PARA TU ANÁLISIS:
+INSTRUCCIONES CRÍTICAS:
 
-Escribe un análisis ULTRA PERSONALIZADO (máximo 150 palabras) que:
+${allTransactions && allTransactions.length === 0 ? `
+🚨 IMPORTANTE: No hay historial de transacciones, pero SÍ tiene $${totalAssets.toLocaleString('es-MX')} en assets reales:
+- Casa Polanco: $20M
+- Fondo GBM: $5M  
+- Bitcoin: $2M
+- Hipoteca: $12M
 
-1. Resuma su situación real usando TODOS los números disponibles arriba
-2. Calcule EXACTAMENTE cuánto tiempo le tomará alcanzar su meta:
-   - Si ahorra $${monthlySavings.toLocaleString('es-MX')}/mes actual
-   - Cuánto necesita ahorrar para lograrlo en 10 años
-   - Cuánto necesita aumentar sus ingresos
-3. Mencione assets/liabilities ESPECÍFICOS por nombre y valor
-4. Use el historial de crecimiento del patrimonio (${netWorthGrowthRate.toFixed(2)}% mensual)
-5. Referencia sus metas y retos activos
-6. Da 3 recomendaciones EXACTAS con cifras de SU situación
+Este usuario CLARAMENTE genera ingresos (tiene una casa de $20M y $5M en inversiones). NO digas que tiene "cero ingresos".
 
-REGLAS ABSOLUTAS:
-✓ USA nombres reales de assets/liabilities
-✓ CITA los números exactos arriba
-✓ CALCULA plazos matemáticamente
-✓ NO uses markdown (*, #, -, /, etc.)
-✓ Máximo 150 palabras
-✓ Texto plano con saltos de línea
+Para el análisis:
+1. Reconoce que tiene un patrimonio sólido de $${currentNetWorth.toLocaleString('es-MX')}
+2. Estima ingresos conservadores: Para mantener estos assets, probablemente genera $${Math.round((totalAssets * 0.05) / 12).toLocaleString('es-MX')} - $${Math.round((totalAssets * 0.10) / 12).toLocaleString('es-MX')}/mes
+3. Calcula cuánto necesita ahorrar mensualmente para alcanzar su meta en 15-20 años
+4. Menciona sus assets principales POR NOMBRE (Casa Polanco $20M, Fondo GBM $5M, etc.)
+5. Da recomendaciones para optimizar estos assets (reducir hipoteca, diversificar inversiones)
+` : `
+Analiza basándote en los datos reales de transacciones:
+1. Menciona su flujo mensual real: $${monthlyIncome.toLocaleString('es-MX')} ingresos - $${monthlyExpenses.toLocaleString('es-MX')} gastos = $${monthlySavings.toLocaleString('es-MX')} ahorro
+2. Calcula cuántos meses/años le tomará alcanzar $${totalAspiration.toLocaleString('es-MX')} ahorrando $${monthlySavings.toLocaleString('es-MX')}/mes
+3. Sugiere cuánto más necesita ahorrar mensualmente para lograrlo en 10-15 años
+4. Menciona sus assets/liabilities específicos por nombre y valor
+`}
 
-Sé ULTRA específico con SUS datos reales.`
+FORMATO:
+- Máximo 150 palabras
+- NO uses markdown (*, #, -, /, etc.)
+- Texto plano con saltos de línea
+- Menciona ASSETS Y LIABILITIES REALES por nombre
+- Calcula plazos matemáticamente
+- Sé específico con CIFRAS EXACTAS`
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
