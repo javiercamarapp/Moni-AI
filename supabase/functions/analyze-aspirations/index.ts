@@ -34,12 +34,13 @@ Deno.serve(async (req) => {
 
     // ========== OBTENER TODA LA INFORMACIÓN HISTÓRICA DEL USUARIO ==========
     
-    // 1. TRANSACCIONES - Todo el historial SIN LÍMITE
+    // 1. TRANSACCIONES - Todo el historial (límite de 10,000 para asegurar que trae todo)
     const { data: allTransactions } = await supabase
       .from('transactions')
       .select('*')
       .eq('user_id', user.id)
       .order('transaction_date', { ascending: false })
+      .limit(10000)
     
     console.log('Total transactions fetched:', allTransactions?.length || 0)
     
