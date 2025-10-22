@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, Lock, Trophy, TrendingUp, Target } from "lucide-react";
+import { Star, Lock, Trophy, TrendingUp, Target, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNetWorth } from "@/hooks/useNetWorth";
 import { Progress } from "@/components/ui/progress";
@@ -243,10 +243,10 @@ export default function FinancialJourney() {
         <Button
           onClick={() => navigate(-1)}
           variant="ghost"
-          className="bg-white rounded-[20px] shadow-xl hover:bg-white/95 text-foreground h-10 px-4 hover:scale-[1.02] transition-all border border-blue-100 relative overflow-hidden"
+          className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 px-4 gap-2 hover:scale-105 transition-all border border-blue-100"
         >
-          <GlowingEffect disabled={false} />
-          <span className="relative z-10">← Regresar</span>
+          <ArrowLeft className="h-4 w-4" />
+          <span>Regresar</span>
         </Button>
       </div>
 
