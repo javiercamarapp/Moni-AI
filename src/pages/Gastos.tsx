@@ -409,38 +409,44 @@ const Gastos = () => {
 
                 <div className="space-y-2">
                   <Label className="text-card-foreground/90 text-base">
-                    ¿El gasto lo hiciste con?
+                    ¿El pago fue en efectivo?
                   </Label>
-                  <Select value={paymentMethod} onValueChange={setPaymentMethod} required>
+                  <Select value={paymentMethod} onValueChange={(value) => {
+                    setPaymentMethod(value);
+                    if (value === 'efectivo') {
+                      setAccount('efectivo');
+                    } else {
+                      setAccount('');
+                    }
+                  }} required>
                     <SelectTrigger className="bg-card/50 border-border/30 text-card-foreground h-14">
-                      <SelectValue placeholder="Selecciona método de pago" />
+                      <SelectValue placeholder="Selecciona una opción" />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border/30 z-50">
-                      <SelectItem value="debito" className="text-card-foreground">Débito</SelectItem>
-                      <SelectItem value="credito" className="text-card-foreground">Crédito</SelectItem>
-                      <SelectItem value="efectivo" className="text-card-foreground">Efectivo</SelectItem>
-                      <SelectItem value="transferencia" className="text-card-foreground">Transferencia</SelectItem>
+                      <SelectItem value="efectivo" className="text-card-foreground">Sí</SelectItem>
+                      <SelectItem value="tarjeta" className="text-card-foreground">No</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-card-foreground/90 text-base">
-                    ¿De cuál tarjeta/cuenta salió el gasto?
-                  </Label>
-                  <Select value={account} onValueChange={setAccount} required>
-                    <SelectTrigger className="bg-card/50 border-border/30 text-card-foreground h-14">
-                      <SelectValue placeholder="Escoge o agrega tu tarjeta/cuenta" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-card border-border/30 z-50">
-                      <SelectItem value="efectivo" className="text-card-foreground">Efectivo</SelectItem>
-                      <SelectItem value="banco1" className="text-card-foreground">Cuenta Principal</SelectItem>
-                      <SelectItem value="banco2" className="text-card-foreground">Cuenta de Ahorros</SelectItem>
-                      <SelectItem value="banco3" className="text-card-foreground">Tarjeta Nómina</SelectItem>
-                      <SelectItem value="otro" className="text-card-foreground">Otra cuenta</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                {paymentMethod === 'tarjeta' && (
+                  <div className="space-y-2">
+                    <Label className="text-card-foreground/90 text-base">
+                      ¿De cuál tarjeta/cuenta salió el gasto?
+                    </Label>
+                    <Select value={account} onValueChange={setAccount} required>
+                      <SelectTrigger className="bg-card/50 border-border/30 text-card-foreground h-14">
+                        <SelectValue placeholder="Escoge o agrega tu tarjeta/cuenta" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-card border-border/30 z-50">
+                        <SelectItem value="banco1" className="text-card-foreground">Cuenta Principal</SelectItem>
+                        <SelectItem value="banco2" className="text-card-foreground">Cuenta de Ahorros</SelectItem>
+                        <SelectItem value="banco3" className="text-card-foreground">Tarjeta Nómina</SelectItem>
+                        <SelectItem value="otro" className="text-card-foreground">Otra cuenta</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <Label className="text-card-foreground/90 text-base">
