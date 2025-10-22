@@ -243,10 +243,10 @@ export default function FinancialJourney() {
         <Button
           onClick={() => navigate(-1)}
           variant="ghost"
-          className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 px-4 gap-2 hover:scale-105 transition-all border border-blue-100"
+          size="icon"
+          className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
         >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Regresar</span>
+          <ArrowLeft className="h-5 w-5" />
         </Button>
       </div>
 
