@@ -75,6 +75,14 @@ export default function FinancialJourney() {
     const nodes: JourneyNode[] = [];
     
     const getNodePosition = (index: number) => {
+      // Último nivel - centrado y más abajo
+      if (index === 200) {
+        return {
+          x: 50, // Centrado
+          y: 7100 // Bien abajo
+        };
+      }
+      
       // Crear un camino completamente aleatorio y orgánico (no uniforme)
       const seed1 = (index * 7919) % 100;
       const seed2 = (index * 3571) % 100;
@@ -245,7 +253,7 @@ export default function FinancialJourney() {
           </div>
         </Card>
 
-        <div className="relative min-h-[7200px] w-full overflow-x-hidden pb-20 pt-2">
+        <div className="relative min-h-[7300px] w-full overflow-x-hidden pb-20 pt-2">
           {/* 9 Secciones de fondo */}
           <div className="absolute inset-0 w-full h-full">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((section) => (
@@ -339,39 +347,61 @@ export default function FinancialJourney() {
                     onClick={() => setExpandedNode(expandedNode === node.id ? null : node.id)}
                     className="relative focus:outline-none"
                   >
-                    {node.isCurrent && (
+                     {node.isCurrent && (
                       <div className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-30" />
                     )}
                     
-                    <div
-                      className={`
-                        relative w-7 h-7 rounded-full flex items-center justify-center cursor-pointer
-                        transition-all duration-300 z-10
-                        ${node.isCompleted
-                          ? 'bg-gradient-to-br from-green-400 to-green-600 shadow-md shadow-green-400/30 hover:scale-110'
-                          : node.isCurrent
-                          ? 'bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/50 scale-110 hover:scale-125'
-                          : node.isUnlocked
-                          ? 'bg-gradient-to-br from-blue-400 to-blue-600 shadow-md shadow-blue-400/30 hover:scale-110'
-                          : 'bg-white border-2 border-gray-200 shadow-sm hover:scale-105'
-                        }
-                      `}
-                    >
-                      {node.isCompleted ? (
-                        <Star className="h-3.5 w-3.5 text-white fill-white" />
-                      ) : node.isCurrent ? (
-                        <div className="relative">
-                          <Star className="h-3.5 w-3.5 text-white" />
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                    {/* Último nivel especial con mina de oro */}
+                    {node.id === 201 ? (
+                      <div className="relative">
+                        <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-40" />
+                        <div
+                          className="relative w-20 h-20 rounded-full flex items-center justify-center cursor-pointer
+                            bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 shadow-2xl shadow-yellow-500/60
+                            hover:scale-110 transition-all duration-300 animate-pulse border-4 border-yellow-300"
+                        >
+                          <div className="text-center">
+                            <Trophy className="h-10 w-10 text-white mb-1 mx-auto" />
+                            <div className="text-xs font-bold text-white">LIBERTAD</div>
                           </div>
                         </div>
-                      ) : node.isUnlocked ? (
-                        <Target className="h-3.5 w-3.5 text-white" />
-                      ) : (
-                        <Lock className="h-2.5 w-2.5 text-gray-400" />
-                      )}
-                    </div>
+                        {/* Monedas/galones decorativos */}
+                        <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-yellow-400 animate-bounce" style={{ animationDelay: '0s' }} />
+                        <div className="absolute -top-3 -left-2 w-5 h-5 rounded-full bg-amber-500 animate-bounce" style={{ animationDelay: '0.2s' }} />
+                        <div className="absolute -bottom-2 -right-3 w-5 h-5 rounded-full bg-yellow-300 animate-bounce" style={{ animationDelay: '0.4s' }} />
+                        <div className="absolute -bottom-3 -left-1 w-4 h-4 rounded-full bg-yellow-500 animate-bounce" style={{ animationDelay: '0.6s' }} />
+                      </div>
+                    ) : (
+                      <div
+                        className={`
+                          relative w-7 h-7 rounded-full flex items-center justify-center cursor-pointer
+                          transition-all duration-300 z-10
+                          ${node.isCompleted
+                            ? 'bg-gradient-to-br from-green-400 to-green-600 shadow-md shadow-green-400/30 hover:scale-110'
+                            : node.isCurrent
+                            ? 'bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/50 scale-110 hover:scale-125'
+                            : node.isUnlocked
+                            ? 'bg-gradient-to-br from-blue-400 to-blue-600 shadow-md shadow-blue-400/30 hover:scale-110'
+                            : 'bg-white border-2 border-gray-200 shadow-sm hover:scale-105'
+                          }
+                        `}
+                      >
+                        {node.isCompleted ? (
+                          <Star className="h-3.5 w-3.5 text-white fill-white" />
+                        ) : node.isCurrent ? (
+                          <div className="relative">
+                            <Star className="h-3.5 w-3.5 text-white" />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                            </div>
+                          </div>
+                        ) : node.isUnlocked ? (
+                          <Target className="h-3.5 w-3.5 text-white" />
+                        ) : (
+                          <Lock className="h-2.5 w-2.5 text-gray-400" />
+                        )}
+                      </div>
+                    )}
 
                     {node.isCurrent && (
                       <svg className="absolute inset-0 w-7 h-7 -rotate-90 pointer-events-none" viewBox="0 0 100 100">
