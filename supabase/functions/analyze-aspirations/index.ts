@@ -128,17 +128,35 @@ Deno.serve(async (req) => {
     const totalIncomeAllTime = incomeTransactions.reduce((sum, t) => sum + Number(t.amount), 0)
     const totalExpensesAllTime = expenseTransactions.reduce((sum, t) => sum + Number(t.amount), 0)
     
-    // Calcular promedio mensual basado en el rango de fechas real
+    // Calcular promedio mensual basado en los ÚLTIMOS 6 MESES de transacciones reales
     let monthlyIncome = 0
     let monthlyExpenses = 0
     
     if (allTransactions && allTransactions.length > 0) {
-      const oldestDate = new Date(allTransactions[allTransactions.length - 1].transaction_date)
-      const newestDate = new Date(allTransactions[0].transaction_date)
-      const monthsDiff = Math.max(1, (newestDate.getTime() - oldestDate.getTime()) / (1000 * 60 * 60 * 24 * 30))
+      // Obtener fecha de hace 6 meses
+      const sixMonthsAgo = new Date()
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
       
-      monthlyIncome = totalIncomeAllTime / monthsDiff
-      monthlyExpenses = totalExpensesAllTime / monthsDiff
+      // Filtrar transacciones de los últimos 6 meses
+      const recentIncome = incomeTransactions.filter(t => new Date(t.transaction_date) >= sixMonthsAgo)
+      const recentExpenses = expenseTransactions.filter(t => new Date(t.transaction_date) >= sixMonthsAgo)
+      
+      const recentIncomeTotal = recentIncome.reduce((sum, t) => sum + Number(t.amount), 0)
+      const recentExpensesTotal = recentExpenses.reduce((sum, t) => sum + Number(t.amount), 0)
+      
+      // Calcular cuántos meses reales tienen transacciones en los últimos 6 meses
+      const recentTransactions = [...recentIncome, ...recentExpenses]
+      const monthsWithData = new Set(
+        recentTransactions.map(t => {
+          const date = new Date(t.transaction_date)
+          return `${date.getFullYear()}-${date.getMonth()}`
+        })
+      ).size
+      
+      const monthsToAverage = Math.max(1, monthsWithData || 6)
+      
+      monthlyIncome = recentIncomeTotal / monthsToAverage
+      monthlyExpenses = recentExpensesTotal / monthsToAverage
     }
     
     // Gastos fijos configurados
@@ -176,9 +194,9 @@ Deno.serve(async (req) => {
       expenseTransactions: expenseTransactions.length,
       totalIncomeAllTime,
       totalExpensesAllTime,
-      monthlyIncome,
-      monthlyExpenses,
-      monthlySavings,
+      monthlyIncome: Math.round(monthlyIncome),
+      monthlyExpenses: Math.round(monthlyExpenses),
+      monthlySavings: Math.round(monthlySavings),
       totalAssets,
       totalLiabilities,
       netWorthSnapshots: netWorthSnapshots?.length || 0,
@@ -187,7 +205,8 @@ Deno.serve(async (req) => {
       scoreMoni: userScore?.score_moni,
       activeGoals: goals?.length || 0,
       activeChallenges: challenges?.length || 0,
-      fixedExpensesConfigured: totalFixedExpenses
+      fixedExpensesConfigured: totalFixedExpenses,
+      calculationMethod: 'Last 6 months average'
     })
 
     // Map aspirations to readable format
