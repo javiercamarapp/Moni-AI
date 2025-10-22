@@ -338,7 +338,7 @@ export default function FinancialJourney() {
                   {expandedNode === node.id && (
                     <Card 
                       className={`
-                        mt-2 px-3 py-2 w-44 text-center animate-scale-in rounded-[16px] shadow-xl z-50 relative
+                        px-3 py-2 w-44 text-center animate-scale-in rounded-[16px] shadow-xl z-50 absolute
                         ${node.isCurrent 
                           ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400' 
                           : node.isUnlocked
@@ -346,6 +346,14 @@ export default function FinancialJourney() {
                           : 'bg-white/50 border border-gray-200 opacity-60'
                         }
                       `}
+                      style={{
+                        ...(node.position.x < 35 
+                          ? { left: '40px', top: '-80px' }
+                          : node.position.x > 65
+                          ? { right: '40px', top: '-80px' }
+                          : { left: '50%', transform: 'translateX(-50%)', top: '35px' }
+                        )
+                      }}
                     >
                       <h3 className={`
                         font-bold mb-1 text-sm
