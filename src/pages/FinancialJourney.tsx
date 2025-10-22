@@ -276,21 +276,29 @@ export default function FinancialJourney() {
             </Button>
           </div>
           
-          <Card className="p-6 bg-white/95 backdrop-blur-sm border-0 shadow-xl rounded-[20px] hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+          <Card className="p-4 bg-white/95 backdrop-blur-sm border-0 shadow-xl rounded-[20px] hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
             <GlowingEffect disabled={false} spread={30} />
             <div className="relative z-10">
               <p className="text-xs font-bold uppercase tracking-wider text-green-600 mb-1">
                 Tu Camino Financiero
               </p>
-              <h1 className="text-2xl font-bold text-foreground">
+              <h1 className="text-xl font-bold text-foreground">
                 Tu deseo, tu realidad
               </h1>
-              <div className="mt-4">
-                <div className="flex justify-between text-sm mb-2 text-foreground/70">
+              <div className="mt-2">
+                <div className="flex justify-between text-xs mb-1 text-foreground/70">
                   <span>Progreso Total</span>
                   <span className="font-bold text-foreground">{currentProgress.toFixed(1)}%</span>
                 </div>
-                <Progress value={currentProgress} className="h-3" />
+                <div className="relative h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                  <div 
+                    className="absolute h-full bg-gradient-to-r from-green-400 via-green-500 to-emerald-500 rounded-full transition-all duration-500 shadow-lg shadow-green-500/50"
+                    style={{ 
+                      width: `${currentProgress}%`,
+                      animation: 'electricPulse 2s ease-in-out infinite'
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </Card>
