@@ -57,6 +57,27 @@ export default function FinancialJourney() {
   // Generar nodos cada 0.5% (200 nodos en total para cubrir del 0% al 100%)
   const generateNodes = () => {
     const nodes: JourneyNode[] = [];
+    
+    // Función para generar insights según el porcentaje
+    const getInsight = (percent: number): string => {
+      if (percent === 0) return "¡El inicio de tu viaje financiero!";
+      if (percent < 5) return `Has dado tus primeros pasos. ${percent.toFixed(1)}% más cerca de tu libertad financiera.`;
+      if (percent < 10) return `Construyendo momentum. Cada peso cuenta en esta etapa.`;
+      if (percent < 20) return `Tu disciplina está dando frutos. Sigue con este ritmo.`;
+      if (percent < 30) return `Has superado el desafío inicial. El camino se hace más claro.`;
+      if (percent < 40) return `Un tercio del camino recorrido. Tu visión se está materializando.`;
+      if (percent < 50) return `Estás en la zona de aceleración. El interés compuesto trabaja a tu favor.`;
+      if (percent === 50) return "¡Medio camino! Tu meta ya no es un sueño, es una realidad en construcción.";
+      if (percent < 60) return `Más de la mitad logrado. Tu futuro financiero toma forma.`;
+      if (percent < 70) return `La recta final está cerca. Tu esfuerzo está transformando tu vida.`;
+      if (percent < 80) return `Zona de excelencia. Pocas personas llegan hasta aquí.`;
+      if (percent < 90) return `Casi en la cima. Tu libertad financiera está al alcance.`;
+      if (percent < 95) return `Los últimos pasos son los más poderosos. Estás a punto de lograrlo.`;
+      if (percent < 100) return `¡Tan cerca! Puedes ver tu meta desde aquí.`;
+      if (percent === 100) return "¡LIBERTAD FINANCIERA ALCANZADA! Has logrado tus aspiraciones.";
+      return `¡Has superado tu meta! Estás en el ${percent.toFixed(1)}% de tus aspiraciones originales.`;
+    };
+    
     for (let i = 0; i <= 200; i++) {
       const progressPercent = i * 0.5;
       const levelNumber = Math.floor((progressPercent / 100) * 2500);
@@ -64,7 +85,7 @@ export default function FinancialJourney() {
       nodes.push({
         id: i + 1,
         title: `Nivel ${levelNumber}`,
-        description: `${progressPercent.toFixed(1)}% de la meta`,
+        description: getInsight(progressPercent),
         requiredProgress: progressPercent,
         isUnlocked: currentProgress >= progressPercent,
         isCurrent: currentProgress >= progressPercent && currentProgress < (progressPercent + 0.5),
