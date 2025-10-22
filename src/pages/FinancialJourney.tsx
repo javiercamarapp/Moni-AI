@@ -2204,15 +2204,15 @@ export default function FinancialJourney() {
             {(() => {
               const level4750 = 4750;
               const nodeIndex = level4750 / 50;
-              const badgeY = 40 + (nodeIndex * 35) - 40; // 40px arriba del nodo
+              const badgeY = 40 + (nodeIndex * 35) - 30; // 30px arriba del nodo
               const isUnlocked = currentLevel >= level4750;
               
               return (
                 <div
-                  className={`absolute right-[10px] transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  className={`absolute left-1/2 -translate-x-1/2 transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
                   style={{
                     top: `${badgeY}px`,
-                    transform: 'translateY(-50%)',
+                    transform: 'translate(-50%, -50%)',
                     zIndex: expandedBadge === 'rubymastery4750' ? 100 : 20
                   }}
                 >
@@ -2245,7 +2245,7 @@ export default function FinancialJourney() {
                     {/* Tooltip al hacer hover */}
                     <div 
                       className={`
-                        absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
                         text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
                         transition-opacity duration-200 bg-red-100 text-red-700
                         shadow-md z-30
@@ -2258,10 +2258,9 @@ export default function FinancialJourney() {
                     {expandedBadge === 'rubymastery4750' && isUnlocked && (
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
-                          border-0 w-64 animate-scale-in overflow-hidden right-full mr-3"
+                          border-0 w-64 animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
                         style={{
-                          top: '50%',
-                          transform: 'translateY(-50%)'
+                          top: '0'
                         }}
                       >
                         <GlowingEffect disabled={false} spread={20} />
