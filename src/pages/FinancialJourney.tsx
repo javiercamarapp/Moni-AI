@@ -57,16 +57,19 @@ export default function FinancialJourney() {
     const nodes: JourneyNode[] = [];
     
     const getNodePosition = (index: number) => {
-      const baseRow = Math.floor(index / 4);
-      const col = index % 4;
+      // Crear un camino más vertical y serpenteante, inspirado en mapas de juegos
+      const row = Math.floor(index / 3); // 3 nodos por "sección"
+      const col = index % 3;
       
+      // Alternar entre izquierda, centro y derecha para crear serpenteo
+      const positions = [20, 50, 80]; // Porcentajes de posición horizontal
       const seed = (index * 7919) % 100;
-      const offsetX = (seed % 30) - 15;
-      const offsetY = ((seed * 13) % 20) - 10;
+      const offsetX = (seed % 15) - 7; // Variación más sutil
+      const offsetY = (row * 100) + ((seed * 13) % 30); // Mayor espacio vertical
       
       return {
-        x: col * 25 + offsetX,
-        y: baseRow * 20 + offsetY
+        x: positions[col] + offsetX,
+        y: offsetY
       };
     };
     
@@ -177,12 +180,12 @@ export default function FinancialJourney() {
         "¡LIBERTAD FINANCIERA ALCANZADA! Lo lograste."
       ];
       
-      const index = Math.floor(percent * 5) % insights.length;
+      const index = Math.floor(percent * 2) % insights.length;
       return insights[index];
     };
     
-    for (let i = 0; i <= 500; i++) {
-      const progressPercent = i * 0.2;
+    for (let i = 0; i <= 200; i++) {
+      const progressPercent = i * 0.5;
       const levelNumber = Math.floor((progressPercent / 100) * 10000);
       const position = getNodePosition(i);
       
@@ -192,8 +195,8 @@ export default function FinancialJourney() {
         description: getInsight(progressPercent),
         requiredProgress: progressPercent,
         isUnlocked: currentProgress >= progressPercent,
-        isCurrent: currentProgress >= progressPercent && currentProgress < (progressPercent + 0.2),
-        isCompleted: currentProgress >= (progressPercent + 0.2),
+        isCurrent: currentProgress >= progressPercent && currentProgress < (progressPercent + 0.5),
+        isCompleted: currentProgress >= (progressPercent + 0.5),
         position
       });
     }
@@ -221,7 +224,7 @@ export default function FinancialJourney() {
           </div>
         </Card>
 
-        <div className="relative min-h-[2000px]">
+        <div className="relative min-h-[6000px]">
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
             <defs>
               <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
