@@ -7,7 +7,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart, Bar } from "recharts";
 import { useNetWorth } from "@/hooks/useNetWorth";
-import { StarBorder } from "@/components/ui/star-border";
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#6366f1'];
 
@@ -425,13 +424,8 @@ export default function AspirationsAnalysis() {
               </div>
             ))}
             
-            {/* Total Card con animación StarBorder */}
-            <StarBorder 
-              as="div" 
-              className="w-full"
-              color="hsl(217, 91%, 60%)"
-              speed="8s"
-            >
+            {/* Total Card */}
+            <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-[15px] p-2.5 shadow-lg border-2 border-slate-300">
               <h4 className="font-bold text-foreground mb-1.5 text-xs">TOTAL</h4>
               <div className="grid grid-cols-3 gap-1.5 text-[10px]">
                 <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-[8px] p-1.5">
@@ -462,7 +456,7 @@ export default function AspirationsAnalysis() {
                   </p>
                 </div>
               </div>
-            </StarBorder>
+            </div>
           </div>
 
           {/* Vista Desktop - Tabla */}
