@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, Lock, Trophy, TrendingUp, Target, Gem } from "lucide-react";
+import { Star, Lock, Trophy, TrendingUp, Target } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNetWorth } from "@/hooks/useNetWorth";
 import { Progress } from "@/components/ui/progress";
@@ -49,13 +49,17 @@ export default function FinancialJourney() {
 
   // Calcular progreso actual (0-100)
   const currentProgress = totalAspiration > 0 ? (currentNetWorth / totalAspiration) * 100 : 0;
+  
+  // Calcular nivel actual de 2500
+  const currentLevel = totalAspiration > 0 ? Math.floor((currentNetWorth / totalAspiration) * 2500) : 0;
+  const targetLevel = 2500;
 
-  // Definir los nodos del camino financiero
+  // Definir los nodos del camino financiero (hitos importantes)
   const journeyNodes: JourneyNode[] = [
     {
       id: 1,
-      title: "Primeros Pasos",
-      description: "Comienza tu viaje financiero",
+      title: "Inicio del Camino",
+      description: "Nivel 0 - Primeros pasos",
       requiredProgress: 0,
       isUnlocked: true,
       isCurrent: currentProgress < 10,
@@ -63,62 +67,89 @@ export default function FinancialJourney() {
     },
     {
       id: 2,
-      title: "Construyendo Base",
-      description: "10% de tu meta alcanzado",
+      title: "Nivel 250",
+      description: "10% de la meta alcanzado",
       requiredProgress: 10,
       isUnlocked: currentProgress >= 10,
-      isCurrent: currentProgress >= 10 && currentProgress < 25,
-      isCompleted: currentProgress >= 25
+      isCurrent: currentProgress >= 10 && currentProgress < 20,
+      isCompleted: currentProgress >= 20
     },
     {
       id: 3,
-      title: "Ganando Impulso",
-      description: "25% de tu meta alcanzado",
-      requiredProgress: 25,
-      isUnlocked: currentProgress >= 25,
-      isCurrent: currentProgress >= 25 && currentProgress < 40,
-      isCompleted: currentProgress >= 40
+      title: "Nivel 500",
+      description: "20% de la meta alcanzado",
+      requiredProgress: 20,
+      isUnlocked: currentProgress >= 20,
+      isCurrent: currentProgress >= 20 && currentProgress < 30,
+      isCompleted: currentProgress >= 30
     },
     {
       id: 4,
-      title: "Medio Camino",
-      description: "40% de tu meta alcanzado",
-      requiredProgress: 40,
-      isUnlocked: currentProgress >= 40,
-      isCurrent: currentProgress >= 40 && currentProgress < 60,
-      isCompleted: currentProgress >= 60
+      title: "Nivel 750",
+      description: "30% de la meta alcanzado",
+      requiredProgress: 30,
+      isUnlocked: currentProgress >= 30,
+      isCurrent: currentProgress >= 30 && currentProgress < 40,
+      isCompleted: currentProgress >= 40
     },
     {
       id: 5,
-      title: "Avanzando Fuerte",
-      description: "60% de tu meta alcanzado",
-      requiredProgress: 60,
-      isUnlocked: currentProgress >= 60,
-      isCurrent: currentProgress >= 60 && currentProgress < 75,
-      isCompleted: currentProgress >= 75
+      title: "Nivel 1000",
+      description: "40% de la meta alcanzado",
+      requiredProgress: 40,
+      isUnlocked: currentProgress >= 40,
+      isCurrent: currentProgress >= 40 && currentProgress < 50,
+      isCompleted: currentProgress >= 50
     },
     {
       id: 6,
-      title: "Casi Allí",
-      description: "75% de tu meta alcanzado",
-      requiredProgress: 75,
-      isUnlocked: currentProgress >= 75,
-      isCurrent: currentProgress >= 75 && currentProgress < 90,
-      isCompleted: currentProgress >= 90
+      title: "Nivel 1250",
+      description: "50% - Medio camino",
+      requiredProgress: 50,
+      isUnlocked: currentProgress >= 50,
+      isCurrent: currentProgress >= 50 && currentProgress < 60,
+      isCompleted: currentProgress >= 60
     },
     {
       id: 7,
-      title: "Meta Alcanzada",
-      description: "90%+ de tu meta alcanzado",
+      title: "Nivel 1500",
+      description: "60% de la meta alcanzado",
+      requiredProgress: 60,
+      isUnlocked: currentProgress >= 60,
+      isCurrent: currentProgress >= 60 && currentProgress < 70,
+      isCompleted: currentProgress >= 70
+    },
+    {
+      id: 8,
+      title: "Nivel 1750",
+      description: "70% de la meta alcanzado",
+      requiredProgress: 70,
+      isUnlocked: currentProgress >= 70,
+      isCurrent: currentProgress >= 70 && currentProgress < 80,
+      isCompleted: currentProgress >= 80
+    },
+    {
+      id: 9,
+      title: "Nivel 2000",
+      description: "80% de la meta alcanzado",
+      requiredProgress: 80,
+      isUnlocked: currentProgress >= 80,
+      isCurrent: currentProgress >= 80 && currentProgress < 90,
+      isCompleted: currentProgress >= 90
+    },
+    {
+      id: 10,
+      title: "Nivel 2250",
+      description: "90% - Casi en la meta",
       requiredProgress: 90,
       isUnlocked: currentProgress >= 90,
       isCurrent: currentProgress >= 90 && currentProgress < 100,
       isCompleted: currentProgress >= 100
     },
     {
-      id: 8,
-      title: "Libertad Financiera",
-      description: "¡Has superado tus aspiraciones!",
+      id: 11,
+      title: "Nivel 2500",
+      description: "¡Libertad Financiera!",
       requiredProgress: 100,
       isUnlocked: currentProgress >= 100,
       isCurrent: currentProgress >= 100,
@@ -126,21 +157,24 @@ export default function FinancialJourney() {
     }
   ];
 
-  const currentLevel = journeyNodes.findIndex(node => node.isCurrent) + 1;
-
   return (
     <div className="min-h-screen animated-wave-bg pb-4">
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         {/* Header */}
-        <div className="flex items-center justify-end mb-6">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-orange-100 px-3 py-1.5 rounded-full border border-orange-200">
-              <Gem className="h-4 w-4 text-orange-600" />
-              <span className="text-sm font-bold text-orange-600">{Math.round(currentProgress)}%</span>
+        <div className="flex items-center justify-center mb-6">
+          <div className="grid grid-cols-3 gap-4 w-full max-w-lg">
+            <div className="text-center bg-white/90 p-3 rounded-xl border border-blue-100 shadow-md">
+              <p className="text-xs text-foreground/60 font-semibold mb-1">NIVELES</p>
+              <p className="text-xl font-bold text-foreground">{targetLevel}</p>
             </div>
-            <div className="flex items-center gap-2 bg-blue-100 px-3 py-1.5 rounded-full border border-blue-200">
-              <Trophy className="h-4 w-4 text-blue-600" />
-              <span className="text-sm font-bold text-blue-600">Nivel {currentLevel}</span>
+            <div className="text-center bg-gradient-to-br from-green-50 to-emerald-50 p-3 rounded-xl border-2 border-green-400 shadow-lg">
+              <p className="text-xs text-green-700 font-semibold mb-1">NIVEL ACTUAL</p>
+              <p className="text-xl font-bold text-green-600">{currentLevel}</p>
+              <p className="text-[10px] text-green-600/70">NET WORTH</p>
+            </div>
+            <div className="text-center bg-white/90 p-3 rounded-xl border border-purple-100 shadow-md">
+              <p className="text-xs text-foreground/60 font-semibold mb-1">NIVEL ESPERADO</p>
+              <p className="text-xl font-bold text-blue-600">{targetLevel}</p>
             </div>
           </div>
         </div>
@@ -180,37 +214,37 @@ export default function FinancialJourney() {
                   
                   <div
                     className={`
-                      relative w-24 h-24 rounded-full flex items-center justify-center
+                      relative w-12 h-12 rounded-full flex items-center justify-center
                       transition-all duration-300 z-10
                       ${node.isCompleted
-                        ? 'bg-gradient-to-br from-green-400 to-green-600 shadow-xl shadow-green-400/40'
+                        ? 'bg-gradient-to-br from-green-400 to-green-600 shadow-lg shadow-green-400/40'
                         : node.isCurrent
-                        ? 'bg-gradient-to-br from-green-500 to-emerald-600 shadow-2xl shadow-green-500/60 scale-110'
+                        ? 'bg-gradient-to-br from-green-500 to-emerald-600 shadow-xl shadow-green-500/60 scale-110'
                         : node.isUnlocked
-                        ? 'bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg shadow-blue-400/40'
-                        : 'bg-white border-2 border-gray-200 shadow-md'
+                        ? 'bg-gradient-to-br from-blue-400 to-blue-600 shadow-md shadow-blue-400/40'
+                        : 'bg-white border-2 border-gray-200 shadow-sm'
                       }
                     `}
                   >
                     {node.isCompleted ? (
-                      <Star className="h-10 w-10 text-white fill-white" />
+                      <Star className="h-5 w-5 text-white fill-white" />
                     ) : node.isCurrent ? (
                       <div className="relative">
-                        <Star className="h-10 w-10 text-white" />
+                        <Star className="h-5 w-5 text-white" />
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-16 h-16 rounded-full border-4 border-white/30 border-t-white animate-spin" />
+                          <div className="w-8 h-8 rounded-full border-2 border-white/30 border-t-white animate-spin" />
                         </div>
                       </div>
                     ) : node.isUnlocked ? (
-                      <Target className="h-10 w-10 text-white" />
+                      <Target className="h-5 w-5 text-white" />
                     ) : (
-                      <Lock className="h-8 w-8 text-gray-400" />
+                      <Lock className="h-4 w-4 text-gray-400" />
                     )}
                   </div>
 
                   {/* Progress ring for current node */}
                   {node.isCurrent && (
-                    <svg className="absolute inset-0 w-24 h-24 -rotate-90" viewBox="0 0 100 100">
+                    <svg className="absolute inset-0 w-12 h-12 -rotate-90" viewBox="0 0 100 100">
                       <circle
                         cx="50"
                         cy="50"
@@ -290,7 +324,7 @@ export default function FinancialJourney() {
           <div className="text-center">
             <h3 className="text-lg font-bold text-foreground mb-2">Tu Progreso</h3>
             <p className="text-foreground/70 text-sm mb-4">
-              Estás en el nivel {currentLevel} de 8. ¡Sigue así!
+              Estás en el nivel {currentLevel} de {targetLevel}. ¡Sigue así!
             </p>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="bg-white/60 p-3 rounded-xl border border-blue-100">
