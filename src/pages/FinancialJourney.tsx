@@ -257,7 +257,7 @@ export default function FinancialJourney() {
   }, [totalAspiration, currentNetWorth]); // Se ejecuta cuando cambian estos valores
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-4">
+    <div className="min-h-screen animated-wave-bg pb-4 overflow-y-auto">
       {/* Header fijo con botón de regresar integrado */}
       <div className="sticky top-0 z-40 bg-transparent backdrop-blur-sm pt-4 pb-2">
         <div className="container mx-auto px-4 max-w-2xl">
@@ -300,11 +300,10 @@ export default function FinancialJourney() {
                   if (currentNode) {
                     setExpandedNode(currentNode.id);
                     setTimeout(() => {
-                      const scrollPosition = currentNode.position.y - 200;
-                      window.scrollTo({
-                        top: scrollPosition,
-                        behavior: 'smooth'
-                      });
+                      const element = document.getElementById(`node-${currentNode.id}`);
+                      if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      }
                     }, 100);
                   }
                 }}
@@ -320,7 +319,7 @@ export default function FinancialJourney() {
 
       {/* Contenedor deslizante del camino */}
       <div className="container mx-auto px-4 max-w-2xl mt-4">
-        <div className="relative min-h-[7200px] w-full overflow-x-hidden pb-4 pt-2">
+        <div className="relative w-full pb-4 pt-2" style={{ minHeight: '7200px' }}>
           {/* 9 Secciones de fondo */}
           <div className="absolute inset-0 w-full h-full">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((section) => (
@@ -401,6 +400,7 @@ export default function FinancialJourney() {
             {journeyNodes.map((node) => (
               <div 
                 key={node.id}
+                id={`node-${node.id}`}
                 className={`absolute transition-all duration-300 ${expandedNode === node.id ? 'z-[100]' : 'z-10'}`}
                 style={{
                   left: `${node.position.x}%`,
