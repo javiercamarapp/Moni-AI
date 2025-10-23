@@ -1066,7 +1066,13 @@ Responde SOLO con el JSON array, sin texto adicional.`;
       forecast: {
         forecastData,
         goalProbability,
-        goalETA
+        goalETA,
+        goalInfo: mainGoal ? {
+          title: mainGoal.title,
+          target: mainGoal.target,
+          current: mainGoal.current,
+          progress: (mainGoal.current / mainGoal.target) * 100
+        } : null
       },
       budgetProgress: {
         categories: categoryBudgets

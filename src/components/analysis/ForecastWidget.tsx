@@ -17,13 +17,21 @@ interface ForecastData {
   optimistic: number;
 }
 
+interface GoalInfo {
+  title: string;
+  target: number;
+  current: number;
+  progress: number;
+}
+
 interface ForecastProps {
   forecastData: ForecastData[];
   goalProbability: number;
   goalETA: string;
+  goalInfo?: GoalInfo | null;
 }
 
-export default function ForecastWidget({ forecastData, goalProbability, goalETA }: ForecastProps) {
+export default function ForecastWidget({ forecastData, goalProbability, goalETA, goalInfo }: ForecastProps) {
   const [timeframe, setTimeframe] = useState<'3' | '6' | '12' | '60' | '120'>('12');
   
   const monthsToShow = timeframe === '3' ? 3 : 
@@ -155,16 +163,48 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA 
           </div>
         </div>
 
-        {goalProbability > 0 && (
-          <div className="bg-purple-50 rounded-lg p-2 border border-purple-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-[8px] text-purple-700 font-medium">Prob. meta</p>
-                <p className="text-sm font-bold text-purple-900">{goalProbability}%</p>
+        {goalInfo && goalProbability > 0 && (
+          <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-2.5 border border-purple-200">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[8px] text-purple-600 font-medium uppercase tracking-wide">Meta de Ahorro</p>
+                  <p className="text-xs font-bold text-purple-900 mt-0.5">{goalInfo.title}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[8px] text-purple-600 font-medium">ETA</p>
+                  <p className="text-[11px] font-bold text-purple-900">{goalETA}</p>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="text-[8px] text-purple-700 font-medium">ETA</p>
-                <p className="text-[11px] font-bold text-purple-900">{goalETA}</p>
+              
+              <div className="space-y-1">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-[10px] font-semibold text-purple-800">
+                    ${goalInfo.current.toLocaleString('es-MX')}
+                  </span>
+                  <span className="text-[9px] text-purple-600">
+                    de ${goalInfo.target.toLocaleString('es-MX')}
+                  </span>
+                </div>
+                <div className="relative h-2 bg-purple-100 rounded-full overflow-hidden">
+                  <div 
+                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-500"
+                    style={{ width: `${Math.min(100, goalInfo.progress)}%` }}
+                  />
+                </div>
+                <p className="text-[9px] text-purple-700 font-medium">{goalInfo.progress.toFixed(1)}% completado</p>
+              </div>
+
+              <div className="flex items-center justify-between pt-1 border-t border-purple-200">
+                <div>
+                  <p className="text-[8px] text-purple-600 font-medium">Probabilidad de éxito</p>
+                  <p className="text-sm font-bold text-purple-900">{goalProbability}%</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[7px] text-purple-500 max-w-[140px]">
+                    Basado en tu ahorro promedio de los últimos 6 meses
+                  </p>
+                </div>
               </div>
             </div>
           </div>
