@@ -380,6 +380,8 @@ export default function AspirationsAnalysis() {
               if (isNavigating) return;
               setIsNavigating(true);
               navigate(-1);
+              // Reset estado después de 1 segundo por si algo falla
+              setTimeout(() => setIsNavigating(false), 1000);
             }}
             disabled={isNavigating}
             className="bg-white rounded-full shadow-xl hover:bg-white/90 text-foreground h-12 w-12 hover:scale-105 transition-all border border-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
