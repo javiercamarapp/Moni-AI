@@ -885,58 +885,58 @@ export default function FinancialAnalysis() {
 
             {/* Control de Gastos - Compacto */}
             <div className="space-y-2">
-              <p className="text-xs font-medium text-white/80 flex items-center gap-1">
+              <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
                 <TrendingDown className="h-3 w-3" /> Control de Gastos
               </p>
               <div className="grid grid-cols-2 gap-2">
-                <Card className="p-3 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/70">Fijos</span>
-                    <AlertCircle className="h-3 w-3 text-orange-400" />
+                    <span className="text-xs text-muted-foreground">Fijos</span>
+                    <AlertCircle className="h-3 w-3 text-orange-500" />
                   </div>
-                  <p className="text-lg font-bold text-orange-300">
+                  <p className="text-lg font-bold text-orange-600">
                     ${formatK(analysis?.metrics?.fixedExpenses)}k
                   </p>
                   <div className="flex items-center justify-between text-[10px]">
-                    <span className="text-white/60">{(analysis?.metrics?.fixedExpensesPercentage || 0).toFixed(0)}% del gasto</span>
-                    <span className="text-emerald-400">↓ -3%</span>
+                    <span className="text-muted-foreground">{(analysis?.metrics?.fixedExpensesPercentage || 0).toFixed(0)}% del gasto</span>
+                    <span className="text-success">↓ -3%</span>
                   </div>
                 </Card>
 
-                <Card className="p-3 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/70">Variables</span>
-                    <Zap className="h-3 w-3 text-violet-400" />
+                    <span className="text-xs text-muted-foreground">Variables</span>
+                    <Zap className="h-3 w-3 text-violet-500" />
                   </div>
-                  <p className="text-lg font-bold text-violet-300">
+                  <p className="text-lg font-bold text-violet-600">
                     ${formatK(analysis?.metrics?.variableExpenses)}k
                   </p>
-                  <p className="text-[10px] text-white/60">{(analysis?.metrics?.variableExpensesPercentage || 0).toFixed(0)}%</p>
+                  <p className="text-[10px] text-muted-foreground">{(analysis?.metrics?.variableExpensesPercentage || 0).toFixed(0)}%</p>
                 </Card>
 
-                <Card className="p-3 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/70">Hormiga</span>
+                    <span className="text-xs text-muted-foreground">Hormiga</span>
                     <span className="text-lg">🐜</span>
                   </div>
-                  <p className="text-lg font-bold text-yellow-300">
+                  <p className="text-lg font-bold text-yellow-600">
                     ${formatK(analysis?.metrics?.antExpenses)}k
                   </p>
                   <div className="flex items-center justify-between text-[10px]">
-                    <span className="text-white/60">{(analysis?.metrics?.antExpensesPercentage || 0).toFixed(1)}% ingreso</span>
-                    <span className="text-yellow-400">↑ +5%</span>
+                    <span className="text-muted-foreground">{(analysis?.metrics?.antExpensesPercentage || 0).toFixed(1)}% ingreso</span>
+                    <span className="text-yellow-600">↑ +5%</span>
                   </div>
                 </Card>
 
-                <Card className="p-3 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/70">Impulsivos</span>
-                    <AlertCircle className="h-3 w-3 text-rose-400" />
+                    <span className="text-xs text-muted-foreground">Impulsivos</span>
+                    <AlertCircle className="h-3 w-3 text-rose-500" />
                   </div>
-                  <p className="text-lg font-bold text-rose-300">{analysis?.metrics?.impulsivePurchases ?? 0}</p>
+                  <p className="text-lg font-bold text-rose-600">{analysis?.metrics?.impulsivePurchases ?? 0}</p>
                   <div className="flex items-center justify-between text-[10px]">
-                    <span className="text-white/60">compras</span>
-                    <span className="text-rose-400">↑ +2</span>
+                    <span className="text-muted-foreground">compras</span>
+                    <span className="text-rose-500">↑ +2</span>
                   </div>
                 </Card>
               </div>
