@@ -27,7 +27,6 @@ export default function FinancialJourney() {
   const [nodes, setNodes] = useState<JourneyNode[]>([]);
   const [expandedNode, setExpandedNode] = useState<number | null>(null);
   const [expandedBadge, setExpandedBadge] = useState<string | null>(null);
-  const [isNavigating, setIsNavigating] = useState(false);
   const netWorthData = useNetWorth("1Y");
   const currentNetWorth = netWorthData.data?.currentNetWorth || 0;
 
@@ -280,27 +279,17 @@ export default function FinancialJourney() {
           <div className="mb-3 flex items-center justify-between">
             <Button
               type="button"
-              onClick={() => {
-                if (isNavigating) return;
-                setIsNavigating(true);
-                navigate(-1);
-              }}
-              disabled={isNavigating}
+              onClick={() => navigate(-1)}
               variant="ghost"
               size="icon"
-              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <Button
               type="button"
-              onClick={() => {
-                if (isNavigating) return;
-                setIsNavigating(true);
-                navigate('/aspirations-analysis');
-              }}
-              disabled={isNavigating}
-              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 px-4 hover:scale-105 transition-all border border-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => navigate('/aspirations-analysis')}
+              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 px-4 hover:scale-105 transition-all border border-blue-100"
             >
               <Target className="h-4 w-4 mr-2" />
               <span className="text-sm font-medium">Análisis</span>
