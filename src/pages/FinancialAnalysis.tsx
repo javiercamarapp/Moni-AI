@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { addDays, addWeeks, addMonths, addYears, isBefore, startOfDay } from "date-fns";
-import { TrendingUp, TrendingDown, DollarSign, PiggyBank, Home, Target, MessageSquare, User, RefreshCw, Droplets, AlertCircle, Zap, Activity, BarChart3, Shield, Trophy, Heart } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, PiggyBank, Home, Target, MessageSquare, User, Droplets, AlertCircle, Zap, Activity, BarChart3, Shield, Trophy, Heart } from "lucide-react";
 import moniAiLogo from "@/assets/moni-ai-horizontal.png";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import BottomNav from '@/components/BottomNav';
@@ -568,11 +568,8 @@ export default function FinancialAnalysis() {
         {/* Header */}
         <div className="flex items-center justify-between pt-4 mb-4">
           <div>
-            <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+            <h1 className="text-xl font-bold text-foreground">
               Análisis Financiero
-              {(loading || loadingTransactions) && (
-                <RefreshCw className="h-4 w-4 animate-spin text-primary" />
-              )}
             </h1>
             <p className="text-xs text-muted-foreground">
               {period === 'month' ? 'Mes actual' : 'Año completo'}
