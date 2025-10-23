@@ -936,7 +936,10 @@ const Dashboard = () => {
       {/* Score Moni - Compacto */}
       {scoreMoni !== null && <div className="mx-4 mb-4">
           <Card className="p-4 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer border border-blue-100 animate-fade-in"
-            onClick={() => navigate('/score-moni')}
+            onClick={() => {
+              navigate('/score-moni');
+              window.scrollTo(0, 0);
+            }}
           >
             <div className="flex items-center justify-between">
               <div>
