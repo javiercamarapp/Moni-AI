@@ -146,66 +146,65 @@ export const BadgeCard = ({
 
   useOutsideClick(containerRef, handleCollapse);
 
-  const modalContent = isExpanded && (
-    <div className="fixed inset-0 flex items-center justify-center p-4" style={{ zIndex: 9999999 }}>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={handleCollapse}
-      />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        ref={containerRef}
-        className="relative w-full max-w-sm"
-        style={{ zIndex: 10000000 }}
-      >
-        <div className="bg-gradient-to-b from-gray-50 to-white rounded-[24px] shadow-2xl p-5 relative">
-          <button
-            className="absolute -top-2 -right-2 h-10 w-10 rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-500 to-orange-500 hover:scale-110 transition-all shadow-lg z-10"
-            onClick={handleCollapse}
-          >
-            <X className="h-4 w-4 text-white" />
-          </button>
-          
-          <div className="flex flex-col items-center">
-            <div className={`bg-gradient-to-br ${badge.color} p-4 rounded-full mb-3 shadow-lg`}>
-              <IconComponent className="h-10 w-10 text-white" />
-            </div>
-            
-            <h2 className="text-xl font-bold text-gray-900 mb-1 text-center">
-              {badge.name}
-            </h2>
-            
-            <p className="text-xs text-gray-500 font-medium mb-4">
-              Nivel {badge.level}
-            </p>
-            
-            <div className="bg-gray-100 rounded-[16px] p-4 mb-3 w-full">
-              <p className="text-xs text-gray-700 leading-relaxed text-center">
-                {badge.explanation}
-              </p>
-            </div>
-            
-            <div className={`bg-gradient-to-br ${badge.color} px-4 py-2.5 rounded-[12px] shadow-md w-full`}>
-              <p className="text-xs text-white font-bold text-center">
-                🎯 {badge.growthPercentage}% patrimonio deseado
-              </p>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
-
   return (
     <>
       <AnimatePresence>
-        {isExpanded && createPortal(modalContent, document.body)}
+        {isExpanded && createPortal(
+          <div className="fixed inset-0 flex items-center justify-center p-4" style={{ zIndex: 9999999 }}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={handleCollapse}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              ref={containerRef}
+              className="relative w-full max-w-sm"
+              style={{ zIndex: 10000000 }}
+            >
+              <div className="bg-gradient-to-b from-gray-50 to-white rounded-[24px] shadow-2xl p-5 relative">
+                <button
+                  className="absolute -top-2 -right-2 h-10 w-10 rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-500 to-orange-500 hover:scale-110 transition-all shadow-lg z-10"
+                  onClick={handleCollapse}
+                >
+                  <X className="h-4 w-4 text-white" />
+                </button>
+                
+                <div className="flex flex-col items-center">
+                  <div className={`bg-gradient-to-br ${badge.color} p-4 rounded-full mb-3 shadow-lg`}>
+                    <IconComponent className="h-10 w-10 text-white" />
+                  </div>
+                  
+                  <h2 className="text-xl font-bold text-gray-900 mb-1 text-center">
+                    {badge.name}
+                  </h2>
+                  
+                  <p className="text-xs text-gray-500 font-medium mb-4">
+                    Nivel {badge.level}
+                  </p>
+                  
+                  <div className="bg-gray-100 rounded-[16px] p-4 mb-3 w-full">
+                    <p className="text-xs text-gray-700 leading-relaxed text-center">
+                      {badge.explanation}
+                    </p>
+                  </div>
+                  
+                  <div className={`bg-gradient-to-br ${badge.color} px-4 py-2.5 rounded-[12px] shadow-md w-full`}>
+                    <p className="text-xs text-white font-bold text-center">
+                      🎯 {badge.growthPercentage}% patrimonio deseado
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>,
+          document.body
+        )}
       </AnimatePresence>
       
       <motion.div
