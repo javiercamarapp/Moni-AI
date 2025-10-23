@@ -88,7 +88,7 @@ export default function FinancialJourney() {
       if (index === 200) {
         return {
           x: 50, // Centrado
-          y: 7100 // Bien abajo
+          y: 7150 // Posición final ajustada para que el globo sea lo último
         };
       }
       
@@ -321,7 +321,7 @@ export default function FinancialJourney() {
       <div className="flex-1 overflow-y-auto relative" style={{ marginTop: '180px' }}>
 
         <div className="container mx-auto px-4 max-w-2xl">
-          <div className="relative w-full pb-4 pt-2" style={{ minHeight: '7500px' }}>
+          <div className="relative w-full pb-4 pt-2" style={{ minHeight: '7300px' }}>
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
             <defs>
               <linearGradient id="electricGreen" x1="0%" y1="0%" x2="0%" y2="100%">
