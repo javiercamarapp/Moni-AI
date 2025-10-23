@@ -29,40 +29,40 @@ export default function UpcomingTransactionsWidget({ historicalAverages }: Upcom
   };
 
   return (
-    <Card className="p-4 bg-gradient-card card-glow border-white/20">
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 transition-all">
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs font-medium text-white/80 flex items-center gap-1">
+            <p className="text-xs font-medium text-foreground flex items-center gap-1">
               <TrendingUp className="h-3 w-3" /> Proyección Anual
             </p>
-            <p className="text-xs text-white/60">
+            <p className="text-xs text-muted-foreground">
               Basado en últimos 12 meses
             </p>
           </div>
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          <div className="bg-gradient-to-br from-emerald-600/90 to-emerald-800/90 rounded-lg p-2 border border-emerald-500/30 card-glow">
-            <p className="text-[10px] text-emerald-200">Ingresos</p>
-            <p className="text-sm font-bold text-white">
+          <div className="bg-emerald-50 rounded-lg p-2 border border-emerald-200">
+            <p className="text-[10px] text-emerald-700">Ingresos</p>
+            <p className="text-sm font-bold text-emerald-800">
               {formatK(projectedAnnualIncome)}
             </p>
-            <p className="text-[9px] text-emerald-300">esperados</p>
+            <p className="text-[9px] text-emerald-600">esperados</p>
           </div>
-          <div className="bg-gradient-to-br from-red-600/90 to-red-800/90 rounded-lg p-2 border border-red-500/30 card-glow">
-            <p className="text-[10px] text-red-200">Gastos</p>
-            <p className="text-sm font-bold text-white">
+          <div className="bg-red-50 rounded-lg p-2 border border-red-200">
+            <p className="text-[10px] text-red-700">Gastos</p>
+            <p className="text-sm font-bold text-red-800">
               {formatK(projectedAnnualExpenses)}
             </p>
-            <p className="text-[9px] text-red-300">esperados</p>
+            <p className="text-[9px] text-red-600">esperados</p>
           </div>
-          <div className={`${projectedAnnualBalance >= 0 ? 'bg-gradient-to-br from-purple-600/90 to-purple-800/90 border-purple-500/30' : 'bg-gradient-to-br from-orange-600/90 to-orange-800/90 border-orange-500/30'} rounded-lg p-2 border card-glow`}>
-            <p className="text-[10px] text-white/80">Balance</p>
-            <p className={`text-sm font-bold text-white`}>
+          <div className={`${projectedAnnualBalance >= 0 ? 'bg-purple-50 border-purple-200' : 'bg-orange-50 border-orange-200'} rounded-lg p-2 border`}>
+            <p className="text-[10px] text-muted-foreground">Balance</p>
+            <p className={`text-sm font-bold ${projectedAnnualBalance >= 0 ? 'text-purple-700' : 'text-orange-700'}`}>
               {projectedAnnualBalance >= 0 ? '+' : ''}{formatK(projectedAnnualBalance)}
             </p>
-            <p className={`text-[9px] ${projectedAnnualBalance >= 0 ? 'text-purple-300' : 'text-orange-300'}`}>proyectado</p>
+            <p className={`text-[9px] ${projectedAnnualBalance >= 0 ? 'text-purple-600' : 'text-orange-600'}`}>proyectado</p>
           </div>
         </div>
       </div>

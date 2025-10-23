@@ -22,17 +22,17 @@ export default function SubscriptionsWidget({ subscriptions, totalMonthly }: Sub
   const increasedSubs = subscriptions.filter(s => s.priceChange && s.priceChange > 0);
 
   return (
-    <Card className="p-4 bg-gradient-card card-glow border-white/20">
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 transition-all">
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs font-medium text-white/80">💳 Suscripciones</p>
-            <p className="text-xs text-white/60">
-              Total: <span className="text-purple-300 font-bold">${totalMonthly}/mes</span>
+            <p className="text-xs font-medium text-foreground">💳 Suscripciones</p>
+            <p className="text-xs text-muted-foreground">
+              Total: <span className="text-purple-600 font-bold">${totalMonthly}/mes</span>
             </p>
           </div>
           {(unusedSubs.length > 0 || increasedSubs.length > 0) && (
-            <AlertCircle className="h-4 w-4 text-yellow-400" />
+            <AlertCircle className="h-4 w-4 text-yellow-500" />
           )}
         </div>
 
@@ -44,22 +44,22 @@ export default function SubscriptionsWidget({ subscriptions, totalMonthly }: Sub
             return (
               <div 
                 key={idx}
-                className={`bg-white/5 rounded-lg p-2 border ${
-                  isUnused || hasIncrease ? 'border-yellow-500/30' : 'border-white/10'
+                className={`bg-muted/50 rounded-lg p-2 border ${
+                  isUnused || hasIncrease ? 'border-yellow-300' : 'border-border'
                 }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-lg">{sub.icon}</span>
                     <div>
-                      <p className="text-xs font-medium text-white">{sub.name}</p>
-                      <p className="text-[10px] text-white/60">
+                      <p className="text-xs font-medium text-foreground">{sub.name}</p>
+                      <p className="text-[10px] text-muted-foreground">
                         Último uso: {sub.lastUsed}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-bold text-white">
+                    <p className="text-sm font-bold text-foreground">
                       ${sub.amount}/{sub.frequency === 'monthly' ? 'm' : 'a'}
                     </p>
                   </div>
@@ -67,12 +67,12 @@ export default function SubscriptionsWidget({ subscriptions, totalMonthly }: Sub
 
                 <div className="flex flex-wrap gap-1 mt-2">
                   {isUnused && (
-                    <Badge variant="outline" className="text-[10px] bg-yellow-500/10 text-yellow-300 border-yellow-500/30">
+                    <Badge variant="outline" className="text-[10px] bg-yellow-50 text-yellow-700 border-yellow-300">
                       Sin uso {sub.daysUnused} días
                     </Badge>
                   )}
                   {hasIncrease && (
-                    <Badge variant="outline" className="text-[10px] bg-red-500/10 text-red-300 border-red-500/30 flex items-center gap-1">
+                    <Badge variant="outline" className="text-[10px] bg-red-50 text-red-700 border-red-300 flex items-center gap-1">
                       <TrendingUp className="h-2 w-2" />
                       Subió ${sub.priceChange}
                     </Badge>
@@ -84,8 +84,8 @@ export default function SubscriptionsWidget({ subscriptions, totalMonthly }: Sub
         </div>
 
         {unusedSubs.length > 0 && (
-          <div className="bg-yellow-500/10 rounded-lg p-2 border border-yellow-500/30">
-            <p className="text-xs text-yellow-200">
+          <div className="bg-yellow-50 rounded-lg p-2 border border-yellow-200">
+            <p className="text-xs text-yellow-700">
               💡 {unusedSubs.length} suscripciones sin usar podrían ahorrarte ${unusedSubs.reduce((sum, s) => sum + s.amount, 0)}/mes
             </p>
           </div>

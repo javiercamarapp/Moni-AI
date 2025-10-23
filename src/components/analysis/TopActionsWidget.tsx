@@ -26,15 +26,15 @@ export default function TopActionsWidget({ actions }: TopActionsProps) {
   const totalPotentialSavings = actions.reduce((sum, a) => sum + a.impact, 0);
 
   return (
-    <Card className="p-4 bg-gradient-card card-glow border-white/20">
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 transition-all">
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs font-medium text-white/80 flex items-center gap-1">
+            <p className="text-xs font-medium text-foreground flex items-center gap-1">
               <Sparkles className="h-3 w-3" /> Top 3 Acciones de Ahorro
             </p>
-            <p className="text-xs text-white/60 mt-1">
-              Ahorro potencial: <span className="text-emerald-300 font-bold">${totalPotentialSavings.toLocaleString()}/mes</span>
+            <p className="text-xs text-muted-foreground mt-1">
+              Ahorro potencial: <span className="text-emerald-600 font-bold">${totalPotentialSavings.toLocaleString()}/mes</span>
             </p>
           </div>
         </div>
@@ -43,18 +43,18 @@ export default function TopActionsWidget({ actions }: TopActionsProps) {
           {actions.map((action, idx) => (
             <div 
               key={idx}
-              className="bg-white/5 rounded-lg p-3 border border-white/10 hover:border-white/30 transition-all"
+              className="bg-muted/50 rounded-lg p-3 border border-border hover:border-primary/50 transition-all"
             >
               <div className="flex items-start gap-2">
                 <span className="text-lg">{getActionIcon(action.type)}</span>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-white">{action.title}</p>
-                  <p className="text-xs text-white/60 mt-1">{action.description}</p>
+                  <p className="text-sm font-medium text-foreground">{action.title}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{action.description}</p>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-emerald-400 font-bold text-sm">
+                    <span className="text-emerald-600 font-bold text-sm">
                       +${action.impact.toLocaleString()}/mes
                     </span>
-                    <span className="text-[10px] text-white/50">
+                    <span className="text-[10px] text-muted-foreground">
                       (${(action.impact * 12).toLocaleString()}/año)
                     </span>
                   </div>

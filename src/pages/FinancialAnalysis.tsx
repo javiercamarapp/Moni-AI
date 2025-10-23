@@ -944,35 +944,35 @@ export default function FinancialAnalysis() {
 
             {/* Endeudamiento Mejorado */}
             <div className="space-y-2">
-              <p className="text-xs font-medium text-white/80 flex items-center gap-1">
+              <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
                 <Shield className="h-3 w-3" /> Endeudamiento
               </p>
               {(analysis?.metrics?.totalDebt ?? 0) > 0 ? <>
                   <div className="grid grid-cols-4 gap-2">
-                    <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
-                      <span className="text-[10px] text-white/60">Razón</span>
-                      <p className="text-sm font-bold text-red-300">{(analysis?.metrics?.debtRatio || 0).toFixed(1)}%</p>
+                    <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                      <span className="text-[10px] text-muted-foreground">Razón</span>
+                      <p className="text-sm font-bold text-red-600">{(analysis?.metrics?.debtRatio || 0).toFixed(1)}%</p>
                     </Card>
-                    <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
-                      <span className="text-[10px] text-white/60">Carga</span>
-                      <p className="text-sm font-bold text-orange-300">{(analysis?.metrics?.financialBurden || 0).toFixed(1)}%</p>
+                    <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                      <span className="text-[10px] text-muted-foreground">Carga</span>
+                      <p className="text-sm font-bold text-orange-600">{(analysis?.metrics?.financialBurden || 0).toFixed(1)}%</p>
                     </Card>
-                    <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
-                      <span className="text-[10px] text-white/60">D/I</span>
-                      <p className="text-sm font-bold text-yellow-300">{(analysis?.metrics?.debtToIncomeRatio || 0).toFixed(2)}</p>
+                    <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                      <span className="text-[10px] text-muted-foreground">D/I</span>
+                      <p className="text-sm font-bold text-yellow-600">{(analysis?.metrics?.debtToIncomeRatio || 0).toFixed(2)}</p>
                     </Card>
-                    <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
-                      <span className="text-[10px] text-white/60">Int.</span>
-                      <p className="text-sm font-bold text-rose-300">{(analysis?.metrics?.interestOnIncome || 0).toFixed(1)}%</p>
+                    <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                      <span className="text-[10px] text-muted-foreground">Int.</span>
+                      <p className="text-sm font-bold text-rose-600">{(analysis?.metrics?.interestOnIncome || 0).toFixed(1)}%</p>
                     </Card>
                   </div>
-                  <div className="bg-gradient-to-br from-purple-600/90 to-purple-800/90 card-glow rounded-lg p-2 border border-purple-500/30">
-                    <p className="text-xs text-purple-200">
+                  <div className="bg-purple-50 rounded-lg p-2 border border-purple-200">
+                    <p className="text-xs text-purple-700">
                       💡 Salís en 8 meses · Intereses este mes: $2,450
                     </p>
                   </div>
-                </> : <Card className="p-3 bg-gradient-to-br from-emerald-600/90 to-emerald-800/90 card-glow border-emerald-500/30">
-                  <p className="text-xs text-emerald-300 text-center">
+                </> : <Card className="p-3 bg-emerald-50 rounded-[20px] shadow-xl border border-emerald-200">
+                  <p className="text-xs text-emerald-700 text-center">
                     🎉 Sin deudas activas - ¡Excelente!
                   </p>
                 </Card>}
@@ -980,67 +980,67 @@ export default function FinancialAnalysis() {
 
             {/* Inversión y Rentabilidad Mejorado */}
             <div className="space-y-2">
-              <p className="text-xs font-medium text-white/80 flex items-center gap-1">
+              <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
                 <TrendingUp className="h-3 w-3" /> Inversión & Rentabilidad
               </p>
               <div className="grid grid-cols-4 gap-2">
-                <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
-                  <span className="text-[10px] text-white/60">Inv.</span>
-                  <p className="text-sm font-bold text-emerald-300">{(analysis?.metrics?.investmentRate || 0).toFixed(1)}%</p>
-                  <span className="text-[9px] text-white/50">🟢 Bajo</span>
+                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                  <span className="text-[10px] text-muted-foreground">Inv.</span>
+                  <p className="text-sm font-bold text-emerald-600">{(analysis?.metrics?.investmentRate || 0).toFixed(1)}%</p>
+                  <span className="text-[9px] text-muted-foreground">🟢 Bajo</span>
                 </Card>
-                <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
-                  <span className="text-[10px] text-white/60">ROE</span>
-                  <p className="text-sm font-bold text-teal-300">{(analysis?.metrics?.personalROE || 0).toFixed(1)}%</p>
-                  <span className="text-[9px] text-white/50">12M</span>
+                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                  <span className="text-[10px] text-muted-foreground">ROE</span>
+                  <p className="text-sm font-bold text-teal-600">{(analysis?.metrics?.personalROE || 0).toFixed(1)}%</p>
+                  <span className="text-[9px] text-muted-foreground">12M</span>
                 </Card>
-                <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
-                  <span className="text-[10px] text-white/60">Crec.</span>
-                  <p className="text-sm font-bold text-green-300">{(analysis?.metrics?.equityGrowth || 0).toFixed(1)}%</p>
-                  <span className="text-[9px] text-white/50">🟡 Med</span>
+                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                  <span className="text-[10px] text-muted-foreground">Crec.</span>
+                  <p className="text-sm font-bold text-green-600">{(analysis?.metrics?.equityGrowth || 0).toFixed(1)}%</p>
+                  <span className="text-[9px] text-muted-foreground">🟡 Med</span>
                 </Card>
-                <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
-                  <span className="text-[10px] text-white/60">ROI</span>
-                  <p className="text-sm font-bold text-lime-300">{(analysis?.metrics?.personalROI || 0).toFixed(1)}%</p>
-                  <span className="text-[9px] text-white/50">36M</span>
+                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                  <span className="text-[10px] text-muted-foreground">ROI</span>
+                  <p className="text-sm font-bold text-lime-600">{(analysis?.metrics?.personalROI || 0).toFixed(1)}%</p>
+                  <span className="text-[9px] text-muted-foreground">36M</span>
                 </Card>
               </div>
             </div>
 
             {/* Estabilidad y Metas Mejorado */}
             <div className="space-y-2">
-              <p className="text-xs font-medium text-white/80 flex items-center gap-1">
+              <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
                 <Target className="h-3 w-3" /> Estabilidad & Metas
               </p>
               <div className="grid grid-cols-2 gap-2">
-                <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-white/60">Metas</span>
-                    <Trophy className="h-3 w-3 text-yellow-400" />
+                    <span className="text-[10px] text-muted-foreground">Metas</span>
+                    <Trophy className="h-3 w-3 text-yellow-500" />
                   </div>
-                  <p className="text-sm font-bold text-indigo-300">{analysis?.metrics?.avgGoalCompletion ?? 0}%</p>
+                  <p className="text-sm font-bold text-indigo-600">{analysis?.metrics?.avgGoalCompletion ?? 0}%</p>
                 </Card>
-                <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-white/60">Consist.</span>
-                    <Activity className="h-3 w-3 text-lime-400" />
+                    <span className="text-[10px] text-muted-foreground">Consist.</span>
+                    <Activity className="h-3 w-3 text-lime-500" />
                   </div>
-                  <p className="text-sm font-bold text-lime-300">{analysis?.metrics?.consistencyScore ?? 0}</p>
+                  <p className="text-sm font-bold text-lime-600">{analysis?.metrics?.consistencyScore ?? 0}</p>
                 </Card>
-                <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-white/60">Proy.</span>
-                    <TrendingUp className="h-3 w-3 text-amber-400" />
+                    <span className="text-[10px] text-muted-foreground">Proy.</span>
+                    <TrendingUp className="h-3 w-3 text-amber-500" />
                   </div>
-                  <p className="text-sm font-bold text-amber-300">${formatK(analysis?.metrics?.projectedAnnualSavings)}k</p>
+                  <p className="text-sm font-bold text-amber-600">${formatK(analysis?.metrics?.projectedAnnualSavings)}k</p>
                 </Card>
-                <Card className="p-2 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] text-white/60">Bienestar</span>
-                    <Heart className="h-3 w-3 text-pink-400" />
+                    <span className="text-[10px] text-muted-foreground">Bienestar</span>
+                    <Heart className="h-3 w-3 text-pink-500" />
                   </div>
-                  <p className="text-sm font-bold text-green-300">{analysis?.metrics?.mindfulSpendingIndex}</p>
-                  <p className="text-[9px] text-white/50">Califícalo 1-10 →</p>
+                  <p className="text-sm font-bold text-green-600">{analysis?.metrics?.mindfulSpendingIndex}</p>
+                  <p className="text-[9px] text-muted-foreground">Califícalo 1-10 →</p>
                 </Card>
               </div>
             </div>
