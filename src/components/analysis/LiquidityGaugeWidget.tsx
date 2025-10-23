@@ -54,21 +54,42 @@ export default function LiquidityGaugeWidget({
                 paddingAngle={0}
                 dataKey="value"
                 animationBegin={0}
-                animationDuration={1000}
-                animationEasing="ease-out"
+                animationDuration={1500}
+                animationEasing="ease-in-out"
+                isAnimationActive={true}
               >
                 {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={entry.color}
+                    style={{
+                      filter: index === 0 ? 'drop-shadow(0 0 8px rgba(0,0,0,0.2))' : 'none'
+                    }}
+                  />
                 ))}
               </Pie>
             </PieChart>
           </ResponsiveContainer>
           
-          <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ top: '52%' }}>
-            <p className="text-2xl font-bold text-foreground animate-scale-in">{validMonths.toFixed(1)}</p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center animate-fade-in" style={{ top: '52%', animationDelay: '0.5s' }}>
+            <p className="text-2xl font-bold text-foreground">{validMonths.toFixed(1)}</p>
             <p className="text-[9px] text-muted-foreground">meses</p>
             <p className="text-[7px] text-gray-500">(balance ÷ gasto)</p>
           </div>
+          
+          {/* Indicador de animación con pulso */}
+          <div 
+            className="absolute rounded-full animate-pulse"
+            style={{
+              width: '8px',
+              height: '8px',
+              backgroundColor: gaugeColor,
+              top: '85%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              boxShadow: `0 0 12px ${gaugeColor}`
+            }}
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-2">
