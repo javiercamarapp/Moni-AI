@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart, Bar } from "recharts";
 import { useNetWorth } from "@/hooks/useNetWorth";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#6366f1'];
@@ -863,37 +863,40 @@ export default function AspirationsAnalysis() {
             </div>
           </div>
 
+          {/* Recuadro de información expandida (fuera del carrusel) */}
+          <AnimatePresence>
+            {expandedBadge !== null && badges[expandedBadge] && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[9999] w-64"
+              >
+                <div className="bg-white rounded-lg shadow-2xl p-4 border-2 border-purple-300">
+                  <p className="text-xs text-gray-800 leading-tight mb-3 font-medium">
+                    {badges[expandedBadge].explanation}
+                  </p>
+                  <div className="bg-gradient-to-r from-blue-100 to-purple-100 px-3 py-2 rounded-md border border-purple-200">
+                    <p className="text-xs text-gray-900 font-bold text-center">
+                      🎯 {badges[expandedBadge].growthPercentage}% patrimonio deseado
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Badges Carousel */}
           {badges.length > 0 ? (
             <div className="relative">
               <Carousel className="w-full max-w-md mx-auto">
-                <CarouselContent className="overflow-visible">
+                <CarouselContent>
                   {badges.map((badge, index) => {
                     const IconComponent = badge.icon;
                     const isExpanded = expandedBadge === index;
                     return (
                       <CarouselItem key={index} className="basis-1/2 md:basis-1/3">
                         <div className="relative">
-                          {/* Recuadro de información expandida arriba */}
-                          {isExpanded && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-[100] w-48"
-                            >
-                              <div className="bg-white rounded-lg shadow-2xl p-3 border-2 border-purple-200">
-                                <p className="text-[10px] text-gray-800 leading-tight mb-2 font-medium">
-                                  {badge.explanation}
-                                </p>
-                                <div className="bg-gradient-to-r from-blue-100 to-purple-100 px-2 py-1.5 rounded-md border border-purple-200">
-                                  <p className="text-[10px] text-gray-900 font-bold text-center">
-                                    🎯 {badge.growthPercentage}% patrimonio deseado
-                                  </p>
-                                </div>
-                              </div>
-                            </motion.div>
-                          )}
-                          
                           {/* Insignia */}
                           <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
