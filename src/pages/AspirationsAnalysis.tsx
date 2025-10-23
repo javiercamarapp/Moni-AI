@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart, Bar } from "recharts";
 import { useNetWorth } from "@/hooks/useNetWorth";
 import { motion, AnimatePresence } from "framer-motion";
-import { BadgeCarousel, BadgeCard } from "@/components/ui/badge-carousel";
+import { BadgeCarousel, BadgeCard, type Badge } from "@/components/ui/badge-carousel";
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#6366f1'];
 
@@ -375,7 +375,7 @@ export default function AspirationsAnalysis() {
     // Agregar todas las insignias desbloqueadas con su porcentaje de crecimiento
     badgeThresholds.forEach(badge => {
       if (currentLevel >= badge.level) {
-        const growthPercentage = totalAspiration > 0 ? ((badge.level / 10000) * 100).toFixed(1) : "0";
+        const growthPercentage = totalAspiration > 0 ? Number(((badge.level / 10000) * 100).toFixed(1)) : 0;
         badges.push({
           ...badge,
           earned: true,
