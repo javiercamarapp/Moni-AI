@@ -93,6 +93,16 @@ export default function FinancialAnalysis() {
     return (value / 1000).toFixed(1);
   };
 
+  // Helper function to clean markdown from text
+  const cleanMarkdown = (text: string | undefined): string => {
+    if (!text) return '';
+    return text
+      .replace(/###/g, '')
+      .replace(/\*\*/g, '')
+      .replace(/\*/g, '')
+      .trim();
+  };
+
   useEffect(() => {
     checkAuth();
   }, []);
@@ -1057,7 +1067,7 @@ export default function FinancialAnalysis() {
                     <BarChart3 className="h-3 w-3" /> Análisis Moni AI
                   </p>
                   <div className="text-xs text-foreground leading-relaxed line-clamp-3">
-                    {analysis?.analysis}
+                    {cleanMarkdown(analysis?.analysis)}
                   </div>
                   <p className="text-xs text-primary mt-2 font-medium">Ver análisis completo →</p>
                 </Card>
@@ -1070,7 +1080,7 @@ export default function FinancialAnalysis() {
                   </DialogTitle>
                 </DialogHeader>
                 <div className="text-sm text-foreground leading-relaxed whitespace-pre-line max-h-[60vh] overflow-y-auto p-4 rounded-[20px] bg-white/50">
-                  {analysis?.analysis}
+                  {cleanMarkdown(analysis?.analysis)}
                 </div>
               </DialogContent>
             </Dialog>
