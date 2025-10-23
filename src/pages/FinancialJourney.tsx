@@ -279,7 +279,7 @@ export default function FinancialJourney() {
           <div className="mb-3 flex items-center justify-between">
             <Button
               type="button"
-              onClick={() => navigate(-1)}
+              onClick={() => navigate('/dashboard')}
               variant="ghost"
               size="icon"
               className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
