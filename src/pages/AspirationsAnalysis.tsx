@@ -432,12 +432,12 @@ export default function AspirationsAnalysis() {
         <Card className="p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
           <h3 className="text-base font-bold text-foreground mb-4">Desglose de Aspiraciones</h3>
           
-          <div className="h-[350px] w-full">
+          <div className="h-[420px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart 
                 data={chartData} 
                 layout="horizontal"
-                margin={{ top: 5, right: 20, left: 20, bottom: 5 }}
+                margin={{ top: 5, right: 20, left: 20, bottom: 80 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis 
@@ -445,10 +445,9 @@ export default function AspirationsAnalysis() {
                   dataKey="name" 
                   angle={-45}
                   textAnchor="end"
-                  height={60}
+                  height={100}
                   tick={{ fontSize: 10 }}
                   interval={0}
-                  tickFormatter={(value) => value.length > 15 ? value.substring(0, 15) + '...' : value}
                 />
                 <YAxis 
                   type="number"
