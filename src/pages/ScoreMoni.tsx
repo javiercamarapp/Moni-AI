@@ -44,14 +44,9 @@ const ScoreMoni = () => {
   }, []);
 
   const calculateComponents = (scoreValue: number) => {
-    const basePercentage = scoreValue / 100;
-    setComponents({
-      savingsAndLiquidity: Math.min(30, Math.round(30 * basePercentage * (0.9 + Math.random() * 0.2))),
-      debt: Math.min(20, Math.round(20 * basePercentage * (0.9 + Math.random() * 0.2))),
-      control: Math.min(20, Math.round(20 * basePercentage * (0.9 + Math.random() * 0.2))),
-      growth: Math.min(15, Math.round(15 * basePercentage * (0.9 + Math.random() * 0.2))),
-      behavior: Math.min(15, Math.round(15 * basePercentage * (0.9 + Math.random() * 0.2)))
-    });
+    // Esta función ya no se usa porque obtenemos los componentes reales del backend
+    // La dejamos por compatibilidad con useEffect inicial
+    console.log('⚠️ calculateComponents llamado con score:', scoreValue);
   };
 
   const fetchScore = async () => {
@@ -59,31 +54,40 @@ const ScoreMoni = () => {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data, error } = await supabase
+        // Primero obtener el score de user_scores
+        const { data: scoreData, error: scoreError } = await supabase
           .from('user_scores')
           .select('score_moni')
           .eq('user_id', user.id)
           .maybeSingle();
 
-        if (data && !error) {
-          const newScore = data.score_moni;
+        if (scoreData && !scoreError) {
+          const newScore = scoreData.score_moni;
           setScore(newScore);
-          // Update cache for Dashboard
           localStorage.setItem('scoreMoni', newScore.toString());
+        }
+
+        // Luego obtener los componentes reales del análisis financiero
+        const { data: analysisData, error: analysisError } = await supabase.functions.invoke('financial-analysis', {
+          body: { 
+            userId: user.id,
+            period: 'month'
+          }
+        });
+
+        if (analysisData && !analysisError && analysisData.scoreBreakdown?.components) {
+          const realComponents = analysisData.scoreBreakdown.components;
+          console.log('📊 Componentes reales del backend:', realComponents);
           
-          // Calculate component breakdown
-          const newComponents = {
-            savingsAndLiquidity: Math.min(30, Math.round(30 * (newScore / 100) * (0.9 + Math.random() * 0.2))),
-            debt: Math.min(20, Math.round(20 * (newScore / 100) * (0.9 + Math.random() * 0.2))),
-            control: Math.min(20, Math.round(20 * (newScore / 100) * (0.9 + Math.random() * 0.2))),
-            growth: Math.min(15, Math.round(15 * (newScore / 100) * (0.9 + Math.random() * 0.2))),
-            behavior: Math.min(15, Math.round(15 * (newScore / 100) * (0.9 + Math.random() * 0.2)))
-          };
-          setComponents(newComponents);
+          setComponents(realComponents);
+          
+          // Calcular score basado en componentes reales
+          const calculatedScore = Object.values(realComponents).reduce((sum: number, val: any) => sum + Number(val), 0);
+          console.log('🎯 Score calculado de componentes:', calculatedScore);
           
           // Generate AI explanation for score change
-          if (Math.abs(newScore - previousScore) > 0) {
-            generateScoreExplanation(newScore, newComponents);
+          if (scoreData && Math.abs(scoreData.score_moni - previousScore) > 0) {
+            generateScoreExplanation(scoreData.score_moni, realComponents);
           }
         }
       }
