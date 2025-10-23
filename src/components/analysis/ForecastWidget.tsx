@@ -24,9 +24,11 @@ interface ForecastProps {
 }
 
 export default function ForecastWidget({ forecastData, goalProbability, goalETA }: ForecastProps) {
-  const [timeframe, setTimeframe] = useState<'3' | '6'>('3');
+  const [timeframe, setTimeframe] = useState<'1' | '5' | '10'>('1');
   
-  const displayData = timeframe === '3' ? forecastData.slice(0, 3) : forecastData;
+  const displayData = timeframe === '1' ? forecastData.slice(0, 12) : 
+                      timeframe === '5' ? forecastData.slice(0, 60) : 
+                      forecastData;
 
   return (
     <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 transition-all">
@@ -36,13 +38,16 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA 
             <TrendingUp className="h-3.5 w-3.5 text-emerald-600" />
             <p className="text-xs font-bold text-foreground">📊 Proyecciones</p>
           </div>
-          <Tabs value={timeframe} onValueChange={(v) => setTimeframe(v as '3' | '6')}>
+          <Tabs value={timeframe} onValueChange={(v) => setTimeframe(v as '1' | '5' | '10')}>
             <TabsList className="h-6 bg-muted">
-              <TabsTrigger value="3" className="text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2 py-0.5">
-                3M
+              <TabsTrigger value="1" className="text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2 py-0.5">
+                1 Año
               </TabsTrigger>
-              <TabsTrigger value="6" className="text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2 py-0.5">
-                6M
+              <TabsTrigger value="5" className="text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2 py-0.5">
+                5 Años
+              </TabsTrigger>
+              <TabsTrigger value="10" className="text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2 py-0.5">
+                10 Años
               </TabsTrigger>
             </TabsList>
           </Tabs>

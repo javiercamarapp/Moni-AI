@@ -576,16 +576,26 @@ Ejemplo formato:
       fallbackUsado: completedMonthsBalances.length === 0
     });
     
-    // Proyecciones usando promedio correcto según período
+    // Proyecciones usando promedio correcto según período - generar hasta 10 años (120 meses)
     const monthlyAvgForProjection = period === 'year' ? avgMonthlySavings1Y : avgMonthlySavings6M;
     const forecastData = [];
     
     console.log('📊 Usando promedio mensual para proyección:', Math.round(monthlyAvgForProjection), 'período:', period);
     
-    for (let i = 1; i <= 6; i++) {
+    // Generar 120 meses (10 años) de proyección
+    for (let i = 1; i <= 120; i++) {
       const monthDate = new Date(now);
       monthDate.setMonth(monthDate.getMonth() + i);
-      const monthLabel = monthDate.toLocaleDateString('es-MX', { month: 'short' });
+      
+      // Formatear etiqueta según el tiempo transcurrido
+      let monthLabel;
+      if (i <= 12) {
+        monthLabel = monthDate.toLocaleDateString('es-MX', { month: 'short' });
+      } else if (i % 12 === 0) {
+        monthLabel = `Año ${i / 12}`;
+      } else {
+        monthLabel = `${monthDate.toLocaleDateString('es-MX', { month: 'short' })} '${String(monthDate.getFullYear()).slice(-2)}`;
+      }
       
       // Acumular ahorro mes a mes
       const baseProjection = monthlyAvgForProjection * i;
