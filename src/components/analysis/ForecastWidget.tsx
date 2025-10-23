@@ -24,11 +24,14 @@ interface ForecastProps {
 }
 
 export default function ForecastWidget({ forecastData, goalProbability, goalETA }: ForecastProps) {
-  const [timeframe, setTimeframe] = useState<'1' | '5' | '10'>('1');
+  const [timeframe, setTimeframe] = useState<'3' | '6' | '12' | '60' | '120'>('12');
   
-  const displayData = timeframe === '1' ? forecastData.slice(0, 12) : 
-                      timeframe === '5' ? forecastData.slice(0, 60) : 
-                      forecastData;
+  const monthsToShow = timeframe === '3' ? 3 : 
+                       timeframe === '6' ? 6 :
+                       timeframe === '12' ? 12 :
+                       timeframe === '60' ? 60 : 120;
+  
+  const displayData = forecastData.slice(0, monthsToShow);
 
   return (
     <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 transition-all">
@@ -38,16 +41,22 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA 
             <TrendingUp className="h-3.5 w-3.5 text-emerald-600" />
             <p className="text-xs font-bold text-foreground">📊 Proyecciones</p>
           </div>
-          <Tabs value={timeframe} onValueChange={(v) => setTimeframe(v as '1' | '5' | '10')}>
+          <Tabs value={timeframe} onValueChange={(v) => setTimeframe(v as '3' | '6' | '12' | '60' | '120')}>
             <TabsList className="h-6 bg-muted">
-              <TabsTrigger value="1" className="text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2 py-0.5">
-                1 Año
+              <TabsTrigger value="3" className="text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2 py-0.5">
+                3M
               </TabsTrigger>
-              <TabsTrigger value="5" className="text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2 py-0.5">
-                5 Años
+              <TabsTrigger value="6" className="text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2 py-0.5">
+                6M
               </TabsTrigger>
-              <TabsTrigger value="10" className="text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2 py-0.5">
-                10 Años
+              <TabsTrigger value="12" className="text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2 py-0.5">
+                1A
+              </TabsTrigger>
+              <TabsTrigger value="60" className="text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2 py-0.5">
+                5A
+              </TabsTrigger>
+              <TabsTrigger value="120" className="text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2 py-0.5">
+                10A
               </TabsTrigger>
             </TabsList>
           </Tabs>
