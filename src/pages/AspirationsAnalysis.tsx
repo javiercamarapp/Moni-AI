@@ -436,11 +436,21 @@ export default function AspirationsAnalysis() {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart 
                 data={chartData} 
-                layout="vertical"
-                margin={{ top: 5, right: 20, left: 20, bottom: 5 }}
+                layout="horizontal"
+                margin={{ top: 5, right: 20, left: 20, bottom: 60 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis 
+                  type="category" 
+                  dataKey="name" 
+                  angle={-45}
+                  textAnchor="end"
+                  height={100}
+                  tick={{ fontSize: 10 }}
+                  interval={0}
+                  tickFormatter={(value) => value.length > 15 ? value.substring(0, 15) + '...' : value}
+                />
+                <YAxis 
                   type="number"
                   tick={{ fontSize: 11 }}
                   tickFormatter={(value) => 
@@ -450,13 +460,6 @@ export default function AspirationsAnalysis() {
                         ? `${(value / 1000).toFixed(0)}k`
                         : value.toString()
                   }
-                />
-                <YAxis 
-                  type="category" 
-                  dataKey="name" 
-                  width={100}
-                  tick={{ fontSize: 10 }}
-                  tickFormatter={(value) => value.length > 12 ? value.substring(0, 12) + '...' : value}
                 />
                 <Tooltip 
                   formatter={(value: number) => 
