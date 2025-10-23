@@ -311,7 +311,7 @@ export default function FinancialJourney() {
       {/* Zona desplazable de niveles - con altura fija */}
       <div className="flex-1 overflow-y-auto" style={{ marginTop: '180px' }}>
         <div className="container mx-auto px-4 max-w-2xl">
-          <div className="relative w-full pb-4 pt-2" style={{ minHeight: '7200px' }}>
+          <div className="relative w-full pb-4 pt-2" style={{ minHeight: '7500px' }}>
           {/* 9 Secciones de fondo */}
           <div className="absolute inset-0 w-full h-full pointer-events-none">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((section) => (
@@ -2927,7 +2927,7 @@ export default function FinancialJourney() {
             {(() => {
               const level7000 = 7000;
               const nodeIndex = level7000 / 50;
-              const badgeY = 40 + (nodeIndex * 35) - 50;
+              const badgeY = 40 + (nodeIndex * 35) + 5;
               const badgeX = 70;
               const isUnlocked = currentLevel >= level7000;
               
