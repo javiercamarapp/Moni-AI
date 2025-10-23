@@ -392,27 +392,27 @@ export default function AspirationsAnalysis() {
         </div>
 
         {/* Net Worth Comparison Card */}
-        <Card className="p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="bg-blue-500/10 p-2 rounded-full">
-              <TrendingUp className="h-5 w-5 text-blue-600" />
+        <Card className="p-3 mb-4 bg-white/40 backdrop-blur-lg rounded-[20px] shadow-lg border border-white/20">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="bg-blue-500/10 p-1.5 rounded-full">
+              <TrendingUp className="h-4 w-4 text-blue-600" />
             </div>
-            <h2 className="text-lg font-bold text-foreground">Tu Meta Financiera</h2>
+            <h2 className="text-sm font-bold text-foreground">Tu Meta Financiera</h2>
           </div>
           
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-[15px] p-4 border border-blue-200">
-              <p className="text-xs text-muted-foreground mb-1">Net Worth Actual</p>
-              <p className="text-xl font-bold text-foreground">
+          <div className="grid grid-cols-2 gap-2 mb-2">
+            <div className="bg-gradient-to-br from-blue-50/80 to-blue-100/80 backdrop-blur-sm rounded-[12px] p-2 border border-blue-200/50">
+              <p className="text-[10px] text-muted-foreground mb-0.5">Net Worth Actual</p>
+              <p className="text-base font-bold text-foreground">
                 ${currentNetWorth >= 1000000 
                   ? `${(currentNetWorth / 1000000).toFixed(1)}M` 
                   : currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                 }
               </p>
             </div>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-[15px] p-4 border border-purple-200">
-              <p className="text-xs text-muted-foreground mb-1">Meta Aspiracional</p>
-              <p className="text-xl font-bold text-purple-600">
+            <div className="bg-gradient-to-br from-purple-50/80 to-purple-100/80 backdrop-blur-sm rounded-[12px] p-2 border border-purple-200/50">
+              <p className="text-[10px] text-muted-foreground mb-0.5">Meta Aspiracional</p>
+              <p className="text-base font-bold text-purple-600">
                 ${totalAspiration >= 1000000 
                   ? `${(totalAspiration / 1000000).toFixed(1)}M` 
                   : totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
@@ -421,12 +421,12 @@ export default function AspirationsAnalysis() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-[15px] p-4 border border-orange-200">
-            <div className="flex justify-between items-center mb-1">
-              <p className="text-xs text-muted-foreground">Brecha a cerrar</p>
-              <p className="text-xs font-semibold text-orange-600">{gapPercentage}%</p>
+          <div className="bg-gradient-to-br from-orange-50/80 to-orange-100/80 backdrop-blur-sm rounded-[12px] p-2 border border-orange-200/50">
+            <div className="flex justify-between items-center mb-0.5">
+              <p className="text-[10px] text-muted-foreground">Brecha a cerrar</p>
+              <p className="text-[10px] font-semibold text-orange-600">{gapPercentage}%</p>
             </div>
-            <p className="text-lg font-bold text-orange-600">
+            <p className="text-sm font-bold text-orange-600">
               ${gap >= 1000000 
                 ? `${(gap / 1000000).toFixed(1)}M` 
                 : gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
