@@ -575,9 +575,11 @@ export default function FinancialAnalysis() {
           tieneAnalysis: !!data.analysis,
           tieneForecast: !!data.forecast,
           forecastData: data.forecast?.forecastData?.length || 0,
+          forecastSample: data.forecast?.forecastData?.slice(0, 3),
           goalProbability: data.forecast?.goalProbability,
           goalETA: data.forecast?.goalETA
         });
+        console.log('📊 FORECAST COMPLETO:', JSON.stringify(data.forecast, null, 2));
         setAnalysis(data);
         // Guardar con timestamp
         localStorage.setItem(cacheKey, JSON.stringify(data));
@@ -745,7 +747,14 @@ export default function FinancialAnalysis() {
             {/* Proyección Anual removida - se moverá a página de proyecciones */}
 
             {/* 3. PROYECCIONES CON ESCENARIOS */}
-            {analysis?.forecast && <ForecastWidget {...analysis?.forecast} />}
+            {(() => {
+              console.log('🔍 RENDERIZANDO FORECAST:', {
+                hasForecast: !!analysis?.forecast,
+                forecastData: analysis?.forecast?.forecastData?.length,
+                forecastSample: analysis?.forecast?.forecastData?.slice(0, 2)
+              });
+              return analysis?.forecast && <ForecastWidget {...analysis?.forecast} />;
+            })()}
 
             {/* 5. PRESUPUESTO VIVO */}
             {analysis?.budgetProgress && analysis?.budgetProgress.categories && <BudgetProgressWidget {...analysis?.budgetProgress} />}
