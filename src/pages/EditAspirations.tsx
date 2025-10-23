@@ -297,18 +297,20 @@ export default function EditAspirations() {
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         {/* Header */}
         <div className="mb-6">
-          <Button
-            onClick={() => navigate(-1)}
-            variant="ghost"
-            size="icon"
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100 mb-4"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          
-          <h1 className="text-2xl font-bold text-foreground mb-2">
-            Editar aspiraciones
-          </h1>
+          <div className="flex items-center gap-3 mb-2">
+            <Button
+              onClick={() => navigate(-1)}
+              variant="ghost"
+              size="icon"
+              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            
+            <h1 className="text-2xl font-bold text-foreground">
+              Editar aspiraciones
+            </h1>
+          </div>
           <p className="text-sm text-foreground/70">
             Modifica tus metas financieras cuando lo necesites
           </p>
