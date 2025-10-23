@@ -1062,14 +1062,14 @@ export default function FinancialAnalysis() {
                   <p className="text-xs text-primary mt-2 font-medium">Ver análisis completo →</p>
                 </Card>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[80vh]">
+              <DialogContent className="max-w-md bg-white/95 backdrop-blur-xl border-2 border-white/20 shadow-2xl">
                 <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2">
+                  <DialogTitle className="flex items-center gap-2 text-foreground">
                     <BarChart3 className="h-4 w-4" />
                     Análisis Completo Moni AI
                   </DialogTitle>
                 </DialogHeader>
-                <div className="text-sm text-foreground leading-relaxed whitespace-pre-line max-h-[60vh] overflow-y-auto p-4">
+                <div className="text-sm text-foreground leading-relaxed whitespace-pre-line max-h-[60vh] overflow-y-auto p-4 rounded-lg bg-white/50">
                   {analysis?.analysis}
                 </div>
               </DialogContent>
