@@ -241,11 +241,11 @@ export const BadgeCard = ({
         whileTap={{ scale: 0.95 }}
       >
         <div className={`${badge.color} rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-200 w-36 h-36 flex flex-col items-center justify-center gap-2`}>
-          <IconComponent className="h-10 w-10 text-white" />
-          <p className="text-white text-xs font-bold text-center leading-tight">
+          <IconComponent className="h-10 w-10 text-white drop-shadow-lg" />
+          <p className="text-white text-xs font-bold text-center leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             {badge.name}
           </p>
-          <p className="text-white/90 text-[10px] text-center">
+          <p className="text-white text-[10px] text-center drop-shadow-[0_2px_3px_rgba(0,0,0,0.7)]">
             Nivel {badge.level}
           </p>
         </div>
