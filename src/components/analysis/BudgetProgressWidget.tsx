@@ -16,11 +16,11 @@ interface BudgetProgressProps {
 
 export default function BudgetProgressWidget({ categories }: BudgetProgressProps) {
   return (
-    <Card className="p-4 bg-gradient-card card-glow border-white/20">
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 transition-all">
       <div className="space-y-3">
         <div>
-          <p className="text-xs font-medium text-white/80 mb-1">Presupuesto por Categoría</p>
-          <p className="text-xs text-white/60">Progreso del mes</p>
+          <p className="text-xs font-medium text-foreground mb-1">Presupuesto por Categoría</p>
+          <p className="text-xs text-muted-foreground">Progreso del mes</p>
         </div>
 
         <div className="space-y-3">
@@ -33,14 +33,14 @@ export default function BudgetProgressWidget({ categories }: BudgetProgressProps
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-sm">{cat.icon}</span>
-                    <span className="text-xs text-white/80">{cat.name}</span>
+                    <span className="text-xs text-foreground">{cat.name}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-white/60">
+                    <span className="text-xs text-muted-foreground">
                       ${cat.spent.toLocaleString()} / ${cat.budget.toLocaleString()}
                     </span>
                     {isWarning && (
-                      <AlertCircle className={`h-3 w-3 ${isCritical ? 'text-red-400' : 'text-yellow-400'}`} />
+                      <AlertCircle className={`h-3 w-3 ${isCritical ? 'text-destructive' : 'text-yellow-500'}`} />
                     )}
                   </div>
                 </div>
@@ -49,20 +49,20 @@ export default function BudgetProgressWidget({ categories }: BudgetProgressProps
                   <Progress 
                     value={Math.min(cat.percentUsed, 100)} 
                     className={`h-2 ${
-                      isCritical ? 'bg-red-500/20' : 
+                      isCritical ? 'bg-destructive/20' : 
                       isWarning ? 'bg-yellow-500/20' : 
-                      'bg-white/10'
+                      'bg-muted'
                     }`}
                   />
                   <div className="flex items-center justify-between">
                     <span className={`text-[10px] font-medium ${
-                      isCritical ? 'text-red-300' : 
-                      isWarning ? 'text-yellow-300' : 
-                      'text-emerald-300'
+                      isCritical ? 'text-destructive' : 
+                      isWarning ? 'text-yellow-600' : 
+                      'text-success'
                     }`}>
                       {cat.percentUsed.toFixed(0)}% usado
                     </span>
-                    <span className="text-[10px] text-white/50">
+                    <span className="text-[10px] text-muted-foreground">
                       {cat.percentUsed < 100 
                         ? `Quedan $${(cat.budget - cat.spent).toLocaleString()}` 
                         : `Excedido $${(cat.spent - cat.budget).toLocaleString()}`
@@ -76,8 +76,8 @@ export default function BudgetProgressWidget({ categories }: BudgetProgressProps
         </div>
 
         {categories.some(c => c.percentUsed >= 80) && (
-          <div className="bg-yellow-500/10 rounded-lg p-2 border border-yellow-500/30">
-            <p className="text-xs text-yellow-200">
+          <div className="bg-yellow-50 rounded-lg p-2 border border-yellow-200">
+            <p className="text-xs text-yellow-700">
               ⚠️ {categories.filter(c => c.percentUsed >= 80).length} categorías cerca o sobre el límite
             </p>
           </div>
