@@ -892,30 +892,30 @@ Responde SOLO con el JSON array, sin texto adicional.`;
     console.log(`Historical transactions found (last ${monthsToAnalyze} months):`, historicalTransactions.length);
     
     // Agrupar por mes y calcular promedios
-    const monthlyData: Record<string, { income: number; expenses: number }> = {};
+    const historicalMonthlyData: Record<string, { income: number; expenses: number }> = {};
     
     historicalTransactions.forEach(t => {
       const monthKey = t.transaction_date.substring(0, 7); // YYYY-MM
-      if (!monthlyData[monthKey]) {
-        monthlyData[monthKey] = { income: 0, expenses: 0 };
+      if (!historicalMonthlyData[monthKey]) {
+        historicalMonthlyData[monthKey] = { income: 0, expenses: 0 };
       }
       
       const amount = Number(t.amount);
       if (t.type === 'income' || t.type === 'ingreso') {
-        monthlyData[monthKey].income += amount;
+        historicalMonthlyData[monthKey].income += amount;
       } else if (t.type === 'expense' || t.type === 'gasto') {
-        monthlyData[monthKey].expenses += amount;
+        historicalMonthlyData[monthKey].expenses += amount;
       }
     });
     
-    const monthsWithData = Object.keys(monthlyData).length;
+    const monthsWithData = Object.keys(historicalMonthlyData).length;
     console.log('Months with data:', monthsWithData);
     
     // Calcular promedios
     let totalHistoricalIncome = 0;
     let totalHistoricalExpenses = 0;
     
-    Object.values(monthlyData).forEach(({ income, expenses }) => {
+    Object.values(historicalMonthlyData).forEach(({ income, expenses }) => {
       totalHistoricalIncome += income;
       totalHistoricalExpenses += expenses;
     });
