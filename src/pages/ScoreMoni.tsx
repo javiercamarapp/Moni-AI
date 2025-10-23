@@ -46,11 +46,11 @@ const ScoreMoni = () => {
   const calculateComponents = (scoreValue: number) => {
     const basePercentage = scoreValue / 100;
     setComponents({
-      savingsAndLiquidity: Math.round(30 * basePercentage * (0.9 + Math.random() * 0.2)),
-      debt: Math.round(20 * basePercentage * (0.9 + Math.random() * 0.2)),
-      control: Math.round(20 * basePercentage * (0.9 + Math.random() * 0.2)),
-      growth: Math.round(15 * basePercentage * (0.9 + Math.random() * 0.2)),
-      behavior: Math.round(15 * basePercentage * (0.9 + Math.random() * 0.2))
+      savingsAndLiquidity: Math.min(30, Math.round(30 * basePercentage * (0.9 + Math.random() * 0.2))),
+      debt: Math.min(20, Math.round(20 * basePercentage * (0.9 + Math.random() * 0.2))),
+      control: Math.min(20, Math.round(20 * basePercentage * (0.9 + Math.random() * 0.2))),
+      growth: Math.min(15, Math.round(15 * basePercentage * (0.9 + Math.random() * 0.2))),
+      behavior: Math.min(15, Math.round(15 * basePercentage * (0.9 + Math.random() * 0.2)))
     });
   };
 
@@ -73,11 +73,11 @@ const ScoreMoni = () => {
           
           // Calculate component breakdown
           const newComponents = {
-            savingsAndLiquidity: Math.round(30 * (newScore / 100) * (0.9 + Math.random() * 0.2)),
-            debt: Math.round(20 * (newScore / 100) * (0.9 + Math.random() * 0.2)),
-            control: Math.round(20 * (newScore / 100) * (0.9 + Math.random() * 0.2)),
-            growth: Math.round(15 * (newScore / 100) * (0.9 + Math.random() * 0.2)),
-            behavior: Math.round(15 * (newScore / 100) * (0.9 + Math.random() * 0.2))
+            savingsAndLiquidity: Math.min(30, Math.round(30 * (newScore / 100) * (0.9 + Math.random() * 0.2))),
+            debt: Math.min(20, Math.round(20 * (newScore / 100) * (0.9 + Math.random() * 0.2))),
+            control: Math.min(20, Math.round(20 * (newScore / 100) * (0.9 + Math.random() * 0.2))),
+            growth: Math.min(15, Math.round(15 * (newScore / 100) * (0.9 + Math.random() * 0.2))),
+            behavior: Math.min(15, Math.round(15 * (newScore / 100) * (0.9 + Math.random() * 0.2)))
           };
           setComponents(newComponents);
           

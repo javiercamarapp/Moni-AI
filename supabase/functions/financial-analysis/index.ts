@@ -509,11 +509,11 @@ Ejemplo formato:
       
       // Componentes del Score (para visualización radar)
       scoreComponents: {
-        savingsAndLiquidity: Math.round((savingsComponent + liquidityComponent) / 2),
-        debt: Math.round(debtComponent),
-        control: Math.round(controlComponent),
-        growth: Math.round(growthComponent),
-        behavior: Math.round(behaviorComponent)
+        savingsAndLiquidity: Math.min(30, Math.round((savingsComponent + liquidityComponent) / 2)),
+        debt: Math.min(20, Math.round(debtComponent)),
+        control: Math.min(20, Math.round(controlComponent)),
+        growth: Math.min(15, Math.round(growthComponent)),
+        behavior: Math.min(15, Math.round(behaviorComponent))
       }
     };
 
