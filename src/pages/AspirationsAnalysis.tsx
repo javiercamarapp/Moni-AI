@@ -21,6 +21,7 @@ export default function AspirationsAnalysis() {
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [assets, setAssets] = useState<any[]>([]);
   const [liabilities, setLiabilities] = useState<any[]>([]);
+  const [expandedBadge, setExpandedBadge] = useState<number | null>(null);
   const [userScore, setUserScore] = useState<number>(40);
   const netWorthData = useNetWorth("1Y");
   const currentNetWorth = netWorthData.data?.currentNetWorth || 0;
@@ -210,39 +211,182 @@ export default function AspirationsAnalysis() {
     
     // Sistema de insignias del Financial Journey
     const badgeThresholds = [
-      { level: 250, name: "Bronce 250", icon: Medal, color: "from-amber-700 to-amber-900", description: "Primeros 250 puntos alcanzados" },
-      { level: 500, name: "Plata 500", icon: Shield, color: "from-gray-300 to-gray-500", description: "500 puntos de progreso" },
-      { level: 750, name: "Bronce 750", icon: Medal, color: "from-amber-600 to-amber-800", description: "Nivel 750 desbloqueado" },
-      { level: 1000, name: "Oro 1000", icon: Star, color: "from-yellow-400 to-yellow-600", description: "¡Nivel 1000 alcanzado!" },
-      { level: 1250, name: "Bronce 1250", icon: Medal, color: "from-amber-700 to-amber-900", description: "1250 puntos logrados" },
-      { level: 1500, name: "Plata 1500", icon: Shield, color: "from-gray-300 to-gray-500", description: "Nivel 1500 completado" },
-      { level: 1750, name: "Maestría Bronce 1750", icon: Trophy, color: "from-amber-700 to-orange-600", description: "Maestría de nivel 1750" },
-      { level: 2000, name: "Oro 2000", icon: Star, color: "from-yellow-400 to-yellow-600", description: "2000 puntos alcanzados" },
-      { level: 2500, name: "Plata 2500", icon: Shield, color: "from-gray-400 to-gray-600", description: "Nivel 2500 desbloqueado" },
-      { level: 3000, name: "Oro 3000", icon: Star, color: "from-yellow-500 to-orange-500", description: "3000 puntos de éxito" },
-      { level: 3500, name: "Platino 3500", icon: Trophy, color: "from-cyan-400 to-cyan-600", description: "Nivel Platino alcanzado" },
-      { level: 4000, name: "Oro Premium 4000", icon: Crown, color: "from-yellow-500 to-yellow-600", description: "4000 puntos premium" },
-      { level: 4500, name: "Diamante 4500", icon: Gem, color: "from-blue-400 to-purple-600", description: "Nivel Diamante desbloqueado" },
-      { level: 5000, name: "Platino 5000", icon: Trophy, color: "from-cyan-500 to-blue-600", description: "5000 puntos élite" },
-      { level: 6000, name: "Rubí 6000", icon: Gem, color: "from-red-500 to-pink-600", description: "Nivel Rubí alcanzado" },
-      { level: 7000, name: "Zafiro 7000", icon: Gem, color: "from-blue-500 to-indigo-600", description: "Nivel Zafiro desbloqueado" },
-      { level: 8000, name: "Esmeralda 8000", icon: Gem, color: "from-green-500 to-emerald-600", description: "Nivel Esmeralda logrado" },
-      { level: 9000, name: "Corona Real 9000", icon: Crown, color: "from-yellow-600 to-purple-600", description: "Corona Real alcanzada" },
-      { level: 9500, name: "Élite Supremo 9500", icon: Crown, color: "from-purple-600 to-pink-600", description: "Élite Supremo" },
-      { level: 10000, name: "Libertad Financiera", icon: Crown, color: "from-yellow-400 via-pink-500 to-purple-600", description: "¡Meta alcanzada!" }
+      { 
+        level: 250, 
+        name: "Bronce 250", 
+        icon: Medal, 
+        color: "from-amber-700 to-amber-900", 
+        description: "Primeros 250 puntos alcanzados",
+        explanation: "Has dado tus primeros pasos en tu camino hacia la libertad financiera. Este es el comienzo de algo grande."
+      },
+      { 
+        level: 500, 
+        name: "Plata 500", 
+        icon: Shield, 
+        color: "from-gray-300 to-gray-500", 
+        description: "500 puntos de progreso",
+        explanation: "Tu compromiso con tus metas financieras está demostrando ser sólido. Sigue así y verás grandes resultados."
+      },
+      { 
+        level: 750, 
+        name: "Bronce 750", 
+        icon: Medal, 
+        color: "from-amber-600 to-amber-800", 
+        description: "Nivel 750 desbloqueado",
+        explanation: "Cada día estás más cerca de tu meta. La constancia es tu mejor aliada."
+      },
+      { 
+        level: 1000, 
+        name: "Oro 1000", 
+        icon: Star, 
+        color: "from-yellow-400 to-yellow-600", 
+        description: "¡Nivel 1000 alcanzado!",
+        explanation: "¡Felicidades! Has alcanzado el 10% de tu meta. Este es un logro significativo que demuestra tu disciplina financiera."
+      },
+      { 
+        level: 1250, 
+        name: "Bronce 1250", 
+        icon: Medal, 
+        color: "from-amber-700 to-amber-900", 
+        description: "1250 puntos logrados",
+        explanation: "Tu patrimonio crece constantemente. Cada peso invertido te acerca más a tus sueños."
+      },
+      { 
+        level: 1500, 
+        name: "Plata 1500", 
+        icon: Shield, 
+        color: "from-gray-300 to-gray-500", 
+        description: "Nivel 1500 completado",
+        explanation: "Has superado el 15% de tu objetivo. Tu estrategia financiera está funcionando."
+      },
+      { 
+        level: 1750, 
+        name: "Maestría Bronce 1750", 
+        icon: Trophy, 
+        color: "from-amber-700 to-orange-600", 
+        description: "Maestría de nivel 1750",
+        explanation: "Tu disciplina financiera te está llevando a niveles de maestría. Pocos llegan hasta aquí."
+      },
+      { 
+        level: 2000, 
+        name: "Oro 2000", 
+        icon: Star, 
+        color: "from-yellow-400 to-yellow-600", 
+        description: "2000 puntos alcanzados",
+        explanation: "¡20% de tu meta cumplida! Tu patrimonio está creciendo exponencialmente."
+      },
+      { 
+        level: 2500, 
+        name: "Plata 2500", 
+        icon: Shield, 
+        color: "from-gray-400 to-gray-600", 
+        description: "Nivel 2500 desbloqueado",
+        explanation: "Un cuarto del camino completado. Tu visión financiera se está materializando."
+      },
+      { 
+        level: 3000, 
+        name: "Oro 3000", 
+        icon: Star, 
+        color: "from-yellow-500 to-orange-500", 
+        description: "3000 puntos de éxito",
+        explanation: "30% alcanzado. Estás construyendo un futuro financiero sólido y duradero."
+      },
+      { 
+        level: 3500, 
+        name: "Platino 3500", 
+        icon: Trophy, 
+        color: "from-cyan-400 to-cyan-600", 
+        description: "Nivel Platino alcanzado",
+        explanation: "Has alcanzado el nivel Platino. Tu dedicación es admirable y tu futuro brillante."
+      },
+      { 
+        level: 4000, 
+        name: "Oro Premium 4000", 
+        icon: Crown, 
+        color: "from-yellow-500 to-yellow-600", 
+        description: "4000 puntos premium",
+        explanation: "¡40% de tu meta! Estás en el camino correcto hacia la independencia financiera."
+      },
+      { 
+        level: 4500, 
+        name: "Diamante 4500", 
+        icon: Gem, 
+        color: "from-blue-400 to-purple-600", 
+        description: "Nivel Diamante desbloqueado",
+        explanation: "Nivel Diamante alcanzado. Tu patrimonio brilla como una joya preciosa."
+      },
+      { 
+        level: 5000, 
+        name: "Platino 5000", 
+        icon: Trophy, 
+        color: "from-cyan-500 to-blue-600", 
+        description: "5000 puntos élite",
+        explanation: "¡Mitad del camino! Tu perseverancia está dando frutos abundantes."
+      },
+      { 
+        level: 6000, 
+        name: "Rubí 6000", 
+        icon: Gem, 
+        color: "from-red-500 to-pink-600", 
+        description: "Nivel Rubí alcanzado",
+        explanation: "60% completado. Tu éxito financiero es inevitable con esta dedicación."
+      },
+      { 
+        level: 7000, 
+        name: "Zafiro 7000", 
+        icon: Gem, 
+        color: "from-blue-500 to-indigo-600", 
+        description: "Nivel Zafiro desbloqueado",
+        explanation: "Nivel Zafiro. Estás en territorio de élite financiera."
+      },
+      { 
+        level: 8000, 
+        name: "Esmeralda 8000", 
+        icon: Gem, 
+        color: "from-green-500 to-emerald-600", 
+        description: "Nivel Esmeralda logrado",
+        explanation: "80% alcanzado. La libertad financiera está cada vez más cerca."
+      },
+      { 
+        level: 9000, 
+        name: "Corona Real 9000", 
+        icon: Crown, 
+        color: "from-yellow-600 to-purple-600", 
+        description: "Corona Real alcanzada",
+        explanation: "¡90%! Eres parte de la élite financiera. Tu legado está asegurado."
+      },
+      { 
+        level: 9500, 
+        name: "Élite Supremo 9500", 
+        icon: Crown, 
+        color: "from-purple-600 to-pink-600", 
+        description: "Élite Supremo",
+        explanation: "95% completado. Estás a un paso de alcanzar la cima."
+      },
+      { 
+        level: 10000, 
+        name: "Libertad Financiera", 
+        icon: Crown, 
+        color: "from-yellow-400 via-pink-500 to-purple-600", 
+        description: "¡Meta alcanzada!",
+        explanation: "¡LO LOGRASTE! Has alcanzado tu meta financiera. Tu libertad financiera es ahora una realidad."
+      }
     ];
     
-    // Agregar todas las insignias desbloqueadas
+    // Agregar todas las insignias desbloqueadas con su porcentaje de crecimiento
     badgeThresholds.forEach(badge => {
       if (currentLevel >= badge.level) {
+        const growthPercentage = totalAspiration > 0 ? ((badge.level / 10000) * 100).toFixed(1) : "0";
         badges.push({
           ...badge,
-          earned: true
+          earned: true,
+          growthPercentage
         });
       }
     });
     
-    return badges;
+    // Invertir el orden para que la última desbloqueada aparezca primero
+    return badges.reverse();
   };
 
   const badges = getUnlockedBadges();
@@ -725,13 +869,17 @@ export default function AspirationsAnalysis() {
               <CarouselContent>
                 {badges.map((badge, index) => {
                   const IconComponent = badge.icon;
+                  const isExpanded = expandedBadge === index;
                   return (
                     <CarouselItem key={index} className="basis-1/2 md:basis-1/3">
                       <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: index * 0.05 }}
-                        className={`bg-gradient-to-br ${badge.color} rounded-[10px] p-2 flex flex-col items-center gap-1 shadow-lg relative overflow-hidden`}
+                        onClick={() => setExpandedBadge(isExpanded ? null : index)}
+                        className={`bg-gradient-to-br ${badge.color} rounded-[10px] p-2 flex flex-col items-center gap-1 shadow-lg relative overflow-hidden cursor-pointer transition-all ${
+                          isExpanded ? 'scale-105 ring-2 ring-white/50' : ''
+                        }`}
                       >
                         {/* Efecto de brillo de fondo */}
                         <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
@@ -739,17 +887,38 @@ export default function AspirationsAnalysis() {
                         <div className="bg-white/30 p-1.5 rounded-full backdrop-blur-sm relative z-10 shadow-md">
                           <IconComponent className="h-4 w-4 text-white" />
                         </div>
-                        <div className="text-center relative z-10">
-                          <p className="text-[9px] font-bold text-white leading-tight mb-0.5 drop-shadow-lg">
-                            {badge.name}
-                          </p>
-                          <p className="text-[7px] text-white/90 leading-tight drop-shadow">
-                            {badge.description}
-                          </p>
-                        </div>
-                        <div className="bg-white/20 px-1.5 py-0.5 rounded-full backdrop-blur-sm relative z-10">
-                          <p className="text-[7px] text-white font-semibold">✓ DESBLOQUEADO</p>
-                        </div>
+                        
+                        {!isExpanded ? (
+                          <>
+                            <div className="text-center relative z-10">
+                              <p className="text-[9px] font-bold text-white leading-tight mb-0.5 drop-shadow-lg">
+                                {badge.name}
+                              </p>
+                              <p className="text-[7px] text-white/90 leading-tight drop-shadow">
+                                {badge.description}
+                              </p>
+                            </div>
+                            <div className="bg-white/20 px-1.5 py-0.5 rounded-full backdrop-blur-sm relative z-10">
+                              <p className="text-[7px] text-white font-semibold">✓ DESBLOQUEADO</p>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="text-center relative z-10 space-y-1">
+                            <p className="text-[9px] font-bold text-white leading-tight drop-shadow-lg">
+                              {badge.name}
+                            </p>
+                            <div className="bg-white/20 px-2 py-1 rounded-lg backdrop-blur-sm">
+                              <p className="text-[7px] text-white/95 leading-tight">
+                                {badge.explanation}
+                              </p>
+                            </div>
+                            <div className="bg-white/30 px-2 py-0.5 rounded-full backdrop-blur-sm">
+                              <p className="text-[8px] text-white font-bold">
+                                🎯 {badge.growthPercentage}% del patrimonio
+                              </p>
+                            </div>
+                          </div>
+                        )}
                       </motion.div>
                     </CarouselItem>
                   );
