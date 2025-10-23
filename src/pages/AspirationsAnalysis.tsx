@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, TrendingUp, Sparkles, Award, Trophy, Star, Target, Zap, Crown } from "lucide-react";
+import { ArrowLeft, TrendingUp, Sparkles, Award, Trophy, Star, Target, Zap, Crown, Shield, Gem, Medal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart, Bar } from "recharts";
 import { useNetWorth } from "@/hooks/useNetWorth";
 import { motion } from "framer-motion";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#6366f1'];
 
@@ -200,13 +201,41 @@ export default function AspirationsAnalysis() {
     }
   };
 
-  // Definir insignias basadas en el progreso hacia aspiraciones
+  // Definir insignias basadas en el progreso hacia aspiraciones con niveles
   const getBadges = () => {
     const badges = [];
     const progress = (currentNetWorth / totalAspiration) * 100;
     const gap = totalAspiration - currentNetWorth;
     
-    // Insignia 1: Inicio del viaje (siempre se muestra)
+    // Sistema de niveles basado en progreso
+    const levels = [
+      { threshold: 0, name: "Bronce", icon: Medal, color: "from-amber-700 to-amber-900", tier: "Inicial" },
+      { threshold: 10, name: "Plata", icon: Shield, color: "from-gray-300 to-gray-500", tier: "Básico" },
+      { threshold: 25, name: "Oro", icon: Star, color: "from-yellow-400 to-yellow-600", tier: "Intermedio" },
+      { threshold: 50, name: "Platino", icon: Trophy, color: "from-cyan-400 to-cyan-600", tier: "Avanzado" },
+      { threshold: 75, name: "Rubí", icon: Gem, color: "from-red-500 to-pink-600", tier: "Experto" },
+      { threshold: 90, name: "Diamante", icon: Crown, color: "from-blue-400 to-purple-600", tier: "Elite" }
+    ];
+    
+    // Determinar el nivel actual del usuario
+    let currentLevel = levels[0];
+    for (const level of levels) {
+      if (progress >= level.threshold) {
+        currentLevel = level;
+      }
+    }
+    
+    // Insignia principal de nivel
+    badges.push({
+      icon: currentLevel.icon,
+      name: `Nivel ${currentLevel.name}`,
+      description: `${currentLevel.tier} - ${progress.toFixed(1)}% completado`,
+      color: currentLevel.color,
+      earned: true,
+      isMainBadge: true
+    });
+    
+    // Insignia de inicio del viaje (siempre desbloqueada)
     badges.push({
       icon: Target,
       name: "Viaje Iniciado",
@@ -214,70 +243,70 @@ export default function AspirationsAnalysis() {
       color: "from-blue-500 to-blue-600",
       earned: true
     });
-
-    // Insignia 2: Progreso basado en porcentaje alcanzado
-    if (progress >= 75) {
+    
+    // Insignias de progreso desbloqueadas
+    if (progress >= 10) {
       badges.push({
-        icon: Crown,
-        name: "Casi en la Cima",
-        description: `${progress.toFixed(0)}% alcanzado`,
-        color: "from-yellow-500 to-yellow-600",
-        earned: true
-      });
-    } else if (progress >= 50) {
-      badges.push({
-        icon: Trophy,
-        name: "A Medio Camino",
-        description: `${progress.toFixed(0)}% alcanzado`,
-        color: "from-purple-500 to-purple-600",
-        earned: true
-      });
-    } else if (progress >= 25) {
-      badges.push({
-        icon: Zap,
-        name: "Cuarto Cumplido",
-        description: `${progress.toFixed(0)}% alcanzado`,
-        color: "from-orange-500 to-orange-600",
-        earned: true
-      });
-    } else if (progress >= 10) {
-      badges.push({
-        icon: Star,
-        name: "Primeros Pasos",
-        description: `${progress.toFixed(0)}% alcanzado`,
+        icon: TrendingUp,
+        name: "Progreso Visible",
+        description: "10% de la meta alcanzada",
         color: "from-green-500 to-green-600",
         earned: true
       });
-    } else if (currentNetWorth > 0) {
+    }
+    
+    if (progress >= 25) {
       badges.push({
-        icon: TrendingUp,
-        name: "En Construcción",
-        description: `${progress.toFixed(1)}% alcanzado`,
-        color: "from-teal-500 to-teal-600",
+        icon: Zap,
+        name: "Cuarto Cumplido",
+        description: "25% de avance logrado",
+        color: "from-orange-500 to-orange-600",
         earned: true
       });
     }
-
-    // Insignia 3: Brecha por cerrar
+    
+    if (progress >= 50) {
+      badges.push({
+        icon: Trophy,
+        name: "A Medio Camino",
+        description: "¡50% completado!",
+        color: "from-purple-500 to-purple-600",
+        earned: true
+      });
+    }
+    
+    if (progress >= 75) {
+      badges.push({
+        icon: Gem,
+        name: "Casi en la Cima",
+        description: "75% de tu meta",
+        color: "from-pink-500 to-red-600",
+        earned: true
+      });
+    }
+    
+    if (progress >= 90) {
+      badges.push({
+        icon: Crown,
+        name: "Elite Financiero",
+        description: "90% alcanzado",
+        color: "from-indigo-500 to-purple-600",
+        earned: true
+      });
+    }
+    
+    // Insignia por brecha cercana
     const gapInMillions = gap / 1000000;
-    if (gapInMillions < 10) {
+    if (gapInMillions < 10 && progress > 50) {
       badges.push({
         icon: Award,
         name: "Meta Cercana",
-        description: `Faltan $${gapInMillions.toFixed(1)}M`,
+        description: `Solo faltan $${gapInMillions.toFixed(1)}M`,
         color: "from-emerald-500 to-emerald-600",
         earned: true
       });
-    } else if (gapInMillions < 50) {
-      badges.push({
-        icon: Award,
-        name: "Brecha Manejable",
-        description: `Faltan $${gapInMillions.toFixed(1)}M`,
-        color: "from-cyan-500 to-cyan-600",
-        earned: true
-      });
     }
-
+    
     return badges;
   };
 
@@ -755,32 +784,52 @@ export default function AspirationsAnalysis() {
             </div>
           </div>
 
-          {/* Badges Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {badges.map((badge, index) => {
-              const IconComponent = badge.icon;
-              return (
-                <div
-                  key={index}
-                  className={`bg-gradient-to-br ${badge.color} rounded-[15px] p-3 flex flex-col items-center gap-2 shadow-lg transform hover:scale-105 transition-all`}
-                >
-                  <div className="bg-white/20 p-2.5 rounded-full backdrop-blur-sm">
-                    <IconComponent className="h-5 w-5 text-white" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs font-bold text-white leading-tight mb-0.5">
-                      {badge.name}
-                    </p>
-                    {badge.description && (
-                      <p className="text-[10px] text-white/90 leading-tight">
-                        {badge.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          {/* Badges Carousel */}
+          <Carousel className="w-full max-w-xl mx-auto">
+            <CarouselContent>
+              {badges.map((badge, index) => {
+                const IconComponent = badge.icon;
+                return (
+                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: index * 0.1 }}
+                      className={`bg-gradient-to-br ${badge.color} rounded-[20px] p-6 flex flex-col items-center gap-3 shadow-2xl ${
+                        badge.isMainBadge ? 'ring-4 ring-yellow-300 ring-offset-2' : ''
+                      }`}
+                    >
+                      <div className="bg-white/20 p-4 rounded-full backdrop-blur-sm relative">
+                        <IconComponent className="h-8 w-8 text-white" />
+                        {badge.isMainBadge && (
+                          <div className="absolute -top-1 -right-1 bg-yellow-400 rounded-full p-1">
+                            <Sparkles className="h-3 w-3 text-yellow-900" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm font-bold text-white leading-tight mb-1">
+                          {badge.name}
+                        </p>
+                        {badge.description && (
+                          <p className="text-xs text-white/90 leading-tight">
+                            {badge.description}
+                          </p>
+                        )}
+                      </div>
+                      {badge.isMainBadge && (
+                        <div className="bg-white/20 px-3 py-1 rounded-full">
+                          <p className="text-xs text-white font-semibold">⭐ NIVEL ACTUAL</p>
+                        </div>
+                      )}
+                    </motion.div>
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+            <CarouselPrevious className="hidden sm:flex" />
+            <CarouselNext className="hidden sm:flex" />
+          </Carousel>
 
           {/* Progress Info */}
           <div className="mt-4 pt-4 border-t border-slate-200">
