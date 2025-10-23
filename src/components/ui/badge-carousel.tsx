@@ -57,31 +57,6 @@ export const BadgeCarousel = ({ items, initialScroll = 0 }: BadgeCarouselProps) 
     }
   };
 
-  const handleScrollLeft = () => {
-    if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: -300, behavior: "smooth" });
-    }
-  };
-
-  const handleScrollRight = () => {
-    if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: 300, behavior: "smooth" });
-    }
-  };
-
-  const handleCardClose = (index: number) => {
-    if (carouselRef.current) {
-      const isMobile = window && window.innerWidth < 768;
-      const cardWidth = isMobile ? 150 : 200;
-      const gap = isMobile ? 8 : 16;
-      const scrollPosition = (cardWidth + gap) * (index + 1);
-      carouselRef.current.scrollTo({
-        left: scrollPosition,
-        behavior: "smooth",
-      });
-    }
-  };
-
   useEffect(() => {
     if (carouselRef.current) {
       carouselRef.current.scrollLeft = initialScroll;
@@ -92,32 +67,27 @@ export const BadgeCarousel = ({ items, initialScroll = 0 }: BadgeCarouselProps) 
   return (
     <div className="relative w-full">
       <div
-        className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth [scrollbar-width:none] py-4"
+        className="flex w-full overflow-x-auto scroll-smooth [scrollbar-width:none] py-4 gap-3"
         ref={carouselRef}
         onScroll={checkScrollability}
       >
-        <div className={cn("flex flex-row justify-start gap-4 pl-2")}>
-          {items.map((item, index) => (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{
-                opacity: 1,
-                y: 0,
-                transition: {
-                  duration: 0.5,
-                  delay: 0.1 * index,
-                  ease: "easeOut",
-                },
-              }}
-              key={`badge-${index}`}
-              className="last:pr-4"
-            >
-              {React.cloneElement(item, {
-                onCardClose: () => handleCardClose(index),
-              })}
-            </motion.div>
-          ))}
-        </div>
+        {items.map((item, index) => (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              transition: {
+                duration: 0.5,
+                delay: 0.05 * index,
+                ease: "easeOut",
+              },
+            }}
+            key={`badge-${index}`}
+          >
+            {item}
+          </motion.div>
+        ))}
       </div>
     </div>
   );
@@ -216,7 +186,7 @@ export const BadgeCard = ({
                   </p>
                   
                   <div className={`${badge.color} px-4 py-3 rounded-[12px] shadow-md`}>
-                    <p className="text-sm text-white font-bold text-center">
+                    <p className="text-sm text-white font-bold text-center drop-shadow-md">
                       🎯 {badge.growthPercentage}% patrimonio deseado
                     </p>
                   </div>
@@ -231,25 +201,35 @@ export const BadgeCard = ({
         )}
       </AnimatePresence>
       
-      <motion.button
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: index * 0.05 }}
         onClick={handleExpand}
-        className="relative"
-        whileHover={{
-          scale: 1.05,
-          transition: { duration: 0.2 },
-        }}
-        whileTap={{ scale: 0.95 }}
+        className={`bg-gradient-to-br ${badge.color} rounded-[10px] p-2 flex flex-col items-center gap-1 shadow-lg relative overflow-hidden cursor-pointer transition-all hover:scale-105 min-w-[100px]`}
       >
-        <div className={`${badge.color} rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-200 w-36 h-36 flex flex-col items-center justify-center gap-2`}>
-          <IconComponent className="h-10 w-10 text-white drop-shadow-lg" />
-          <p className="text-white text-xs font-bold text-center leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+        {/* Efecto de brillo de fondo */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+        
+        <div className="bg-white/30 p-1.5 rounded-full backdrop-blur-sm relative z-10 shadow-md">
+          <IconComponent className="h-4 w-4 text-white" />
+        </div>
+        
+        <div className="text-center relative z-10">
+          <p className="text-[9px] font-bold text-white leading-tight mb-0.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             {badge.name}
           </p>
-          <p className="text-white text-[10px] text-center drop-shadow-[0_2px_3px_rgba(0,0,0,0.7)]">
-            Nivel {badge.level}
+          <p className="text-[7px] text-white/90 leading-tight drop-shadow-[0_2px_3px_rgba(0,0,0,0.7)]">
+            {badge.description}
           </p>
         </div>
-      </motion.button>
+        
+        <div className="bg-white/20 px-1.5 py-0.5 rounded-full backdrop-blur-sm relative z-10">
+          <p className="text-[7px] text-white font-semibold drop-shadow-md">
+            ✓ DESBLOQUEADO
+          </p>
+        </div>
+      </motion.div>
     </>
   );
 };
