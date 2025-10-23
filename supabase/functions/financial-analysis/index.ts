@@ -587,10 +587,9 @@ Ejemplo formato:
     });
     
     // Proyecciones usando promedios específicos por horizonte temporal
-    // - Meses 1-12: promedio de últimos 12 meses
-    // - Meses 13-60: promedio de últimos 5 años
-    // - Meses 61-120: promedio de últimos 10 años
+    // Acumular mes a mes usando el promedio apropiado para cada periodo
     const forecastData = [];
+    let accumulatedSavings = 0; // Mantener acumulado real
     
     console.log('📊 Generando proyecciones con promedios por horizonte');
     
@@ -609,24 +608,24 @@ Ejemplo formato:
         monthLabel = `${monthDate.toLocaleDateString('es-MX', { month: 'short' })} '${String(monthDate.getFullYear()).slice(-2)}`;
       }
       
-      // Seleccionar el promedio apropiado según el horizonte
-      let monthlyAvgForProjection;
+      // Seleccionar el promedio apropiado según el horizonte y acumular
+      let monthlyAvgForThisMonth;
       if (i <= 12) {
-        monthlyAvgForProjection = avgMonthlySavings12M; // 1er año: promedio 12 meses
+        monthlyAvgForThisMonth = avgMonthlySavings12M; // 1er año: promedio 12 meses
       } else if (i <= 60) {
-        monthlyAvgForProjection = avgMonthlySavings60M; // Años 2-5: promedio 5 años
+        monthlyAvgForThisMonth = avgMonthlySavings60M; // Años 2-5: promedio 5 años
       } else {
-        monthlyAvgForProjection = avgMonthlySavings120M; // Años 6-10: promedio 10 años
+        monthlyAvgForThisMonth = avgMonthlySavings120M; // Años 6-10: promedio 10 años
       }
       
-      // Acumular ahorro mes a mes
-      const baseProjection = monthlyAvgForProjection * i;
+      // Acumular el ahorro de este mes
+      accumulatedSavings += monthlyAvgForThisMonth;
       
       forecastData.push({
         month: monthLabel,
-        conservative: Math.max(0, baseProjection * 0.7),
-        realistic: baseProjection,
-        optimistic: baseProjection * 1.3
+        conservative: Math.max(0, accumulatedSavings * 0.7),
+        realistic: accumulatedSavings,
+        optimistic: accumulatedSavings * 1.3
       });
     }
     
