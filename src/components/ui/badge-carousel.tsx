@@ -119,22 +119,6 @@ export const BadgeCarousel = ({ items, initialScroll = 0 }: BadgeCarouselProps) 
           ))}
         </div>
       </div>
-      <div className="flex justify-end gap-2 mt-2">
-        <button
-          className="relative z-40 h-8 w-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center disabled:opacity-50 hover:scale-105 transition-all duration-200 shadow-lg"
-          onClick={handleScrollLeft}
-          disabled={!canScrollLeft}
-        >
-          <ArrowLeft className="h-4 w-4 text-white" />
-        </button>
-        <button
-          className="relative z-40 h-8 w-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center disabled:opacity-50 hover:scale-105 transition-all duration-200 shadow-lg"
-          onClick={handleScrollRight}
-          disabled={!canScrollRight}
-        >
-          <ArrowRight className="h-4 w-4 text-white" />
-        </button>
-      </div>
     </div>
   );
 };
