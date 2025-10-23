@@ -155,18 +155,20 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA 
           </div>
         </div>
 
-        <div className="bg-purple-50 rounded-lg p-2 border border-purple-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-[8px] text-purple-700 font-medium">Prob. meta</p>
-              <p className="text-sm font-bold text-purple-900">{goalProbability}%</p>
-            </div>
-            <div className="text-right">
-              <p className="text-[8px] text-purple-700 font-medium">ETA</p>
-              <p className="text-[11px] font-bold text-purple-900">{goalETA}</p>
+        {goalProbability > 0 && (
+          <div className="bg-purple-50 rounded-lg p-2 border border-purple-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[8px] text-purple-700 font-medium">Prob. meta</p>
+                <p className="text-sm font-bold text-purple-900">{goalProbability}%</p>
+              </div>
+              <div className="text-right">
+                <p className="text-[8px] text-purple-700 font-medium">ETA</p>
+                <p className="text-[11px] font-bold text-purple-900">{goalETA}</p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </Card>
   );
