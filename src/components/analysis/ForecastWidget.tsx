@@ -112,19 +112,31 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA 
           <div className="bg-amber-50 rounded-lg p-1.5 border border-amber-200">
             <p className="text-[8px] text-amber-700 font-medium">Conserv.</p>
             <p className="text-[11px] font-bold text-amber-900 leading-tight">
-              ${Math.round((displayData[displayData.length - 1]?.conservative || 0) / 1000)}k
+              {(() => {
+                const value = displayData[displayData.length - 1]?.conservative || 0;
+                if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
+                return `$${Math.round(value / 1000)}k`;
+              })()}
             </p>
           </div>
           <div className="bg-purple-50 rounded-lg p-1.5 border border-purple-200">
             <p className="text-[8px] text-purple-700 font-medium">Realista</p>
             <p className="text-[11px] font-bold text-purple-900 leading-tight">
-              ${Math.round((displayData[displayData.length - 1]?.realistic || 0) / 1000)}k
+              {(() => {
+                const value = displayData[displayData.length - 1]?.realistic || 0;
+                if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
+                return `$${Math.round(value / 1000)}k`;
+              })()}
             </p>
           </div>
           <div className="bg-emerald-50 rounded-lg p-1.5 border border-emerald-200">
             <p className="text-[8px] text-emerald-700 font-medium">Óptimo</p>
             <p className="text-[11px] font-bold text-emerald-900 leading-tight">
-              ${Math.round((displayData[displayData.length - 1]?.optimistic || 0) / 1000)}k
+              {(() => {
+                const value = displayData[displayData.length - 1]?.optimistic || 0;
+                if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
+                return `$${Math.round(value / 1000)}k`;
+              })()}
             </p>
           </div>
         </div>
