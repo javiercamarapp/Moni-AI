@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { addDays, addWeeks, addMonths, addYears, isBefore, startOfDay } from "date-fns";
 import { TrendingUp, TrendingDown, DollarSign, PiggyBank, Home, Target, MessageSquare, User, Droplets, AlertCircle, Zap, Activity, BarChart3, Shield, Trophy, Heart } from "lucide-react";
@@ -1049,14 +1050,30 @@ export default function FinancialAnalysis() {
             
 
             {/* Análisis AI */}
-            <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100">
-              <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
-                <BarChart3 className="h-3 w-3" /> Análisis Moni AI
-              </p>
-              <div className="text-xs text-foreground leading-relaxed whitespace-pre-line max-h-60 overflow-y-auto">
-                {analysis?.analysis}
-              </div>
-            </Card>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 active:scale-95 transition-all">
+                  <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
+                    <BarChart3 className="h-3 w-3" /> Análisis Moni AI
+                  </p>
+                  <div className="text-xs text-foreground leading-relaxed line-clamp-3">
+                    {analysis?.analysis}
+                  </div>
+                  <p className="text-xs text-primary mt-2 font-medium">Ver análisis completo →</p>
+                </Card>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[80vh]">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-4 w-4" />
+                    Análisis Completo Moni AI
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="text-sm text-foreground leading-relaxed whitespace-pre-line max-h-[60vh] overflow-y-auto p-4">
+                  {analysis?.analysis}
+                </div>
+              </DialogContent>
+            </Dialog>
 
             {/* Calendario de Próximos Movimientos */}
             {loadingTransactions ? (
