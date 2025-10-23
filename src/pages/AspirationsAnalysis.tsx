@@ -19,6 +19,7 @@ export default function AspirationsAnalysis() {
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [assets, setAssets] = useState<any[]>([]);
   const [liabilities, setLiabilities] = useState<any[]>([]);
+  const [isNavigating, setIsNavigating] = useState(false);
   const netWorthData = useNetWorth("1Y");
   const currentNetWorth = netWorthData.data?.currentNetWorth || 0;
 
@@ -271,8 +272,13 @@ export default function AspirationsAnalysis() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate("/dashboard")}
-            className="bg-white rounded-full shadow-xl hover:bg-white/90 text-foreground h-12 w-12 hover:scale-105 transition-all border border-blue-100"
+            onClick={() => {
+              if (isNavigating) return;
+              setIsNavigating(true);
+              navigate(-1);
+            }}
+            disabled={isNavigating}
+            className="bg-white rounded-full shadow-xl hover:bg-white/90 text-foreground h-12 w-12 hover:scale-105 transition-all border border-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
