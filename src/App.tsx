@@ -1,6 +1,5 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Onboarding from "./pages/Onboarding";
@@ -49,45 +48,43 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/chat" element={<ChatInterface />} />
-            <Route path="/new-goal" element={<NewGoal />} />
-            <Route path="/financial-chat" element={<FinancialChat />} />
-            <Route path="/ingresos" element={<Ingresos />} />
-            <Route path="/gastos" element={<Gastos />} />
-            <Route path="/categorias" element={<GestionarCategorias />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/balance" element={<Balance />} />
-            <Route path="/whatsapp" element={<WhatsAppSetup />} />
-            <Route path="/analysis" element={<FinancialAnalysis />} />
-            <Route path="/bank-connection" element={<BankConnection />} />
-            <Route path="/notifications" element={<NotificationSettings />} />
-            <Route path="/net-worth" element={<NetWorth />} />
-            <Route path="/score-moni" element={<ScoreMoni />} />
-            <Route path="/assets" element={<Assets />} />
-            <Route path="/liabilities" element={<Liabilities />} />
-            <Route path="/level-quiz" element={<LevelQuiz />} />
-            <Route path="/level-details" element={<LevelDetails />} />
-            <Route path="/aspirations-analysis" element={<AspirationsAnalysis />} />
-            <Route path="/financial-journey" element={<FinancialJourney />} />
-            <Route path="/edit-aspirations" element={<EditAspirations />} />
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/chat" element={<ChatInterface />} />
+          <Route path="/new-goal" element={<NewGoal />} />
+          <Route path="/financial-chat" element={<FinancialChat />} />
+          <Route path="/ingresos" element={<Ingresos />} />
+          <Route path="/gastos" element={<Gastos />} />
+          <Route path="/categorias" element={<GestionarCategorias />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/balance" element={<Balance />} />
+          <Route path="/whatsapp" element={<WhatsAppSetup />} />
+          <Route path="/analysis" element={<FinancialAnalysis />} />
+          <Route path="/bank-connection" element={<BankConnection />} />
+          <Route path="/notifications" element={<NotificationSettings />} />
+          <Route path="/net-worth" element={<NetWorth />} />
+          <Route path="/score-moni" element={<ScoreMoni />} />
+          <Route path="/assets" element={<Assets />} />
+          <Route path="/liabilities" element={<Liabilities />} />
+          <Route path="/level-quiz" element={<LevelQuiz />} />
+          <Route path="/level-details" element={<LevelDetails />} />
+          <Route path="/aspirations-analysis" element={<AspirationsAnalysis />} />
+          <Route path="/financial-journey" element={<FinancialJourney />} />
+          <Route path="/edit-aspirations" element={<EditAspirations />} />
           <Route path="/subscriptions" element={<Subscriptions />} />
           <Route path="/daily-expenses" element={<DailyExpenses />} />
           <Route path="/reports" element={<Reports />} />
-            
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+          
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 }
