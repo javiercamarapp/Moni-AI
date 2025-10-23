@@ -488,7 +488,20 @@ export default function AspirationsAnalysis() {
           <div className="block sm:hidden space-y-1.5">
             {comparativeData.map((item, index) => (
               <div key={index} className="bg-white/90 backdrop-blur-sm rounded-[12px] p-2 shadow-md border border-blue-100">
-                <h4 className="font-bold text-foreground mb-1 text-[10px]">{item.category}</h4>
+                {/* Título con barra de progreso */}
+                <div className="flex items-center gap-1.5 mb-1">
+                  <h4 className="font-bold text-foreground text-[10px] whitespace-nowrap">{item.category}</h4>
+                  <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.min(100 - parseFloat(String(item.gapPercentage)), 100)}%` }}
+                    />
+                  </div>
+                  <span className="text-[7px] font-semibold text-emerald-600 whitespace-nowrap">
+                    {Math.min(100 - parseFloat(String(item.gapPercentage)), 100).toFixed(0)}%
+                  </span>
+                </div>
+                
                 <div className="grid grid-cols-3 gap-1 text-[9px]">
                   <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-[6px] p-1">
                     <p className="text-muted-foreground mb-0.5 text-[8px]">Actual</p>
@@ -522,7 +535,6 @@ export default function AspirationsAnalysis() {
                           : item.gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                       }
                     </p>
-                    <p className="text-[7px] text-orange-500 mt-0.5">{item.gapPercentage}%</p>
                   </div>
                 </div>
               </div>
