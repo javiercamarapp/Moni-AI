@@ -571,6 +571,13 @@ export default function FinancialAnalysis() {
       }
       
       if (data) {
+        console.log('📊 DATOS RECIBIDOS DE LA API:', {
+          tieneAnalysis: !!data.analysis,
+          tieneForecast: !!data.forecast,
+          forecastData: data.forecast?.forecastData?.length || 0,
+          goalProbability: data.forecast?.goalProbability,
+          goalETA: data.forecast?.goalETA
+        });
         setAnalysis(data);
         // Guardar con timestamp
         localStorage.setItem(cacheKey, JSON.stringify(data));
