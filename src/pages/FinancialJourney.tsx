@@ -288,29 +288,29 @@ export default function FinancialJourney() {
             </Button>
           </div>
           
-          <Card className="p-4 bg-white/95 backdrop-blur-sm border-0 shadow-xl rounded-[20px] hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+          <Card className="p-3 bg-white/95 backdrop-blur-sm border-0 shadow-xl rounded-[20px] hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
             <GlowingEffect disabled={false} spread={30} />
             <div className="relative z-10">
-              <p className="text-xs font-bold uppercase tracking-wider text-green-600 mb-1">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-green-600 mb-0.5">
                 Tu Camino Financiero
               </p>
-              <h1 className="text-xl font-bold text-foreground">
+              <h1 className="text-base font-bold text-foreground mb-1.5">
                 Tu deseo, tu realidad
               </h1>
               
               {/* Net Worth */}
-              <div className="mt-2 p-2 bg-muted/50 rounded-lg border border-border">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex-1 space-y-1">
-                    <div className="flex items-baseline gap-2">
-                      <p className="text-[10px] text-muted-foreground">Actual:</p>
-                      <p className="text-sm font-semibold text-foreground">
+              <div className="p-1.5 bg-muted/50 rounded-lg border border-border">
+                <div className="flex items-center justify-between gap-1.5">
+                  <div className="flex-1 space-y-0.5">
+                    <div className="flex items-baseline gap-1.5">
+                      <p className="text-[9px] text-muted-foreground">Actual:</p>
+                      <p className="text-xs font-semibold text-foreground">
                         ${currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                       </p>
                     </div>
-                    <div className="flex items-baseline gap-2">
-                      <p className="text-[10px] text-muted-foreground">Objetivo:</p>
-                      <p className="text-sm font-semibold text-primary">
+                    <div className="flex items-baseline gap-1.5">
+                      <p className="text-[9px] text-muted-foreground">Objetivo:</p>
+                      <p className="text-xs font-semibold text-primary">
                         ${totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                       </p>
                     </div>
@@ -319,7 +319,7 @@ export default function FinancialJourney() {
                     onClick={() => navigate("/edit-aspirations")}
                     variant="ghost"
                     size="sm"
-                    className="h-7 px-2"
+                    className="h-6 px-1.5"
                   >
                     <Edit className="h-3 w-3" />
                   </Button>
