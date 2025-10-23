@@ -1149,13 +1149,14 @@ Responde SOLO con el JSON array, sin texto adicional.`;
       }
     };
 
-    // Guardar score en la base de datos para carga instantánea
-    if (scoreMoni !== undefined) {
+    // Guardar score y componentes en la base de datos para carga instantánea
+    if (scoreMoni !== undefined && scoreBreakdown?.components) {
       await supabase
         .from('user_scores')
         .upsert({
           user_id: userId,
           score_moni: Math.round(scoreMoni),
+          components: scoreBreakdown.components,
           last_calculated_at: new Date().toISOString()
         }, {
           onConflict: 'user_id'

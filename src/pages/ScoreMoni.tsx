@@ -59,45 +59,30 @@ const ScoreMoni = () => {
 
   const fetchScore = async () => {
     try {
-      // No mostramos loading para no bloquear la UI
       const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        // Primero obtener el score de user_scores
-        const { data: scoreData, error: scoreError } = await supabase
-          .from('user_scores')
-          .select('score_moni')
-          .eq('user_id', user.id)
-          .maybeSingle();
+      if (!user) return;
 
-        if (scoreData && !scoreError) {
-          const newScore = scoreData.score_moni;
-          setScore(newScore);
-          localStorage.setItem('scoreMoni', newScore.toString());
-        }
+      // Obtener score Y componentes directamente de la tabla (súper rápido)
+      const { data: scoreData, error: scoreError } = await supabase
+        .from('user_scores')
+        .select('score_moni, components')
+        .eq('user_id', user.id)
+        .maybeSingle();
 
-        // Luego obtener los componentes reales del análisis financiero
-        const { data: analysisData, error: analysisError } = await supabase.functions.invoke('financial-analysis', {
-          body: { 
-            userId: user.id,
-            period: 'month'
-          }
-        });
+      if (scoreData && !scoreError) {
+        // Actualizar score
+        const newScore = scoreData.score_moni;
+        setScore(newScore);
+        localStorage.setItem('scoreMoni', newScore.toString());
 
-        if (analysisData && !analysisError && analysisData.scoreBreakdown?.components) {
-          const realComponents = analysisData.scoreBreakdown.components;
-          console.log('📊 Componentes reales del backend:', realComponents);
+        // Actualizar componentes si existen
+        if (scoreData.components) {
+          setComponents(scoreData.components);
+          localStorage.setItem('scoreComponents', JSON.stringify(scoreData.components));
           
-          setComponents(realComponents);
-          // Cache components for instant display next time
-          localStorage.setItem('scoreComponents', JSON.stringify(realComponents));
-          
-          // Calcular score basado en componentes reales
-          const calculatedScore = Object.values(realComponents).reduce((sum: number, val: any) => sum + Number(val), 0);
-          console.log('🎯 Score calculado de componentes:', calculatedScore);
-          
-          // Generate AI explanation for score change (optional, no espera)
-          if (scoreData && Math.abs(scoreData.score_moni - previousScore) > 0) {
-            generateScoreExplanation(scoreData.score_moni, realComponents);
+          // Generate AI explanation for score change (en background, sin bloquear)
+          if (Math.abs(newScore - previousScore) > 0) {
+            generateScoreExplanation(newScore, scoreData.components);
           }
         }
       }

@@ -607,18 +607,21 @@ export type Database = {
       }
       user_scores: {
         Row: {
+          components: Json | null
           last_calculated_at: string | null
           score_moni: number
           updated_at: string | null
           user_id: string
         }
         Insert: {
+          components?: Json | null
           last_calculated_at?: string | null
           score_moni?: number
           updated_at?: string | null
           user_id: string
         }
         Update: {
+          components?: Json | null
           last_calculated_at?: string | null
           score_moni?: number
           updated_at?: string | null
