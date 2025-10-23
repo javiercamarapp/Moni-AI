@@ -427,16 +427,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-amber-100 text-amber-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Bronce 250
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-amber-100 text-amber-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Bronce 250
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'bronze250' && isUnlocked && (
@@ -528,16 +530,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-gray-100 text-gray-600
-                        shadow-md z-30
-                      `}
-                    >
-                      Plata 500
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-gray-100 text-gray-600
+                          shadow-md z-30
+                        `}
+                      >
+                        Plata 500
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'silver500' && isUnlocked && (
@@ -629,16 +633,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-amber-100 text-amber-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Bronce 750 #2
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-amber-100 text-amber-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Bronce 750 #2
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'bronze750' && isUnlocked && (
@@ -730,16 +736,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-yellow-100 text-yellow-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Oro 1000
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-yellow-100 text-yellow-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Oro 1000
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'gold1000' && isUnlocked && (
@@ -831,16 +839,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-amber-100 text-amber-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Bronce 1250 #3
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-amber-100 text-amber-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Bronce 1250 #3
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'bronze1250' && isUnlocked && (
@@ -932,16 +942,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-gray-100 text-gray-600
-                        shadow-md z-30
-                      `}
-                    >
-                      Plata 1500 #2
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-gray-100 text-gray-600
+                          shadow-md z-30
+                        `}
+                      >
+                        Plata 1500 #2
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'silver1500' && isUnlocked && (
@@ -1033,16 +1045,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-amber-100 text-amber-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Maestría Bronce 1750 #1
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-amber-100 text-amber-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Maestría Bronce 1750 #1
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'mastery1750' && isUnlocked && (
