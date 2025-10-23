@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, TrendingUp, Sparkles, Award, Trophy, Star, Target, Zap, Crown, Shield, Gem, Medal } from "lucide-react";
+import { ArrowLeft, TrendingUp, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart, Bar } from "recharts";
@@ -201,6 +201,11 @@ export default function AspirationsAnalysis() {
     }
   };
 
+  // Emoji component to replace icons
+  const EmojiIcon = ({ emoji }: { emoji: string }) => {
+    return <span className="text-2xl">{emoji}</span>;
+  };
+
   // Obtener insignias desbloqueadas del sistema de Financial Journey
   const getUnlockedBadges = () => {
     const progress = (currentNetWorth / totalAspiration) * 100;
@@ -208,167 +213,167 @@ export default function AspirationsAnalysis() {
     
     const badges = [];
     
-    // Sistema de insignias del Financial Journey
+    // Sistema de insignias del Financial Journey con emojis
     const badgeThresholds = [
       { 
         level: 250, 
-        name: "Bronce 250", 
-        icon: Medal, 
-        color: "from-amber-700 to-amber-900", 
-        description: "Primeros 250 puntos alcanzados",
-        explanation: "Has dado tus primeros pasos en tu camino hacia la libertad financiera. Este es el comienzo de algo grande."
+        name: "💸 Novato Financiero", 
+        icon: () => EmojiIcon({ emoji: "💸" }), 
+        color: "from-blue-400 to-blue-600", 
+        description: "Primeros pasos",
+        explanation: "Has iniciado tu camino financiero. Estás aprendiendo a gestionar tu dinero y crear buenos hábitos."
       },
       { 
         level: 500, 
-        name: "Plata 500", 
-        icon: Shield, 
-        color: "from-gray-300 to-gray-500", 
-        description: "500 puntos de progreso",
-        explanation: "Tu compromiso con tus metas financieras está demostrando ser sólido. Sigue así y verás grandes resultados."
+        name: "💸 Novato Financiero", 
+        icon: () => EmojiIcon({ emoji: "💸" }), 
+        color: "from-blue-400 to-blue-600", 
+        description: "Educación financiera",
+        explanation: "Estás desarrollando consciencia sobre tus finanzas y comenzando a tomar decisiones informadas."
       },
       { 
         level: 750, 
-        name: "Bronce 750", 
-        icon: Medal, 
-        color: "from-amber-600 to-amber-800", 
-        description: "Nivel 750 desbloqueado",
-        explanation: "Cada día estás más cerca de tu meta. La constancia es tu mejor aliada."
+        name: "💸 Novato Financiero", 
+        icon: () => EmojiIcon({ emoji: "💸" }), 
+        color: "from-blue-400 to-blue-600", 
+        description: "Progreso inicial",
+        explanation: "Tus nuevos hábitos financieros están tomando forma. Cada día aprendes algo nuevo."
       },
       { 
         level: 1000, 
-        name: "Oro 1000", 
-        icon: Star, 
-        color: "from-yellow-400 to-yellow-600", 
-        description: "¡Nivel 1000 alcanzado!",
-        explanation: "¡Felicidades! Has alcanzado el 10% de tu meta. Este es un logro significativo que demuestra tu disciplina financiera."
+        name: "🪙 Ahorrador Disciplinado", 
+        icon: () => EmojiIcon({ emoji: "🪙" }), 
+        color: "from-green-400 to-green-600", 
+        description: "Control y ahorro",
+        explanation: "¡10% alcanzado! Ahora tienes control sobre tus gastos y estás construyendo el hábito del ahorro consistente."
       },
       { 
         level: 1250, 
-        name: "Bronce 1250", 
-        icon: Medal, 
-        color: "from-amber-700 to-amber-900", 
-        description: "1250 puntos logrados",
-        explanation: "Tu patrimonio crece constantemente. Cada peso invertido te acerca más a tus sueños."
+        name: "🪙 Ahorrador Disciplinado", 
+        icon: () => EmojiIcon({ emoji: "🪙" }), 
+        color: "from-green-400 to-green-600", 
+        description: "Metas de ahorro",
+        explanation: "Estás cumpliendo tus metas de ahorro y viendo crecer tu patrimonio mes a mes."
       },
       { 
         level: 1500, 
-        name: "Plata 1500", 
-        icon: Shield, 
-        color: "from-gray-300 to-gray-500", 
-        description: "Nivel 1500 completado",
-        explanation: "Has superado el 15% de tu objetivo. Tu estrategia financiera está funcionando."
+        name: "🪙 Ahorrador Disciplinado", 
+        icon: () => EmojiIcon({ emoji: "🪙" }), 
+        color: "from-green-400 to-green-600", 
+        description: "Ahorro consistente",
+        explanation: "Tu disciplina de ahorro se ha vuelto un hábito sólido. Los resultados son evidentes."
       },
       { 
         level: 1750, 
-        name: "Maestría Bronce 1750", 
-        icon: Trophy, 
-        color: "from-amber-700 to-orange-600", 
-        description: "Maestría de nivel 1750",
-        explanation: "Tu disciplina financiera te está llevando a niveles de maestría. Pocos llegan hasta aquí."
+        name: "🪙 Ahorrador Disciplinado", 
+        icon: () => EmojiIcon({ emoji: "🪙" }), 
+        color: "from-green-400 to-green-600", 
+        description: "Maestría en ahorro",
+        explanation: "Has perfeccionado el arte del ahorro inteligente. Tu fondo de emergencia crece constantemente."
       },
       { 
         level: 2000, 
-        name: "Oro 2000", 
-        icon: Star, 
-        color: "from-yellow-400 to-yellow-600", 
-        description: "2000 puntos alcanzados",
-        explanation: "¡20% de tu meta cumplida! Tu patrimonio está creciendo exponencialmente."
+        name: "📈 Inversionista Aprendiz", 
+        icon: () => EmojiIcon({ emoji: "📈" }), 
+        color: "from-purple-400 to-purple-600", 
+        description: "Primeras inversiones",
+        explanation: "¡20% completado! Has comenzado a invertir y diversificar. Tu dinero ahora trabaja para ti."
       },
       { 
         level: 2500, 
-        name: "Plata 2500", 
-        icon: Shield, 
-        color: "from-gray-400 to-gray-600", 
-        description: "Nivel 2500 desbloqueado",
-        explanation: "Un cuarto del camino completado. Tu visión financiera se está materializando."
+        name: "📈 Inversionista Aprendiz", 
+        icon: () => EmojiIcon({ emoji: "📈" }), 
+        color: "from-purple-400 to-purple-600", 
+        description: "Diversificación activa",
+        explanation: "Estás explorando diferentes vehículos de inversión y construyendo un portafolio balanceado."
       },
       { 
         level: 3000, 
-        name: "Oro 3000", 
-        icon: Star, 
-        color: "from-yellow-500 to-orange-500", 
-        description: "3000 puntos de éxito",
-        explanation: "30% alcanzado. Estás construyendo un futuro financiero sólido y duradero."
+        name: "📈 Inversionista Aprendiz", 
+        icon: () => EmojiIcon({ emoji: "📈" }), 
+        color: "from-purple-400 to-purple-600", 
+        description: "Portafolio en crecimiento",
+        explanation: "30% alcanzado. Tu portafolio de inversiones muestra rendimientos positivos y crecimiento sostenido."
       },
       { 
         level: 3500, 
-        name: "Platino 3500", 
-        icon: Trophy, 
-        color: "from-cyan-400 to-cyan-600", 
-        description: "Nivel Platino alcanzado",
-        explanation: "Has alcanzado el nivel Platino. Tu dedicación es admirable y tu futuro brillante."
+        name: "📈 Inversionista Aprendiz", 
+        icon: () => EmojiIcon({ emoji: "📈" }), 
+        color: "from-purple-400 to-purple-600", 
+        description: "Estrategia de inversión",
+        explanation: "Has desarrollado una estrategia de inversión clara y consistente. Tu patrimonio crece aceleradamente."
       },
       { 
         level: 4000, 
-        name: "Oro Premium 4000", 
-        icon: Crown, 
-        color: "from-yellow-500 to-yellow-600", 
-        description: "4000 puntos premium",
-        explanation: "¡40% de tu meta! Estás en el camino correcto hacia la independencia financiera."
+        name: "🧠 Estratega Financiero", 
+        icon: () => EmojiIcon({ emoji: "🧠" }), 
+        color: "from-orange-400 to-orange-600", 
+        description: "Análisis y optimización",
+        explanation: "¡40% de tu meta! Analizas, comparas y optimizas cada decisión financiera con maestría."
       },
       { 
         level: 4500, 
-        name: "Diamante 4500", 
-        icon: Gem, 
-        color: "from-blue-400 to-purple-600", 
-        description: "Nivel Diamante desbloqueado",
-        explanation: "Nivel Diamante alcanzado. Tu patrimonio brilla como una joya preciosa."
+        name: "🧠 Estratega Financiero", 
+        icon: () => EmojiIcon({ emoji: "🧠" }), 
+        color: "from-orange-400 to-orange-600", 
+        description: "Optimización de activos",
+        explanation: "Tus estrategias de optimización están maximizando el rendimiento de cada peso invertido."
       },
       { 
         level: 5000, 
-        name: "Platino 5000", 
-        icon: Trophy, 
-        color: "from-cyan-500 to-blue-600", 
-        description: "5000 puntos élite",
-        explanation: "¡Mitad del camino! Tu perseverancia está dando frutos abundantes."
+        name: "🧠 Estratega Financiero", 
+        icon: () => EmojiIcon({ emoji: "🧠" }), 
+        color: "from-orange-400 to-orange-600", 
+        description: "Maestría estratégica",
+        explanation: "¡Mitad del camino! Tu visión estratégica te posiciona entre los mejores administradores de patrimonio."
       },
       { 
         level: 6000, 
-        name: "Rubí 6000", 
-        icon: Gem, 
-        color: "from-red-500 to-pink-600", 
-        description: "Nivel Rubí alcanzado",
-        explanation: "60% completado. Tu éxito financiero es inevitable con esta dedicación."
+        name: "🧠 Estratega Financiero", 
+        icon: () => EmojiIcon({ emoji: "🧠" }), 
+        color: "from-orange-400 to-orange-600", 
+        description: "Planificación avanzada",
+        explanation: "60% completado. Tu planificación financiera a largo plazo está cristalizando tus sueños."
       },
       { 
         level: 7000, 
-        name: "Zafiro 7000", 
-        icon: Gem, 
-        color: "from-blue-500 to-indigo-600", 
-        description: "Nivel Zafiro desbloqueado",
-        explanation: "Nivel Zafiro. Estás en territorio de élite financiera."
+        name: "🚀 Visionario", 
+        icon: () => EmojiIcon({ emoji: "🚀" }), 
+        color: "from-cyan-400 to-cyan-600", 
+        description: "Independencia financiera",
+        explanation: "Nivel Visionario alcanzado. Estás a punto de lograr tu independencia financiera completa."
       },
       { 
         level: 8000, 
-        name: "Esmeralda 8000", 
-        icon: Gem, 
-        color: "from-green-500 to-emerald-600", 
-        description: "Nivel Esmeralda logrado",
-        explanation: "80% alcanzado. La libertad financiera está cada vez más cerca."
+        name: "🚀 Visionario", 
+        icon: () => EmojiIcon({ emoji: "🚀" }), 
+        color: "from-cyan-400 to-cyan-600", 
+        description: "Plan a largo plazo",
+        explanation: "80% alcanzado. Tu visión a largo plazo se está materializando. La libertad está cerca."
       },
       { 
         level: 9000, 
-        name: "Corona Real 9000", 
-        icon: Crown, 
-        color: "from-yellow-600 to-purple-600", 
-        description: "Corona Real alcanzada",
-        explanation: "¡90%! Eres parte de la élite financiera. Tu legado está asegurado."
+        name: "🚀 Visionario", 
+        icon: () => EmojiIcon({ emoji: "🚀" }), 
+        color: "from-cyan-400 to-cyan-600", 
+        description: "Casi libre financieramente",
+        explanation: "¡90%! Tu independencia financiera es prácticamente una realidad. El futuro que soñaste está aquí."
       },
       { 
         level: 9500, 
-        name: "Élite Supremo 9500", 
-        icon: Crown, 
-        color: "from-purple-600 to-pink-600", 
-        description: "Élite Supremo",
-        explanation: "95% completado. Estás a un paso de alcanzar la cima."
+        name: "👑 Leyenda Moni", 
+        icon: () => EmojiIcon({ emoji: "👑" }), 
+        color: "from-yellow-400 to-yellow-600", 
+        description: "Élite financiera",
+        explanation: "95% completado. Estás en la cúspide del éxito financiero. Eres un referente para otros."
       },
       { 
         level: 10000, 
-        name: "Libertad Financiera", 
-        icon: Crown, 
+        name: "👑 Leyenda Moni", 
+        icon: () => EmojiIcon({ emoji: "👑" }), 
         color: "from-yellow-400 via-pink-500 to-purple-600", 
-        description: "¡Meta alcanzada!",
-        explanation: "¡LO LOGRASTE! Has alcanzado tu meta financiera. Tu libertad financiera es ahora una realidad."
+        description: "Máximo nivel alcanzado",
+        explanation: "¡LO LOGRASTE! Leyenda Moni. Dominas completamente tu camino financiero y has alcanzado la libertad total."
       }
     ];
     
@@ -848,15 +853,15 @@ export default function AspirationsAnalysis() {
         <Card className="p-2 mb-4 bg-white/95 backdrop-blur-sm rounded-[12px] shadow-xl border-0">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-1.5">
-              <div className="bg-gradient-to-br from-yellow-500 to-orange-500 p-1 rounded-full">
-                <Award className="h-3 w-3 text-white" />
+              <div className="bg-gradient-to-br from-yellow-500 to-orange-500 p-1 rounded-full flex items-center justify-center">
+                <span className="text-[10px]">🏆</span>
               </div>
               <h3 className="text-xs font-bold text-foreground">Tus Logros</h3>
             </div>
             <div className="flex flex-col items-end">
               <p className="text-[8px] text-muted-foreground">Score Moni</p>
               <div className="flex items-center gap-0.5">
-                <Star className="h-2.5 w-2.5 text-yellow-500 fill-yellow-500" />
+                <span className="text-[10px]">⭐</span>
                 <p className="text-sm font-bold text-foreground">{userScore}</p>
               </div>
             </div>
@@ -876,7 +881,7 @@ export default function AspirationsAnalysis() {
             />
           ) : (
             <div className="text-center py-3">
-              <Trophy className="h-6 w-6 text-muted-foreground mx-auto mb-1.5 opacity-50" />
+              <span className="text-2xl opacity-50 block mb-1.5">🏆</span>
               <p className="text-[9px] text-muted-foreground">
                 Aún no has desbloqueado insignias.
               </p>

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 export interface Badge {
   level: number;
   name: string;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<any> | (() => JSX.Element);
   color: string;
   description: string;
   explanation: string;
@@ -176,8 +176,8 @@ export const BadgeCard = ({
                 </button>
                 
                 <div className="flex flex-col items-center">
-                  <div className={`bg-gradient-to-br ${badge.color} p-4 rounded-full mb-4 shadow-lg`}>
-                    <IconComponent className="h-10 w-10 text-white" />
+                  <div className={`bg-gradient-to-br ${badge.color} p-4 rounded-full mb-4 shadow-lg flex items-center justify-center`}>
+                    <IconComponent />
                   </div>
                   
                   <h2 className="text-xl font-bold text-foreground mb-1 text-center">
@@ -219,8 +219,8 @@ export const BadgeCard = ({
         {/* Efecto de brillo de fondo */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
         
-        <div className="bg-white/30 p-1.5 rounded-full backdrop-blur-sm relative z-10 shadow-md">
-          <IconComponent className="h-4 w-4 text-white" />
+        <div className="bg-white/30 p-1.5 rounded-full backdrop-blur-sm relative z-10 shadow-md flex items-center justify-center">
+          <IconComponent />
         </div>
         
         <div className="text-center relative z-10">
