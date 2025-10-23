@@ -1150,13 +1150,13 @@ Responde SOLO con el JSON array, sin texto adicional.`;
     };
 
     // Guardar score y componentes en la base de datos para carga instantánea
-    if (scoreMoni !== undefined && scoreBreakdown?.components) {
+    if (scoreMoni !== undefined && metrics.scoreComponents) {
       await supabase
         .from('user_scores')
         .upsert({
           user_id: userId,
           score_moni: Math.round(scoreMoni),
-          components: scoreBreakdown.components,
+          components: metrics.scoreComponents,
           last_calculated_at: new Date().toISOString()
         }, {
           onConflict: 'user_id'
