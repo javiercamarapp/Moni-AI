@@ -456,7 +456,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-400 animate-ping opacity-30" />
                         )}
-                        <span className="text-2xl">🥉</span>
+                        <span className="text-2xl">🪨</span>
                       </div>
                     </button>
                     
@@ -470,7 +470,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Bronce 250
+                        Piedra Base
                       </div>
                     )}
 
@@ -498,20 +498,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800">
-                              <span className="text-xl">🥉</span>
+                              <span className="text-xl">🪨</span>
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-bold text-sm text-amber-700 truncate">
-                                Insigna de Bronce
+                               <h3 className="font-bold text-sm text-amber-700 truncate">
+                                Piedra Base
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                250 puntos
+                                Nivel 250
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Insigna de Bronce 250 puntos
+                            Tu primer paso, lo sólido que da inicio al camino.
                           </p>
                         </div>
                       </Card>
@@ -559,7 +559,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-gray-300 animate-ping opacity-30" />
                         )}
-                        <span className="text-2xl">🥈</span>
+                        <span className="text-2xl">📎</span>
                       </div>
                     </button>
                     
@@ -573,7 +573,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Plata 500
+                        Conector Sencillo
                       </div>
                     )}
 
@@ -601,20 +601,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500">
-                              <span className="text-xl">🥈</span>
+                              <span className="text-xl">📎</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-gray-600 truncate">
-                                Insigna de Plata
+                                Conector Sencillo
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                500 puntos
+                                Nivel 500
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Insigna de Plata 500 puntos
+                            Empiezas a enlazar ideas y componentes.
                           </p>
                         </div>
                       </Card>
@@ -662,7 +662,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-400 animate-ping opacity-30" />
                         )}
-                        <span className="text-2xl">⭐</span>
+                        <span className="text-2xl">🪑</span>
                       </div>
                     </button>
                     
@@ -676,7 +676,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Bronce 750 #2
+                        Asiento Firmado
                       </div>
                     )}
 
@@ -704,20 +704,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-500 via-yellow-600 to-amber-700">
-                              <span className="text-xl">⭐</span>
+                              <span className="text-xl">🪑</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-amber-700 truncate">
-                                Medalla de Bronce #2
+                                Asiento Firmado
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                750 puntos
+                                Nivel 750
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Medalla de Bronce 750 puntos
+                            Tienes tu sitio, te instalas con claridad.
                           </p>
                         </div>
                       </Card>
@@ -765,7 +765,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-yellow-300 animate-ping opacity-30" />
                         )}
-                        <span className="text-3xl">🏆</span>
+                        <span className="text-3xl">📐</span>
                       </div>
                     </button>
                     
@@ -779,7 +779,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Oro 1000
+                        Ángulo Preciso
                       </div>
                     )}
 
@@ -807,20 +807,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500">
-                              <span className="text-2xl">🏆</span>
+                              <span className="text-2xl">📐</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-yellow-700 truncate">
-                                Medalla de Oro
+                                Ángulo Preciso
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                1000 puntos
+                                Nivel 1000
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Medalla de Oro 1000 puntos
+                            Mides, ajustas, haces que todo encaje.
                           </p>
                         </div>
                       </Card>
@@ -868,7 +868,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-600 animate-ping opacity-20" />
                         )}
-                        <span className="text-2xl">🛡️</span>
+                        <span className="text-2xl">🧱</span>
                       </div>
                     </button>
                     
@@ -882,7 +882,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Bronce 1250 #3
+                        Bloque Fundamental
                       </div>
                     )}
 
@@ -910,20 +910,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800">
-                              <span className="text-xl">🛡️</span>
+                              <span className="text-xl">🧱</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-amber-700 truncate">
-                                Medalla de Bronce #3
+                                Bloque Fundamental
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                1250 puntos
+                                Nivel 1250
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Medalla de Bronce 1250 puntos
+                            Eres parte de la estructura que sostiene.
                           </p>
                         </div>
                       </Card>
@@ -971,7 +971,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-gray-400 animate-ping opacity-20" />
                         )}
-                        <span className="text-3xl">💎</span>
+                        <span className="text-3xl">🧮</span>
                       </div>
                     </button>
                     
@@ -985,7 +985,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Plata 1500 #2
+                        Cuenta Clara
                       </div>
                     )}
 
@@ -1013,20 +1013,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500">
-                              <span className="text-2xl">💎</span>
+                              <span className="text-2xl">🧮</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-gray-600 truncate">
-                                Insignia de Plata #2
+                                Cuenta Clara
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                1500 puntos
+                                Nivel 1500
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Insignia de Plata 1500 puntos
+                            Llevas registro, das seguimiento con exactitud.
                           </p>
                         </div>
                       </Card>
@@ -1074,7 +1074,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-600 animate-ping opacity-20" />
                         )}
-                        <span className="text-3xl">👑</span>
+                        <span className="text-3xl">📊</span>
                       </div>
                     </button>
                     
@@ -1088,7 +1088,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Maestría Bronce 1750 #1
+                        Gráfico Ascendente
                       </div>
                     )}
 
@@ -1116,20 +1116,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-900">
-                              <span className="text-2xl">👑</span>
+                              <span className="text-2xl">📊</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-amber-700 truncate">
-                                Insignia de Maestría Bronce #1
+                                Gráfico Ascendente
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                1750 puntos
+                                Nivel 1750
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Insignia de Maestría Bronce 1750 puntos
+                            Tus resultados muestran crecimiento visible.
                           </p>
                         </div>
                       </Card>
@@ -1177,7 +1177,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-20" />
                         )}
-                        <span className="text-3xl">🥈</span>
+                        <span className="text-3xl">🧭</span>
                       </div>
                     </button>
                     
@@ -1191,7 +1191,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Oro 2000 #2
+                        Brújula Activa
                       </div>
                     )}
 
@@ -1219,20 +1219,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500">
-                              <span className="text-2xl">🥈</span>
+                              <span className="text-2xl">🧭</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-yellow-700 truncate">
-                                Medalla de Oro 2000 #2
+                                Brújula Activa
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                2000 puntos
+                                Nivel 2000
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Medalla de Oro 2000 puntos
+                            Marcas rumbo, defines dirección para otros.
                           </p>
                         </div>
                       </Card>
@@ -1280,7 +1280,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-600 animate-ping opacity-20" />
                         )}
-                        <span className="text-3xl">👑</span>
+                        <span className="text-3xl">🔑</span>
                       </div>
                     </button>
                     
@@ -1294,7 +1294,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Maestría Bronce 2250 #2
+                        Llave Maestra
                       </div>
                     )}
 
@@ -1322,20 +1322,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-900">
-                              <span className="text-2xl">👑</span>
+                              <span className="text-2xl">🔑</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-amber-700 truncate">
-                                Insignia de Maestría Bronce #2
+                                Llave Maestra
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                2250 puntos
+                                Nivel 2250
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Insignia de Maestría Bronce 2250 puntos
+                            Tienes la capacidad de abrir nuevas puertas.
                           </p>
                         </div>
                       </Card>
@@ -1383,7 +1383,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-gray-400 animate-ping opacity-20" />
                         )}
-                        <span className="text-3xl">✨</span>
+                        <span className="text-3xl">🧱</span>
                       </div>
                     </button>
                     
@@ -1397,7 +1397,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Plata 2500 #3
+                        Ladrillo Maestro
                       </div>
                     )}
 
@@ -1425,20 +1425,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500">
-                              <span className="text-2xl">✨</span>
+                              <span className="text-2xl">🧱</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-gray-600 truncate">
-                                Insignia de Plata #3
+                                Ladrillo Maestro
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                2500 puntos
+                                Nivel 2500
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Insignia de Plata 2500 puntos
+                            Construyes pieza a pieza hacia algo mayor.
                           </p>
                         </div>
                       </Card>
@@ -1486,7 +1486,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-600 animate-ping opacity-20" />
                         )}
-                        <span className="text-3xl">👑</span>
+                        <span className="text-3xl">📦</span>
                       </div>
                     </button>
                     
@@ -1500,7 +1500,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Maestría Bronce 2750 #3
+                        Caja Completa
                       </div>
                     )}
 
@@ -1528,20 +1528,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-900">
-                              <span className="text-2xl">👑</span>
+                              <span className="text-2xl">📦</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-amber-700 truncate">
-                                Insignia de Maestría Bronce #3
+                                Caja Completa
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                2750 puntos
+                                Nivel 2750
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Insignia de Maestría Bronce 2750 puntos
+                            Tus entregas están listas y completas.
                           </p>
                         </div>
                       </Card>
