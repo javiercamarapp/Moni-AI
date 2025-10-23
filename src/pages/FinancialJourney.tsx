@@ -296,7 +296,7 @@ export default function FinancialJourney() {
               </p>
               
               {/* Net Worth */}
-              <div className="p-1.5 bg-muted/50 rounded-lg border border-border">
+              <div className="p-1.5 bg-white/20 backdrop-blur-md rounded-lg border border-white/30 shadow-lg">
                 <div className="flex items-center justify-between gap-1.5">
                   <div className="flex-1 space-y-0.5">
                     <div className="flex items-baseline gap-1.5">
