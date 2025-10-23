@@ -52,22 +52,22 @@ export default function EvolutionChartWidget({ data, insight }: EvolutionChartPr
   const config = getChartConfig();
 
   return (
-    <Card className="p-4 bg-gradient-card card-glow border-white/20 hover:scale-105 transition-transform duration-200">
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all border border-blue-100 animate-fade-in">
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-emerald-400" />
-            <p className="text-sm font-medium text-white">📊 Tu Evolución</p>
+            <TrendingUp className="h-4 w-4 text-primary" />
+            <p className="text-sm font-medium text-foreground">📊 Tu Evolución</p>
           </div>
           <Tabs value={view} onValueChange={(v) => setView(v as any)}>
-            <TabsList className="h-7 bg-white/10 border border-white/30">
-              <TabsTrigger value="score" className="text-[10px] text-white data-[state=active]:bg-white data-[state=active]:text-black px-2">
+            <TabsList className="h-7 bg-muted border border-border">
+              <TabsTrigger value="score" className="text-[10px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2">
                 Score
               </TabsTrigger>
-              <TabsTrigger value="balance" className="text-[10px] text-white data-[state=active]:bg-white data-[state=active]:text-black px-2">
+              <TabsTrigger value="balance" className="text-[10px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2">
                 Balance
               </TabsTrigger>
-              <TabsTrigger value="flow" className="text-[10px] text-white data-[state=active]:bg-white data-[state=active]:text-black px-2">
+              <TabsTrigger value="flow" className="text-[10px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2">
                 Flujo
               </TabsTrigger>
             </TabsList>
@@ -117,8 +117,8 @@ export default function EvolutionChartWidget({ data, insight }: EvolutionChartPr
         </div>
 
         {insight && (
-          <div className="bg-emerald-500/20 rounded px-3 py-2 border border-emerald-500/30">
-            <p className="text-[10px] text-emerald-200 leading-snug">
+          <div className="bg-primary/10 rounded-lg px-3 py-2 border border-primary/20 animate-fade-in">
+            <p className="text-[10px] text-primary leading-snug">
               🟢 <span className="font-medium">Insight:</span> {insight}
             </p>
           </div>

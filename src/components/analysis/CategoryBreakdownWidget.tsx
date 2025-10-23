@@ -20,11 +20,11 @@ export default function CategoryBreakdownWidget({ categories }: CategoryBreakdow
   const hasData = validCategories.length > 0 && total > 0;
 
   return (
-    <Card className="p-4 bg-gradient-card card-glow border-white/20">
-      <p className="text-sm font-medium text-white/90 mb-3">📊 Gastos por Categoría</p>
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all border border-blue-100 animate-fade-in">
+      <p className="text-sm font-medium text-foreground mb-3">📊 Gastos por Categoría</p>
       {!hasData ? (
         <div className="h-[220px] flex items-center justify-center">
-          <p className="text-white/60 text-sm">Sin datos disponibles</p>
+          <p className="text-muted-foreground text-sm">Sin datos disponibles</p>
         </div>
       ) : (
         <>
@@ -63,9 +63,9 @@ export default function CategoryBreakdownWidget({ categories }: CategoryBreakdow
                   className="w-3 h-3 rounded-full" 
                   style={{ backgroundColor: cat.color || COLORS[idx % COLORS.length] }}
                 />
-                <span className="text-white/70">{cat.name}</span>
+                <span className="text-muted-foreground">{cat.name}</span>
               </div>
-              <span className="text-white/90 font-medium">
+              <span className="text-foreground font-medium">
                 ${cat.value.toLocaleString()} ({((cat.value / total) * 100).toFixed(1)}%)
               </span>
             </div>

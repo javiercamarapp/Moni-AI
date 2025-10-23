@@ -18,11 +18,11 @@ export default function HistoricalComparisonWidget({ data, insight }: Historical
   const avgSavings = data.reduce((sum, d) => sum + d.savings, 0) / data.length;
 
   return (
-    <Card className="p-4 bg-gradient-card card-glow border-white/20 hover:scale-105 transition-transform duration-200">
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all border border-blue-100 animate-fade-in">
       <div className="space-y-3">
         <div className="flex items-center gap-2">
-          <BarChart3 className="h-4 w-4 text-purple-400" />
-          <p className="text-sm font-medium text-white">💎 Comparativo Histórico</p>
+          <BarChart3 className="h-4 w-4 text-primary" />
+          <p className="text-sm font-medium text-foreground">💎 Comparativo Histórico</p>
         </div>
 
         <div className="h-56">
@@ -75,30 +75,30 @@ export default function HistoricalComparisonWidget({ data, insight }: Historical
           </ResponsiveContainer>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10">
+        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border">
           <div>
-            <p className="text-[10px] text-white/60">Ahorro promedio</p>
-            <p className="text-xs font-bold text-purple-300 break-words">
+            <p className="text-[10px] text-muted-foreground">Ahorro promedio</p>
+            <p className="text-xs font-bold text-primary break-words">
               ${avgSavings.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
           </div>
           <div>
-            <p className="text-[10px] text-white/60">Mejor mes</p>
-            <p className="text-sm font-bold text-emerald-300">
+            <p className="text-[10px] text-muted-foreground">Mejor mes</p>
+            <p className="text-sm font-bold text-foreground">
               {data.reduce((max, d) => d.savings > max.savings ? d : max, data[0])?.month || '-'}
             </p>
           </div>
           <div>
-            <p className="text-[10px] text-white/60">Tendencia</p>
-            <p className="text-sm font-bold text-white">
+            <p className="text-[10px] text-muted-foreground">Tendencia</p>
+            <p className="text-sm font-bold text-foreground">
               {data[data.length - 1]?.savings > data[0]?.savings ? '📈 ↑' : '📉 ↓'}
             </p>
           </div>
         </div>
 
         {insight && (
-          <div className="bg-purple-500/20 rounded px-3 py-2 border border-purple-500/30">
-            <p className="text-[10px] text-purple-200 leading-snug">
+          <div className="bg-primary/10 rounded-lg px-3 py-2 border border-primary/20 animate-fade-in">
+            <p className="text-[10px] text-primary leading-snug">
               🔸 <span className="font-medium">Insight:</span> {insight}
             </p>
           </div>

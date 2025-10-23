@@ -40,13 +40,13 @@ export default function FutureCalendarWidget({ events }: FutureCalendarProps) {
   const getEventColor = (type: string) => {
     switch (type) {
       case "income":
-        return "text-emerald-300";
+        return "text-primary";
       case "subscription":
-        return "text-purple-300";
+        return "text-secondary";
       case "expense":
-        return "text-orange-300";
+        return "text-destructive";
       default:
-        return "text-white";
+        return "text-foreground";
     }
   };
 
@@ -58,11 +58,11 @@ export default function FutureCalendarWidget({ events }: FutureCalendarProps) {
   };
 
   return (
-    <Card className="p-4 bg-gradient-card card-glow border-white/20 hover:scale-105 transition-transform duration-200">
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all border border-blue-100 animate-fade-in">
       <div className="space-y-3">
         <div className="flex items-center gap-2">
-          <Calendar className="h-4 w-4 text-blue-400" />
-          <p className="text-sm font-medium text-white">📅 Calendario de próximos movimientos</p>
+          <Calendar className="h-4 w-4 text-primary" />
+          <p className="text-sm font-medium text-foreground">📅 Calendario de próximos movimientos</p>
         </div>
 
         <div className="space-y-2 max-h-64 overflow-y-auto">
@@ -75,20 +75,20 @@ export default function FutureCalendarWidget({ events }: FutureCalendarProps) {
                 key={index}
                 className={`p-3 rounded-lg border ${
                   isUrgent 
-                    ? 'bg-red-500/20 border-red-500/30' 
-                    : 'bg-white/5 border-white/10'
-                } hover:bg-white/10 transition-colors`}
+                    ? 'bg-destructive/10 border-destructive/30' 
+                    : 'bg-muted/20 border-border'
+                } hover:bg-muted/40 transition-colors`}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-base">{getEventIcon(event.type)}</span>
-                      <p className="text-xs font-medium text-white">
+                      <p className="text-xs font-medium text-foreground">
                         {event.description}
                       </p>
-                      {isUrgent && <AlertCircle className="h-3 w-3 text-red-400" />}
+                      {isUrgent && <AlertCircle className="h-3 w-3 text-destructive" />}
                     </div>
-                    <div className="flex items-center gap-2 text-[10px] text-white/60">
+                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
                       <span>{format(event.date, "d 'de' MMMM", { locale: es })}</span>
                       <span>•</span>
                       <span>
@@ -111,8 +111,8 @@ export default function FutureCalendarWidget({ events }: FutureCalendarProps) {
         </div>
 
         {sortedEvents.filter(e => getDaysUntil(e.date) <= 3).length > 0 && (
-          <div className="bg-yellow-500/20 rounded px-3 py-2 border border-yellow-500/30">
-            <p className="text-[10px] text-yellow-200 leading-snug">
+          <div className="bg-yellow-500/10 rounded-lg px-3 py-2 border border-yellow-500/30 animate-fade-in">
+            <p className="text-[10px] text-yellow-700 leading-snug">
               ⚠️ <span className="font-medium">
                 {sortedEvents.filter(e => getDaysUntil(e.date) <= 3).length} movimientos próximos
               </span> en los siguientes 3 días

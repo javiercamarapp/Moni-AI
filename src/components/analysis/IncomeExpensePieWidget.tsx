@@ -18,11 +18,11 @@ export default function IncomeExpensePieWidget({ income, expenses }: IncomeExpen
   ];
 
   return (
-    <Card className="p-4 bg-gradient-card card-glow border-white/20">
-      <p className="text-sm font-medium text-white/90 mb-3">💰 Distribución Ingresos vs Gastos</p>
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all border border-blue-100 animate-fade-in">
+      <p className="text-sm font-medium text-foreground mb-3">💰 Distribución Ingresos vs Gastos</p>
       {!hasData ? (
         <div className="h-[200px] flex items-center justify-center">
-          <p className="text-white/60 text-sm">Sin datos disponibles</p>
+          <p className="text-muted-foreground text-sm">Sin datos disponibles</p>
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={200}>
@@ -56,8 +56,8 @@ export default function IncomeExpensePieWidget({ income, expenses }: IncomeExpen
       {hasData && (
         <div className="mt-3 space-y-2">
           <div className="flex justify-between items-center text-xs">
-            <span className="text-white/70">Balance</span>
-            <span className={`font-bold ${validIncome - validExpenses >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            <span className="text-muted-foreground">Balance</span>
+            <span className={`font-bold ${validIncome - validExpenses >= 0 ? 'text-primary' : 'text-destructive'}`}>
               ${(validIncome - validExpenses).toLocaleString()}
             </span>
           </div>

@@ -43,10 +43,10 @@ export default function FinancialHealthPieWidget({
   const healthStatus = savingsRate >= 20 ? '✅ Excelente' : savingsRate >= 10 ? '⚠️ Mejorable' : '❌ Crítico';
 
   return (
-    <Card className="p-4 bg-gradient-card card-glow border-white/20">
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all border border-blue-100 animate-fade-in">
       <div className="flex justify-between items-center mb-3">
-        <p className="text-sm font-medium text-white/90">💚 Salud Financiera</p>
-        <span className="text-xs text-white/70">{healthStatus}</span>
+        <p className="text-sm font-medium text-foreground">💚 Salud Financiera</p>
+        <span className="text-xs text-muted-foreground">{healthStatus}</span>
       </div>
       <ResponsiveContainer width="100%" height={200}>
         <PieChart>
@@ -83,15 +83,15 @@ export default function FinancialHealthPieWidget({
           <div key={idx} className="flex justify-between items-center text-xs">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-              <span className="text-white/70">{item.name}</span>
+              <span className="text-muted-foreground">{item.name}</span>
             </div>
-            <span className="text-white/90 font-medium">
+            <span className="text-foreground font-medium">
               ${item.value.toLocaleString()} ({(item.percentage || 0).toFixed(1)}%)
             </span>
           </div>
         ))}
-        <div className="pt-2 border-t border-white/10">
-          <p className="text-xs text-white/60">
+        <div className="pt-2 border-t border-border">
+          <p className="text-xs text-muted-foreground">
             {savingsRate >= 20 
               ? '🎯 Tasa de ahorro ideal. ¡Sigue así!' 
               : savingsRate >= 10 
