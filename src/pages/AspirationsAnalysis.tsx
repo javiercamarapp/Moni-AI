@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart, Bar } from "recharts";
 import { useNetWorth } from "@/hooks/useNetWorth";
 import { motion, AnimatePresence } from "framer-motion";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { BadgeCarousel, BadgeCard } from "@/components/ui/badge-carousel";
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#6366f1'];
 
@@ -21,7 +21,6 @@ export default function AspirationsAnalysis() {
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [assets, setAssets] = useState<any[]>([]);
   const [liabilities, setLiabilities] = useState<any[]>([]);
-  const [expandedBadge, setExpandedBadge] = useState<number | null>(null);
   const [userScore, setUserScore] = useState<number>(40);
   const netWorthData = useNetWorth("1Y");
   const currentNetWorth = netWorthData.data?.currentNetWorth || 0;
@@ -863,80 +862,18 @@ export default function AspirationsAnalysis() {
             </div>
           </div>
 
-          {/* Recuadro de información expandida (fuera del carrusel) */}
-          <AnimatePresence>
-            {expandedBadge !== null && badges[expandedBadge] && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[9999] w-64"
-              >
-                <div className="bg-white rounded-lg shadow-2xl p-4 border-2 border-purple-300">
-                  <p className="text-xs text-gray-800 leading-tight mb-3 font-medium">
-                    {badges[expandedBadge].explanation}
-                  </p>
-                  <div className="bg-gradient-to-r from-blue-100 to-purple-100 px-3 py-2 rounded-md border border-purple-200">
-                    <p className="text-xs text-gray-900 font-bold text-center">
-                      🎯 {badges[expandedBadge].growthPercentage}% patrimonio deseado
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
           {/* Badges Carousel */}
           {badges.length > 0 ? (
-            <div className="relative">
-              <Carousel className="w-full max-w-md mx-auto">
-                <CarouselContent>
-                  {badges.map((badge, index) => {
-                    const IconComponent = badge.icon;
-                    const isExpanded = expandedBadge === index;
-                    return (
-                      <CarouselItem key={index} className="basis-1/2 md:basis-1/3">
-                        <div className="relative">
-                          {/* Insignia */}
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: index * 0.05 }}
-                            onClick={() => setExpandedBadge(isExpanded ? null : index)}
-                            className={`bg-gradient-to-br ${badge.color} rounded-[10px] p-2 flex flex-col items-center gap-1 shadow-lg relative overflow-hidden cursor-pointer transition-all ${
-                              isExpanded ? 'scale-105 ring-2 ring-yellow-400' : ''
-                            }`}
-                          >
-                            {/* Efecto de brillo de fondo */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-                            
-                            <div className="bg-white/30 p-1.5 rounded-full backdrop-blur-sm relative z-10 shadow-md">
-                              <IconComponent className="h-4 w-4 text-white" />
-                            </div>
-                            
-                            <div className="text-center relative z-10">
-                              <p className="text-[9px] font-bold text-white leading-tight mb-0.5 drop-shadow-lg">
-                                {badge.name}
-                              </p>
-                              <p className="text-[7px] text-white/90 leading-tight drop-shadow">
-                                {badge.description}
-                              </p>
-                            </div>
-                            <div className="bg-white/20 px-1.5 py-0.5 rounded-full backdrop-blur-sm relative z-10">
-                              <p className="text-[7px] text-white font-semibold">
-                                {isExpanded ? '👆 VER ARRIBA' : '✓ DESBLOQUEADO'}
-                              </p>
-                            </div>
-                          </motion.div>
-                        </div>
-                      </CarouselItem>
-                    );
-                  })}
-                </CarouselContent>
-                <CarouselPrevious className="hidden sm:flex h-6 w-6" />
-                <CarouselNext className="hidden sm:flex h-6 w-6" />
-              </Carousel>
-            </div>
+            <BadgeCarousel
+              items={badges.map((badge, index) => (
+                <BadgeCard
+                  key={index}
+                  badge={badge}
+                  index={index}
+                  onCardClose={() => {}}
+                />
+              ))}
+            />
           ) : (
             <div className="text-center py-3">
               <Trophy className="h-6 w-6 text-muted-foreground mx-auto mb-1.5 opacity-50" />
