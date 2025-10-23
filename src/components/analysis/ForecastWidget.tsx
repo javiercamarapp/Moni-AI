@@ -29,28 +29,26 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA 
   const displayData = timeframe === '3' ? forecastData.slice(0, 3) : forecastData;
 
   return (
-    <Card className="p-4 bg-gradient-card card-glow border-white/20">
+    <Card className="p-4 bg-gradient-card card-glow border-white/20 hover:scale-105 transition-transform duration-200">
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs font-medium text-white/80 flex items-center gap-1">
-              <TrendingUp className="h-3 w-3" /> Proyecciones con Escenarios
-            </p>
-            <p className="text-xs text-white/60">Forecast de ahorro</p>
+          <div className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-emerald-400" />
+            <p className="text-sm font-medium text-white">📊 Proyecciones con Escenarios</p>
           </div>
           <Tabs value={timeframe} onValueChange={(v) => setTimeframe(v as '3' | '6')}>
-            <TabsList className="h-7 bg-white/10 border border-white/20">
-              <TabsTrigger value="3" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black px-2">
+            <TabsList className="h-7 bg-white/10 border border-white/30">
+              <TabsTrigger value="3" className="text-[10px] text-white data-[state=active]:bg-white data-[state=active]:text-black px-2">
                 3M
               </TabsTrigger>
-              <TabsTrigger value="6" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black px-2">
+              <TabsTrigger value="6" className="text-[10px] text-white data-[state=active]:bg-white data-[state=active]:text-black px-2">
                 6M
               </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
 
-        <div className="h-[180px]">
+        <div className="h-48">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={displayData}>
               <defs>
@@ -67,15 +65,15 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA 
                   <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.05}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
               <XAxis 
                 dataKey="month" 
-                tick={{ fill: 'white', fontSize: 9 }}
-                tickLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                stroke="rgba(255,255,255,0.5)"
+                tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 10 }}
               />
               <YAxis 
-                tick={{ fill: 'white', fontSize: 9 }}
-                tickLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                stroke="rgba(255,255,255,0.5)"
+                tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 10 }}
               />
               <Tooltip
                 contentStyle={{ 
