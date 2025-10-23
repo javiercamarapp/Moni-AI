@@ -15,12 +15,23 @@ const ScoreMoni = () => {
   });
   const [loading, setLoading] = useState(false);
   const [previousScore] = useState(35); // Simulated previous score
-  const [components, setComponents] = useState({
-    savingsAndLiquidity: 0,
-    debt: 0,
-    control: 0,
-    growth: 0,
-    behavior: 0
+  const [components, setComponents] = useState(() => {
+    // Load from localStorage first for instant display
+    const cached = localStorage.getItem('scoreComponents');
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {
+        console.error('Error parsing cached components:', e);
+      }
+    }
+    return {
+      savingsAndLiquidity: 0,
+      debt: 0,
+      control: 0,
+      growth: 0,
+      behavior: 0
+    };
   });
   const [previousComponents] = useState({
     savingsAndLiquidity: 10,
@@ -36,13 +47,7 @@ const ScoreMoni = () => {
     // Scroll to top immediately when page loads
     window.scrollTo(0, 0);
     
-    // Calculate initial components based on cached score
-    const cachedScore = localStorage.getItem('scoreMoni');
-    if (cachedScore) {
-      calculateComponents(parseInt(cachedScore));
-    }
-    
-    // Fetch latest score in background
+    // Fetch latest score in background (no loading state to avoid blocking UI)
     fetchScore();
   }, []);
 
@@ -54,7 +59,7 @@ const ScoreMoni = () => {
 
   const fetchScore = async () => {
     try {
-      setLoading(true);
+      // No mostramos loading para no bloquear la UI
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         // Primero obtener el score de user_scores
@@ -83,12 +88,14 @@ const ScoreMoni = () => {
           console.log('📊 Componentes reales del backend:', realComponents);
           
           setComponents(realComponents);
+          // Cache components for instant display next time
+          localStorage.setItem('scoreComponents', JSON.stringify(realComponents));
           
           // Calcular score basado en componentes reales
           const calculatedScore = Object.values(realComponents).reduce((sum: number, val: any) => sum + Number(val), 0);
           console.log('🎯 Score calculado de componentes:', calculatedScore);
           
-          // Generate AI explanation for score change
+          // Generate AI explanation for score change (optional, no espera)
           if (scoreData && Math.abs(scoreData.score_moni - previousScore) > 0) {
             generateScoreExplanation(scoreData.score_moni, realComponents);
           }
@@ -96,15 +103,19 @@ const ScoreMoni = () => {
       }
     } catch (error) {
       console.error('Error fetching score:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
   const generateScoreExplanation = async (currentScore: number, currentComponents: typeof components) => {
     try {
       setLoadingReason(true);
-      const { data, error } = await supabase.functions.invoke('analyze-score-change', {
+      
+      // Timeout rápido para no bloquear la UI
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout')), 5000)
+      );
+      
+      const fetchPromise = supabase.functions.invoke('analyze-score-change', {
         body: {
           currentScore,
           previousScore,
@@ -113,14 +124,16 @@ const ScoreMoni = () => {
         }
       });
 
+      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any;
+
       if (error) throw error;
       
       if (data?.explanation) {
         setChangeReason(data.explanation);
       }
     } catch (error) {
-      console.error('Error generating explanation:', error);
-      // Fallback to static message
+      console.log('Explanation not available:', error);
+      // Fallback to static message - no es crítico
       const scoreChange = currentScore - previousScore;
       setChangeReason(
         scoreChange > 0 
