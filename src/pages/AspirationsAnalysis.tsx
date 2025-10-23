@@ -200,62 +200,80 @@ export default function AspirationsAnalysis() {
     }
   };
 
-  // Definir insignias basadas en logros
+  // Definir insignias basadas en el progreso hacia aspiraciones
   const getBadges = () => {
     const badges = [];
+    const progress = (currentNetWorth / totalAspiration) * 100;
+    const gap = totalAspiration - currentNetWorth;
     
-    // Insignia por completar el quiz
+    // Insignia 1: Inicio del viaje (siempre se muestra)
     badges.push({
       icon: Target,
-      name: "Aspiraciones Definidas",
+      name: "Viaje Iniciado",
+      description: `Meta: $${(totalAspiration / 1000000).toFixed(1)}M`,
       color: "from-blue-500 to-blue-600",
       earned: true
     });
 
-    // Insignia por tener net worth positivo
-    if (currentNetWorth > 0) {
-      badges.push({
-        icon: TrendingUp,
-        name: "Patrimonio Positivo",
-        color: "from-green-500 to-green-600",
-        earned: true
-      });
-    }
-
-    // Insignia por score alto
-    if (userScore >= 70) {
+    // Insignia 2: Progreso basado en porcentaje alcanzado
+    if (progress >= 75) {
       badges.push({
         icon: Crown,
-        name: "Score Excelente",
+        name: "Casi en la Cima",
+        description: `${progress.toFixed(0)}% alcanzado`,
         color: "from-yellow-500 to-yellow-600",
         earned: true
       });
-    } else if (userScore >= 50) {
+    } else if (progress >= 50) {
       badges.push({
-        icon: Star,
-        name: "Score Bueno",
+        icon: Trophy,
+        name: "A Medio Camino",
+        description: `${progress.toFixed(0)}% alcanzado`,
         color: "from-purple-500 to-purple-600",
         earned: true
       });
-    }
-
-    // Insignia por tener activos
-    if (assets.length > 0) {
+    } else if (progress >= 25) {
       badges.push({
-        icon: Trophy,
-        name: "Inversionista",
+        icon: Zap,
+        name: "Cuarto Cumplido",
+        description: `${progress.toFixed(0)}% alcanzado`,
         color: "from-orange-500 to-orange-600",
+        earned: true
+      });
+    } else if (progress >= 10) {
+      badges.push({
+        icon: Star,
+        name: "Primeros Pasos",
+        description: `${progress.toFixed(0)}% alcanzado`,
+        color: "from-green-500 to-green-600",
+        earned: true
+      });
+    } else if (currentNetWorth > 0) {
+      badges.push({
+        icon: TrendingUp,
+        name: "En Construcción",
+        description: `${progress.toFixed(1)}% alcanzado`,
+        color: "from-teal-500 to-teal-600",
         earned: true
       });
     }
 
-    // Insignia por progreso hacia la meta
-    const progress = (currentNetWorth / totalAspiration) * 100;
-    if (progress >= 25) {
+    // Insignia 3: Brecha por cerrar
+    const gapInMillions = gap / 1000000;
+    if (gapInMillions < 10) {
       badges.push({
-        icon: Zap,
-        name: "En Camino",
-        color: "from-pink-500 to-pink-600",
+        icon: Award,
+        name: "Meta Cercana",
+        description: `Faltan $${gapInMillions.toFixed(1)}M`,
+        color: "from-emerald-500 to-emerald-600",
+        earned: true
+      });
+    } else if (gapInMillions < 50) {
+      badges.push({
+        icon: Award,
+        name: "Brecha Manejable",
+        description: `Faltan $${gapInMillions.toFixed(1)}M`,
+        color: "from-cyan-500 to-cyan-600",
         earned: true
       });
     }
@@ -705,14 +723,21 @@ export default function AspirationsAnalysis() {
               return (
                 <div
                   key={index}
-                  className={`bg-gradient-to-br ${badge.color} rounded-[15px] p-4 flex flex-col items-center gap-2 shadow-lg transform hover:scale-105 transition-all`}
+                  className={`bg-gradient-to-br ${badge.color} rounded-[15px] p-3 flex flex-col items-center gap-2 shadow-lg transform hover:scale-105 transition-all`}
                 >
-                  <div className="bg-white/20 p-3 rounded-full backdrop-blur-sm">
-                    <IconComponent className="h-6 w-6 text-white" />
+                  <div className="bg-white/20 p-2.5 rounded-full backdrop-blur-sm">
+                    <IconComponent className="h-5 w-5 text-white" />
                   </div>
-                  <p className="text-xs font-semibold text-white text-center leading-tight">
-                    {badge.name}
-                  </p>
+                  <div className="text-center">
+                    <p className="text-xs font-bold text-white leading-tight mb-0.5">
+                      {badge.name}
+                    </p>
+                    {badge.description && (
+                      <p className="text-[10px] text-white/90 leading-tight">
+                        {badge.description}
+                      </p>
+                    )}
+                  </div>
                 </div>
               );
             })}
