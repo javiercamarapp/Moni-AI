@@ -509,88 +509,100 @@ Ejemplo formato:
       }
     ].filter(a => a.impact > 0);
     
-    // Calcular promedio de ahorro mensual histórico
-    // Para proyecciones de 3-6 meses: últimos 6 meses
-    // Para proyecciones anuales: último año completo
-    const sixMonthsAgo = new Date(now);
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    // Calcular promedio de ahorro mensual histórico usando TODO el año
+    // Esto asegura tener datos suficientes para promedios precisos
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
     
-    const { data: last6MonthsTxs } = await supabase
+    console.log('📊 Obteniendo transacciones históricas desde:', startOfYear.toISOString().split('T')[0], 'hasta:', now.toISOString().split('T')[0]);
+    
+    const { data: yearTxs } = await supabase
       .from('transactions')
       .select('*')
       .eq('user_id', userId)
-      .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
+      .gte('transaction_date', startOfYear.toISOString().split('T')[0])
       .lte('transaction_date', now.toISOString().split('T')[0]);
     
-    const oneYearAgo = new Date(now);
-    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+    console.log('📊 Transacciones históricas encontradas:', yearTxs?.length || 0);
     
-    const { data: lastYearTxs } = await supabase
-      .from('transactions')
-      .select('*')
-      .eq('user_id', userId)
-      .gte('transaction_date', oneYearAgo.toISOString().split('T')[0])
-      .lte('transaction_date', now.toISOString().split('T')[0]);
+    // Agrupar por mes y calcular balance mensual SOLO de meses completados
+    const monthlyData: Record<string, { income: number; expenses: number }> = {};
+    const currentMonth = now.toISOString().substring(0, 7); // YYYY-MM actual
     
-    // Agrupar por mes y calcular balance mensual
-    const calculateMonthlyBalances = (txs: any[]) => {
-      const monthlyData: Record<string, { income: number; expenses: number }> = {};
+    yearTxs?.forEach(tx => {
+      const monthKey = tx.transaction_date.substring(0, 7); // YYYY-MM
+      // NO incluir el mes actual en el promedio histórico (aún no termina)
+      if (monthKey >= currentMonth) return;
       
-      txs?.forEach(tx => {
-        const monthKey = tx.transaction_date.substring(0, 7); // YYYY-MM
-        if (!monthlyData[monthKey]) {
-          monthlyData[monthKey] = { income: 0, expenses: 0 };
-        }
-        
-        if (tx.type === 'income' || tx.type === 'ingreso') {
-          monthlyData[monthKey].income += Number(tx.amount);
-        } else if (tx.type === 'expense' || tx.type === 'gasto') {
-          monthlyData[monthKey].expenses += Number(tx.amount);
-        }
-      });
+      if (!monthlyData[monthKey]) {
+        monthlyData[monthKey] = { income: 0, expenses: 0 };
+      }
       
-      return Object.values(monthlyData).map(m => m.income - m.expenses);
-    };
-    
-    const last6MonthsBalances = calculateMonthlyBalances(last6MonthsTxs || []);
-    const lastYearBalances = calculateMonthlyBalances(lastYearTxs || []);
-    
-    const avgMonthlySavings6M = last6MonthsBalances.length > 0
-      ? last6MonthsBalances.reduce((sum, b) => sum + b, 0) / last6MonthsBalances.length
-      : balance;
-    
-    const avgMonthlySavings1Y = lastYearBalances.length > 0
-      ? lastYearBalances.reduce((sum, b) => sum + b, 0) / lastYearBalances.length
-      : balance;
-    
-    console.log('📊 Promedios históricos calculados:', {
-      ultimos6Meses: Math.round(avgMonthlySavings6M),
-      ultimoAño: Math.round(avgMonthlySavings1Y),
-      mesesAnalizados6M: last6MonthsBalances.length,
-      mesesAnalizados1Y: lastYearBalances.length
+      if (tx.type === 'income' || tx.type === 'ingreso') {
+        monthlyData[monthKey].income += Number(tx.amount);
+      } else if (tx.type === 'expense' || tx.type === 'gasto') {
+        monthlyData[monthKey].expenses += Number(tx.amount);
+      }
     });
     
-    // Proyecciones con escenarios usando promedio real
-    // Para período mensual/trimestral: usar promedio de 6 meses
-    // Para período anual: usar promedio de 1 año
+    const completedMonthsBalances = Object.entries(monthlyData).map(([month, data]) => ({
+      month,
+      balance: data.income - data.expenses
+    }));
+    
+    console.log('📊 Meses completados analizados:', completedMonthsBalances.length);
+    console.log('📊 Balances mensuales:', completedMonthsBalances.map(m => ({ 
+      month: m.month, 
+      balance: Math.round(m.balance) 
+    })));
+    
+    // Calcular promedio: últimos 6 meses para vista mensual, todos los meses para vista anual
+    const last6Months = completedMonthsBalances
+      .sort((a, b) => b.month.localeCompare(a.month))
+      .slice(0, 6);
+    
+    const avgMonthlySavings6M = last6Months.length > 0
+      ? last6Months.reduce((sum, m) => sum + m.balance, 0) / last6Months.length
+      : balance; // Fallback al balance actual si no hay histórico
+    
+    const avgMonthlySavings1Y = completedMonthsBalances.length > 0
+      ? completedMonthsBalances.reduce((sum, m) => sum + m.balance, 0) / completedMonthsBalances.length
+      : balance; // Fallback al balance actual
+    
+    console.log('📊 Promedios calculados:', {
+      promedio6Meses: Math.round(avgMonthlySavings6M),
+      promedioAñoCompleto: Math.round(avgMonthlySavings1Y),
+      mesesUsados6M: last6Months.length,
+      mesesUsadosAño: completedMonthsBalances.length,
+      fallbackUsado: completedMonthsBalances.length === 0
+    });
+    
+    // Proyecciones usando promedio correcto según período
     const monthlyAvgForProjection = period === 'year' ? avgMonthlySavings1Y : avgMonthlySavings6M;
     const forecastData = [];
+    
+    console.log('📊 Usando promedio mensual para proyección:', Math.round(monthlyAvgForProjection), 'período:', period);
     
     for (let i = 1; i <= 6; i++) {
       const monthDate = new Date(now);
       monthDate.setMonth(monthDate.getMonth() + i);
       const monthLabel = monthDate.toLocaleDateString('es-MX', { month: 'short' });
       
-      // Acumular el ahorro mes a mes
+      // Acumular ahorro mes a mes
       const baseProjection = monthlyAvgForProjection * i;
       
       forecastData.push({
         month: monthLabel,
-        conservative: Math.max(0, baseProjection * 0.7), // 30% menos por imprevistos
+        conservative: Math.max(0, baseProjection * 0.7),
         realistic: baseProjection,
-        optimistic: baseProjection * 1.3 // 30% más optimizando
+        optimistic: baseProjection * 1.3
       });
     }
+    
+    console.log('📊 Proyección para 3 meses:', {
+      conservative: Math.round(forecastData[2].conservative),
+      realistic: Math.round(forecastData[2].realistic),
+      optimistic: Math.round(forecastData[2].optimistic)
+    });
     
     // Probabilidad de cumplir meta usando promedio real de ahorro
     const mainGoal = goalsProgress.length > 0 ? goalsProgress[0] : null;
