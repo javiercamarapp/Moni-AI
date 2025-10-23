@@ -148,28 +148,28 @@ export const BadgeCard = ({
 
   return (
     <>
-      <AnimatePresence>
-        {isExpanded && createPortal(
-          <div className="fixed inset-0 flex items-center justify-center p-4" style={{ zIndex: 9999999 }}>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-              onClick={handleCollapse}
-            />
+      {isExpanded && createPortal(
+        <AnimatePresence mode="wait">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            style={{ zIndex: 999999 }}
+            onClick={handleCollapse}
+          >
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
               ref={containerRef}
               className="relative w-full max-w-sm"
-              style={{ zIndex: 10000000 }}
             >
               <div className="bg-gradient-to-b from-gray-50 to-white rounded-[24px] shadow-2xl p-5 relative">
                 <button
-                  className="absolute -top-2 -right-2 h-10 w-10 rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-500 to-orange-500 hover:scale-110 transition-all shadow-lg z-10"
+                  className="absolute -top-2 -right-2 h-10 w-10 rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-500 to-orange-500 hover:scale-110 transition-all shadow-lg"
                   onClick={handleCollapse}
                 >
                   <X className="h-4 w-4 text-white" />
@@ -202,10 +202,10 @@ export const BadgeCard = ({
                 </div>
               </div>
             </motion.div>
-          </div>,
-          document.body
-        )}
-      </AnimatePresence>
+          </motion.div>
+        </AnimatePresence>,
+        document.body
+      )}
       
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
