@@ -400,6 +400,532 @@ export default function FinancialJourney() {
                 />
               );
             })}
+            
+            {/* Líneas conectoras para las insignias especiales */}
+            {/* Bronce 250 */}
+            {(() => {
+              const level = 250;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 80;
+              const badgeY = nodeY + 45;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Plata 750 */}
+            {(() => {
+              const level = 750;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 15;
+              const badgeY = nodeY + 35;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Oro 1250 */}
+            {(() => {
+              const level = 1250;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 85;
+              const badgeY = nodeY - 15;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Platino 1750 */}
+            {(() => {
+              const level = 1750;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 20;
+              const badgeY = nodeY + 25;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Diamante 2250 */}
+            {(() => {
+              const level = 2250;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 80;
+              const badgeY = nodeY - 20;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Elite 2750 */}
+            {(() => {
+              const level = 2750;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 18;
+              const badgeY = nodeY + 30;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Legendario 3250 */}
+            {(() => {
+              const level = 3250;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 82;
+              const badgeY = nodeY - 25;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Maestría de Esmeralda #1 - 3750 */}
+            {(() => {
+              const level = 3750;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 15;
+              const badgeY = nodeY + 20;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Black #1 - 4250 */}
+            {(() => {
+              const level = 4250;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 85;
+              const badgeY = nodeY - 20;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Maestría de Rubí #1 - 4750 */}
+            {(() => {
+              const level = 4750;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 12;
+              const badgeY = nodeY + 15;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Maestría de Zafiro #1 - 5250 */}
+            {(() => {
+              const level = 5250;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 80;
+              const badgeY = nodeY - 25;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Maestría Rubí #3 - 5750 */}
+            {(() => {
+              const level = 5750;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 20;
+              const badgeY = nodeY - 30;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Maestría Zafiro #2 - 6250 */}
+            {(() => {
+              const level = 6250;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 83;
+              const badgeY = nodeY - 20;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Maestría de Oro #2 - 6750 */}
+            {(() => {
+              const level = 6750;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 15;
+              const badgeY = nodeY + 10;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Maestría Oro #3 - 7000 */}
+            {(() => {
+              const level = 7000;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 80;
+              const badgeY = nodeY - 55;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Platino #3 - 7250 */}
+            {(() => {
+              const level = 7250;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 12;
+              const badgeY = nodeY + 10;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Black #2 - 7500 */}
+            {(() => {
+              const level = 7500;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 80;
+              const badgeY = nodeY - 20;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Maestría de Platino #1 - 7750 */}
+            {(() => {
+              const level = 7750;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 15;
+              const badgeY = nodeY + 15;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Maestro 👑 - 8000 */}
+            {(() => {
+              const level = 8000;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 85;
+              const badgeY = nodeY - 25;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Visionario 🧠 - 8250 */}
+            {(() => {
+              const level = 8250;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 18;
+              const badgeY = nodeY + 20;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
+            
+            {/* Inversor 💹 - 8500 */}
+            {(() => {
+              const level = 8500;
+              const nodeIndex = level / 50;
+              const nodeX = journeyNodes[nodeIndex]?.position.x || 50;
+              const nodeY = 40 + (nodeIndex * 35);
+              const badgeX = 82;
+              const badgeY = nodeY - 30;
+              const isUnlocked = currentLevel >= level;
+              
+              return (
+                <line
+                  x1={`${nodeX}%`}
+                  y1={nodeY}
+                  x2={`${badgeX}%`}
+                  y2={badgeY}
+                  stroke={isUnlocked ? "url(#electricGreen)" : "url(#lockedGray)"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={isUnlocked ? undefined : "4,4"}
+                  opacity={isUnlocked ? "0.8" : "0.3"}
+                />
+              );
+            })()}
           </svg>
 
           <div className="relative z-10 px-4">
