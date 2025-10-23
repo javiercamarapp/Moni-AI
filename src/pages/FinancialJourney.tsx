@@ -414,15 +414,15 @@ export default function FinancialJourney() {
                       <div
                         className={`
                           relative w-10 h-10 rounded-full flex items-center justify-center
-                          transition-all duration-300 border-2 border-white cursor-pointer
-                          bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800 shadow-md
-                          ${isUnlocked ? 'shadow-lg hover:scale-110' : 'grayscale cursor-not-allowed opacity-50'}
+                          transition-all duration-300 border-2 border-purple-300 cursor-pointer
+                          bg-gradient-to-br from-amber-500 via-yellow-600 to-amber-700 shadow-lg shadow-amber-500/60
+                          ${isUnlocked ? 'shadow-xl hover:scale-110 hover:shadow-amber-400/80' : 'grayscale cursor-not-allowed opacity-40'}
                         `}
                       >
                         {isUnlocked && (
-                          <div className="absolute inset-0 rounded-full bg-amber-600 animate-ping opacity-20" />
+                          <div className="absolute inset-0 rounded-full bg-amber-400 animate-ping opacity-30" />
                         )}
-                        <Medal className="w-5 h-5 text-white relative z-10 drop-shadow-md" />
+                        <Medal className="w-5 h-5 text-white relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]" />
                       </div>
                     </button>
                     
@@ -515,15 +515,15 @@ export default function FinancialJourney() {
                       <div
                         className={`
                           relative w-11 h-11 rounded-full flex items-center justify-center
-                          transition-all duration-300 border-2 border-white cursor-pointer
-                          bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 shadow-lg
-                          ${isUnlocked ? 'shadow-lg hover:scale-110' : 'grayscale cursor-not-allowed opacity-50'}
+                          transition-all duration-300 border-2 border-purple-300 cursor-pointer
+                          bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 shadow-lg shadow-gray-400/60
+                          ${isUnlocked ? 'shadow-xl hover:scale-110 hover:shadow-gray-300/80' : 'grayscale cursor-not-allowed opacity-40'}
                         `}
                       >
                         {isUnlocked && (
-                          <div className="absolute inset-0 rounded-full bg-gray-400 animate-ping opacity-20" />
+                          <div className="absolute inset-0 rounded-full bg-gray-300 animate-ping opacity-30" />
                         )}
-                        <Award className="w-6 h-6 text-white relative z-10 drop-shadow-md" />
+                        <Award className="w-6 h-6 text-white relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]" />
                       </div>
                     </button>
                     
@@ -616,15 +616,15 @@ export default function FinancialJourney() {
                       <div
                         className={`
                           relative w-10 h-10 rounded-full flex items-center justify-center
-                          transition-all duration-300 border-2 border-white cursor-pointer
-                          bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800 shadow-md
-                          ${isUnlocked ? 'shadow-lg hover:scale-110' : 'grayscale cursor-not-allowed opacity-50'}
+                          transition-all duration-300 border-2 border-purple-300 cursor-pointer
+                          bg-gradient-to-br from-amber-500 via-yellow-600 to-amber-700 shadow-lg shadow-amber-500/60
+                          ${isUnlocked ? 'shadow-xl hover:scale-110 hover:shadow-amber-400/80' : 'grayscale cursor-not-allowed opacity-40'}
                         `}
                       >
                         {isUnlocked && (
-                          <div className="absolute inset-0 rounded-full bg-amber-600 animate-ping opacity-20" />
+                          <div className="absolute inset-0 rounded-full bg-amber-400 animate-ping opacity-30" />
                         )}
-                        <Star className="w-5 h-5 text-white relative z-10 drop-shadow-md fill-white" />
+                        <Star className="w-5 h-5 text-white relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.9)] fill-white" />
                       </div>
                     </button>
                     
@@ -717,15 +717,15 @@ export default function FinancialJourney() {
                       <div
                         className={`
                           relative w-12 h-12 rounded-full flex items-center justify-center
-                          transition-all duration-300 border-2 border-white cursor-pointer
-                          bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 shadow-xl
-                          ${isUnlocked ? 'shadow-xl hover:scale-110' : 'grayscale cursor-not-allowed opacity-50'}
+                          transition-all duration-300 border-2 border-purple-300 cursor-pointer
+                          bg-gradient-to-br from-yellow-300 via-amber-400 to-yellow-600 shadow-xl shadow-yellow-400/70
+                          ${isUnlocked ? 'shadow-2xl hover:scale-110 hover:shadow-yellow-300/90' : 'grayscale cursor-not-allowed opacity-40'}
                         `}
                       >
                         {isUnlocked && (
-                          <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-20" />
+                          <div className="absolute inset-0 rounded-full bg-yellow-300 animate-ping opacity-30" />
                         )}
-                        <Trophy className="w-6 h-6 text-white relative z-10 drop-shadow-md" />
+                        <Trophy className="w-6 h-6 text-white relative z-10 drop-shadow-[0_0_10px_rgba(255,255,255,1)]" />
                       </div>
                     </button>
                     
@@ -1626,15 +1626,15 @@ export default function FinancialJourney() {
                       <div
                         className={`
                           relative w-12 h-12 rounded-full flex items-center justify-center
-                          transition-all duration-300 border-2 border-white cursor-pointer
-                          bg-gradient-to-br from-red-500 via-rose-600 to-pink-700 shadow-xl
-                          ${isUnlocked ? 'shadow-xl hover:scale-110' : 'grayscale cursor-not-allowed opacity-50'}
+                          transition-all duration-300 border-2 border-purple-300 cursor-pointer
+                          bg-gradient-to-br from-pink-500 via-fuchsia-600 to-purple-700 shadow-xl shadow-pink-500/70
+                          ${isUnlocked ? 'shadow-2xl hover:scale-110 hover:shadow-pink-400/90' : 'grayscale cursor-not-allowed opacity-40'}
                         `}
                       >
                         {isUnlocked && (
-                          <div className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-20" />
+                          <div className="absolute inset-0 rounded-full bg-pink-400 animate-ping opacity-30" />
                         )}
-                        <Diamond className="w-6 h-6 text-white relative z-10 drop-shadow-md" />
+                        <Diamond className="w-6 h-6 text-white relative z-10 drop-shadow-[0_0_10px_rgba(255,255,255,1)]" />
                       </div>
                     </button>
                     
@@ -2030,15 +2030,15 @@ export default function FinancialJourney() {
                       <div
                         className={`
                           relative w-12 h-12 rounded-full flex items-center justify-center
-                          transition-all duration-300 border-2 border-white cursor-pointer
-                          bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-600 shadow-xl
-                          ${isUnlocked ? 'shadow-xl hover:scale-110' : 'grayscale cursor-not-allowed opacity-50'}
+                          transition-all duration-300 border-2 border-purple-300 cursor-pointer
+                          bg-gradient-to-br from-yellow-300 via-amber-400 to-orange-500 shadow-xl shadow-yellow-400/70
+                          ${isUnlocked ? 'shadow-2xl hover:scale-110 hover:shadow-yellow-300/90' : 'grayscale cursor-not-allowed opacity-40'}
                         `}
                       >
                         {isUnlocked && (
-                          <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-20" />
+                          <div className="absolute inset-0 rounded-full bg-yellow-300 animate-ping opacity-30" />
                         )}
-                        <Crown className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                        <Crown className="w-7 h-7 text-white relative z-10 drop-shadow-[0_0_10px_rgba(255,255,255,1)]" />
                       </div>
                     </button>
                     
@@ -3640,30 +3640,30 @@ export default function FinancialJourney() {
                       <div
                         className={`
                           relative w-7 h-7 rounded-full flex items-center justify-center cursor-pointer
-                          transition-all duration-300 z-10
+                          transition-all duration-300 z-10 border border-white/20
                           ${node.isCompleted
-                            ? 'bg-gradient-to-br from-green-400 to-green-600 shadow-md shadow-green-400/30 hover:scale-110'
+                            ? 'bg-gradient-to-br from-purple-500 via-violet-600 to-purple-700 shadow-lg shadow-purple-500/50 hover:scale-110 hover:shadow-purple-400/60'
                             : node.isCurrent
-                            ? 'bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/50 scale-110 hover:scale-125'
+                            ? 'bg-gradient-to-br from-cyan-400 via-blue-500 to-cyan-600 shadow-xl shadow-cyan-400/70 scale-110 hover:scale-125 animate-pulse'
                             : node.isUnlocked
-                            ? 'bg-gradient-to-br from-blue-400 to-blue-600 shadow-md shadow-blue-400/30 hover:scale-110'
-                            : 'bg-white border-2 border-gray-200 shadow-sm hover:scale-105'
+                            ? 'bg-gradient-to-br from-blue-500 via-indigo-600 to-blue-700 shadow-md shadow-blue-500/40 hover:scale-110'
+                            : 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 shadow-sm hover:scale-105'
                           }
                         `}
                       >
                         {node.isCompleted ? (
-                          <Star className="h-3.5 w-3.5 text-white fill-white" />
+                          <Star className="h-3.5 w-3.5 text-white fill-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
                         ) : node.isCurrent ? (
                           <div className="relative">
-                            <Star className="h-3.5 w-3.5 text-white" />
+                            <Star className="h-3.5 w-3.5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,1)]" />
                             <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                              <div className="w-5 h-5 rounded-full border-2 border-white/40 border-t-white animate-spin" />
                             </div>
                           </div>
                         ) : node.isUnlocked ? (
-                          <Target className="h-3.5 w-3.5 text-white" />
+                          <Target className="h-3.5 w-3.5 text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]" />
                         ) : (
-                          <Lock className="h-2.5 w-2.5 text-gray-400" />
+                          <Lock className="h-2.5 w-2.5 text-gray-500" />
                         )}
                       </div>
                     )}
@@ -3675,7 +3675,7 @@ export default function FinancialJourney() {
                           cy="50"
                           r="45"
                           fill="none"
-                          stroke="rgba(255,255,255,0.3)"
+                          stroke="rgba(34,211,238,0.4)"
                           strokeWidth="4"
                         />
                         <circle
