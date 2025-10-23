@@ -3699,10 +3699,10 @@ export default function FinancialJourney() {
                         px-3 py-2 w-44 text-center animate-scale-in rounded-[16px] shadow-xl z-50 absolute
                         hover:shadow-2xl transition-all duration-300 overflow-hidden
                         ${node.isCurrent 
-                          ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400' 
+                          ? 'bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-400' 
                           : node.isUnlocked
-                          ? 'bg-white border border-blue-100'
-                          : 'bg-white/50 border border-gray-200 opacity-60'
+                          ? 'bg-white/95 backdrop-blur-sm border border-blue-300 shadow-blue-500/30'
+                          : 'bg-gray-900/90 backdrop-blur-md border border-slate-600 shadow-lg shadow-slate-700/50'
                         }
                       `}
                       style={{
@@ -3720,20 +3720,20 @@ export default function FinancialJourney() {
                       <div className="relative z-10">
                       <h3 className={`
                         font-bold mb-1 text-sm
-                        ${node.isCurrent ? 'text-green-600' : node.isUnlocked ? 'text-foreground' : 'text-gray-400'}
+                        ${node.isCurrent ? 'text-cyan-600' : node.isUnlocked ? 'text-foreground' : 'text-slate-200'}
                       `}>
                         {node.title}
                       </h3>
                       <p className={`
                         text-xs leading-tight
-                        ${node.isUnlocked ? 'text-foreground/70' : 'text-gray-400'}
+                        ${node.isUnlocked ? 'text-foreground/70' : 'text-slate-300'}
                       `}>
                         {node.description}
                       </p>
                       
                       {node.isCurrent && (
-                        <div className="mt-2 pt-2 border-t border-green-200">
-                          <div className="flex items-center justify-center gap-1 text-xs text-green-600">
+                        <div className="mt-2 pt-2 border-t border-cyan-200">
+                          <div className="flex items-center justify-center gap-1 text-xs text-cyan-600">
                             <TrendingUp className="h-3 w-3" />
                             <span className="font-semibold">Nivel Actual</span>
                           </div>
@@ -3741,7 +3741,7 @@ export default function FinancialJourney() {
                       )}
 
                        {node.isCompleted && (
-                        <div className="mt-2 flex items-center justify-center gap-1 text-xs text-green-600">
+                        <div className="mt-2 flex items-center justify-center gap-1 text-xs text-slate-300">
                           <Star className="h-3 w-3 fill-current" />
                           <span>Completado</span>
                         </div>
