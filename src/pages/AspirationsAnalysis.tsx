@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart, Bar } from "recharts";
 import { useNetWorth } from "@/hooks/useNetWorth";
+import { motion } from "framer-motion";
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#6366f1'];
 
@@ -487,19 +488,32 @@ export default function AspirationsAnalysis() {
           {/* Vista Móvil - Cards */}
           <div className="block sm:hidden space-y-1.5">
             {comparativeData.map((item, index) => (
-              <div key={index} className="bg-white/90 backdrop-blur-sm rounded-[12px] p-2 shadow-md border border-blue-100">
+              <motion.div 
+                key={index} 
+                className="bg-white/90 backdrop-blur-sm rounded-[12px] p-2 shadow-md border border-blue-100"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1, duration: 0.4 }}
+              >
                 {/* Título con barra de progreso */}
                 <div className="flex items-center gap-1.5 mb-1">
                   <h4 className="font-bold text-foreground text-[10px] whitespace-nowrap">{item.category}</h4>
                   <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full transition-all duration-500"
-                      style={{ width: `${Math.min(100 - parseFloat(String(item.gapPercentage)), 100)}%` }}
+                    <motion.div 
+                      className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full"
+                      initial={{ width: "0%" }}
+                      animate={{ width: `${Math.min(100 - parseFloat(String(item.gapPercentage)), 100)}%` }}
+                      transition={{ delay: index * 0.1 + 0.2, duration: 1, ease: "easeOut" }}
                     />
                   </div>
-                  <span className="text-[7px] font-semibold text-emerald-600 whitespace-nowrap">
+                  <motion.span 
+                    className="text-[7px] font-semibold text-emerald-600 whitespace-nowrap"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: index * 0.1 + 0.8, duration: 0.3 }}
+                  >
                     {Math.min(100 - parseFloat(String(item.gapPercentage)), 100).toFixed(0)}%
-                  </span>
+                  </motion.span>
                 </div>
                 
                 <div className="grid grid-cols-3 gap-1 text-[9px]">
@@ -537,11 +551,16 @@ export default function AspirationsAnalysis() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
             
             {/* Total Card */}
-            <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-[12px] p-2 shadow-lg border-2 border-slate-300">
+            <motion.div 
+              className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-[12px] p-2 shadow-lg border-2 border-slate-300"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: comparativeData.length * 0.1 + 0.2, duration: 0.4 }}
+            >
               <h4 className="font-bold text-foreground mb-1 text-[10px]">TOTAL</h4>
               <div className="grid grid-cols-3 gap-1 text-[9px]">
                 <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-[6px] p-1">
@@ -570,9 +589,9 @@ export default function AspirationsAnalysis() {
                       : gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                     }
                   </p>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
           </div>
 
           {/* Vista Desktop - Tabla */}
