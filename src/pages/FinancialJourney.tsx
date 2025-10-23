@@ -277,7 +277,7 @@ export default function FinancialJourney() {
       <div className="fixed top-0 left-0 right-0 z-40 bg-transparent backdrop-blur-sm pt-4 pb-2">
         <div className="container mx-auto px-4 max-w-2xl">
           {/* Botón de regresar arriba del card */}
-          <div className="mb-3">
+          <div className="mb-3 flex items-center gap-2">
             <Button
               type="button"
               onClick={() => {
@@ -291,6 +291,19 @@ export default function FinancialJourney() {
               className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                if (isNavigating) return;
+                setIsNavigating(true);
+                navigate('/aspirations-analysis');
+              }}
+              disabled={isNavigating}
+              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 px-4 hover:scale-105 transition-all border border-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Target className="h-4 w-4 mr-2" />
+              <span className="text-sm font-medium">Análisis</span>
             </Button>
           </div>
           
