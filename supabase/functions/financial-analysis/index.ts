@@ -650,16 +650,58 @@ Ejemplo formato:
       }
     });
     
-    // Probabilidad de cumplir meta usando promedio de 12 meses
+    // Calcular probabilidad de cumplir meta basándose en desempeño financiero
     const mainGoal = goalsProgress.length > 0 ? goalsProgress[0] : null;
     const remainingAmount = mainGoal ? (mainGoal.target - mainGoal.current) : 0;
-    const goalProbability = mainGoal && avgMonthlySavings12M > 0 && remainingAmount > 0
-      ? Math.min(95, Math.max(10, Math.round((avgMonthlySavings12M / remainingAmount) * 100 * 5)))
-      : 0;
     
-    const monthsToGoal = mainGoal && avgMonthlySavings12M > 0 
-      ? Math.ceil(remainingAmount / avgMonthlySavings12M)
-      : 0;
+    let goalProbability = 0;
+    let monthsToGoal = 0;
+    
+    if (mainGoal && avgMonthlySavings12M > 0 && remainingAmount > 0) {
+      // Calcular meses necesarios para alcanzar la meta
+      monthsToGoal = Math.ceil(remainingAmount / avgMonthlySavings12M);
+      
+      // Calcular consistencia del ahorro (menor varianza = mayor consistencia)
+      const savingsVariance = monthlyBalances.map(m => m.balance).reduce((acc, bal, i, arr) => {
+        if (i === 0) return 0;
+        return acc + Math.pow(bal - arr[i-1], 2);
+      }, 0) / (monthlyBalances.length - 1);
+      const consistencyScore = Math.max(0, 100 - (savingsVariance / avgMonthlySavings12M));
+      
+      // Evaluar tendencia (últimos 6 meses vs primeros 6 meses)
+      const recentSavings = monthlyBalances.slice(0, Math.min(6, monthlyBalances.length))
+        .reduce((sum, m) => sum + m.balance, 0) / Math.min(6, monthlyBalances.length);
+      const olderSavings = monthlyBalances.slice(-6)
+        .reduce((sum, m) => sum + m.balance, 0) / Math.min(6, monthlyBalances.length);
+      const trendMultiplier = recentSavings >= olderSavings ? 1.1 : 0.9;
+      
+      // Evaluar si el ritmo es razonable (meta alcanzable en menos de 5 años = 60 meses)
+      let timeScore = 100;
+      if (monthsToGoal > 60) timeScore = 30;
+      else if (monthsToGoal > 36) timeScore = 50;
+      else if (monthsToGoal > 24) timeScore = 70;
+      else if (monthsToGoal > 12) timeScore = 85;
+      
+      // Calcular probabilidad final
+      const baseProbability = (
+        timeScore * 0.5 +           // 50% peso en tiempo razonable
+        consistencyScore * 0.3 +     // 30% peso en consistencia
+        Math.min(100, (avgMonthlySavings12M / (remainingAmount / 12)) * 100) * 0.2  // 20% peso en capacidad de ahorro
+      ) * trendMultiplier;
+      
+      goalProbability = Math.min(95, Math.max(5, Math.round(baseProbability)));
+      
+      console.log('🎯 Cálculo de probabilidad de meta:', {
+        remainingAmount,
+        avgMonthlySavings12M,
+        monthsToGoal,
+        consistencyScore: Math.round(consistencyScore),
+        timeScore,
+        trendMultiplier,
+        finalProbability: goalProbability
+      });
+    }
+    
     const goalETA = monthsToGoal > 0 
       ? monthsToGoal <= 12 
         ? `${monthsToGoal} meses`
