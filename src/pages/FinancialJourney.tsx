@@ -294,9 +294,6 @@ export default function FinancialJourney() {
               <p className="text-[10px] font-bold uppercase tracking-wider text-green-600 mb-0.5">
                 Tu Camino Financiero
               </p>
-              <h1 className="text-base font-bold text-foreground mb-1.5">
-                Tu deseo, tu realidad
-              </h1>
               
               {/* Net Worth */}
               <div className="p-1.5 bg-muted/50 rounded-lg border border-border">
