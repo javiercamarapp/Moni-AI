@@ -98,36 +98,27 @@ export default function FinancialAnalysis() {
         }
       });
       
-      // Cargar datos del período correcto
-      const cacheKey = `financialAnalysis_quickMetrics_${period}`;
-      const cached = localStorage.getItem(cacheKey);
-      if (cached) {
-        const cachedData = JSON.parse(cached);
-        console.log('📦 Cargando caché para período:', period, cachedData);
-        setQuickMetrics(cachedData);
-      } else {
-        // Si no hay caché, usar valores por defecto
-        console.log('❌ No hay caché para período:', period);
-        setQuickMetrics({
-          totalIncome: 0,
-          totalExpenses: 0,
-          balance: 0,
-          savingsRate: 0,
-          transactionsCount: 0
-        });
-      }
+      // Limpiar TODOS los cachés para forzar recarga completa
+      const cacheKeys = [
+        `financialAnalysis_quickMetrics_${period}`,
+        `financialAnalysis_full_${period}_${user.id}`,
+        `financialAnalysis_full_${period}_${user.id}_time`
+      ];
+      cacheKeys.forEach(key => localStorage.removeItem(key));
+      
+      // Resetear métricas
+      setQuickMetrics({
+        totalIncome: 0,
+        totalExpenses: 0,
+        balance: 0,
+        savingsRate: 0,
+        transactionsCount: 0
+      });
       
       // Ejecutar cargas en background (forzar recarga sin caché)
       console.log('🚀 Iniciando carga de datos para período:', period);
       calculateQuickMetrics();
       fetchTransactionsData();
-      
-      // Limpiar caché del análisis completo para forzar recarga desde el servidor
-      const analysisCacheKey = `financialAnalysis_full_${period}_${user.id}`;
-      const analysisCacheTimeKey = `${analysisCacheKey}_time`;
-      localStorage.removeItem(analysisCacheKey);
-      localStorage.removeItem(analysisCacheTimeKey);
-      
       loadAnalysis();
     }
   }, [user, period]);
@@ -157,19 +148,38 @@ export default function FinancialAnalysis() {
         endDate: endDate.toISOString().split('T')[0]
       });
       
-      // Obtener transacciones del período actual - SIN LÍMITES, TODA LA BD
-      const { data: transactions, error: txError } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user.id)
-        .gte('transaction_date', startDate.toISOString().split('T')[0])
-        .lte('transaction_date', endDate.toISOString().split('T')[0])
-        .order('transaction_date', { ascending: false });
+      // Obtener transacciones del período actual - SIN LÍMITES para obtener TODAS
+      let allTransactions: any[] = [];
+      let page = 0;
+      const pageSize = 1000;
+      let hasMore = true;
       
-      if (txError) {
-        console.error('Error fetching transactions:', txError);
-        throw txError;
+      while (hasMore) {
+        const { data: transactions, error: txError } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', user.id)
+          .gte('transaction_date', startDate.toISOString().split('T')[0])
+          .lte('transaction_date', endDate.toISOString().split('T')[0])
+          .order('transaction_date', { ascending: false })
+          .range(page * pageSize, (page + 1) * pageSize - 1);
+        
+        if (txError) {
+          console.error('Error fetching transactions:', txError);
+          throw txError;
+        }
+        
+        if (transactions && transactions.length > 0) {
+          allTransactions = [...allTransactions, ...transactions];
+          hasMore = transactions.length === pageSize;
+          page++;
+        } else {
+          hasMore = false;
+        }
       }
+      
+      const transactions = allTransactions;
+      
       
       console.log('📅 ANÁLISIS FINANCIERO - Transacciones obtenidas:', {
         periodo: period,
