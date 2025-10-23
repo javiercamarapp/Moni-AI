@@ -509,28 +509,104 @@ Ejemplo formato:
       }
     ].filter(a => a.impact > 0);
     
-    // Proyecciones con escenarios (3-6 meses)
-    const monthlyBalance = balance;
+    // Calcular promedio de ahorro mensual histórico
+    // Para proyecciones de 3-6 meses: últimos 6 meses
+    // Para proyecciones anuales: último año completo
+    const sixMonthsAgo = new Date(now);
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    
+    const { data: last6MonthsTxs } = await supabase
+      .from('transactions')
+      .select('*')
+      .eq('user_id', userId)
+      .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
+      .lte('transaction_date', now.toISOString().split('T')[0]);
+    
+    const oneYearAgo = new Date(now);
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+    
+    const { data: lastYearTxs } = await supabase
+      .from('transactions')
+      .select('*')
+      .eq('user_id', userId)
+      .gte('transaction_date', oneYearAgo.toISOString().split('T')[0])
+      .lte('transaction_date', now.toISOString().split('T')[0]);
+    
+    // Agrupar por mes y calcular balance mensual
+    const calculateMonthlyBalances = (txs: any[]) => {
+      const monthlyData: Record<string, { income: number; expenses: number }> = {};
+      
+      txs?.forEach(tx => {
+        const monthKey = tx.transaction_date.substring(0, 7); // YYYY-MM
+        if (!monthlyData[monthKey]) {
+          monthlyData[monthKey] = { income: 0, expenses: 0 };
+        }
+        
+        if (tx.type === 'income' || tx.type === 'ingreso') {
+          monthlyData[monthKey].income += Number(tx.amount);
+        } else if (tx.type === 'expense' || tx.type === 'gasto') {
+          monthlyData[monthKey].expenses += Number(tx.amount);
+        }
+      });
+      
+      return Object.values(monthlyData).map(m => m.income - m.expenses);
+    };
+    
+    const last6MonthsBalances = calculateMonthlyBalances(last6MonthsTxs || []);
+    const lastYearBalances = calculateMonthlyBalances(lastYearTxs || []);
+    
+    const avgMonthlySavings6M = last6MonthsBalances.length > 0
+      ? last6MonthsBalances.reduce((sum, b) => sum + b, 0) / last6MonthsBalances.length
+      : balance;
+    
+    const avgMonthlySavings1Y = lastYearBalances.length > 0
+      ? lastYearBalances.reduce((sum, b) => sum + b, 0) / lastYearBalances.length
+      : balance;
+    
+    console.log('📊 Promedios históricos calculados:', {
+      ultimos6Meses: Math.round(avgMonthlySavings6M),
+      ultimoAño: Math.round(avgMonthlySavings1Y),
+      mesesAnalizados6M: last6MonthsBalances.length,
+      mesesAnalizados1Y: lastYearBalances.length
+    });
+    
+    // Proyecciones con escenarios usando promedio real
+    // Para período mensual/trimestral: usar promedio de 6 meses
+    // Para período anual: usar promedio de 1 año
+    const monthlyAvgForProjection = period === 'year' ? avgMonthlySavings1Y : avgMonthlySavings6M;
     const forecastData = [];
+    
     for (let i = 1; i <= 6; i++) {
-      const monthLabel = new Date(now.getTime() + i * 30 * 24 * 60 * 60 * 1000).toLocaleDateString('es-MX', { month: 'short' });
+      const monthDate = new Date(now);
+      monthDate.setMonth(monthDate.getMonth() + i);
+      const monthLabel = monthDate.toLocaleDateString('es-MX', { month: 'short' });
+      
+      // Acumular el ahorro mes a mes
+      const baseProjection = monthlyAvgForProjection * i;
+      
       forecastData.push({
         month: monthLabel,
-        conservative: monthlyBalance * i * 0.7, // 30% menos por imprevistos
-        realistic: monthlyBalance * i,
-        optimistic: monthlyBalance * i * 1.2 // 20% más optimizando
+        conservative: Math.max(0, baseProjection * 0.7), // 30% menos por imprevistos
+        realistic: baseProjection,
+        optimistic: baseProjection * 1.3 // 30% más optimizando
       });
     }
     
-    // Probabilidad de cumplir meta principal (si existe)
+    // Probabilidad de cumplir meta usando promedio real de ahorro
     const mainGoal = goalsProgress.length > 0 ? goalsProgress[0] : null;
-    const goalProbability = mainGoal && monthlyBalance > 0 
-      ? Math.min(95, Math.round(((monthlyBalance / (mainGoal.target - mainGoal.current)) * 100)))
+    const remainingAmount = mainGoal ? (mainGoal.target - mainGoal.current) : 0;
+    const goalProbability = mainGoal && monthlyAvgForProjection > 0 && remainingAmount > 0
+      ? Math.min(95, Math.max(10, Math.round((monthlyAvgForProjection / remainingAmount) * 100 * 5)))
       : 0;
-    const monthsToGoal = mainGoal && monthlyBalance > 0 
-      ? Math.ceil((mainGoal.target - mainGoal.current) / monthlyBalance)
+    
+    const monthsToGoal = mainGoal && monthlyAvgForProjection > 0 
+      ? Math.ceil(remainingAmount / monthlyAvgForProjection)
       : 0;
-    const goalETA = monthsToGoal > 0 ? `${monthsToGoal} meses` : 'N/A';
+    const goalETA = monthsToGoal > 0 
+      ? monthsToGoal <= 12 
+        ? `${monthsToGoal} meses`
+        : `${Math.round(monthsToGoal / 12)} años`
+      : 'N/A';
     
     // Presupuesto por categoría (basado en proporción ideal)
     const categoryBudgets = topCategories.slice(0, 5).map(cat => {
