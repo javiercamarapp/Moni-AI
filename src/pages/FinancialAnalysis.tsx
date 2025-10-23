@@ -89,6 +89,15 @@ export default function FinancialAnalysis() {
     if (user) {
       console.log('🔄 PERÍODO CAMBIADO A:', period);
       
+      // Limpiar el estado del análisis para forzar recarga
+      setAnalysis({
+        metrics: {
+          totalIncome: 0,
+          totalExpenses: 0,
+          balance: 0
+        }
+      });
+      
       // Cargar datos del período correcto
       const cacheKey = `financialAnalysis_quickMetrics_${period}`;
       const cached = localStorage.getItem(cacheKey);
@@ -108,10 +117,17 @@ export default function FinancialAnalysis() {
         });
       }
       
-      // Ejecutar cargas en background
+      // Ejecutar cargas en background (forzar recarga sin caché)
       console.log('🚀 Iniciando carga de datos para período:', period);
       calculateQuickMetrics();
       fetchTransactionsData();
+      
+      // Limpiar caché del análisis completo para forzar recarga desde el servidor
+      const analysisCacheKey = `financialAnalysis_full_${period}_${user.id}`;
+      const analysisCacheTimeKey = `${analysisCacheKey}_time`;
+      localStorage.removeItem(analysisCacheKey);
+      localStorage.removeItem(analysisCacheTimeKey);
+      
       loadAnalysis();
     }
   }, [user, period]);

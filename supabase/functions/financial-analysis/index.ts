@@ -135,24 +135,28 @@ Ejemplo formato:
       });
     }
 
-    // Obtener todas las transacciones históricas
-    console.log('Fetching transactions for user:', userId, 'period:', period);
-    const { data: transactions, error: txError } = await supabase
-      .from('transactions')
-      .select('*, categories(name, type)')
-      .eq('user_id', userId)
-      .gte('transaction_date', '2020-01-01')
-      .order('transaction_date', { ascending: false });
-
     // Define current date and period start date
     const now = new Date();
     const startDate = period === 'year' 
       ? new Date(now.getFullYear(), 0, 1) 
       : new Date(now.getFullYear(), now.getMonth(), 1);
+    
+    const endDate = period === 'year'
+      ? new Date(now.getFullYear(), 11, 31)
+      : new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-    console.log('Transactions found:', transactions?.length || 0);
-    console.log('Period:', period, 'Start date:', startDate, 'Now:', now);
-    if (txError) console.error('Transaction query error:', txError);
+    console.log('Period:', period, 'Start date:', startDate.toISOString().split('T')[0], 'End date:', endDate.toISOString().split('T')[0]);
+
+    // Obtener transacciones del período seleccionado
+    console.log('Fetching transactions for user:', userId, 'period:', period);
+    const { data: transactions, error: txError } = await supabase
+      .from('transactions')
+      .select('*, categories(name, type)')
+      .eq('user_id', userId)
+      .gte('transaction_date', startDate.toISOString().split('T')[0])
+      .lte('transaction_date', endDate.toISOString().split('T')[0])
+      .order('transaction_date', { ascending: false });
+    console.log('Transactions found for period:', transactions?.length || 0);
 
     if (!transactions || transactions.length === 0) {
       return new Response(JSON.stringify({
