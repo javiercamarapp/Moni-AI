@@ -663,7 +663,7 @@ export default function FinancialJourney() {
                           </button>
                           
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800">
+                            <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-500 via-yellow-600 to-amber-700">
                               <Star className="w-5 h-5 text-white fill-white" />
                             </div>
                             <div className="flex-1 min-w-0">
