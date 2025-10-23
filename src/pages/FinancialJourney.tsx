@@ -1589,7 +1589,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-20" />
                         )}
-                        <span className="text-3xl">🏆</span>
+                        <span className="text-3xl">📒</span>
                       </div>
                     </button>
                     
@@ -1603,7 +1603,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Oro 3000 #3
+                        Libro Abierto
                       </div>
                     )}
 
@@ -1631,20 +1631,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500">
-                              <span className="text-2xl">🏆</span>
+                              <span className="text-2xl">📒</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-yellow-700 truncate">
-                                Medalla de Oro #3
+                                Libro Abierto
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                3000 puntos
+                                Nivel 3000
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Medalla de Oro 3000 puntos
+                            Compartes conocimiento y transparencia.
                           </p>
                         </div>
                       </Card>
@@ -1692,7 +1692,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-pink-400 animate-ping opacity-30" />
                         )}
-                        <span className="text-3xl">💎</span>
+                        <span className="text-3xl">🖥️</span>
                       </div>
                     </button>
                     
@@ -1706,7 +1706,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Rubí 3250 #1
+                        Pantalla Clara
                       </div>
                     )}
 
@@ -1734,20 +1734,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-red-500 via-rose-600 to-pink-700">
-                              <span className="text-2xl">💎</span>
+                              <span className="text-2xl">🖥️</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-red-700 truncate">
-                                Insignia de Rubí #1
+                                Pantalla Clara
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                3250 puntos
+                                Nivel 3250
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Insignia de Rubí 3250 puntos
+                            Presentas ideas de forma visible y accesible.
                           </p>
                         </div>
                       </Card>
@@ -1795,7 +1795,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-gray-400 animate-ping opacity-20" />
                         )}
-                        <span className="text-3xl">👑</span>
+                        <span className="text-3xl">🛰️</span>
                       </div>
                     </button>
                     
@@ -1809,7 +1809,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Maestría Plata 3500 #1
+                        Satélite Enviado
                       </div>
                     )}
 
@@ -1837,20 +1837,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-600">
-                              <span className="text-2xl">👑</span>
+                              <span className="text-2xl">🛰️</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-gray-700 truncate">
-                                Insignia de Maestría Plata #1
+                                Satélite Enviado
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                3500 puntos
+                                Nivel 3500
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Insignia de Maestría Plata 3500 puntos
+                            Te conectas al panorama más amplio del sistema.
                           </p>
                         </div>
                       </Card>
@@ -1898,7 +1898,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-20" />
                         )}
-                        <span className="text-3xl">💎</span>
+                        <span className="text-3xl">🚀</span>
                       </div>
                     </button>
                     
@@ -1912,7 +1912,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Rubí 3750 #2
+                        Cohete Despegue
                       </div>
                     )}
 
@@ -1940,20 +1940,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-red-500 via-rose-600 to-pink-700">
-                              <span className="text-2xl">💎</span>
+                              <span className="text-2xl">🚀</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-red-700 truncate">
-                                Insignia de Rubí #2
+                                Cohete Despegue
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                3750 puntos
+                                Nivel 3750
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Insignia de Rubí 3750 puntos
+                            Tu impacto comienza a alcanzar altura.
                           </p>
                         </div>
                       </Card>
@@ -2001,7 +2001,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-red-400 animate-ping opacity-20" />
                         )}
-                        <span className="text-3xl">💎</span>
+                        <span className="text-3xl">🧩</span>
                       </div>
                     </button>
                     
@@ -2015,7 +2015,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Rubí 4250 #3
+                        Pieza Clave
                       </div>
                     )}
 
@@ -2043,20 +2043,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-red-500 via-rose-600 to-pink-700">
-                              <span className="text-2xl">💎</span>
+                              <span className="text-2xl">🧩</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-red-700 truncate">
-                                Insignia de Rubí #3
+                                Pieza Clave
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                4250 puntos
+                                Nivel 4250
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Insignia de Rubí 4250 puntos
+                            Eres indispensable para que el conjunto funcione.
                           </p>
                         </div>
                       </Card>
@@ -2104,7 +2104,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-yellow-300 animate-ping opacity-30" />
                         )}
-                        <span className="text-4xl">👑</span>
+                        <span className="text-4xl">💡</span>
                       </div>
                     </button>
                     
@@ -2118,7 +2118,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Maestría Oro 4000 #1
+                        Bombilla Iluminada
                       </div>
                     )}
 
@@ -2145,20 +2145,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-600">
-                              <span className="text-3xl">👑</span>
+                              <span className="text-3xl">💡</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-yellow-700 truncate">
-                                Insignia de Maestría Oro #1
+                                Bombilla Iluminada
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                4000 puntos
+                                Nivel 4000
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Insignia de Maestría Oro 4000 puntos
+                            Traes ideas que iluminan el camino.
                           </p>
                         </div>
                       </Card>
