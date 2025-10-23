@@ -3184,9 +3184,6 @@ export default function FinancialJourney() {
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
                           border-0 w-64 max-w-[calc(100vw-40px)] animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
-                        style={{
-                          top: '0'
-                        }}
                       >
                         <GlowingEffect disabled={false} spread={20} />
                         <div className="relative p-3">
@@ -3284,9 +3281,6 @@ export default function FinancialJourney() {
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
                           border-0 w-64 max-w-[calc(100vw-40px)] animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
-                        style={{
-                          top: '0'
-                        }}
                       >
                         <GlowingEffect disabled={false} spread={20} />
                         <div className="relative p-3">
@@ -3384,9 +3378,6 @@ export default function FinancialJourney() {
                       <Card 
                         className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
                           border-0 w-64 max-w-[calc(100vw-40px)] animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
-                        style={{
-                          top: '0'
-                        }}
                       >
                         <GlowingEffect disabled={false} spread={20} />
                         <div className="relative p-3">
