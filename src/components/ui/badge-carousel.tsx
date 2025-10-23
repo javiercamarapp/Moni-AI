@@ -161,41 +161,41 @@ export const BadgeCard = ({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               ref={containerRef}
-              className="max-w-2xl mx-auto bg-card/95 backdrop-blur-sm h-auto z-[10000] p-6 md:p-10 rounded-[20px] relative mt-20 shadow-2xl border border-border"
+              className="max-w-md mx-auto bg-white/95 backdrop-blur-sm h-auto z-[10000] p-4 rounded-[12px] relative top-10 shadow-xl border-0"
             >
               <button
-                className="absolute top-4 right-4 h-10 w-10 rounded-full flex items-center justify-center bg-primary hover:bg-primary/90 hover:scale-110 transition-all shadow-lg"
+                className="absolute top-2 right-2 h-8 w-8 rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-500 to-orange-500 hover:scale-110 transition-all shadow-lg"
                 onClick={handleCollapse}
               >
-                <X className="h-5 w-5 text-primary-foreground" />
+                <X className="h-4 w-4 text-white" />
               </button>
               
-              <div className="flex flex-col items-center">
-                <div className={`${badge.color} p-4 rounded-full mb-4 shadow-lg`}>
-                  <IconComponent className="h-12 w-12 text-white" />
+              <div className="flex flex-col items-center pt-2">
+                <div className={`bg-gradient-to-br ${badge.color} p-3 rounded-full mb-3 shadow-lg`}>
+                  <IconComponent className="h-8 w-8 text-white" />
                 </div>
                 
-                <h2 className="text-3xl font-bold text-foreground mb-2 text-center">
+                <h2 className="text-xl font-bold text-foreground mb-1 text-center">
                   {badge.name}
                 </h2>
                 
-                <p className="text-sm text-muted-foreground font-medium mb-6">
+                <p className="text-xs text-muted-foreground font-medium mb-4">
                   Nivel {badge.level}
                 </p>
                 
-                <div className="bg-background/80 backdrop-blur-sm rounded-[16px] p-6 mb-6 shadow-lg border border-border w-full">
-                  <p className="text-foreground leading-relaxed text-center mb-4">
+                <div className="bg-background/80 backdrop-blur-sm rounded-[10px] p-4 mb-4 shadow-md border border-border w-full">
+                  <p className="text-sm text-foreground leading-relaxed text-center mb-3">
                     {badge.explanation}
                   </p>
                   
-                  <div className={`${badge.color} px-4 py-3 rounded-[12px] shadow-md`}>
-                    <p className="text-sm text-white font-bold text-center drop-shadow-md">
+                  <div className={`bg-gradient-to-br ${badge.color} px-3 py-2 rounded-[8px] shadow-md`}>
+                    <p className="text-xs text-white font-bold text-center drop-shadow-md">
                       🎯 {badge.growthPercentage}% patrimonio deseado
                     </p>
                   </div>
                 </div>
                 
-                <p className="text-muted-foreground text-sm text-center italic">
+                <p className="text-muted-foreground text-xs text-center italic px-2">
                   {badge.description}
                 </p>
               </div>
@@ -208,8 +208,10 @@ export const BadgeCard = ({
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: index * 0.05 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={handleExpand}
-        className={`bg-gradient-to-br ${badge.color} rounded-[10px] p-2 flex flex-col items-center gap-1 shadow-lg relative overflow-hidden cursor-pointer transition-all hover:scale-105 min-w-[100px]`}
+        className={`bg-gradient-to-br ${badge.color} rounded-[10px] p-2 flex flex-col items-center gap-1 shadow-lg relative overflow-hidden cursor-pointer transition-all min-w-[100px]`}
       >
         {/* Efecto de brillo de fondo */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
