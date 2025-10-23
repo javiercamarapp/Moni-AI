@@ -414,7 +414,7 @@ export default function FinancialJourney() {
                       <div
                         className={`
                           relative w-10 h-10 rounded-full flex items-center justify-center
-                          transition-all duration-300 border-2 border-purple-300 cursor-pointer
+                          transition-all duration-300 border-2 border-slate-300 cursor-pointer
                           bg-gradient-to-br from-amber-500 via-yellow-600 to-amber-700 shadow-lg shadow-amber-500/60
                           ${isUnlocked ? 'shadow-xl hover:scale-110 hover:shadow-amber-400/80' : 'grayscale cursor-not-allowed opacity-40'}
                         `}
@@ -515,7 +515,7 @@ export default function FinancialJourney() {
                       <div
                         className={`
                           relative w-11 h-11 rounded-full flex items-center justify-center
-                          transition-all duration-300 border-2 border-purple-300 cursor-pointer
+                          transition-all duration-300 border-2 border-slate-300 cursor-pointer
                           bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 shadow-lg shadow-gray-400/60
                           ${isUnlocked ? 'shadow-xl hover:scale-110 hover:shadow-gray-300/80' : 'grayscale cursor-not-allowed opacity-40'}
                         `}
@@ -616,7 +616,7 @@ export default function FinancialJourney() {
                       <div
                         className={`
                           relative w-10 h-10 rounded-full flex items-center justify-center
-                          transition-all duration-300 border-2 border-purple-300 cursor-pointer
+                          transition-all duration-300 border-2 border-slate-300 cursor-pointer
                           bg-gradient-to-br from-amber-500 via-yellow-600 to-amber-700 shadow-lg shadow-amber-500/60
                           ${isUnlocked ? 'shadow-xl hover:scale-110 hover:shadow-amber-400/80' : 'grayscale cursor-not-allowed opacity-40'}
                         `}
@@ -717,7 +717,7 @@ export default function FinancialJourney() {
                       <div
                         className={`
                           relative w-12 h-12 rounded-full flex items-center justify-center
-                          transition-all duration-300 border-2 border-purple-300 cursor-pointer
+                          transition-all duration-300 border-2 border-slate-300 cursor-pointer
                           bg-gradient-to-br from-yellow-300 via-amber-400 to-yellow-600 shadow-xl shadow-yellow-400/70
                           ${isUnlocked ? 'shadow-2xl hover:scale-110 hover:shadow-yellow-300/90' : 'grayscale cursor-not-allowed opacity-40'}
                         `}
@@ -1626,7 +1626,7 @@ export default function FinancialJourney() {
                       <div
                         className={`
                           relative w-12 h-12 rounded-full flex items-center justify-center
-                          transition-all duration-300 border-2 border-purple-300 cursor-pointer
+                          transition-all duration-300 border-2 border-slate-300 cursor-pointer
                           bg-gradient-to-br from-pink-500 via-fuchsia-600 to-purple-700 shadow-xl shadow-pink-500/70
                           ${isUnlocked ? 'shadow-2xl hover:scale-110 hover:shadow-pink-400/90' : 'grayscale cursor-not-allowed opacity-40'}
                         `}
@@ -2030,7 +2030,7 @@ export default function FinancialJourney() {
                       <div
                         className={`
                           relative w-12 h-12 rounded-full flex items-center justify-center
-                          transition-all duration-300 border-2 border-purple-300 cursor-pointer
+                          transition-all duration-300 border-2 border-slate-300 cursor-pointer
                           bg-gradient-to-br from-yellow-300 via-amber-400 to-orange-500 shadow-xl shadow-yellow-400/70
                           ${isUnlocked ? 'shadow-2xl hover:scale-110 hover:shadow-yellow-300/90' : 'grayscale cursor-not-allowed opacity-40'}
                         `}
@@ -3642,7 +3642,7 @@ export default function FinancialJourney() {
                           relative w-7 h-7 rounded-full flex items-center justify-center cursor-pointer
                           transition-all duration-300 z-10 border border-white/20
                           ${node.isCompleted
-                            ? 'bg-gradient-to-br from-purple-500 via-violet-600 to-purple-700 shadow-lg shadow-purple-500/50 hover:scale-110 hover:shadow-purple-400/60'
+                            ? 'bg-gradient-to-br from-slate-300 via-gray-400 to-slate-500 shadow-lg shadow-slate-400/50 hover:scale-110 hover:shadow-slate-300/60'
                             : node.isCurrent
                             ? 'bg-gradient-to-br from-cyan-400 via-blue-500 to-cyan-600 shadow-xl shadow-cyan-400/70 scale-110 hover:scale-125 animate-pulse'
                             : node.isUnlocked
