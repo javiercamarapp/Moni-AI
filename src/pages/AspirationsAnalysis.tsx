@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, TrendingUp, Sparkles } from "lucide-react";
+import { ArrowLeft, TrendingUp, Sparkles, Award, Trophy, Star, Target, Zap, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart, Bar } from "recharts";
@@ -20,6 +20,7 @@ export default function AspirationsAnalysis() {
   const [assets, setAssets] = useState<any[]>([]);
   const [liabilities, setLiabilities] = useState<any[]>([]);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [userScore, setUserScore] = useState<number>(40);
   const netWorthData = useNetWorth("1Y");
   const currentNetWorth = netWorthData.data?.currentNetWorth || 0;
 
@@ -42,6 +43,7 @@ export default function AspirationsAnalysis() {
   useEffect(() => {
     fetchAspirations();
     fetchAssetsAndLiabilities();
+    fetchUserScore();
   }, []);
 
   useEffect(() => {
@@ -178,6 +180,90 @@ export default function AspirationsAnalysis() {
       console.error("Error fetching assets and liabilities:", error);
     }
   };
+
+  const fetchUserScore = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: scoreData } = await supabase
+        .from("user_scores")
+        .select("score_moni")
+        .eq("user_id", user.id)
+        .single();
+
+      if (scoreData) {
+        setUserScore(scoreData.score_moni);
+      }
+    } catch (error) {
+      console.error("Error fetching user score:", error);
+    }
+  };
+
+  // Definir insignias basadas en logros
+  const getBadges = () => {
+    const badges = [];
+    
+    // Insignia por completar el quiz
+    badges.push({
+      icon: Target,
+      name: "Aspiraciones Definidas",
+      color: "from-blue-500 to-blue-600",
+      earned: true
+    });
+
+    // Insignia por tener net worth positivo
+    if (currentNetWorth > 0) {
+      badges.push({
+        icon: TrendingUp,
+        name: "Patrimonio Positivo",
+        color: "from-green-500 to-green-600",
+        earned: true
+      });
+    }
+
+    // Insignia por score alto
+    if (userScore >= 70) {
+      badges.push({
+        icon: Crown,
+        name: "Score Excelente",
+        color: "from-yellow-500 to-yellow-600",
+        earned: true
+      });
+    } else if (userScore >= 50) {
+      badges.push({
+        icon: Star,
+        name: "Score Bueno",
+        color: "from-purple-500 to-purple-600",
+        earned: true
+      });
+    }
+
+    // Insignia por tener activos
+    if (assets.length > 0) {
+      badges.push({
+        icon: Trophy,
+        name: "Inversionista",
+        color: "from-orange-500 to-orange-600",
+        earned: true
+      });
+    }
+
+    // Insignia por progreso hacia la meta
+    const progress = (currentNetWorth / totalAspiration) * 100;
+    if (progress >= 25) {
+      badges.push({
+        icon: Zap,
+        name: "En Camino",
+        color: "from-pink-500 to-pink-600",
+        earned: true
+      });
+    }
+
+    return badges;
+  };
+
+  const badges = getBadges();
 
   // Mapear y comparar categorías
   const getComparativeData = () => {
@@ -591,6 +677,52 @@ export default function AspirationsAnalysis() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
+          </div>
+        </Card>
+
+        {/* Badges and Score Section */}
+        <Card className="p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="bg-gradient-to-br from-yellow-500 to-orange-500 p-2 rounded-full">
+                <Award className="h-5 w-5 text-white" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground">Tus Logros</h3>
+            </div>
+            <div className="flex flex-col items-end">
+              <p className="text-xs text-muted-foreground">Score Moni</p>
+              <div className="flex items-center gap-1">
+                <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
+                <p className="text-2xl font-bold text-foreground">{userScore}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Badges Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {badges.map((badge, index) => {
+              const IconComponent = badge.icon;
+              return (
+                <div
+                  key={index}
+                  className={`bg-gradient-to-br ${badge.color} rounded-[15px] p-4 flex flex-col items-center gap-2 shadow-lg transform hover:scale-105 transition-all`}
+                >
+                  <div className="bg-white/20 p-3 rounded-full backdrop-blur-sm">
+                    <IconComponent className="h-6 w-6 text-white" />
+                  </div>
+                  <p className="text-xs font-semibold text-white text-center leading-tight">
+                    {badge.name}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Progress Info */}
+          <div className="mt-4 pt-4 border-t border-slate-200">
+            <p className="text-xs text-muted-foreground text-center">
+              <span className="font-semibold">¡Sigue así!</span> Has desbloqueado {badges.length} insignia{badges.length !== 1 ? 's' : ''}
+            </p>
           </div>
         </Card>
 
