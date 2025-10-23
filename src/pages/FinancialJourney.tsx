@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, Lock, Trophy, TrendingUp, Target, ArrowLeft, Award, Crown, Gem, Sparkles, Medal, Zap, Rocket, Shield, Diamond } from "lucide-react";
+import { Star, Lock, Trophy, TrendingUp, Target, ArrowLeft, Award, Crown, Gem, Sparkles, Medal, Zap, Rocket, Shield, Diamond, Edit } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNetWorth } from "@/hooks/useNetWorth";
 import { Progress } from "@/components/ui/progress";
@@ -297,7 +297,28 @@ export default function FinancialJourney() {
               <h1 className="text-xl font-bold text-foreground">
                 Tu deseo, tu realidad
               </h1>
-              <div className="mt-2">
+              
+              {/* Net Worth Objetivo */}
+              <div className="mt-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <p className="text-xs text-foreground/60 mb-0.5">Net Worth objetivo:</p>
+                    <p className="text-lg font-bold text-green-600">
+                      ${totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => navigate("/edit-aspirations")}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs px-3 py-1 h-8 bg-white hover:bg-green-50 border-green-300 text-green-700 hover:text-green-800"
+                  >
+                    Modificar
+                  </Button>
+                </div>
+              </div>
+
+              <div className="mt-3">
                 <div className="flex justify-between text-xs mb-1 text-foreground/70">
                   <span>Progreso Total</span>
                   <span className="font-bold text-foreground">{currentProgress.toFixed(1)}%</span>
