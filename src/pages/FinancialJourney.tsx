@@ -1148,16 +1148,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-yellow-100 text-yellow-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Oro 2000 #2
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-yellow-100 text-yellow-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Oro 2000 #2
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'gold2000' && isUnlocked && (
@@ -1249,16 +1251,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-amber-100 text-amber-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Maestría Bronce 2250 #2
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-amber-100 text-amber-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Maestría Bronce 2250 #2
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'mastery2250' && isUnlocked && (
@@ -1350,16 +1354,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-gray-100 text-gray-600
-                        shadow-md z-30
-                      `}
-                    >
-                      Plata 2500 #3
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-gray-100 text-gray-600
+                          shadow-md z-30
+                        `}
+                      >
+                        Plata 2500 #3
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'silver2500' && isUnlocked && (
@@ -1451,16 +1457,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-amber-100 text-amber-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Maestría Bronce 2750 #3
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-amber-100 text-amber-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Maestría Bronce 2750 #3
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'mastery2750' && isUnlocked && (
@@ -1552,16 +1560,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-yellow-100 text-yellow-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Oro 3000 #3
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-yellow-100 text-yellow-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Oro 3000 #3
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'gold3000' && isUnlocked && (
@@ -1653,16 +1663,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-red-100 text-red-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Rubí 3250 #1
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-red-100 text-red-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Rubí 3250 #1
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'ruby3250' && isUnlocked && (
@@ -1754,16 +1766,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-gray-100 text-gray-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Maestría Plata 3500 #1
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-gray-100 text-gray-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Maestría Plata 3500 #1
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'silvermastery3500' && isUnlocked && (
@@ -1855,16 +1869,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-red-100 text-red-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Rubí 3750 #2
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-red-100 text-red-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Rubí 3750 #2
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'ruby3750' && isUnlocked && (
@@ -1956,16 +1972,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-red-100 text-red-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Rubí 4250 #3
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-red-100 text-red-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Rubí 4250 #3
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'ruby4250' && isUnlocked && (
@@ -2057,16 +2075,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-yellow-100 text-yellow-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Maestría Oro 4000 #1
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-yellow-100 text-yellow-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Maestría Oro 4000 #1
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'goldmastery4000' && isUnlocked && (
@@ -2157,16 +2177,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-gray-100 text-gray-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Maestría Plata 4500 #2
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-gray-100 text-gray-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Maestría Plata 4500 #2
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'silvermastery4500' && isUnlocked && (
@@ -2254,16 +2276,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-red-100 text-red-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Maestría de Rubí 4750 #1
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-red-100 text-red-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Maestría de Rubí 4750 #1
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'rubymastery4750' && isUnlocked && (
@@ -2357,16 +2381,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-red-100 text-red-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Maestría Rubí #2
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-red-100 text-red-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Maestría Rubí #2
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'rubymastery5250' && isUnlocked && (
@@ -2460,16 +2486,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-gray-100 text-gray-600
-                        shadow-md z-30
-                      `}
-                    >
-                      Maestría Plata #3
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-gray-100 text-gray-600
+                          shadow-md z-30
+                        `}
+                      >
+                        Maestría Plata #3
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'silvermastery5500' && isUnlocked && (
@@ -2563,16 +2591,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-yellow-100 text-amber-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Maestría Oro #2
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-yellow-100 text-amber-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Maestría Oro #2
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'goldmastery6000' && isUnlocked && (
@@ -2663,16 +2693,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-slate-100 text-slate-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Platino #1
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-slate-100 text-slate-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Platino #1
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'platinum6250' && isUnlocked && (
@@ -2763,16 +2795,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-gray-900 text-white
-                        shadow-md z-30
-                      `}
-                    >
-                      Black #1
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-gray-900 text-white
+                          shadow-md z-30
+                        `}
+                      >
+                        Black #1
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'black6500' && isUnlocked && (
@@ -2863,16 +2897,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-slate-100 text-slate-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Platino #2
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-slate-100 text-slate-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Platino #2
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'platinum6750' && isUnlocked && (
@@ -2963,16 +2999,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-yellow-100 text-amber-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Maestría Oro #3
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-yellow-100 text-amber-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Maestría Oro #3
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'goldmastery7000' && isUnlocked && (
@@ -3063,16 +3101,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-slate-100 text-slate-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Platino #3
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-slate-100 text-slate-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Platino #3
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'platinum7250' && isUnlocked && (
@@ -3163,16 +3203,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-gray-900 text-white
-                        shadow-md z-30
-                      `}
-                    >
-                      Black #2
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-gray-900 text-white
+                          shadow-md z-30
+                        `}
+                      >
+                        Black #2
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'black7500' && isUnlocked && (
@@ -3260,16 +3302,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-slate-100 text-slate-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Maestría de Platino #1
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-slate-100 text-slate-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Maestría de Platino #1
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'platinummastery7750' && isUnlocked && (
@@ -3357,16 +3401,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-yellow-100 text-amber-800
-                        shadow-md z-30
-                      `}
-                    >
-                      Maestro 👑
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-yellow-100 text-amber-800
+                          shadow-md z-30
+                        `}
+                      >
+                        Maestro 👑
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'maestro8000' && isUnlocked && (
@@ -3454,16 +3500,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-red-100 text-red-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Maestría Rubí #3
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-red-100 text-red-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Maestría Rubí #3
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'rubymastery5750' && isUnlocked && (
@@ -3557,16 +3605,18 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    <div 
-                      className={`
-                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
-                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
-                        transition-opacity duration-200 bg-cyan-100 text-cyan-700
-                        shadow-md z-30
-                      `}
-                    >
-                      Maestría Diamante 5000 #1
-                    </div>
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-cyan-100 text-cyan-700
+                          shadow-md z-30
+                        `}
+                      >
+                        Maestría Diamante 5000 #1
+                      </div>
+                    )}
 
                     {/* Card de descripción expandida */}
                     {expandedBadge === 'diamondmastery5000' && isUnlocked && (
