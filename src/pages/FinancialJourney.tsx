@@ -2206,7 +2206,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-gray-300 animate-ping opacity-20" />
                         )}
-                        <span className="text-4xl">🛡️</span>
+                        <span className="text-4xl">📌</span>
                       </div>
                     </button>
                     
@@ -2220,7 +2220,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Maestría Plata 4500 #2
+                        Clavija Fija
                       </div>
                     )}
 
@@ -2244,20 +2244,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-gray-300 via-gray-400 to-slate-500">
-                              <span className="text-3xl">🛡️</span>
+                              <span className="text-3xl">📌</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-gray-700 truncate">
-                                Insignia de Maestría Plata #2
+                                Clavija Fija
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                4500 puntos
+                                Nivel 4500
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Insignia de Maestría Plata 4500 puntos
+                            Anclas proyectos, haces que permanezcan.
                           </p>
                         </div>
                       </Card>
@@ -2305,7 +2305,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-20" />
                         )}
-                        <span className="text-4xl">🥈</span>
+                        <span className="text-4xl">📍</span>
                       </div>
                     </button>
                     
@@ -2319,7 +2319,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Maestría de Rubí 4750 #1
+                        Hito Señalado
                       </div>
                     )}
 
@@ -2347,20 +2347,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-red-600 via-rose-700 to-pink-800">
-                              <span className="text-3xl">🥈</span>
+                              <span className="text-3xl">📍</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-red-700 truncate">
-                                Insignia de Maestría de Rubí #1
+                                Hito Señalado
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                4750 puntos
+                                Nivel 4750
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Insignia de Maestría de Rubí 4750 puntos
+                            Dejas un punto de referencia para que otros sigan.
                           </p>
                         </div>
                       </Card>
@@ -2410,7 +2410,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-red-400 animate-ping opacity-30" />
                         )}
-                        <span className="text-4xl">💎</span>
+                        <span className="text-4xl">🎯</span>
                       </div>
                     </button>
                     
@@ -2424,7 +2424,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Maestría Rubí #2
+                        Diana Impactada
                       </div>
                     )}
 
@@ -2451,21 +2451,21 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-red-400 via-rose-500 to-pink-600">
-                              <span className="text-3xl">💎</span>
+                              <span className="text-3xl">🎯</span>
                             </div>
                             
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-red-700 truncate">
-                                Maestría Rubí #2
+                                Diana Impactada
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                5250 puntos
+                                Nivel 5250
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Has alcanzado el nivel 5,250. Tu dedicación es excepcional.
+                            Alcanzas objetivos con precisión.
                           </p>
                         </div>
                       </Card>
@@ -2515,7 +2515,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-gray-400 animate-ping opacity-30" />
                         )}
-                        <span className="text-4xl">🛡️</span>
+                        <span className="text-4xl">🪜</span>
                       </div>
                     </button>
                     
@@ -2529,7 +2529,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Maestría Plata #3
+                        Escalón Superado
                       </div>
                     )}
 
@@ -2556,21 +2556,21 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500">
-                              <span className="text-3xl">🛡️</span>
+                              <span className="text-3xl">🪜</span>
                             </div>
                             
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-gray-600 truncate">
-                                Maestría Plata #3
+                                Escalón Superado
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                5500 puntos
+                                Nivel 5500
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Has alcanzado el nivel 5,500. Tu maestría es extraordinaria.
+                            Has subido de nivel, avanzas sin mirar atrás.
                           </p>
                         </div>
                       </Card>
@@ -2620,7 +2620,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-500 animate-ping opacity-30" />
                         )}
-                        <span className="text-4xl">🏆</span>
+                        <span className="text-4xl">💼</span>
                       </div>
                     </button>
                     
@@ -2634,7 +2634,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Maestría Oro #2
+                        Maletín Profesional
                       </div>
                     )}
 
@@ -2661,17 +2661,17 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500 flex items-center justify-center shrink-0">
-                              <span className="text-xl">🏆</span>
+                              <span className="text-xl">💼</span>
                             </div>
-                            <h3 className="text-base font-bold text-gray-900">Maestría Oro #2</h3>
+                            <h3 className="text-base font-bold text-gray-900">Maletín Profesional</h3>
                           </div>
                           
                           <p className="text-xs text-gray-600 mb-2 leading-relaxed">
-                            Has alcanzado el nivel 6,000. Tu excelencia financiera alcanza dimensiones doradas.
+                            Tu desempeño se ve y se valora como estándar.
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-amber-700 bg-yellow-50 px-2 py-1 rounded-full w-fit">
-                            <span className="text-sm">🏆</span>
+                            <span className="text-sm">💼</span>
                             <span>Nivel 6,000</span>
                           </div>
                         </div>
@@ -2722,7 +2722,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-slate-400 animate-ping opacity-30" />
                         )}
-                        <span className="text-4xl">🛡️</span>
+                        <span className="text-4xl">📜</span>
                       </div>
                     </button>
                     
@@ -2736,7 +2736,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Platino #1
+                        Pergamino Honorario
                       </div>
                     )}
 
@@ -2763,17 +2763,17 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-300 via-gray-400 to-zinc-500 flex items-center justify-center shrink-0">
-                              <span className="text-xl">🛡️</span>
+                              <span className="text-xl">📜</span>
                             </div>
-                            <h3 className="text-base font-bold text-gray-900">Platino #1</h3>
+                            <h3 className="text-base font-bold text-gray-900">Pergamino Honorario</h3>
                           </div>
                           
                           <p className="text-xs text-gray-600 mb-2 leading-relaxed">
-                            Has alcanzado el nivel 6,250. Tu estabilidad financiera es de élite.
+                            Reconocimiento formal por tu trayectoria.
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-slate-700 bg-slate-50 px-2 py-1 rounded-full w-fit">
-                            <span className="text-sm">🛡️</span>
+                            <span className="text-sm">📜</span>
                             <span>Nivel 6,250</span>
                           </div>
                         </div>
@@ -2824,7 +2824,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-gray-700 animate-ping opacity-30" />
                         )}
-                        <span className="text-4xl">💎</span>
+                        <span className="text-4xl">🏆</span>
                       </div>
                     </button>
                     
@@ -2838,7 +2838,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Black #1
+                        Trofeo Real
                       </div>
                     )}
 
@@ -2865,17 +2865,17 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-900 via-black to-gray-800 flex items-center justify-center shrink-0">
-                              <span className="text-xl">💎</span>
+                              <span className="text-xl">🏆</span>
                             </div>
-                            <h3 className="text-base font-bold text-gray-900">Black #1</h3>
+                            <h3 className="text-base font-bold text-gray-900">Trofeo Real</h3>
                           </div>
                           
                           <p className="text-xs text-gray-600 mb-2 leading-relaxed">
-                            Has alcanzado el nivel 6,500. Prestigio financiero exclusivo.
+                            Logro que trasciende lo habitual.
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-white bg-gray-900 px-2 py-1 rounded-full w-fit">
-                            <span className="text-sm">💎</span>
+                            <span className="text-sm">🏆</span>
                             <span>Nivel 6,500</span>
                           </div>
                         </div>
@@ -2926,7 +2926,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-slate-500 animate-ping opacity-30" />
                         )}
-                        <span className="text-4xl">🥈</span>
+                        <span className="text-4xl">🌌</span>
                       </div>
                     </button>
                     
@@ -2940,7 +2940,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Platino #2
+                        Galaxia Abierta
                       </div>
                     )}
 
@@ -2967,17 +2967,17 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-400 via-gray-500 to-zinc-600 flex items-center justify-center shrink-0">
-                              <span className="text-xl">🥈</span>
+                              <span className="text-xl">🌌</span>
                             </div>
-                            <h3 className="text-base font-bold text-gray-900">Platino #2</h3>
+                            <h3 className="text-base font-bold text-gray-900">Galaxia Abierta</h3>
                           </div>
                           
                           <p className="text-xs text-gray-600 mb-2 leading-relaxed">
-                            Has alcanzado el nivel 6,750. Tu dominio financiero es excepcional.
+                            Observas, exploras y te expandes más allá de lo común.
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-slate-700 bg-slate-50 px-2 py-1 rounded-full w-fit">
-                            <span className="text-sm">🥈</span>
+                            <span className="text-sm">🌌</span>
                             <span>Nivel 6,750</span>
                           </div>
                         </div>
@@ -3529,7 +3529,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-rose-500 animate-ping opacity-30" />
                         )}
-                        <Gem className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-4xl">🧪</span>
                       </div>
                     </button>
                     
@@ -3543,7 +3543,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Maestría Rubí #3
+                        Experimento Éxito
                       </div>
                     )}
 
@@ -3570,21 +3570,21 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-red-400 via-rose-500 to-pink-600">
-                              <Gem className="w-7 h-7 text-white" />
+                              <span className="text-3xl">🧪</span>
                             </div>
                             
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-red-700 truncate">
-                                Maestría Rubí #3
+                                Experimento Éxito
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                5750 puntos
+                                Nivel 5750
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            Has alcanzado el nivel 5,750. Tu excelencia financiera brilla intensamente.
+                            Lo que probaste ya funciona y aporta.
                           </p>
                         </div>
                       </Card>
@@ -3634,7 +3634,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-cyan-300 animate-ping opacity-30" />
                         )}
-                        <Gem className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-4xl">🧱</span>
                       </div>
                     </button>
                     
@@ -3648,7 +3648,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Maestría Diamante 5000 #1
+                        Muro Construido
                       </div>
                     )}
 
@@ -3675,20 +3675,20 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-cyan-300 via-blue-400 to-indigo-500">
-                              <Gem className="w-7 h-7 text-white" />
+                              <span className="text-3xl">🧱</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-cyan-700 truncate">
-                                Insignia de Maestría Diamante #1
+                                Muro Construido
                               </h3>
                               <p className="text-[10px] text-muted-foreground">
-                                5000 puntos
+                                Nivel 5000
                               </p>
                             </div>
                           </div>
                           
                           <p className="text-xs text-foreground/80 leading-relaxed">
-                            ¡Máximo nivel alcanzado! Has completado el viaje de educación financiera.
+                            Ya no eres parte del muro, eres el muro que todos reconocen.
                           </p>
                         </div>
                       </Card>
