@@ -76,20 +76,6 @@ export default function LiquidityGaugeWidget({
             <p className="text-[9px] text-muted-foreground">meses</p>
             <p className="text-[7px] text-gray-500">(balance ÷ gasto)</p>
           </div>
-          
-          {/* Indicador de animación con pulso */}
-          <div 
-            className="absolute rounded-full animate-pulse"
-            style={{
-              width: '8px',
-              height: '8px',
-              backgroundColor: gaugeColor,
-              top: '85%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              boxShadow: `0 0 12px ${gaugeColor}`
-            }}
-          />
         </div>
 
         <div className="grid grid-cols-2 gap-2">
