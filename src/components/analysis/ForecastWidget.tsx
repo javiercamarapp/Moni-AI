@@ -29,26 +29,26 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA 
   const displayData = timeframe === '3' ? forecastData.slice(0, 3) : forecastData;
 
   return (
-    <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 transition-all">
-      <div className="space-y-3">
+    <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 transition-all">
+      <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-emerald-600" />
-            <p className="text-sm font-bold text-foreground">📊 Proyecciones con Escenarios</p>
+          <div className="flex items-center gap-1.5">
+            <TrendingUp className="h-3.5 w-3.5 text-emerald-600" />
+            <p className="text-xs font-bold text-foreground">📊 Proyecciones</p>
           </div>
           <Tabs value={timeframe} onValueChange={(v) => setTimeframe(v as '3' | '6')}>
-            <TabsList className="h-7 bg-muted">
-              <TabsTrigger value="3" className="text-[10px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2">
+            <TabsList className="h-6 bg-muted">
+              <TabsTrigger value="3" className="text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2 py-0.5">
                 3M
               </TabsTrigger>
-              <TabsTrigger value="6" className="text-[10px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2">
+              <TabsTrigger value="6" className="text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-2 py-0.5">
                 6M
               </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
 
-        <div className="h-48">
+        <div className="h-32">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={displayData}>
               <defs>
@@ -69,18 +69,18 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA 
               <XAxis 
                 dataKey="month" 
                 stroke="rgba(0,0,0,0.3)"
-                tick={{ fill: 'rgba(0,0,0,0.6)', fontSize: 10 }}
+                tick={{ fill: 'rgba(0,0,0,0.6)', fontSize: 8 }}
               />
               <YAxis 
                 stroke="rgba(0,0,0,0.3)"
-                tick={{ fill: 'rgba(0,0,0,0.6)', fontSize: 10 }}
+                tick={{ fill: 'rgba(0,0,0,0.6)', fontSize: 8 }}
               />
               <Tooltip
                 contentStyle={{ 
                   backgroundColor: 'white', 
                   border: '1px solid rgba(0,0,0,0.1)', 
                   borderRadius: '8px',
-                  fontSize: '11px'
+                  fontSize: '9px'
                 }}
               />
               <Area 
@@ -108,36 +108,36 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA 
           </ResponsiveContainer>
         </div>
 
-        <div className="grid grid-cols-3 gap-2">
-          <div className="bg-amber-50 rounded-lg p-2 border border-amber-200">
-            <p className="text-[10px] text-amber-700 font-medium">Conservador</p>
-            <p className="text-sm font-bold text-amber-900 break-words">
-              ${(displayData[displayData.length - 1]?.conservative || 0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+        <div className="grid grid-cols-3 gap-1.5">
+          <div className="bg-amber-50 rounded-lg p-1.5 border border-amber-200">
+            <p className="text-[8px] text-amber-700 font-medium">Conserv.</p>
+            <p className="text-[11px] font-bold text-amber-900 leading-tight">
+              ${Math.round((displayData[displayData.length - 1]?.conservative || 0) / 1000)}k
             </p>
           </div>
-          <div className="bg-purple-50 rounded-lg p-2 border border-purple-200">
-            <p className="text-[10px] text-purple-700 font-medium">Realista</p>
-            <p className="text-sm font-bold text-purple-900 break-words">
-              ${(displayData[displayData.length - 1]?.realistic || 0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+          <div className="bg-purple-50 rounded-lg p-1.5 border border-purple-200">
+            <p className="text-[8px] text-purple-700 font-medium">Realista</p>
+            <p className="text-[11px] font-bold text-purple-900 leading-tight">
+              ${Math.round((displayData[displayData.length - 1]?.realistic || 0) / 1000)}k
             </p>
           </div>
-          <div className="bg-emerald-50 rounded-lg p-2 border border-emerald-200">
-            <p className="text-[10px] text-emerald-700 font-medium">Óptimo</p>
-            <p className="text-sm font-bold text-emerald-900 break-words">
-              ${(displayData[displayData.length - 1]?.optimistic || 0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+          <div className="bg-emerald-50 rounded-lg p-1.5 border border-emerald-200">
+            <p className="text-[8px] text-emerald-700 font-medium">Óptimo</p>
+            <p className="text-[11px] font-bold text-emerald-900 leading-tight">
+              ${Math.round((displayData[displayData.length - 1]?.optimistic || 0) / 1000)}k
             </p>
           </div>
         </div>
 
-        <div className="bg-purple-50 rounded-lg p-3 border border-purple-200">
+        <div className="bg-purple-50 rounded-lg p-2 border border-purple-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] text-purple-700 font-medium">Probabilidad meta</p>
-              <p className="text-lg font-bold text-purple-900">{goalProbability}%</p>
+              <p className="text-[8px] text-purple-700 font-medium">Prob. meta</p>
+              <p className="text-sm font-bold text-purple-900">{goalProbability}%</p>
             </div>
             <div className="text-right">
-              <p className="text-[10px] text-purple-700 font-medium">ETA estimado</p>
-              <p className="text-sm font-bold text-purple-900">{goalETA}</p>
+              <p className="text-[8px] text-purple-700 font-medium">ETA</p>
+              <p className="text-[11px] font-bold text-purple-900">{goalETA}</p>
             </div>
           </div>
         </div>
