@@ -2523,6 +2523,106 @@ export default function FinancialJourney() {
               );
             })()}
 
+            {/* Maestría Oro #2 - Nivel 6000 */}
+            {(() => {
+              const level6000 = 6000;
+              const nodeIndex = level6000 / 50;
+              const badgeY = 40 + (nodeIndex * 35) - 40;
+              const badgeX = 75;
+              const isUnlocked = currentLevel >= level6000;
+              
+              return (
+                <div
+                  className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  style={{
+                    top: `${badgeY}px`,
+                    left: `${badgeX}%`,
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: expandedBadge === 'goldmastery6000' ? 100 : 20
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-0.5 relative">
+                    <button
+                      onClick={() => {
+                        if (isUnlocked) {
+                          setExpandedBadge(expandedBadge === 'goldmastery6000' ? null : 'goldmastery6000');
+                          setExpandedNode(null);
+                        }
+                      }}
+                      disabled={!isUnlocked}
+                      className="focus:outline-none relative"
+                    >
+                      <div
+                        className={`
+                          relative w-12 h-12 rounded-full flex items-center justify-center
+                          transition-all duration-300 border-2 border-white cursor-pointer
+                          bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500 shadow-xl
+                          ${isUnlocked ? 'shadow-xl hover:scale-110 animate-pulse' : 'grayscale cursor-not-allowed opacity-50'}
+                        `}
+                      >
+                        {isUnlocked && (
+                          <div className="absolute inset-0 rounded-full bg-amber-500 animate-ping opacity-30" />
+                        )}
+                        <Trophy className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                      </div>
+                    </button>
+                    
+                    {/* Tooltip al hacer hover */}
+                    <div 
+                      className={`
+                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                        transition-opacity duration-200 bg-yellow-100 text-amber-700
+                        shadow-md z-30
+                      `}
+                    >
+                      Maestría Oro #2
+                    </div>
+
+                    {/* Card de descripción expandida */}
+                    {expandedBadge === 'goldmastery6000' && isUnlocked && (
+                      <Card 
+                        className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
+                          border-0 w-64 max-w-[calc(100vw-40px)] animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
+                        style={{
+                          top: '0'
+                        }}
+                      >
+                        <GlowingEffect disabled={false} spread={20} />
+                        <div className="relative p-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedBadge(null);
+                            }}
+                            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors z-10"
+                          >
+                            ✕
+                          </button>
+                          
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500 flex items-center justify-center shrink-0">
+                              <Trophy className="w-5 h-5 text-white" />
+                            </div>
+                            <h3 className="text-base font-bold text-gray-900">Maestría Oro #2</h3>
+                          </div>
+                          
+                          <p className="text-xs text-gray-600 mb-2 leading-relaxed">
+                            Has alcanzado el nivel 6,000. Tu excelencia financiera alcanza dimensiones doradas.
+                          </p>
+                          
+                          <div className="flex items-center gap-1.5 text-[10px] font-medium text-amber-700 bg-yellow-50 px-2 py-1 rounded-full w-fit">
+                            <Trophy className="w-3 h-3" />
+                            <span>Nivel 6,000</span>
+                          </div>
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Maestría Rubí #3 - Nivel 5750 */}
             {(() => {
               const level5750 = 5750;
