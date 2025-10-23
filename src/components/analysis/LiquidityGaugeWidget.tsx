@@ -4,17 +4,17 @@ import { Droplets } from "lucide-react";
 
 interface LiquidityGaugeWidgetProps {
   months: number;
-  currentBalance: number;
+  liquidAssets: number;
   monthlyExpenses: number;
 }
 
 export default function LiquidityGaugeWidget({ 
   months, 
-  currentBalance, 
+  liquidAssets, 
   monthlyExpenses 
 }: LiquidityGaugeWidgetProps) {
   const validMonths = months && !isNaN(months) ? Math.max(0, months) : 0;
-  const validBalance = currentBalance && !isNaN(currentBalance) ? currentBalance : 0;
+  const validLiquidAssets = liquidAssets && !isNaN(liquidAssets) ? liquidAssets : 0;
   const validExpenses = monthlyExpenses && !isNaN(monthlyExpenses) && monthlyExpenses > 0 ? monthlyExpenses : 0;
 
   const maxMonths = 6;
@@ -104,8 +104,9 @@ export default function LiquidityGaugeWidget({
 
         <div className="grid grid-cols-2 gap-2">
           <div className="bg-blue-50 rounded-lg p-1.5 border border-blue-200">
-            <p className="text-[8px] text-blue-700 font-medium">Balance</p>
-            <p className="text-[11px] font-bold text-blue-900">${(validBalance / 1000).toFixed(1)}k</p>
+            <p className="text-[8px] text-blue-700 font-medium">Liquidez</p>
+            <p className="text-[11px] font-bold text-blue-900">${(validLiquidAssets / 1000).toFixed(1)}k</p>
+            <p className="text-[7px] text-gray-500">(efectivo disponible)</p>
           </div>
           <div className="bg-purple-50 rounded-lg p-1.5 border border-purple-200">
             <p className="text-[8px] text-purple-700 font-medium">Gasto/mes</p>
@@ -126,7 +127,7 @@ export default function LiquidityGaugeWidget({
           <div className="bg-yellow-50 rounded-lg p-2 border border-yellow-200">
             <p className="text-[8px] text-yellow-700 font-semibold">{statusIcon} Situación Regular</p>
             <p className="text-[9px] text-yellow-900">
-              Tienes ${(validMonths * validExpenses).toLocaleString('es-MX')}. Te faltan ${((3 - validMonths) * validExpenses).toLocaleString('es-MX')} para estar saludable
+              Tienes ${(validLiquidAssets).toLocaleString('es-MX')}. Te faltan ${((3 * validExpenses) - validLiquidAssets).toLocaleString('es-MX')} para estar saludable
             </p>
             <p className="text-[7px] text-gray-500 mt-0.5">(meta: 3 meses mínimo)</p>
           </div>

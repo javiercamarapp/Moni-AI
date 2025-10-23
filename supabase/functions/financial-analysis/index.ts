@@ -202,6 +202,49 @@ Ejemplo formato:
     }
 
     // 1. LIQUIDEZ Y ESTABILIDAD
+    
+    // Obtener activos líquidos del usuario
+    const { data: assets } = await supabase
+      .from('assets')
+      .select('*')
+      .eq('user_id', userId);
+    
+    // Función para determinar si un activo es líquido
+    const isLiquidAsset = (category: string, name?: string) => {
+      const cat = category.toLowerCase();
+      const accountName = name?.toLowerCase() || '';
+      
+      // Activos NO líquidos (tienen prioridad en la exclusión)
+      const illiquidKeywords = [
+        'retirement', 'pension', 'retiro', 'pensión', '401k', 'ira', 'roth',
+        'property', 'real estate', 'propiedad', 'inmueble', 'edificio',
+        'machinery', 'maquinaria', 'equipment', 'equipo',
+        'certificate', 'certificado', 'cd',
+        'annuity', 'anualidad', 'plan', 'jubilación', 'jubilacion'
+      ];
+      
+      const hasIlliquidKeyword = illiquidKeywords.some(keyword => 
+        cat.includes(keyword) || accountName.includes(keyword)
+      );
+      
+      if (hasIlliquidKeyword) return false;
+      
+      // Activos líquidos: efectivo, depósitos bancarios, valores negociables, fondos
+      const liquidKeywords = [
+        'cash', 'efectivo', 'dinero',
+        'checking', 'corriente', 'cuenta corriente',
+        'saving', 'ahorro', 'cuenta de ahorro',
+        'money market', 'mercado de dinero',
+        'deposit', 'depósito', 'depósito a la vista'
+      ];
+      
+      return liquidKeywords.some(keyword => cat.includes(keyword));
+    };
+    
+    // Calcular liquidez total (solo activos líquidos)
+    const totalLiquidAssets = assets?.filter(a => isLiquidAsset(a.category, a.name))
+      .reduce((sum, a) => sum + Number(a.value), 0) || 0;
+    
     const totalIncome = transactions
       .filter(t => t.type === 'income' || t.type === 'ingreso')
       .reduce((sum, t) => sum + Number(t.amount), 0);
@@ -213,13 +256,12 @@ Ejemplo formato:
     const balance = totalIncome - totalExpenses;
     const savingsRate = totalIncome > 0 ? ((balance / totalIncome) * 100) : 0;
     
-    // Liquidez inmediata (meses que puedes vivir sin ingresos)
+    // Liquidez inmediata (meses que puedes vivir con tus activos líquidos)
     const monthlyExpenses = totalExpenses;
-    const liquidityMonths = monthlyExpenses > 0 ? (balance / monthlyExpenses) : 0;
+    const liquidityMonths = monthlyExpenses > 0 ? (totalLiquidAssets / monthlyExpenses) : 0;
     
     // Coeficiente de liquidez (activos líquidos / pasivos corto plazo)
-    // Asumimos balance como activos líquidos y gastos mensuales como pasivos
-    const liquidityCoefficient = monthlyExpenses > 0 ? (balance / monthlyExpenses) : 0;
+    const liquidityCoefficient = monthlyExpenses > 0 ? (totalLiquidAssets / monthlyExpenses) : 0;
     
     // Cash Flow acumulado
     const cashFlowAccumulated = balance;
@@ -414,6 +456,7 @@ Ejemplo formato:
       totalIncome,
       totalExpenses,
       balance,
+      totalLiquidAssets: Math.round(totalLiquidAssets),
       savingsRate: Math.round(savingsRate * 100) / 100,
       liquidityMonths: Math.round(liquidityMonths * 100) / 100,
       liquidityCoefficient: Math.round(liquidityCoefficient * 100) / 100,

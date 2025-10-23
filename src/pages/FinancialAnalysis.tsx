@@ -1155,7 +1155,7 @@ export default function FinancialAnalysis() {
               
               <LiquidityGaugeWidget 
                 months={analysis?.metrics?.liquidityMonths || 0}
-                currentBalance={analysis?.metrics?.balance ?? 0}
+                liquidAssets={analysis?.metrics?.totalLiquidAssets ?? 0}
                 monthlyExpenses={analysis?.metrics?.totalExpenses ?? 0}
               />
             </div>
