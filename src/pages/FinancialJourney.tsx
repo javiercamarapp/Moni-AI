@@ -3323,6 +3323,106 @@ export default function FinancialJourney() {
               );
             })()}
 
+            {/* Maestro 👑 - Nivel 8000 */}
+            {(() => {
+              const level8000 = 8000;
+              const nodeIndex = level8000 / 50;
+              const badgeY = 40 + (nodeIndex * 35) - 25;
+              const badgeX = 85;
+              const isUnlocked = currentLevel >= level8000;
+              
+              return (
+                <div
+                  className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  style={{
+                    top: `${badgeY}px`,
+                    left: `${badgeX}%`,
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: expandedBadge === 'maestro8000' ? 100 : 20
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-0.5 relative">
+                    <button
+                      onClick={() => {
+                        if (isUnlocked) {
+                          setExpandedBadge(expandedBadge === 'maestro8000' ? null : 'maestro8000');
+                          setExpandedNode(null);
+                        }
+                      }}
+                      disabled={!isUnlocked}
+                      className="focus:outline-none relative"
+                    >
+                      <div
+                        className={`
+                          relative w-12 h-12 rounded-full flex items-center justify-center
+                          transition-all duration-300 border-2 border-yellow-300 cursor-pointer
+                          bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500 shadow-2xl
+                          ${isUnlocked ? 'shadow-2xl hover:scale-110 animate-pulse' : 'grayscale cursor-not-allowed opacity-50'}
+                        `}
+                      >
+                        {isUnlocked && (
+                          <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-30" />
+                        )}
+                        <Crown className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                      </div>
+                    </button>
+                    
+                    {/* Tooltip al hacer hover */}
+                    <div 
+                      className={`
+                        absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                        text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                        transition-opacity duration-200 bg-yellow-100 text-amber-800
+                        shadow-md z-30
+                      `}
+                    >
+                      Maestro 👑
+                    </div>
+
+                    {/* Card de descripción expandida */}
+                    {expandedBadge === 'maestro8000' && isUnlocked && (
+                      <Card 
+                        className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
+                          border-0 w-64 max-w-[calc(100vw-40px)] animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
+                        style={{
+                          top: '0'
+                        }}
+                      >
+                        <GlowingEffect disabled={false} spread={20} />
+                        <div className="relative p-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedBadge(null);
+                            }}
+                            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors z-10"
+                          >
+                            ✕
+                          </button>
+                          
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500 flex items-center justify-center shrink-0">
+                              <Crown className="w-5 h-5 text-white" />
+                            </div>
+                            <h3 className="text-base font-bold text-gray-900">Maestro 👑</h3>
+                          </div>
+                          
+                          <p className="text-xs text-gray-600 mb-2 leading-relaxed">
+                            Has alcanzado el nivel 8,000. Eres un verdadero maestro de las finanzas, coronado por tu excelencia.
+                          </p>
+                          
+                          <div className="flex items-center gap-1.5 text-[10px] font-medium text-amber-800 bg-yellow-50 px-2 py-1 rounded-full w-fit">
+                            <Crown className="w-3 h-3" />
+                            <span>Nivel 8,000</span>
+                          </div>
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Maestría Rubí #3 - Nivel 5750 */}
             {(() => {
               const level5750 = 5750;
