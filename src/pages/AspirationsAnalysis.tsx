@@ -702,77 +702,77 @@ export default function AspirationsAnalysis() {
         </Card>
 
         {/* Badges and Score Section */}
-        <Card className="p-6 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="bg-gradient-to-br from-yellow-500 to-orange-500 p-2 rounded-full">
-                <Award className="h-5 w-5 text-white" />
+        <Card className="p-2 mb-4 bg-white/95 backdrop-blur-sm rounded-[12px] shadow-xl border-0">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-1.5">
+              <div className="bg-gradient-to-br from-yellow-500 to-orange-500 p-1 rounded-full">
+                <Award className="h-3 w-3 text-white" />
               </div>
-              <h3 className="text-lg font-bold text-foreground">Tus Logros</h3>
+              <h3 className="text-xs font-bold text-foreground">Tus Logros</h3>
             </div>
             <div className="flex flex-col items-end">
-              <p className="text-xs text-muted-foreground">Score Moni</p>
-              <div className="flex items-center gap-1">
-                <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                <p className="text-2xl font-bold text-foreground">{userScore}</p>
+              <p className="text-[8px] text-muted-foreground">Score Moni</p>
+              <div className="flex items-center gap-0.5">
+                <Star className="h-2.5 w-2.5 text-yellow-500 fill-yellow-500" />
+                <p className="text-sm font-bold text-foreground">{userScore}</p>
               </div>
             </div>
           </div>
 
           {/* Badges Carousel */}
           {badges.length > 0 ? (
-            <Carousel className="w-full max-w-xl mx-auto">
+            <Carousel className="w-full max-w-md mx-auto">
               <CarouselContent>
                 {badges.map((badge, index) => {
                   const IconComponent = badge.icon;
                   return (
-                    <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                    <CarouselItem key={index} className="basis-1/2 md:basis-1/3">
                       <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: index * 0.05 }}
-                        className={`bg-gradient-to-br ${badge.color} rounded-[20px] p-6 flex flex-col items-center gap-3 shadow-2xl relative overflow-hidden`}
+                        className={`bg-gradient-to-br ${badge.color} rounded-[10px] p-2 flex flex-col items-center gap-1 shadow-lg relative overflow-hidden`}
                       >
                         {/* Efecto de brillo de fondo */}
                         <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
                         
-                        <div className="bg-white/30 p-4 rounded-full backdrop-blur-sm relative z-10 shadow-lg">
-                          <IconComponent className="h-8 w-8 text-white" />
+                        <div className="bg-white/30 p-1.5 rounded-full backdrop-blur-sm relative z-10 shadow-md">
+                          <IconComponent className="h-4 w-4 text-white" />
                         </div>
                         <div className="text-center relative z-10">
-                          <p className="text-sm font-bold text-white leading-tight mb-1 drop-shadow-lg">
+                          <p className="text-[9px] font-bold text-white leading-tight mb-0.5 drop-shadow-lg">
                             {badge.name}
                           </p>
-                          <p className="text-xs text-white/90 leading-tight drop-shadow">
+                          <p className="text-[7px] text-white/90 leading-tight drop-shadow">
                             {badge.description}
                           </p>
                         </div>
-                        <div className="bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm relative z-10">
-                          <p className="text-xs text-white font-semibold">✓ DESBLOQUEADO</p>
+                        <div className="bg-white/20 px-1.5 py-0.5 rounded-full backdrop-blur-sm relative z-10">
+                          <p className="text-[7px] text-white font-semibold">✓ DESBLOQUEADO</p>
                         </div>
                       </motion.div>
                     </CarouselItem>
                   );
                 })}
               </CarouselContent>
-              <CarouselPrevious className="hidden sm:flex" />
-              <CarouselNext className="hidden sm:flex" />
+              <CarouselPrevious className="hidden sm:flex h-6 w-6" />
+              <CarouselNext className="hidden sm:flex h-6 w-6" />
             </Carousel>
           ) : (
-            <div className="text-center py-8">
-              <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-50" />
-              <p className="text-sm text-muted-foreground">
+            <div className="text-center py-3">
+              <Trophy className="h-6 w-6 text-muted-foreground mx-auto mb-1.5 opacity-50" />
+              <p className="text-[9px] text-muted-foreground">
                 Aún no has desbloqueado insignias.
               </p>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-[8px] text-muted-foreground mt-0.5">
                 ¡Sigue avanzando para desbloquear tu primera insignia en el nivel 250!
               </p>
             </div>
           )}
 
           {/* Progress Info */}
-          <div className="mt-4 pt-4 border-t border-slate-200">
-            <p className="text-xs text-muted-foreground text-center">
+          <div className="mt-2 pt-2 border-t border-slate-200">
+            <p className="text-[8px] text-muted-foreground text-center">
               <span className="font-semibold">¡Sigue así!</span> Has desbloqueado {badges.length} insignia{badges.length !== 1 ? 's' : ''}
             </p>
           </div>
