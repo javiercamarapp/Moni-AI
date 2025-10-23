@@ -638,15 +638,8 @@ export default function FinancialAnalysis() {
             </Tabs>
           </div>
 
-          {/* Show AI Analysis Loader in content area while loading */}
-          {loading ? (
-            <div className="py-12">
-              <AIAnalysisLoader />
-            </div>
-          ) : (
-            <>
-              {/* Mostrar métricas instantáneas (siempre disponibles del caché) */}
-              {(quickMetrics || analysis) ? (
+          {/* Mostrar métricas instantáneas (siempre disponibles del caché) */}
+          {(quickMetrics || analysis) ? (
           <>
             {/* Animated Income & Expense Card */}
             <Card 
@@ -1190,8 +1183,6 @@ export default function FinancialAnalysis() {
           <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center">
             <p className="text-muted-foreground">No hay datos disponibles para mostrar</p>
           </Card>
-        )}
-        </>
         )}
         </div>
       </div>
