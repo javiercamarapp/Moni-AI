@@ -541,7 +541,7 @@ export default function EditAspirations() {
             <Button
               onClick={handleSave}
               disabled={!isComplete || isSaving}
-              className="w-full h-12 rounded-[20px] shadow-xl text-base font-bold"
+              className="w-full h-12 bg-white rounded-[20px] shadow-xl border border-blue-100 text-foreground hover:bg-gray-50 text-base font-bold hover:scale-[1.02] transition-all disabled:opacity-50 disabled:hover:scale-100"
               size="lg"
             >
               <Save className="mr-2 h-5 w-5" />
