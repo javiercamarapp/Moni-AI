@@ -310,22 +310,20 @@ export default function FinancialJourney() {
       </div>
 
       {/* Zona desplazable de niveles - con altura fija */}
-      <div className="flex-1 overflow-y-auto" style={{ marginTop: '180px' }}>
-        <div className="container mx-auto px-4 max-w-2xl">
-          <div className="relative w-full pb-4 pt-2" style={{ minHeight: '7500px' }}>
-          {/* 9 Secciones de fondo */}
-          <div className="absolute inset-0 w-full h-full pointer-events-none">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((section) => (
-              <div
-                key={`section-${section}`}
-                className="w-full h-[800px] relative pointer-events-none"
-                style={{
-                  backgroundImage: section === 1 ? `url(${spaceBackground})` : undefined,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundColor: section === 1 ? 'transparent' : (section % 2 === 0 ? 'rgba(240, 253, 244, 0.3)' : 'rgba(239, 246, 255, 0.3)')
-                }}
-              >
+      <div className="flex-1 overflow-y-auto relative" style={{ marginTop: '180px' }}>
+        {/* 9 Secciones de fondo - Full Width */}
+        <div className="absolute left-0 right-0 w-screen h-full pointer-events-none" style={{ minHeight: '7500px', marginLeft: 'calc(50% - 50vw)' }}>
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((section) => (
+            <div
+              key={`section-${section}`}
+              className="w-full h-[800px] relative pointer-events-none"
+              style={{
+                backgroundImage: section === 1 ? `url(${spaceBackground})` : undefined,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundColor: section === 1 ? 'transparent' : (section % 2 === 0 ? 'rgba(240, 253, 244, 0.3)' : 'rgba(239, 246, 255, 0.3)')
+              }}
+            >
                 {/* Para video de fondo, descomenta esto:
                 <video
                   className="absolute inset-0 w-full h-full object-cover"
@@ -341,6 +339,8 @@ export default function FinancialJourney() {
             ))}
           </div>
 
+        <div className="container mx-auto px-4 max-w-2xl">
+          <div className="relative w-full pb-4 pt-2" style={{ minHeight: '7500px' }}>
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
             <defs>
               <linearGradient id="electricGreen" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -3773,8 +3773,8 @@ export default function FinancialJourney() {
             ))}
           </div>
         </div>
+        </div>
       </div>
-    </div>
     </div>
   );
 }
