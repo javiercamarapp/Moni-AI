@@ -298,22 +298,30 @@ export default function FinancialJourney() {
                 Tu deseo, tu realidad
               </h1>
               
-              {/* Net Worth Objetivo */}
-              <div className="mt-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p className="text-xs text-foreground/60 mb-0.5">Net Worth objetivo:</p>
-                    <p className="text-lg font-bold text-green-600">
-                      ${totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                    </p>
+              {/* Net Worth */}
+              <div className="mt-2 p-2 bg-muted/50 rounded-lg border border-border">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex-1 space-y-1">
+                    <div className="flex items-baseline gap-2">
+                      <p className="text-[10px] text-muted-foreground">Actual:</p>
+                      <p className="text-sm font-semibold text-foreground">
+                        ${currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      </p>
+                    </div>
+                    <div className="flex items-baseline gap-2">
+                      <p className="text-[10px] text-muted-foreground">Objetivo:</p>
+                      <p className="text-sm font-semibold text-primary">
+                        ${totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      </p>
+                    </div>
                   </div>
                   <Button
                     onClick={() => navigate("/edit-aspirations")}
-                    variant="outline"
+                    variant="ghost"
                     size="sm"
-                    className="text-xs px-3 py-1 h-8 bg-white hover:bg-green-50 border-green-300 text-green-700 hover:text-green-800"
+                    className="h-7 px-2"
                   >
-                    Modificar
+                    <Edit className="h-3 w-3" />
                   </Button>
                 </div>
               </div>
