@@ -8,6 +8,7 @@ import { useNetWorth } from "@/hooks/useNetWorth";
 import { Progress } from "@/components/ui/progress";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import EarthPlanet3D from "@/components/EarthPlanet3D";
+import spaceBackground from "@/assets/space-background.jpg";
 
 interface JourneyNode {
   id: number;
@@ -319,11 +320,10 @@ export default function FinancialJourney() {
                 key={`section-${section}`}
                 className="w-full h-[800px] relative pointer-events-none"
                 style={{
-                  // Aquí puedes agregar imágenes o videos de fondo
-                  // backgroundImage: `url('/path-to-image-${section}.jpg')`,
-                  // backgroundSize: 'cover',
-                  // backgroundPosition: 'center',
-                  backgroundColor: section % 2 === 0 ? 'rgba(240, 253, 244, 0.3)' : 'rgba(239, 246, 255, 0.3)'
+                  backgroundImage: section === 1 ? `url(${spaceBackground})` : undefined,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundColor: section === 1 ? 'transparent' : (section % 2 === 0 ? 'rgba(240, 253, 244, 0.3)' : 'rgba(239, 246, 255, 0.3)')
                 }}
               >
                 {/* Para video de fondo, descomenta esto:
