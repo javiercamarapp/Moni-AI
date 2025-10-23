@@ -500,11 +500,23 @@ export default function AspirationsAnalysis() {
                   <h4 className="font-bold text-foreground text-[10px] whitespace-nowrap">{item.category}</h4>
                   <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
                     <motion.div 
-                      className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full"
+                      className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full relative overflow-hidden"
                       initial={{ width: "0%" }}
                       animate={{ width: `${Math.min(100 - parseFloat(String(item.gapPercentage)), 100)}%` }}
                       transition={{ delay: index * 0.1 + 0.2, duration: 1, ease: "easeOut" }}
-                    />
+                    >
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                        initial={{ x: "-100%" }}
+                        animate={{ x: "200%" }}
+                        transition={{ 
+                          delay: index * 0.1 + 0.2,
+                          duration: 1.2, 
+                          ease: "easeInOut",
+                          repeat: 0
+                        }}
+                      />
+                    </motion.div>
                   </div>
                   <motion.span 
                     className="text-[7px] font-semibold text-emerald-600 whitespace-nowrap"
