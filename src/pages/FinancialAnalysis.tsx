@@ -28,9 +28,11 @@ import CategoryBreakdownWidget from "@/components/analysis/CategoryBreakdownWidg
 import FinancialHealthPieWidget from "@/components/analysis/FinancialHealthPieWidget";
 import LiquidityGaugeWidget from "@/components/analysis/LiquidityGaugeWidget";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import { AIAnalysisLoader } from "@/components/AIAnalysisLoader";
+
 export default function FinancialAnalysis() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Start with true to show loader initially
   const [period, setPeriod] = useState("month");
   const [user, setUser] = useState<any>(null);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
@@ -547,13 +549,14 @@ export default function FinancialAnalysis() {
     const cachedTime = localStorage.getItem(cacheTimeKey);
     const now = Date.now();
     
-    // Si hay caché válido, usarlo inmediatamente (sin loading)
+    // Si hay caché válido, usarlo inmediatamente y ocultar loader
     if (cachedTime && (now - parseInt(cachedTime)) < 5 * 60 * 1000) {
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
         try {
           const data = JSON.parse(cached);
           setAnalysis(data);
+          setLoading(false); // Hide loader when cache is loaded
           console.log('✅ Using cached analysis data');
           return;
         } catch (e) {
@@ -562,9 +565,10 @@ export default function FinancialAnalysis() {
       }
     }
     
-    // NO mostrar loading para no bloquear la UI - actualizar en background
+    // Mostrar loading mientras carga
+    setLoading(true);
     try {
-      console.log('🔄 Actualizando análisis en background para:', { userId: user.id, period });
+      console.log('🔄 Cargando análisis para:', { userId: user.id, period });
       const {
         data,
         error
@@ -596,16 +600,21 @@ export default function FinancialAnalysis() {
       }
     } catch (error: any) {
       console.error("Error loading analysis:", error);
-      // No mostrar toast si tenemos datos en caché
-      if (!analysis?.forecast) {
-        toast.error(`No se pudo cargar el análisis`);
-      }
+      toast.error(`No se pudo cargar el análisis`);
+    } finally {
+      setLoading(false); // Hide loader when done
     }
   };
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-24">
-      <div className="mx-4 space-y-4">
+    <>
+      {/* Show AI Analysis Loader while loading */}
+      {loading && <AIAnalysisLoader />}
+      
+      {/* Main content - hide while loading */}
+      {!loading && (
+        <div className="min-h-screen animated-wave-bg pb-24">
+          <div className="mx-4 space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between pt-4 mb-4">
           <div>
@@ -1180,9 +1189,11 @@ export default function FinancialAnalysis() {
             <p className="text-muted-foreground">No hay datos disponibles para mostrar</p>
           </Card>
         )}
+        </div>
+        
+        <BottomNav />
       </div>
-      
-      <BottomNav />
-    </div>
+      )}
+    </>
   );
 }
