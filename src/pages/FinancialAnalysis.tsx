@@ -845,38 +845,38 @@ export default function FinancialAnalysis() {
 
                 <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/70">Ahorro</span>
-                    <PiggyBank className="h-3 w-3 text-purple-400" />
+                    <span className="text-xs text-muted-foreground">Ahorro</span>
+                    <PiggyBank className="h-3 w-3 text-purple-500" />
                   </div>
-                  <p className="text-lg font-bold text-purple-300">{analysis?.metrics?.savingsRate ?? 0}%</p>
-                  <p className="text-[10px] text-white/60">
+                  <p className="text-lg font-bold text-purple-600">{analysis?.metrics?.savingsRate ?? 0}%</p>
+                  <p className="text-[10px] text-muted-foreground">
                     meta: {(analysis?.metrics?.liquidityMonths ?? 0) >= 3 ? '22%' : '20%'} 
                     {(analysis?.metrics?.savingsRate ?? 0) >= 20 && ' 🎯'}
                   </p>
                 </Card>
 
-                <Card className={`p-3 card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200 ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'bg-gradient-to-br from-emerald-600/90 to-emerald-800/90' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'bg-gradient-to-br from-yellow-600/90 to-yellow-800/90' : 'bg-gradient-to-br from-red-600/90 to-red-800/90'}`}>
+                <Card className={`p-3 bg-white rounded-[20px] shadow-xl border cursor-pointer hover:scale-105 transition-transform duration-200 ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'border-emerald-200 bg-emerald-50/50' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'border-yellow-200 bg-yellow-50/50' : 'border-red-200 bg-red-50/50'}`}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/70">Liquidez</span>
-                    <Droplets className={`h-3 w-3 ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'text-emerald-400' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'text-yellow-400' : 'text-red-400'}`} />
+                    <span className="text-xs text-muted-foreground">Liquidez</span>
+                    <Droplets className={`h-3 w-3 ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'text-emerald-600' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'text-yellow-600' : 'text-red-600'}`} />
                   </div>
-                  <p className={`text-lg font-bold ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'text-emerald-300' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'text-yellow-300' : 'text-red-300'}`}>
+                  <p className={`text-lg font-bold ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'text-emerald-700' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'text-yellow-700' : 'text-red-700'}`}>
                     {(analysis?.metrics?.liquidityMonths || 0).toFixed(1)} m
                   </p>
-                  <p className="text-[10px] text-white/60">
+                  <p className="text-[10px] text-muted-foreground">
                     {(analysis?.metrics?.liquidityMonths || 0) >= 3 ? '✅ Seguro' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? '⚠️ Regular' : '🚨 Crítico'}
                   </p>
                 </Card>
 
-                <Card className="p-3 bg-gradient-card card-glow border-white/20 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/70">Cash Flow</span>
-                    <TrendingUp className="h-3 w-3 text-teal-400" />
+                    <span className="text-xs text-muted-foreground">Cash Flow</span>
+                    <TrendingUp className="h-3 w-3 text-teal-500" />
                   </div>
-                  <p className="text-lg font-bold text-teal-300">
+                  <p className="text-lg font-bold text-teal-600">
                     ${formatK(analysis?.metrics?.cashFlowAccumulated)}k
                   </p>
-                  <Button variant="ghost" size="sm" className="text-[10px] text-white/60 hover:text-white p-0 h-auto hover-lift">
+                  <Button variant="ghost" size="sm" className="text-[10px] text-muted-foreground hover:text-foreground p-0 h-auto">
                     ver por semana →
                   </Button>
                 </Card>
