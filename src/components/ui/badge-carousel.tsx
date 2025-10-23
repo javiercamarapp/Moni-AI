@@ -149,7 +149,7 @@ export const BadgeCard = ({
     <>
       <AnimatePresence>
         {isExpanded && (
-          <div className="fixed inset-0 h-screen overflow-hidden z-[99999]">
+          <div className="fixed inset-0 h-screen overflow-hidden" style={{ zIndex: 999999 }}>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -163,7 +163,8 @@ export const BadgeCard = ({
               exit={{ opacity: 0, y: -50 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               ref={containerRef}
-              className="absolute top-4 left-1/2 transform -translate-x-1/2 w-[90%] max-w-md z-[100000]"
+              className="absolute top-4 left-1/2 transform -translate-x-1/2 w-[90%] max-w-md"
+              style={{ zIndex: 1000000 }}
             >
               <div className="bg-gradient-to-b from-gray-50 to-white rounded-[28px] shadow-2xl p-6 relative border border-gray-200">
                 <button
