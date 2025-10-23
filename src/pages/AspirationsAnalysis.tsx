@@ -485,14 +485,14 @@ export default function AspirationsAnalysis() {
           <h3 className="text-sm sm:text-base font-bold text-foreground mb-3 sm:mb-4">Comparativa Actual vs Aspiracional</h3>
           
           {/* Vista Móvil - Cards */}
-          <div className="block sm:hidden space-y-2">
+          <div className="block sm:hidden space-y-1.5">
             {comparativeData.map((item, index) => (
-              <div key={index} className="bg-white/90 backdrop-blur-sm rounded-[15px] p-2.5 shadow-md border border-blue-100">
-                <h4 className="font-bold text-foreground mb-1.5 text-xs">{item.category}</h4>
-                <div className="grid grid-cols-3 gap-1.5 text-[10px]">
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-[8px] p-1.5">
-                    <p className="text-muted-foreground mb-0.5 text-[9px]">Actual</p>
-                    <p className="font-bold text-blue-600 leading-tight">
+              <div key={index} className="bg-white/90 backdrop-blur-sm rounded-[12px] p-2 shadow-md border border-blue-100">
+                <h4 className="font-bold text-foreground mb-1 text-[10px]">{item.category}</h4>
+                <div className="grid grid-cols-3 gap-1 text-[9px]">
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-[6px] p-1">
+                    <p className="text-muted-foreground mb-0.5 text-[8px]">Actual</p>
+                    <p className="font-bold text-blue-600 leading-tight text-[9px]">
                       ${item.current >= 1000000 
                         ? `${(item.current / 1000000).toFixed(1)}M` 
                         : item.current >= 1000
@@ -501,9 +501,9 @@ export default function AspirationsAnalysis() {
                       }
                     </p>
                   </div>
-                  <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-[8px] p-1.5">
-                    <p className="text-muted-foreground mb-0.5 text-[9px]">Meta</p>
-                    <p className="font-bold text-purple-600 leading-tight">
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-[6px] p-1">
+                    <p className="text-muted-foreground mb-0.5 text-[8px]">Meta</p>
+                    <p className="font-bold text-purple-600 leading-tight text-[9px]">
                       ${item.aspiration >= 1000000 
                         ? `${(item.aspiration / 1000000).toFixed(1)}M` 
                         : item.aspiration >= 1000
@@ -512,9 +512,9 @@ export default function AspirationsAnalysis() {
                       }
                     </p>
                   </div>
-                  <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-[8px] p-1.5">
-                    <p className="text-muted-foreground mb-0.5 text-[9px]">Brecha</p>
-                    <p className="font-bold text-orange-600 leading-tight">
+                  <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-[6px] p-1">
+                    <p className="text-muted-foreground mb-0.5 text-[8px]">Brecha</p>
+                    <p className="font-bold text-orange-600 leading-tight text-[9px]">
                       ${item.gap >= 1000000 
                         ? `${(item.gap / 1000000).toFixed(1)}M` 
                         : item.gap >= 1000
@@ -522,37 +522,37 @@ export default function AspirationsAnalysis() {
                           : item.gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                       }
                     </p>
-                    <p className="text-[8px] text-orange-500 mt-0.5">{item.gapPercentage}%</p>
+                    <p className="text-[7px] text-orange-500 mt-0.5">{item.gapPercentage}%</p>
                   </div>
                 </div>
               </div>
             ))}
             
             {/* Total Card */}
-            <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-[15px] p-2.5 shadow-lg border-2 border-slate-300">
-              <h4 className="font-bold text-foreground mb-1.5 text-xs">TOTAL</h4>
-              <div className="grid grid-cols-3 gap-1.5 text-[10px]">
-                <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-[8px] p-1.5">
-                  <p className="text-muted-foreground mb-0.5 text-[9px]">Actual</p>
-                  <p className="font-bold text-blue-700 leading-tight">
+            <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-[12px] p-2 shadow-lg border-2 border-slate-300">
+              <h4 className="font-bold text-foreground mb-1 text-[10px]">TOTAL</h4>
+              <div className="grid grid-cols-3 gap-1 text-[9px]">
+                <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-[6px] p-1">
+                  <p className="text-muted-foreground mb-0.5 text-[8px]">Actual</p>
+                  <p className="font-bold text-blue-700 leading-tight text-[9px]">
                     ${currentNetWorth >= 1000000 
                       ? `${(currentNetWorth / 1000000).toFixed(1)}M` 
                       : currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                     }
                   </p>
                 </div>
-                <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-[8px] p-1.5">
-                  <p className="text-muted-foreground mb-0.5 text-[9px]">Meta</p>
-                  <p className="font-bold text-purple-700 leading-tight">
+                <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-[6px] p-1">
+                  <p className="text-muted-foreground mb-0.5 text-[8px]">Meta</p>
+                  <p className="font-bold text-purple-700 leading-tight text-[9px]">
                     ${totalAspiration >= 1000000 
                       ? `${(totalAspiration / 1000000).toFixed(1)}M` 
                       : totalAspiration.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
                     }
                   </p>
                 </div>
-                <div className="bg-gradient-to-br from-orange-100 to-orange-200 rounded-[8px] p-1.5">
-                  <p className="text-muted-foreground mb-0.5 text-[9px]">Brecha</p>
-                  <p className="font-bold text-orange-700 leading-tight">
+                <div className="bg-gradient-to-br from-orange-100 to-orange-200 rounded-[6px] p-1">
+                  <p className="text-muted-foreground mb-0.5 text-[8px]">Brecha</p>
+                  <p className="font-bold text-orange-700 leading-tight text-[9px]">
                     ${gap >= 1000000 
                       ? `${(gap / 1000000).toFixed(1)}M` 
                       : gap.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
