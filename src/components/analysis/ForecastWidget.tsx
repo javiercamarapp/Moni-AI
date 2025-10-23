@@ -109,36 +109,36 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA 
           </ResponsiveContainer>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 text-center">
-          <div>
-            <p className="text-[10px] text-amber-300">Conservador</p>
-            <p className="text-xs font-bold text-amber-300 break-words">
-              ${(displayData[displayData.length - 1]?.conservative || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        <div className="grid grid-cols-3 gap-2">
+          <div className="bg-amber-500/20 rounded-lg p-2 border border-amber-500/30">
+            <p className="text-[10px] text-amber-200 font-medium">Conservador</p>
+            <p className="text-sm font-bold text-white break-words">
+              ${(displayData[displayData.length - 1]?.conservative || 0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
             </p>
           </div>
-          <div>
-            <p className="text-[10px] text-purple-300">Realista</p>
-            <p className="text-xs font-bold text-purple-300 break-words">
-              ${(displayData[displayData.length - 1]?.realistic || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          <div className="bg-purple-500/20 rounded-lg p-2 border border-purple-500/30">
+            <p className="text-[10px] text-purple-200 font-medium">Realista</p>
+            <p className="text-sm font-bold text-white break-words">
+              ${(displayData[displayData.length - 1]?.realistic || 0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
             </p>
           </div>
-          <div>
-            <p className="text-[10px] text-emerald-300">Óptimo</p>
-            <p className="text-xs font-bold text-emerald-300 break-words">
-              ${(displayData[displayData.length - 1]?.optimistic || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          <div className="bg-emerald-500/20 rounded-lg p-2 border border-emerald-500/30">
+            <p className="text-[10px] text-emerald-200 font-medium">Óptimo</p>
+            <p className="text-sm font-bold text-white break-words">
+              ${(displayData[displayData.length - 1]?.optimistic || 0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
             </p>
           </div>
         </div>
 
-        <div className="bg-purple-500/10 rounded-lg p-2 border border-purple-500/30">
+        <div className="bg-purple-500/20 rounded-lg p-3 border border-purple-500/30">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-white/70">Probabilidad de cumplir meta</p>
-              <p className="text-lg font-bold text-purple-300">{goalProbability}%</p>
+              <p className="text-[10px] text-purple-200 font-medium">Probabilidad meta</p>
+              <p className="text-lg font-bold text-white">{goalProbability}%</p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-white/70">ETA estimado</p>
-              <p className="text-sm font-medium text-white">{goalETA}</p>
+              <p className="text-[10px] text-purple-200 font-medium">ETA estimado</p>
+              <p className="text-sm font-bold text-white">{goalETA}</p>
             </div>
           </div>
         </div>
