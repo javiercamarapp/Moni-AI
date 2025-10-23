@@ -456,7 +456,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-400 animate-ping opacity-30" />
                         )}
-                        <Medal className="w-5 h-5 text-white relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]" />
+                        <span className="text-2xl">🥉</span>
                       </div>
                     </button>
                     
@@ -498,7 +498,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800">
-                              <Medal className="w-5 h-5 text-white" />
+                              <span className="text-xl">🥉</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-amber-700 truncate">
@@ -559,7 +559,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-gray-300 animate-ping opacity-30" />
                         )}
-                        <Award className="w-6 h-6 text-white relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]" />
+                        <span className="text-2xl">🥈</span>
                       </div>
                     </button>
                     
@@ -601,7 +601,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500">
-                              <Award className="w-6 h-6 text-white" />
+                              <span className="text-xl">🥈</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-gray-600 truncate">
@@ -662,7 +662,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-400 animate-ping opacity-30" />
                         )}
-                        <Star className="w-5 h-5 text-white relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.9)] fill-white" />
+                        <span className="text-2xl">⭐</span>
                       </div>
                     </button>
                     
@@ -704,7 +704,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-500 via-yellow-600 to-amber-700">
-                              <Star className="w-5 h-5 text-white fill-white" />
+                              <span className="text-xl">⭐</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-amber-700 truncate">
@@ -765,7 +765,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-yellow-300 animate-ping opacity-30" />
                         )}
-                        <Trophy className="w-6 h-6 text-white relative z-10 drop-shadow-[0_0_10px_rgba(255,255,255,1)]" />
+                        <span className="text-3xl">🏆</span>
                       </div>
                     </button>
                     
@@ -807,7 +807,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500">
-                              <Trophy className="w-6 h-6 text-white" />
+                              <span className="text-2xl">🏆</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-yellow-700 truncate">
@@ -868,7 +868,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-600 animate-ping opacity-20" />
                         )}
-                        <Shield className="w-5 h-5 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-2xl">🛡️</span>
                       </div>
                     </button>
                     
@@ -910,7 +910,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800">
-                              <Shield className="w-5 h-5 text-white" />
+                              <span className="text-xl">🛡️</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-amber-700 truncate">
@@ -971,7 +971,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-gray-400 animate-ping opacity-20" />
                         )}
-                        <Gem className="w-6 h-6 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-3xl">💎</span>
                       </div>
                     </button>
                     
@@ -1013,7 +1013,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500">
-                              <Gem className="w-6 h-6 text-white" />
+                              <span className="text-2xl">💎</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-gray-600 truncate">
@@ -1074,7 +1074,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-600 animate-ping opacity-20" />
                         )}
-                        <Crown className="w-6 h-6 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-3xl">👑</span>
                       </div>
                     </button>
                     
@@ -1116,7 +1116,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-900">
-                              <Crown className="w-6 h-6 text-white" />
+                              <span className="text-2xl">👑</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-amber-700 truncate">
@@ -1177,7 +1177,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-20" />
                         )}
-                        <Award className="w-6 h-6 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-3xl">🥈</span>
                       </div>
                     </button>
                     
@@ -1219,7 +1219,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500">
-                              <Award className="w-6 h-6 text-white" />
+                              <span className="text-2xl">🥈</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-yellow-700 truncate">
@@ -1280,7 +1280,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-600 animate-ping opacity-20" />
                         )}
-                        <Crown className="w-6 h-6 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-3xl">👑</span>
                       </div>
                     </button>
                     
@@ -1322,7 +1322,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-900">
-                              <Crown className="w-6 h-6 text-white" />
+                              <span className="text-2xl">👑</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-amber-700 truncate">
@@ -1383,7 +1383,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-gray-400 animate-ping opacity-20" />
                         )}
-                        <Sparkles className="w-6 h-6 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-3xl">✨</span>
                       </div>
                     </button>
                     
@@ -1425,7 +1425,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500">
-                              <Sparkles className="w-6 h-6 text-white" />
+                              <span className="text-2xl">✨</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-gray-600 truncate">
@@ -1486,7 +1486,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-600 animate-ping opacity-20" />
                         )}
-                        <Crown className="w-6 h-6 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-3xl">👑</span>
                       </div>
                     </button>
                     
@@ -1528,7 +1528,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-11 h-11 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-900">
-                              <Crown className="w-6 h-6 text-white" />
+                              <span className="text-2xl">👑</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-amber-700 truncate">
@@ -1589,7 +1589,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-20" />
                         )}
-                        <Trophy className="w-6 h-6 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-3xl">🏆</span>
                       </div>
                     </button>
                     
@@ -1631,7 +1631,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500">
-                              <Trophy className="w-6 h-6 text-white" />
+                              <span className="text-2xl">🏆</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-yellow-700 truncate">
@@ -1692,7 +1692,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-pink-400 animate-ping opacity-30" />
                         )}
-                        <Diamond className="w-6 h-6 text-white relative z-10 drop-shadow-[0_0_10px_rgba(255,255,255,1)]" />
+                        <span className="text-3xl">💎</span>
                       </div>
                     </button>
                     
@@ -1734,7 +1734,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-red-500 via-rose-600 to-pink-700">
-                              <Diamond className="w-6 h-6 text-white" />
+                              <span className="text-2xl">💎</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-red-700 truncate">
@@ -1795,7 +1795,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-gray-400 animate-ping opacity-20" />
                         )}
-                        <Crown className="w-6 h-6 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-3xl">👑</span>
                       </div>
                     </button>
                     
@@ -1837,7 +1837,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-600">
-                              <Crown className="w-6 h-6 text-white" />
+                              <span className="text-2xl">👑</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-gray-700 truncate">
@@ -1898,7 +1898,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-20" />
                         )}
-                        <Diamond className="w-6 h-6 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-3xl">💎</span>
                       </div>
                     </button>
                     
@@ -1940,7 +1940,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-red-500 via-rose-600 to-pink-700">
-                              <Diamond className="w-6 h-6 text-white" />
+                              <span className="text-2xl">💎</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-red-700 truncate">
@@ -2001,7 +2001,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-red-400 animate-ping opacity-20" />
                         )}
-                        <Diamond className="w-6 h-6 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-3xl">💎</span>
                       </div>
                     </button>
                     
@@ -2043,7 +2043,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-red-500 via-rose-600 to-pink-700">
-                              <Diamond className="w-6 h-6 text-white" />
+                              <span className="text-2xl">💎</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-red-700 truncate">
@@ -2104,7 +2104,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-yellow-300 animate-ping opacity-30" />
                         )}
-                        <Crown className="w-7 h-7 text-white relative z-10 drop-shadow-[0_0_10px_rgba(255,255,255,1)]" />
+                        <span className="text-4xl">👑</span>
                       </div>
                     </button>
                     
@@ -2145,7 +2145,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-600">
-                              <Crown className="w-7 h-7 text-white" />
+                              <span className="text-3xl">👑</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-yellow-700 truncate">
@@ -2206,7 +2206,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-gray-300 animate-ping opacity-20" />
                         )}
-                        <Shield className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-4xl">🛡️</span>
                       </div>
                     </button>
                     
@@ -2244,7 +2244,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-gray-300 via-gray-400 to-slate-500">
-                              <Shield className="w-7 h-7 text-white" />
+                              <span className="text-3xl">🛡️</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-gray-700 truncate">
@@ -2305,7 +2305,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-20" />
                         )}
-                        <Award className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-4xl">🥈</span>
                       </div>
                     </button>
                     
@@ -2347,7 +2347,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-red-600 via-rose-700 to-pink-800">
-                              <Award className="w-7 h-7 text-white" />
+                              <span className="text-3xl">🥈</span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-sm text-red-700 truncate">
@@ -2410,7 +2410,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-red-400 animate-ping opacity-30" />
                         )}
-                        <Gem className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-4xl">💎</span>
                       </div>
                     </button>
                     
@@ -2451,7 +2451,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-red-400 via-rose-500 to-pink-600">
-                              <Gem className="w-7 h-7 text-white" />
+                              <span className="text-3xl">💎</span>
                             </div>
                             
                             <div className="flex-1 min-w-0">
@@ -2515,7 +2515,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-gray-400 animate-ping opacity-30" />
                         )}
-                        <Shield className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-4xl">🛡️</span>
                       </div>
                     </button>
                     
@@ -2556,7 +2556,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 border-white shrink-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500">
-                              <Shield className="w-7 h-7 text-white" />
+                              <span className="text-3xl">🛡️</span>
                             </div>
                             
                             <div className="flex-1 min-w-0">
@@ -2620,7 +2620,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-500 animate-ping opacity-30" />
                         )}
-                        <Trophy className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-4xl">🏆</span>
                       </div>
                     </button>
                     
@@ -2661,7 +2661,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500 flex items-center justify-center shrink-0">
-                              <Trophy className="w-5 h-5 text-white" />
+                              <span className="text-xl">🏆</span>
                             </div>
                             <h3 className="text-base font-bold text-gray-900">Maestría Oro #2</h3>
                           </div>
@@ -2671,7 +2671,7 @@ export default function FinancialJourney() {
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-amber-700 bg-yellow-50 px-2 py-1 rounded-full w-fit">
-                            <Trophy className="w-3 h-3" />
+                            <span className="text-sm">🏆</span>
                             <span>Nivel 6,000</span>
                           </div>
                         </div>
@@ -2722,7 +2722,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-slate-400 animate-ping opacity-30" />
                         )}
-                        <Shield className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-4xl">🛡️</span>
                       </div>
                     </button>
                     
@@ -2763,7 +2763,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-300 via-gray-400 to-zinc-500 flex items-center justify-center shrink-0">
-                              <Shield className="w-5 h-5 text-white" />
+                              <span className="text-xl">🛡️</span>
                             </div>
                             <h3 className="text-base font-bold text-gray-900">Platino #1</h3>
                           </div>
@@ -2773,7 +2773,7 @@ export default function FinancialJourney() {
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-slate-700 bg-slate-50 px-2 py-1 rounded-full w-fit">
-                            <Shield className="w-3 h-3" />
+                            <span className="text-sm">🛡️</span>
                             <span>Nivel 6,250</span>
                           </div>
                         </div>
@@ -2824,7 +2824,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-gray-700 animate-ping opacity-30" />
                         )}
-                        <Diamond className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-4xl">💎</span>
                       </div>
                     </button>
                     
@@ -2865,7 +2865,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-900 via-black to-gray-800 flex items-center justify-center shrink-0">
-                              <Diamond className="w-5 h-5 text-white" />
+                              <span className="text-xl">💎</span>
                             </div>
                             <h3 className="text-base font-bold text-gray-900">Black #1</h3>
                           </div>
@@ -2875,7 +2875,7 @@ export default function FinancialJourney() {
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-white bg-gray-900 px-2 py-1 rounded-full w-fit">
-                            <Diamond className="w-3 h-3" />
+                            <span className="text-sm">💎</span>
                             <span>Nivel 6,500</span>
                           </div>
                         </div>
@@ -2926,7 +2926,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-slate-500 animate-ping opacity-30" />
                         )}
-                        <Award className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-4xl">🥈</span>
                       </div>
                     </button>
                     
@@ -2967,7 +2967,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-400 via-gray-500 to-zinc-600 flex items-center justify-center shrink-0">
-                              <Award className="w-5 h-5 text-white" />
+                              <span className="text-xl">🥈</span>
                             </div>
                             <h3 className="text-base font-bold text-gray-900">Platino #2</h3>
                           </div>
@@ -2977,7 +2977,7 @@ export default function FinancialJourney() {
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-slate-700 bg-slate-50 px-2 py-1 rounded-full w-fit">
-                            <Award className="w-3 h-3" />
+                            <span className="text-sm">🥈</span>
                             <span>Nivel 6,750</span>
                           </div>
                         </div>
@@ -3028,7 +3028,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-600 animate-ping opacity-30" />
                         )}
-                        <Crown className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-4xl">👑</span>
                       </div>
                     </button>
                     
@@ -3069,7 +3069,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-500 via-amber-600 to-orange-600 flex items-center justify-center shrink-0">
-                              <Crown className="w-5 h-5 text-white" />
+                              <span className="text-xl">👑</span>
                             </div>
                             <h3 className="text-base font-bold text-gray-900">Maestría Oro #3</h3>
                           </div>
@@ -3079,7 +3079,7 @@ export default function FinancialJourney() {
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-amber-700 bg-yellow-50 px-2 py-1 rounded-full w-fit">
-                            <Crown className="w-3 h-3" />
+                            <span className="text-sm">👑</span>
                             <span>Nivel 7,000</span>
                           </div>
                         </div>
@@ -3130,7 +3130,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-slate-600 animate-ping opacity-30" />
                         )}
-                        <Sparkles className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-4xl">✨</span>
                       </div>
                     </button>
                     
@@ -3171,7 +3171,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-500 via-gray-600 to-zinc-700 flex items-center justify-center shrink-0">
-                              <Sparkles className="w-5 h-5 text-white" />
+                              <span className="text-xl">✨</span>
                             </div>
                             <h3 className="text-base font-bold text-gray-900">Platino #3</h3>
                           </div>
@@ -3181,7 +3181,7 @@ export default function FinancialJourney() {
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-slate-700 bg-slate-50 px-2 py-1 rounded-full w-fit">
-                            <Sparkles className="w-3 h-3" />
+                            <span className="text-sm">✨</span>
                             <span>Nivel 7,250</span>
                           </div>
                         </div>
@@ -3232,7 +3232,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-gray-900 animate-ping opacity-30" />
                         )}
-                        <Shield className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-4xl">🛡️</span>
                       </div>
                     </button>
                     
@@ -3270,7 +3270,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-black via-gray-900 to-zinc-950 flex items-center justify-center shrink-0">
-                              <Shield className="w-5 h-5 text-white" />
+                              <span className="text-xl">🛡️</span>
                             </div>
                             <h3 className="text-base font-bold text-gray-900">Black #2</h3>
                           </div>
@@ -3280,7 +3280,7 @@ export default function FinancialJourney() {
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-gray-900 bg-gray-100 px-2 py-1 rounded-full w-fit">
-                            <Shield className="w-3 h-3" />
+                            <span className="text-sm">🛡️</span>
                             <span>Nivel 7,500</span>
                           </div>
                         </div>
@@ -3331,7 +3331,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-slate-500 animate-ping opacity-30" />
                         )}
-                        <Award className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-4xl">🥈</span>
                       </div>
                     </button>
                     
@@ -3369,7 +3369,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-400 via-gray-500 to-zinc-600 flex items-center justify-center shrink-0">
-                              <Award className="w-5 h-5 text-white" />
+                              <span className="text-xl">🥈</span>
                             </div>
                             <h3 className="text-base font-bold text-gray-900">Maestría de Platino #1</h3>
                           </div>
@@ -3379,7 +3379,7 @@ export default function FinancialJourney() {
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-slate-700 bg-slate-50 px-2 py-1 rounded-full w-fit">
-                            <Award className="w-3 h-3" />
+                            <span className="text-sm">🥈</span>
                             <span>Nivel 7,750</span>
                           </div>
                         </div>
@@ -3430,7 +3430,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-30" />
                         )}
-                        <Crown className="w-7 h-7 text-white relative z-10 drop-shadow-md" />
+                        <span className="text-4xl">👑</span>
                       </div>
                     </button>
                     
@@ -3468,7 +3468,7 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500 flex items-center justify-center shrink-0">
-                              <Crown className="w-5 h-5 text-white" />
+                              <span className="text-xl">👑</span>
                             </div>
                             <h3 className="text-base font-bold text-gray-900">Maestro 👑</h3>
                           </div>
@@ -3478,7 +3478,7 @@ export default function FinancialJourney() {
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-amber-800 bg-yellow-50 px-2 py-1 rounded-full w-fit">
-                            <Crown className="w-3 h-3" />
+                            <span className="text-sm">👑</span>
                             <span>Nivel 8,000</span>
                           </div>
                         </div>
