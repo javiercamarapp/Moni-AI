@@ -3028,7 +3028,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-amber-600 animate-ping opacity-30" />
                         )}
-                        <span className="text-4xl">👑</span>
+                        <span className="text-4xl">🪙</span>
                       </div>
                     </button>
                     
@@ -3042,7 +3042,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Maestría Oro #3
+                        Moneda Valiosa
                       </div>
                     )}
 
@@ -3069,17 +3069,17 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-500 via-amber-600 to-orange-600 flex items-center justify-center shrink-0">
-                              <span className="text-xl">👑</span>
+                              <span className="text-xl">🪙</span>
                             </div>
-                            <h3 className="text-base font-bold text-gray-900">Maestría Oro #3</h3>
+                            <h3 className="text-base font-bold text-gray-900">Moneda Valiosa</h3>
                           </div>
                           
                           <p className="text-xs text-gray-600 mb-2 leading-relaxed">
-                            Has alcanzado el nivel 7,000. Tu maestría financiera es legendaria.
+                            Tu valor es claro y cuantificable.
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-amber-700 bg-yellow-50 px-2 py-1 rounded-full w-fit">
-                            <span className="text-sm">👑</span>
+                            <span className="text-sm">🪙</span>
                             <span>Nivel 7,000</span>
                           </div>
                         </div>
@@ -3130,7 +3130,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-slate-600 animate-ping opacity-30" />
                         )}
-                        <span className="text-4xl">✨</span>
+                        <span className="text-4xl">🧬</span>
                       </div>
                     </button>
                     
@@ -3144,7 +3144,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Platino #3
+                        Código Genético
                       </div>
                     )}
 
@@ -3171,17 +3171,17 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-500 via-gray-600 to-zinc-700 flex items-center justify-center shrink-0">
-                              <span className="text-xl">✨</span>
+                              <span className="text-xl">🧬</span>
                             </div>
-                            <h3 className="text-base font-bold text-gray-900">Platino #3</h3>
+                            <h3 className="text-base font-bold text-gray-900">Código Genético</h3>
                           </div>
                           
                           <p className="text-xs text-gray-600 mb-2 leading-relaxed">
-                            Has alcanzado el nivel 7,250. Tu excelencia financiera brilla con luz propia.
+                            Tu marca personal se ha convertido en parte de la esencia.
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-slate-700 bg-slate-50 px-2 py-1 rounded-full w-fit">
-                            <span className="text-sm">✨</span>
+                            <span className="text-sm">🧬</span>
                             <span>Nivel 7,250</span>
                           </div>
                         </div>
@@ -3232,7 +3232,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-gray-900 animate-ping opacity-30" />
                         )}
-                        <span className="text-4xl">🛡️</span>
+                        <span className="text-4xl">⚜️</span>
                       </div>
                     </button>
                     
@@ -3246,7 +3246,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Black #2
+                        Fleur-de-lis Noble
                       </div>
                     )}
 
@@ -3270,17 +3270,17 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-black via-gray-900 to-zinc-950 flex items-center justify-center shrink-0">
-                              <span className="text-xl">🛡️</span>
+                              <span className="text-xl">⚜️</span>
                             </div>
-                            <h3 className="text-base font-bold text-gray-900">Black #2</h3>
+                            <h3 className="text-base font-bold text-gray-900">Fleur-de-lis Noble</h3>
                           </div>
                           
                           <p className="text-xs text-gray-600 mb-2 leading-relaxed">
-                            Has alcanzado el nivel 7,500. Tu dominio financiero es absoluto e inquebrantable.
+                            Elegancia, prestigio y categoría.
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-gray-900 bg-gray-100 px-2 py-1 rounded-full w-fit">
-                            <span className="text-sm">🛡️</span>
+                            <span className="text-sm">⚜️</span>
                             <span>Nivel 7,500</span>
                           </div>
                         </div>
@@ -3331,7 +3331,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-slate-500 animate-ping opacity-30" />
                         )}
-                        <span className="text-4xl">🥈</span>
+                        <span className="text-4xl">👑</span>
                       </div>
                     </button>
                     
@@ -3345,7 +3345,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Maestría de Platino #1
+                        Corona Soberana
                       </div>
                     )}
 
@@ -3369,17 +3369,17 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-400 via-gray-500 to-zinc-600 flex items-center justify-center shrink-0">
-                              <span className="text-xl">🥈</span>
+                              <span className="text-xl">👑</span>
                             </div>
-                            <h3 className="text-base font-bold text-gray-900">Maestría de Platino #1</h3>
+                            <h3 className="text-base font-bold text-gray-900">Corona Soberana</h3>
                           </div>
                           
                           <p className="text-xs text-gray-600 mb-2 leading-relaxed">
-                            Has alcanzado el nivel 7,750. Tu maestría en finanzas es reconocida como platino puro.
+                            Liderazgo rotundo, presencia imponente.
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-slate-700 bg-slate-50 px-2 py-1 rounded-full w-fit">
-                            <span className="text-sm">🥈</span>
+                            <span className="text-sm">👑</span>
                             <span>Nivel 7,750</span>
                           </div>
                         </div>
@@ -3430,7 +3430,7 @@ export default function FinancialJourney() {
                         {isUnlocked && (
                           <div className="absolute inset-0 rounded-full bg-yellow-400 animate-ping opacity-30" />
                         )}
-                        <span className="text-4xl">👑</span>
+                        <span className="text-4xl">🌠</span>
                       </div>
                     </button>
                     
@@ -3444,7 +3444,7 @@ export default function FinancialJourney() {
                           shadow-md z-30
                         `}
                       >
-                        Maestro 👑
+                        Cometa Resplandeciente
                       </div>
                     )}
 
@@ -3468,17 +3468,17 @@ export default function FinancialJourney() {
                           
                           <div className="flex items-center gap-2 mb-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500 flex items-center justify-center shrink-0">
-                              <span className="text-xl">👑</span>
+                              <span className="text-xl">🌠</span>
                             </div>
-                            <h3 className="text-base font-bold text-gray-900">Maestro 👑</h3>
+                            <h3 className="text-base font-bold text-gray-900">Cometa Resplandeciente</h3>
                           </div>
                           
                           <p className="text-xs text-gray-600 mb-2 leading-relaxed">
-                            Has alcanzado el nivel 8,000. Eres un verdadero maestro de las finanzas, coronado por tu excelencia.
+                            Tu paso deja huella visible para todos.
                           </p>
                           
                           <div className="flex items-center gap-1.5 text-[10px] font-medium text-amber-800 bg-yellow-50 px-2 py-1 rounded-full w-fit">
-                            <span className="text-sm">👑</span>
+                            <span className="text-sm">🌠</span>
                             <span>Nivel 8,000</span>
                           </div>
                         </div>
