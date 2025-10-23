@@ -385,10 +385,11 @@ Ejemplo formato:
     // Ahorro y liquidez (30%)
     const savingsComponent = Math.min(30, (savingsRate / 20) * 30);
     const liquidityComponent = Math.min(30, liquidityMonths * 10);
-    scoreMoni += (savingsComponent + liquidityComponent) / 2;
+    const avgSavingsLiquidity = (savingsComponent + liquidityComponent) / 2;
+    scoreMoni += avgSavingsLiquidity;
     
     // Endeudamiento (20%)
-    const debtComponent = totalDebt > 0 ? Math.max(0, 20 - (financialBurden / 5)) : 20;
+    const debtComponent = totalDebt > 0 ? Math.max(0, Math.min(20, 20 - (financialBurden / 5))) : 20;
     scoreMoni += debtComponent;
     
     // Gasto y control (20%)
@@ -404,6 +405,18 @@ Ejemplo formato:
     scoreMoni += behaviorComponent;
     
     scoreMoni = Math.round(Math.min(100, scoreMoni));
+    
+    console.log('🎯 Score Moni Calculation:', {
+      savingsComponent: savingsComponent.toFixed(2),
+      liquidityComponent: liquidityComponent.toFixed(2),
+      avgSavingsLiquidity: avgSavingsLiquidity.toFixed(2),
+      debtComponent: debtComponent.toFixed(2),
+      controlComponent: controlComponent.toFixed(2),
+      growthComponent: growthComponent.toFixed(2),
+      behaviorComponent: behaviorComponent.toFixed(2),
+      totalBeforeRound: (avgSavingsLiquidity + debtComponent + controlComponent + growthComponent + behaviorComponent).toFixed(2),
+      scoreMoni
+    });
     
     // 10. MINDFUL SPENDING INDEX
     const transactionCount = expenseTransactions.length;
@@ -509,7 +522,7 @@ Ejemplo formato:
       
       // Componentes del Score (para visualización radar)
       scoreComponents: {
-        savingsAndLiquidity: Math.min(30, Math.round((savingsComponent + liquidityComponent) / 2)),
+        savingsAndLiquidity: Math.min(30, Math.round(avgSavingsLiquidity)),
         debt: Math.min(20, Math.round(debtComponent)),
         control: Math.min(20, Math.round(controlComponent)),
         growth: Math.min(15, Math.round(growthComponent)),
