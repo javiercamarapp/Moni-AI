@@ -277,7 +277,7 @@ export default function FinancialJourney() {
       <div className="fixed top-0 left-0 right-0 z-40 bg-transparent backdrop-blur-sm pt-4 pb-2">
         <div className="container mx-auto px-4 max-w-2xl">
           {/* Botón de regresar arriba del card */}
-          <div className="mb-3 flex items-center gap-2">
+          <div className="mb-3 flex items-center justify-between">
             <Button
               type="button"
               onClick={() => {
