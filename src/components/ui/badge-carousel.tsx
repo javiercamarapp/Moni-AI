@@ -149,55 +149,55 @@ export const BadgeCard = ({
     <>
       <AnimatePresence>
         {isExpanded && (
-          <div className="fixed inset-0 h-screen overflow-hidden z-[9999]">
+          <div className="fixed inset-0 h-screen overflow-hidden z-[99999]">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="bg-black/60 backdrop-blur-md h-full w-full fixed inset-0"
+              className="bg-black/40 backdrop-blur-sm h-full w-full fixed inset-0"
+              onClick={handleCollapse}
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, y: -50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
               ref={containerRef}
-              className="max-w-md mx-auto bg-white/95 backdrop-blur-sm h-auto z-[10000] p-4 rounded-[12px] relative top-10 shadow-xl border-0"
+              className="absolute top-4 left-1/2 transform -translate-x-1/2 w-[90%] max-w-md z-[100000]"
             >
-              <button
-                className="absolute top-2 right-2 h-8 w-8 rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-500 to-orange-500 hover:scale-110 transition-all shadow-lg"
-                onClick={handleCollapse}
-              >
-                <X className="h-4 w-4 text-white" />
-              </button>
-              
-              <div className="flex flex-col items-center pt-2">
-                <div className={`bg-gradient-to-br ${badge.color} p-3 rounded-full mb-3 shadow-lg`}>
-                  <IconComponent className="h-8 w-8 text-white" />
-                </div>
+              <div className="bg-gradient-to-b from-gray-50 to-white rounded-[28px] shadow-2xl p-6 relative border border-gray-200">
+                <button
+                  className="absolute top-4 right-4 h-12 w-12 rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-500 to-orange-500 hover:scale-110 transition-all shadow-lg z-10"
+                  onClick={handleCollapse}
+                >
+                  <X className="h-5 w-5 text-white" />
+                </button>
                 
-                <h2 className="text-xl font-bold text-foreground mb-1 text-center">
-                  {badge.name}
-                </h2>
-                
-                <p className="text-xs text-muted-foreground font-medium mb-4">
-                  Nivel {badge.level}
-                </p>
-                
-                <div className="bg-background/80 backdrop-blur-sm rounded-[10px] p-4 mb-4 shadow-md border border-border w-full">
-                  <p className="text-sm text-foreground leading-relaxed text-center mb-3">
-                    {badge.explanation}
+                <div className="flex flex-col items-center pt-2">
+                  <div className={`bg-gradient-to-br ${badge.color} p-5 rounded-full mb-4 shadow-xl`}>
+                    <IconComponent className="h-12 w-12 text-white" />
+                  </div>
+                  
+                  <h2 className="text-2xl font-bold text-gray-900 mb-1 text-center">
+                    {badge.name}
+                  </h2>
+                  
+                  <p className="text-sm text-gray-500 font-medium mb-6">
+                    Nivel {badge.level}
                   </p>
                   
-                  <div className={`bg-gradient-to-br ${badge.color} px-3 py-2 rounded-[8px] shadow-md`}>
-                    <p className="text-xs text-white font-bold text-center drop-shadow-md">
+                  <div className="bg-gray-100 rounded-[20px] p-5 mb-4 w-full">
+                    <p className="text-sm text-gray-700 leading-relaxed text-center">
+                      {badge.explanation}
+                    </p>
+                  </div>
+                  
+                  <div className={`bg-gradient-to-br ${badge.color} px-5 py-3 rounded-[16px] shadow-lg w-full`}>
+                    <p className="text-sm text-white font-bold text-center">
                       🎯 {badge.growthPercentage}% patrimonio deseado
                     </p>
                   </div>
                 </div>
-                
-                <p className="text-muted-foreground text-xs text-center italic px-2">
-                  {badge.description}
-                </p>
               </div>
             </motion.div>
           </div>
