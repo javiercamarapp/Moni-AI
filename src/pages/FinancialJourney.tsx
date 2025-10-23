@@ -3489,6 +3489,807 @@ export default function FinancialJourney() {
               );
             })()}
 
+            {/* Escudo Legendario - Nivel 8250 */}
+            {(() => {
+              const level8250 = 8250;
+              const nodeIndex = level8250 / 50;
+              const badgeY = 40 + (nodeIndex * 35) + 30;
+              const badgeX = 15;
+              const isUnlocked = currentLevel >= level8250;
+              
+              return (
+                <div
+                  className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  style={{
+                    top: `${badgeY}px`,
+                    left: `${badgeX}%`,
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: expandedBadge === 'shield8250' ? 100 : 20
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-0.5 relative">
+                    <button
+                      onClick={() => {
+                        if (isUnlocked) {
+                          setExpandedBadge(expandedBadge === 'shield8250' ? null : 'shield8250');
+                          setExpandedNode(null);
+                        }
+                      }}
+                      disabled={!isUnlocked}
+                      className="focus:outline-none relative"
+                    >
+                      <div
+                        className={`
+                          relative w-14 h-14 rounded-full flex items-center justify-center
+                          transition-all duration-300 border-2 border-yellow-300 cursor-pointer
+                          bg-gradient-to-br from-emerald-400 via-green-500 to-teal-600 shadow-2xl
+                          ${isUnlocked ? 'shadow-2xl hover:scale-110 animate-pulse' : 'grayscale cursor-not-allowed opacity-50'}
+                        `}
+                      >
+                        {isUnlocked && (
+                          <div className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-30" />
+                        )}
+                        <span className="text-4xl">🛡️</span>
+                      </div>
+                    </button>
+                    
+                    {/* Tooltip al hacer hover */}
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-green-100 text-green-800
+                          shadow-md z-30
+                        `}
+                      >
+                        Escudo Legendario
+                      </div>
+                    )}
+
+                    {/* Card de descripción expandida */}
+                    {expandedBadge === 'shield8250' && isUnlocked && (
+                      <Card 
+                        className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
+                          border-0 w-64 max-w-[calc(100vw-40px)] animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
+                      >
+                        <GlowingEffect disabled={false} spread={20} />
+                        <div className="relative p-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedBadge(null);
+                            }}
+                            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors z-10"
+                          >
+                            ✕
+                          </button>
+                          
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 via-green-500 to-teal-600 flex items-center justify-center shrink-0">
+                              <span className="text-2xl">🛡️</span>
+                            </div>
+                            <h3 className="text-base font-bold text-gray-900">Escudo Legendario</h3>
+                          </div>
+                          
+                          <p className="text-xs text-gray-600 mb-2 leading-relaxed">
+                            Proteges, sostienes y lideras con integridad.
+                          </p>
+                          
+                          <div className="flex items-center gap-1.5 text-[10px] font-medium text-green-800 bg-green-50 px-2 py-1 rounded-full w-fit">
+                            <span className="text-sm">🛡️</span>
+                            <span>Nivel 8,250</span>
+                          </div>
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Brújula Maestra - Nivel 8500 */}
+            {(() => {
+              const level8500 = 8500;
+              const nodeIndex = level8500 / 50;
+              const badgeY = 40 + (nodeIndex * 35) - 40;
+              const badgeX = 80;
+              const isUnlocked = currentLevel >= level8500;
+              
+              return (
+                <div
+                  className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  style={{
+                    top: `${badgeY}px`,
+                    left: `${badgeX}%`,
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: expandedBadge === 'compass8500' ? 100 : 20
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-0.5 relative">
+                    <button
+                      onClick={() => {
+                        if (isUnlocked) {
+                          setExpandedBadge(expandedBadge === 'compass8500' ? null : 'compass8500');
+                          setExpandedNode(null);
+                        }
+                      }}
+                      disabled={!isUnlocked}
+                      className="focus:outline-none relative"
+                    >
+                      <div
+                        className={`
+                          relative w-14 h-14 rounded-full flex items-center justify-center
+                          transition-all duration-300 border-2 border-blue-300 cursor-pointer
+                          bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 shadow-2xl
+                          ${isUnlocked ? 'shadow-2xl hover:scale-110 animate-pulse' : 'grayscale cursor-not-allowed opacity-50'}
+                        `}
+                      >
+                        {isUnlocked && (
+                          <div className="absolute inset-0 rounded-full bg-blue-400 animate-ping opacity-30" />
+                        )}
+                        <span className="text-4xl">🧭</span>
+                      </div>
+                    </button>
+                    
+                    {/* Tooltip al hacer hover */}
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-blue-100 text-blue-800
+                          shadow-md z-30
+                        `}
+                      >
+                        Brújula Maestra
+                      </div>
+                    )}
+
+                    {/* Card de descripción expandida */}
+                    {expandedBadge === 'compass8500' && isUnlocked && (
+                      <Card 
+                        className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
+                          border-0 w-64 max-w-[calc(100vw-40px)] animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
+                      >
+                        <GlowingEffect disabled={false} spread={20} />
+                        <div className="relative p-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedBadge(null);
+                            }}
+                            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors z-10"
+                          >
+                            ✕
+                          </button>
+                          
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 flex items-center justify-center shrink-0">
+                              <span className="text-2xl">🧭</span>
+                            </div>
+                            <h3 className="text-base font-bold text-gray-900">Brújula Maestra</h3>
+                          </div>
+                          
+                          <p className="text-xs text-gray-600 mb-2 leading-relaxed">
+                            No sólo marcas rumbo, lo escribes para otros.
+                          </p>
+                          
+                          <div className="flex items-center gap-1.5 text-[10px] font-medium text-blue-800 bg-blue-50 px-2 py-1 rounded-full w-fit">
+                            <span className="text-sm">🧭</span>
+                            <span>Nivel 8,500</span>
+                          </div>
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Caja Diamantina - Nivel 8750 */}
+            {(() => {
+              const level8750 = 8750;
+              const nodeIndex = level8750 / 50;
+              const badgeY = 40 + (nodeIndex * 35) + 20;
+              const badgeX = 25;
+              const isUnlocked = currentLevel >= level8750;
+              
+              return (
+                <div
+                  className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  style={{
+                    top: `${badgeY}px`,
+                    left: `${badgeX}%`,
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: expandedBadge === 'box8750' ? 100 : 20
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-0.5 relative">
+                    <button
+                      onClick={() => {
+                        if (isUnlocked) {
+                          setExpandedBadge(expandedBadge === 'box8750' ? null : 'box8750');
+                          setExpandedNode(null);
+                        }
+                      }}
+                      disabled={!isUnlocked}
+                      className="focus:outline-none relative"
+                    >
+                      <div
+                        className={`
+                          relative w-14 h-14 rounded-full flex items-center justify-center
+                          transition-all duration-300 border-2 border-red-300 cursor-pointer
+                          bg-gradient-to-br from-red-400 via-rose-500 to-pink-600 shadow-2xl
+                          ${isUnlocked ? 'shadow-2xl hover:scale-110 animate-pulse' : 'grayscale cursor-not-allowed opacity-50'}
+                        `}
+                      >
+                        {isUnlocked && (
+                          <div className="absolute inset-0 rounded-full bg-red-400 animate-ping opacity-30" />
+                        )}
+                        <span className="text-4xl">🧧</span>
+                      </div>
+                    </button>
+                    
+                    {/* Tooltip al hacer hover */}
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-red-100 text-red-800
+                          shadow-md z-30
+                        `}
+                      >
+                        Caja Diamantina
+                      </div>
+                    )}
+
+                    {/* Card de descripción expandida */}
+                    {expandedBadge === 'box8750' && isUnlocked && (
+                      <Card 
+                        className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
+                          border-0 w-64 max-w-[calc(100vw-40px)] animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
+                      >
+                        <GlowingEffect disabled={false} spread={20} />
+                        <div className="relative p-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedBadge(null);
+                            }}
+                            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors z-10"
+                          >
+                            ✕
+                          </button>
+                          
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-400 via-rose-500 to-pink-600 flex items-center justify-center shrink-0">
+                              <span className="text-2xl">🧧</span>
+                            </div>
+                            <h3 className="text-base font-bold text-gray-900">Caja Diamantina</h3>
+                          </div>
+                          
+                          <p className="text-xs text-gray-600 mb-2 leading-relaxed">
+                            Guardas secretos, riquezas de valor intangible.
+                          </p>
+                          
+                          <div className="flex items-center gap-1.5 text-[10px] font-medium text-red-800 bg-red-50 px-2 py-1 rounded-full w-fit">
+                            <span className="text-sm">🧧</span>
+                            <span>Nivel 8,750</span>
+                          </div>
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Planeta Conquistado - Nivel 9000 */}
+            {(() => {
+              const level9000 = 9000;
+              const nodeIndex = level9000 / 50;
+              const badgeY = 40 + (nodeIndex * 35) - 50;
+              const badgeX = 75;
+              const isUnlocked = currentLevel >= level9000;
+              
+              return (
+                <div
+                  className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  style={{
+                    top: `${badgeY}px`,
+                    left: `${badgeX}%`,
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: expandedBadge === 'planet9000' ? 100 : 20
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-0.5 relative">
+                    <button
+                      onClick={() => {
+                        if (isUnlocked) {
+                          setExpandedBadge(expandedBadge === 'planet9000' ? null : 'planet9000');
+                          setExpandedNode(null);
+                        }
+                      }}
+                      disabled={!isUnlocked}
+                      className="focus:outline-none relative"
+                    >
+                      <div
+                        className={`
+                          relative w-16 h-16 rounded-full flex items-center justify-center
+                          transition-all duration-300 border-3 border-cyan-300 cursor-pointer
+                          bg-gradient-to-br from-blue-500 via-cyan-500 to-green-500 shadow-2xl
+                          ${isUnlocked ? 'shadow-2xl hover:scale-110 animate-pulse' : 'grayscale cursor-not-allowed opacity-50'}
+                        `}
+                      >
+                        {isUnlocked && (
+                          <div className="absolute inset-0 rounded-full bg-cyan-400 animate-ping opacity-30" />
+                        )}
+                        <span className="text-5xl">🌍</span>
+                      </div>
+                    </button>
+                    
+                    {/* Tooltip al hacer hover */}
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-cyan-100 text-cyan-900
+                          shadow-md z-30
+                        `}
+                      >
+                        Planeta Conquistado
+                      </div>
+                    )}
+
+                    {/* Card de descripción expandida */}
+                    {expandedBadge === 'planet9000' && isUnlocked && (
+                      <Card 
+                        className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
+                          border-0 w-64 max-w-[calc(100vw-40px)] animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
+                      >
+                        <GlowingEffect disabled={false} spread={20} />
+                        <div className="relative p-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedBadge(null);
+                            }}
+                            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors z-10"
+                          >
+                            ✕
+                          </button>
+                          
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 via-cyan-500 to-green-500 flex items-center justify-center shrink-0">
+                              <span className="text-3xl">🌍</span>
+                            </div>
+                            <h3 className="text-base font-bold text-gray-900">Planeta Conquistado</h3>
+                          </div>
+                          
+                          <p className="text-xs text-gray-600 mb-2 leading-relaxed">
+                            Tu influencia cruza fronteras, abarca mundos.
+                          </p>
+                          
+                          <div className="flex items-center gap-1.5 text-[10px] font-medium text-cyan-900 bg-cyan-50 px-2 py-1 rounded-full w-fit">
+                            <span className="text-sm">🌍</span>
+                            <span>Nivel 9,000</span>
+                          </div>
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Nave Estelar - Nivel 9250 */}
+            {(() => {
+              const level9250 = 9250;
+              const nodeIndex = level9250 / 50;
+              const badgeY = 40 + (nodeIndex * 35) + 15;
+              const badgeX = 20;
+              const isUnlocked = currentLevel >= level9250;
+              
+              return (
+                <div
+                  className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  style={{
+                    top: `${badgeY}px`,
+                    left: `${badgeX}%`,
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: expandedBadge === 'ship9250' ? 100 : 20
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-0.5 relative">
+                    <button
+                      onClick={() => {
+                        if (isUnlocked) {
+                          setExpandedBadge(expandedBadge === 'ship9250' ? null : 'ship9250');
+                          setExpandedNode(null);
+                        }
+                      }}
+                      disabled={!isUnlocked}
+                      className="focus:outline-none relative"
+                    >
+                      <div
+                        className={`
+                          relative w-16 h-16 rounded-full flex items-center justify-center
+                          transition-all duration-300 border-3 border-purple-300 cursor-pointer
+                          bg-gradient-to-br from-purple-500 via-indigo-600 to-blue-700 shadow-2xl
+                          ${isUnlocked ? 'shadow-2xl hover:scale-110 animate-pulse' : 'grayscale cursor-not-allowed opacity-50'}
+                        `}
+                      >
+                        {isUnlocked && (
+                          <div className="absolute inset-0 rounded-full bg-purple-400 animate-ping opacity-30" />
+                        )}
+                        <span className="text-5xl">🛸</span>
+                      </div>
+                    </button>
+                    
+                    {/* Tooltip al hacer hover */}
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-purple-100 text-purple-900
+                          shadow-md z-30
+                        `}
+                      >
+                        Nave Estelar
+                      </div>
+                    )}
+
+                    {/* Card de descripción expandida */}
+                    {expandedBadge === 'ship9250' && isUnlocked && (
+                      <Card 
+                        className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
+                          border-0 w-64 max-w-[calc(100vw-40px)] animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
+                      >
+                        <GlowingEffect disabled={false} spread={20} />
+                        <div className="relative p-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedBadge(null);
+                            }}
+                            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors z-10"
+                          >
+                            ✕
+                          </button>
+                          
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 via-indigo-600 to-blue-700 flex items-center justify-center shrink-0">
+                              <span className="text-3xl">🛸</span>
+                            </div>
+                            <h3 className="text-base font-bold text-gray-900">Nave Estelar</h3>
+                          </div>
+                          
+                          <p className="text-xs text-gray-600 mb-2 leading-relaxed">
+                            Viajas más allá, innovas y exploras lo desconocido.
+                          </p>
+                          
+                          <div className="flex items-center gap-1.5 text-[10px] font-medium text-purple-900 bg-purple-50 px-2 py-1 rounded-full w-fit">
+                            <span className="text-sm">🛸</span>
+                            <span>Nivel 9,250</span>
+                          </div>
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Espacio Infinito - Nivel 9500 */}
+            {(() => {
+              const level9500 = 9500;
+              const nodeIndex = level9500 / 50;
+              const badgeY = 40 + (nodeIndex * 35) - 30;
+              const badgeX = 70;
+              const isUnlocked = currentLevel >= level9500;
+              
+              return (
+                <div
+                  className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  style={{
+                    top: `${badgeY}px`,
+                    left: `${badgeX}%`,
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: expandedBadge === 'space9500' ? 100 : 20
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-0.5 relative">
+                    <button
+                      onClick={() => {
+                        if (isUnlocked) {
+                          setExpandedBadge(expandedBadge === 'space9500' ? null : 'space9500');
+                          setExpandedNode(null);
+                        }
+                      }}
+                      disabled={!isUnlocked}
+                      className="focus:outline-none relative"
+                    >
+                      <div
+                        className={`
+                          relative w-16 h-16 rounded-full flex items-center justify-center
+                          transition-all duration-300 border-3 border-indigo-300 cursor-pointer
+                          bg-gradient-to-br from-indigo-600 via-purple-700 to-pink-800 shadow-2xl
+                          ${isUnlocked ? 'shadow-2xl hover:scale-110 animate-pulse' : 'grayscale cursor-not-allowed opacity-50'}
+                        `}
+                      >
+                        {isUnlocked && (
+                          <div className="absolute inset-0 rounded-full bg-indigo-500 animate-ping opacity-30" />
+                        )}
+                        <span className="text-5xl">🌌</span>
+                      </div>
+                    </button>
+                    
+                    {/* Tooltip al hacer hover */}
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-indigo-100 text-indigo-900
+                          shadow-md z-30
+                        `}
+                      >
+                        Espacio Infinito
+                      </div>
+                    )}
+
+                    {/* Card de descripción expandida */}
+                    {expandedBadge === 'space9500' && isUnlocked && (
+                      <Card 
+                        className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
+                          border-0 w-64 max-w-[calc(100vw-40px)] animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
+                      >
+                        <GlowingEffect disabled={false} spread={20} />
+                        <div className="relative p-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedBadge(null);
+                            }}
+                            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors z-10"
+                          >
+                            ✕
+                          </button>
+                          
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 via-purple-700 to-pink-800 flex items-center justify-center shrink-0">
+                              <span className="text-3xl">🌌</span>
+                            </div>
+                            <h3 className="text-base font-bold text-gray-900">Espacio Infinito</h3>
+                          </div>
+                          
+                          <p className="text-xs text-gray-600 mb-2 leading-relaxed">
+                            No tienes límites visibles, tu proyección es libre.
+                          </p>
+                          
+                          <div className="flex items-center gap-1.5 text-[10px] font-medium text-indigo-900 bg-indigo-50 px-2 py-1 rounded-full w-fit">
+                            <span className="text-sm">🌌</span>
+                            <span>Nivel 9,500</span>
+                          </div>
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Diamante Imponente - Nivel 9750 */}
+            {(() => {
+              const level9750 = 9750;
+              const nodeIndex = level9750 / 50;
+              const badgeY = 40 + (nodeIndex * 35) + 25;
+              const badgeX = 30;
+              const isUnlocked = currentLevel >= level9750;
+              
+              return (
+                <div
+                  className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  style={{
+                    top: `${badgeY}px`,
+                    left: `${badgeX}%`,
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: expandedBadge === 'diamond9750' ? 100 : 20
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-0.5 relative">
+                    <button
+                      onClick={() => {
+                        if (isUnlocked) {
+                          setExpandedBadge(expandedBadge === 'diamond9750' ? null : 'diamond9750');
+                          setExpandedNode(null);
+                        }
+                      }}
+                      disabled={!isUnlocked}
+                      className="focus:outline-none relative"
+                    >
+                      <div
+                        className={`
+                          relative w-16 h-16 rounded-full flex items-center justify-center
+                          transition-all duration-300 border-3 border-cyan-300 cursor-pointer
+                          bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 shadow-2xl
+                          ${isUnlocked ? 'shadow-2xl hover:scale-110 animate-pulse' : 'grayscale cursor-not-allowed opacity-50'}
+                        `}
+                      >
+                        {isUnlocked && (
+                          <div className="absolute inset-0 rounded-full bg-cyan-400 animate-ping opacity-30" />
+                        )}
+                        <span className="text-5xl">💠</span>
+                      </div>
+                    </button>
+                    
+                    {/* Tooltip al hacer hover */}
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[10px] font-bold text-center whitespace-nowrap px-2 py-1 rounded-full
+                          transition-opacity duration-200 bg-cyan-100 text-cyan-900
+                          shadow-md z-30
+                        `}
+                      >
+                        Diamante Imponente
+                      </div>
+                    )}
+
+                    {/* Card de descripción expandida */}
+                    {expandedBadge === 'diamond9750' && isUnlocked && (
+                      <Card 
+                        className="absolute bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl
+                          border-0 w-64 max-w-[calc(100vw-40px)] animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
+                      >
+                        <GlowingEffect disabled={false} spread={20} />
+                        <div className="relative p-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedBadge(null);
+                            }}
+                            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors z-10"
+                          >
+                            ✕
+                          </button>
+                          
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 flex items-center justify-center shrink-0">
+                              <span className="text-3xl">💠</span>
+                            </div>
+                            <h3 className="text-base font-bold text-gray-900">Diamante Imponente</h3>
+                          </div>
+                          
+                          <p className="text-xs text-gray-600 mb-2 leading-relaxed">
+                            Ya eres sinónimo de brillo, dureza y exclusividad.
+                          </p>
+                          
+                          <div className="flex items-center gap-1.5 text-[10px] font-medium text-cyan-900 bg-cyan-50 px-2 py-1 rounded-full w-fit">
+                            <span className="text-sm">💠</span>
+                            <span>Nivel 9,750</span>
+                          </div>
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Diamante Supremo - Nivel 10000 (MÁXIMO) */}
+            {(() => {
+              const level10000 = 10000;
+              const nodeIndex = level10000 / 50;
+              const badgeY = 40 + (nodeIndex * 35) - 60;
+              const badgeX = 50;
+              const isUnlocked = currentLevel >= level10000;
+              
+              return (
+                <div
+                  className={`absolute transition-all duration-300 ${isUnlocked ? 'opacity-100 scale-100' : 'opacity-40 scale-90'} group`}
+                  style={{
+                    top: `${badgeY}px`,
+                    left: `${badgeX}%`,
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: expandedBadge === 'supreme10000' ? 100 : 20
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-0.5 relative">
+                    <button
+                      onClick={() => {
+                        if (isUnlocked) {
+                          setExpandedBadge(expandedBadge === 'supreme10000' ? null : 'supreme10000');
+                          setExpandedNode(null);
+                        }
+                      }}
+                      disabled={!isUnlocked}
+                      className="focus:outline-none relative"
+                    >
+                      <div
+                        className={`
+                          relative w-20 h-20 rounded-full flex items-center justify-center
+                          transition-all duration-300 border-4 border-pink-300 cursor-pointer
+                          bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-600 shadow-3xl
+                          ${isUnlocked ? 'shadow-3xl hover:scale-110 animate-pulse' : 'grayscale cursor-not-allowed opacity-50'}
+                        `}
+                      >
+                        {isUnlocked && (
+                          <>
+                            <div className="absolute inset-0 rounded-full bg-pink-400 animate-ping opacity-40" />
+                            <div className="absolute inset-0 rounded-full bg-purple-500 animate-ping opacity-30 animation-delay-150" />
+                          </>
+                        )}
+                        <span className="text-6xl">💎</span>
+                      </div>
+                    </button>
+                    
+                    {/* Tooltip al hacer hover */}
+                    {isUnlocked && (
+                      <div 
+                        className={`
+                          absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
+                          text-[11px] font-bold text-center whitespace-nowrap px-3 py-1.5 rounded-full
+                          transition-opacity duration-200 bg-gradient-to-r from-pink-100 to-purple-100 text-purple-900
+                          shadow-lg z-30 border border-pink-200
+                        `}
+                      >
+                        💎 Diamante Supremo 💎
+                      </div>
+                    )}
+
+                    {/* Card de descripción expandida */}
+                    {expandedBadge === 'supreme10000' && isUnlocked && (
+                      <Card 
+                        className="absolute bg-white/95 backdrop-blur-sm rounded-[24px] shadow-2xl
+                          border-2 border-pink-200 w-72 max-w-[calc(100vw-40px)] animate-scale-in overflow-hidden top-full mt-3 left-1/2 -translate-x-1/2"
+                      >
+                        <GlowingEffect disabled={false} spread={30} />
+                        <div className="relative p-4">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedBadge(null);
+                            }}
+                            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors z-10"
+                          >
+                            ✕
+                          </button>
+                          
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-lg">
+                              <span className="text-4xl">💎</span>
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                                Diamante Supremo
+                              </h3>
+                              <p className="text-xs text-purple-600 font-semibold">Nivel Máximo</p>
+                            </div>
+                          </div>
+                          
+                          <p className="text-sm text-gray-700 mb-3 leading-relaxed font-medium">
+                            ¡Felicitaciones! Has alcanzado el nivel más alto: valor excepcional, legado, perfección.
+                          </p>
+                          
+                          <div className="flex items-center justify-center gap-2 text-xs font-bold text-white bg-gradient-to-r from-pink-500 to-purple-600 px-3 py-2 rounded-full shadow-md">
+                            <span className="text-lg">💎</span>
+                            <span>NIVEL 10,000 - MÁXIMO</span>
+                            <span className="text-lg">💎</span>
+                          </div>
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Maestría Rubí #3 - Nivel 5750 */}
             {(() => {
               const level5750 = 5750;
