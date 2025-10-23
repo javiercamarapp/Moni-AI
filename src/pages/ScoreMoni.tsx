@@ -33,6 +33,9 @@ const ScoreMoni = () => {
   const [loadingReason, setLoadingReason] = useState(false);
 
   useEffect(() => {
+    // Scroll to top immediately when page loads
+    window.scrollTo(0, 0);
+    
     // Calculate initial components based on cached score
     const cachedScore = localStorage.getItem('scoreMoni');
     if (cachedScore) {
