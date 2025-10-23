@@ -55,7 +55,16 @@ export default function FinancialAnalysis() {
     return cached ? JSON.parse(cached) : null;
   });
   const [analysis, setAnalysis] = useState<any>(() => {
-    // No usar caché inicial ya que depende del período seleccionado
+    // Cargar desde caché inmediatamente para mostrar instantáneamente
+    const cacheKey = `financialAnalysis_full_month_cache`;
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {
+        console.error('Error parsing cached analysis:', e);
+      }
+    }
     return {
       metrics: {
         totalIncome: 0,
@@ -538,6 +547,7 @@ export default function FinancialAnalysis() {
     const cachedTime = localStorage.getItem(cacheTimeKey);
     const now = Date.now();
     
+    // Si hay caché válido, usarlo inmediatamente (sin loading)
     if (cachedTime && (now - parseInt(cachedTime)) < 5 * 60 * 1000) {
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
@@ -552,9 +562,9 @@ export default function FinancialAnalysis() {
       }
     }
     
-    setLoading(true);
+    // NO mostrar loading para no bloquear la UI - actualizar en background
     try {
-      console.log('Calling financial-analysis function with:', { userId: user.id, period });
+      console.log('🔄 Actualizando análisis en background para:', { userId: user.id, period });
       const {
         data,
         error
@@ -575,25 +585,21 @@ export default function FinancialAnalysis() {
           tieneAnalysis: !!data.analysis,
           tieneForecast: !!data.forecast,
           forecastData: data.forecast?.forecastData?.length || 0,
-          forecastSample: data.forecast?.forecastData?.slice(0, 3),
-          goalProbability: data.forecast?.goalProbability,
-          goalETA: data.forecast?.goalETA
+          forecastSample: data.forecast?.forecastData?.slice(0, 3)
         });
-        console.log('📊 FORECAST COMPLETO:', JSON.stringify(data.forecast, null, 2));
         setAnalysis(data);
-        // Guardar con timestamp
+        // Guardar con timestamp y caché general
         localStorage.setItem(cacheKey, JSON.stringify(data));
         localStorage.setItem(cacheTimeKey, now.toString());
+        localStorage.setItem('financialAnalysis_full_month_cache', JSON.stringify(data));
         console.log('✅ Analysis data cached successfully');
       }
     } catch (error: any) {
       console.error("Error loading analysis:", error);
       // No mostrar toast si tenemos datos en caché
-      if (!analysis) {
+      if (!analysis?.forecast) {
         toast.error(`No se pudo cargar el análisis`);
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -746,14 +752,23 @@ export default function FinancialAnalysis() {
 
             {/* Proyección Anual removida - se moverá a página de proyecciones */}
 
-            {/* 3. PROYECCIONES CON ESCENARIOS */}
+            {/* 3. PROYECCIONES CON ESCENARIOS - Siempre mostrar con datos en caché */}
             {(() => {
               console.log('🔍 RENDERIZANDO FORECAST:', {
                 hasForecast: !!analysis?.forecast,
                 forecastData: analysis?.forecast?.forecastData?.length,
                 forecastSample: analysis?.forecast?.forecastData?.slice(0, 2)
               });
-              return analysis?.forecast && <ForecastWidget {...analysis?.forecast} />;
+              
+              // Mostrar widget incluso si no hay datos (mostrará placeholder o datos en caché)
+              const forecastProps = analysis?.forecast || {
+                forecastData: [],
+                goalProbability: 0,
+                goalETA: 'Calculando...',
+                goalInfo: null
+              };
+              
+              return <ForecastWidget {...forecastProps} />;
             })()}
 
             {/* 5. PRESUPUESTO VIVO */}
