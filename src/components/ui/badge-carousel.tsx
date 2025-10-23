@@ -167,34 +167,34 @@ export const BadgeCard = ({
               ref={containerRef}
               className="relative w-full max-w-sm"
             >
-              <div className="bg-gradient-to-b from-gray-50 to-white rounded-[24px] shadow-2xl p-5 relative">
+              <div className="bg-card/95 backdrop-blur-xl rounded-3xl shadow-2xl p-6 relative border border-border/50">
                 <button
-                  className="absolute -top-2 -right-2 h-10 w-10 rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-500 to-orange-500 hover:scale-110 transition-all shadow-lg"
+                  className="absolute -top-2 -right-2 h-10 w-10 rounded-full flex items-center justify-center bg-primary hover:bg-primary/90 hover:scale-110 transition-all shadow-lg"
                   onClick={handleCollapse}
                 >
-                  <X className="h-4 w-4 text-white" />
+                  <X className="h-4 w-4 text-primary-foreground" />
                 </button>
                 
                 <div className="flex flex-col items-center">
-                  <div className={`bg-gradient-to-br ${badge.color} p-4 rounded-full mb-3 shadow-lg`}>
+                  <div className={`bg-gradient-to-br ${badge.color} p-4 rounded-full mb-4 shadow-lg`}>
                     <IconComponent className="h-10 w-10 text-white" />
                   </div>
                   
-                  <h2 className="text-xl font-bold text-gray-900 mb-1 text-center">
+                  <h2 className="text-xl font-bold text-foreground mb-1 text-center">
                     {badge.name}
                   </h2>
                   
-                  <p className="text-xs text-gray-500 font-medium mb-4">
+                  <p className="text-xs text-muted-foreground font-medium mb-4">
                     Nivel {badge.level}
                   </p>
                   
-                  <div className="bg-gray-100 rounded-[16px] p-4 mb-3 w-full">
-                    <p className="text-xs text-gray-700 leading-relaxed text-center">
+                  <div className="bg-muted/50 rounded-2xl p-4 mb-4 w-full border border-border/30">
+                    <p className="text-xs text-foreground leading-relaxed text-center">
                       {badge.explanation}
                     </p>
                   </div>
                   
-                  <div className={`bg-gradient-to-br ${badge.color} px-4 py-2.5 rounded-[12px] shadow-md w-full`}>
+                  <div className={`bg-gradient-to-br ${badge.color} px-4 py-3 rounded-xl shadow-md w-full`}>
                     <p className="text-xs text-white font-bold text-center">
                       🎯 {badge.growthPercentage}% patrimonio deseado
                     </p>
