@@ -865,71 +865,75 @@ export default function AspirationsAnalysis() {
 
           {/* Badges Carousel */}
           {badges.length > 0 ? (
-            <Carousel className="w-full max-w-md mx-auto">
-              <CarouselContent>
-                {badges.map((badge, index) => {
-                  const IconComponent = badge.icon;
-                  const isExpanded = expandedBadge === index;
-                  return (
-                    <CarouselItem key={index} className="basis-1/2 md:basis-1/3">
-                      <div className="relative">
-                        {/* Recuadro de información expandida arriba */}
-                        {isExpanded && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="absolute bottom-full left-0 right-0 mb-2 z-50"
-                          >
-                            <div className="bg-white rounded-lg shadow-xl p-3 border border-gray-200">
-                              <p className="text-[8px] text-foreground leading-tight mb-2">
-                                {badge.explanation}
-                              </p>
-                              <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-2 py-1 rounded-md">
-                                <p className="text-[9px] text-foreground font-bold text-center">
-                                  🎯 {badge.growthPercentage}% patrimonio deseado
+            <div className="relative">
+              <Carousel className="w-full max-w-md mx-auto">
+                <CarouselContent className="overflow-visible">
+                  {badges.map((badge, index) => {
+                    const IconComponent = badge.icon;
+                    const isExpanded = expandedBadge === index;
+                    return (
+                      <CarouselItem key={index} className="basis-1/2 md:basis-1/3">
+                        <div className="relative">
+                          {/* Recuadro de información expandida arriba */}
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-[100] w-48"
+                            >
+                              <div className="bg-white rounded-lg shadow-2xl p-3 border-2 border-purple-200">
+                                <p className="text-[10px] text-gray-800 leading-tight mb-2 font-medium">
+                                  {badge.explanation}
                                 </p>
+                                <div className="bg-gradient-to-r from-blue-100 to-purple-100 px-2 py-1.5 rounded-md border border-purple-200">
+                                  <p className="text-[10px] text-gray-900 font-bold text-center">
+                                    🎯 {badge.growthPercentage}% patrimonio deseado
+                                  </p>
+                                </div>
                               </div>
+                            </motion.div>
+                          )}
+                          
+                          {/* Insignia */}
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: index * 0.05 }}
+                            onClick={() => setExpandedBadge(isExpanded ? null : index)}
+                            className={`bg-gradient-to-br ${badge.color} rounded-[10px] p-2 flex flex-col items-center gap-1 shadow-lg relative overflow-hidden cursor-pointer transition-all ${
+                              isExpanded ? 'scale-105 ring-2 ring-yellow-400' : ''
+                            }`}
+                          >
+                            {/* Efecto de brillo de fondo */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                            
+                            <div className="bg-white/30 p-1.5 rounded-full backdrop-blur-sm relative z-10 shadow-md">
+                              <IconComponent className="h-4 w-4 text-white" />
+                            </div>
+                            
+                            <div className="text-center relative z-10">
+                              <p className="text-[9px] font-bold text-white leading-tight mb-0.5 drop-shadow-lg">
+                                {badge.name}
+                              </p>
+                              <p className="text-[7px] text-white/90 leading-tight drop-shadow">
+                                {badge.description}
+                              </p>
+                            </div>
+                            <div className="bg-white/20 px-1.5 py-0.5 rounded-full backdrop-blur-sm relative z-10">
+                              <p className="text-[7px] text-white font-semibold">
+                                {isExpanded ? '👆 VER ARRIBA' : '✓ DESBLOQUEADO'}
+                              </p>
                             </div>
                           </motion.div>
-                        )}
-                        
-                        {/* Insignia */}
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: index * 0.05 }}
-                          onClick={() => setExpandedBadge(isExpanded ? null : index)}
-                          className={`bg-gradient-to-br ${badge.color} rounded-[10px] p-2 flex flex-col items-center gap-1 shadow-lg relative overflow-hidden cursor-pointer transition-all ${
-                            isExpanded ? 'scale-105 ring-2 ring-white/50' : ''
-                          }`}
-                        >
-                          {/* Efecto de brillo de fondo */}
-                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-                          
-                          <div className="bg-white/30 p-1.5 rounded-full backdrop-blur-sm relative z-10 shadow-md">
-                            <IconComponent className="h-4 w-4 text-white" />
-                          </div>
-                          
-                          <div className="text-center relative z-10">
-                            <p className="text-[9px] font-bold text-white leading-tight mb-0.5 drop-shadow-lg">
-                              {badge.name}
-                            </p>
-                            <p className="text-[7px] text-white/90 leading-tight drop-shadow">
-                              {badge.description}
-                            </p>
-                          </div>
-                          <div className="bg-white/20 px-1.5 py-0.5 rounded-full backdrop-blur-sm relative z-10">
-                            <p className="text-[7px] text-white font-semibold">✓ DESBLOQUEADO</p>
-                          </div>
-                        </motion.div>
-                      </div>
-                    </CarouselItem>
-                  );
-                })}
-              </CarouselContent>
-              <CarouselPrevious className="hidden sm:flex h-6 w-6" />
-              <CarouselNext className="hidden sm:flex h-6 w-6" />
-            </Carousel>
+                        </div>
+                      </CarouselItem>
+                    );
+                  })}
+                </CarouselContent>
+                <CarouselPrevious className="hidden sm:flex h-6 w-6" />
+                <CarouselNext className="hidden sm:flex h-6 w-6" />
+              </Carousel>
+            </div>
           ) : (
             <div className="text-center py-3">
               <Trophy className="h-6 w-6 text-muted-foreground mx-auto mb-1.5 opacity-50" />
