@@ -188,13 +188,13 @@ export const BadgeCard = ({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               ref={containerRef}
-              className="max-w-2xl mx-auto bg-gradient-to-br from-white via-purple-50 to-blue-50 h-auto z-[10000] p-6 md:p-10 rounded-3xl relative mt-20 shadow-2xl border-2 border-purple-200"
+              className="max-w-2xl mx-auto bg-card/95 backdrop-blur-sm h-auto z-[10000] p-6 md:p-10 rounded-[20px] relative mt-20 shadow-2xl border border-border"
             >
               <button
-                className="absolute top-4 right-4 h-10 w-10 rounded-full flex items-center justify-center bg-gradient-to-br from-purple-500 to-blue-500 hover:scale-110 transition-transform shadow-lg"
+                className="absolute top-4 right-4 h-10 w-10 rounded-full flex items-center justify-center bg-primary hover:bg-primary/90 hover:scale-110 transition-all shadow-lg"
                 onClick={handleCollapse}
               >
-                <X className="h-5 w-5 text-white" />
+                <X className="h-5 w-5 text-primary-foreground" />
               </button>
               
               <div className="flex flex-col items-center">
@@ -202,27 +202,27 @@ export const BadgeCard = ({
                   <IconComponent className="h-12 w-12 text-white" />
                 </div>
                 
-                <h2 className="text-3xl font-bold text-gray-900 mb-2 text-center">
+                <h2 className="text-3xl font-bold text-foreground mb-2 text-center">
                   {badge.name}
                 </h2>
                 
-                <p className="text-sm text-purple-600 font-medium mb-6">
+                <p className="text-sm text-muted-foreground font-medium mb-6">
                   Nivel {badge.level}
                 </p>
                 
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 mb-6 shadow-lg border border-purple-100">
-                  <p className="text-gray-700 leading-relaxed text-center mb-4">
+                <div className="bg-background/80 backdrop-blur-sm rounded-[16px] p-6 mb-6 shadow-lg border border-border w-full">
+                  <p className="text-foreground leading-relaxed text-center mb-4">
                     {badge.explanation}
                   </p>
                   
-                  <div className="bg-gradient-to-r from-blue-100 to-purple-100 px-4 py-3 rounded-xl border-2 border-purple-200">
-                    <p className="text-sm text-gray-900 font-bold text-center">
+                  <div className={`${badge.color} px-4 py-3 rounded-[12px] shadow-md`}>
+                    <p className="text-sm text-white font-bold text-center">
                       🎯 {badge.growthPercentage}% patrimonio deseado
                     </p>
                   </div>
                 </div>
                 
-                <p className="text-gray-600 text-sm text-center italic">
+                <p className="text-muted-foreground text-sm text-center italic">
                   {badge.description}
                 </p>
               </div>
