@@ -20,14 +20,38 @@ export default function LiquidityGaugeWidget({
   const maxMonths = 6;
   const percentage = validExpenses > 0 ? Math.min((validMonths / maxMonths) * 100, 100) : 0;
   
-  const gaugeColor = validMonths >= 3 ? '#10b981' : validMonths >= 1.5 ? '#f59e0b' : '#ef4444';
+  // Determinar nivel de salud financiera
+  let status = '';
+  let statusColor = '';
+  let gaugeColor = '';
+  let statusIcon = '';
+  
+  if (validMonths >= 3) {
+    status = 'Saludable';
+    statusColor = 'text-emerald-600';
+    gaugeColor = '#10b981';
+    statusIcon = '✅';
+  } else if (validMonths >= 2) {
+    status = 'Regular';
+    statusColor = 'text-yellow-600';
+    gaugeColor = '#eab308';
+    statusIcon = '🟡';
+  } else if (validMonths >= 1) {
+    status = 'Se puede mejorar';
+    statusColor = 'text-orange-600';
+    gaugeColor = '#f97316';
+    statusIcon = '🟠';
+  } else {
+    status = 'Tomemos acción';
+    statusColor = 'text-red-600';
+    gaugeColor = '#ef4444';
+    statusIcon = '🔴';
+  }
+  
   const data = [
     { value: percentage, color: gaugeColor },
     { value: 100 - percentage, color: '#e5e7eb' }
   ];
-
-  const status = validMonths >= 3 ? 'Saludable' : validMonths >= 1.5 ? 'Bajo' : 'Crítico';
-  const statusColor = validMonths >= 3 ? 'text-emerald-600' : validMonths >= 1.5 ? 'text-amber-600' : 'text-red-600';
 
   return (
     <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 transition-all">
@@ -37,7 +61,7 @@ export default function LiquidityGaugeWidget({
             <Droplets className="h-3.5 w-3.5 text-blue-600" />
             <p className="text-xs font-bold text-foreground">💧 Liquidez de Emergencia</p>
           </div>
-          <span className={`text-[9px] font-semibold ${statusColor}`}>{status}</span>
+          <span className={`text-[9px] font-semibold ${statusColor}`}>{statusIcon} {status}</span>
         </div>
 
         <div className="relative">
@@ -89,22 +113,42 @@ export default function LiquidityGaugeWidget({
           </div>
         </div>
 
-        {validMonths < 3 && validExpenses > 0 && (
-          <div className="bg-amber-50 rounded-lg p-2 border border-amber-200">
-            <p className="text-[8px] text-amber-700 font-semibold">⚠️ Recomendación</p>
-            <p className="text-[9px] text-amber-900">
-              Necesitas ${((3 - validMonths) * validExpenses).toLocaleString('es-MX')} más para 3 meses
-            </p>
-            <p className="text-[7px] text-gray-500 mt-0.5">(meta: 3-6 meses de gastos)</p>
-          </div>
-        )}
-
         {validMonths >= 3 && (
           <div className="bg-emerald-50 rounded-lg p-2 border border-emerald-200">
             <p className="text-[9px] text-emerald-700 font-semibold">
-              🎯 Fondo de emergencia saludable
+              {statusIcon} Fondo de emergencia saludable
             </p>
             <p className="text-[7px] text-gray-500">(3-6 meses es ideal)</p>
+          </div>
+        )}
+
+        {validMonths >= 2 && validMonths < 3 && (
+          <div className="bg-yellow-50 rounded-lg p-2 border border-yellow-200">
+            <p className="text-[8px] text-yellow-700 font-semibold">{statusIcon} Situación Regular</p>
+            <p className="text-[9px] text-yellow-900">
+              Tienes ${(validMonths * validExpenses).toLocaleString('es-MX')}. Te faltan ${((3 - validMonths) * validExpenses).toLocaleString('es-MX')} para estar saludable
+            </p>
+            <p className="text-[7px] text-gray-500 mt-0.5">(meta: 3 meses mínimo)</p>
+          </div>
+        )}
+
+        {validMonths >= 1 && validMonths < 2 && (
+          <div className="bg-orange-50 rounded-lg p-2 border border-orange-200">
+            <p className="text-[8px] text-orange-700 font-semibold">{statusIcon} Se puede mejorar</p>
+            <p className="text-[9px] text-orange-900">
+              Necesitas ${((3 - validMonths) * validExpenses).toLocaleString('es-MX')} más para alcanzar 3 meses de cobertura
+            </p>
+            <p className="text-[7px] text-gray-500 mt-0.5">(aumenta tu ahorro mensual)</p>
+          </div>
+        )}
+
+        {validMonths < 1 && validExpenses > 0 && (
+          <div className="bg-red-50 rounded-lg p-2 border border-red-200">
+            <p className="text-[8px] text-red-700 font-semibold">{statusIcon} ¡Tomemos acción!</p>
+            <p className="text-[9px] text-red-900">
+              Situación crítica. Necesitas ${(3 * validExpenses).toLocaleString('es-MX')} para un fondo de emergencia básico
+            </p>
+            <p className="text-[7px] text-gray-500 mt-0.5">(prioriza crear un colchón de ahorro)</p>
           </div>
         )}
       </div>
