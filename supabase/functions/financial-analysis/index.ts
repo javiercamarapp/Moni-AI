@@ -382,10 +382,12 @@ Ejemplo formato:
     // 9. SCORE MONI (0-100) - Ponderado
     let scoreMoni = 0;
     
-    // Ahorro y liquidez (30%)
-    const savingsComponent = Math.min(30, (savingsRate / 20) * 30);
-    const liquidityComponent = Math.min(30, liquidityMonths * 10);
-    const avgSavingsLiquidity = (savingsComponent + liquidityComponent) / 2;
+    // Ahorro y liquidez (30 pts total)
+    // 15 pts por tasa de ahorro (ideal: 20% o más)
+    const savingsComponent = Math.min(15, (savingsRate / 20) * 15);
+    // 15 pts por fondo de emergencia (ideal: 3-6 meses de gastos líquidos)
+    const liquidityComponent = Math.min(15, (liquidityMonths / 3) * 15);
+    const avgSavingsLiquidity = savingsComponent + liquidityComponent;
     scoreMoni += avgSavingsLiquidity;
     
     // Endeudamiento (20%)
@@ -407,13 +409,15 @@ Ejemplo formato:
     scoreMoni = Math.round(Math.min(100, scoreMoni));
     
     console.log('🎯 Score Moni Calculation:', {
-      savingsComponent: savingsComponent.toFixed(2),
-      liquidityComponent: liquidityComponent.toFixed(2),
-      avgSavingsLiquidity: avgSavingsLiquidity.toFixed(2),
-      debtComponent: debtComponent.toFixed(2),
-      controlComponent: controlComponent.toFixed(2),
-      growthComponent: growthComponent.toFixed(2),
-      behaviorComponent: behaviorComponent.toFixed(2),
+      savingsRate: savingsRate.toFixed(2) + '%',
+      liquidityMonths: liquidityMonths.toFixed(2),
+      savingsComponent: savingsComponent.toFixed(2) + '/15',
+      liquidityComponent: liquidityComponent.toFixed(2) + '/15',
+      avgSavingsLiquidity: avgSavingsLiquidity.toFixed(2) + '/30',
+      debtComponent: debtComponent.toFixed(2) + '/20',
+      controlComponent: controlComponent.toFixed(2) + '/20',
+      growthComponent: growthComponent.toFixed(2) + '/15',
+      behaviorComponent: behaviorComponent.toFixed(2) + '/15',
       totalBeforeRound: (avgSavingsLiquidity + debtComponent + controlComponent + growthComponent + behaviorComponent).toFixed(2),
       scoreMoni
     });
