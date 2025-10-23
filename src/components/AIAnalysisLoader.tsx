@@ -4,7 +4,7 @@ import { Sparkles, TrendingUp, BarChart3, Calculator } from "lucide-react";
 
 export function AIAnalysisLoader() {
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center overflow-hidden relative">
+    <div className="w-full bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center overflow-hidden relative rounded-[20px] py-12">
       {/* Animated background circles */}
       <motion.div
         className="absolute inset-0"

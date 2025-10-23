@@ -608,43 +608,45 @@ export default function FinancialAnalysis() {
 
   return (
     <>
-      {/* Show AI Analysis Loader while loading */}
-      {loading && <AIAnalysisLoader />}
-      
-      {/* Main content - hide while loading */}
-      {!loading && (
-        <div className="min-h-screen animated-wave-bg pb-24">
-          <div className="mx-4 space-y-4">
-        {/* Header */}
-        <div className="flex items-center justify-between pt-4 mb-4">
-          <div>
-            <h1 className="text-xl font-bold text-foreground">
-              Análisis Financiero
-            </h1>
-            <p className="text-xs text-muted-foreground">
-              {period === 'month' ? 'Mes actual' : 'Año completo'}
-            </p>
+      <div className="min-h-screen animated-wave-bg pb-24">
+        <div className="mx-4 space-y-4">
+          {/* Header - Always visible */}
+          <div className="flex items-center justify-between pt-4 mb-4">
+            <div>
+              <h1 className="text-xl font-bold text-foreground">
+                Análisis Financiero
+              </h1>
+              <p className="text-xs text-muted-foreground">
+                {period === 'month' ? 'Mes actual' : 'Año completo'}
+              </p>
+            </div>
+            <Tabs value={period} onValueChange={setPeriod}>
+              <TabsList className="h-10 bg-white rounded-[20px] shadow-xl border border-blue-100">
+                <TabsTrigger 
+                  value="month" 
+                  className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-[16px] transition-all"
+                >
+                  Mes
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="year" 
+                  className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-[16px] transition-all"
+                >
+                  Año
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
-          <Tabs value={period} onValueChange={setPeriod}>
-            <TabsList className="h-10 bg-white rounded-[20px] shadow-xl border border-blue-100">
-              <TabsTrigger 
-                value="month" 
-                className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-[16px] transition-all"
-              >
-                Mes
-              </TabsTrigger>
-              <TabsTrigger 
-                value="year" 
-                className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-[16px] transition-all"
-              >
-                Año
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
 
-        {/* Mostrar métricas instantáneas (siempre disponibles del caché) */}
-        {(quickMetrics || analysis) ? (
+          {/* Show AI Analysis Loader in content area while loading */}
+          {loading ? (
+            <div className="py-12">
+              <AIAnalysisLoader />
+            </div>
+          ) : (
+            <>
+              {/* Mostrar métricas instantáneas (siempre disponibles del caché) */}
+              {(quickMetrics || analysis) ? (
           <>
             {/* Animated Income & Expense Card */}
             <Card 
@@ -1189,11 +1191,11 @@ export default function FinancialAnalysis() {
             <p className="text-muted-foreground">No hay datos disponibles para mostrar</p>
           </Card>
         )}
+        </>
+        )}
         </div>
-        
-        <BottomNav />
       </div>
-      )}
+      <BottomNav />
     </>
   );
 }
