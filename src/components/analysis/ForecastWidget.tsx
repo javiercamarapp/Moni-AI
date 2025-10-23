@@ -140,6 +140,7 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
                 return `$${Math.round(value / 1000)}k`;
               })()}
             </p>
+            <p className="text-[7px] text-gray-500 mt-0.5">(ahorro mín. esperado)</p>
           </div>
           <div className="bg-purple-50 rounded-lg p-1.5 border border-purple-200">
             <p className="text-[8px] text-purple-700 font-medium">Realista</p>
@@ -150,6 +151,7 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
                 return `$${Math.round(value / 1000)}k`;
               })()}
             </p>
+            <p className="text-[7px] text-gray-500 mt-0.5">(basado en tu promedio)</p>
           </div>
           <div className="bg-emerald-50 rounded-lg p-1.5 border border-emerald-200">
             <p className="text-[8px] text-emerald-700 font-medium">Óptimo</p>
@@ -160,6 +162,7 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
                 return `$${Math.round(value / 1000)}k`;
               })()}
             </p>
+            <p className="text-[7px] text-gray-500 mt-0.5">(si mejoras 20%)</p>
           </div>
         </div>
 
@@ -193,12 +196,14 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
                   />
                 </div>
                 <p className="text-[9px] text-purple-700 font-medium">{goalInfo.progress.toFixed(1)}% completado</p>
+                <p className="text-[7px] text-gray-500">(progreso actual vs meta total)</p>
               </div>
 
               <div className="flex items-center justify-between pt-1 border-t border-purple-200">
                 <div>
                   <p className="text-[8px] text-purple-600 font-medium">Probabilidad de éxito</p>
                   <p className="text-sm font-bold text-purple-900">{goalProbability}%</p>
+                  <p className="text-[7px] text-gray-500">(tiempo + consistencia + capacidad)</p>
                 </div>
                 <div className="text-right">
                   <p className="text-[7px] text-purple-500 max-w-[140px]">
