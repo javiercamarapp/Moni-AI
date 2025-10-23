@@ -304,7 +304,7 @@ export default function FinancialJourney() {
               </p>
               
               {/* Net Worth */}
-              <div className="p-1.5 bg-white/20 backdrop-blur-md rounded-lg border border-white/30 shadow-lg">
+              <div className="p-1.5 bg-white/20 backdrop-blur-md rounded-lg border border-white/30 shadow-lg hover:scale-105 hover:bg-white/30 hover:border-white/50 hover:shadow-2xl transition-all duration-300 cursor-pointer">
                 <div className="flex items-center justify-between gap-1.5">
                   <div className="flex-1 space-y-0.5">
                     <div className="flex items-baseline gap-1.5">
@@ -331,7 +331,7 @@ export default function FinancialJourney() {
                 </div>
               </div>
 
-              <div className="mt-3">
+              <div className="mt-3 p-1.5 bg-white/20 backdrop-blur-md rounded-lg border border-white/30 shadow-lg hover:scale-105 hover:bg-white/30 hover:border-white/50 hover:shadow-2xl transition-all duration-300 cursor-pointer">
                 <div className="flex justify-between text-xs mb-1 text-foreground/70">
                   <span>Progreso Total</span>
                   <span className="font-bold text-foreground">{currentProgress.toFixed(1)}%</span>
