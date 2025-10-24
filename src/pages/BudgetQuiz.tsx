@@ -487,7 +487,7 @@ export default function BudgetQuiz() {
 
       console.log('=== TODOS LOS PRESUPUESTOS GUARDADOS ===');
       toast.success("¡Presupuestos configurados exitosamente!");
-      navigate('/gestionar-categorias');
+      navigate('/budgets');
     } catch (error) {
       console.error('Error saving budgets:', error);
       toast.error("Error al guardar presupuestos");
