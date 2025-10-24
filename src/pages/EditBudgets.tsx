@@ -49,62 +49,62 @@ const DEFAULT_SUBCATEGORIES: Record<string, { id: string; name: string }[]> = {
     { id: 'agua', name: 'Agua' },
     { id: 'gas', name: 'Gas' },
     { id: 'internet', name: 'Internet y teléfono' },
+    { id: 'limpieza', name: 'Servicio de limpieza / seguridad' },
   ],
   'transporte': [
     { id: 'gasolina', name: 'Gasolina / carga eléctrica' },
-    { id: 'mensualidad_auto', name: 'Mensualidad de automóvil' },
+    { id: 'transporte_publico', name: 'Transporte público' },
     { id: 'uber', name: 'Uber, Didi, taxis' },
     { id: 'estacionamiento', name: 'Estacionamiento o peajes' },
+    { id: 'mantenimiento_auto', name: 'Mantenimiento del vehículo / seguro' },
   ],
   'alimentación': [
     { id: 'supermercado', name: 'Supermercado' },
     { id: 'restaurantes', name: 'Comidas fuera de casa' },
     { id: 'cafe', name: 'Café / snacks / antojos' },
-    { id: 'apps_comida', name: 'Apps de comida' },
+    { id: 'apps_comida', name: 'Apps de comida (Rappi, Uber Eats, etc.)' },
   ],
   'servicios y suscripciones': [
     { id: 'streaming', name: 'Streaming (Netflix, Spotify, etc.)' },
-    { id: 'apps_premium', name: 'Apps premium' },
+    { id: 'apps_premium', name: 'Apps premium (IA, productividad, edición, etc.)' },
+    { id: 'suscripciones_software', name: 'Suscripciones de software / membresías' },
     { id: 'telefono', name: 'Teléfono móvil' },
   ],
   'salud y bienestar': [
     { id: 'seguro_medico', name: 'Seguro médico' },
     { id: 'medicinas', name: 'Medicinas' },
     { id: 'consultas', name: 'Consultas médicas' },
-    { id: 'gimnasio', name: 'Gimnasio' },
+    { id: 'gimnasio', name: 'Gimnasio, clases, suplementos' },
   ],
   'educación y desarrollo': [
     { id: 'colegiaturas', name: 'Colegiaturas' },
     { id: 'cursos', name: 'Cursos / talleres' },
-    { id: 'libros', name: 'Libros' },
+    { id: 'libros', name: 'Libros o herramientas de aprendizaje' },
+    { id: 'clases_extra', name: 'Clases extracurriculares' },
   ],
   'deudas y créditos': [
     { id: 'tarjetas', name: 'Tarjetas de crédito' },
-    { id: 'prestamos', name: 'Préstamos personales' },
+    { id: 'prestamos', name: 'Préstamos personales / automotriz' },
     { id: 'creditos', name: 'Créditos hipotecarios' },
+    { id: 'intereses', name: 'Intereses / pagos mínimos' },
   ],
   'entretenimiento y estilo de vida': [
     { id: 'salidas', name: 'Salidas, fiestas, bares' },
     { id: 'ropa', name: 'Ropa, accesorios, belleza' },
     { id: 'viajes', name: 'Viajes o escapadas' },
-    { id: 'hobbies', name: 'Hobbies, videojuegos' },
+    { id: 'hobbies', name: 'Hobbies, videojuegos, mascotas' },
   ],
   'ahorro e inversión': [
     { id: 'ahorro_mensual', name: 'Ahorro mensual' },
     { id: 'fondo_emergencia', name: 'Fondo de emergencia' },
-    { id: 'inversion', name: 'Inversión' },
-    { id: 'retiro', name: 'Aportación a retiro' },
+    { id: 'inversion', name: 'Inversión (fondos, CETES, cripto, etc.)' },
+    { id: 'retiro', name: 'Aportación a retiro (AFORE, IRA, etc.)' },
   ],
   'apoyos y otros': [
-    { id: 'apoyo_familiar', name: 'Apoyo familiar' },
+    { id: 'apoyo_familiar', name: 'Apoyo familiar / hijos / pareja' },
     { id: 'donaciones', name: 'Donaciones' },
-    { id: 'otros', name: 'Otros gastos' },
-  ],
-  'mascotas': [
-    { id: 'comida_mascotas', name: 'Comida y snacks' },
-    { id: 'veterinario', name: 'Veterinario y medicinas' },
-    { id: 'accesorios_mascotas', name: 'Accesorios y juguetes' },
-    { id: 'estetica_mascotas', name: 'Estética y cuidado' },
+    { id: 'mascotas', name: 'Mascotas' },
+    { id: 'otros', name: 'Otros gastos no clasificados' },
   ],
 };
 
@@ -131,22 +131,40 @@ export default function EditBudgets() {
 
       console.log('Cargando presupuestos para usuario:', user.id);
 
-      // Cargar categorías principales con presupuesto
-      const { data, error } = await supabase
-        .from('category_budgets')
-        .select(`
-          id,
-          category_id,
-          monthly_budget,
-          category:categories (
-            id,
-            name,
-            color
-          )
-        `)
-        .eq('user_id', user.id);
+      // Cargar SOLO categorías principales con presupuesto (parent_id IS NULL)
+      const { data: mainCategories, error: catError } = await supabase
+        .from('categories')
+        .select('id, name, color')
+        .eq('user_id', user.id)
+        .is('parent_id', null);
 
-      if (error) throw error;
+      if (catError) throw catError;
+
+      // Para cada categoría principal, buscar su presupuesto
+      const budgetsData = await Promise.all(
+        (mainCategories || []).map(async (cat) => {
+          const { data: budgetData } = await supabase
+            .from('category_budgets')
+            .select('id, monthly_budget')
+            .eq('user_id', user.id)
+            .eq('category_id', cat.id)
+            .maybeSingle();
+
+          return {
+            id: budgetData?.id || '',
+            category_id: cat.id,
+            monthly_budget: budgetData?.monthly_budget || 0,
+            category: {
+              id: cat.id,
+              name: cat.name,
+              color: cat.color
+            }
+          };
+        })
+      );
+
+      const data = budgetsData;
+
       console.log('Categorías principales cargadas:', data);
 
       // Para cada categoría, cargar sus subcategorías
