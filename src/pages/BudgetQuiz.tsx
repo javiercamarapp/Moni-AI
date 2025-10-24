@@ -175,6 +175,7 @@ export default function BudgetQuiz() {
   const [aiForecast, setAiForecast] = useState<number | null>(null);
   const [showForecast, setShowForecast] = useState(false);
   const [showManualInput, setShowManualInput] = useState(false);
+  const [categoryEstimates, setCategoryEstimates] = useState<Record<string, number>>({});
 
   useEffect(() => {
     checkAuth();
@@ -190,6 +191,7 @@ export default function BudgetQuiz() {
     loadUserCategories(user.id);
     checkBankConnection(user.id);
     calculateAIForecast(user.id);
+    calculateCategoryEstimates(user.id);
   };
 
   const loadUserCategories = async (userId: string) => {
@@ -249,6 +251,77 @@ export default function BudgetQuiz() {
       }
     } catch (error) {
       console.error('Error calculating AI forecast:', error);
+    }
+  };
+
+  const calculateCategoryEstimates = async (userId: string) => {
+    try {
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+      
+      // Obtener todas las transacciones de gastos de los últimos 6 meses
+      const { data: transactions } = await supabase
+        .from('transactions')
+        .select('amount, transaction_date, category_id, description, frequency')
+        .eq('user_id', userId)
+        .eq('type', 'gasto')
+        .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false });
+
+      if (!transactions || transactions.length === 0) return;
+
+      // Obtener categorías del usuario
+      const { data: categories } = await supabase
+        .from('categories')
+        .select('id, name')
+        .eq('user_id', userId)
+        .eq('type', 'expense');
+
+      if (!categories) return;
+
+      const estimates: Record<string, number> = {};
+
+      // Para cada categoría principal, calcular el promedio
+      DEFAULT_CATEGORIES.forEach(mainCategory => {
+        // Buscar la categoría del usuario que coincida con el nombre
+        const userCategory = categories.find(
+          c => c.name.toLowerCase() === mainCategory.name.toLowerCase()
+        );
+
+        if (userCategory) {
+          // Filtrar transacciones de esta categoría
+          const categoryTransactions = transactions.filter(t => t.category_id === userCategory.id);
+          
+          if (categoryTransactions.length > 0) {
+            // Detectar si es suscripción o gasto fijo (recurrente)
+            const hasRecurring = categoryTransactions.some(t => t.frequency && t.frequency !== 'one-time');
+            
+            if (hasRecurring) {
+              // Para gastos fijos, tomar el valor más reciente
+              const recentTransaction = categoryTransactions[0];
+              estimates[mainCategory.id] = Math.round(Number(recentTransaction.amount));
+            } else {
+              // Para gastos variables, calcular promedio mensual
+              const monthlyTotals: Record<string, number> = {};
+              
+              categoryTransactions.forEach(t => {
+                const monthKey = t.transaction_date.substring(0, 7);
+                monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + Number(t.amount);
+              });
+
+              const totalMonths = Object.keys(monthlyTotals).length;
+              if (totalMonths > 0) {
+                const total = Object.values(monthlyTotals).reduce((sum, val) => sum + val, 0);
+                estimates[mainCategory.id] = Math.round(total / totalMonths);
+              }
+            }
+          }
+        }
+      });
+
+      setCategoryEstimates(estimates);
+    } catch (error) {
+      console.error('Error calculating category estimates:', error);
     }
   };
 
@@ -612,9 +685,18 @@ export default function BudgetQuiz() {
                             </p>
                           </div>
                         </div>
-                        <ArrowRight className={`h-4 w-4 text-muted-foreground transition-transform ${
-                          expandedCategory === category.id ? 'rotate-90' : ''
-                        }`} />
+                        <div className="flex items-center gap-2">
+                          {categoryEstimates[category.id] && (
+                            <div className="bg-primary/10 px-2 py-1 rounded-lg">
+                              <p className="text-[9px] text-primary font-semibold">
+                                IA: ${categoryEstimates[category.id].toLocaleString()}
+                              </p>
+                            </div>
+                          )}
+                          <ArrowRight className={`h-4 w-4 text-muted-foreground transition-transform ${
+                            expandedCategory === category.id ? 'rotate-90' : ''
+                          }`} />
+                        </div>
                       </div>
                     </button>
                     
@@ -623,6 +705,33 @@ export default function BudgetQuiz() {
                         <p className="text-[9px] text-muted-foreground italic mb-2">
                           💡 {category.insight}
                         </p>
+                        
+                        {categoryEstimates[category.id] && (
+                          <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-[12px] p-2 mb-2 border border-primary/20">
+                            <div className="flex items-center justify-between mb-1">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-base">🤖</span>
+                                <span className="text-[10px] font-semibold text-foreground">Estimación IA</span>
+                              </div>
+                              <span className="text-sm font-bold text-primary">
+                                ${categoryEstimates[category.id].toLocaleString()}
+                              </span>
+                            </div>
+                            <p className="text-[8px] text-muted-foreground mb-1.5">
+                              Promedio últimos 6 meses
+                            </p>
+                            <Button
+                              onClick={() => {
+                                setBudgets({ ...budgets, [category.id]: categoryEstimates[category.id] });
+                                toast.success("Estimación aplicada");
+                              }}
+                              className="w-full h-7 text-[10px] bg-primary hover:bg-primary/90 text-white rounded-[8px] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all"
+                            >
+                              Aceptar estimación
+                            </Button>
+                          </div>
+                        )}
+                        
                         <div className="space-y-1.5">
                           {category.subcategories.map(sub => (
                             <div key={sub.id} className="bg-gray-50 rounded-lg px-2 py-2">
