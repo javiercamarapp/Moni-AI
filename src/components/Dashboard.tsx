@@ -1171,18 +1171,18 @@ const Dashboard = () => {
                 <div 
                   className={`h-full rounded-full relative overflow-hidden transition-all duration-1000 ease-out ${
                     totalBudget > 0 && (currentMonthExpenses / totalBudget) * 100 > 90 
-                      ? 'bg-gradient-to-r from-[hsl(0,50%,40%)] via-[hsl(5,55%,45%)] to-[hsl(0,50%,40%)]' 
+                      ? 'bg-gradient-to-r from-[hsl(0,55%,35%)] via-[hsl(0,60%,40%)] to-[hsl(0,55%,35%)]' 
                       : totalBudget > 0 && (currentMonthExpenses / totalBudget) * 100 > 75 
-                      ? 'bg-gradient-to-r from-[hsl(30,45%,45%)] via-[hsl(32,50%,50%)] to-[hsl(30,45%,45%)]' 
-                      : 'bg-gradient-to-r from-[hsl(25,35%,35%)] via-[hsl(28,40%,42%)] to-[hsl(25,35%,35%)]'
+                      ? 'bg-gradient-to-r from-[hsl(0,50%,40%)] via-[hsl(0,55%,45%)] to-[hsl(0,50%,40%)]' 
+                      : 'bg-gradient-to-r from-[hsl(0,45%,45%)] via-[hsl(0,50%,50%)] to-[hsl(0,45%,45%)]'
                   }`}
                   style={{ 
                     width: `${totalBudget > 0 ? Math.min((currentMonthExpenses / totalBudget) * 100, 100) : 0}%`,
                     boxShadow: totalBudget > 0 && (currentMonthExpenses / totalBudget) * 100 > 90 
-                      ? '0 2px 12px hsla(0, 50%, 40%, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
+                      ? '0 2px 12px hsla(0, 55%, 35%, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
                       : totalBudget > 0 && (currentMonthExpenses / totalBudget) * 100 > 75 
-                      ? '0 2px 12px hsla(30, 45%, 45%, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
-                      : '0 2px 12px hsla(25, 35%, 35%, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                      ? '0 2px 12px hsla(0, 50%, 40%, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
+                      : '0 2px 12px hsla(0, 45%, 45%, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
                   }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-transparent" />
