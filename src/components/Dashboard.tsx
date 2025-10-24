@@ -1195,7 +1195,7 @@ const Dashboard = () => {
               </div>
             </div>
             
-            <p className="text-[10px] text-foreground/80 text-center font-semibold min-h-[20px] flex items-center justify-center leading-tight">
+            <p className="text-[10px] text-black text-center font-bold min-h-[20px] flex items-center justify-center leading-tight">
               {totalBudget === 0 ? (
                 <Button
                   onClick={() => navigate('/budget-quiz')}
