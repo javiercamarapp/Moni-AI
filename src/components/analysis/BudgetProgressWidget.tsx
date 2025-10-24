@@ -3,6 +3,7 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { AIAnalysisLoader } from "@/components/AIAnalysisLoader";
 
 interface CategoryBudget {
   name: string;
@@ -15,10 +16,23 @@ interface CategoryBudget {
 interface BudgetProgressProps {
   categories?: CategoryBudget[];
   hasBudgets?: boolean;
+  isLoading?: boolean;
 }
 
-export default function BudgetProgressWidget({ categories = [], hasBudgets = false }: BudgetProgressProps) {
+export default function BudgetProgressWidget({ categories = [], hasBudgets = false, isLoading = false }: BudgetProgressProps) {
   const navigate = useNavigate();
+  
+  // Si está cargando, mostrar loader de IA
+  if (isLoading) {
+    return (
+      <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100">
+        <div className="space-y-3">
+          <p className="text-sm font-semibold text-center">🤖 Cargando tu presupuesto...</p>
+          <AIAnalysisLoader />
+        </div>
+      </Card>
+    );
+  }
   
   // Si no tiene presupuestos configurados, mostrar invitación
   if (!hasBudgets || categories.length === 0) {
