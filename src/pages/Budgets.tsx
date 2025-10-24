@@ -406,7 +406,7 @@ export default function Budgets() {
               const percentage = (spent / Number(b.monthly_budget)) * 100;
               return percentage >= 80;
             }) && (
-              <Card className="p-4 bg-white/10 backdrop-blur-sm rounded-[20px] shadow-xl border-2 border-yellow-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all animate-fade-in">
+              <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] active:scale-[0.98] transition-all animate-fade-in">
                 <div className="flex items-center gap-3">
                   <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 animate-pulse" />
                   <div>
