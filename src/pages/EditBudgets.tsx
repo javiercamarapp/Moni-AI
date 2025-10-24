@@ -228,14 +228,6 @@ export default function EditBudgets() {
                 };
               })
             );
-            
-            // Si ninguna subcategoría tiene monto pero la categoría principal sí,
-            // asignar todo el monto a la primera subcategoría por defecto
-            const hasAnySubcategoryBudget = subcategoriesWithBudget.some(sub => sub.monthly_budget > 0);
-            if (!hasAnySubcategoryBudget && Number(budget.monthly_budget) > 0 && subcategoriesWithBudget.length > 0) {
-              console.log(`Asignando ${budget.monthly_budget} de ${budget.category.name} a ${subcategoriesWithBudget[0].name}`);
-              subcategoriesWithBudget[0].monthly_budget = Number(budget.monthly_budget);
-            }
           }
 
           console.log(`Subcategorías con presupuesto para ${budget.category.name}:`, subcategoriesWithBudget);
