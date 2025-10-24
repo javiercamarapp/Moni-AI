@@ -65,7 +65,7 @@ export default function SafeToSpendWidget({
           <span className="text-foreground font-medium">${totalBudget.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
         </div>
         <div className="flex justify-between">
-          <span>Metas configuradas</span>
+          <span>Metas</span>
           <span className="text-foreground font-medium">{goalsCount}</span>
         </div>
         <div className="border-t border-blue-100 pt-2 flex justify-between font-semibold">
