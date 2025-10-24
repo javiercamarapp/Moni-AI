@@ -489,7 +489,7 @@ export default function AspirationsAnalysis() {
             variant="ghost"
             size="icon"
             onClick={() => window.history.back()}
-            className="bg-white rounded-full shadow-xl hover:bg-white/90 text-foreground h-12 w-12 hover:scale-105 transition-all border border-blue-100"
+            className="bg-white/80 backdrop-blur-md rounded-[20px] shadow-lg hover:bg-white text-foreground h-10 w-10 hover:scale-105 transition-all border border-gray-200/50"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
