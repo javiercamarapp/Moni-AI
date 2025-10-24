@@ -1,9 +1,9 @@
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Sparkles, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { AIAnalysisLoader } from "@/components/AIAnalysisLoader";
+import { motion } from "motion/react";
 
 interface CategoryBudget {
   name: string;
@@ -26,9 +26,36 @@ export default function BudgetProgressWidget({ categories = [], hasBudgets = fal
   if (isLoading) {
     return (
       <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100">
-        <div className="space-y-3">
-          <p className="text-sm font-semibold text-center">🤖 Cargando tu presupuesto...</p>
-          <AIAnalysisLoader />
+        <div className="h-32 flex flex-col items-center justify-center space-y-3">
+          <div className="flex items-center gap-2">
+            <motion.div
+              animate={{
+                rotate: [0, 360],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            >
+              <Sparkles className="w-5 h-5 text-primary" />
+            </motion.div>
+            <motion.div
+              animate={{
+                y: [0, -5, 0],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              <BarChart3 className="w-5 h-5 text-primary" />
+            </motion.div>
+          </div>
+          <p className="text-xs text-muted-foreground text-center">
+            AI analizando presupuesto...
+          </p>
         </div>
       </Card>
     );
