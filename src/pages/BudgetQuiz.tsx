@@ -29,7 +29,7 @@ export default function BudgetQuiz() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [monthlyIncome, setMonthlyIncome] = useState("");
-  const [displayValue, setDisplayValue] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [budgets, setBudgets] = useState<Record<string, number>>({});
   const [user, setUser] = useState<any>(null);
@@ -60,22 +60,21 @@ export default function BudgetQuiz() {
     setUserCategories(data || []);
   };
 
-  const handleIncomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
-    const numericValue = input.replace(/[^\d]/g, '');
-    
-    setMonthlyIncome(numericValue);
-    
-    if (numericValue) {
-      const number = parseFloat(numericValue);
-      const formatted = new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }).format(number);
-      setDisplayValue(formatted);
-    } else {
-      setDisplayValue("");
+  const formatDisplayValue = (value: string) => {
+    if (!value || value === "0") return "";
+    const number = parseFloat(value);
+    if (isNaN(number)) return "";
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(number);
+  };
+
+  const getDisplayValue = () => {
+    if (isEditing) {
+      return monthlyIncome;
     }
+    return monthlyIncome ? formatDisplayValue(monthlyIncome) : "";
   };
 
   const handleCategoryToggle = (categoryId: string) => {
@@ -225,9 +224,15 @@ export default function BudgetQuiz() {
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-3xl font-bold text-muted-foreground">$</span>
                   <Input
                     type="text"
+                    inputMode="numeric"
                     placeholder="0.00"
-                    value={displayValue}
-                    onChange={handleIncomeChange}
+                    value={getDisplayValue()}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^\d]/g, '');
+                      setMonthlyIncome(value);
+                    }}
+                    onFocus={() => setIsEditing(true)}
+                    onBlur={() => setIsEditing(false)}
                     className="text-3xl text-center font-bold h-16 rounded-[20px] border-2 border-blue-100 pl-12"
                   />
                 </div>
