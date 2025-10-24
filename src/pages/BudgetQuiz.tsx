@@ -771,7 +771,7 @@ export default function BudgetQuiz() {
                         {!budgets[category.id] && (
                           <>
                             <div className="space-y-1.5">
-                              {category.subcategories.map((sub, index) => (
+                              {category.subcategories.map((sub) => (
                                 <div key={sub.id} className="bg-gray-50 rounded-lg px-2 py-2">
                                   <div className="flex items-center justify-between gap-2">
                                     {category.id === 'personalizada' ? (
@@ -783,24 +783,22 @@ export default function BudgetQuiz() {
                                           onChange={(e) => {
                                             setCustomSubcategories({ ...customSubcategories, [sub.id]: e.target.value });
                                           }}
-                                          className="flex-1 h-7 text-[10px] bg-gray-50 border-gray-200"
+                                          className="flex-1 h-7 text-[10px] bg-white border-gray-200"
                                         />
-                                        {index === category.subcategories.length - 1 && (
-                                          <Button
-                                            onClick={() => {
-                                              const newId = `personalizado_${Date.now()}`;
-                                              const newSubcategory = { id: newId, name: `Concepto ${category.subcategories.length + 1}` };
-                                              // Agregar nueva subcategoría a la categoría
-                                              category.subcategories.push(newSubcategory);
-                                              // Forzar actualización
-                                              setCustomSubcategories({ ...customSubcategories });
+                                        <div className="relative flex items-center">
+                                          <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
+                                          <Input
+                                            type="text"
+                                            inputMode="numeric"
+                                            placeholder="0"
+                                            value={subcategoryBudgets[sub.id] ? formatCurrency(subcategoryBudgets[sub.id]) : ""}
+                                            onChange={(e) => {
+                                              const value = e.target.value.replace(/[^\d]/g, '');
+                                              updateSubcategoryBudget(sub.id, value);
                                             }}
-                                            variant="ghost"
-                                            className="h-7 w-7 p-0 rounded-full bg-primary/10 hover:bg-primary/20 text-primary"
-                                          >
-                                            +
-                                          </Button>
-                                        )}
+                                            className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-white border-gray-200"
+                                          />
+                                        </div>
                                       </>
                                     ) : (
                                       <>
@@ -827,6 +825,23 @@ export default function BudgetQuiz() {
                                 </div>
                               ))}
                             </div>
+                            
+                            {category.id === 'personalizada' && (
+                              <div className="flex justify-center mt-2">
+                                <Button
+                                  onClick={() => {
+                                    const newId = `personalizado_${Date.now()}`;
+                                    const newSubcategory = { id: newId, name: `Concepto ${category.subcategories.length + 1}` };
+                                    category.subcategories.push(newSubcategory);
+                                    setCustomSubcategories({ ...customSubcategories });
+                                  }}
+                                  variant="ghost"
+                                  className="h-8 w-8 p-0 rounded-full bg-primary/10 hover:bg-primary/20 text-primary font-bold"
+                                >
+                                  +
+                                </Button>
+                              </div>
+                            )}
                             <Button
                               onClick={() => {
                                 if (selectedCategories.includes(category.id)) {
