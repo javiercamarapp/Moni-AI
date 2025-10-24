@@ -51,6 +51,8 @@ const Dashboard = () => {
   
   // Keep local state for things that update independently
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
+  const [totalBudget, setTotalBudget] = useState(0);
+  const [currentMonthExpenses, setCurrentMonthExpenses] = useState(0);
   
   // Sync recentTransactions when dashboardData updates - use ref to avoid infinite loop
   useEffect(() => {
@@ -205,6 +207,49 @@ const Dashboard = () => {
 
     getUserData();
   }, [navigate]);
+
+  // Load budget data from category_budgets
+  useEffect(() => {
+    const loadBudgetData = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Get total monthly budget from category_budgets
+        const { data: budgetData } = await supabase
+          .from('category_budgets')
+          .select('monthly_budget')
+          .eq('user_id', user.id);
+
+        if (budgetData && budgetData.length > 0) {
+          const total = budgetData.reduce((sum, b) => sum + Number(b.monthly_budget), 0);
+          setTotalBudget(total);
+        }
+
+        // Get current month expenses
+        const now = new Date();
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+        const { data: expenseData } = await supabase
+          .from('transactions')
+          .select('amount')
+          .eq('user_id', user.id)
+          .eq('type', 'gasto')
+          .gte('transaction_date', firstDay.toISOString().split('T')[0])
+          .lte('transaction_date', lastDay.toISOString().split('T')[0]);
+
+        if (expenseData) {
+          const total = expenseData.reduce((sum, t) => sum + Number(t.amount), 0);
+          setCurrentMonthExpenses(total);
+        }
+      } catch (error) {
+        console.error('Error loading budget data:', error);
+      }
+    };
+
+    loadBudgetData();
+  }, []);
 
   // Auto-scroll carousel
   useEffect(() => {
@@ -1093,12 +1138,16 @@ const Dashboard = () => {
               <div>
                 <h3 className="text-xs font-bold text-foreground leading-tight">💰 Presupuesto Mensual</h3>
                 <p className="text-[10px] text-foreground/80 font-medium break-words leading-tight">
-                  Gastado: ${monthlyExpenses.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} de ${(monthlyIncome * 0.8).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {totalBudget > 0 ? (
+                    <>Gastado: ${currentMonthExpenses.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} de ${totalBudget.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</>
+                  ) : (
+                    <>No hay presupuesto configurado</>
+                  )}
                 </p>
               </div>
               <div className="text-right">
                 <p className="text-lg font-black text-foreground leading-tight">
-                  {monthlyIncome > 0 ? ((monthlyExpenses / (monthlyIncome * 0.8)) * 100).toFixed(0) : 0}%
+                  {totalBudget > 0 ? ((currentMonthExpenses / totalBudget) * 100).toFixed(0) : 0}%
                 </p>
                 <p className="text-[9px] text-foreground/70 font-semibold leading-tight">del presupuesto</p>
               </div>
@@ -1108,17 +1157,17 @@ const Dashboard = () => {
               <div className="h-4 rounded-full bg-gradient-to-r from-[hsl(220,60%,10%)] to-[hsl(240,55%,8%)] border border-white/10 overflow-hidden shadow-inner">
                 <div 
                   className={`h-full rounded-full relative overflow-hidden transition-all duration-1000 ease-out ${
-                    monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 90 
+                    totalBudget > 0 && (currentMonthExpenses / totalBudget) * 100 > 90 
                       ? 'bg-gradient-to-r from-red-600 via-red-500 to-red-600' 
-                      : monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 75 
+                      : totalBudget > 0 && (currentMonthExpenses / totalBudget) * 100 > 75 
                       ? 'bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500' 
                       : 'bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500'
                   }`}
                   style={{ 
-                    width: `${monthlyIncome > 0 ? Math.min((monthlyExpenses / (monthlyIncome * 0.8)) * 100, 100) : 0}%`,
-                    boxShadow: monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 90 
+                    width: `${totalBudget > 0 ? Math.min((currentMonthExpenses / totalBudget) * 100, 100) : 0}%`,
+                    boxShadow: totalBudget > 0 && (currentMonthExpenses / totalBudget) * 100 > 90 
                       ? '0 0 20px rgba(239, 68, 68, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)' 
-                      : monthlyIncome > 0 && (monthlyExpenses / (monthlyIncome * 0.8)) * 100 > 75 
+                      : totalBudget > 0 && (currentMonthExpenses / totalBudget) * 100 > 75 
                       ? '0 0 20px rgba(251, 191, 36, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)' 
                       : '0 0 20px rgba(4, 120, 87, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)'
                   }}
@@ -1129,13 +1178,23 @@ const Dashboard = () => {
             </div>
             
             <p className="text-[10px] text-foreground/80 text-center font-semibold min-h-[20px] flex items-center justify-center leading-tight">
-              {loadingBudgetMessage ? (
+              {totalBudget === 0 ? (
+                <Button
+                  onClick={() => navigate('/budget-quiz')}
+                  variant="ghost"
+                  className="text-[10px] h-auto py-1 px-2 text-primary hover:text-primary/80"
+                >
+                  👉 Configura tu presupuesto aquí
+                </Button>
+              ) : loadingBudgetMessage ? (
                 <span className="inline-flex items-center gap-1">
                   <span className="inline-block animate-spin rounded-full h-2 w-2 border-b-2 border-foreground"></span>
                   Analizando patrón...
                 </span>
               ) : (
-                budgetMessage
+                totalBudget > 0 && currentMonthExpenses <= totalBudget
+                  ? `✅ Quedan $${(totalBudget - currentMonthExpenses).toLocaleString('es-MX')} disponibles`
+                  : `⚠️ Has excedido el presupuesto por $${(currentMonthExpenses - totalBudget).toLocaleString('es-MX')}`
               )}
             </p>
           </div>
