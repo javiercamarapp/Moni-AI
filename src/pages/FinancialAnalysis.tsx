@@ -620,7 +620,7 @@ export default function FinancialAnalysis() {
   return (
     <>
       {loading ? (
-        <AIAnalysisLoader message="Está analizando tus transacciones" fullScreen={true} />
+        <AIAnalysisLoader message="La IA está analizando tus transacciones" fullScreen={true} />
       ) : (
         <div className="min-h-screen animated-wave-bg pb-24">
           <div className="mx-4 space-y-4">
