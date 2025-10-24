@@ -39,6 +39,7 @@ export default function BudgetQuiz() {
   const [calculatingIncome, setCalculatingIncome] = useState(false);
   const [aiForecast, setAiForecast] = useState<number | null>(null);
   const [showForecast, setShowForecast] = useState(false);
+  const [showManualInput, setShowManualInput] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -350,12 +351,40 @@ export default function BudgetQuiz() {
                       Usar
                     </Button>
                     <Button
-                      onClick={() => setShowForecast(false)}
                       variant="outline"
                       className="flex-1 h-7 text-[10px] rounded-[10px] border-white/30 bg-white/5 hover:bg-white/10 hover:scale-105 active:scale-95 transition-all"
+                      onClick={() => {
+                        setShowForecast(false);
+                        setShowManualInput(true);
+                      }}
                     >
                       Manual
                     </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Manual Input Card */}
+              {(showManualInput || (!showForecast && !hasBankConnection)) && (
+                <div className="bg-white/10 backdrop-blur-sm rounded-[15px] p-3 space-y-2 border-2 border-white/20 shadow-lg animate-fade-in">
+                  <div className="text-center">
+                    <p className="text-xs font-semibold text-foreground mb-2">Ingresa tu ingreso mensual</p>
+                  </div>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-bold text-muted-foreground">$</span>
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="0.00"
+                      value={getDisplayValue()}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^\d]/g, '');
+                        setMonthlyIncome(value);
+                      }}
+                      onFocus={() => setIsEditing(true)}
+                      onBlur={() => setIsEditing(false)}
+                      className="text-2xl text-center font-bold h-14 rounded-[15px] border-2 border-white/20 pl-10 bg-white/5"
+                    />
                   </div>
                 </div>
               )}
