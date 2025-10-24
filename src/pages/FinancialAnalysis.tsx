@@ -109,63 +109,28 @@ export default function FinancialAnalysis() {
 
   useEffect(() => {
     if (user) {
-      console.log('🔄 PERÍODO CAMBIADO A:', period);
+      console.log('🔄 Cargando datos iniciales');
       
-      // Limpiar el estado del análisis para forzar recarga
-      setAnalysis({
-        metrics: {
-          totalIncome: 0,
-          totalExpenses: 0,
-          balance: 0
-        }
-      });
-      
-      // Limpiar TODOS los cachés para forzar recarga completa
-      const cacheKeys = [
-        `financialAnalysis_quickMetrics_${period}`,
-        `financialAnalysis_full_${period}_${user.id}`,
-        `financialAnalysis_full_${period}_${user.id}_time`
-      ];
-      cacheKeys.forEach(key => localStorage.removeItem(key));
-      
-      // Resetear métricas
-      setQuickMetrics({
-        totalIncome: 0,
-        totalExpenses: 0,
-        balance: 0,
-        savingsRate: 0,
-        transactionsCount: 0
-      });
-      
-      // Ejecutar cargas en background (forzar recarga sin caché)
-      console.log('🚀 Iniciando carga de datos para período:', period);
+      // Ejecutar cargas en background para datos anuales
+      console.log('🚀 Iniciando carga de datos anuales');
       calculateQuickMetrics();
       fetchTransactionsData();
       loadAnalysis();
     }
-  }, [user, period]);
+  }, [user]);
 
   const calculateQuickMetrics = async () => {
     if (!user) return;
     
-    console.log('📊 Calculating metrics for period:', period);
+    console.log('📊 Calculating metrics for year');
     
     try {
-      // Calcular fechas según el período
+      // Calcular fechas para el año completo
       const now = new Date();
-      let startDate: Date;
-      let endDate: Date;
-      
-      if (period === 'month') {
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0); // Último día del mes
-      } else {
-        startDate = new Date(now.getFullYear(), 0, 1);
-        endDate = new Date(now.getFullYear(), 11, 31); // 31 de diciembre
-      }
+      const startDate = new Date(now.getFullYear(), 0, 1);
+      const endDate = new Date(now.getFullYear(), 11, 31); // 31 de diciembre
       
       console.log('📅 Date range:', { 
-        period, 
         startDate: startDate.toISOString().split('T')[0],
         endDate: endDate.toISOString().split('T')[0]
       });
@@ -204,7 +169,6 @@ export default function FinancialAnalysis() {
       
       
       console.log('📅 ANÁLISIS FINANCIERO - Transacciones obtenidas:', {
-        periodo: period,
         fechaInicio: startDate.toISOString().split('T')[0],
         fechaFin: endDate.toISOString().split('T')[0],
         transaccionesTotales: transactions?.length || 0,
@@ -366,8 +330,8 @@ export default function FinancialAnalysis() {
       });
       
       setQuickMetrics(metricsData);
-      // Guardar con clave específica por período
-      const cacheKey = `financialAnalysis_quickMetrics_${period}`;
+      // Guardar con clave para datos anuales
+      const cacheKey = `financialAnalysis_quickMetrics_year`;
       localStorage.setItem(cacheKey, JSON.stringify(metricsData));
     } catch (error) {
       console.error('Error calculating quick metrics:', error);
@@ -649,7 +613,6 @@ export default function FinancialAnalysis() {
               >
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs font-semibold text-primary">📅 Mes Actual</p>
-                  <p className="text-[10px] text-muted-foreground">← Desliza →</p>
                 </div>
                 {(() => {
                   const income = dashboardData.monthlyIncome;
@@ -739,7 +702,6 @@ export default function FinancialAnalysis() {
               >
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs font-semibold text-purple-600">📊 Año Completo</p>
-                  <p className="text-[10px] text-muted-foreground">← Desliza →</p>
                 </div>
                 {(() => {
                   const income = quickMetrics?.totalIncome || 0;
