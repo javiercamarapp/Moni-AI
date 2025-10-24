@@ -256,79 +256,20 @@ export default function BudgetQuiz() {
 
   const calculateCategoryEstimates = async (userId: string) => {
     try {
-      const sixMonthsAgo = new Date();
-      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+      console.log('Llamando a edge function para categorizar gastos...');
       
-      console.log('Calculando estimaciones de categorías para userId:', userId);
-      
-      // Obtener todas las transacciones de gastos de los últimos 6 meses
-      const { data: transactions, error: transError } = await supabase
-        .from('transactions')
-        .select('amount, transaction_date, description, frequency')
-        .eq('user_id', userId)
-        .eq('type', 'gasto')
-        .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
-        .order('transaction_date', { ascending: false });
+      const { data, error } = await supabase.functions.invoke('categorize-expenses', {
+        body: { userId }
+      });
 
-      console.log('Transacciones encontradas:', transactions?.length);
-
-      if (!transactions || transactions.length === 0) {
-        console.log('No hay transacciones de gastos en los últimos 6 meses');
+      if (error) {
+        console.error('Error al categorizar gastos:', error);
         return;
       }
 
-      const estimates: Record<string, number> = {};
-
-      // Palabras clave para cada categoría (más específicas)
-      const categoryKeywords: Record<string, string[]> = {
-        'vivienda': ['renta', 'alquiler', 'hipoteca', 'predial', 'cfe', 'luz', 'agua', 'gas natural', 'gas', 'internet', 'izzi', 'telmex', 'totalplay', 'limpieza', 'condominio'],
-        'transporte': ['gasolina', 'uber', 'didi', 'taxi', 'transporte', 'metro', 'autobus', 'estacionamiento', 'peaje', 'gasolinera'],
-        'alimentacion': ['super', 'mercado', 'oxxo', 'restaurante', 'comida', 'cafe', 'rappi', 'uber eats', 'didi food', 'walmart', 'soriana', 'chedraui'],
-        'servicios': ['netflix', 'spotify', 'amazon', 'hbo', 'disney', 'apple', 'prime video', 'suscripcion', 'telefono', 'telcel', 'at&t', 'movistar', 'celular', 'membresía'],
-        'salud': ['farmacia', 'medico', 'hospital', 'consulta', 'gimnasio', 'doctor', 'dentista', 'seguro medico'],
-        'educacion': ['colegiatura', 'escuela', 'universidad', 'curso', 'libro', 'material escolar'],
-        'deudas': ['tarjeta', 'credito', 'prestamo', 'banco', 'banamex', 'bancomer', 'santander', 'hsbc'],
-        'entretenimiento': ['cine', 'bar', 'fiesta', 'ropa', 'zapatos', 'viaje', 'hotel', 'entretenimiento'],
-        'ahorro': ['ahorro', 'inversion', 'cetes', 'fondo', 'retiro', 'afore'],
-        'apoyos': ['apoyo', 'donacion', 'familia', 'mascota', 'veterinaria']
-      };
-
-      // Para cada categoría principal
-      DEFAULT_CATEGORIES.forEach(mainCategory => {
-        const keywords = categoryKeywords[mainCategory.id] || [];
-        
-        // Filtrar transacciones que coincidan con las palabras clave
-        const categoryTransactions = transactions.filter(t => {
-          const description = (t.description || '').toLowerCase();
-          return keywords.some(keyword => description.includes(keyword));
-        });
-
-        console.log(`${mainCategory.name}: ${categoryTransactions.length} transacciones encontradas`);
-        
-        if (categoryTransactions.length > 0) {
-          // Agrupar por mes y sumar todos los gastos de esa categoría por mes
-          const monthlyTotals: Record<string, number> = {};
-          
-          categoryTransactions.forEach(t => {
-            const monthKey = t.transaction_date.substring(0, 7);
-            monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + Number(t.amount);
-          });
-
-          console.log(`${mainCategory.name} - Totales mensuales:`, monthlyTotals);
-
-          const totalMonths = Object.keys(monthlyTotals).length;
-          if (totalMonths > 0) {
-            const total = Object.values(monthlyTotals).reduce((sum, val) => sum + val, 0);
-            const average = Math.round(total / totalMonths);
-            estimates[mainCategory.id] = average;
-            
-            console.log(`${mainCategory.name} - Promedio: $${average} (${totalMonths} meses)`);
-          }
-        }
-      });
-
-      console.log('Estimaciones finales:', estimates);
-      setCategoryEstimates(estimates);
+      console.log('Estimaciones de IA:', data.estimates);
+      setCategoryEstimates(data.estimates || {});
+      
     } catch (error) {
       console.error('Error calculating category estimates:', error);
     }
