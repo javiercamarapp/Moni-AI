@@ -232,7 +232,7 @@ export default function Budgets() {
           <h1 className="text-lg font-bold text-foreground">💰 Presupuesto Mensual</h1>
           <Button
             variant="ghost"
-            onClick={() => navigate('/budget-quiz')}
+            onClick={() => navigate('/edit-budgets')}
             className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 active:scale-95 transition-all border border-blue-100 h-9 w-9 p-0"
           >
             <Pencil className="h-4 w-4" />

@@ -30,6 +30,7 @@ import Logros from "./pages/Logros";
 import MisRetos from "./pages/MisRetos";
 import EditAspirations from "./pages/EditAspirations";
 import Budgets from "./pages/Budgets";
+import EditBudgets from "./pages/EditBudgets";
 import BudgetQuiz from "./pages/BudgetQuiz";
 
 import Subscriptions from "./pages/Subscriptions";
@@ -88,6 +89,7 @@ function App() {
           <Route path="/daily-expenses" element={<DailyExpenses />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/budgets" element={<Budgets />} />
+          <Route path="/edit-budgets" element={<EditBudgets />} />
           <Route path="/budget-quiz" element={<BudgetQuiz />} />
           <Route path="/category-expenses" element={<CategoryExpenses />} />
           <Route path="/gestionar-categorias" element={<GestionarCategorias />} />
