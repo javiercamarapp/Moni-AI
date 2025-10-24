@@ -29,7 +29,6 @@ export default function BudgetQuiz() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [monthlyIncome, setMonthlyIncome] = useState("");
-  const [displayIncome, setDisplayIncome] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [budgets, setBudgets] = useState<Record<string, number>>({});
   const [user, setUser] = useState<any>(null);
@@ -60,26 +59,14 @@ export default function BudgetQuiz() {
     setUserCategories(data || []);
   };
 
-  const formatCurrency = (value: string) => {
-    // Remover todo excepto números
-    const numericValue = value.replace(/[^\d]/g, '');
-    if (!numericValue) return '';
-    
-    // Convertir a número y formatear
-    const number = parseInt(numericValue);
+  const formatDisplayValue = (value: string) => {
+    if (!value || value === "0") return "";
+    const number = parseFloat(value);
+    if (isNaN(number)) return "";
     return new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(number);
-  };
-
-  const handleIncomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
-    // Remover todo excepto números
-    const numericValue = input.replace(/[^\d]/g, '');
-    
-    setMonthlyIncome(numericValue);
-    setDisplayIncome(formatCurrency(numericValue));
   };
 
   const handleCategoryToggle = (categoryId: string) => {
@@ -225,13 +212,21 @@ export default function BudgetQuiz() {
               </div>
               
               <div className="space-y-2">
-                <Input
-                  type="text"
-                  placeholder="0.00"
-                  value={displayIncome}
-                  onChange={handleIncomeChange}
-                  className="text-3xl text-center font-bold h-16 rounded-[20px] border-2 border-blue-100"
-                />
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-3xl font-bold text-muted-foreground">$</span>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={monthlyIncome}
+                    onChange={(e) => setMonthlyIncome(e.target.value)}
+                    className="text-3xl text-center font-bold h-16 rounded-[20px] border-2 border-blue-100 pl-12"
+                  />
+                  {monthlyIncome && (
+                    <div className="mt-1 text-sm text-center text-muted-foreground">
+                      {formatDisplayValue(monthlyIncome)}
+                    </div>
+                  )}
+                </div>
                 <p className="text-xs text-muted-foreground">
                   Ingresa tu ingreso mensual neto aproximado
                 </p>
