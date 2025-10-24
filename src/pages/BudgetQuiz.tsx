@@ -202,6 +202,7 @@ export default function BudgetQuiz() {
   const [showForecast, setShowForecast] = useState(false);
   const [showManualInput, setShowManualInput] = useState(false);
   const [categoryEstimates, setCategoryEstimates] = useState<Record<string, number>>({});
+  const [customSubcategories, setCustomSubcategories] = useState<Record<string, string>>({});
 
   useEffect(() => {
     checkAuth();
@@ -770,26 +771,58 @@ export default function BudgetQuiz() {
                         {!budgets[category.id] && (
                           <>
                             <div className="space-y-1.5">
-                              {category.subcategories.map(sub => (
+                              {category.subcategories.map((sub, index) => (
                                 <div key={sub.id} className="bg-gray-50 rounded-lg px-2 py-2">
                                   <div className="flex items-center justify-between gap-2">
-                                    <span className="text-[10px] text-foreground flex-1">
-                                      • {sub.name}
-                                    </span>
-                                    <div className="relative flex items-center">
-                                      <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
-                                      <Input
-                                        type="text"
-                                        inputMode="numeric"
-                                        placeholder="0"
-                                        value={subcategoryBudgets[sub.id] ? formatCurrency(subcategoryBudgets[sub.id]) : ""}
-                                        onChange={(e) => {
-                                          const value = e.target.value.replace(/[^\d]/g, '');
-                                          updateSubcategoryBudget(sub.id, value);
-                                        }}
-                                        className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-gray-50 border-gray-200"
-                                      />
-                                    </div>
+                                    {category.id === 'personalizada' ? (
+                                      <>
+                                        <Input
+                                          type="text"
+                                          placeholder={sub.name}
+                                          value={customSubcategories[sub.id] || ""}
+                                          onChange={(e) => {
+                                            setCustomSubcategories({ ...customSubcategories, [sub.id]: e.target.value });
+                                          }}
+                                          className="flex-1 h-7 text-[10px] bg-gray-50 border-gray-200"
+                                        />
+                                        {index === category.subcategories.length - 1 && (
+                                          <Button
+                                            onClick={() => {
+                                              const newId = `personalizado_${Date.now()}`;
+                                              const newSubcategory = { id: newId, name: `Concepto ${category.subcategories.length + 1}` };
+                                              // Agregar nueva subcategoría a la categoría
+                                              category.subcategories.push(newSubcategory);
+                                              // Forzar actualización
+                                              setCustomSubcategories({ ...customSubcategories });
+                                            }}
+                                            variant="ghost"
+                                            className="h-7 w-7 p-0 rounded-full bg-primary/10 hover:bg-primary/20 text-primary"
+                                          >
+                                            +
+                                          </Button>
+                                        )}
+                                      </>
+                                    ) : (
+                                      <>
+                                        <span className="text-[10px] text-foreground flex-1">
+                                          • {sub.name}
+                                        </span>
+                                        <div className="relative flex items-center">
+                                          <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
+                                          <Input
+                                            type="text"
+                                            inputMode="numeric"
+                                            placeholder="0"
+                                            value={subcategoryBudgets[sub.id] ? formatCurrency(subcategoryBudgets[sub.id]) : ""}
+                                            onChange={(e) => {
+                                              const value = e.target.value.replace(/[^\d]/g, '');
+                                              updateSubcategoryBudget(sub.id, value);
+                                            }}
+                                            className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-gray-50 border-gray-200"
+                                          />
+                                        </div>
+                                      </>
+                                    )}
                                   </div>
                                 </div>
                               ))}
