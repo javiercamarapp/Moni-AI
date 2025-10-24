@@ -400,23 +400,23 @@ export default function AspirationsAnalysis() {
     const categoryMapping: Record<string, { aspirationIds: number[], assetCategories: string[], liabilityCategories: string[] }> = {
       "Propiedades": {
         aspirationIds: [1, 8, 9, 10],
-        assetCategories: ["Propiedad", "Inmuebles", "Casa", "Terreno"],
-        liabilityCategories: ["Hipoteca", "Crédito Hipotecario"]
+        assetCategories: ["Property", "Propiedad", "Inmuebles", "Casa", "Terreno"],
+        liabilityCategories: ["Mortgage", "Hipoteca", "Crédito Hipotecario"]
       },
       "Vehículos": {
         aspirationIds: [2, 7, 15],
-        assetCategories: ["Vehículo", "Auto", "Coche"],
-        liabilityCategories: ["Crédito Automotriz"]
+        assetCategories: ["Vehículo", "Auto", "Coche", "Vehicle", "Car", "Other"],
+        liabilityCategories: ["Crédito Automotriz", "Auto Loan"]
       },
       "Ahorros": {
         aspirationIds: [3, 11],
-        assetCategories: ["Cuenta de Ahorros", "Cuenta Bancaria", "Efectivo"],
+        assetCategories: ["Savings", "Checking", "Cuenta de Ahorros", "Cuenta Bancaria", "Efectivo", "Cash"],
         liabilityCategories: []
       },
       "Inversiones": {
         aspirationIds: [4, 12, 13, 14],
-        assetCategories: ["Inversiones", "Acciones", "Fondos", "Criptomonedas", "AFORE", "Negocio"],
-        liabilityCategories: []
+        assetCategories: ["Investments", "Inversiones", "Acciones", "Fondos", "Criptomonedas", "AFORE", "Negocio", "Stocks", "Crypto"],
+        liabilityCategories: ["Loans", "Credit", "Préstamo", "Crédito"]
       }
     };
 
