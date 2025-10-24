@@ -23,6 +23,7 @@ export default function Budgets() {
   const navigate = useNavigate();
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMonthlyData, setLoadingMonthlyData] = useState(true);
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [totalBudget, setTotalBudget] = useState(0);
   const [currentExpenses, setCurrentExpenses] = useState<Record<string, number>>({});
@@ -68,6 +69,7 @@ export default function Budgets() {
   };
 
   const loadMonthlyData = async () => {
+    setLoadingMonthlyData(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -148,6 +150,8 @@ export default function Budgets() {
       setCurrentExpenses(expensesByCategory);
     } catch (error) {
       console.error('Error loading monthly data:', error);
+    } finally {
+      setLoadingMonthlyData(false);
     }
   };
 
@@ -291,78 +295,95 @@ export default function Budgets() {
 
             {/* Lista de Presupuestos en dos columnas */}
             <div className="grid grid-cols-2 gap-2.5">
-              {budgets.map((budget, index) => {
-                const spent = currentExpenses[budget.category_id] || 0;
-                const budgetAmount = Number(budget.monthly_budget);
-                const percentUsed = (spent / budgetAmount) * 100;
-                const remaining = budgetAmount - spent;
-                const isWarning = percentUsed >= 80;
-                const isCritical = percentUsed >= 100;
-
-                return (
-                  <Card 
-                    key={budget.id} 
-                    className="p-3 bg-white rounded-[15px] shadow-lg border border-blue-100 hover:scale-105 active:scale-95 transition-all animate-fade-in"
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    <div className="space-y-2">
-                      <div className="text-center">
-                        <span className="text-2xl">{getCategoryIcon(budget.category.name)}</span>
-                        <p className="text-[10px] font-bold text-foreground leading-tight">{budget.category.name}</p>
-                      </div>
-
-                      <div className="space-y-1">
-                        <Progress 
-                          value={Math.min(percentUsed, 100)} 
-                          className={`h-1.5 ${
-                            isCritical ? 'bg-destructive/20' : 
-                            isWarning ? 'bg-yellow-500/20' : 
-                            'bg-muted'
-                          }`}
-                        />
-                        <p className={`text-[9px] text-center font-bold ${
-                          isCritical ? 'text-destructive' : 
-                          isWarning ? 'text-yellow-600' : 
-                          'text-success'
-                        }`}>
-                          {percentUsed.toFixed(0)}%
-                        </p>
-                      </div>
-
-                      <div className="text-center space-y-0.5">
-                        <p className="text-[8px] text-muted-foreground leading-tight">
-                          ${spent.toLocaleString()} / ${budgetAmount.toLocaleString()}
-                        </p>
-                        <p className={`text-[9px] font-bold leading-tight ${
-                          isCritical ? 'text-destructive' : 
-                          isWarning ? 'text-yellow-600' : 
-                          'text-success'
-                        }`}>
-                          {percentUsed < 100 
-                            ? `Quedan $${remaining.toLocaleString()}` 
-                            : `Excedido $${Math.abs(remaining).toLocaleString()}`
-                          }
-                        </p>
-                      </div>
-
-                      {/* Botón de estado */}
-                      <div className={`rounded-[10px] p-1.5 ${
-                        isCritical ? 'bg-destructive/10 border-2 border-destructive/30' :
-                        isWarning ? 'bg-yellow-50 border-2 border-yellow-500/30' :
-                        'bg-success/10 border-2 border-success/30'
-                      }`}>
-                        <p className={`text-[9px] font-bold text-center leading-tight ${
-                          isCritical ? 'text-destructive' :
-                          isWarning ? 'text-yellow-700' :
-                          'text-success'
-                        }`}>
-                          {isCritical ? '⚠️ Mal' : isWarning ? '⚡ Cuidado' : '✅ Muy Bien'}
-                        </p>
-                      </div>
+              {loadingMonthlyData ? (
+                // Mostrar mensaje de análisis mientras carga
+                <div className="col-span-2">
+                  <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center animate-fade-in">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                      <p className="text-sm font-semibold text-foreground">
+                        🤖 Presupuestos por categoría están siendo analizados por la IA
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Esto puede tomar unos segundos...
+                      </p>
                     </div>
                   </Card>
-                );
-              })}
+                </div>
+              ) : (
+                budgets.map((budget, index) => {
+                  const spent = currentExpenses[budget.category_id] || 0;
+                  const budgetAmount = Number(budget.monthly_budget);
+                  const percentUsed = (spent / budgetAmount) * 100;
+                  const remaining = budgetAmount - spent;
+                  const isWarning = percentUsed >= 80;
+                  const isCritical = percentUsed >= 100;
+
+                  return (
+                    <Card 
+                      key={budget.id} 
+                      className="p-3 bg-white rounded-[15px] shadow-lg border border-blue-100 hover:scale-105 active:scale-95 transition-all animate-fade-in"
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                    >
+                      <div className="space-y-2">
+                        <div className="text-center">
+                          <span className="text-2xl">{getCategoryIcon(budget.category.name)}</span>
+                          <p className="text-[10px] font-bold text-foreground leading-tight">{budget.category.name}</p>
+                        </div>
+
+                        <div className="space-y-1">
+                          <Progress 
+                            value={Math.min(percentUsed, 100)} 
+                            className={`h-1.5 ${
+                              isCritical ? 'bg-destructive/20' : 
+                              isWarning ? 'bg-yellow-500/20' : 
+                              'bg-muted'
+                            }`}
+                          />
+                          <p className={`text-[9px] text-center font-bold ${
+                            isCritical ? 'text-destructive' : 
+                            isWarning ? 'text-yellow-600' : 
+                            'text-success'
+                          }`}>
+                            {percentUsed.toFixed(0)}%
+                          </p>
+                        </div>
+
+                        <div className="text-center space-y-0.5">
+                          <p className="text-[8px] text-muted-foreground leading-tight">
+                            ${spent.toLocaleString()} / ${budgetAmount.toLocaleString()}
+                          </p>
+                          <p className={`text-[9px] font-bold leading-tight ${
+                            isCritical ? 'text-destructive' : 
+                            isWarning ? 'text-yellow-600' : 
+                            'text-success'
+                          }`}>
+                            {percentUsed < 100 
+                              ? `Quedan $${remaining.toLocaleString()}` 
+                              : `Excedido $${Math.abs(remaining).toLocaleString()}`
+                            }
+                          </p>
+                        </div>
+
+                        {/* Botón de estado */}
+                        <div className={`rounded-[10px] p-1.5 ${
+                          isCritical ? 'bg-destructive/10 border-2 border-destructive/30' :
+                          isWarning ? 'bg-yellow-50 border-2 border-yellow-500/30' :
+                          'bg-success/10 border-2 border-success/30'
+                        }`}>
+                          <p className={`text-[9px] font-bold text-center leading-tight ${
+                            isCritical ? 'text-destructive' :
+                            isWarning ? 'text-yellow-700' :
+                            'text-success'
+                          }`}>
+                            {isCritical ? '⚠️ Mal' : isWarning ? '⚡ Cuidado' : '✅ Muy Bien'}
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })
+              )}
             </div>
 
             {/* Resumen de alertas */}
