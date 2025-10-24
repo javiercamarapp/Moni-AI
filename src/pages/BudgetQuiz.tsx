@@ -112,7 +112,8 @@ const DEFAULT_CATEGORIES: Category[] = [
     insight: 'Ayuda a calcular el índice de endeudamiento (<35% recomendable)',
     subcategories: [
       { id: 'tarjetas', name: 'Tarjetas de crédito' },
-      { id: 'prestamos', name: 'Préstamos personales / automotriz' },
+      { id: 'prestamos', name: 'Préstamos personales' },
+      { id: 'mensualidad_auto', name: 'Mensualidad de automóvil' },
       { id: 'hipotecarios', name: 'Créditos hipotecarios' },
       { id: 'intereses', name: 'Intereses / pagos mínimos' },
     ]
