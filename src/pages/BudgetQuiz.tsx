@@ -697,16 +697,32 @@ export default function BudgetQuiz() {
                         {budgets[category.id] && budgets[category.id] > 0 && (
                           <div className="bg-gradient-to-r from-gray-50 to-white rounded-[12px] p-3 mb-2 border border-gray-200">
                             <p className="text-[10px] font-semibold text-foreground mb-2">
-                              Presupuesto asignado
+                              Presupuesto asignado: ${budgets[category.id].toLocaleString()}
                             </p>
-                            <div className="flex items-center gap-2">
-                              <span className="text-[10px] font-semibold text-muted-foreground">$</span>
-                              <Input
-                                type="number"
-                                value={budgets[category.id]}
-                                onChange={(e) => updateBudget(category.id, e.target.value)}
-                                className="flex-1 h-9 text-sm font-bold text-right"
-                              />
+                            <div className="flex gap-2">
+                              <Button
+                                onClick={() => {
+                                  const newBudgets = { ...budgets };
+                                  delete newBudgets[category.id];
+                                  setBudgets(newBudgets);
+                                }}
+                                variant="outline"
+                                className="flex-1 h-8 text-[10px] rounded-[8px] border-destructive/50 text-destructive hover:bg-destructive/10"
+                              >
+                                Quitar estimación IA
+                              </Button>
+                              <Button
+                                onClick={() => {
+                                  const newAmount = prompt('Ingresa el monto manual:', budgets[category.id].toString());
+                                  if (newAmount && !isNaN(Number(newAmount))) {
+                                    setBudgets({ ...budgets, [category.id]: Number(newAmount) });
+                                  }
+                                }}
+                                variant="outline"
+                                className="flex-1 h-8 text-[10px] rounded-[8px] border-primary/50 text-primary hover:bg-primary/10"
+                              >
+                                Agregar monto manual
+                              </Button>
                             </div>
                           </div>
                         )}
