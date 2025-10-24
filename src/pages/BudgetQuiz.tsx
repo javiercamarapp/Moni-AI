@@ -35,6 +35,8 @@ export default function BudgetQuiz() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [userCategories, setUserCategories] = useState<any[]>([]);
+  const [hasBankConnection, setHasBankConnection] = useState(false);
+  const [calculatingIncome, setCalculatingIncome] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -48,6 +50,7 @@ export default function BudgetQuiz() {
     }
     setUser(user);
     loadUserCategories(user.id);
+    checkBankConnection(user.id);
   };
 
   const loadUserCategories = async (userId: string) => {
@@ -58,6 +61,66 @@ export default function BudgetQuiz() {
       .eq('type', 'expense');
     
     setUserCategories(data || []);
+  };
+
+  const checkBankConnection = async (userId: string) => {
+    const { data } = await supabase
+      .from('bank_connections')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .limit(1);
+    
+    setHasBankConnection(!!data && data.length > 0);
+  };
+
+  const calculateAverageIncome = async () => {
+    if (!user) return;
+    
+    setCalculatingIncome(true);
+    try {
+      // Calcular fecha de hace 12 meses
+      const twelveMonthsAgo = new Date();
+      twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+      
+      // Obtener transacciones de ingresos de los últimos 12 meses
+      const { data: transactions } = await supabase
+        .from('transactions')
+        .select('amount, transaction_date')
+        .eq('user_id', user.id)
+        .eq('type', 'income')
+        .gte('transaction_date', twelveMonthsAgo.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false });
+
+      if (transactions && transactions.length > 0) {
+        // Agrupar por mes y calcular total por mes
+        const monthlyIncomes: Record<string, number> = {};
+        
+        transactions.forEach(t => {
+          const monthKey = t.transaction_date.substring(0, 7); // YYYY-MM
+          monthlyIncomes[monthKey] = (monthlyIncomes[monthKey] || 0) + Number(t.amount);
+        });
+
+        // Calcular promedio
+        const totalMonths = Object.keys(monthlyIncomes).length;
+        if (totalMonths > 0) {
+          const totalIncome = Object.values(monthlyIncomes).reduce((sum, val) => sum + val, 0);
+          const averageIncome = Math.round(totalIncome / totalMonths);
+          
+          setMonthlyIncome(averageIncome.toString());
+          toast.success(`Ingreso promedio detectado: $${averageIncome.toLocaleString()}`);
+        } else {
+          toast.info("No se encontraron ingresos en los últimos 12 meses");
+        }
+      } else {
+        toast.info("No se encontraron transacciones de ingreso");
+      }
+    } catch (error) {
+      console.error('Error calculating average income:', error);
+      toast.error("Error al calcular el ingreso promedio");
+    } finally {
+      setCalculatingIncome(false);
+    }
   };
 
   const formatDisplayValue = (value: string) => {
@@ -218,6 +281,35 @@ export default function BudgetQuiz() {
                   Esto nos ayudará a sugerir presupuestos realistas
                 </p>
               </div>
+              
+              {hasBankConnection && (
+                <Button
+                  onClick={calculateAverageIncome}
+                  disabled={calculatingIncome}
+                  variant="outline"
+                  className="w-full h-12 rounded-[20px] border-2 border-primary/30 hover:border-primary/60 hover:bg-primary/5"
+                >
+                  {calculatingIncome ? (
+                    "Calculando..."
+                  ) : (
+                    <>
+                      <span className="text-2xl mr-2">🏦</span>
+                      Detectar Ingreso del Banco
+                    </>
+                  )}
+                </Button>
+              )}
+
+              {!hasBankConnection && (
+                <Button
+                  onClick={() => navigate('/bank-connection')}
+                  variant="outline"
+                  className="w-full h-12 rounded-[20px] border-2 border-primary/30 hover:border-primary/60 hover:bg-primary/5"
+                >
+                  <span className="text-2xl mr-2">🏦</span>
+                  Conectar Banco para Detectar Ingreso
+                </Button>
+              )}
               
               <div className="space-y-2">
                 <div className="relative">
