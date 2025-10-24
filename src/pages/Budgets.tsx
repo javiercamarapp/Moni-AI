@@ -214,7 +214,10 @@ export default function Budgets() {
                     </div>
                   </div>
                   
-                  <div className="bg-white/10 backdrop-blur-sm rounded-[12px] p-2 border-2 border-white/20 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all">
+                  <button
+                    onClick={() => navigate('/gastos')}
+                    className="bg-white/10 backdrop-blur-sm rounded-[12px] p-2 border-2 border-white/20 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all w-full cursor-pointer"
+                  >
                     <div className="flex flex-col items-center gap-0.5 text-center">
                       <TrendingUp className="h-4 w-4 text-destructive" />
                       <span className="text-[8px] text-muted-foreground font-medium">Gastado</span>
@@ -222,7 +225,7 @@ export default function Budgets() {
                         ${(Object.values(currentExpenses).reduce((sum, val) => sum + val, 0) / 1000).toFixed(0)}k
                       </p>
                     </div>
-                  </div>
+                  </button>
                 </div>
 
                 {/* Disponible para gastar */}
