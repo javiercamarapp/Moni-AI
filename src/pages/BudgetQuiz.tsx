@@ -921,66 +921,50 @@ export default function BudgetQuiz() {
 
         {/* Step 3: Budgets */}
         {step === 3 && (
-          <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in">
-            <div className="space-y-5">
+          <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in">
+            <div className="space-y-3">
               <div className="text-center">
-                <div className="text-4xl mb-3">🎯</div>
-                <h2 className="text-xl font-bold text-foreground mb-2">
-                  Ajusta tus presupuestos
+                <h2 className="text-lg font-bold text-foreground">
+                  💰 Ajusta tus presupuestos
                 </h2>
-                <p className="text-xs text-muted-foreground mb-4">
-                  Ingreso mensual: ${Number(monthlyIncome).toLocaleString()}
+                <p className="text-[10px] text-muted-foreground">
+                  Ingreso: ${Number(monthlyIncome).toLocaleString()} • Presupuesto: ${totalBudget.toLocaleString()}
                 </p>
+              </div>
                 
-                {/* Budget vs Savings Visualization */}
-                <div className="space-y-3 bg-gradient-to-br from-primary/5 to-primary/10 p-4 rounded-[15px] border-2 border-primary/20">
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="text-left">
-                      <p className="text-[10px] text-muted-foreground">Presupuesto asignado</p>
-                      <p className="text-lg font-bold text-foreground">${totalBudget.toLocaleString()}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[10px] text-muted-foreground">Ahorro estimado</p>
-                      <p className={`text-lg font-bold ${
-                        Number(monthlyIncome) - totalBudget >= 0 ? 'text-green-600' : 'text-destructive'
-                      }`}>
-                        ${Math.max(0, Number(monthlyIncome) - totalBudget).toLocaleString()}
-                      </p>
-                    </div>
+              {/* Budget vs Savings Visualization */}
+              <div className="bg-gradient-to-br from-primary/5 to-primary/10 p-3 rounded-[12px] border border-primary/20">
+                <div className="relative h-5 bg-white rounded-full overflow-hidden border border-white/50">
+                  <div
+                    className={`absolute left-0 top-0 h-full transition-all ${
+                      percentageOfIncome > 100 ? 'bg-destructive' : 'bg-gradient-to-r from-primary to-primary/80'
+                    }`}
+                    style={{ width: `${Math.min(percentageOfIncome, 100)}%` }}
+                  />
+                  <div
+                    className="absolute right-0 top-0 h-full bg-gradient-to-r from-green-400 to-green-500"
+                    style={{ width: `${Math.max(0, 100 - percentageOfIncome)}%` }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-[9px] font-bold text-white drop-shadow">
+                      {percentageOfIncome.toFixed(0)}% • Ahorro: {Math.max(0, 100 - percentageOfIncome).toFixed(0)}%
+                    </span>
                   </div>
-                  
-                  <div className="relative h-6 bg-white rounded-full overflow-hidden border-2 border-white/50 shadow-inner">
-                    <div
-                      className={`absolute left-0 top-0 h-full transition-all ${
-                        percentageOfIncome > 100 ? 'bg-destructive' : 'bg-gradient-to-r from-primary to-primary/80'
-                      }`}
-                      style={{ width: `${Math.min(percentageOfIncome, 100)}%` }}
-                    />
-                    <div
-                      className="absolute right-0 top-0 h-full bg-gradient-to-r from-green-400 to-green-500"
-                      style={{ width: `${Math.max(0, 100 - percentageOfIncome)}%` }}
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-[10px] font-bold text-white drop-shadow-lg">
-                        {percentageOfIncome.toFixed(0)}% presupuesto • {Math.max(0, 100 - percentageOfIncome).toFixed(0)}% ahorro
-                      </span>
-                    </div>
-                  </div>
-                  
-                  {percentageOfIncome > 100 && (
-                    <p className="text-[10px] text-destructive font-semibold text-center animate-pulse">
-                      ⚠️ Tu presupuesto excede tus ingresos
-                    </p>
-                  )}
-                  {percentageOfIncome < 90 && percentageOfIncome > 0 && (
-                    <p className="text-[10px] text-green-600 font-semibold text-center">
-                      ✨ ¡Excelente! Estás ahorrando {(100 - percentageOfIncome).toFixed(0)}%
-                    </p>
-                  )}
                 </div>
+                
+                {percentageOfIncome > 100 && (
+                  <p className="text-[9px] text-destructive font-semibold text-center mt-1 animate-pulse">
+                    ⚠️ Excede tus ingresos
+                  </p>
+                )}
+                {percentageOfIncome < 90 && percentageOfIncome > 0 && (
+                  <p className="text-[9px] text-green-600 font-semibold text-center mt-1">
+                    ✨ ¡Ahorras {(100 - percentageOfIncome).toFixed(0)}%!
+                  </p>
+                )}
               </div>
               
-              <div className="space-y-2 max-h-[300px] overflow-y-auto">
+              <div className="space-y-2 max-h-[450px] overflow-y-auto pr-1">
                 {selectedCategories.map(catId => {
                   const category = DEFAULT_CATEGORIES.find(c => c.id === catId);
                   if (!category) return null;
@@ -988,33 +972,32 @@ export default function BudgetQuiz() {
                   const budgetPercentage = monthlyIncome ? (budgets[catId] / Number(monthlyIncome)) * 100 : 0;
                   
                   return (
-                    <div key={catId} className="p-4 bg-white rounded-[15px] border-2 border-blue-100 shadow-lg hover:shadow-xl transition-all">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <span className="text-2xl">{category.icon}</span>
-                          <div>
-                            <p className="text-sm font-bold text-foreground">
+                    <button
+                      key={catId}
+                      onClick={() => setEditingCategoryId(catId)}
+                      className="w-full p-3 bg-white rounded-[12px] border border-blue-200 shadow-sm hover:shadow-md hover:border-primary/50 transition-all text-left"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 flex-1">
+                          <span className="text-xl">{category.icon}</span>
+                          <div className="flex-1">
+                            <p className="text-xs font-bold text-foreground">
                               {category.name}
-                            </p>
-                            <p className="text-[10px] text-muted-foreground">
-                              Sugerido: {category.suggestedPercentage}%
                             </p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <button
-                            onClick={() => setEditingCategoryId(catId)}
-                            className="w-28 h-12 text-right text-base font-bold bg-white rounded-[12px] border-2 border-primary/30 shadow-md hover:shadow-xl hover:border-primary transition-all flex items-center justify-between px-3"
-                          >
-                            <Edit2 className="h-4 w-4 text-primary/60" />
-                            <span>${budgets[catId] || 0}</span>
-                          </button>
-                          <p className="text-base font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mt-1 animate-pulse">
-                            {budgetPercentage.toFixed(1)}%
-                          </p>
+                        <div className="flex items-center gap-2">
+                          <div className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-purple-50 rounded-[8px] border border-blue-200">
+                            <span className="text-sm font-bold text-foreground">
+                              ${(budgets[catId] || 0).toLocaleString()}
+                            </span>
+                          </div>
+                          <span className="text-xs font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                            {budgetPercentage.toFixed(0)}%
+                          </span>
                         </div>
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
