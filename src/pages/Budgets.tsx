@@ -88,6 +88,22 @@ export default function Budgets() {
       const income = (incomeData || []).reduce((sum, t) => sum + Number(t.amount), 0);
       setMonthlyIncome(income);
 
+      // Cargar todas las categorías del usuario
+      const { data: allCategories } = await supabase
+        .from('categories')
+        .select('id, name')
+        .eq('user_id', user.id);
+
+      // Crear un mapa de nombre normalizado a IDs de categorías
+      const categoryNameMap: Record<string, string[]> = {};
+      (allCategories || []).forEach(cat => {
+        const normalizedName = cat.name.toLowerCase().trim();
+        if (!categoryNameMap[normalizedName]) {
+          categoryNameMap[normalizedName] = [];
+        }
+        categoryNameMap[normalizedName].push(cat.id);
+      });
+
       // Calcular gastos por categoría del mes
       const { data: expenseData } = await supabase
         .from('transactions')
@@ -97,12 +113,31 @@ export default function Budgets() {
         .gte('transaction_date', firstDay.toISOString().split('T')[0])
         .lte('transaction_date', lastDay.toISOString().split('T')[0]);
 
-      const expensesByCategory: Record<string, number> = {};
+      console.log('=== DEBUG GASTOS ===');
+      console.log('Total de transacciones:', expenseData?.length);
+      console.log('Datos de gastos:', expenseData);
+
+      // Agrupar gastos por nombre de categoría
+      const expensesByName: Record<string, number> = {};
       (expenseData || []).forEach(t => {
-        if (t.category_id) {
-          expensesByCategory[t.category_id] = (expensesByCategory[t.category_id] || 0) + Number(t.amount);
+        if (t.categories && t.categories.name) {
+          const normalizedName = t.categories.name.toLowerCase().trim();
+          expensesByName[normalizedName] = (expensesByName[normalizedName] || 0) + Number(t.amount);
         }
       });
+
+      console.log('Gastos agrupados por nombre:', expensesByName);
+
+      // Mapear gastos a los IDs de categorías de los presupuestos
+      const expensesByCategory: Record<string, number> = {};
+      Object.entries(expensesByName).forEach(([name, amount]) => {
+        const categoryIds = categoryNameMap[name] || [];
+        categoryIds.forEach(id => {
+          expensesByCategory[id] = (expensesByCategory[id] || 0) + amount;
+        });
+      });
+
+      console.log('Gastos mapeados a categorías de presupuestos:', expensesByCategory);
 
       setCurrentExpenses(expensesByCategory);
     } catch (error) {
