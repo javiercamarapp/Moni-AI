@@ -426,9 +426,10 @@ export default function BudgetQuiz() {
   };
 
   const formatCurrency = (value: number): string => {
+    if (value === 0) return "";
     return new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(value);
   };
 
@@ -634,13 +635,13 @@ export default function BudgetQuiz() {
                                   <Input
                                     type="text"
                                     inputMode="numeric"
-                                    placeholder="0.00"
+                                    placeholder="0"
                                     value={subcategoryBudgets[sub.id] ? formatCurrency(subcategoryBudgets[sub.id]) : ""}
                                     onChange={(e) => {
                                       const value = e.target.value.replace(/[^\d]/g, '');
                                       updateSubcategoryBudget(sub.id, value);
                                     }}
-                                    className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2"
+                                    className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-gray-50 border-gray-200"
                                   />
                                 </div>
                               </div>
