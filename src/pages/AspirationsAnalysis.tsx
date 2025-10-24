@@ -213,44 +213,44 @@ export default function AspirationsAnalysis() {
     
     const badges = [];
     
-    // Sistema de insignias del Financial Journey con emojis
+    // Sistema de insignias del Financial Journey con emojis únicos para cada nivel
     const badgeThresholds = [
       { 
         level: 250, 
-        name: "💸 Novato Financiero", 
-        icon: () => EmojiIcon({ emoji: "💸" }), 
+        name: "🌱 Novato Financiero", 
+        icon: () => EmojiIcon({ emoji: "🌱" }), 
         color: "from-blue-400 to-blue-600", 
         description: "Primeros pasos",
         explanation: "Has iniciado tu camino financiero. Estás aprendiendo a gestionar tu dinero y crear buenos hábitos."
       },
       { 
         level: 500, 
-        name: "💸 Novato Financiero", 
-        icon: () => EmojiIcon({ emoji: "💸" }), 
+        name: "📚 Novato Financiero", 
+        icon: () => EmojiIcon({ emoji: "📚" }), 
         color: "from-blue-400 to-blue-600", 
         description: "Educación financiera",
         explanation: "Estás desarrollando consciencia sobre tus finanzas y comenzando a tomar decisiones informadas."
       },
       { 
         level: 750, 
-        name: "💸 Novato Financiero", 
-        icon: () => EmojiIcon({ emoji: "💸" }), 
+        name: "💪 Novato Financiero", 
+        icon: () => EmojiIcon({ emoji: "💪" }), 
         color: "from-blue-400 to-blue-600", 
         description: "Progreso inicial",
         explanation: "Tus nuevos hábitos financieros están tomando forma. Cada día aprendes algo nuevo."
       },
       { 
         level: 1000, 
-        name: "🪙 Ahorrador Disciplinado", 
-        icon: () => EmojiIcon({ emoji: "🪙" }), 
+        name: "🎯 Ahorrador Disciplinado", 
+        icon: () => EmojiIcon({ emoji: "🎯" }), 
         color: "from-green-400 to-green-600", 
         description: "Control y ahorro",
         explanation: "¡10% alcanzado! Ahora tienes control sobre tus gastos y estás construyendo el hábito del ahorro consistente."
       },
       { 
         level: 1250, 
-        name: "🪙 Ahorrador Disciplinado", 
-        icon: () => EmojiIcon({ emoji: "🪙" }), 
+        name: "💰 Ahorrador Disciplinado", 
+        icon: () => EmojiIcon({ emoji: "💰" }), 
         color: "from-green-400 to-green-600", 
         description: "Metas de ahorro",
         explanation: "Estás cumpliendo tus metas de ahorro y viendo crecer tu patrimonio mes a mes."
@@ -265,16 +265,16 @@ export default function AspirationsAnalysis() {
       },
       { 
         level: 1750, 
-        name: "🪙 Ahorrador Disciplinado", 
-        icon: () => EmojiIcon({ emoji: "🪙" }), 
+        name: "🏆 Ahorrador Disciplinado", 
+        icon: () => EmojiIcon({ emoji: "🏆" }), 
         color: "from-green-400 to-green-600", 
         description: "Maestría en ahorro",
         explanation: "Has perfeccionado el arte del ahorro inteligente. Tu fondo de emergencia crece constantemente."
       },
       { 
         level: 2000, 
-        name: "📈 Inversionista Aprendiz", 
-        icon: () => EmojiIcon({ emoji: "📈" }), 
+        name: "📊 Inversionista Aprendiz", 
+        icon: () => EmojiIcon({ emoji: "📊" }), 
         color: "from-purple-400 to-purple-600", 
         description: "Primeras inversiones",
         explanation: "¡20% completado! Has comenzado a invertir y diversificar. Tu dinero ahora trabaja para ti."
@@ -289,16 +289,16 @@ export default function AspirationsAnalysis() {
       },
       { 
         level: 3000, 
-        name: "📈 Inversionista Aprendiz", 
-        icon: () => EmojiIcon({ emoji: "📈" }), 
+        name: "💎 Inversionista Aprendiz", 
+        icon: () => EmojiIcon({ emoji: "💎" }), 
         color: "from-purple-400 to-purple-600", 
         description: "Portafolio en crecimiento",
         explanation: "30% alcanzado. Tu portafolio de inversiones muestra rendimientos positivos y crecimiento sostenido."
       },
       { 
         level: 3500, 
-        name: "📈 Inversionista Aprendiz", 
-        icon: () => EmojiIcon({ emoji: "📈" }), 
+        name: "🎲 Inversionista Aprendiz", 
+        icon: () => EmojiIcon({ emoji: "🎲" }), 
         color: "from-purple-400 to-purple-600", 
         description: "Estrategia de inversión",
         explanation: "Has desarrollado una estrategia de inversión clara y consistente. Tu patrimonio crece aceleradamente."
@@ -313,24 +313,24 @@ export default function AspirationsAnalysis() {
       },
       { 
         level: 4500, 
-        name: "🧠 Estratega Financiero", 
-        icon: () => EmojiIcon({ emoji: "🧠" }), 
+        name: "⚡ Estratega Financiero", 
+        icon: () => EmojiIcon({ emoji: "⚡" }), 
         color: "from-orange-400 to-orange-600", 
         description: "Optimización de activos",
         explanation: "Tus estrategias de optimización están maximizando el rendimiento de cada peso invertido."
       },
       { 
         level: 5000, 
-        name: "🧠 Estratega Financiero", 
-        icon: () => EmojiIcon({ emoji: "🧠" }), 
+        name: "🎖️ Estratega Financiero", 
+        icon: () => EmojiIcon({ emoji: "🎖️" }), 
         color: "from-orange-400 to-orange-600", 
         description: "Maestría estratégica",
         explanation: "¡Mitad del camino! Tu visión estratégica te posiciona entre los mejores administradores de patrimonio."
       },
       { 
         level: 6000, 
-        name: "🧠 Estratega Financiero", 
-        icon: () => EmojiIcon({ emoji: "🧠" }), 
+        name: "🔮 Estratega Financiero", 
+        icon: () => EmojiIcon({ emoji: "🔮" }), 
         color: "from-orange-400 to-orange-600", 
         description: "Planificación avanzada",
         explanation: "60% completado. Tu planificación financiera a largo plazo está cristalizando tus sueños."
@@ -345,24 +345,24 @@ export default function AspirationsAnalysis() {
       },
       { 
         level: 8000, 
-        name: "🚀 Visionario", 
-        icon: () => EmojiIcon({ emoji: "🚀" }), 
+        name: "🌟 Visionario", 
+        icon: () => EmojiIcon({ emoji: "🌟" }), 
         color: "from-cyan-400 to-cyan-600", 
         description: "Plan a largo plazo",
         explanation: "80% alcanzado. Tu visión a largo plazo se está materializando. La libertad está cerca."
       },
       { 
         level: 9000, 
-        name: "🚀 Visionario", 
-        icon: () => EmojiIcon({ emoji: "🚀" }), 
+        name: "✨ Visionario", 
+        icon: () => EmojiIcon({ emoji: "✨" }), 
         color: "from-cyan-400 to-cyan-600", 
         description: "Casi libre financieramente",
         explanation: "¡90%! Tu independencia financiera es prácticamente una realidad. El futuro que soñaste está aquí."
       },
       { 
         level: 9500, 
-        name: "👑 Leyenda Moni", 
-        icon: () => EmojiIcon({ emoji: "👑" }), 
+        name: "🔥 Leyenda Moni", 
+        icon: () => EmojiIcon({ emoji: "🔥" }), 
         color: "from-yellow-400 to-yellow-600", 
         description: "Élite financiera",
         explanation: "95% completado. Estás en la cúspide del éxito financiero. Eres un referente para otros."
