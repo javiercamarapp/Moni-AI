@@ -462,7 +462,7 @@ export default function BudgetQuiz() {
           console.log('Categoría ya existe:', existingCategory);
         }
 
-        // Crear el nuevo presupuesto
+        // Crear el nuevo presupuesto para la categoría principal
         console.log('Insertando presupuesto en DB:', {
           user_id: user.id,
           category_id: existingCategory.id,
@@ -483,6 +483,52 @@ export default function BudgetQuiz() {
         }
         
         console.log('Presupuesto guardado exitosamente');
+
+        // Ahora guardar las subcategorías con sus presupuestos
+        for (const subcategory of categoryData.subcategories) {
+          const subcatBudget = subcategoryBudgets[subcategory.id];
+          
+          // Solo guardar si tiene presupuesto asignado
+          if (subcatBudget && subcatBudget > 0) {
+            // Obtener el nombre personalizado si existe
+            const subcatName = customSubcategories[subcategory.id] || subcategory.name;
+            
+            console.log(`  Guardando subcategoría: ${subcatName} con presupuesto: ${subcatBudget}`);
+
+            // Crear la subcategoría en la BD
+            const { data: newSubcategory, error: subcatError } = await supabase
+              .from('categories')
+              .insert({
+                user_id: user.id,
+                name: subcatName,
+                type: 'gasto',
+                color: 'bg-primary/20',
+                parent_id: existingCategory.id
+              })
+              .select()
+              .single();
+
+            if (subcatError) {
+              console.error('Error creando subcategoría:', subcatError);
+              continue; // Continuar con la siguiente subcategoría
+            }
+
+            // Crear el presupuesto para la subcategoría
+            const { error: subcatBudgetError } = await supabase
+              .from('category_budgets')
+              .insert({
+                user_id: user.id,
+                category_id: newSubcategory.id,
+                monthly_budget: subcatBudget
+              });
+
+            if (subcatBudgetError) {
+              console.error('Error guardando presupuesto de subcategoría:', subcatBudgetError);
+            } else {
+              console.log(`  Subcategoría ${subcatName} guardada exitosamente`);
+            }
+          }
+        }
       }
 
       console.log('=== TODOS LOS PRESUPUESTOS GUARDADOS ===');
