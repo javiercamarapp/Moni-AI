@@ -928,11 +928,38 @@ export default function BudgetQuiz() {
                   💰 Ajusta tus presupuestos
                 </h2>
                 <p className="text-[10px] text-muted-foreground">
-                  Ingreso: ${Number(monthlyIncome).toLocaleString()} • Presupuesto: ${totalBudget.toLocaleString()}
+                  Ingreso IA (6 meses): ${Number(monthlyIncome).toLocaleString()} • Presupuesto: ${totalBudget.toLocaleString()}
                 </p>
               </div>
                 
-                
+              {/* Budget vs Savings Visualization */}
+              <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100">
+                <div className="relative h-5 bg-gradient-to-r from-[hsl(220,60%,10%)] to-[hsl(240,55%,8%)] rounded-full border border-white/10 overflow-hidden shadow-inner">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      percentageOfIncome > 100 
+                        ? 'bg-gradient-to-r from-red-600 via-red-500 to-red-600' 
+                        : percentageOfIncome > 75
+                        ? 'bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500'
+                        : 'bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500'
+                    }`}
+                    style={{ 
+                      width: `${Math.min(percentageOfIncome, 100)}%`,
+                      boxShadow: percentageOfIncome > 100
+                        ? '0 0 20px rgba(239, 68, 68, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)'
+                        : percentageOfIncome > 75
+                        ? '0 0 20px rgba(251, 191, 36, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)'
+                        : '0 0 20px rgba(4, 120, 87, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)'
+                    }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-[10px] font-bold text-white drop-shadow-lg">
+                      Ahorrando: {Math.max(0, 100 - percentageOfIncome).toFixed(0)}%
+                    </span>
+                  </div>
+                </div>
+              </Card>
+              
               <div className="grid grid-cols-3 gap-2 max-h-[450px] overflow-y-auto pr-1">
                 {selectedCategories.map(catId => {
                   const category = DEFAULT_CATEGORIES.find(c => c.id === catId);
