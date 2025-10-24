@@ -128,6 +128,15 @@ export default function Logros() {
       growthPercentage: 25.0
     },
     { 
+      level: 2750, 
+      name: "Martillo Constructor", 
+      emoji: "🔨", 
+      color: "from-purple-400 to-purple-600", 
+      description: "Construcción sólida",
+      explanation: "Forjas tus objetivos con precisión.",
+      growthPercentage: 27.5
+    },
+    { 
       level: 3000, 
       name: "Libro Abierto", 
       emoji: "📒", 
@@ -135,6 +144,15 @@ export default function Logros() {
       description: "Portafolio en crecimiento",
       explanation: "30% alcanzado. Compartes conocimiento y transparencia.",
       growthPercentage: 30.0
+    },
+    { 
+      level: 3250, 
+      name: "Telescopio Enfocado", 
+      emoji: "🔭", 
+      color: "from-purple-400 to-purple-600", 
+      description: "Visión clara",
+      explanation: "Ves más allá, planeas con claridad.",
+      growthPercentage: 32.5
     },
     { 
       level: 3500, 
@@ -155,6 +173,15 @@ export default function Logros() {
       growthPercentage: 40.0
     },
     { 
+      level: 4250, 
+      name: "Engranaje Preciso", 
+      emoji: "⚙️", 
+      color: "from-orange-400 to-orange-600", 
+      description: "Sistema optimizado",
+      explanation: "Todo funciona con sincronía perfecta.",
+      growthPercentage: 42.5
+    },
+    { 
       level: 4500, 
       name: "Clavija Fija", 
       emoji: "📌", 
@@ -162,6 +189,15 @@ export default function Logros() {
       description: "Optimización de activos",
       explanation: "Anclas proyectos, haces que permanezcan.",
       growthPercentage: 45.0
+    },
+    { 
+      level: 4750, 
+      name: "Llave Maestra", 
+      emoji: "🔑", 
+      color: "from-orange-400 to-orange-600", 
+      description: "Acceso total",
+      explanation: "Abres puertas, desbloqueas oportunidades.",
+      growthPercentage: 47.5
     },
     { 
       level: 5000, 
@@ -173,6 +209,33 @@ export default function Logros() {
       growthPercentage: 50.0
     },
     { 
+      level: 5250, 
+      name: "Estrella Brillante", 
+      emoji: "⭐", 
+      color: "from-orange-400 to-orange-600", 
+      description: "Destacado",
+      explanation: "Tu brillo es visible desde lejos.",
+      growthPercentage: 52.5
+    },
+    { 
+      level: 5500, 
+      name: "Corona Ganada", 
+      emoji: "👑", 
+      color: "from-orange-400 to-orange-600", 
+      description: "Logro superior",
+      explanation: "Tu liderazgo es indiscutible.",
+      growthPercentage: 55.0
+    },
+    { 
+      level: 5750, 
+      name: "Trofeo Conquistado", 
+      emoji: "🏆", 
+      color: "from-orange-400 to-orange-600", 
+      description: "Victoria estratégica",
+      explanation: "Tus logros hablan por ti.",
+      growthPercentage: 57.5
+    },
+    { 
       level: 6000, 
       name: "Maletín Profesional", 
       emoji: "💼", 
@@ -180,6 +243,33 @@ export default function Logros() {
       description: "Planificación avanzada",
       explanation: "60% completado. Tu desempeño se ve y se valora como estándar.",
       growthPercentage: 60.0
+    },
+    { 
+      level: 6250, 
+      name: "Reloj Suizo", 
+      emoji: "⌚", 
+      color: "from-cyan-400 to-cyan-600", 
+      description: "Precisión temporal",
+      explanation: "Tu timing es perfecto, nunca fallas.",
+      growthPercentage: 62.5
+    },
+    { 
+      level: 6500, 
+      name: "Balanza Equilibrada", 
+      emoji: "⚖️", 
+      color: "from-cyan-400 to-cyan-600", 
+      description: "Balance perfecto",
+      explanation: "Mantienes todo en armonía.",
+      growthPercentage: 65.0
+    },
+    { 
+      level: 6750, 
+      name: "Ancla Firme", 
+      emoji: "⚓", 
+      color: "from-cyan-400 to-cyan-600", 
+      description: "Estabilidad absoluta",
+      explanation: "Permaneces firme ante cualquier tormenta.",
+      growthPercentage: 67.5
     },
     { 
       level: 7000, 
@@ -191,6 +281,33 @@ export default function Logros() {
       growthPercentage: 70.0
     },
     { 
+      level: 7250, 
+      name: "Cohete Espacial", 
+      emoji: "🚀", 
+      color: "from-cyan-400 to-cyan-600", 
+      description: "Ascenso imparable",
+      explanation: "Tu crecimiento no tiene límites.",
+      growthPercentage: 72.5
+    },
+    { 
+      level: 7500, 
+      name: "Faro Luminoso", 
+      emoji: "🗼", 
+      color: "from-cyan-400 to-cyan-600", 
+      description: "Guía brillante",
+      explanation: "Iluminas el camino para otros.",
+      growthPercentage: 75.0
+    },
+    { 
+      level: 7750, 
+      name: "Gema Preciosa", 
+      emoji: "💠", 
+      color: "from-cyan-400 to-cyan-600", 
+      description: "Valor excepcional",
+      explanation: "Tu rareza te hace único.",
+      growthPercentage: 77.5
+    },
+    { 
       level: 8000, 
       name: "Cometa Resplandeciente", 
       emoji: "🌠", 
@@ -198,6 +315,33 @@ export default function Logros() {
       description: "Plan a largo plazo",
       explanation: "80% alcanzado. Tu paso deja huella visible para todos.",
       growthPercentage: 80.0
+    },
+    { 
+      level: 8250, 
+      name: "Sol Radiante", 
+      emoji: "☀️", 
+      color: "from-yellow-400 to-yellow-600", 
+      description: "Energía infinita",
+      explanation: "Tu poder es la fuente de todo.",
+      growthPercentage: 82.5
+    },
+    { 
+      level: 8500, 
+      name: "Galaxia Expandida", 
+      emoji: "🌌", 
+      color: "from-yellow-400 to-yellow-600", 
+      description: "Expansión cósmica",
+      explanation: "Tu alcance es universal.",
+      growthPercentage: 85.0
+    },
+    { 
+      level: 8750, 
+      name: "Volcán Activo", 
+      emoji: "🌋", 
+      color: "from-yellow-400 to-yellow-600", 
+      description: "Potencia explosiva",
+      explanation: "Tu fuerza es imparable.",
+      growthPercentage: 87.5
     },
     { 
       level: 9000, 
@@ -209,6 +353,15 @@ export default function Logros() {
       growthPercentage: 90.0
     },
     { 
+      level: 9250, 
+      name: "Universo Paralelo", 
+      emoji: "🌐", 
+      color: "from-yellow-400 to-yellow-600", 
+      description: "Realidad alternativa",
+      explanation: "Creas nuevos mundos con tus decisiones.",
+      growthPercentage: 92.5
+    },
+    { 
       level: 9500, 
       name: "Espacio Infinito", 
       emoji: "🌌", 
@@ -216,6 +369,15 @@ export default function Logros() {
       description: "Élite financiera",
       explanation: "95% completado. No tienes límites visibles, tu proyección es libre.",
       growthPercentage: 95.0
+    },
+    { 
+      level: 9750, 
+      name: "Supernova Brillante", 
+      emoji: "✨", 
+      color: "from-yellow-400 to-yellow-600", 
+      description: "Explosión de éxito",
+      explanation: "Tu brillo ilumina todo el universo.",
+      growthPercentage: 97.5
     },
     { 
       level: 10000, 
