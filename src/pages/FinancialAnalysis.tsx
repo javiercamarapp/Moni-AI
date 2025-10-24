@@ -643,7 +643,7 @@ export default function FinancialAnalysis() {
             <div className="overflow-x-auto snap-x snap-mandatory flex gap-4 pb-2 scrollbar-hide">
               {/* Card Mensual */}
               <Card 
-                className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer hover:scale-105 active:scale-95 transition-all" 
+                className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer transition-all" 
                 style={{ animationDelay: '0ms' }}
                 onClick={() => navigate('/balance')}
               >
@@ -733,7 +733,7 @@ export default function FinancialAnalysis() {
 
               {/* Card Anual */}
               <Card 
-                className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer hover:scale-105 active:scale-95 transition-all" 
+                className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer transition-all" 
                 style={{ animationDelay: '100ms' }}
                 onClick={() => navigate('/balance')}
               >
