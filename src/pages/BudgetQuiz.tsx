@@ -46,6 +46,7 @@ const DEFAULT_CATEGORIES: Category[] = [
     insight: 'Detecta sobrecostos o hábitos de transporte ineficiente',
     subcategories: [
       { id: 'gasolina', name: 'Gasolina / carga eléctrica' },
+      { id: 'mensualidad_auto', name: 'Mensualidad de automóvil' },
       { id: 'publico', name: 'Transporte público' },
       { id: 'uber', name: 'Uber, Didi, taxis' },
       { id: 'estacionamiento', name: 'Estacionamiento o peajes' },
@@ -113,7 +114,6 @@ const DEFAULT_CATEGORIES: Category[] = [
     subcategories: [
       { id: 'tarjetas', name: 'Tarjetas de crédito' },
       { id: 'prestamos', name: 'Préstamos personales' },
-      { id: 'mensualidad_auto', name: 'Mensualidad de automóvil' },
       { id: 'hipotecarios', name: 'Créditos hipotecarios' },
       { id: 'intereses', name: 'Intereses / pagos mínimos' },
     ]
