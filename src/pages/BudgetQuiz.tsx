@@ -267,8 +267,15 @@ export default function BudgetQuiz() {
         return;
       }
 
-      console.log('Estimaciones de IA:', data.estimates);
-      setCategoryEstimates(data.estimates || {});
+      console.log('Respuesta de edge function:', data);
+      console.log('Estimaciones de IA recibidas:', data?.estimates);
+      
+      if (data?.estimates) {
+        setCategoryEstimates(data.estimates);
+        console.log('Estado actualizado con estimaciones:', data.estimates);
+      } else {
+        console.warn('No se recibieron estimaciones del edge function');
+      }
       
     } catch (error) {
       console.error('Error calculating category estimates:', error);
