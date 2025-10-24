@@ -1150,11 +1150,15 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-xs font-bold text-foreground leading-tight">💰 Presupuesto Mensual</h3>
-                <p className="text-[10px] text-foreground/80 font-medium break-words leading-tight">
+                <p className="text-[10px] break-words leading-tight">
                   {totalBudget > 0 ? (
-                    <>Gastado: ${currentMonthExpenses.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} de ${totalBudget.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</>
+                    <>
+                      <span className="text-red-600 font-bold">Gastado: ${currentMonthExpenses.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                      {' de '}
+                      <span className="text-blue-600 font-bold">${totalBudget.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </>
                   ) : (
-                    <>No hay presupuesto configurado</>
+                    <span className="text-foreground/80 font-medium">No hay presupuesto configurado</span>
                   )}
                 </p>
               </div>
