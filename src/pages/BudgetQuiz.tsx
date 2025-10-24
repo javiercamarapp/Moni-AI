@@ -29,6 +29,7 @@ export default function BudgetQuiz() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [monthlyIncome, setMonthlyIncome] = useState("");
+  const [displayIncome, setDisplayIncome] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [budgets, setBudgets] = useState<Record<string, number>>({});
   const [user, setUser] = useState<any>(null);
@@ -57,6 +58,28 @@ export default function BudgetQuiz() {
       .eq('type', 'expense');
     
     setUserCategories(data || []);
+  };
+
+  const formatCurrency = (value: string) => {
+    // Remover todo excepto números
+    const numericValue = value.replace(/[^\d]/g, '');
+    if (!numericValue) return '';
+    
+    // Convertir a número y formatear
+    const number = parseInt(numericValue);
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(number);
+  };
+
+  const handleIncomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    // Remover todo excepto números
+    const numericValue = input.replace(/[^\d]/g, '');
+    
+    setMonthlyIncome(numericValue);
+    setDisplayIncome(formatCurrency(numericValue));
   };
 
   const handleCategoryToggle = (categoryId: string) => {
@@ -203,10 +226,10 @@ export default function BudgetQuiz() {
               
               <div className="space-y-2">
                 <Input
-                  type="number"
-                  placeholder="0"
-                  value={monthlyIncome}
-                  onChange={(e) => setMonthlyIncome(e.target.value)}
+                  type="text"
+                  placeholder="0.00"
+                  value={displayIncome}
+                  onChange={handleIncomeChange}
                   className="text-3xl text-center font-bold h-16 rounded-[20px] border-2 border-blue-100"
                 />
                 <p className="text-xs text-muted-foreground">
