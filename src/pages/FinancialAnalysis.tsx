@@ -767,6 +767,32 @@ export default function FinancialAnalysis() {
 
             {/* Proyección Anual removida - se moverá a página de proyecciones */}
 
+            {/* Análisis AI */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 active:scale-95 transition-all">
+                  <p className="text-xs font-bold text-foreground mb-2 flex items-center gap-1">
+                    <BarChart3 className="h-3 w-3" /> Análisis Moni AI
+                  </p>
+                  <div className="text-xs text-foreground leading-relaxed line-clamp-3">
+                    {cleanMarkdown(analysis?.analysis)}
+                  </div>
+                  <p className="text-xs text-primary mt-2 font-medium">Ver análisis completo →</p>
+                </Card>
+              </DialogTrigger>
+              <DialogContent className="max-w-[280px] bg-white/95 backdrop-blur-xl border border-blue-100 shadow-2xl rounded-[20px]">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-foreground text-sm">
+                    <BarChart3 className="h-4 w-4" />
+                    Análisis Completo Moni AI
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="text-sm text-foreground leading-relaxed whitespace-pre-line max-h-[60vh] overflow-y-auto p-2 rounded-[20px] bg-white/50">
+                  {cleanMarkdown(analysis?.analysis)}
+                </div>
+              </DialogContent>
+            </Dialog>
+
             {/* 3. PROYECCIONES CON ESCENARIOS - Siempre mostrar con datos en caché */}
             {(() => {
               console.log('🔍 RENDERIZANDO FORECAST:', {
@@ -1057,33 +1083,6 @@ export default function FinancialAnalysis() {
             </div>
 
             {/* Microcopy Empático */}
-            
-
-            {/* Análisis AI */}
-            <Dialog>
-              <DialogTrigger asChild>
-                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 active:scale-95 transition-all">
-                  <p className="text-xs font-bold text-foreground mb-2 flex items-center gap-1">
-                    <BarChart3 className="h-3 w-3" /> Análisis Moni AI
-                  </p>
-                  <div className="text-xs text-foreground leading-relaxed line-clamp-3">
-                    {cleanMarkdown(analysis?.analysis)}
-                  </div>
-                  <p className="text-xs text-primary mt-2 font-medium">Ver análisis completo →</p>
-                </Card>
-              </DialogTrigger>
-              <DialogContent className="max-w-[280px] bg-white/95 backdrop-blur-xl border border-blue-100 shadow-2xl rounded-[20px]">
-                <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2 text-foreground text-sm">
-                    <BarChart3 className="h-4 w-4" />
-                    Análisis Completo Moni AI
-                  </DialogTitle>
-                </DialogHeader>
-                <div className="text-sm text-foreground leading-relaxed whitespace-pre-line max-h-[60vh] overflow-y-auto p-2 rounded-[20px] bg-white/50">
-                  {cleanMarkdown(analysis?.analysis)}
-                </div>
-              </DialogContent>
-            </Dialog>
 
             {/* Calendario de Próximos Movimientos */}
             {loadingTransactions ? (
