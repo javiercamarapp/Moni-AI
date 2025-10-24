@@ -964,38 +964,47 @@ export default function BudgetQuiz() {
                 )}
               </div>
               
-              <div className="space-y-2 max-h-[450px] overflow-y-auto pr-1">
+              <div className="grid grid-cols-3 gap-2 max-h-[450px] overflow-y-auto pr-1">
                 {selectedCategories.map(catId => {
                   const category = DEFAULT_CATEGORIES.find(c => c.id === catId);
                   if (!category) return null;
                   
                   const budgetPercentage = monthlyIncome ? (budgets[catId] / Number(monthlyIncome)) * 100 : 0;
                   
+                  // Calcular color según qué tan saludable es el porcentaje
+                  const getHealthColor = () => {
+                    const suggested = category.suggestedPercentage;
+                    const diff = budgetPercentage - suggested;
+                    
+                    // Si está dentro del rango +/- 5% del sugerido, es verde
+                    if (Math.abs(diff) <= 5) return 'text-green-600';
+                    // Si está entre 5-15% de diferencia, es amarillo
+                    if (Math.abs(diff) <= 15) return 'text-yellow-600';
+                    // Si está más de 15% por encima, es rojo
+                    if (diff > 15) return 'text-red-600';
+                    // Si está muy por debajo, es azul (subaprovechado)
+                    return 'text-blue-600';
+                  };
+                  
                   return (
                     <button
                       key={catId}
                       onClick={() => setEditingCategoryId(catId)}
-                      className="w-full p-3 bg-white rounded-[12px] border border-blue-200 shadow-sm hover:shadow-md hover:border-primary/50 transition-all text-left"
+                      className="p-2 bg-white rounded-[12px] border border-blue-200 shadow-sm hover:shadow-md hover:border-primary/50 transition-all"
                     >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2 flex-1">
-                          <span className="text-xl">{category.icon}</span>
-                          <div className="flex-1">
-                            <p className="text-xs font-bold text-foreground">
-                              {category.name}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-purple-50 rounded-[8px] border border-blue-200">
-                            <span className="text-sm font-bold text-foreground">
-                              ${(budgets[catId] || 0).toLocaleString()}
-                            </span>
-                          </div>
-                          <span className="text-xs font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                            {budgetPercentage.toFixed(0)}%
+                      <div className="flex flex-col items-center gap-1 text-center">
+                        <span className="text-2xl">{category.icon}</span>
+                        <p className="text-[10px] font-bold text-foreground leading-tight">
+                          {category.name}
+                        </p>
+                        <div className="px-2 py-0.5 bg-gradient-to-r from-blue-50 to-purple-50 rounded-[6px] border border-blue-200 w-full">
+                          <span className="text-[10px] font-bold text-foreground">
+                            ${(budgets[catId] || 0).toLocaleString('es-MX', { maximumFractionDigits: 0 })}
                           </span>
                         </div>
+                        <span className={`text-sm font-extrabold ${getHealthColor()}`}>
+                          {budgetPercentage.toFixed(0)}%
+                        </span>
                       </div>
                     </button>
                   );
