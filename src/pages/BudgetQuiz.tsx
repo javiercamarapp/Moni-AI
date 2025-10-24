@@ -387,14 +387,17 @@ export default function BudgetQuiz() {
                   onClick={calculateAverageIncome}
                   disabled={calculatingIncome}
                   variant="outline"
-                  className="w-full h-auto py-3 rounded-[20px] border-2 border-primary/30 hover:border-primary/60 hover:bg-primary/5"
+                  className="w-full h-auto py-4 rounded-[20px] border-2 border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
                   {calculatingIncome ? (
-                    "Calculando..."
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                      <span className="text-sm font-medium">Calculando...</span>
+                    </div>
                   ) : (
-                    <div className="flex flex-col items-center gap-1">
-                      <span className="text-2xl">🏦</span>
-                      <span className="text-[10px] font-medium text-center leading-tight">IA detectará tu ingreso promedio</span>
+                    <div className="flex flex-col items-center gap-2">
+                      <span className="text-3xl animate-pulse">🏦</span>
+                      <span className="text-xs font-medium text-center leading-tight">IA detectará tu ingreso promedio</span>
                     </div>
                   )}
                 </Button>
@@ -404,10 +407,10 @@ export default function BudgetQuiz() {
                 <Button
                   onClick={() => navigate('/bank-connection')}
                   variant="outline"
-                  className="w-full h-auto py-3 rounded-[20px] border-2 border-primary/30 hover:border-primary/60 hover:bg-primary/5"
+                  className="w-full h-auto py-4 rounded-[20px] border-2 border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
-                  <div className="flex flex-col items-center gap-1">
-                    <span className="text-2xl">🏦</span>
+                  <div className="flex flex-col items-center gap-2">
+                    <span className="text-3xl animate-pulse">🏦</span>
                     <span className="text-[10px] font-medium text-center leading-tight">Conectar Banco para que la IA detecte tu ingreso</span>
                   </div>
                 </Button>
