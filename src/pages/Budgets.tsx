@@ -229,7 +229,7 @@ export default function Budgets() {
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-lg font-bold text-foreground">💰 Mis Presupuestos</h1>
+          <h1 className="text-lg font-bold text-foreground">💰 Presupuesto Mensual</h1>
           <Button
             variant="ghost"
             onClick={() => navigate('/budget-quiz')}
