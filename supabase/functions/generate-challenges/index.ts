@@ -27,23 +27,31 @@ serve(async (req) => {
       });
     }
 
-    // Get how many challenges to generate (default: 2)
-    const { count = 2 } = await req.json().catch(() => ({ count: 2 }));
+    // Get how many challenges to generate and userId (default: 2)
+    const { count = 2, userId } = await req.json().catch(() => ({ count: 2, userId: null }));
 
-    // Get user's recent transactions (last 3 months)
-    const threeMonthsAgo = new Date();
-    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+    console.log('🎯 Generando retos para usuario:', user.id, 'Count:', count);
+
+    // Get user's recent transactions (last month for analysis)
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
     const { data: transactions } = await supabase
       .from("transactions")
       .select("*, categories(name)")
       .eq("user_id", user.id)
       .eq("type", "gasto")
-      .gte("transaction_date", threeMonthsAgo.toISOString().split('T')[0])
+      .gte("transaction_date", oneMonthAgo.toISOString().split('T')[0])
       .order("transaction_date", { ascending: false });
 
+    console.log('💳 Transacciones encontradas:', transactions?.length || 0);
+
     if (!transactions || transactions.length === 0) {
-      return new Response(JSON.stringify({ challenges: [] }), {
+      console.log('⚠️ No hay transacciones para analizar');
+      return new Response(JSON.stringify({ 
+        error: 'No hay suficientes transacciones del último mes para generar retos personalizados',
+        challenges: [] 
+      }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -71,12 +79,15 @@ serve(async (req) => {
     }
 
     // Generate challenges using AI
-    const prompt = `Analiza estos patrones de gasto y genera ${count} retos semanales específicos y motivadores:
+    const prompt = `Analiza estos patrones de gasto del último mes y genera ${count} retos semanales específicos y motivadores:
 
-${spendingArray.map(s => `- ${s.name}: $${s.total.toFixed(2)} en ${s.count} transacciones (últimos 3 meses)`).join('\n')}
+${spendingArray.map(s => `- ${s.name}: $${s.total.toFixed(2)} en ${s.count} transacciones (último mes)`).join('\n')}
 
-Para cada categoría, genera un reto semanal realista que reduzca el gasto en un 30-40%. 
-Formato: título corto y motivador, descripción breve, y la meta de gasto semanal.`;
+Para cada categoría, genera un reto semanal realista que ayude a reducir el gasto en un 20-30%. 
+Los retos deben ser alcanzables y motivadores.
+Formato: título corto y motivador, descripción específica del reto, y la meta de gasto semanal.`;
+
+    console.log('🤖 Llamando a Lovable AI para generar retos...');
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -151,6 +162,8 @@ Formato: título corto y motivador, descripción breve, y la meta de gasto seman
 
     const generatedChallenges = JSON.parse(toolCall.function.arguments).challenges.slice(0, count);
 
+    console.log('✨ Retos generados:', generatedChallenges.length);
+
     // Create challenge records
     const now = new Date();
     const startOfWeek = new Date(now);
@@ -187,8 +200,11 @@ Formato: título corto y motivador, descripción breve, y la meta de gasto seman
       .select();
 
     if (insertError) {
+      console.error('❌ Error insertando retos:', insertError);
       throw insertError;
     }
+
+    console.log('✅ Retos insertados correctamente:', insertedChallenges?.length);
 
     return new Response(JSON.stringify({ challenges: insertedChallenges }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

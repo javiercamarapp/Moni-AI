@@ -1548,7 +1548,7 @@ const Dashboard = () => {
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Tus Retos Semanales</h3>
                 <div className="flex gap-2">
                   <Button
-                    onClick={() => navigate("/logros")}
+                    onClick={() => navigate("/mis-retos")}
                     size="sm"
                     className="bg-white/80 backdrop-blur-md hover:bg-white text-foreground text-xs h-8 px-3 rounded-full shadow-md hover:shadow-lg transition-all border border-gray-200/50 font-semibold"
                   >
