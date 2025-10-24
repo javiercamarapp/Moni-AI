@@ -279,12 +279,12 @@ export default function BudgetQuiz() {
 
       const estimates: Record<string, number> = {};
 
-      // Palabras clave para cada categoría
+      // Palabras clave para cada categoría (más específicas)
       const categoryKeywords: Record<string, string[]> = {
-        'vivienda': ['renta', 'alquiler', 'hipoteca', 'predial', 'luz', 'agua', 'gas', 'internet', 'limpieza', 'condominio', 'cfe', 'telmex'],
+        'vivienda': ['renta', 'alquiler', 'hipoteca', 'predial', 'cfe', 'luz', 'agua', 'gas natural', 'gas', 'internet', 'izzi', 'telmex', 'totalplay', 'limpieza', 'condominio'],
         'transporte': ['gasolina', 'uber', 'didi', 'taxi', 'transporte', 'metro', 'autobus', 'estacionamiento', 'peaje', 'gasolinera'],
         'alimentacion': ['super', 'mercado', 'oxxo', 'restaurante', 'comida', 'cafe', 'rappi', 'uber eats', 'didi food', 'walmart', 'soriana', 'chedraui'],
-        'servicios': ['netflix', 'spotify', 'amazon', 'hbo', 'disney', 'apple', 'suscripcion', 'telefono', 'celular', 'membresía'],
+        'servicios': ['netflix', 'spotify', 'amazon', 'hbo', 'disney', 'apple', 'prime video', 'suscripcion', 'telefono', 'telcel', 'at&t', 'movistar', 'celular', 'membresía'],
         'salud': ['farmacia', 'medico', 'hospital', 'consulta', 'gimnasio', 'doctor', 'dentista', 'seguro medico'],
         'educacion': ['colegiatura', 'escuela', 'universidad', 'curso', 'libro', 'material escolar'],
         'deudas': ['tarjeta', 'credito', 'prestamo', 'banco', 'banamex', 'bancomer', 'santander', 'hsbc'],
@@ -303,35 +303,31 @@ export default function BudgetQuiz() {
           return keywords.some(keyword => description.includes(keyword));
         });
 
-        console.log(`Transacciones para ${mainCategory.name}:`, categoryTransactions.length);
-
+        console.log(`${mainCategory.name}: ${categoryTransactions.length} transacciones encontradas`);
+        
         if (categoryTransactions.length > 0) {
-          // Detectar si es suscripción o gasto fijo (recurrente)
-          const hasRecurring = categoryTransactions.some(t => t.frequency && t.frequency !== 'one-time');
+          // Agrupar por mes y sumar todos los gastos de esa categoría por mes
+          const monthlyTotals: Record<string, number> = {};
           
-          if (hasRecurring) {
-            // Para gastos fijos, tomar el valor más reciente
-            const recentTransaction = categoryTransactions[0];
-            estimates[mainCategory.id] = Math.round(Number(recentTransaction.amount));
-          } else {
-            // Para gastos variables, calcular promedio mensual
-            const monthlyTotals: Record<string, number> = {};
-            
-            categoryTransactions.forEach(t => {
-              const monthKey = t.transaction_date.substring(0, 7);
-              monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + Number(t.amount);
-            });
+          categoryTransactions.forEach(t => {
+            const monthKey = t.transaction_date.substring(0, 7);
+            monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + Number(t.amount);
+          });
 
-            const totalMonths = Object.keys(monthlyTotals).length;
-            if (totalMonths > 0) {
-              const total = Object.values(monthlyTotals).reduce((sum, val) => sum + val, 0);
-              estimates[mainCategory.id] = Math.round(total / totalMonths);
-            }
+          console.log(`${mainCategory.name} - Totales mensuales:`, monthlyTotals);
+
+          const totalMonths = Object.keys(monthlyTotals).length;
+          if (totalMonths > 0) {
+            const total = Object.values(monthlyTotals).reduce((sum, val) => sum + val, 0);
+            const average = Math.round(total / totalMonths);
+            estimates[mainCategory.id] = average;
+            
+            console.log(`${mainCategory.name} - Promedio: $${average} (${totalMonths} meses)`);
           }
         }
       });
 
-      console.log('Estimaciones calculadas:', estimates);
+      console.log('Estimaciones finales:', estimates);
       setCategoryEstimates(estimates);
     } catch (error) {
       console.error('Error calculating category estimates:', error);
