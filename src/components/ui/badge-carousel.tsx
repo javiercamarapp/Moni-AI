@@ -68,10 +68,9 @@ export const BadgeCarousel = ({ items, initialScroll = 0 }: BadgeCarouselProps) 
   return (
     <div className="relative w-full">
       <div
-        className="flex w-full overflow-x-scroll overscroll-x-contain scroll-smooth [scrollbar-width:none] [-webkit-overflow-scrolling:touch] py-4 gap-3 px-2"
+        className="flex w-full overflow-x-auto overscroll-x-auto scroll-smooth [scrollbar-width:none] [-webkit-overflow-scrolling:touch] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden py-4 gap-3 px-2"
         ref={carouselRef}
         onScroll={checkScrollability}
-        style={{ scrollSnapType: 'x mandatory' }}
       >
         {items.map((item, index) => (
           <motion.div
@@ -86,7 +85,6 @@ export const BadgeCarousel = ({ items, initialScroll = 0 }: BadgeCarouselProps) 
               },
             }}
             key={`badge-${index}`}
-            style={{ scrollSnapAlign: 'start' }}
             className="flex-shrink-0"
           >
             {item}
