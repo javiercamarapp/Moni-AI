@@ -6,10 +6,18 @@ import { ArrowLeft, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNetWorth } from "@/hooks/useNetWorth";
 import { motion } from "framer-motion";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 export default function Logros() {
   const navigate = useNavigate();
   const [totalAspiration, setTotalAspiration] = useState(0);
+  const [selectedBadge, setSelectedBadge] = useState<typeof allBadges[0] | null>(null);
   const netWorthData = useNetWorth("1Y");
   const currentNetWorth = netWorthData.data?.currentNetWorth || 0;
 
@@ -38,11 +46,6 @@ export default function Logros() {
 
   const currentLevel = totalAspiration > 0 ? Math.floor((currentNetWorth / totalAspiration) * 10000) : 0;
   const currentProgress = totalAspiration > 0 ? (currentNetWorth / totalAspiration) * 100 : 0;
-
-  // Emoji component
-  const EmojiIcon = ({ emoji }: { emoji: string }) => {
-    return <span className="text-4xl">{emoji}</span>;
-  };
 
   // Sistema de insignias
   const allBadges = [
@@ -431,11 +434,12 @@ export default function Logros() {
                 transition={{ delay: index * 0.05 }}
               >
                 <Card 
+                  onClick={() => setSelectedBadge(badge)}
                   className={`
                     p-2 rounded-[16px] transition-all duration-300 overflow-hidden relative
                     ${isUnlocked 
                       ? 'bg-white/70 backdrop-blur-xl shadow-lg border border-gray-200/50 hover:shadow-xl hover:scale-105 cursor-pointer' 
-                      : 'bg-white/40 backdrop-blur-md shadow-md border border-gray-300/30 opacity-70'
+                      : 'bg-white/40 backdrop-blur-md shadow-md border border-gray-300/30 opacity-70 cursor-pointer'
                     }
                   `}
                 >
@@ -499,6 +503,88 @@ export default function Logros() {
             );
           })}
         </div>
+
+        {/* Dialog de explicación */}
+        <Dialog open={!!selectedBadge} onOpenChange={(open) => !open && setSelectedBadge(null)}>
+          <DialogContent className="bg-white/80 backdrop-blur-xl border-gray-200/50 rounded-[24px] shadow-2xl max-w-md">
+            {selectedBadge && (
+              <>
+                <DialogHeader>
+                  <div className="flex flex-col items-center text-center mb-4">
+                    {/* Icono grande */}
+                    <div className={`
+                      w-20 h-20 rounded-full flex items-center justify-center mb-4
+                      ${currentLevel >= selectedBadge.level 
+                        ? `bg-gradient-to-br ${selectedBadge.color} shadow-lg` 
+                        : 'bg-gray-200 shadow-md'
+                      }
+                    `}>
+                      {currentLevel >= selectedBadge.level ? (
+                        <span className="text-5xl">{selectedBadge.emoji}</span>
+                      ) : (
+                        <Lock className="w-10 h-10 text-gray-400" />
+                      )}
+                    </div>
+
+                    {/* Título */}
+                    <DialogTitle className="text-2xl font-bold text-foreground mb-2">
+                      {selectedBadge.name}
+                    </DialogTitle>
+
+                    {/* Nivel y porcentaje */}
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-sm font-semibold text-muted-foreground">
+                        Nivel {selectedBadge.level}
+                      </span>
+                      <span className="text-sm font-semibold text-primary">
+                        {selectedBadge.growthPercentage}%
+                      </span>
+                    </div>
+
+                    {/* Badge de estado */}
+                    <div className={`
+                      px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm mb-4
+                      ${currentLevel >= selectedBadge.level 
+                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' 
+                        : 'bg-gray-200 text-gray-600'
+                      }
+                    `}>
+                      {currentLevel >= selectedBadge.level ? '✓ DESBLOQUEADO' : '🔒 BLOQUEADO'}
+                    </div>
+                  </div>
+                </DialogHeader>
+
+                {/* Descripción */}
+                <DialogDescription asChild>
+                  <div className="space-y-4">
+                    <div className="bg-white/50 backdrop-blur-md rounded-[16px] p-4 border border-gray-200/30">
+                      <h4 className="text-sm font-bold text-foreground mb-2">Descripción</h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {selectedBadge.description}
+                      </p>
+                    </div>
+
+                    <div className="bg-white/50 backdrop-blur-md rounded-[16px] p-4 border border-gray-200/30">
+                      <h4 className="text-sm font-bold text-foreground mb-2">Significado</h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {selectedBadge.explanation}
+                      </p>
+                    </div>
+
+                    {currentLevel < selectedBadge.level && (
+                      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-[16px] p-4 border border-blue-200/50">
+                        <h4 className="text-sm font-bold text-foreground mb-2">Para desbloquear</h4>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          Alcanza el {selectedBadge.growthPercentage}% de tus aspiraciones para desbloquear este logro.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </DialogDescription>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
