@@ -103,7 +103,11 @@ export default function BudgetProgressWidget({ categories = [], hasBudgets = fal
             const isCritical = cat.percentUsed >= 100;
             
             return (
-              <div key={idx} className="space-y-1">
+              <div 
+                key={idx} 
+                className="space-y-1 cursor-pointer hover:bg-primary/5 p-2 rounded-lg transition-colors"
+                onClick={() => navigate(`/category-expenses?category=${encodeURIComponent(cat.name)}`)}
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-sm">{cat.icon}</span>

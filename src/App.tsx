@@ -33,6 +33,7 @@ import BudgetQuiz from "./pages/BudgetQuiz";
 import Subscriptions from "./pages/Subscriptions";
 import DailyExpenses from './pages/DailyExpenses';
 import Reports from './pages/Reports';
+import CategoryExpenses from './pages/CategoryExpenses';
 
 import NotFound from "./pages/NotFound";
 
@@ -84,6 +85,7 @@ function App() {
           <Route path="/reports" element={<Reports />} />
           <Route path="/budgets" element={<Budgets />} />
           <Route path="/budget-quiz" element={<BudgetQuiz />} />
+          <Route path="/category-expenses" element={<CategoryExpenses />} />
           <Route path="/gestionar-categorias" element={<GestionarCategorias />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
