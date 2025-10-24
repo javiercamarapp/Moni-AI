@@ -326,16 +326,16 @@ export default function BudgetQuiz() {
 
               {/* AI Forecast Card */}
               {showForecast && aiForecast && !hasBankConnection && (
-                <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-[15px] p-2 space-y-1.5 border border-primary/20 animate-fade-in">
+                <div className="bg-white/10 backdrop-blur-sm rounded-[15px] p-3 space-y-2 border-2 border-white/20 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 animate-fade-in">
                   <div className="flex items-center justify-center gap-2">
-                    <span className="text-2xl">🤖</span>
+                    <span className="text-2xl animate-pulse">🤖</span>
                     <div className="text-left">
                       <p className="text-[10px] font-semibold text-foreground">Pronóstico de IA</p>
                       <p className="text-[8px] text-muted-foreground">Últimos 6 meses</p>
                     </div>
                   </div>
                   <div className="text-center py-1">
-                    <p className="text-2xl font-bold text-primary">${aiForecast.toLocaleString()}</p>
+                    <p className="text-2xl font-bold text-primary drop-shadow-lg">${aiForecast.toLocaleString()}</p>
                     <p className="text-[8px] text-muted-foreground">Ingreso mensual promedio</p>
                   </div>
                   <div className="flex gap-1.5">
@@ -345,14 +345,14 @@ export default function BudgetQuiz() {
                         setShowForecast(false);
                         toast.success("Pronóstico aplicado");
                       }}
-                      className="flex-1 bg-primary hover:bg-primary/90 text-white h-8 text-xs font-semibold rounded-[12px]"
+                      className="flex-1 bg-primary hover:bg-primary/90 text-white h-8 text-xs font-semibold rounded-[12px] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all"
                     >
                       Usar
                     </Button>
                     <Button
                       onClick={() => setShowForecast(false)}
                       variant="outline"
-                      className="flex-1 h-8 text-xs rounded-[12px] border-primary/30"
+                      className="flex-1 h-8 text-xs rounded-[12px] border-white/30 bg-white/5 hover:bg-white/10 hover:scale-105 active:scale-95 transition-all"
                     >
                       Manual
                     </Button>
