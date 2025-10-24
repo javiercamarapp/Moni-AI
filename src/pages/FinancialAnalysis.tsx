@@ -604,17 +604,15 @@ export default function FinancialAnalysis() {
             {(quickMetrics || analysis) ? (
           <>
             {/* Animated Income & Expense Card with Carousel */}
-            <div className="overflow-x-auto snap-x snap-mandatory flex gap-4 pb-2 scrollbar-hide touch-pan-x">
+            <div className="overflow-x-scroll snap-x snap-mandatory flex gap-4 pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               {/* Card Mensual */}
               <Card 
-                className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer transition-all touch-manipulation" 
+                className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer transition-all flex-shrink-0" 
                 style={{ animationDelay: '0ms' }}
                 onClick={(e) => {
-                  // Solo navegar si no es un scroll
-                  if (Math.abs((e.currentTarget.parentElement as HTMLElement)?.scrollLeft || 0) < 10) {
-                    localStorage.setItem('balanceViewMode', 'mensual');
-                    navigate('/balance');
-                  }
+                  e.preventDefault();
+                  localStorage.setItem('balanceViewMode', 'mensual');
+                  navigate('/balance');
                 }}
               >
                 <div className="flex items-center justify-between mb-2">
@@ -702,14 +700,12 @@ export default function FinancialAnalysis() {
 
               {/* Card Anual */}
               <Card 
-                className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer transition-all touch-manipulation" 
+                className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer transition-all flex-shrink-0" 
                 style={{ animationDelay: '100ms' }}
                 onClick={(e) => {
-                  // Solo navegar si no es un scroll
-                  if (Math.abs((e.currentTarget.parentElement as HTMLElement)?.scrollLeft || 0) < 10) {
-                    localStorage.setItem('balanceViewMode', 'anual');
-                    navigate('/balance');
-                  }
+                  e.preventDefault();
+                  localStorage.setItem('balanceViewMode', 'anual');
+                  navigate('/balance');
                 }}
               >
                 <div className="flex items-center justify-between mb-2">
