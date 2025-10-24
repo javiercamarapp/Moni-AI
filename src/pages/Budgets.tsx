@@ -161,7 +161,7 @@ export default function Budgets() {
           <Button
             variant="ghost"
             onClick={() => navigate('/dashboard')}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-9 w-9 p-0"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 active:scale-95 transition-all border border-blue-100 h-9 w-9 p-0"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -169,15 +169,15 @@ export default function Budgets() {
           <Button
             variant="ghost"
             onClick={() => navigate('/budget-quiz')}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-9 w-9 p-0"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 active:scale-95 transition-all border border-blue-100 h-9 w-9 p-0"
           >
             <Plus className="h-4 w-4" />
           </Button>
         </div>
 
         {budgets.length === 0 ? (
-          <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center">
-            <div className="text-5xl mb-4">📊</div>
+          <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center animate-fade-in hover:scale-[1.02] active:scale-[0.98] transition-all">
+            <div className="text-5xl mb-4 animate-pulse">📊</div>
             <p className="text-base font-semibold text-foreground mb-2">
               Crea tu Presupuesto Mensual
             </p>
@@ -186,7 +186,7 @@ export default function Budgets() {
             </p>
             <Button
               onClick={() => navigate('/budget-quiz')}
-              className="bg-primary/10 rounded-[20px] shadow-lg border border-primary/20 hover:bg-primary/20 hover:scale-105 text-primary font-semibold"
+              className="bg-white/10 backdrop-blur-sm rounded-[20px] shadow-lg border-2 border-white/20 hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95 transition-all text-primary font-semibold"
             >
               <Plus className="h-4 w-4 mr-2" />
               Configurar Presupuestos
@@ -195,40 +195,41 @@ export default function Budgets() {
         ) : (
           <>
             {/* Resumen General */}
-            <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] transition-all">
+            <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] active:scale-[0.98] transition-all animate-fade-in">
               <div className="space-y-4">
-                <div>
-                  <p className="text-sm font-medium text-foreground mb-1">Resumen del Mes</p>
-                  <p className="text-xs text-muted-foreground">Tu salud financiera en tiempo real</p>
+                <div className="text-center">
+                  <div className="text-3xl mb-2">💰</div>
+                  <p className="text-sm font-bold text-foreground mb-0.5">Resumen del Mes</p>
+                  <p className="text-[10px] text-muted-foreground">Tu salud financiera en tiempo real</p>
                 </div>
 
                 {/* Métricas principales */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-success/5 rounded-xl p-3 border border-success/20">
-                    <div className="flex items-center gap-2 mb-1">
-                      <TrendingUp className="h-4 w-4 text-success" />
-                      <span className="text-xs text-muted-foreground">Ingresos</span>
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-[15px] p-3 border-2 border-white/20 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all">
+                    <div className="flex flex-col items-center gap-1.5 text-center">
+                      <TrendingUp className="h-5 w-5 text-success" />
+                      <span className="text-[9px] text-muted-foreground font-medium">Ingresos</span>
+                      <p className="text-xl font-bold text-success">
+                        ${(monthlyIncome / 1000).toFixed(0)}k
+                      </p>
                     </div>
-                    <p className="text-lg font-bold text-success">
-                      ${(monthlyIncome / 1000).toFixed(0)}k
-                    </p>
                   </div>
                   
-                  <div className="bg-primary/5 rounded-xl p-3 border border-primary/20">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Target className="h-4 w-4 text-primary" />
-                      <span className="text-xs text-muted-foreground">Presupuesto</span>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-[15px] p-3 border-2 border-white/20 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all">
+                    <div className="flex flex-col items-center gap-1.5 text-center">
+                      <Target className="h-5 w-5 text-primary" />
+                      <span className="text-[9px] text-muted-foreground font-medium">Presupuesto</span>
+                      <p className="text-xl font-bold text-primary">
+                        ${(totalBudget / 1000).toFixed(0)}k
+                      </p>
                     </div>
-                    <p className="text-lg font-bold text-primary">
-                      ${(totalBudget / 1000).toFixed(0)}k
-                    </p>
                   </div>
                 </div>
 
                 {/* Barra de ahorro */}
-                <div className="space-y-2">
+                <div className="bg-white/10 backdrop-blur-sm rounded-[15px] p-3 space-y-2 border-2 border-white/20 shadow-lg">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">Meta de Ahorro</span>
+                    <span className="text-[10px] text-muted-foreground font-medium">Meta de Ahorro</span>
                     <span className={`text-xs font-bold ${
                       savingsPercentage >= 20 ? 'text-success' : 
                       savingsPercentage >= 10 ? 'text-yellow-600' : 'text-destructive'
@@ -238,9 +239,9 @@ export default function Budgets() {
                   </div>
                   <Progress 
                     value={Math.min(savingsPercentage, 100)} 
-                    className="h-3"
+                    className="h-2.5"
                   />
-                  <p className="text-[10px] text-center text-muted-foreground">
+                  <p className="text-[9px] text-center text-muted-foreground leading-tight">
                     {savingsPercentage >= 20 
                       ? '¡Excelente! Estás ahorrando muy bien' 
                       : savingsPercentage >= 10
@@ -253,14 +254,15 @@ export default function Budgets() {
             </Card>
 
             {/* Título de sección */}
-            <div>
-              <p className="text-sm font-medium text-foreground mb-1">Presupuesto por Categoría</p>
-              <p className="text-xs text-muted-foreground">Progreso del mes actual</p>
+            <div className="text-center space-y-1">
+              <div className="text-3xl">📊</div>
+              <p className="text-sm font-bold text-foreground">Presupuesto por Categoría</p>
+              <p className="text-[10px] text-muted-foreground">Progreso del mes actual</p>
             </div>
 
             {/* Lista de Presupuestos */}
-            <div className="space-y-3">
-              {budgets.map((budget) => {
+            <div className="space-y-2.5">
+              {budgets.map((budget, index) => {
                 const spent = currentExpenses[budget.category_id] || 0;
                 const budgetAmount = Number(budget.monthly_budget);
                 const percentUsed = (spent / budgetAmount) * 100;
@@ -271,44 +273,45 @@ export default function Budgets() {
                 return (
                   <Card 
                     key={budget.id} 
-                    className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] active:scale-95 transition-all"
+                    className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] active:scale-95 transition-all animate-fade-in"
+                    style={{ animationDelay: `${index * 0.1}s` }}
                   >
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3 flex-1">
+                        <div className="flex items-center gap-2.5 flex-1">
                           <span className="text-2xl">{getCategoryIcon(budget.category.name)}</span>
                           <div className="flex-1">
                             <p className="text-sm font-bold text-foreground">{budget.category.name}</p>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-[10px] text-muted-foreground">
                               ${spent.toLocaleString()} de ${budgetAmount.toLocaleString()}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
                           {isWarning && (
-                            <AlertCircle className={`h-4 w-4 ${isCritical ? 'text-destructive' : 'text-yellow-500'}`} />
+                            <AlertCircle className={`h-4 w-4 ${isCritical ? 'text-destructive animate-pulse' : 'text-yellow-500'}`} />
                           )}
                         </div>
                       </div>
 
-                      <div className="space-y-2">
+                      <div className="space-y-1.5">
                         <Progress 
                           value={Math.min(percentUsed, 100)} 
-                          className={`h-2.5 ${
+                          className={`h-2 ${
                             isCritical ? 'bg-destructive/20' : 
                             isWarning ? 'bg-yellow-500/20' : 
                             'bg-muted'
                           }`}
                         />
                         <div className="flex items-center justify-between">
-                          <span className={`text-xs font-medium ${
+                          <span className={`text-[10px] font-bold ${
                             isCritical ? 'text-destructive' : 
                             isWarning ? 'text-yellow-600' : 
                             'text-success'
                           }`}>
                             {percentUsed.toFixed(0)}% usado
                           </span>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-[10px] text-muted-foreground">
                             {percentUsed < 100 
                               ? `Quedan $${remaining.toLocaleString()}` 
                               : `Excedido $${Math.abs(remaining).toLocaleString()}`
@@ -319,23 +322,23 @@ export default function Budgets() {
 
                       {/* Mensaje de estado */}
                       {isCritical && (
-                        <div className="bg-destructive/10 rounded-lg p-2 border border-destructive/20">
-                          <p className="text-xs text-destructive font-medium">
-                            ⚠️ Has superado tu presupuesto. Considera reducir gastos en esta categoría.
+                        <div className="bg-white/10 backdrop-blur-sm rounded-[10px] p-2 border-2 border-destructive/30 shadow-lg">
+                          <p className="text-[10px] text-destructive font-semibold text-center leading-tight">
+                            ⚠️ Has superado tu presupuesto
                           </p>
                         </div>
                       )}
                       {isWarning && !isCritical && (
-                        <div className="bg-yellow-50 rounded-lg p-2 border border-yellow-200">
-                          <p className="text-xs text-yellow-700 font-medium">
-                            ⚡ Te estás acercando al límite. Controla tus gastos.
+                        <div className="bg-white/10 backdrop-blur-sm rounded-[10px] p-2 border-2 border-yellow-500/30 shadow-lg">
+                          <p className="text-[10px] text-yellow-700 font-semibold text-center leading-tight">
+                            ⚡ Te estás acercando al límite
                           </p>
                         </div>
                       )}
                       {!isWarning && (
-                        <div className="bg-success/10 rounded-lg p-2 border border-success/20">
-                          <p className="text-xs text-success font-medium">
-                            ✅ Vas muy bien. Sigue así.
+                        <div className="bg-white/10 backdrop-blur-sm rounded-[10px] p-2 border-2 border-success/30 shadow-lg">
+                          <p className="text-[10px] text-success font-semibold text-center leading-tight">
+                            ✅ Vas muy bien
                           </p>
                         </div>
                       )}
@@ -351,14 +354,14 @@ export default function Budgets() {
               const percentage = (spent / Number(b.monthly_budget)) * 100;
               return percentage >= 80;
             }) && (
-              <Card className="p-4 bg-yellow-50 rounded-[20px] shadow-xl border border-yellow-200">
+              <Card className="p-4 bg-white/10 backdrop-blur-sm rounded-[20px] shadow-xl border-2 border-yellow-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all animate-fade-in">
                 <div className="flex items-center gap-3">
-                  <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0" />
+                  <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 animate-pulse" />
                   <div>
                     <p className="text-sm font-bold text-yellow-900">
                       Atención a tus presupuestos
                     </p>
-                    <p className="text-xs text-yellow-700">
+                    <p className="text-[10px] text-yellow-700 leading-tight">
                       {budgets.filter(b => {
                         const spent = currentExpenses[b.category_id] || 0;
                         const percentage = (spent / Number(b.monthly_budget)) * 100;
