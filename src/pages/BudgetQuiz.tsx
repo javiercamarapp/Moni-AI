@@ -7,24 +7,155 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 
+interface Subcategory {
+  id: string;
+  name: string;
+}
+
 interface Category {
   id: string;
   name: string;
   icon: string;
   suggestedPercentage: number;
+  subcategories: Subcategory[];
+  insight: string;
 }
 
 const DEFAULT_CATEGORIES: Category[] = [
-  { id: 'vivienda', name: 'Vivienda', icon: '🏠', suggestedPercentage: 30 },
-  { id: 'transporte', name: 'Transporte', icon: '🚗', suggestedPercentage: 15 },
-  { id: 'alimentacion', name: 'Alimentación', icon: '🍽️', suggestedPercentage: 20 },
-  { id: 'servicios', name: 'Servicios y suscripciones', icon: '🧾', suggestedPercentage: 8 },
-  { id: 'salud', name: 'Salud y bienestar', icon: '🩺', suggestedPercentage: 5 },
-  { id: 'educacion', name: 'Educación y desarrollo', icon: '🎓', suggestedPercentage: 5 },
-  { id: 'deudas', name: 'Deudas y créditos', icon: '💳', suggestedPercentage: 5 },
-  { id: 'entretenimiento', name: 'Entretenimiento y estilo de vida', icon: '🎉', suggestedPercentage: 7 },
-  { id: 'ahorro', name: 'Ahorro e inversión', icon: '💸', suggestedPercentage: 5 },
-  { id: 'apoyos', name: 'Apoyos y otros', icon: '🤝', suggestedPercentage: 0 },
+  { 
+    id: 'vivienda', 
+    name: 'Vivienda', 
+    icon: '🏠', 
+    suggestedPercentage: 30,
+    insight: 'Mide estabilidad y proporción ideal (<30% de ingresos)',
+    subcategories: [
+      { id: 'renta', name: 'Renta o hipoteca' },
+      { id: 'mantenimiento', name: 'Mantenimiento o predial' },
+      { id: 'luz', name: 'Luz' },
+      { id: 'agua', name: 'Agua' },
+      { id: 'gas', name: 'Gas' },
+      { id: 'internet', name: 'Internet y teléfono' },
+      { id: 'limpieza', name: 'Servicio de limpieza / seguridad' },
+    ]
+  },
+  { 
+    id: 'transporte', 
+    name: 'Transporte', 
+    icon: '🚗', 
+    suggestedPercentage: 15,
+    insight: 'Detecta sobrecostos o hábitos de transporte ineficiente',
+    subcategories: [
+      { id: 'gasolina', name: 'Gasolina / carga eléctrica' },
+      { id: 'publico', name: 'Transporte público' },
+      { id: 'uber', name: 'Uber, Didi, taxis' },
+      { id: 'estacionamiento', name: 'Estacionamiento o peajes' },
+      { id: 'mantenimiento_vehiculo', name: 'Mantenimiento del vehículo / seguro' },
+    ]
+  },
+  { 
+    id: 'alimentacion', 
+    name: 'Alimentación', 
+    icon: '🍽️', 
+    suggestedPercentage: 20,
+    insight: 'Es la categoría donde más fuga de dinero hay',
+    subcategories: [
+      { id: 'supermercado', name: 'Supermercado' },
+      { id: 'restaurantes', name: 'Comidas fuera de casa' },
+      { id: 'cafe', name: 'Café / snacks / antojos' },
+      { id: 'apps_comida', name: 'Apps de comida (Rappi, Uber Eats, etc.)' },
+    ]
+  },
+  { 
+    id: 'servicios', 
+    name: 'Servicios y suscripciones', 
+    icon: '🧾', 
+    suggestedPercentage: 8,
+    insight: 'Ideal para detectar "gastos hormiga" o suscripciones olvidadas',
+    subcategories: [
+      { id: 'streaming', name: 'Streaming (Netflix, Spotify, etc.)' },
+      { id: 'apps_premium', name: 'Apps premium (IA, productividad, edición, etc.)' },
+      { id: 'software', name: 'Suscripciones de software / membresías' },
+      { id: 'telefono', name: 'Teléfono móvil' },
+    ]
+  },
+  { 
+    id: 'salud', 
+    name: 'Salud y bienestar', 
+    icon: '🩺', 
+    suggestedPercentage: 5,
+    insight: 'Muestra equilibrio entre autocuidado y exceso de gasto',
+    subcategories: [
+      { id: 'seguro_medico', name: 'Seguro médico' },
+      { id: 'medicinas', name: 'Medicinas' },
+      { id: 'consultas', name: 'Consultas médicas' },
+      { id: 'gimnasio', name: 'Gimnasio, clases, suplementos' },
+    ]
+  },
+  { 
+    id: 'educacion', 
+    name: 'Educación y desarrollo', 
+    icon: '🎓', 
+    suggestedPercentage: 5,
+    insight: 'Refleja gasto de crecimiento o inversión en conocimiento',
+    subcategories: [
+      { id: 'colegiaturas', name: 'Colegiaturas' },
+      { id: 'cursos', name: 'Cursos / talleres' },
+      { id: 'libros', name: 'Libros o herramientas de aprendizaje' },
+      { id: 'extracurriculares', name: 'Clases extracurriculares' },
+    ]
+  },
+  { 
+    id: 'deudas', 
+    name: 'Deudas y créditos', 
+    icon: '💳', 
+    suggestedPercentage: 5,
+    insight: 'Ayuda a calcular el índice de endeudamiento (<35% recomendable)',
+    subcategories: [
+      { id: 'tarjetas', name: 'Tarjetas de crédito' },
+      { id: 'prestamos', name: 'Préstamos personales / automotriz' },
+      { id: 'hipotecarios', name: 'Créditos hipotecarios' },
+      { id: 'intereses', name: 'Intereses / pagos mínimos' },
+    ]
+  },
+  { 
+    id: 'entretenimiento', 
+    name: 'Entretenimiento y estilo de vida', 
+    icon: '🎉', 
+    suggestedPercentage: 7,
+    insight: 'Identifica exceso de gasto emocional o impulsivo',
+    subcategories: [
+      { id: 'salidas', name: 'Salidas, fiestas, bares' },
+      { id: 'ropa', name: 'Ropa, accesorios, belleza' },
+      { id: 'viajes', name: 'Viajes o escapadas' },
+      { id: 'hobbies', name: 'Hobbies, videojuegos, mascotas' },
+    ]
+  },
+  { 
+    id: 'ahorro', 
+    name: 'Ahorro e inversión', 
+    icon: '💸', 
+    suggestedPercentage: 10,
+    insight: 'Mide disciplina financiera (objetivo: al menos 10-20% de ingresos)',
+    subcategories: [
+      { id: 'ahorro_mensual', name: 'Ahorro mensual' },
+      { id: 'fondo_emergencia', name: 'Fondo de emergencia' },
+      { id: 'inversion', name: 'Inversión (fondos, CETES, cripto, etc.)' },
+      { id: 'retiro', name: 'Aportación a retiro (AFORE, IRA, etc.)' },
+    ]
+  },
+  { 
+    id: 'apoyos', 
+    name: 'Apoyos y otros', 
+    icon: '🤝', 
+    suggestedPercentage: 0,
+    insight: 'Permite ajustar el "balance neto real" del mes',
+    subcategories: [
+      { id: 'apoyo_familiar', name: 'Apoyo familiar / hijos / pareja' },
+      { id: 'donaciones', name: 'Donaciones' },
+      { id: 'mascotas', name: 'Mascotas' },
+      { id: 'otros', name: 'Otros gastos no clasificados' },
+    ]
+  },
 ];
 
 export default function BudgetQuiz() {
@@ -33,6 +164,7 @@ export default function BudgetQuiz() {
   const [monthlyIncome, setMonthlyIncome] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [budgets, setBudgets] = useState<Record<string, number>>({});
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -431,33 +563,72 @@ export default function BudgetQuiz() {
         {/* Step 2: Categories */}
         {step === 2 && (
           <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in">
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="text-center">
                 <div className="text-4xl mb-2">📊</div>
                 <h2 className="text-xl font-bold text-foreground mb-1">
                   ¿En qué categorías gastas?
                 </h2>
                 <p className="text-xs text-muted-foreground">
-                  Selecciona las categorías que quieres controlar
+                  Toca para ver subcategorías y seleccionar
                 </p>
               </div>
               
-              <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-2">
                 {DEFAULT_CATEGORIES.map(category => (
-                  <button
-                    key={category.id}
-                    onClick={() => handleCategoryToggle(category.id)}
-                    className={`p-3 rounded-[15px] border-2 transition-all ${
-                      selectedCategories.includes(category.id)
-                        ? 'border-primary bg-primary/10 scale-95'
-                        : 'border-blue-100 bg-white hover:border-primary/50'
-                    }`}
-                  >
-                    <div className="text-2xl mb-1">{category.icon}</div>
-                    <p className="text-[10px] font-medium text-foreground leading-tight">
-                      {category.name}
-                    </p>
-                  </button>
+                  <div key={category.id} className="space-y-1">
+                    <button
+                      onClick={() => setExpandedCategory(expandedCategory === category.id ? null : category.id)}
+                      className={`w-full p-3 rounded-[15px] border-2 transition-all text-left ${
+                        selectedCategories.includes(category.id)
+                          ? 'border-primary bg-primary/10'
+                          : 'border-blue-100 bg-white hover:border-primary/50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">{category.icon}</span>
+                          <div>
+                            <p className="text-sm font-semibold text-foreground">
+                              {category.name}
+                            </p>
+                            <p className="text-[9px] text-muted-foreground">
+                              {category.suggestedPercentage}% sugerido
+                            </p>
+                          </div>
+                        </div>
+                        <ArrowRight className={`h-4 w-4 text-muted-foreground transition-transform ${
+                          expandedCategory === category.id ? 'rotate-90' : ''
+                        }`} />
+                      </div>
+                    </button>
+                    
+                    {expandedCategory === category.id && (
+                      <div className="ml-4 pl-4 border-l-2 border-primary/20 space-y-1.5 py-2 animate-fade-in">
+                        <p className="text-[9px] text-muted-foreground italic mb-2">
+                          💡 {category.insight}
+                        </p>
+                        <div className="space-y-1">
+                          {category.subcategories.map(sub => (
+                            <div key={sub.id} className="text-[10px] text-foreground bg-gray-50 rounded-lg px-2 py-1.5">
+                              • {sub.name}
+                            </div>
+                          ))}
+                        </div>
+                        <Button
+                          onClick={() => handleCategoryToggle(category.id)}
+                          size="sm"
+                          className={`w-full mt-2 h-8 text-xs rounded-[10px] ${
+                            selectedCategories.includes(category.id)
+                              ? 'bg-destructive hover:bg-destructive/90'
+                              : 'bg-primary hover:bg-primary/90'
+                          }`}
+                        >
+                          {selectedCategories.includes(category.id) ? 'Quitar' : 'Agregar'}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
@@ -466,50 +637,96 @@ export default function BudgetQuiz() {
 
         {/* Step 3: Budgets */}
         {step === 3 && (
-          <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in">
-            <div className="space-y-6">
+          <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in">
+            <div className="space-y-5">
               <div className="text-center">
-                <div className="text-5xl mb-3">🎯</div>
-                <h2 className="text-2xl font-bold text-foreground mb-2">
+                <div className="text-4xl mb-3">🎯</div>
+                <h2 className="text-xl font-bold text-foreground mb-2">
                   Ajusta tus presupuestos
                 </h2>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Basados en tu ingreso de ${Number(monthlyIncome).toLocaleString()}
+                <p className="text-xs text-muted-foreground mb-4">
+                  Ingreso mensual: ${Number(monthlyIncome).toLocaleString()}
                 </p>
                 
-                {/* Progress */}
-                <div className="bg-gray-100 rounded-full h-3 mb-2">
-                  <div
-                    className={`h-full rounded-full transition-all ${
-                      percentageOfIncome > 100 ? 'bg-destructive' : 'bg-primary'
-                    }`}
-                    style={{ width: `${Math.min(percentageOfIncome, 100)}%` }}
-                  />
+                {/* Budget vs Savings Visualization */}
+                <div className="space-y-3 bg-gradient-to-br from-primary/5 to-primary/10 p-4 rounded-[15px] border-2 border-primary/20">
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="text-left">
+                      <p className="text-[10px] text-muted-foreground">Presupuesto asignado</p>
+                      <p className="text-lg font-bold text-foreground">${totalBudget.toLocaleString()}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] text-muted-foreground">Ahorro estimado</p>
+                      <p className={`text-lg font-bold ${
+                        Number(monthlyIncome) - totalBudget >= 0 ? 'text-green-600' : 'text-destructive'
+                      }`}>
+                        ${Math.max(0, Number(monthlyIncome) - totalBudget).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="relative h-6 bg-white rounded-full overflow-hidden border-2 border-white/50 shadow-inner">
+                    <div
+                      className={`absolute left-0 top-0 h-full transition-all ${
+                        percentageOfIncome > 100 ? 'bg-destructive' : 'bg-gradient-to-r from-primary to-primary/80'
+                      }`}
+                      style={{ width: `${Math.min(percentageOfIncome, 100)}%` }}
+                    />
+                    <div
+                      className="absolute right-0 top-0 h-full bg-gradient-to-r from-green-400 to-green-500"
+                      style={{ width: `${Math.max(0, 100 - percentageOfIncome)}%` }}
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-[10px] font-bold text-white drop-shadow-lg">
+                        {percentageOfIncome.toFixed(0)}% presupuesto • {Math.max(0, 100 - percentageOfIncome).toFixed(0)}% ahorro
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {percentageOfIncome > 100 && (
+                    <p className="text-[10px] text-destructive font-semibold text-center animate-pulse">
+                      ⚠️ Tu presupuesto excede tus ingresos
+                    </p>
+                  )}
+                  {percentageOfIncome < 90 && percentageOfIncome > 0 && (
+                    <p className="text-[10px] text-green-600 font-semibold text-center">
+                      ✨ ¡Excelente! Estás ahorrando {(100 - percentageOfIncome).toFixed(0)}%
+                    </p>
+                  )}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  ${totalBudget.toLocaleString()} de ${Number(monthlyIncome).toLocaleString()} ({percentageOfIncome.toFixed(0)}%)
-                </p>
               </div>
               
-              <div className="space-y-3">
+              <div className="space-y-2 max-h-[300px] overflow-y-auto">
                 {selectedCategories.map(catId => {
                   const category = DEFAULT_CATEGORIES.find(c => c.id === catId);
                   if (!category) return null;
                   
+                  const budgetPercentage = monthlyIncome ? (budgets[catId] / Number(monthlyIncome)) * 100 : 0;
+                  
                   return (
-                    <div key={catId} className="flex items-center gap-3 p-3 bg-gray-50 rounded-[15px]">
-                      <div className="text-2xl">{category.icon}</div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-foreground">
-                          {category.name}
-                        </p>
+                    <div key={catId} className="p-3 bg-gradient-to-r from-gray-50 to-white rounded-[12px] border border-gray-100">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xl">{category.icon}</span>
+                        <div className="flex-1">
+                          <p className="text-xs font-semibold text-foreground">
+                            {category.name}
+                          </p>
+                          <p className="text-[9px] text-muted-foreground">
+                            Sugerido: {category.suggestedPercentage}%
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <Input
+                            type="number"
+                            value={budgets[catId] || 0}
+                            onChange={(e) => updateBudget(catId, e.target.value)}
+                            className="w-24 h-8 text-right text-xs font-bold"
+                          />
+                          <p className="text-[9px] text-muted-foreground mt-0.5">
+                            {budgetPercentage.toFixed(1)}%
+                          </p>
+                        </div>
                       </div>
-                      <Input
-                        type="number"
-                        value={budgets[catId] || 0}
-                        onChange={(e) => updateBudget(catId, e.target.value)}
-                        className="w-32 text-right font-semibold"
-                      />
                     </div>
                   );
                 })}
