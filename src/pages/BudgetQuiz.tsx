@@ -199,6 +199,7 @@ export default function BudgetQuiz() {
   const [userCategories, setUserCategories] = useState<any[]>([]);
   const [hasBankConnection, setHasBankConnection] = useState(false);
   const [calculatingIncome, setCalculatingIncome] = useState(false);
+  const [calculatingEstimates, setCalculatingEstimates] = useState(false);
   const [aiForecast, setAiForecast] = useState<number | null>(null);
   const [showForecast, setShowForecast] = useState(false);
   const [showManualInput, setShowManualInput] = useState(false);
@@ -283,6 +284,7 @@ export default function BudgetQuiz() {
   };
 
   const calculateCategoryEstimates = async (userId: string) => {
+    setCalculatingEstimates(true);
     try {
       console.log('Llamando a edge function para categorizar gastos...');
       
@@ -312,6 +314,8 @@ export default function BudgetQuiz() {
       
     } catch (error) {
       console.error('Error calculating category estimates:', error);
+    } finally {
+      setCalculatingEstimates(false);
     }
   };
 
@@ -680,6 +684,13 @@ export default function BudgetQuiz() {
                 <p className="text-xs text-muted-foreground">
                   Toca para ver subcategorías y seleccionar
                 </p>
+                {calculatingEstimates && (
+                  <div className="mt-3 p-2 bg-blue-50 rounded-[10px] border border-blue-200 animate-pulse">
+                    <p className="text-[10px] font-medium text-blue-700">
+                      🤖 La IA está analizando tus gastos históricos para sugerirte montos...
+                    </p>
+                  </div>
+                )}
               </div>
               
               <div className="space-y-2">

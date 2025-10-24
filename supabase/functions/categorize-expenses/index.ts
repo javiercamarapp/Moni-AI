@@ -91,8 +91,9 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     
+    // Limitar a 500 transacciones más recientes para mayor velocidad
     const transactionsResponse = await fetch(
-      `${supabaseUrl}/rest/v1/transactions?select=amount,description,transaction_date&user_id=eq.${userId}&type=eq.gasto&transaction_date=gte.${dateString}`,
+      `${supabaseUrl}/rest/v1/transactions?select=amount,description,transaction_date&user_id=eq.${userId}&type=eq.gasto&transaction_date=gte.${dateString}&order=transaction_date.desc&limit=500`,
       {
         headers: {
           'apikey': supabaseKey,
@@ -128,8 +129,8 @@ ${Object.entries(CATEGORY_DEFINITIONS).map(([id, def]) =>
 Para cada descripción, responde ÚNICAMENTE con el ID de la categoría (vivienda, transporte, alimentacion, servicios, salud, educacion, deudas, entretenimiento, ahorro, apoyos, mascotas).
 Si no estás seguro, usa 'apoyos' como categoría por defecto.`;
 
-    // Categorizar en lotes de 50 transacciones
-    const batchSize = 50;
+    // Categorizar en lotes más grandes para mayor velocidad
+    const batchSize = 100;
     const categorizedTransactions: { category: string; amount: number; date: string }[] = [];
 
     for (let i = 0; i < transactions.length; i += batchSize) {
@@ -146,7 +147,7 @@ Si no estás seguro, usa 'apoyos' como categoría por defecto.`;
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
+          model: 'google/gemini-2.5-flash-lite',
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: prompt }
