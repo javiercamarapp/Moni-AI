@@ -634,16 +634,23 @@ export default function BudgetQuiz() {
                         <div className="flex items-center gap-2">
                           <span className="text-2xl">{category.icon}</span>
                           <div>
-                            <p className="text-sm font-semibold text-foreground">
-                              {category.name}
-                            </p>
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-semibold text-foreground">
+                                {category.name}
+                              </p>
+                              {budgets[category.id] && budgets[category.id] > 0 && (
+                                <span className="text-xs font-bold text-primary">
+                                  ${budgets[category.id].toLocaleString()}
+                                </span>
+                              )}
+                            </div>
                             <p className="text-[9px] text-muted-foreground">
                               {category.suggestedPercentage}% sugerido
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          {categoryEstimates[category.id] && (
+                          {categoryEstimates[category.id] && !budgets[category.id] && (
                             <div className="bg-primary/10 px-2 py-1 rounded-lg">
                               <p className="text-[9px] text-primary font-semibold">
                                 IA: ${categoryEstimates[category.id].toLocaleString()}
