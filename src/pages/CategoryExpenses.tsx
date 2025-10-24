@@ -163,158 +163,172 @@ const CategoryExpenses = () => {
   }
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-24">
-      <div className="mx-4 pt-4 space-y-4">
-        {/* Header */}
-        <div className="flex items-center gap-3">
+    <div className="min-h-screen animated-wave-bg pb-20">
+      {/* Header fijo */}
+      <div className="p-4 flex items-center justify-between border-b border-border/30 bg-card/50 backdrop-blur-sm">
+        <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate(-1)}
-            className="rounded-full hover:bg-white/10"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-12 w-12"
           >
-            <ArrowLeft className="h-5 w-5 text-foreground" />
+            <ArrowLeft className="h-5 w-5" />
           </Button>
-          <div className="flex-1">
-            <h1 className="text-xl font-bold text-foreground">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
               {getCategoryEmoji(categoryName)} {categoryName}
             </h1>
-            <p className="text-sm text-muted-foreground">
-              Gastos del mes
-            </p>
+            <p className="text-sm text-muted-foreground">Detalle de gastos</p>
           </div>
         </div>
+      </div>
 
-        {/* Period Navigation */}
-        <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handlePreviousPeriod}
-              className="rounded-full hover:bg-primary/10"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            
-            <div className="text-center">
-              <p className="text-sm font-medium text-foreground capitalize">
-                {getPeriodLabel()}
+      {/* Period Navigation */}
+      <div className="px-4 mt-4 mb-4">
+        <div className="flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handlePreviousPeriod}
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          
+          <div className="bg-white rounded-[20px] shadow-xl px-4 py-2 border border-blue-100">
+            <p className="text-foreground font-medium capitalize text-center">
+              {getPeriodLabel()}
+            </p>
+          </div>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleNextPeriod}
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </Button>
+        </div>
+      </div>
+
+      <div className="px-4 space-y-4">
+        {/* Summary Card fijo */}
+        <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-red-100 animate-fade-in sticky top-0 z-10">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-red-500/20">
+              <TrendingDown className="h-6 w-6 text-red-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-foreground/60 mb-1 font-medium">
+                Total Gastado
+              </p>
+              <p className="text-3xl sm:text-4xl font-bold leading-tight break-words text-red-600">
+                ${totalGastos.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
               </p>
             </div>
-            
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleNextPeriod}
-              className="rounded-full hover:bg-primary/10"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
           </div>
-        </Card>
-
-        {/* Summary Card */}
-        <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-blue-100">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-destructive/10 flex items-center justify-center">
-                <TrendingDown className="w-6 h-6 text-destructive" />
+          
+          <div className="space-y-2">
+            {budget > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-foreground/60">Presupuesto:</span>
+                <span className="text-lg font-bold text-foreground">
+                  ${budget.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+                </span>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Total Gastado</p>
-                <p className="text-2xl font-bold text-destructive">
-                  ${totalGastos.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
-                </p>
-              </div>
+            )}
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-foreground/60">Transacciones:</span>
+              <span className="text-lg font-bold text-foreground">{transactions.length}</span>
             </div>
             {budget > 0 && (
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">Presupuesto</p>
-                <p className="text-lg font-semibold text-foreground">
-                  ${budget.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
-                </p>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-foreground/60">Uso del presupuesto:</span>
                 <Badge 
                   variant={percentUsed >= 100 ? "destructive" : percentUsed >= 80 ? "secondary" : "default"}
-                  className="mt-1"
+                  className="text-sm"
                 >
-                  {percentUsed.toFixed(0)}% usado
+                  {percentUsed.toFixed(0)}%
                 </Badge>
               </div>
             )}
           </div>
-          
-          {transactions.length > 0 && (
-            <div className="text-xs text-muted-foreground">
-              {transactions.length} transacción{transactions.length !== 1 ? 'es' : ''} en este período
-            </div>
-          )}
         </Card>
 
-        {/* Transactions List */}
-        <div className="space-y-2">
+        {/* Lista de transacciones scrolleable */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <TrendingDown className="h-5 w-5 text-destructive" />
+            Historial de Gastos
+          </h3>
+          
           {transactions.length === 0 ? (
-            <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center">
-              <div className="text-5xl mb-3">📊</div>
-              <p className="text-base font-semibold text-foreground mb-1">
-                Sin gastos registrados
-              </p>
-              <p className="text-sm text-muted-foreground">
-                No hay transacciones en esta categoría para el período seleccionado
-              </p>
+            <Card className="p-6 bg-white rounded-[20px] shadow-xl text-center border border-blue-100">
+              <p className="text-muted-foreground">No hay gastos registrados en esta categoría</p>
             </Card>
           ) : (
-            transactions.map((transaction) => (
-              <Card 
-                key={transaction.id} 
-                className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] active:scale-[0.98] transition-all"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Badge 
-                        variant="outline"
-                        style={{ 
-                          backgroundColor: transaction.categories?.color || '#f0f0f0',
-                          borderColor: transaction.categories?.color || '#d0d0d0'
-                        }}
-                      >
-                        {transaction.categories?.name || 'Sin categoría'}
-                      </Badge>
-                      {transaction.frequency && transaction.frequency !== 'once' && (
-                        <Badge variant="secondary" className="text-xs">
-                          {transaction.frequency === 'daily' ? 'Diario' : 
-                           transaction.frequency === 'weekly' ? 'Semanal' :
-                           transaction.frequency === 'biweekly' ? 'Quincenal' :
-                           transaction.frequency === 'monthly' ? 'Mensual' : 
-                           transaction.frequency}
-                        </Badge>
-                      )}
+            transactions.map((transaction, index) => {
+              const transactionDate = new Date(transaction.transaction_date);
+              const categoryEmoji = transaction.categories ? getCategoryEmoji(transaction.categories.name) : '💸';
+              const capitalizedDescription = transaction.description.charAt(0).toUpperCase() + transaction.description.slice(1);
+              const capitalizedPaymentMethod = transaction.payment_method 
+                ? transaction.payment_method.charAt(0).toUpperCase() + transaction.payment_method.slice(1) 
+                : '';
+              
+              return (
+                <Card 
+                  key={transaction.id} 
+                  className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all animate-fade-in active:scale-95"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <div className="flex items-center gap-2">
+                    {/* Logo de categoría */}
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[hsl(0,55%,40%)] to-[hsl(0,65%,35%)] flex items-center justify-center flex-shrink-0 border border-[hsl(0,60%,45%)]/70 shadow-md">
+                      <span className="text-base">{categoryEmoji}</span>
                     </div>
-                    <p className="font-semibold text-foreground mb-1">
-                      {transaction.description}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(transaction.transaction_date).toLocaleDateString('es-MX', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                      })}
-                    </p>
-                    {(transaction.payment_method || transaction.account) && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {transaction.payment_method} {transaction.account && `• ${transaction.account}`}
+                    
+                    {/* Información */}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-foreground text-sm leading-tight">
+                        {capitalizedDescription}
+                      </h4>
+                      <p className="text-xs text-foreground/80 font-medium leading-tight">
+                        {transactionDate.toLocaleDateString('es-MX', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric'
+                        })}
                       </p>
-                    )}
+                      <div className="flex gap-1 flex-wrap mt-1">
+                        {transaction.categories && (
+                          <Badge 
+                            className="text-[10px] font-semibold bg-gradient-to-r from-[hsl(0,60%,45%)] to-[hsl(0,70%,40%)] text-white border-0 shadow-sm px-2 py-0.5"
+                          >
+                            {transaction.categories.name.charAt(0).toUpperCase() + transaction.categories.name.slice(1)}
+                          </Badge>
+                        )}
+                        {transaction.payment_method && (
+                          <Badge 
+                            className="text-[10px] font-semibold bg-gradient-to-r from-[hsl(280,60%,45%)] to-[hsl(280,70%,40%)] text-white border-0 shadow-sm px-2 py-0.5"
+                          >
+                            {capitalizedPaymentMethod}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* Monto */}
+                    <div className="text-right flex-shrink-0">
+                      <p className="text-base font-bold text-foreground">
+                        -${Number(transaction.amount).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-destructive">
-                      ${Number(transaction.amount).toLocaleString('es-MX', { maximumFractionDigits: 2 })}
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            ))
+                </Card>
+              );
+            })
           )}
         </div>
       </div>
