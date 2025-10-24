@@ -168,50 +168,60 @@ export default function EditBudgets() {
           
           if (subcats && subcats.length > 0) {
             // Para cada subcategoría guardada, buscar si tiene presupuesto
-            subcategoriesWithBudget = await Promise.all(
-              subcats.map(async (subcat) => {
+            // Usar un Map para evitar duplicados
+            const subcategoryMap = new Map();
+            
+            for (const subcat of subcats) {
+              // Solo procesar si no está duplicado
+              if (!subcategoryMap.has(subcat.name)) {
                 const { data: subcatBudget } = await supabase
                   .from('category_budgets')
                   .select('id, monthly_budget')
                   .eq('user_id', user.id)
                   .eq('category_id', subcat.id)
-                  .single();
+                  .maybeSingle();
 
-                return {
+                subcategoryMap.set(subcat.name, {
                   id: subcat.id,
                   name: subcat.name,
                   budget_id: subcatBudget?.id,
                   monthly_budget: subcatBudget?.monthly_budget || 0
-                };
-              })
-            );
+                });
+              }
+            }
+            
+            subcategoriesWithBudget = Array.from(subcategoryMap.values());
           } else {
-            // Usar subcategorías predeterminadas pero buscar si tienen presupuesto asignado
+            // Usar subcategorías predeterminadas y buscar si tienen presupuesto asignado
             const categoryNameLower = budget.category.name.toLowerCase();
             const defaultSubs = DEFAULT_SUBCATEGORIES[categoryNameLower] || [];
             
-            // Para cada subcategoría predeterminada, buscar si existe un presupuesto con ese nombre
+            // Para cada subcategoría predeterminada, buscar si existe en la BD con presupuesto
             subcategoriesWithBudget = await Promise.all(
               defaultSubs.map(async (sub) => {
-                // Buscar categoría con este nombre que sea hija de la categoría actual
-                const { data: existingCategory } = await supabase
+                // Buscar si existe esta subcategoría (por nombre) guardada
+                const { data: existingSubcats } = await supabase
                   .from('categories')
                   .select('id')
                   .eq('user_id', user.id)
                   .eq('name', sub.name)
-                  .eq('parent_id', budget.category_id)
-                  .maybeSingle();
+                  .eq('parent_id', budget.category_id);
 
                 let monthly_budget = 0;
                 let budget_id = undefined;
+                let actual_id = sub.id;
 
-                if (existingCategory) {
-                  // Si existe la categoría, buscar su presupuesto
+                // Si existe la subcategoría en la BD (tomar la primera si hay duplicados)
+                if (existingSubcats && existingSubcats.length > 0) {
+                  const existingSubcat = existingSubcats[0];
+                  actual_id = existingSubcat.id;
+                  
+                  // Buscar su presupuesto
                   const { data: budgetData } = await supabase
                     .from('category_budgets')
                     .select('id, monthly_budget')
                     .eq('user_id', user.id)
-                    .eq('category_id', existingCategory.id)
+                    .eq('category_id', existingSubcat.id)
                     .maybeSingle();
 
                   if (budgetData) {
@@ -221,7 +231,7 @@ export default function EditBudgets() {
                 }
 
                 return {
-                  id: existingCategory?.id || sub.id,
+                  id: actual_id,
                   name: sub.name,
                   budget_id,
                   monthly_budget
