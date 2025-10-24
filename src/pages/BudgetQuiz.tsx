@@ -457,9 +457,6 @@ export default function BudgetQuiz() {
                     <p className="text-[10px] font-medium text-foreground leading-tight">
                       {category.name}
                     </p>
-                    {selectedCategories.includes(category.id) && (
-                      <Check className="h-4 w-4 text-primary mx-auto mt-2" />
-                    )}
                   </button>
                 ))}
               </div>
