@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Plus, AlertCircle, TrendingUp, Target } from "lucide-react";
+import { ArrowLeft, Pencil, AlertCircle, TrendingUp, Target } from "lucide-react";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 
@@ -235,7 +235,7 @@ export default function Budgets() {
             onClick={() => navigate('/budget-quiz')}
             className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 active:scale-95 transition-all border border-blue-100 h-9 w-9 p-0"
           >
-            <Plus className="h-4 w-4" />
+            <Pencil className="h-4 w-4" />
           </Button>
         </div>
 
@@ -252,8 +252,8 @@ export default function Budgets() {
               onClick={() => navigate('/budget-quiz')}
               className="bg-white/10 backdrop-blur-sm rounded-[20px] shadow-lg border-2 border-white/20 hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95 transition-all text-primary font-semibold"
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Configurar Presupuestos
+              <Pencil className="h-4 w-4 mr-2" />
+              Configurar Presupuesto
             </Button>
           </Card>
         ) : (
