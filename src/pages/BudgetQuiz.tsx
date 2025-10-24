@@ -485,20 +485,6 @@ export default function BudgetQuiz() {
         console.log('Presupuesto guardado exitosamente');
 
         // Ahora guardar las subcategorías con sus presupuestos
-        // Si no hay montos asignados a subcategorías, asignar todo a la primera
-        const hasSubcategoryBudgets = categoryData.subcategories.some(
-          sub => subcategoryBudgets[sub.id] && subcategoryBudgets[sub.id] > 0
-        );
-        
-        if (!hasSubcategoryBudgets && budgets[categoryId] > 0) {
-          // Asignar todo el monto a la primera subcategoría
-          const firstSubcategory = categoryData.subcategories[0];
-          if (firstSubcategory) {
-            subcategoryBudgets[firstSubcategory.id] = budgets[categoryId];
-            console.log(`  No había desglose, asignando ${budgets[categoryId]} a ${firstSubcategory.name}`);
-          }
-        }
-        
         for (const subcategory of categoryData.subcategories) {
           const subcatBudget = subcategoryBudgets[subcategory.id];
           
