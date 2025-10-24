@@ -170,7 +170,7 @@ export default function BudgetQuiz() {
           <Button
             variant="ghost"
             onClick={() => step === 1 ? navigate('/dashboard') : setStep(step - 1)}
-            className="rounded-full"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-10 w-10 p-0"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
