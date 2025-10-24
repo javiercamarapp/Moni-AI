@@ -27,6 +27,8 @@ import LevelDetails from "./pages/LevelDetails";
 import AspirationsAnalysis from "./pages/AspirationsAnalysis";
 import FinancialJourney from "./pages/FinancialJourney";
 import EditAspirations from "./pages/EditAspirations";
+import Budgets from "./pages/Budgets";
+import BudgetQuiz from "./pages/BudgetQuiz";
 
 import Subscriptions from "./pages/Subscriptions";
 import DailyExpenses from './pages/DailyExpenses';
@@ -80,6 +82,9 @@ function App() {
           <Route path="/subscriptions" element={<Subscriptions />} />
           <Route path="/daily-expenses" element={<DailyExpenses />} />
           <Route path="/reports" element={<Reports />} />
+          <Route path="/budgets" element={<Budgets />} />
+          <Route path="/budget-quiz" element={<BudgetQuiz />} />
+          <Route path="/gestionar-categorias" element={<GestionarCategorias />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

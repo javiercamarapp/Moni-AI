@@ -1057,6 +1057,7 @@ const Dashboard = () => {
           </button>
 
           <button 
+            onClick={() => navigate('/budgets')}
             className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer animate-fade-in border border-blue-100" 
             style={{ animationDelay: '400ms' }}
           >
