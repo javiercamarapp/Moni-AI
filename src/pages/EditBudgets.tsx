@@ -41,6 +41,73 @@ const CATEGORY_ICONS: Record<string, string> = {
   'mascotas': '🐾',
 };
 
+const DEFAULT_SUBCATEGORIES: Record<string, { id: string; name: string }[]> = {
+  'vivienda': [
+    { id: 'renta', name: 'Renta o hipoteca' },
+    { id: 'mantenimiento', name: 'Mantenimiento o predial' },
+    { id: 'luz', name: 'Luz' },
+    { id: 'agua', name: 'Agua' },
+    { id: 'gas', name: 'Gas' },
+    { id: 'internet', name: 'Internet y teléfono' },
+  ],
+  'transporte': [
+    { id: 'gasolina', name: 'Gasolina / carga eléctrica' },
+    { id: 'mensualidad_auto', name: 'Mensualidad de automóvil' },
+    { id: 'uber', name: 'Uber, Didi, taxis' },
+    { id: 'estacionamiento', name: 'Estacionamiento o peajes' },
+  ],
+  'alimentación': [
+    { id: 'supermercado', name: 'Supermercado' },
+    { id: 'restaurantes', name: 'Comidas fuera de casa' },
+    { id: 'cafe', name: 'Café / snacks / antojos' },
+    { id: 'apps_comida', name: 'Apps de comida' },
+  ],
+  'servicios y suscripciones': [
+    { id: 'streaming', name: 'Streaming (Netflix, Spotify, etc.)' },
+    { id: 'apps_premium', name: 'Apps premium' },
+    { id: 'telefono', name: 'Teléfono móvil' },
+  ],
+  'salud y bienestar': [
+    { id: 'seguro_medico', name: 'Seguro médico' },
+    { id: 'medicinas', name: 'Medicinas' },
+    { id: 'consultas', name: 'Consultas médicas' },
+    { id: 'gimnasio', name: 'Gimnasio' },
+  ],
+  'educación y desarrollo': [
+    { id: 'colegiaturas', name: 'Colegiaturas' },
+    { id: 'cursos', name: 'Cursos / talleres' },
+    { id: 'libros', name: 'Libros' },
+  ],
+  'deudas y créditos': [
+    { id: 'tarjetas', name: 'Tarjetas de crédito' },
+    { id: 'prestamos', name: 'Préstamos personales' },
+    { id: 'creditos', name: 'Créditos hipotecarios' },
+  ],
+  'entretenimiento y estilo de vida': [
+    { id: 'salidas', name: 'Salidas, fiestas, bares' },
+    { id: 'ropa', name: 'Ropa, accesorios, belleza' },
+    { id: 'viajes', name: 'Viajes o escapadas' },
+    { id: 'hobbies', name: 'Hobbies, videojuegos' },
+  ],
+  'ahorro e inversión': [
+    { id: 'ahorro_mensual', name: 'Ahorro mensual' },
+    { id: 'fondo_emergencia', name: 'Fondo de emergencia' },
+    { id: 'inversion', name: 'Inversión' },
+    { id: 'retiro', name: 'Aportación a retiro' },
+  ],
+  'apoyos y otros': [
+    { id: 'apoyo_familiar', name: 'Apoyo familiar' },
+    { id: 'donaciones', name: 'Donaciones' },
+    { id: 'otros', name: 'Otros gastos' },
+  ],
+  'mascotas': [
+    { id: 'comida_mascotas', name: 'Comida y snacks' },
+    { id: 'veterinario', name: 'Veterinario y medicinas' },
+    { id: 'accesorios_mascotas', name: 'Accesorios y juguetes' },
+    { id: 'estetica_mascotas', name: 'Estética y cuidado' },
+  ],
+};
+
 export default function EditBudgets() {
   const navigate = useNavigate();
   const [budgets, setBudgets] = useState<Budget[]>([]);
@@ -62,6 +129,8 @@ export default function EditBudgets() {
         return;
       }
 
+      console.log('Cargando presupuestos para usuario:', user.id);
+
       // Cargar categorías principales con presupuesto
       const { data, error } = await supabase
         .from('category_budgets')
@@ -78,10 +147,13 @@ export default function EditBudgets() {
         .eq('user_id', user.id);
 
       if (error) throw error;
+      console.log('Categorías principales cargadas:', data);
 
       // Para cada categoría, cargar sus subcategorías
       const budgetsWithSubcategories = await Promise.all(
         (data || []).map(async (budget) => {
+          console.log(`Buscando subcategorías para: ${budget.category.name} (${budget.category_id})`);
+          
           // Buscar subcategorías (categorías con parent_id igual a esta categoría)
           const { data: subcats } = await supabase
             .from('categories')
@@ -89,24 +161,44 @@ export default function EditBudgets() {
             .eq('user_id', user.id)
             .eq('parent_id', budget.category_id);
 
-          // Para cada subcategoría, buscar si tiene presupuesto
-          const subcategoriesWithBudget = await Promise.all(
-            (subcats || []).map(async (subcat) => {
-              const { data: subcatBudget } = await supabase
-                .from('category_budgets')
-                .select('id, monthly_budget')
-                .eq('user_id', user.id)
-                .eq('category_id', subcat.id)
-                .single();
+          console.log(`Subcategorías encontradas para ${budget.category.name}:`, subcats);
 
-              return {
-                id: subcat.id,
-                name: subcat.name,
-                budget_id: subcatBudget?.id,
-                monthly_budget: subcatBudget?.monthly_budget || 0
-              };
-            })
-          );
+          // Si no hay subcategorías guardadas, usar las predeterminadas
+          let subcategoriesWithBudget: Subcategory[] = [];
+          
+          if (subcats && subcats.length > 0) {
+            // Para cada subcategoría guardada, buscar si tiene presupuesto
+            subcategoriesWithBudget = await Promise.all(
+              subcats.map(async (subcat) => {
+                const { data: subcatBudget } = await supabase
+                  .from('category_budgets')
+                  .select('id, monthly_budget')
+                  .eq('user_id', user.id)
+                  .eq('category_id', subcat.id)
+                  .single();
+
+                return {
+                  id: subcat.id,
+                  name: subcat.name,
+                  budget_id: subcatBudget?.id,
+                  monthly_budget: subcatBudget?.monthly_budget || 0
+                };
+              })
+            );
+          } else {
+            // Usar subcategorías predeterminadas basadas en el nombre de la categoría
+            const categoryNameLower = budget.category.name.toLowerCase();
+            const defaultSubs = DEFAULT_SUBCATEGORIES[categoryNameLower] || [];
+            
+            subcategoriesWithBudget = defaultSubs.map(sub => ({
+              id: sub.id,
+              name: sub.name,
+              budget_id: undefined,
+              monthly_budget: 0
+            }));
+          }
+
+          console.log(`Subcategorías con presupuesto para ${budget.category.name}:`, subcategoriesWithBudget);
 
           return {
             ...budget,
@@ -115,6 +207,7 @@ export default function EditBudgets() {
         })
       );
 
+      console.log('Budgets finales con subcategorías:', budgetsWithSubcategories);
       setBudgets(budgetsWithSubcategories);
 
       // Inicializar valores editables para categorías principales
@@ -183,27 +276,46 @@ export default function EditBudgets() {
           for (const subcat of budget.subcategories) {
             const newSubAmount = Number(editedSubcategoryBudgets[subcat.id] || 0);
             
-            if (subcat.budget_id) {
-              // Actualizar presupuesto existente
-              if (newSubAmount !== Number(subcat.monthly_budget)) {
-                const { error } = await supabase
+            // Solo procesar si hay un monto asignado
+            if (newSubAmount > 0) {
+              if (subcat.budget_id) {
+                // Actualizar presupuesto existente
+                if (newSubAmount !== Number(subcat.monthly_budget)) {
+                  const { error } = await supabase
+                    .from('category_budgets')
+                    .update({ monthly_budget: newSubAmount })
+                    .eq('id', subcat.budget_id);
+
+                  if (error) throw error;
+                }
+              } else {
+                // Crear subcategoría y presupuesto nuevo
+                // Primero crear la subcategoría en la tabla categories
+                const { data: newSubcat, error: subcatError } = await supabase
+                  .from('categories')
+                  .insert({
+                    user_id: user.id,
+                    name: subcat.name,
+                    type: 'gasto',
+                    color: 'bg-primary/20',
+                    parent_id: budget.category_id
+                  })
+                  .select()
+                  .single();
+
+                if (subcatError) throw subcatError;
+
+                // Luego crear su presupuesto
+                const { error: budgetError } = await supabase
                   .from('category_budgets')
-                  .update({ monthly_budget: newSubAmount })
-                  .eq('id', subcat.budget_id);
+                  .insert({
+                    user_id: user.id,
+                    category_id: newSubcat.id,
+                    monthly_budget: newSubAmount
+                  });
 
-                if (error) throw error;
+                if (budgetError) throw budgetError;
               }
-            } else if (newSubAmount > 0) {
-              // Crear nuevo presupuesto para subcategoría
-              const { error } = await supabase
-                .from('category_budgets')
-                .insert({
-                  user_id: user.id,
-                  category_id: subcat.id,
-                  monthly_budget: newSubAmount
-                });
-
-              if (error) throw error;
             }
           }
         }
