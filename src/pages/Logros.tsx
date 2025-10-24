@@ -394,7 +394,7 @@ export default function Logros() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white pb-32">
+    <div className="min-h-screen animated-wave-bg pb-32">
       <div className="container mx-auto px-4 py-6 max-w-2xl mb-8">
         {/* Header */}
         <div className="mb-6">
