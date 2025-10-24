@@ -299,6 +299,7 @@ export default function BudgetQuiz() {
       if (data?.estimates) {
         setCategoryEstimates(data.estimates);
         console.log('Estado actualizado con estimaciones:', data.estimates);
+        console.log('¿Mascotas tiene estimación?', 'mascotas' in data.estimates, data.estimates.mascotas);
       } else {
         console.warn('No se recibieron estimaciones del edge function');
       }
@@ -710,7 +711,9 @@ export default function BudgetQuiz() {
                             </p>
                             <Button
                               onClick={() => {
-                                setBudgets({ ...budgets, [category.id]: categoryEstimates[category.id] });
+                                const estimatedValue = categoryEstimates[category.id];
+                                console.log('Aceptando estimación:', category.id, estimatedValue, typeof estimatedValue);
+                                setBudgets({ ...budgets, [category.id]: estimatedValue });
                                 setExpandedCategory(null);
                               }}
                               className="w-full h-7 text-[10px] bg-primary hover:bg-primary/90 text-white rounded-[8px] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all"
@@ -745,7 +748,12 @@ export default function BudgetQuiz() {
                               variant="outline"
                               className="w-full h-8 text-[10px] rounded-[8px] border-destructive/50 text-destructive hover:bg-destructive/10"
                             >
-                              {budgets[category.id] === categoryEstimates[category.id] ? 'Quitar estimación IA' : 'Quitar presupuesto'}
+                              {(() => {
+                                const budgetValue = budgets[category.id];
+                                const estimateValue = categoryEstimates[category.id];
+                                console.log('Comparación botón:', category.id, 'budget:', budgetValue, typeof budgetValue, 'estimate:', estimateValue, typeof estimateValue, 'son iguales?:', budgetValue === estimateValue);
+                                return budgetValue === estimateValue ? 'Quitar estimación IA' : 'Quitar presupuesto';
+                              })()}
                             </Button>
                           </div>
                         )}
