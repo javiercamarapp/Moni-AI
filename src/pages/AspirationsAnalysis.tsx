@@ -829,8 +829,18 @@ export default function AspirationsAnalysis() {
                     contentStyle={{
                       backgroundColor: 'rgba(255, 255, 255, 0.95)',
                       border: 'none',
-                      borderRadius: '12px',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      padding: '4px 8px',
+                      fontSize: '10px',
+                      transform: 'scale(0.85)'
+                    }}
+                    labelStyle={{
+                      fontSize: '9px',
+                      fontWeight: 'bold'
+                    }}
+                    itemStyle={{
+                      fontSize: '9px'
                     }}
                   />
                   <Legend 
