@@ -1,6 +1,8 @@
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface CategoryBudget {
   name: string;
@@ -11,10 +13,40 @@ interface CategoryBudget {
 }
 
 interface BudgetProgressProps {
-  categories: CategoryBudget[];
+  categories?: CategoryBudget[];
+  hasBudgets?: boolean;
 }
 
-export default function BudgetProgressWidget({ categories }: BudgetProgressProps) {
+export default function BudgetProgressWidget({ categories = [], hasBudgets = false }: BudgetProgressProps) {
+  const navigate = useNavigate();
+  
+  // Si no tiene presupuestos configurados, mostrar invitación
+  if (!hasBudgets || categories.length === 0) {
+    return (
+      <Card className="p-6 bg-gradient-to-br from-blue-50 to-purple-50 rounded-[20px] shadow-xl border-2 border-blue-200 hover:scale-105 active:scale-95 transition-all">
+        <div className="text-center space-y-4">
+          <div className="text-5xl">📊</div>
+          <div>
+            <p className="text-base font-semibold text-foreground mb-1">
+              Crea tu Presupuesto Mensual
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Controla tus gastos por categoría y recibe alertas cuando te acerques al límite
+            </p>
+          </div>
+          
+          <Button
+            onClick={() => navigate('/gestionar-categorias')}
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+          >
+            Configurar Presupuestos
+          </Button>
+        </div>
+      </Card>
+    );
+  }
+  
+  // Si tiene presupuestos, mostrar progreso normal
   return (
     <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 transition-all">
       <div className="space-y-3">

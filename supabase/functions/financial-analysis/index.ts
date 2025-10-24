@@ -768,21 +768,38 @@ Ejemplo formato:
         : `${Math.round(monthsToGoal / 12)} años`
       : 'N/A';
     
-    // Presupuesto por categoría (basado en proporción ideal)
-    const categoryBudgets = topCategories.slice(0, 5).map(cat => {
-      const idealBudget = totalIncome * 0.15; // Asumimos 15% por categoría top
-      const spent = Number(cat.total);
-      return {
-        name: cat.name,
-        spent,
-        budget: idealBudget,
-        percentUsed: (spent / idealBudget) * 100,
-        icon: cat.name.toLowerCase().includes('comida') ? '🍔' :
-              cat.name.toLowerCase().includes('transport') ? '🚗' :
-              cat.name.toLowerCase().includes('hogar') ? '🏠' :
-              cat.name.toLowerCase().includes('ocio') ? '🎮' : '💳'
-      };
-    });
+    // Presupuesto por categoría (basado en presupuestos reales del usuario)
+    const { data: userBudgets } = await supabase
+      .from('category_budgets')
+      .select('*, categories(id, name)')
+      .eq('user_id', userId);
+    
+    let categoryBudgets: any[] = [];
+    let hasBudgets = false;
+    
+    if (userBudgets && userBudgets.length > 0) {
+      hasBudgets = true;
+      
+      // Para cada presupuesto configurado, calcular cuánto se gastó
+      categoryBudgets = userBudgets.map(budget => {
+        const categoryName = budget.categories?.name || 'Sin categoría';
+        const spent = expensesByCategory[categoryName] || 0;
+        const monthlyBudget = Number(budget.monthly_budget);
+        
+        return {
+          name: categoryName,
+          spent,
+          budget: monthlyBudget,
+          percentUsed: monthlyBudget > 0 ? (spent / monthlyBudget) * 100 : 0,
+          icon: categoryName.toLowerCase().includes('comida') ? '🍔' :
+                categoryName.toLowerCase().includes('transport') ? '🚗' :
+                categoryName.toLowerCase().includes('hogar') ? '🏠' :
+                categoryName.toLowerCase().includes('salud') ? '💊' :
+                categoryName.toLowerCase().includes('ocio') ? '🎮' :
+                categoryName.toLowerCase().includes('educación') ? '📚' : '💳'
+        };
+      }).filter(b => b.budget > 0); // Solo mostrar presupuestos con valor
+    }
     
     // Plan de pago de deudas (simulado - idealmente de tabla deudas)
     const debts = totalDebt > 0 ? [
@@ -1135,7 +1152,8 @@ Responde SOLO con el JSON array, sin texto adicional.`;
         } : null
       },
       budgetProgress: {
-        categories: categoryBudgets
+        categories: categoryBudgets,
+        hasBudgets
       },
       debtPlan: {
         debts,
