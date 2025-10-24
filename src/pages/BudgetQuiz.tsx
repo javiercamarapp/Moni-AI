@@ -406,18 +406,6 @@ export default function BudgetQuiz() {
         return;
       }
       
-      // Calcular presupuestos sugeridos
-      const income = Number(monthlyIncome);
-      const newBudgets: Record<string, number> = {};
-      
-      selectedCategories.forEach(catId => {
-        const category = DEFAULT_CATEGORIES.find(c => c.id === catId);
-        if (category) {
-          newBudgets[catId] = Math.round(income * (category.suggestedPercentage / 100));
-        }
-      });
-      
-      setBudgets(newBudgets);
       setStep(3);
     } else if (step === 3) {
       saveBudgets();
