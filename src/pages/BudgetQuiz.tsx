@@ -309,15 +309,15 @@ export default function BudgetQuiz() {
                   onClick={calculateAverageIncome}
                   disabled={calculatingIncome}
                   variant="outline"
-                  className="w-full h-12 rounded-[20px] border-2 border-primary/30 hover:border-primary/60 hover:bg-primary/5"
+                  className="w-full h-auto py-3 rounded-[20px] border-2 border-primary/30 hover:border-primary/60 hover:bg-primary/5"
                 >
                   {calculatingIncome ? (
                     "Calculando..."
                   ) : (
-                    <>
-                      <span className="text-2xl mr-2">🏦</span>
-                      Detectar Ingreso del Banco
-                    </>
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="text-2xl">🏦</span>
+                      <span className="text-xs font-medium">Detectar Ingreso del Banco</span>
+                    </div>
                   )}
                 </Button>
               )}
@@ -326,10 +326,12 @@ export default function BudgetQuiz() {
                 <Button
                   onClick={() => navigate('/bank-connection')}
                   variant="outline"
-                  className="w-full h-12 rounded-[20px] border-2 border-primary/30 hover:border-primary/60 hover:bg-primary/5"
+                  className="w-full h-auto py-3 rounded-[20px] border-2 border-primary/30 hover:border-primary/60 hover:bg-primary/5"
                 >
-                  <span className="text-2xl mr-2">🏦</span>
-                  Conectar Banco para Detectar Ingreso
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-2xl">🏦</span>
+                    <span className="text-xs font-medium">Conectar Banco</span>
+                  </div>
                 </Button>
               )}
             </div>
