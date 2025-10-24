@@ -152,8 +152,34 @@ const DEFAULT_CATEGORIES: Category[] = [
     subcategories: [
       { id: 'apoyo_familiar', name: 'Apoyo familiar / hijos / pareja' },
       { id: 'donaciones', name: 'Donaciones' },
-      { id: 'mascotas', name: 'Mascotas' },
       { id: 'otros', name: 'Otros gastos no clasificados' },
+    ]
+  },
+  { 
+    id: 'mascotas', 
+    name: 'Mascotas', 
+    icon: '🐾', 
+    suggestedPercentage: 3,
+    insight: 'Cuida de tus compañeros peludos de forma responsable',
+    subcategories: [
+      { id: 'comida_mascotas', name: 'Comida y snacks' },
+      { id: 'veterinario', name: 'Veterinario y medicinas' },
+      { id: 'accesorios_mascotas', name: 'Accesorios y juguetes' },
+      { id: 'estetica_mascotas', name: 'Estética y cuidado' },
+      { id: 'seguro_mascotas', name: 'Seguro de mascotas' },
+    ]
+  },
+  { 
+    id: 'personalizada', 
+    name: 'Categoría personalizada', 
+    icon: '⭐', 
+    suggestedPercentage: 0,
+    insight: 'Crea tu propia categoría para gastos específicos',
+    subcategories: [
+      { id: 'personalizado_1', name: 'Concepto 1' },
+      { id: 'personalizado_2', name: 'Concepto 2' },
+      { id: 'personalizado_3', name: 'Concepto 3' },
+      { id: 'personalizado_4', name: 'Concepto 4' },
     ]
   },
 ];
