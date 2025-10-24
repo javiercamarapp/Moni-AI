@@ -292,6 +292,34 @@ export default function Budgets() {
                   </button>
                 </div>
 
+                {/* Barra de progreso del presupuesto */}
+                <div className="space-y-1">
+                  <div className="relative">
+                    <Progress 
+                      value={totalBudget > 0 ? Math.min((Object.values(currentExpenses).reduce((sum, val) => sum + val, 0) / totalBudget) * 100, 100) : 0}
+                      className={`h-2 animate-fade-in ${
+                        (Object.values(currentExpenses).reduce((sum, val) => sum + val, 0) / totalBudget) * 100 >= 100 ? 'bg-destructive/20' : 
+                        (Object.values(currentExpenses).reduce((sum, val) => sum + val, 0) / totalBudget) * 100 >= 80 ? 'bg-yellow-500/20' : 
+                        'bg-muted'
+                      }`}
+                    />
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <p className="text-[7px] text-muted-foreground">
+                      {totalBudget > 0 ? ((Object.values(currentExpenses).reduce((sum, val) => sum + val, 0) / totalBudget) * 100).toFixed(0) : 0}% usado
+                    </p>
+                    <p className={`text-[7px] font-bold ${
+                      (Object.values(currentExpenses).reduce((sum, val) => sum + val, 0) / totalBudget) * 100 >= 100 ? 'text-destructive' : 
+                      (Object.values(currentExpenses).reduce((sum, val) => sum + val, 0) / totalBudget) * 100 >= 80 ? 'text-yellow-600' : 
+                      'text-success'
+                    }`}>
+                      {(Object.values(currentExpenses).reduce((sum, val) => sum + val, 0) / totalBudget) * 100 >= 100 ? '⚠️ Límite' : 
+                       (Object.values(currentExpenses).reduce((sum, val) => sum + val, 0) / totalBudget) * 100 >= 80 ? '⚡ Alerta' : 
+                       '✅ Bien'}
+                    </p>
+                  </div>
+                </div>
+
                 {/* Disponible para gastar */}
                 <div className="bg-white/10 backdrop-blur-sm rounded-[10px] p-1.5 border-2 border-white/20 shadow-lg text-center">
                   <span className="text-[7px] text-muted-foreground font-medium">Disponible</span>
