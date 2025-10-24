@@ -264,72 +264,68 @@ export default function BudgetQuiz() {
       // Obtener todas las transacciones de gastos de los últimos 6 meses
       const { data: transactions, error: transError } = await supabase
         .from('transactions')
-        .select('amount, transaction_date, category_id, description, frequency')
+        .select('amount, transaction_date, description, frequency')
         .eq('user_id', userId)
         .eq('type', 'gasto')
         .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
 
-      console.log('Transacciones encontradas:', transactions?.length, transactions);
+      console.log('Transacciones encontradas:', transactions?.length);
 
       if (!transactions || transactions.length === 0) {
         console.log('No hay transacciones de gastos en los últimos 6 meses');
         return;
       }
 
-      // Obtener categorías del usuario
-      const { data: categories, error: catError } = await supabase
-        .from('categories')
-        .select('id, name')
-        .eq('user_id', userId)
-        .eq('type', 'expense');
-
-      console.log('Categorías encontradas:', categories?.length, categories);
-
-      if (!categories) {
-        console.log('No hay categorías del usuario');
-        return;
-      }
-
       const estimates: Record<string, number> = {};
 
-      // Para cada categoría principal, calcular el promedio
+      // Palabras clave para cada categoría
+      const categoryKeywords: Record<string, string[]> = {
+        'vivienda': ['renta', 'alquiler', 'hipoteca', 'predial', 'luz', 'agua', 'gas', 'internet', 'limpieza', 'condominio', 'cfe', 'telmex'],
+        'transporte': ['gasolina', 'uber', 'didi', 'taxi', 'transporte', 'metro', 'autobus', 'estacionamiento', 'peaje', 'gasolinera'],
+        'alimentacion': ['super', 'mercado', 'oxxo', 'restaurante', 'comida', 'cafe', 'rappi', 'uber eats', 'didi food', 'walmart', 'soriana', 'chedraui'],
+        'servicios': ['netflix', 'spotify', 'amazon', 'hbo', 'disney', 'apple', 'suscripcion', 'telefono', 'celular', 'membresía'],
+        'salud': ['farmacia', 'medico', 'hospital', 'consulta', 'gimnasio', 'doctor', 'dentista', 'seguro medico'],
+        'educacion': ['colegiatura', 'escuela', 'universidad', 'curso', 'libro', 'material escolar'],
+        'deudas': ['tarjeta', 'credito', 'prestamo', 'banco', 'banamex', 'bancomer', 'santander', 'hsbc'],
+        'entretenimiento': ['cine', 'bar', 'fiesta', 'ropa', 'zapatos', 'viaje', 'hotel', 'entretenimiento'],
+        'ahorro': ['ahorro', 'inversion', 'cetes', 'fondo', 'retiro', 'afore'],
+        'apoyos': ['apoyo', 'donacion', 'familia', 'mascota', 'veterinaria']
+      };
+
+      // Para cada categoría principal
       DEFAULT_CATEGORIES.forEach(mainCategory => {
-        // Buscar la categoría del usuario que coincida con el nombre
-        const userCategory = categories.find(
-          c => c.name.toLowerCase().includes(mainCategory.name.toLowerCase().substring(0, 5))
-        );
+        const keywords = categoryKeywords[mainCategory.id] || [];
+        
+        // Filtrar transacciones que coincidan con las palabras clave
+        const categoryTransactions = transactions.filter(t => {
+          const description = (t.description || '').toLowerCase();
+          return keywords.some(keyword => description.includes(keyword));
+        });
 
-        console.log(`Buscando categoría "${mainCategory.name}":`, userCategory);
+        console.log(`Transacciones para ${mainCategory.name}:`, categoryTransactions.length);
 
-        if (userCategory) {
-          // Filtrar transacciones de esta categoría
-          const categoryTransactions = transactions.filter(t => t.category_id === userCategory.id);
+        if (categoryTransactions.length > 0) {
+          // Detectar si es suscripción o gasto fijo (recurrente)
+          const hasRecurring = categoryTransactions.some(t => t.frequency && t.frequency !== 'one-time');
           
-          console.log(`Transacciones para ${mainCategory.name}:`, categoryTransactions.length);
-          
-          if (categoryTransactions.length > 0) {
-            // Detectar si es suscripción o gasto fijo (recurrente)
-            const hasRecurring = categoryTransactions.some(t => t.frequency && t.frequency !== 'one-time');
+          if (hasRecurring) {
+            // Para gastos fijos, tomar el valor más reciente
+            const recentTransaction = categoryTransactions[0];
+            estimates[mainCategory.id] = Math.round(Number(recentTransaction.amount));
+          } else {
+            // Para gastos variables, calcular promedio mensual
+            const monthlyTotals: Record<string, number> = {};
             
-            if (hasRecurring) {
-              // Para gastos fijos, tomar el valor más reciente
-              const recentTransaction = categoryTransactions[0];
-              estimates[mainCategory.id] = Math.round(Number(recentTransaction.amount));
-            } else {
-              // Para gastos variables, calcular promedio mensual
-              const monthlyTotals: Record<string, number> = {};
-              
-              categoryTransactions.forEach(t => {
-                const monthKey = t.transaction_date.substring(0, 7);
-                monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + Number(t.amount);
-              });
+            categoryTransactions.forEach(t => {
+              const monthKey = t.transaction_date.substring(0, 7);
+              monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + Number(t.amount);
+            });
 
-              const totalMonths = Object.keys(monthlyTotals).length;
-              if (totalMonths > 0) {
-                const total = Object.values(monthlyTotals).reduce((sum, val) => sum + val, 0);
-                estimates[mainCategory.id] = Math.round(total / totalMonths);
-              }
+            const totalMonths = Object.keys(monthlyTotals).length;
+            if (totalMonths > 0) {
+              const total = Object.values(monthlyTotals).reduce((sum, val) => sum + val, 0);
+              estimates[mainCategory.id] = Math.round(total / totalMonths);
             }
           }
         }
