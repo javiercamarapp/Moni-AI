@@ -37,6 +37,8 @@ export default function BudgetQuiz() {
   const [userCategories, setUserCategories] = useState<any[]>([]);
   const [hasBankConnection, setHasBankConnection] = useState(false);
   const [calculatingIncome, setCalculatingIncome] = useState(false);
+  const [aiForecast, setAiForecast] = useState<number | null>(null);
+  const [showForecast, setShowForecast] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -51,6 +53,7 @@ export default function BudgetQuiz() {
     setUser(user);
     loadUserCategories(user.id);
     checkBankConnection(user.id);
+    calculateAIForecast(user.id);
   };
 
   const loadUserCategories = async (userId: string) => {
@@ -72,6 +75,45 @@ export default function BudgetQuiz() {
       .limit(1);
     
     setHasBankConnection(!!data && data.length > 0);
+  };
+
+  const calculateAIForecast = async (userId: string) => {
+    try {
+      // Calcular fecha de hace 6 meses
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+      
+      // Obtener transacciones de ingresos de los últimos 6 meses
+      const { data: transactions } = await supabase
+        .from('transactions')
+        .select('amount, transaction_date')
+        .eq('user_id', userId)
+        .eq('type', 'income')
+        .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false });
+
+      if (transactions && transactions.length > 0) {
+        // Agrupar por mes y calcular total por mes
+        const monthlyIncomes: Record<string, number> = {};
+        
+        transactions.forEach(t => {
+          const monthKey = t.transaction_date.substring(0, 7); // YYYY-MM
+          monthlyIncomes[monthKey] = (monthlyIncomes[monthKey] || 0) + Number(t.amount);
+        });
+
+        // Calcular promedio
+        const totalMonths = Object.keys(monthlyIncomes).length;
+        if (totalMonths > 0) {
+          const totalIncome = Object.values(monthlyIncomes).reduce((sum, val) => sum + val, 0);
+          const averageIncome = Math.round(totalIncome / totalMonths);
+          
+          setAiForecast(averageIncome);
+          setShowForecast(true);
+        }
+      }
+    } catch (error) {
+      console.error('Error calculating AI forecast:', error);
+    }
   };
 
   const calculateAverageIncome = async () => {
@@ -281,6 +323,42 @@ export default function BudgetQuiz() {
                   Esto nos ayudará a sugerir presupuestos realistas
                 </p>
               </div>
+
+              {/* AI Forecast Card */}
+              {showForecast && aiForecast && !hasBankConnection && (
+                <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-[15px] p-4 space-y-3 border border-primary/20">
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-3xl">🤖</span>
+                    <div className="text-left">
+                      <p className="text-xs font-semibold text-foreground">Pronóstico de IA</p>
+                      <p className="text-[10px] text-muted-foreground">Basado en tus últimos 6 meses</p>
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-3xl font-bold text-primary">${aiForecast.toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Ingreso mensual promedio</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => {
+                        setMonthlyIncome(aiForecast.toString());
+                        setShowForecast(false);
+                        toast.success("Pronóstico aplicado");
+                      }}
+                      className="flex-1 bg-primary hover:bg-primary/90 text-white h-10 text-sm font-semibold rounded-[15px]"
+                    >
+                      Usar Pronóstico
+                    </Button>
+                    <Button
+                      onClick={() => setShowForecast(false)}
+                      variant="outline"
+                      className="flex-1 h-10 text-sm rounded-[15px] border-primary/30"
+                    >
+                      Ingresar Manual
+                    </Button>
+                  </div>
+                </div>
+              )}
               
               <div className="space-y-2">
                 <div className="relative">
