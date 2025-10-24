@@ -88,7 +88,7 @@ export default function BudgetQuiz() {
         .from('transactions')
         .select('amount, transaction_date')
         .eq('user_id', userId)
-        .eq('type', 'income')
+        .eq('type', 'ingreso')
         .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
 
@@ -130,7 +130,7 @@ export default function BudgetQuiz() {
         .from('transactions')
         .select('amount, transaction_date')
         .eq('user_id', user.id)
-        .eq('type', 'income')
+        .eq('type', 'ingreso')
         .gte('transaction_date', twelveMonthsAgo.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
 
