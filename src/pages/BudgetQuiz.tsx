@@ -463,7 +463,14 @@ export default function BudgetQuiz() {
           console.log('Categoría ya existe:', existingCategory);
         }
 
-        // Crear el presupuesto
+        // Eliminar presupuesto existente si lo hay
+        await supabase
+          .from('category_budgets')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('category_id', existingCategory.id);
+
+        // Crear el nuevo presupuesto
         console.log('Insertando presupuesto en DB:', {
           user_id: user.id,
           category_id: existingCategory.id,
