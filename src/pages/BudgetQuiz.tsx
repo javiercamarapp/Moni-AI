@@ -986,19 +986,19 @@ export default function BudgetQuiz() {
                     <button
                       key={catId}
                       onClick={() => setEditingCategoryId(catId)}
-                      className="p-2.5 bg-white rounded-[15px] border border-blue-100 shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+                      className="p-1.5 bg-white rounded-[12px] border border-blue-100 shadow-lg hover:shadow-xl hover:scale-105 transition-all"
                     >
-                      <div className="flex flex-col items-center gap-1.5 text-center">
-                        <span className="text-2xl">{category.icon}</span>
-                        <p className="text-[9px] font-bold text-foreground leading-tight min-h-[24px] flex items-center justify-center">
+                      <div className="flex flex-col items-center gap-1 text-center">
+                        <span className="text-lg">{category.icon}</span>
+                        <p className="text-[8px] font-bold text-foreground leading-tight min-h-[20px] flex items-center justify-center px-0.5">
                           {category.name}
                         </p>
-                        <div className="px-2 py-1 bg-primary/10 rounded-lg w-full">
-                          <span className="text-[10px] font-bold text-foreground">
+                        <div className="px-1.5 py-0.5 bg-primary/10 rounded-md w-full">
+                          <span className="text-[9px] font-bold text-foreground">
                             ${(budgets[catId] || 0).toLocaleString('es-MX', { maximumFractionDigits: 0 })}
                           </span>
                         </div>
-                        <span className={`text-sm font-extrabold ${getHealthColor()}`}>
+                        <span className={`text-xs font-extrabold ${getHealthColor()}`}>
                           {budgetPercentage.toFixed(0)}%
                         </span>
                       </div>
