@@ -1,6 +1,5 @@
 import { motion } from "motion/react";
 import moniLogo from "@/assets/moni-ai-logo-black.png";
-import { Sparkles, BarChart3 } from "lucide-react";
 
 interface AIAnalysisLoaderProps {
   message?: string;
@@ -14,8 +13,8 @@ export function AIAnalysisLoader({ message = "Analizando...", fullScreen = false
 
   return (
     <div className={containerClass}>
-      {/* Logo and animation */}
-      <div className="relative z-10 flex flex-col items-center gap-8">
+      {/* Logo animation */}
+      <div className="relative z-10 flex flex-col items-center justify-center">
         <motion.img
           src={moniLogo}
           alt="MONI AI"
@@ -31,34 +30,6 @@ export function AIAnalysisLoader({ message = "Analizando...", fullScreen = false
             ease: "easeInOut",
           }}
         />
-        
-        {/* Animated icons - 5x bigger than original */}
-        <div className="flex items-center gap-4">
-          <motion.div
-            animate={{
-              rotate: [0, 360],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          >
-            <Sparkles className="w-12 h-12 text-primary" />
-          </motion.div>
-          <motion.div
-            animate={{
-              y: [0, -25, 0],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            <BarChart3 className="w-12 h-12 text-primary" />
-          </motion.div>
-        </div>
       </div>
     </div>
   );
