@@ -17,6 +17,14 @@ interface Budget {
     name: string;
     color: string;
   };
+  subcategories?: Subcategory[];
+}
+
+interface Subcategory {
+  id: string;
+  name: string;
+  budget_id?: string;
+  monthly_budget: number;
 }
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -39,6 +47,7 @@ export default function EditBudgets() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editedBudgets, setEditedBudgets] = useState<Record<string, string>>({});
+  const [editedSubcategoryBudgets, setEditedSubcategoryBudgets] = useState<Record<string, string>>({});
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   useEffect(() => {
@@ -53,6 +62,7 @@ export default function EditBudgets() {
         return;
       }
 
+      // Cargar categorías principales con presupuesto
       const { data, error } = await supabase
         .from('category_budgets')
         .select(`
@@ -69,14 +79,59 @@ export default function EditBudgets() {
 
       if (error) throw error;
 
-      setBudgets(data || []);
+      // Para cada categoría, cargar sus subcategorías
+      const budgetsWithSubcategories = await Promise.all(
+        (data || []).map(async (budget) => {
+          // Buscar subcategorías (categorías con parent_id igual a esta categoría)
+          const { data: subcats } = await supabase
+            .from('categories')
+            .select('id, name')
+            .eq('user_id', user.id)
+            .eq('parent_id', budget.category_id);
 
-      // Inicializar valores editables
+          // Para cada subcategoría, buscar si tiene presupuesto
+          const subcategoriesWithBudget = await Promise.all(
+            (subcats || []).map(async (subcat) => {
+              const { data: subcatBudget } = await supabase
+                .from('category_budgets')
+                .select('id, monthly_budget')
+                .eq('user_id', user.id)
+                .eq('category_id', subcat.id)
+                .single();
+
+              return {
+                id: subcat.id,
+                name: subcat.name,
+                budget_id: subcatBudget?.id,
+                monthly_budget: subcatBudget?.monthly_budget || 0
+              };
+            })
+          );
+
+          return {
+            ...budget,
+            subcategories: subcategoriesWithBudget
+          };
+        })
+      );
+
+      setBudgets(budgetsWithSubcategories);
+
+      // Inicializar valores editables para categorías principales
       const initialEdited: Record<string, string> = {};
-      (data || []).forEach(b => {
+      const initialSubcatEdited: Record<string, string> = {};
+      
+      budgetsWithSubcategories.forEach(b => {
         initialEdited[b.category_id] = String(Number(b.monthly_budget));
+        
+        // Inicializar subcategorías
+        b.subcategories?.forEach(sub => {
+          initialSubcatEdited[sub.id] = String(Number(sub.monthly_budget));
+        });
       });
+      
       setEditedBudgets(initialEdited);
+      setEditedSubcategoryBudgets(initialSubcatEdited);
 
     } catch (error) {
       console.error('Error loading budgets:', error);
@@ -111,7 +166,7 @@ export default function EditBudgets() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Actualizar presupuestos
+      // Actualizar presupuestos de categorías principales
       for (const budget of budgets) {
         const newAmount = Number(editedBudgets[budget.category_id] || 0);
         if (newAmount !== Number(budget.monthly_budget)) {
@@ -121,6 +176,36 @@ export default function EditBudgets() {
             .eq('id', budget.id);
 
           if (error) throw error;
+        }
+
+        // Actualizar presupuestos de subcategorías
+        if (budget.subcategories) {
+          for (const subcat of budget.subcategories) {
+            const newSubAmount = Number(editedSubcategoryBudgets[subcat.id] || 0);
+            
+            if (subcat.budget_id) {
+              // Actualizar presupuesto existente
+              if (newSubAmount !== Number(subcat.monthly_budget)) {
+                const { error } = await supabase
+                  .from('category_budgets')
+                  .update({ monthly_budget: newSubAmount })
+                  .eq('id', subcat.budget_id);
+
+                if (error) throw error;
+              }
+            } else if (newSubAmount > 0) {
+              // Crear nuevo presupuesto para subcategoría
+              const { error } = await supabase
+                .from('category_budgets')
+                .insert({
+                  user_id: user.id,
+                  category_id: subcat.id,
+                  monthly_budget: newSubAmount
+                });
+
+              if (error) throw error;
+            }
+          }
         }
       }
 
@@ -212,10 +297,11 @@ export default function EditBudgets() {
 
                   {/* Panel expandido para editar */}
                   {expandedCategory === budget.category_id && (
-                    <div className="ml-4 pl-4 border-l-2 border-primary/20 py-2 animate-fade-in">
+                    <div className="ml-4 pl-4 border-l-2 border-primary/20 py-2 animate-fade-in space-y-2">
+                      {/* Monto de categoría principal */}
                       <div className="bg-gradient-to-r from-gray-50 to-white rounded-[12px] p-3 border border-gray-200">
                         <p className="text-[10px] font-semibold text-foreground mb-2">
-                          Ajusta el monto mensual
+                          Presupuesto total de la categoría
                         </p>
                         
                         <div className="relative mb-3">
@@ -253,6 +339,39 @@ export default function EditBudgets() {
                           </Button>
                         </div>
                       </div>
+
+                      {/* Subcategorías */}
+                      {budget.subcategories && budget.subcategories.length > 0 && (
+                        <div className="space-y-1.5">
+                          <p className="text-[9px] text-muted-foreground font-semibold mb-1">
+                            Subcategorías
+                          </p>
+                          {budget.subcategories.map((subcat) => (
+                            <div key={subcat.id} className="bg-gray-50 rounded-lg px-3 py-2">
+                              <div className="flex items-center justify-between gap-2 mb-1">
+                                <p className="text-[10px] font-medium text-foreground">{subcat.name}</p>
+                              </div>
+                              <div className="relative">
+                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-muted-foreground">$</span>
+                                <Input
+                                  type="text"
+                                  inputMode="numeric"
+                                  placeholder="0"
+                                  value={formatCurrency(editedSubcategoryBudgets[subcat.id] || "0")}
+                                  onChange={(e) => {
+                                    const cleanValue = e.target.value.replace(/[^\d]/g, '');
+                                    setEditedSubcategoryBudgets(prev => ({
+                                      ...prev,
+                                      [subcat.id]: cleanValue
+                                    }));
+                                  }}
+                                  className="h-8 text-sm text-center bg-white border-gray-200 pl-6"
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
