@@ -774,6 +774,9 @@ Ejemplo formato:
       .select('*, categories(id, name)')
       .eq('user_id', userId);
     
+    console.log('📊 PRESUPUESTOS ENCONTRADOS:', userBudgets?.length || 0);
+    console.log('💰 GASTOS POR CATEGORÍA:', expensesByCategory);
+    
     let categoryBudgets: any[] = [];
     let hasBudgets = false;
     
@@ -785,6 +788,8 @@ Ejemplo formato:
         const categoryName = budget.categories?.name || 'Sin categoría';
         const spent = expensesByCategory[categoryName] || 0;
         const monthlyBudget = Number(budget.monthly_budget);
+        
+        console.log(`📊 Presupuesto para "${categoryName}": gastado=$${spent}, presupuesto=$${monthlyBudget}`);
         
         return {
           name: categoryName,
