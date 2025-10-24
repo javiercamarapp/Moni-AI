@@ -765,6 +765,13 @@ export default function FinancialAnalysis() {
               indicators={analysis?.riskIndicators || []}
             />
 
+            {/* Liquidez de Emergencia */}
+            <LiquidityGaugeWidget 
+              months={analysis?.metrics?.liquidityMonths || 0}
+              liquidAssets={analysis?.metrics?.totalLiquidAssets ?? 0}
+              monthlyExpenses={analysis?.metrics?.totalExpenses ?? 0}
+            />
+
             {/* Proyección Anual removida - se moverá a página de proyecciones */}
 
             {/* Análisis AI */}
@@ -919,13 +926,6 @@ export default function FinancialAnalysis() {
                 </Button>
               </div>
             </div>
-
-            {/* Liquidez de Emergencia */}
-            <LiquidityGaugeWidget 
-              months={analysis?.metrics?.liquidityMonths || 0}
-              liquidAssets={analysis?.metrics?.totalLiquidAssets ?? 0}
-              monthlyExpenses={analysis?.metrics?.totalExpenses ?? 0}
-            />
 
             {/* Control de Gastos - Compacto */}
             <div className="space-y-2">
