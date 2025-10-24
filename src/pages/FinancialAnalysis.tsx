@@ -1074,7 +1074,7 @@ export default function FinancialAnalysis() {
               </DialogTrigger>
               <DialogContent className="max-w-[280px] bg-white/95 backdrop-blur-xl border border-blue-100 shadow-2xl rounded-[20px]">
                 <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2 text-foreground">
+                  <DialogTitle className="flex items-center gap-2 text-foreground text-sm">
                     <BarChart3 className="h-4 w-4" />
                     Análisis Completo Moni AI
                   </DialogTitle>
