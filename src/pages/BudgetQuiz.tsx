@@ -997,9 +997,9 @@ export default function BudgetQuiz() {
                             type="number"
                             value={budgets[catId] || 0}
                             onChange={(e) => updateBudget(catId, e.target.value)}
-                            className="w-24 h-8 text-right text-xs font-bold"
+                            className="w-24 h-10 text-right text-sm font-bold bg-gradient-to-br from-white to-blue-50 border-2 border-blue-200 rounded-[12px] shadow-md focus:border-primary focus:ring-2 focus:ring-primary/30 focus:shadow-lg transition-all hover:shadow-xl"
                           />
-                          <p className="text-[9px] text-muted-foreground mt-0.5">
+                          <p className="text-base font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mt-1 animate-pulse">
                             {budgetPercentage.toFixed(1)}%
                           </p>
                         </div>
