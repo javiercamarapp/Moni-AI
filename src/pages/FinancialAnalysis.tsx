@@ -619,50 +619,41 @@ export default function FinancialAnalysis() {
 
   return (
     <>
-      <div className="min-h-screen animated-wave-bg pb-24">
-        <div className="mx-4 space-y-4">
-          {/* Banner del Logo - Siempre visible */}
-          <div className="flex items-center justify-center pt-8 pb-4">
-            <img 
-              src={moniAiLogo} 
-              alt="Moni AI" 
-              className="h-12 w-auto"
-            />
-          </div>
-
-          {/* Mostrar contenido solo cuando NO esté cargando */}
-          {!loading ? (
-            <>
-              {/* Header */}
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h1 className="text-xl font-bold text-foreground">
-                    Análisis Financiero
-                  </h1>
-                  <p className="text-xs text-muted-foreground">
-                    {period === 'month' ? 'Mes actual' : 'Año completo'}
-                  </p>
-                </div>
-                <Tabs value={period} onValueChange={setPeriod}>
-                  <TabsList className="h-10 bg-white rounded-[20px] shadow-xl border border-blue-100">
-                    <TabsTrigger 
-                      value="month" 
-                      className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-[16px] transition-all"
-                    >
-                      Mes
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="year" 
-                      className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-[16px] transition-all"
-                    >
-                      Año
-                    </TabsTrigger>
-                  </TabsList>
-                </Tabs>
+      {loading ? (
+        <AIAnalysisLoader message="Está analizando tus transacciones" fullScreen={true} />
+      ) : (
+        <div className="min-h-screen animated-wave-bg pb-24">
+          <div className="mx-4 space-y-4">
+            {/* Header */}
+            <div className="flex items-center justify-between pt-4 mb-4">
+              <div>
+                <h1 className="text-xl font-bold text-foreground">
+                  Análisis Financiero
+                </h1>
+                <p className="text-xs text-muted-foreground">
+                  {period === 'month' ? 'Mes actual' : 'Año completo'}
+                </p>
               </div>
+              <Tabs value={period} onValueChange={setPeriod}>
+                <TabsList className="h-10 bg-white rounded-[20px] shadow-xl border border-blue-100">
+                  <TabsTrigger 
+                    value="month" 
+                    className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-[16px] transition-all"
+                  >
+                    Mes
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="year" 
+                    className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-[16px] transition-all"
+                  >
+                    Año
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
 
-              {/* Mostrar métricas instantáneas (siempre disponibles del caché) */}
-              {(quickMetrics || analysis) ? (
+            {/* Mostrar métricas instantáneas (siempre disponibles del caché) */}
+            {(quickMetrics || analysis) ? (
           <>
             {/* Animated Income & Expense Card */}
             <Card 
@@ -1221,10 +1212,9 @@ export default function FinancialAnalysis() {
             <p className="text-muted-foreground">No hay datos disponibles para mostrar</p>
           </Card>
         )}
-          </>
-        ) : null}
+          </div>
         </div>
-      </div>
+      )}
       <BottomNav />
     </>
   );

@@ -1,9 +1,18 @@
 import { motion } from "motion/react";
 import moniLogo from "@/assets/moni-ai-logo-black.png";
 
-export function AIAnalysisLoader() {
+interface AIAnalysisLoaderProps {
+  message?: string;
+  fullScreen?: boolean;
+}
+
+export function AIAnalysisLoader({ message = "Analizando...", fullScreen = false }: AIAnalysisLoaderProps) {
+  const containerClass = fullScreen 
+    ? "fixed inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center overflow-hidden z-50"
+    : "w-full bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center overflow-hidden relative rounded-[20px] py-12";
+
   return (
-    <div className="w-full bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center overflow-hidden relative rounded-[20px] py-12">
+    <div className={containerClass}>
       {/* Animated background circles */}
       <motion.div
         className="absolute inset-0"
@@ -55,7 +64,7 @@ export function AIAnalysisLoader() {
             ease: "easeInOut",
           }}
         />
-        <p className="text-sm text-foreground/60 animate-pulse">Analizando...</p>
+        <p className="text-sm text-foreground/60 animate-pulse">{message}</p>
       </div>
     </div>
   );
