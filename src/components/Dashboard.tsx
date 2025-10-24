@@ -1132,104 +1132,72 @@ const Dashboard = () => {
         />
 
         {/* Presupuesto Mensual */}
-        <Card className="p-4 bg-gradient-to-br from-[hsl(30,25%,94%)] via-[hsl(30,22%,92%)] to-[hsl(30,20%,90%)] rounded-[20px] shadow-xl border border-[hsl(30,15%,85%)] relative overflow-hidden hover:scale-[1.02] transition-all duration-300">
-          {/* Fondo decorativo sutil */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(30,30%,88%)]/30 via-transparent to-[hsl(30,25%,85%)]/20 opacity-50" />
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-radial from-[hsl(35,35%,75%)]/10 to-transparent rounded-full blur-2xl" />
-          
-          <div className="space-y-2 relative z-10">
+        <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden">
+          <div className="space-y-1.5 relative z-10">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-xs font-bold text-[hsl(30,20%,30%)] leading-tight flex items-center gap-1.5">
-                  <span className="text-base">💰</span>
-                  <span>Presupuesto Mensual</span>
-                </h3>
-                <p className="text-[10px] text-[hsl(30,15%,45%)] font-medium break-words leading-tight mt-0.5">
+                <h3 className="text-xs font-bold text-foreground leading-tight">💰 Presupuesto Mensual</h3>
+                <p className="text-[10px] text-foreground/80 font-medium break-words leading-tight">
                   {totalBudget > 0 ? (
-                    <>
-                      <span className="font-semibold text-[hsl(30,20%,35%)]">${currentMonthExpenses.toLocaleString('es-MX', { minimumFractionDigits: 0 })}</span>
-                      <span className="text-[hsl(30,10%,55%)]"> de </span>
-                      <span className="font-semibold text-[hsl(30,20%,40%)]">${totalBudget.toLocaleString('es-MX', { minimumFractionDigits: 0 })}</span>
-                    </>
+                    <>Gastado: ${currentMonthExpenses.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} de ${totalBudget.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</>
                   ) : (
-                    <span className="text-[hsl(30,15%,50%)]">No hay presupuesto configurado</span>
+                    <>No hay presupuesto configurado</>
                   )}
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-xl font-black bg-gradient-to-br from-[hsl(30,25%,40%)] to-[hsl(30,30%,50%)] bg-clip-text text-transparent leading-tight">
+                <p className="text-lg font-black text-foreground leading-tight">
                   {totalBudget > 0 ? ((currentMonthExpenses / totalBudget) * 100).toFixed(0) : 0}%
                 </p>
-                <p className="text-[9px] text-[hsl(30,15%,50%)] font-semibold leading-tight">del presupuesto</p>
+                <p className="text-[9px] text-foreground/70 font-semibold leading-tight">del presupuesto</p>
               </div>
             </div>
             
-            <div className="relative pt-1">
-              <div className="h-3 rounded-full bg-gradient-to-r from-[hsl(30,15%,82%)] via-[hsl(30,12%,80%)] to-[hsl(30,15%,78%)] border border-[hsl(30,20%,75%)]/40 overflow-hidden shadow-inner relative">
-                {/* Efectos de brillo en el fondo */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
-                
+            <div className="relative">
+              <div className="h-4 rounded-full bg-gradient-to-r from-[hsl(220,60%,10%)] to-[hsl(240,55%,8%)] border border-white/10 overflow-hidden shadow-inner">
                 <div 
                   className={`h-full rounded-full relative overflow-hidden transition-all duration-1000 ease-out ${
                     totalBudget > 0 && (currentMonthExpenses / totalBudget) * 100 > 90 
-                      ? 'bg-gradient-to-r from-[hsl(0,50%,45%)] via-[hsl(5,55%,50%)] to-[hsl(0,50%,45%)]' 
+                      ? 'bg-gradient-to-r from-[hsl(0,50%,40%)] via-[hsl(5,55%,45%)] to-[hsl(0,50%,40%)]' 
                       : totalBudget > 0 && (currentMonthExpenses / totalBudget) * 100 > 75 
-                      ? 'bg-gradient-to-r from-[hsl(35,60%,50%)] via-[hsl(38,65%,55%)] to-[hsl(35,60%,50%)]' 
-                      : 'bg-gradient-to-r from-[hsl(30,35%,50%)] via-[hsl(32,40%,55%)] to-[hsl(30,35%,50%)]'
+                      ? 'bg-gradient-to-r from-[hsl(30,45%,45%)] via-[hsl(32,50%,50%)] to-[hsl(30,45%,45%)]' 
+                      : 'bg-gradient-to-r from-[hsl(25,35%,35%)] via-[hsl(28,40%,42%)] to-[hsl(25,35%,35%)]'
                   }`}
                   style={{ 
                     width: `${totalBudget > 0 ? Math.min((currentMonthExpenses / totalBudget) * 100, 100) : 0}%`,
                     boxShadow: totalBudget > 0 && (currentMonthExpenses / totalBudget) * 100 > 90 
-                      ? '0 2px 12px hsla(0, 50%, 45%, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)' 
+                      ? '0 2px 12px hsla(0, 50%, 40%, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
                       : totalBudget > 0 && (currentMonthExpenses / totalBudget) * 100 > 75 
-                      ? '0 2px 12px hsla(35, 60%, 50%, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)' 
-                      : '0 2px 12px hsla(30, 35%, 50%, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+                      ? '0 2px 12px hsla(30, 45%, 45%, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
+                      : '0 2px 12px hsla(25, 35%, 35%, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
                   }}
                 >
-                  {/* Efecto de brillo superior */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-transparent" />
-                  {/* Animación de movimiento sutil */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-transparent" />
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-[slideIn_2s_ease-in-out_infinite]" />
                 </div>
               </div>
             </div>
             
-            <div className="mt-1 pt-2 border-t border-[hsl(30,20%,85%)]/50">
-              <p className="text-[10px] text-[hsl(30,20%,40%)] text-center font-semibold min-h-[18px] flex items-center justify-center leading-tight">
-                {totalBudget === 0 ? (
-                  <Button
-                    onClick={() => navigate('/budget-quiz')}
-                    variant="ghost"
-                    className="text-[10px] h-auto py-1 px-3 text-[hsl(30,30%,45%)] hover:text-[hsl(30,35%,40%)] hover:bg-[hsl(30,25%,88%)] rounded-full transition-all"
-                  >
-                    <span className="mr-1">✨</span> Configura tu presupuesto
-                  </Button>
-                ) : loadingBudgetMessage ? (
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="inline-block animate-spin rounded-full h-2.5 w-2.5 border-b-2 border-[hsl(30,30%,45%)]"></span>
-                    <span className="text-[hsl(30,20%,45%)]">Analizando patrón...</span>
-                  </span>
-                ) : (
-                  <span className={`inline-flex items-center gap-1 ${
-                    totalBudget > 0 && currentMonthExpenses <= totalBudget
-                      ? 'text-[hsl(30,30%,40%)]'
-                      : 'text-[hsl(0,45%,45%)]'
-                  }`}>
-                    {totalBudget > 0 && currentMonthExpenses <= totalBudget ? (
-                      <>
-                        <span className="text-xs">✓</span>
-                        <span>Quedan <span className="font-bold">${(totalBudget - currentMonthExpenses).toLocaleString('es-MX')}</span></span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-xs">⚠</span>
-                        <span>Excedido por <span className="font-bold">${(currentMonthExpenses - totalBudget).toLocaleString('es-MX')}</span></span>
-                      </>
-                    )}
-                  </span>
-                )}
-              </p>
-            </div>
+            <p className="text-[10px] text-foreground/80 text-center font-semibold min-h-[20px] flex items-center justify-center leading-tight">
+              {totalBudget === 0 ? (
+                <Button
+                  onClick={() => navigate('/budget-quiz')}
+                  variant="ghost"
+                  className="text-[10px] h-auto py-1 px-2 text-primary hover:text-primary/80"
+                >
+                  👉 Configura tu presupuesto aquí
+                </Button>
+              ) : loadingBudgetMessage ? (
+                <span className="inline-flex items-center gap-1">
+                  <span className="inline-block animate-spin rounded-full h-2 w-2 border-b-2 border-foreground"></span>
+                  Analizando patrón...
+                </span>
+              ) : (
+                totalBudget > 0 && currentMonthExpenses <= totalBudget
+                  ? `✅ Quedan $${(totalBudget - currentMonthExpenses).toLocaleString('es-MX')} disponibles`
+                  : `⚠️ Has excedido el presupuesto por $${(currentMonthExpenses - totalBudget).toLocaleString('es-MX')}`
+              )}
+            </p>
           </div>
         </Card>
 
