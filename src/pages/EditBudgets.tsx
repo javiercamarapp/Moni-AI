@@ -410,53 +410,11 @@ export default function EditBudgets() {
                   {/* Panel expandido para editar */}
                   {expandedCategory === budget.category_id && (
                     <div className="ml-4 pl-4 border-l-2 border-primary/20 py-2 animate-fade-in space-y-2">
-                      {/* Monto de categoría principal */}
-                      <div className="bg-gradient-to-r from-gray-50 to-white rounded-[12px] p-3 border border-gray-200">
-                        <p className="text-[10px] font-semibold text-foreground mb-2">
-                          Presupuesto total de la categoría
-                        </p>
-                        
-                        <div className="relative mb-3">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg font-bold text-muted-foreground">$</span>
-                          <Input
-                            type="text"
-                            inputMode="numeric"
-                            placeholder="0"
-                            value={formatCurrency(editedBudgets[budget.category_id] || "0")}
-                            onChange={(e) => handleAmountChange(budget.category_id, e.target.value)}
-                            className="text-xl text-center font-bold h-12 rounded-[10px] border-2 border-primary/20 pl-8 bg-white"
-                          />
-                        </div>
-
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={() => {
-                              setExpandedCategory(null);
-                            }}
-                            className="flex-1 h-8 text-[10px] bg-primary hover:bg-primary/90 text-white rounded-[8px] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all"
-                          >
-                            Listo
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              setEditedBudgets(prev => ({
-                                ...prev,
-                                [budget.category_id]: String(Number(budget.monthly_budget))
-                              }));
-                            }}
-                            variant="outline"
-                            className="flex-1 h-8 text-[10px] rounded-[8px] border-gray-300 hover:bg-gray-50"
-                          >
-                            Restaurar
-                          </Button>
-                        </div>
-                      </div>
-
                       {/* Subcategorías */}
                       {budget.subcategories && budget.subcategories.length > 0 && (
                         <div className="space-y-1.5">
                           <p className="text-[9px] text-muted-foreground font-semibold mb-1">
-                            Subcategorías
+                            Desglose por concepto
                           </p>
                           {budget.subcategories.map((subcat) => (
                             <div key={subcat.id} className="bg-gray-50 rounded-lg px-3 py-2">
@@ -484,6 +442,30 @@ export default function EditBudgets() {
                           ))}
                         </div>
                       )}
+
+                      {/* Botones de acción */}
+                      <div className="flex gap-2 pt-2">
+                        <Button
+                          onClick={async () => {
+                            // Guardar cambios de esta categoría
+                            await handleSave();
+                            setExpandedCategory(null);
+                          }}
+                          className="flex-1 h-8 text-[10px] bg-primary hover:bg-primary/90 text-white rounded-[8px] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all"
+                        >
+                          <Save className="h-3 w-3 mr-1" />
+                          Guardar
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setExpandedCategory(null);
+                          }}
+                          variant="outline"
+                          className="flex-1 h-8 text-[10px] rounded-[8px] border-gray-300 hover:bg-gray-50"
+                        >
+                          Listo
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </div>
