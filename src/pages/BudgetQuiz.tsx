@@ -736,7 +736,6 @@ export default function BudgetQuiz() {
                             <Button
                               onClick={() => {
                                 setBudgets({ ...budgets, [category.id]: categoryEstimates[category.id] });
-                                toast.success("Estimación aplicada");
                               }}
                               className="w-full h-7 text-[10px] bg-primary hover:bg-primary/90 text-white rounded-[8px] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all"
                             >
