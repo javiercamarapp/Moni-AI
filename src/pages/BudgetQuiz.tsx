@@ -701,9 +701,20 @@ export default function BudgetQuiz() {
                             </p>
                             <Button
                               onClick={() => {
+                                // Quitar el presupuesto de la categoría
                                 const newBudgets = { ...budgets };
                                 delete newBudgets[category.id];
                                 setBudgets(newBudgets);
+                                
+                                // Limpiar los montos de las subcategorías
+                                const newSubcategoryBudgets = { ...subcategoryBudgets };
+                                category.subcategories.forEach(sub => {
+                                  delete newSubcategoryBudgets[sub.id];
+                                });
+                                setSubcategoryBudgets(newSubcategoryBudgets);
+                                
+                                // Quitar la categoría de las seleccionadas
+                                setSelectedCategories(selectedCategories.filter(id => id !== category.id));
                               }}
                               variant="outline"
                               className="w-full h-8 text-[10px] rounded-[8px] border-destructive/50 text-destructive hover:bg-destructive/10"
