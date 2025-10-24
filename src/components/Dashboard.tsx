@@ -1126,7 +1126,7 @@ const Dashboard = () => {
               <div className="flex-1 min-w-0 text-center sm:text-left">
                 <p className="text-[9px] sm:text-xs text-foreground/80 leading-tight">Presupuestos</p>
                 <p className="text-xs sm:text-base font-bold text-foreground leading-tight">
-                  ${(monthlyIncome / 1000).toFixed(0)}k
+                  ${totalBudget > 0 ? (totalBudget / 1000).toFixed(0) : 0}k
                 </p>
               </div>
             </div>
