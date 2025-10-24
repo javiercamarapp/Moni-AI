@@ -257,7 +257,7 @@ export default function Logros() {
         </div>
 
         {/* Grid de logros */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           {allBadges.map((badge, index) => {
             const isUnlocked = currentLevel >= badge.level;
             
@@ -270,7 +270,7 @@ export default function Logros() {
               >
                 <Card 
                   className={`
-                    p-4 rounded-[20px] transition-all duration-300 overflow-hidden relative
+                    p-2 rounded-[16px] transition-all duration-300 overflow-hidden relative
                     ${isUnlocked 
                       ? 'bg-white/70 backdrop-blur-xl shadow-lg border border-gray-200/50 hover:shadow-xl hover:scale-105 cursor-pointer' 
                       : 'bg-white/40 backdrop-blur-md shadow-md border border-gray-300/30 opacity-70'
@@ -282,25 +282,25 @@ export default function Logros() {
                     <div className={`absolute inset-0 bg-gradient-to-br ${badge.color} opacity-10 pointer-events-none`} />
                   )}
                   
-                  <div className="flex flex-col items-center text-center gap-2 relative z-10">
+                  <div className="flex flex-col items-center text-center gap-1 relative z-10">
                     {/* Icono */}
                     <div className={`
-                      w-16 h-16 rounded-full flex items-center justify-center transition-all
+                      w-10 h-10 rounded-full flex items-center justify-center transition-all
                       ${isUnlocked 
-                        ? `bg-gradient-to-br ${badge.color} shadow-lg` 
-                        : 'bg-gray-200 shadow-md'
+                        ? `bg-gradient-to-br ${badge.color} shadow-md` 
+                        : 'bg-gray-200 shadow-sm'
                       }
                     `}>
                       {isUnlocked ? (
-                        <span className="text-4xl">{badge.emoji}</span>
+                        <span className="text-2xl">{badge.emoji}</span>
                       ) : (
-                        <Lock className="w-8 h-8 text-gray-400" />
+                        <Lock className="w-5 h-5 text-gray-400" />
                       )}
                     </div>
 
                     {/* Nombre */}
                     <h3 className={`
-                      text-sm font-bold leading-tight
+                      text-[10px] font-bold leading-tight
                       ${isUnlocked ? 'text-foreground' : 'text-gray-500'}
                     `}>
                       {badge.name}
@@ -308,7 +308,7 @@ export default function Logros() {
 
                     {/* Nivel */}
                     <p className={`
-                      text-xs font-medium
+                      text-[8px] font-medium
                       ${isUnlocked ? 'text-muted-foreground' : 'text-gray-400'}
                     `}>
                       Nivel {badge.level}
@@ -316,7 +316,7 @@ export default function Logros() {
 
                     {/* Badge de estado */}
                     <div className={`
-                      px-2.5 py-1 rounded-full text-[10px] font-semibold shadow-sm
+                      px-1.5 py-0.5 rounded-full text-[7px] font-semibold shadow-sm
                       ${isUnlocked 
                         ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' 
                         : 'bg-gray-200 text-gray-500'
@@ -327,7 +327,7 @@ export default function Logros() {
 
                     {/* Porcentaje */}
                     {isUnlocked && (
-                      <p className="text-xs text-foreground/70 font-medium mt-1">
+                      <p className="text-[8px] text-foreground/70 font-medium">
                         {badge.growthPercentage}% alcanzado
                       </p>
                     )}
