@@ -434,6 +434,19 @@ export default function BudgetQuiz() {
       console.log('Budgets actuales:', budgets);
       console.log('Subcategory budgets:', subcategoryBudgets);
       
+      // ELIMINAR TODOS LOS PRESUPUESTOS EXISTENTES DEL USUARIO
+      console.log('Eliminando todos los presupuestos anteriores del usuario...');
+      const { error: deleteError } = await supabase
+        .from('category_budgets')
+        .delete()
+        .eq('user_id', user.id);
+      
+      if (deleteError) {
+        console.error('Error eliminando presupuestos anteriores:', deleteError);
+        throw deleteError;
+      }
+      console.log('Presupuestos anteriores eliminados exitosamente');
+      
       // Para cada categoría seleccionada, buscar o crear la categoría en la BD
       for (const categoryId of selectedCategories) {
         const categoryData = DEFAULT_CATEGORIES.find(c => c.id === categoryId);
@@ -466,13 +479,6 @@ export default function BudgetQuiz() {
         } else {
           console.log('Categoría ya existe:', existingCategory);
         }
-
-        // Eliminar presupuesto existente si lo hay
-        await supabase
-          .from('category_budgets')
-          .delete()
-          .eq('user_id', user.id)
-          .eq('category_id', existingCategory.id);
 
         // Crear el nuevo presupuesto
         console.log('Insertando presupuesto en DB:', {
