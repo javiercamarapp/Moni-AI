@@ -166,6 +166,7 @@ export default function BudgetQuiz() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [budgets, setBudgets] = useState<Record<string, number>>({});
+  const [subcategoryBudgets, setSubcategoryBudgets] = useState<Record<string, number>>({});
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [userCategories, setUserCategories] = useState<any[]>([]);
@@ -417,6 +418,20 @@ export default function BudgetQuiz() {
     }
   };
 
+  const updateSubcategoryBudget = (subcategoryId: string, value: string) => {
+    const numValue = Number(value.replace(/,/g, ''));
+    if (!isNaN(numValue) && numValue >= 0) {
+      setSubcategoryBudgets({ ...subcategoryBudgets, [subcategoryId]: numValue });
+    }
+  };
+
+  const formatCurrency = (value: number): string => {
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value);
+  };
+
   const totalBudget = Object.values(budgets).reduce((sum, val) => sum + val, 0);
   const percentageOfIncome = monthlyIncome ? (totalBudget / Number(monthlyIncome)) * 100 : 0;
 
@@ -608,10 +623,28 @@ export default function BudgetQuiz() {
                         <p className="text-[9px] text-muted-foreground italic mb-2">
                           💡 {category.insight}
                         </p>
-                        <div className="space-y-1">
+                        <div className="space-y-1.5">
                           {category.subcategories.map(sub => (
-                            <div key={sub.id} className="text-[10px] text-foreground bg-gray-50 rounded-lg px-2 py-1.5">
-                              • {sub.name}
+                            <div key={sub.id} className="bg-gray-50 rounded-lg px-2 py-2">
+                              <div className="flex items-center justify-between gap-2">
+                                <span className="text-[10px] text-foreground flex-1">
+                                  • {sub.name}
+                                </span>
+                                <div className="relative flex items-center">
+                                  <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
+                                  <Input
+                                    type="text"
+                                    inputMode="numeric"
+                                    placeholder="0.00"
+                                    value={subcategoryBudgets[sub.id] ? formatCurrency(subcategoryBudgets[sub.id]) : ""}
+                                    onChange={(e) => {
+                                      const value = e.target.value.replace(/[^\d]/g, '');
+                                      updateSubcategoryBudget(sub.id, value);
+                                    }}
+                                    className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2"
+                                  />
+                                </div>
+                              </div>
                             </div>
                           ))}
                         </div>
