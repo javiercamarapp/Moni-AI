@@ -609,7 +609,10 @@ export default function FinancialAnalysis() {
               <Card 
                 className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer transition-all" 
                 style={{ animationDelay: '0ms' }}
-                onClick={() => navigate('/balance')}
+                onClick={() => {
+                  localStorage.setItem('balanceViewMode', 'mensual');
+                  navigate('/balance');
+                }}
               >
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs font-semibold text-primary">📅 Mes Actual</p>
@@ -698,7 +701,10 @@ export default function FinancialAnalysis() {
               <Card 
                 className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer transition-all" 
                 style={{ animationDelay: '100ms' }}
-                onClick={() => navigate('/balance')}
+                onClick={() => {
+                  localStorage.setItem('balanceViewMode', 'anual');
+                  navigate('/balance');
+                }}
               >
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs font-semibold text-purple-600">📊 Año Completo</p>
