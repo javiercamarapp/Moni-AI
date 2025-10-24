@@ -116,7 +116,7 @@ const DEFAULT_SUBCATEGORIES: Record<string, { id: string; name: string }[]> = {
   'apoyos y otros': [
     { id: 'apoyo_familiar', name: 'Apoyo familiar / hijos / pareja' },
     { id: 'donaciones', name: 'Donaciones' },
-    { id: 'mascotas', name: 'Mascotas' },
+    { id: 'mascotas_otros', name: 'Mascotas' },
     { id: 'otros', name: 'Otros gastos no clasificados' },
   ],
 };
