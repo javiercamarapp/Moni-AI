@@ -195,59 +195,44 @@ export default function Budgets() {
         ) : (
           <>
             {/* Resumen General */}
-            <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] active:scale-[0.98] transition-all animate-fade-in">
-              <div className="space-y-4">
+            <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] active:scale-[0.98] transition-all animate-fade-in">
+              <div className="space-y-2">
                 <div className="text-center">
-                  <div className="text-3xl mb-2">💰</div>
-                  <p className="text-sm font-bold text-foreground mb-0.5">Resumen del Mes</p>
-                  <p className="text-[10px] text-muted-foreground">Tu salud financiera en tiempo real</p>
+                  <div className="text-xl">💰</div>
+                  <p className="text-[11px] font-bold text-foreground">Resumen del Mes</p>
                 </div>
 
                 {/* Métricas principales */}
-                <div className="grid grid-cols-2 gap-2.5">
-                  <div className="bg-white/10 backdrop-blur-sm rounded-[15px] p-3 border-2 border-white/20 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all">
-                    <div className="flex flex-col items-center gap-1.5 text-center">
-                      <TrendingUp className="h-5 w-5 text-success" />
-                      <span className="text-[9px] text-muted-foreground font-medium">Ingresos</span>
-                      <p className="text-xl font-bold text-success">
-                        ${(monthlyIncome / 1000).toFixed(0)}k
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white/10 backdrop-blur-sm rounded-[15px] p-3 border-2 border-white/20 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all">
-                    <div className="flex flex-col items-center gap-1.5 text-center">
-                      <Target className="h-5 w-5 text-primary" />
-                      <span className="text-[9px] text-muted-foreground font-medium">Presupuesto</span>
-                      <p className="text-xl font-bold text-primary">
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-[12px] p-2 border-2 border-white/20 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all">
+                    <div className="flex flex-col items-center gap-0.5 text-center">
+                      <Target className="h-4 w-4 text-primary" />
+                      <span className="text-[8px] text-muted-foreground font-medium">Presupuestado</span>
+                      <p className="text-base font-bold text-primary">
                         ${(totalBudget / 1000).toFixed(0)}k
                       </p>
                     </div>
                   </div>
+                  
+                  <div className="bg-white/10 backdrop-blur-sm rounded-[12px] p-2 border-2 border-white/20 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all">
+                    <div className="flex flex-col items-center gap-0.5 text-center">
+                      <TrendingUp className="h-4 w-4 text-destructive" />
+                      <span className="text-[8px] text-muted-foreground font-medium">Gastado</span>
+                      <p className="text-base font-bold text-destructive">
+                        ${(Object.values(currentExpenses).reduce((sum, val) => sum + val, 0) / 1000).toFixed(0)}k
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Barra de ahorro */}
-                <div className="bg-white/10 backdrop-blur-sm rounded-[15px] p-3 space-y-2 border-2 border-white/20 shadow-lg">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-muted-foreground font-medium">Meta de Ahorro</span>
-                    <span className={`text-xs font-bold ${
-                      savingsPercentage >= 20 ? 'text-success' : 
-                      savingsPercentage >= 10 ? 'text-yellow-600' : 'text-destructive'
-                    }`}>
-                      {savingsPercentage.toFixed(0)}%
-                    </span>
-                  </div>
-                  <Progress 
-                    value={Math.min(savingsPercentage, 100)} 
-                    className="h-2.5"
-                  />
-                  <p className="text-[9px] text-center text-muted-foreground leading-tight">
-                    {savingsPercentage >= 20 
-                      ? '¡Excelente! Estás ahorrando muy bien' 
-                      : savingsPercentage >= 10
-                      ? 'Buen trabajo, sigue así'
-                      : 'Intenta ahorrar al menos el 10% de tus ingresos'
-                    }
+                {/* Disponible para gastar */}
+                <div className="bg-white/10 backdrop-blur-sm rounded-[12px] p-2 border-2 border-white/20 shadow-lg text-center">
+                  <span className="text-[8px] text-muted-foreground font-medium">Disponible</span>
+                  <p className={`text-lg font-bold ${remainingBudget >= 0 ? 'text-success' : 'text-destructive'}`}>
+                    ${Math.abs(remainingBudget).toLocaleString()}
+                  </p>
+                  <p className="text-[8px] text-muted-foreground">
+                    {remainingBudget >= 0 ? 'para gastar' : 'sobre presupuesto'}
                   </p>
                 </div>
               </div>
