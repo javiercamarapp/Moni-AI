@@ -360,28 +360,6 @@ export default function BudgetQuiz() {
                 </div>
               )}
               
-              <div className="space-y-2">
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-3xl font-bold text-muted-foreground">$</span>
-                  <Input
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="0.00"
-                    value={getDisplayValue()}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/[^\d]/g, '');
-                      setMonthlyIncome(value);
-                    }}
-                    onFocus={() => setIsEditing(true)}
-                    onBlur={() => setIsEditing(false)}
-                    className="text-3xl text-center font-bold h-16 rounded-[20px] border-2 border-blue-100 pl-12"
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Ingresa tu ingreso mensual neto aproximado
-                </p>
-              </div>
-
               {hasBankConnection && (
                 <Button
                   onClick={calculateAverageIncome}
