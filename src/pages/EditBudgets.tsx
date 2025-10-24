@@ -27,6 +27,19 @@ interface Subcategory {
   monthly_budget: number;
 }
 
+const MAIN_CATEGORIES = [
+  { name: 'Vivienda', icon: '🏠' },
+  { name: 'Transporte', icon: '🚗' },
+  { name: 'Alimentación', icon: '🍽️' },
+  { name: 'Servicios y suscripciones', icon: '🧾' },
+  { name: 'Salud y bienestar', icon: '🩺' },
+  { name: 'Educación y desarrollo', icon: '🎓' },
+  { name: 'Deudas y créditos', icon: '💳' },
+  { name: 'Entretenimiento y estilo de vida', icon: '🎉' },
+  { name: 'Ahorro e inversión', icon: '💸' },
+  { name: 'Apoyos y otros', icon: '🤝' },
+];
+
 const CATEGORY_ICONS: Record<string, string> = {
   'vivienda': '🏠',
   'transporte': '🚗',
@@ -280,11 +293,26 @@ export default function EditBudgets() {
       // Actualizar presupuestos de categorías principales
       for (const budget of budgets) {
         const newAmount = Number(editedBudgets[budget.category_id] || 0);
-        if (newAmount !== Number(budget.monthly_budget)) {
+        
+        if (budget.id) {
+          // Si ya existe el presupuesto, actualizarlo si cambió
+          if (newAmount !== Number(budget.monthly_budget)) {
+            const { error } = await supabase
+              .from('category_budgets')
+              .update({ monthly_budget: newAmount })
+              .eq('id', budget.id);
+
+            if (error) throw error;
+          }
+        } else if (newAmount > 0) {
+          // Si no existe y el monto es mayor a 0, crear el presupuesto
           const { error } = await supabase
             .from('category_budgets')
-            .update({ monthly_budget: newAmount })
-            .eq('id', budget.id);
+            .insert({
+              user_id: user.id,
+              category_id: budget.category_id,
+              monthly_budget: newAmount
+            });
 
           if (error) throw error;
         }
