@@ -719,7 +719,7 @@ export default function BudgetQuiz() {
                               variant="outline"
                               className="w-full h-8 text-[10px] rounded-[8px] border-destructive/50 text-destructive hover:bg-destructive/10"
                             >
-                              Quitar presupuesto
+                              {budgets[category.id] === categoryEstimates[category.id] ? 'Quitar estimación IA' : 'Quitar presupuesto'}
                             </Button>
                           </div>
                         )}
