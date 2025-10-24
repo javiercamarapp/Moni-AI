@@ -777,6 +777,64 @@ Ejemplo formato:
     console.log('📊 PRESUPUESTOS ENCONTRADOS:', userBudgets?.length || 0);
     console.log('💰 GASTOS POR CATEGORÍA:', expensesByCategory);
     
+    // Mapeo de categorías específicas a categorías de presupuesto
+    const categoryMapping: Record<string, string> = {
+      // Alimentación
+      'Supermercado': 'Alimentación',
+      'Rappi': 'Alimentación',
+      'Uber Eats': 'Alimentación',
+      'Restaurantes': 'Alimentación',
+      'Café': 'Alimentación',
+      
+      // Transporte
+      'Gasolina': 'Transporte',
+      'Uber': 'Transporte',
+      'Estacionamiento': 'Transporte',
+      'Mantenimiento Auto': 'Transporte',
+      
+      // Vivienda
+      'Luz': 'Vivienda',
+      'Agua': 'Vivienda',
+      'Gas': 'Vivienda',
+      'Internet': 'Vivienda',
+      
+      // Servicios y suscripciones
+      'Netflix': 'Servicios y suscripciones',
+      'Spotify': 'Servicios y suscripciones',
+      'HBO Max': 'Servicios y suscripciones',
+      'Disney+': 'Servicios y suscripciones',
+      'Amazon Prime': 'Servicios y suscripciones',
+      'Teléfono': 'Servicios y suscripciones',
+      
+      // Salud y bienestar
+      'Farmacia': 'Salud y bienestar',
+      'Médico': 'Salud y bienestar',
+      'Dentista': 'Salud y bienestar',
+      'Gym': 'Salud y bienestar',
+      
+      // Entretenimiento y estilo de vida
+      'Cine': 'Entretenimiento y estilo de vida',
+      'Bar y Copas': 'Entretenimiento y estilo de vida',
+      'Night Club': 'Entretenimiento y estilo de vida',
+      'Conciertos': 'Entretenimiento y estilo de vida',
+      'Eventos': 'Entretenimiento y estilo de vida',
+      'Ropa': 'Entretenimiento y estilo de vida',
+      'Amazon': 'Entretenimiento y estilo de vida',
+      'Mercado Libre': 'Entretenimiento y estilo de vida',
+      
+      // Tecnología -> puede ir a Entretenimiento
+      'Tecnología': 'Entretenimiento y estilo de vida',
+    };
+    
+    // Agrupar gastos por categoría de presupuesto
+    const expensesByBudgetCategory: Record<string, number> = {};
+    Object.entries(expensesByCategory).forEach(([category, amount]) => {
+      const budgetCategory = categoryMapping[category] || category;
+      expensesByBudgetCategory[budgetCategory] = (expensesByBudgetCategory[budgetCategory] || 0) + amount;
+    });
+    
+    console.log('💰 GASTOS AGRUPADOS POR CATEGORÍA DE PRESUPUESTO:', expensesByBudgetCategory);
+    
     let categoryBudgets: any[] = [];
     let hasBudgets = false;
     
@@ -786,7 +844,7 @@ Ejemplo formato:
       // Para cada presupuesto configurado, calcular cuánto se gastó
       categoryBudgets = userBudgets.map(budget => {
         const categoryName = budget.categories?.name || 'Sin categoría';
-        const spent = expensesByCategory[categoryName] || 0;
+        const spent = expensesByBudgetCategory[categoryName] || 0;
         const monthlyBudget = Number(budget.monthly_budget);
         
         console.log(`📊 Presupuesto para "${categoryName}": gastado=$${spent}, presupuesto=$${monthlyBudget}`);
