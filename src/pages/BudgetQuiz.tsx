@@ -449,7 +449,7 @@ export default function BudgetQuiz() {
             .insert({
               user_id: user.id,
               name: categoryData.name,
-              type: 'expense',
+              type: 'gasto',
               color: 'bg-primary/20'
             })
             .select()
