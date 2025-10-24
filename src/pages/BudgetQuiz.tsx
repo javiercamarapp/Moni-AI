@@ -314,7 +314,7 @@ export default function BudgetQuiz() {
         <Button
           onClick={handleNext}
           disabled={loading}
-          className="w-full h-14 bg-white/20 backdrop-blur-xl border-2 border-white/30 hover:bg-white/30 text-white rounded-[20px] font-semibold text-lg shadow-2xl hover:shadow-blue-500/50 hover:scale-105 active:scale-95 transition-all"
+          className="w-full h-14 bg-blue-500/80 backdrop-blur-xl border-2 border-white/40 hover:bg-blue-600/80 text-white rounded-[20px] font-semibold text-lg shadow-2xl hover:shadow-blue-500/50 hover:scale-105 active:scale-95 transition-all"
         >
           {loading ? (
             "Guardando..."
