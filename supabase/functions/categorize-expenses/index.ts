@@ -59,8 +59,13 @@ const CATEGORY_DEFINITIONS = {
   },
   'apoyos': {
     name: 'Apoyos y otros',
-    subcategories: ['Apoyo familiar / hijos / pareja', 'Donaciones', 'Mascotas', 'Otros gastos no clasificados'],
-    keywords: ['apoyo', 'donacion', 'familia', 'mascota', 'veterinaria', 'transferencia']
+    subcategories: ['Apoyo familiar / hijos / pareja', 'Donaciones', 'Otros gastos no clasificados'],
+    keywords: ['apoyo', 'donacion', 'familia', 'transferencia']
+  },
+  'mascotas': {
+    name: 'Mascotas',
+    subcategories: ['Comida y snacks', 'Veterinario y medicinas', 'Accesorios y juguetes', 'Estética y cuidado', 'Seguro de mascotas'],
+    keywords: ['mascota', 'perro', 'gato', 'veterinaria', 'veterinario', 'pet', 'petco', 'pedigree', 'whiskas', 'royal canin', 'purina', 'estetica canina', 'peluqueria mascota', 'vacuna', 'desparasitante']
   }
 };
 
@@ -120,7 +125,7 @@ ${Object.entries(CATEGORY_DEFINITIONS).map(([id, def]) =>
   `- ${id}: ${def.name} (${def.keywords.join(', ')})`
 ).join('\n')}
 
-Para cada descripción, responde ÚNICAMENTE con el ID de la categoría (vivienda, transporte, alimentacion, servicios, salud, educacion, deudas, entretenimiento, ahorro, apoyos).
+Para cada descripción, responde ÚNICAMENTE con el ID de la categoría (vivienda, transporte, alimentacion, servicios, salud, educacion, deudas, entretenimiento, ahorro, apoyos, mascotas).
 Si no estás seguro, usa 'apoyos' como categoría por defecto.`;
 
     // Categorizar en lotes de 50 transacciones
