@@ -1040,21 +1040,21 @@ export default function BudgetQuiz() {
         
         {/* Dialog para editar subcategorías */}
         <Dialog open={editingCategoryId !== null} onOpenChange={(open) => !open && setEditingCategoryId(null)}>
-          <DialogContent className="max-w-md bg-white rounded-[20px] border-2 border-blue-100">
+          <DialogContent className="max-w-[340px] bg-white rounded-[20px] border border-blue-100 shadow-xl">
             <DialogHeader>
-              <DialogTitle className="text-xl font-bold text-center">
+              <DialogTitle className="text-sm font-bold text-center text-foreground">
                 {editingCategoryId && DEFAULT_CATEGORIES.find(c => c.id === editingCategoryId)?.icon} {editingCategoryId && DEFAULT_CATEGORIES.find(c => c.id === editingCategoryId)?.name}
               </DialogTitle>
             </DialogHeader>
-            <div className="space-y-3 max-h-[400px] overflow-y-auto py-2">
+            <div className="space-y-2 max-h-[320px] overflow-y-auto py-1">
               {editingCategoryId && DEFAULT_CATEGORIES.find(c => c.id === editingCategoryId)?.subcategories.map(sub => (
-                <div key={sub.id} className="p-3 bg-gradient-to-r from-blue-50 to-white rounded-[12px] border border-blue-100">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-xs font-medium text-foreground flex-1">
+                <div key={sub.id} className="p-2 bg-white rounded-[10px] border border-blue-100 shadow-sm">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] font-medium text-foreground flex-1">
                       • {sub.name}
                     </span>
                     <div className="relative flex items-center">
-                      <span className="absolute left-2 text-xs font-semibold text-muted-foreground">$</span>
+                      <span className="absolute left-2 text-[9px] font-semibold text-muted-foreground">$</span>
                       <Input
                         type="text"
                         inputMode="numeric"
@@ -1078,26 +1078,26 @@ export default function BudgetQuiz() {
                             }
                           }
                         }}
-                        className="w-28 h-9 text-xs text-right font-semibold pl-6 pr-2 bg-white border-2 border-blue-200 rounded-[10px] focus:border-primary focus:ring-2 focus:ring-primary/30"
+                        className="w-20 h-7 text-[10px] text-right font-semibold pl-4 pr-1 bg-white border border-blue-200 rounded-[8px] focus:border-primary focus:ring-1 focus:ring-primary/30"
                       />
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="pt-3 border-t border-blue-100">
-              <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-100 to-purple-100 rounded-[12px]">
-                <span className="text-sm font-bold text-foreground">Total</span>
-                <span className="text-lg font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <div className="pt-2 border-t border-blue-100">
+              <div className="flex items-center justify-between p-2 bg-primary/10 rounded-[10px]">
+                <span className="text-xs font-bold text-foreground">Total</span>
+                <span className="text-sm font-extrabold text-foreground">
                   ${editingCategoryId ? (budgets[editingCategoryId] || 0).toLocaleString() : 0}
                 </span>
               </div>
             </div>
             <Button
               onClick={() => setEditingCategoryId(null)}
-              className="w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-[12px] font-semibold shadow-lg"
+              className="w-full h-9 bg-white border-2 border-primary/20 hover:bg-primary/5 text-foreground rounded-[12px] font-semibold shadow-lg hover:scale-105 transition-all"
             >
-              <Check className="h-5 w-5 mr-2" />
+              <Check className="h-4 w-4 mr-1" />
               Guardar
             </Button>
           </DialogContent>
