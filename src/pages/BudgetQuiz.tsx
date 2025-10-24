@@ -724,59 +724,63 @@ export default function BudgetQuiz() {
                           </div>
                         )}
                         
-                        <div className="space-y-1.5">
-                          {category.subcategories.map(sub => (
-                            <div key={sub.id} className="bg-gray-50 rounded-lg px-2 py-2">
-                              <div className="flex items-center justify-between gap-2">
-                                <span className="text-[10px] text-foreground flex-1">
-                                  • {sub.name}
-                                </span>
-                                <div className="relative flex items-center">
-                                  <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
-                                  <Input
-                                    type="text"
-                                    inputMode="numeric"
-                                    placeholder="0"
-                                    value={subcategoryBudgets[sub.id] ? formatCurrency(subcategoryBudgets[sub.id]) : ""}
-                                    onChange={(e) => {
-                                      const value = e.target.value.replace(/[^\d]/g, '');
-                                      updateSubcategoryBudget(sub.id, value);
-                                    }}
-                                    className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-gray-50 border-gray-200"
-                                  />
+                        {!budgets[category.id] && (
+                          <>
+                            <div className="space-y-1.5">
+                              {category.subcategories.map(sub => (
+                                <div key={sub.id} className="bg-gray-50 rounded-lg px-2 py-2">
+                                  <div className="flex items-center justify-between gap-2">
+                                    <span className="text-[10px] text-foreground flex-1">
+                                      • {sub.name}
+                                    </span>
+                                    <div className="relative flex items-center">
+                                      <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
+                                      <Input
+                                        type="text"
+                                        inputMode="numeric"
+                                        placeholder="0"
+                                        value={subcategoryBudgets[sub.id] ? formatCurrency(subcategoryBudgets[sub.id]) : ""}
+                                        onChange={(e) => {
+                                          const value = e.target.value.replace(/[^\d]/g, '');
+                                          updateSubcategoryBudget(sub.id, value);
+                                        }}
+                                        className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-gray-50 border-gray-200"
+                                      />
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
-                        <Button
-                          onClick={() => {
-                            if (selectedCategories.includes(category.id)) {
-                              handleCategoryToggle(category.id);
-                            } else {
-                              // Sumar todos los montos de las subcategorías
-                              const subcategoryTotal = category.subcategories.reduce((sum, sub) => {
-                                return sum + (subcategoryBudgets[sub.id] || 0);
-                              }, 0);
-                              
-                              // Si hay un total de subcategorías, agregarlo al budget
-                              if (subcategoryTotal > 0) {
-                                setBudgets({ ...budgets, [category.id]: subcategoryTotal });
-                              }
-                              
-                              // Agregar la categoría
-                              handleCategoryToggle(category.id);
-                              setExpandedCategory(null);
-                            }
-                          }}
-                          className={`w-full mt-2 h-10 text-xs font-semibold rounded-[15px] shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all ${
-                            selectedCategories.includes(category.id)
-                              ? 'bg-destructive hover:bg-destructive/90 text-white'
-                              : 'bg-primary hover:bg-primary/90 text-white'
-                          }`}
-                        >
-                          {selectedCategories.includes(category.id) ? 'Quitar' : 'Agregar'}
-                        </Button>
+                            <Button
+                              onClick={() => {
+                                if (selectedCategories.includes(category.id)) {
+                                  handleCategoryToggle(category.id);
+                                } else {
+                                  // Sumar todos los montos de las subcategorías
+                                  const subcategoryTotal = category.subcategories.reduce((sum, sub) => {
+                                    return sum + (subcategoryBudgets[sub.id] || 0);
+                                  }, 0);
+                                  
+                                  // Si hay un total de subcategorías, agregarlo al budget
+                                  if (subcategoryTotal > 0) {
+                                    setBudgets({ ...budgets, [category.id]: subcategoryTotal });
+                                  }
+                                  
+                                  // Agregar la categoría
+                                  handleCategoryToggle(category.id);
+                                  setExpandedCategory(null);
+                                }
+                              }}
+                              className={`w-full mt-2 h-10 text-xs font-semibold rounded-[15px] shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all ${
+                                selectedCategories.includes(category.id)
+                                  ? 'bg-destructive hover:bg-destructive/90 text-white'
+                                  : 'bg-primary hover:bg-primary/90 text-white'
+                              }`}
+                            >
+                              {selectedCategories.includes(category.id) ? 'Quitar' : 'Agregar'}
+                            </Button>
+                          </>
+                        )}
                       </div>
                     )}
                   </div>
