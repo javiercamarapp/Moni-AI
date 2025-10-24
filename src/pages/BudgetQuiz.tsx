@@ -259,8 +259,10 @@ export default function BudgetQuiz() {
       const sixMonthsAgo = new Date();
       sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
       
+      console.log('Calculando estimaciones de categorías para userId:', userId);
+      
       // Obtener todas las transacciones de gastos de los últimos 6 meses
-      const { data: transactions } = await supabase
+      const { data: transactions, error: transError } = await supabase
         .from('transactions')
         .select('amount, transaction_date, category_id, description, frequency')
         .eq('user_id', userId)
@@ -268,16 +270,26 @@ export default function BudgetQuiz() {
         .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
 
-      if (!transactions || transactions.length === 0) return;
+      console.log('Transacciones encontradas:', transactions?.length, transactions);
+
+      if (!transactions || transactions.length === 0) {
+        console.log('No hay transacciones de gastos en los últimos 6 meses');
+        return;
+      }
 
       // Obtener categorías del usuario
-      const { data: categories } = await supabase
+      const { data: categories, error: catError } = await supabase
         .from('categories')
         .select('id, name')
         .eq('user_id', userId)
         .eq('type', 'expense');
 
-      if (!categories) return;
+      console.log('Categorías encontradas:', categories?.length, categories);
+
+      if (!categories) {
+        console.log('No hay categorías del usuario');
+        return;
+      }
 
       const estimates: Record<string, number> = {};
 
@@ -285,12 +297,16 @@ export default function BudgetQuiz() {
       DEFAULT_CATEGORIES.forEach(mainCategory => {
         // Buscar la categoría del usuario que coincida con el nombre
         const userCategory = categories.find(
-          c => c.name.toLowerCase() === mainCategory.name.toLowerCase()
+          c => c.name.toLowerCase().includes(mainCategory.name.toLowerCase().substring(0, 5))
         );
+
+        console.log(`Buscando categoría "${mainCategory.name}":`, userCategory);
 
         if (userCategory) {
           // Filtrar transacciones de esta categoría
           const categoryTransactions = transactions.filter(t => t.category_id === userCategory.id);
+          
+          console.log(`Transacciones para ${mainCategory.name}:`, categoryTransactions.length);
           
           if (categoryTransactions.length > 0) {
             // Detectar si es suscripción o gasto fijo (recurrente)
@@ -319,6 +335,7 @@ export default function BudgetQuiz() {
         }
       });
 
+      console.log('Estimaciones calculadas:', estimates);
       setCategoryEstimates(estimates);
     } catch (error) {
       console.error('Error calculating category estimates:', error);
