@@ -50,10 +50,10 @@ export default function LiquidityGaugeWidget({
 
   const validMonths = months && !isNaN(months) ? Math.max(0, months) : 0;
   const validLiquidAssets = liquidAssets && !isNaN(liquidAssets) ? liquidAssets : 0;
-  // Usar el gasto mensual real actual del dashboard
-  const validExpenses = monthlyExpenses && !isNaN(monthlyExpenses) && monthlyExpenses > 0 
-    ? monthlyExpenses 
-    : (avgMonthlyExpenses && avgMonthlyExpenses > 0 ? avgMonthlyExpenses : 0);
+  // Usar el promedio calculado por IA si está disponible, si no usar el prop
+  const validExpenses = avgMonthlyExpenses && avgMonthlyExpenses > 0 
+    ? avgMonthlyExpenses 
+    : (monthlyExpenses && !isNaN(monthlyExpenses) && monthlyExpenses > 0 ? monthlyExpenses : 0);
 
   const maxMonths = 6;
   const percentage = validExpenses > 0 ? Math.min((validMonths / maxMonths) * 100, 100) : 0;
@@ -149,6 +149,7 @@ export default function LiquidityGaugeWidget({
           <div className="bg-purple-50 rounded-lg p-1.5 border border-purple-200">
             <p className="text-[8px] text-purple-700 font-medium">Gasto/mes</p>
             <p className="text-[11px] font-bold text-purple-900">${(validExpenses / 1000).toFixed(1)}k</p>
+            <p className="text-[7px] text-gray-500">(prom. últimos 6 meses)</p>
           </div>
         </div>
 

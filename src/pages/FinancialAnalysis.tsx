@@ -809,7 +809,7 @@ export default function FinancialAnalysis() {
             <LiquidityGaugeWidget 
               months={analysis?.metrics?.liquidityMonths || 0}
               liquidAssets={analysis?.metrics?.totalLiquidAssets ?? 0}
-              monthlyExpenses={dashboardData.monthlyExpenses}
+              monthlyExpenses={analysis?.metrics?.totalExpenses ?? 0}
             />
 
             {/* Proyección Anual removida - se moverá a página de proyecciones */}
