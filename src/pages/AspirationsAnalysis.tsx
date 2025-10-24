@@ -9,6 +9,8 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { useNetWorth } from "@/hooks/useNetWorth";
 import { motion, AnimatePresence } from "framer-motion";
 import { BadgeCarousel, BadgeCard, type Badge } from "@/components/ui/badge-carousel";
+import { LoadingScreen } from "@/components/LoadingScreen";
+import moniLogo from "@/assets/moni-ai-logo-black.png";
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#6366f1'];
 
@@ -470,14 +472,7 @@ export default function AspirationsAnalysis() {
   const gapPercentage = currentNetWorth > 0 ? ((gap / totalAspiration) * 100).toFixed(1) : 100;
 
   if (isLoadingData || netWorthData.isLoading) {
-    return (
-      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-foreground">Cargando tu análisis...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
@@ -918,12 +913,35 @@ export default function AspirationsAnalysis() {
           </div>
           
           {isLoadingAnalysis ? (
-            <div className="flex flex-col items-center justify-center py-12 gap-3">
-              <div className="relative">
-                <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-200 border-t-purple-600"></div>
-                <Sparkles className="h-5 w-5 text-purple-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
-              </div>
-              <p className="text-sm text-foreground/60 animate-pulse">Analizando tu situación financiera completa...</p>
+            <div className="flex flex-col items-center justify-center py-12 gap-4 relative">
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 rounded-xl"
+                animate={{
+                  scale: [1, 1.05, 1],
+                  opacity: [0.3, 0.5, 0.3],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+              <motion.img
+                src={moniLogo}
+                alt="MONI AI"
+                className="w-32 h-auto relative z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{
+                  opacity: [0.7, 1, 0.7],
+                  scale: [0.95, 1, 0.95],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+              <p className="text-sm text-foreground/60 animate-pulse relative z-10">Analizando tu situación financiera...</p>
             </div>
           ) : (
             <div className="space-y-4">
