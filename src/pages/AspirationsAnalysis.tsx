@@ -861,7 +861,7 @@ export default function AspirationsAnalysis() {
             <Button
               onClick={() => navigate("/logros")}
               size="sm"
-              className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white text-[10px] h-7 px-3 rounded-full shadow-md hover:shadow-lg transition-all"
+              className="bg-white/80 backdrop-blur-md hover:bg-white text-foreground text-[10px] h-7 px-3 rounded-full shadow-md hover:shadow-lg transition-all border border-gray-200/50 font-semibold"
             >
               Ver todos
             </Button>

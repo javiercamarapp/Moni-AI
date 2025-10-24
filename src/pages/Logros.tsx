@@ -229,7 +229,7 @@ export default function Logros() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white pb-20">
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         {/* Header */}
         <div className="mb-6">
@@ -238,17 +238,22 @@ export default function Logros() {
             onClick={() => navigate(-1)}
             variant="ghost"
             size="icon"
-            className="mb-4 bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
+            className="mb-4 bg-white/80 backdrop-blur-md rounded-[20px] shadow-lg hover:bg-white text-foreground h-10 w-10 hover:scale-105 transition-all border border-gray-200/50"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
 
-          <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Tus Logros</h1>
-            <p className="text-sm text-muted-foreground">
-              Progreso actual: {currentProgress.toFixed(1)}% ({currentLevel} / 10,000)
-            </p>
-          </div>
+          <Card className="bg-white/60 backdrop-blur-xl rounded-[20px] shadow-lg border border-gray-200/50 p-6 mb-6">
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 mb-3 shadow-lg">
+                <span className="text-3xl">🏆</span>
+              </div>
+              <h1 className="text-3xl font-bold text-foreground mb-2">Tus Logros</h1>
+              <p className="text-sm text-muted-foreground">
+                Progreso actual: <span className="font-semibold text-foreground">{currentProgress.toFixed(1)}%</span> ({currentLevel} / 10,000)
+              </p>
+            </div>
+          </Card>
         </div>
 
         {/* Grid de logros */}
@@ -265,50 +270,56 @@ export default function Logros() {
               >
                 <Card 
                   className={`
-                    p-4 rounded-[16px] shadow-lg border-0 transition-all duration-300
+                    p-4 rounded-[20px] transition-all duration-300 overflow-hidden relative
                     ${isUnlocked 
-                      ? `bg-gradient-to-br ${badge.color}` 
-                      : 'bg-gray-200'
+                      ? 'bg-white/70 backdrop-blur-xl shadow-lg border border-gray-200/50 hover:shadow-xl hover:scale-105 cursor-pointer' 
+                      : 'bg-white/40 backdrop-blur-md shadow-md border border-gray-300/30 opacity-70'
                     }
-                    ${isUnlocked ? 'hover:scale-105 cursor-pointer' : 'opacity-60'}
                   `}
                 >
-                  <div className="flex flex-col items-center text-center gap-2">
+                  {/* Gradient overlay for unlocked badges */}
+                  {isUnlocked && (
+                    <div className={`absolute inset-0 bg-gradient-to-br ${badge.color} opacity-10 pointer-events-none`} />
+                  )}
+                  
+                  <div className="flex flex-col items-center text-center gap-2 relative z-10">
                     {/* Icono */}
                     <div className={`
-                      w-16 h-16 rounded-full flex items-center justify-center
-                      ${isUnlocked ? 'bg-white/30' : 'bg-gray-300'}
-                      backdrop-blur-sm shadow-md
+                      w-16 h-16 rounded-full flex items-center justify-center transition-all
+                      ${isUnlocked 
+                        ? `bg-gradient-to-br ${badge.color} shadow-lg` 
+                        : 'bg-gray-200 shadow-md'
+                      }
                     `}>
                       {isUnlocked ? (
                         <span className="text-4xl">{badge.emoji}</span>
                       ) : (
-                        <Lock className="w-8 h-8 text-gray-500" />
+                        <Lock className="w-8 h-8 text-gray-400" />
                       )}
                     </div>
 
                     {/* Nombre */}
                     <h3 className={`
                       text-sm font-bold leading-tight
-                      ${isUnlocked ? 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]' : 'text-gray-600'}
+                      ${isUnlocked ? 'text-foreground' : 'text-gray-500'}
                     `}>
                       {badge.name}
                     </h3>
 
                     {/* Nivel */}
                     <p className={`
-                      text-xs font-semibold
-                      ${isUnlocked ? 'text-white/90 drop-shadow-[0_2px_3px_rgba(0,0,0,0.7)]' : 'text-gray-500'}
+                      text-xs font-medium
+                      ${isUnlocked ? 'text-muted-foreground' : 'text-gray-400'}
                     `}>
                       Nivel {badge.level}
                     </p>
 
                     {/* Badge de estado */}
                     <div className={`
-                      px-2 py-1 rounded-full text-[10px] font-semibold
+                      px-2.5 py-1 rounded-full text-[10px] font-semibold shadow-sm
                       ${isUnlocked 
-                        ? 'bg-white/20 text-white backdrop-blur-sm' 
-                        : 'bg-gray-300 text-gray-600'
+                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' 
+                        : 'bg-gray-200 text-gray-500'
                       }
                     `}>
                       {isUnlocked ? '✓ DESBLOQUEADO' : '🔒 BLOQUEADO'}
@@ -316,7 +327,7 @@ export default function Logros() {
 
                     {/* Porcentaje */}
                     {isUnlocked && (
-                      <p className="text-xs text-white/90 font-medium mt-1">
+                      <p className="text-xs text-foreground/70 font-medium mt-1">
                         {badge.growthPercentage}% alcanzado
                       </p>
                     )}
