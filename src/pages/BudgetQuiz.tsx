@@ -921,32 +921,32 @@ export default function BudgetQuiz() {
 
         {/* Step 3: Budgets */}
         {step === 3 && (
-          <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in">
+          <Card className="p-4 bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 rounded-[20px] shadow-xl border border-blue-100 animate-fade-in backdrop-blur-sm">
             <div className="space-y-3">
               <div className="text-center">
-                <h2 className="text-lg font-bold text-foreground">
+                <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   💰 Ajusta tus presupuestos
                 </h2>
-                <p className="text-[10px] text-muted-foreground">
+                <p className="text-[11px] font-medium text-muted-foreground">
                   Ingreso: ${Number(monthlyIncome).toLocaleString()} • Presupuesto: ${totalBudget.toLocaleString()}
                 </p>
               </div>
                 
               {/* Budget vs Savings Visualization */}
-              <div className="bg-gradient-to-br from-primary/5 to-primary/10 p-3 rounded-[12px] border border-primary/20">
-                <div className="relative h-5 bg-white rounded-full overflow-hidden border border-white/50">
+              <div className="bg-gradient-to-br from-primary/10 to-primary/20 p-3 rounded-[15px] border-2 border-primary/30 shadow-lg backdrop-blur-sm">
+                <div className="relative h-6 bg-white rounded-full overflow-hidden border-2 border-white/50 shadow-inner">
                   <div
-                    className={`absolute left-0 top-0 h-full transition-all ${
-                      percentageOfIncome > 100 ? 'bg-destructive' : 'bg-gradient-to-r from-primary to-primary/80'
+                    className={`absolute left-0 top-0 h-full transition-all duration-500 ${
+                      percentageOfIncome > 100 ? 'bg-gradient-to-r from-red-500 to-red-600' : 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500'
                     }`}
                     style={{ width: `${Math.min(percentageOfIncome, 100)}%` }}
                   />
                   <div
-                    className="absolute right-0 top-0 h-full bg-gradient-to-r from-green-400 to-green-500"
+                    className="absolute right-0 top-0 h-full bg-gradient-to-r from-emerald-400 to-green-500"
                     style={{ width: `${Math.max(0, 100 - percentageOfIncome)}%` }}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-[9px] font-bold text-white drop-shadow">
+                    <span className="text-[10px] font-bold text-white drop-shadow-lg">
                       {percentageOfIncome.toFixed(0)}% • Ahorro: {Math.max(0, 100 - percentageOfIncome).toFixed(0)}%
                     </span>
                   </div>
@@ -964,7 +964,7 @@ export default function BudgetQuiz() {
                 )}
               </div>
               
-              <div className="grid grid-cols-3 gap-2 max-h-[450px] overflow-y-auto pr-1">
+              <div className="grid grid-cols-3 gap-3 max-h-[450px] overflow-y-auto pr-1">
                 {selectedCategories.map(catId => {
                   const category = DEFAULT_CATEGORIES.find(c => c.id === catId);
                   if (!category) return null;
@@ -977,32 +977,42 @@ export default function BudgetQuiz() {
                     const diff = budgetPercentage - suggested;
                     
                     // Si está dentro del rango +/- 5% del sugerido, es verde
-                    if (Math.abs(diff) <= 5) return 'text-green-600';
+                    if (Math.abs(diff) <= 5) return 'text-green-600 drop-shadow-[0_0_8px_rgba(22,163,74,0.5)]';
                     // Si está entre 5-15% de diferencia, es amarillo
-                    if (Math.abs(diff) <= 15) return 'text-yellow-600';
+                    if (Math.abs(diff) <= 15) return 'text-yellow-600 drop-shadow-[0_0_8px_rgba(202,138,4,0.5)]';
                     // Si está más de 15% por encima, es rojo
-                    if (diff > 15) return 'text-red-600';
+                    if (diff > 15) return 'text-red-600 drop-shadow-[0_0_8px_rgba(220,38,38,0.5)]';
                     // Si está muy por debajo, es azul (subaprovechado)
-                    return 'text-blue-600';
+                    return 'text-blue-600 drop-shadow-[0_0_8px_rgba(37,99,235,0.5)]';
+                  };
+
+                  const getCardBorder = () => {
+                    const suggested = category.suggestedPercentage;
+                    const diff = budgetPercentage - suggested;
+                    
+                    if (Math.abs(diff) <= 5) return 'border-green-200 hover:border-green-400 hover:shadow-green-200/50';
+                    if (Math.abs(diff) <= 15) return 'border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/50';
+                    if (diff > 15) return 'border-red-200 hover:border-red-400 hover:shadow-red-200/50';
+                    return 'border-blue-200 hover:border-blue-400 hover:shadow-blue-200/50';
                   };
                   
                   return (
                     <button
                       key={catId}
                       onClick={() => setEditingCategoryId(catId)}
-                      className="p-2 bg-white rounded-[12px] border border-blue-200 shadow-sm hover:shadow-md hover:border-primary/50 transition-all"
+                      className={`p-3 bg-gradient-to-br from-white to-gray-50/50 rounded-[15px] border-2 ${getCardBorder()} shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-300`}
                     >
-                      <div className="flex flex-col items-center gap-1 text-center">
-                        <span className="text-2xl">{category.icon}</span>
-                        <p className="text-[10px] font-bold text-foreground leading-tight">
+                      <div className="flex flex-col items-center gap-2 text-center">
+                        <div className="text-3xl drop-shadow-lg">{category.icon}</div>
+                        <p className="text-[10px] font-bold text-foreground leading-tight min-h-[28px] flex items-center justify-center">
                           {category.name}
                         </p>
-                        <div className="px-2 py-0.5 bg-gradient-to-r from-blue-50 to-purple-50 rounded-[6px] border border-blue-200 w-full">
-                          <span className="text-[10px] font-bold text-foreground">
+                        <div className="px-2.5 py-1 bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 rounded-[8px] border border-purple-200 w-full shadow-sm">
+                          <span className="text-[11px] font-bold bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent">
                             ${(budgets[catId] || 0).toLocaleString('es-MX', { maximumFractionDigits: 0 })}
                           </span>
                         </div>
-                        <span className={`text-sm font-extrabold ${getHealthColor()}`}>
+                        <span className={`text-base font-extrabold ${getHealthColor()} animate-pulse`}>
                           {budgetPercentage.toFixed(0)}%
                         </span>
                       </div>
