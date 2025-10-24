@@ -30,8 +30,13 @@ export default function Budgets() {
 
   useEffect(() => {
     loadBudgets();
-    loadMonthlyData();
   }, []);
+
+  useEffect(() => {
+    if (budgets.length > 0) {
+      loadMonthlyData();
+    }
+  }, [budgets]);
 
   const loadBudgets = async () => {
     try {
