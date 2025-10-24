@@ -245,92 +245,135 @@ export default function Budgets() {
               <p className="text-[10px] text-muted-foreground">Progreso del mes actual</p>
             </div>
 
-            {/* Lista de Presupuestos */}
-            <div className="space-y-2.5">
-              {budgets.map((budget, index) => {
-                const spent = currentExpenses[budget.category_id] || 0;
-                const budgetAmount = Number(budget.monthly_budget);
-                const percentUsed = (spent / budgetAmount) * 100;
-                const remaining = budgetAmount - spent;
-                const isWarning = percentUsed >= 80;
-                const isCritical = percentUsed >= 100;
+            {/* Lista de Presupuestos en dos columnas */}
+            <div className="grid grid-cols-2 gap-3">
+              {/* Columna Verde - Muy Bien */}
+              <div className="space-y-2">
+                <div className="bg-success/10 rounded-[15px] p-2 border-2 border-success/30 text-center">
+                  <p className="text-xs font-bold text-success">✅ Muy Bien</p>
+                </div>
+                <div className="space-y-2">
+                  {budgets.filter(budget => {
+                    const spent = currentExpenses[budget.category_id] || 0;
+                    const percentage = (spent / Number(budget.monthly_budget)) * 100;
+                    return percentage < 80;
+                  }).map((budget, index) => {
+                    const spent = currentExpenses[budget.category_id] || 0;
+                    const budgetAmount = Number(budget.monthly_budget);
+                    const percentUsed = (spent / budgetAmount) * 100;
+                    const remaining = budgetAmount - spent;
 
-                return (
-                  <Card 
-                    key={budget.id} 
-                    className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] active:scale-95 transition-all animate-fade-in"
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2.5 flex-1">
-                          <span className="text-2xl">{getCategoryIcon(budget.category.name)}</span>
-                          <div className="flex-1">
-                            <p className="text-sm font-bold text-foreground">{budget.category.name}</p>
-                            <p className="text-[10px] text-muted-foreground">
-                              ${spent.toLocaleString()} de ${budgetAmount.toLocaleString()}
+                    return (
+                      <Card 
+                        key={budget.id} 
+                        className="p-3 bg-white rounded-[15px] shadow-lg border border-success/20 hover:scale-105 active:scale-95 transition-all animate-fade-in"
+                        style={{ animationDelay: `${index * 0.1}s` }}
+                      >
+                        <div className="space-y-2">
+                          <div className="text-center">
+                            <span className="text-xl">{getCategoryIcon(budget.category.name)}</span>
+                            <p className="text-[10px] font-bold text-foreground">{budget.category.name}</p>
+                          </div>
+
+                          <div className="space-y-1">
+                            <Progress 
+                              value={Math.min(percentUsed, 100)} 
+                              className="h-1.5 bg-muted"
+                            />
+                            <p className="text-[9px] text-center text-success font-bold">
+                              {percentUsed.toFixed(0)}%
+                            </p>
+                          </div>
+
+                          <div className="text-center">
+                            <p className="text-[8px] text-muted-foreground">
+                              ${spent.toLocaleString()} / ${budgetAmount.toLocaleString()}
+                            </p>
+                            <p className="text-[9px] font-bold text-success">
+                              Quedan ${remaining.toLocaleString()}
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          {isWarning && (
-                            <AlertCircle className={`h-4 w-4 ${isCritical ? 'text-destructive animate-pulse' : 'text-yellow-500'}`} />
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <Progress 
-                          value={Math.min(percentUsed, 100)} 
-                          className={`h-2 ${
-                            isCritical ? 'bg-destructive/20' : 
-                            isWarning ? 'bg-yellow-500/20' : 
-                            'bg-muted'
-                          }`}
-                        />
-                        <div className="flex items-center justify-between">
-                          <span className={`text-[10px] font-bold ${
-                            isCritical ? 'text-destructive' : 
-                            isWarning ? 'text-yellow-600' : 
-                            'text-success'
-                          }`}>
-                            {percentUsed.toFixed(0)}% usado
-                          </span>
-                          <span className="text-[10px] text-muted-foreground">
-                            {percentUsed < 100 
-                              ? `Quedan $${remaining.toLocaleString()}` 
-                              : `Excedido $${Math.abs(remaining).toLocaleString()}`
-                            }
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Mensaje de estado */}
-                      {isCritical && (
-                        <div className="bg-white/10 backdrop-blur-sm rounded-[10px] p-2 border-2 border-destructive/30 shadow-lg">
-                          <p className="text-[10px] text-destructive font-semibold text-center leading-tight">
-                            ⚠️ Has superado tu presupuesto
-                          </p>
-                        </div>
-                      )}
-                      {isWarning && !isCritical && (
-                        <div className="bg-white/10 backdrop-blur-sm rounded-[10px] p-2 border-2 border-yellow-500/30 shadow-lg">
-                          <p className="text-[10px] text-yellow-700 font-semibold text-center leading-tight">
-                            ⚡ Te estás acercando al límite
-                          </p>
-                        </div>
-                      )}
-                      {!isWarning && (
-                        <div className="bg-white/10 backdrop-blur-sm rounded-[10px] p-2 border-2 border-success/30 shadow-lg">
-                          <p className="text-[10px] text-success font-semibold text-center leading-tight">
-                            ✅ Vas muy bien
-                          </p>
-                        </div>
-                      )}
+                      </Card>
+                    );
+                  })}
+                  {budgets.filter(budget => {
+                    const spent = currentExpenses[budget.category_id] || 0;
+                    const percentage = (spent / Number(budget.monthly_budget)) * 100;
+                    return percentage < 80;
+                  }).length === 0 && (
+                    <div className="p-4 text-center">
+                      <p className="text-[10px] text-muted-foreground">Sin categorías</p>
                     </div>
-                  </Card>
-                );
-              })}
+                  )}
+                </div>
+              </div>
+
+              {/* Columna Roja - Mal */}
+              <div className="space-y-2">
+                <div className="bg-destructive/10 rounded-[15px] p-2 border-2 border-destructive/30 text-center">
+                  <p className="text-xs font-bold text-destructive">⚠️ Mal</p>
+                </div>
+                <div className="space-y-2">
+                  {budgets.filter(budget => {
+                    const spent = currentExpenses[budget.category_id] || 0;
+                    const percentage = (spent / Number(budget.monthly_budget)) * 100;
+                    return percentage >= 80;
+                  }).map((budget, index) => {
+                    const spent = currentExpenses[budget.category_id] || 0;
+                    const budgetAmount = Number(budget.monthly_budget);
+                    const percentUsed = (spent / budgetAmount) * 100;
+                    const remaining = budgetAmount - spent;
+                    const isCritical = percentUsed >= 100;
+
+                    return (
+                      <Card 
+                        key={budget.id} 
+                        className="p-3 bg-white rounded-[15px] shadow-lg border border-destructive/20 hover:scale-105 active:scale-95 transition-all animate-fade-in"
+                        style={{ animationDelay: `${index * 0.1}s` }}
+                      >
+                        <div className="space-y-2">
+                          <div className="text-center">
+                            <span className="text-xl">{getCategoryIcon(budget.category.name)}</span>
+                            <p className="text-[10px] font-bold text-foreground">{budget.category.name}</p>
+                          </div>
+
+                          <div className="space-y-1">
+                            <Progress 
+                              value={Math.min(percentUsed, 100)} 
+                              className={`h-1.5 ${isCritical ? 'bg-destructive/20' : 'bg-yellow-500/20'}`}
+                            />
+                            <p className={`text-[9px] text-center font-bold ${isCritical ? 'text-destructive animate-pulse' : 'text-yellow-600'}`}>
+                              {percentUsed.toFixed(0)}%
+                            </p>
+                          </div>
+
+                          <div className="text-center">
+                            <p className="text-[8px] text-muted-foreground">
+                              ${spent.toLocaleString()} / ${budgetAmount.toLocaleString()}
+                            </p>
+                            <p className={`text-[9px] font-bold ${isCritical ? 'text-destructive' : 'text-yellow-600'}`}>
+                              {percentUsed < 100 
+                                ? `Quedan $${remaining.toLocaleString()}` 
+                                : `Excedido $${Math.abs(remaining).toLocaleString()}`
+                              }
+                            </p>
+                          </div>
+                        </div>
+                      </Card>
+                    );
+                  })}
+                  {budgets.filter(budget => {
+                    const spent = currentExpenses[budget.category_id] || 0;
+                    const percentage = (spent / Number(budget.monthly_budget)) * 100;
+                    return percentage >= 80;
+                  }).length === 0 && (
+                    <div className="p-4 text-center">
+                      <p className="text-[10px] text-muted-foreground">¡Todo bien!</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Resumen de alertas */}
