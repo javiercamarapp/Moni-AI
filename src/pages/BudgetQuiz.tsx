@@ -15,14 +15,16 @@ interface Category {
 }
 
 const DEFAULT_CATEGORIES: Category[] = [
-  { id: 'comida', name: 'Comida y Restaurantes', icon: '🍔', suggestedPercentage: 15 },
-  { id: 'transporte', name: 'Transporte', icon: '🚗', suggestedPercentage: 10 },
-  { id: 'hogar', name: 'Hogar y Servicios', icon: '🏠', suggestedPercentage: 25 },
-  { id: 'ocio', name: 'Entretenimiento', icon: '🎮', suggestedPercentage: 10 },
-  { id: 'salud', name: 'Salud y Bienestar', icon: '💊', suggestedPercentage: 10 },
-  { id: 'educacion', name: 'Educación', icon: '📚', suggestedPercentage: 5 },
-  { id: 'compras', name: 'Compras Personales', icon: '🛍️', suggestedPercentage: 10 },
-  { id: 'otros', name: 'Otros Gastos', icon: '💳', suggestedPercentage: 15 }
+  { id: 'vivienda', name: 'Vivienda', icon: '🏠', suggestedPercentage: 30 },
+  { id: 'transporte', name: 'Transporte', icon: '🚗', suggestedPercentage: 15 },
+  { id: 'alimentacion', name: 'Alimentación', icon: '🍽️', suggestedPercentage: 20 },
+  { id: 'servicios', name: 'Servicios y suscripciones', icon: '🧾', suggestedPercentage: 8 },
+  { id: 'salud', name: 'Salud y bienestar', icon: '🩺', suggestedPercentage: 5 },
+  { id: 'educacion', name: 'Educación y desarrollo', icon: '🎓', suggestedPercentage: 5 },
+  { id: 'deudas', name: 'Deudas y créditos', icon: '💳', suggestedPercentage: 5 },
+  { id: 'entretenimiento', name: 'Entretenimiento y estilo de vida', icon: '🎉', suggestedPercentage: 7 },
+  { id: 'ahorro', name: 'Ahorro e inversión', icon: '💸', suggestedPercentage: 5 },
+  { id: 'apoyos', name: 'Apoyos y otros', icon: '🤝', suggestedPercentage: 0 },
 ];
 
 export default function BudgetQuiz() {
