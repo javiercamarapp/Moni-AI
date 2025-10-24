@@ -36,10 +36,11 @@ export default function BudgetProgressWidget({ categories = [], hasBudgets = fal
           </div>
           
           <Button
+            variant="ghost"
             onClick={() => navigate('/gestionar-categorias')}
-            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+            className="w-full bg-primary/10 rounded-[20px] shadow-lg border border-primary/20 hover:bg-primary/20 hover:scale-105 active:scale-95 transition-all text-sm h-auto py-3 text-primary font-semibold"
           >
-            Configurar Presupuestos
+            📊 Configurar Presupuestos
           </Button>
         </div>
       </Card>
