@@ -656,7 +656,7 @@ export default function BudgetQuiz() {
                   className="w-full h-auto py-3 rounded-[20px] border-2 border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
                   <div className="flex flex-col items-center gap-1.5">
-                    <span className="text-2xl animate-pulse">✨</span>
+                    <span className="text-2xl animate-pulse">🏦</span>
                     <span className="text-[9px] font-medium text-center leading-tight">Conectar Banco para que la IA detecte tu ingreso</span>
                   </div>
                 </Button>
