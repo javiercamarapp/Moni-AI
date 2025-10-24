@@ -9,6 +9,8 @@ interface SafeToSpendProps {
   actualExpenses: number;
   budgetExcesses: number;
   unbudgetedExpenses: number;
+  totalBudget?: number;
+  goalsCount?: number;
 }
 
 export default function SafeToSpendWidget({
@@ -18,7 +20,9 @@ export default function SafeToSpendWidget({
   savingsGoals,
   actualExpenses,
   budgetExcesses,
-  unbudgetedExpenses
+  unbudgetedExpenses,
+  totalBudget = 0,
+  goalsCount = 0
 }: SafeToSpendProps) {
   
   // Calcular el disponible para gastar
@@ -57,12 +61,12 @@ export default function SafeToSpendWidget({
           <span className="text-foreground font-medium">${monthlyIncome.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
         </div>
         <div className="flex justify-between">
-          <span>Gastos totales</span>
-          <span className="text-foreground font-medium">-${totalSpent.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+          <span>Presupuesto mensual</span>
+          <span className="text-foreground font-medium">${totalBudget.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
         </div>
         <div className="flex justify-between">
-          <span>Metas de ahorro</span>
-          <span className="text-foreground font-medium">-${savingsGoals.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+          <span>Metas configuradas</span>
+          <span className="text-foreground font-medium">{goalsCount}</span>
         </div>
         <div className="border-t border-blue-100 pt-2 flex justify-between font-semibold">
           <span className="text-foreground">Disponible</span>

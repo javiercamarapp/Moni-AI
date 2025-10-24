@@ -1142,6 +1142,8 @@ const Dashboard = () => {
           actualExpenses={monthlyExpenses}
           budgetExcesses={0}
           unbudgetedExpenses={0}
+          totalBudget={totalBudget}
+          goalsCount={goals.length}
         />
 
         {/* Presupuesto Mensual */}
