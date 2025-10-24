@@ -88,21 +88,17 @@ export default function Budgets() {
       const income = (incomeData || []).reduce((sum, t) => sum + Number(t.amount), 0);
       setMonthlyIncome(income);
 
-      // Cargar todas las categorías del usuario
-      const { data: allCategories } = await supabase
-        .from('categories')
-        .select('id, name')
-        .eq('user_id', user.id);
-
-      // Crear un mapa de nombre normalizado a IDs de categorías
-      const categoryNameMap: Record<string, string[]> = {};
-      (allCategories || []).forEach(cat => {
-        const normalizedName = cat.name.toLowerCase().trim();
-        if (!categoryNameMap[normalizedName]) {
-          categoryNameMap[normalizedName] = [];
-        }
-        categoryNameMap[normalizedName].push(cat.id);
-      });
+      // Mapeo de categorías específicas a categorías generales de presupuesto
+      const categoryMapping: Record<string, string[]> = {
+        'vivienda': ['luz', 'agua', 'gas', 'internet', 'renta', 'mantenimiento'],
+        'transporte': ['gasolina', 'uber', 'estacionamiento', 'mantenimiento auto'],
+        'alimentación': ['supermercado', 'restaurantes', 'café', 'rappi', 'uber eats', 'bar y copas'],
+        'servicios y suscripciones': ['netflix', 'spotify', 'amazon prime', 'disney+', 'hbo max', 'teléfono'],
+        'salud y bienestar': ['gym', 'farmacia', 'médico', 'dentista'],
+        'entretenimiento y estilo de vida': ['cine', 'conciertos', 'night club', 'eventos', 'ropa', 'amazon', 'mercado libre'],
+        'ahorro e inversión': ['inversiones'],
+        'mascotas': ['veterinario', 'comida mascotas']
+      };
 
       // Calcular gastos por categoría del mes
       const { data: expenseData } = await supabase
@@ -115,29 +111,39 @@ export default function Budgets() {
 
       console.log('=== DEBUG GASTOS ===');
       console.log('Total de transacciones:', expenseData?.length);
-      console.log('Datos de gastos:', expenseData);
 
-      // Agrupar gastos por nombre de categoría
-      const expensesByName: Record<string, number> = {};
+      // Buscar las categorías de presupuesto en la BD
+      const budgetCategoryNames = budgets.map(b => b.category.name.toLowerCase().trim());
+      
+      // Agrupar gastos por categoría general
+      const expensesByGeneralCategory: Record<string, number> = {};
+      
       (expenseData || []).forEach(t => {
         if (t.categories && t.categories.name) {
-          const normalizedName = t.categories.name.toLowerCase().trim();
-          expensesByName[normalizedName] = (expensesByName[normalizedName] || 0) + Number(t.amount);
+          const specificCategoryName = t.categories.name.toLowerCase().trim();
+          
+          // Buscar a qué categoría general pertenece este gasto
+          for (const [generalCategory, specificCategories] of Object.entries(categoryMapping)) {
+            if (specificCategories.some(cat => specificCategoryName.includes(cat) || cat.includes(specificCategoryName))) {
+              expensesByGeneralCategory[generalCategory] = (expensesByGeneralCategory[generalCategory] || 0) + Number(t.amount);
+              break;
+            }
+          }
         }
       });
 
-      console.log('Gastos agrupados por nombre:', expensesByName);
+      console.log('Gastos agrupados por categoría general:', expensesByGeneralCategory);
 
-      // Mapear gastos a los IDs de categorías de los presupuestos
+      // Mapear a los IDs de las categorías de presupuesto
       const expensesByCategory: Record<string, number> = {};
-      Object.entries(expensesByName).forEach(([name, amount]) => {
-        const categoryIds = categoryNameMap[name] || [];
-        categoryIds.forEach(id => {
-          expensesByCategory[id] = (expensesByCategory[id] || 0) + amount;
-        });
+      budgets.forEach(budget => {
+        const categoryName = budget.category.name.toLowerCase().trim();
+        if (expensesByGeneralCategory[categoryName]) {
+          expensesByCategory[budget.category_id] = expensesByGeneralCategory[categoryName];
+        }
       });
 
-      console.log('Gastos mapeados a categorías de presupuestos:', expensesByCategory);
+      console.log('Gastos mapeados a IDs de presupuestos:', expensesByCategory);
 
       setCurrentExpenses(expensesByCategory);
     } catch (error) {
