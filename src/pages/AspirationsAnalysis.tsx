@@ -860,7 +860,10 @@ export default function AspirationsAnalysis() {
               <h3 className="text-xs font-bold text-foreground">Tus Logros</h3>
             </div>
             <Button
-              onClick={() => navigate("/logros")}
+              onClick={() => {
+                navigate("/logros");
+                setTimeout(() => window.scrollTo(0, 0), 100);
+              }}
               size="sm"
               className="bg-white/80 backdrop-blur-md hover:bg-white text-foreground text-[10px] h-7 px-3 rounded-full shadow-md hover:shadow-lg transition-all border border-gray-200/50 font-semibold"
             >
