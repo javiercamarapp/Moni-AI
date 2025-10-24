@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { ArrowLeft, Plus, AlertCircle, TrendingUp, Target } from "lucide-react";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 
@@ -126,14 +127,23 @@ export default function Budgets() {
     }
   };
 
-  const getBudgetStatus = (spent: number, budget: number) => {
-    const percentage = (spent / budget) * 100;
-    if (percentage >= 90) return { color: 'text-red-600', status: '⚠️ Excedido' };
-    if (percentage >= 75) return { color: 'text-yellow-600', status: '⚡ Cuidado' };
-    return { color: 'text-green-600', status: '✅ Bien' };
+  const getCategoryIcon = (name: string) => {
+    const icons: Record<string, string> = {
+      'vivienda': '🏠',
+      'transporte': '🚗',
+      'alimentación': '🍽️',
+      'servicios': '💡',
+      'salud': '💊',
+      'entretenimiento': '🎮',
+      'ahorro': '💰',
+      'mascotas': '🐾',
+    };
+    return icons[name.toLowerCase()] || '📊';
   };
 
   const percentageOfIncome = monthlyIncome > 0 ? (totalBudget / monthlyIncome) * 100 : 0;
+  const remainingBudget = totalBudget - Object.values(currentExpenses).reduce((sum, val) => sum + val, 0);
+  const savingsPercentage = monthlyIncome > 0 ? ((monthlyIncome - totalBudget) / monthlyIncome) * 100 : 0;
 
   if (loading) {
     return (
@@ -165,121 +175,202 @@ export default function Budgets() {
           </Button>
         </div>
 
-        {/* Resumen General */}
-        <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
-          <div className="space-y-3">
-            <div className="text-center">
-              <h2 className="text-sm font-bold text-foreground">Resumen Mensual</h2>
-              <p className="text-[10px] text-muted-foreground">
-                Ingreso: ${monthlyIncome.toLocaleString()} • Presupuesto Total: ${totalBudget.toLocaleString()}
-              </p>
-            </div>
+        {budgets.length === 0 ? (
+          <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center">
+            <div className="text-5xl mb-4">📊</div>
+            <p className="text-base font-semibold text-foreground mb-2">
+              Crea tu Presupuesto Mensual
+            </p>
+            <p className="text-sm text-muted-foreground mb-4">
+              Controla tus gastos por categoría y recibe alertas cuando te acerques al límite
+            </p>
+            <Button
+              onClick={() => navigate('/budget-quiz')}
+              className="bg-primary/10 rounded-[20px] shadow-lg border border-primary/20 hover:bg-primary/20 hover:scale-105 text-primary font-semibold"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Configurar Presupuestos
+            </Button>
+          </Card>
+        ) : (
+          <>
+            {/* Resumen General */}
+            <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] transition-all">
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm font-medium text-foreground mb-1">Resumen del Mes</p>
+                  <p className="text-xs text-muted-foreground">Tu salud financiera en tiempo real</p>
+                </div>
 
-            {/* Barra de presupuesto global */}
-            <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100">
-              <div className="relative h-5 bg-gradient-to-r from-[hsl(220,60%,10%)] to-[hsl(240,55%,8%)] rounded-full border border-white/10 overflow-hidden shadow-inner">
-                <div
-                  className={`h-full rounded-full transition-all duration-500 ${
-                    percentageOfIncome > 100 
-                      ? 'bg-gradient-to-r from-red-600 via-red-500 to-red-600' 
-                      : percentageOfIncome > 75
-                      ? 'bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500'
-                      : 'bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500'
-                  }`}
-                  style={{ 
-                    width: `${Math.min(percentageOfIncome, 100)}%`,
-                    boxShadow: percentageOfIncome > 100
-                      ? '0 0 20px rgba(239, 68, 68, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)'
-                      : percentageOfIncome > 75
-                      ? '0 0 20px rgba(251, 191, 36, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)'
-                      : '0 0 20px rgba(4, 120, 87, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)'
-                  }}
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-[10px] font-bold text-white drop-shadow-lg">
-                    Ahorrando: {Math.max(0, 100 - percentageOfIncome).toFixed(0)}%
-                  </span>
+                {/* Métricas principales */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-success/5 rounded-xl p-3 border border-success/20">
+                    <div className="flex items-center gap-2 mb-1">
+                      <TrendingUp className="h-4 w-4 text-success" />
+                      <span className="text-xs text-muted-foreground">Ingresos</span>
+                    </div>
+                    <p className="text-lg font-bold text-success">
+                      ${(monthlyIncome / 1000).toFixed(0)}k
+                    </p>
+                  </div>
+                  
+                  <div className="bg-primary/5 rounded-xl p-3 border border-primary/20">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Target className="h-4 w-4 text-primary" />
+                      <span className="text-xs text-muted-foreground">Presupuesto</span>
+                    </div>
+                    <p className="text-lg font-bold text-primary">
+                      ${(totalBudget / 1000).toFixed(0)}k
+                    </p>
+                  </div>
+                </div>
+
+                {/* Barra de ahorro */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Meta de Ahorro</span>
+                    <span className={`text-xs font-bold ${
+                      savingsPercentage >= 20 ? 'text-success' : 
+                      savingsPercentage >= 10 ? 'text-yellow-600' : 'text-destructive'
+                    }`}>
+                      {savingsPercentage.toFixed(0)}%
+                    </span>
+                  </div>
+                  <Progress 
+                    value={Math.min(savingsPercentage, 100)} 
+                    className="h-3"
+                  />
+                  <p className="text-[10px] text-center text-muted-foreground">
+                    {savingsPercentage >= 20 
+                      ? '¡Excelente! Estás ahorrando muy bien' 
+                      : savingsPercentage >= 10
+                      ? 'Buen trabajo, sigue así'
+                      : 'Intenta ahorrar al menos el 10% de tus ingresos'
+                    }
+                  </p>
                 </div>
               </div>
             </Card>
-          </div>
-        </Card>
 
-        {/* Lista de Presupuestos por Categoría */}
-        <div className="space-y-3">
-          {budgets.length === 0 ? (
-            <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center">
-              <p className="text-sm text-muted-foreground mb-4">
-                No tienes presupuestos configurados
-              </p>
-              <Button
-                onClick={() => navigate('/budget-quiz')}
-                className="bg-white rounded-[20px] shadow-xl hover:shadow-2xl border border-blue-100 hover:border-primary/50 text-foreground font-semibold"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Crear Presupuesto
-              </Button>
-            </Card>
-          ) : (
-            budgets.map((budget) => {
-              const spent = currentExpenses[budget.category_id] || 0;
-              const percentage = (spent / Number(budget.monthly_budget)) * 100;
-              const status = getBudgetStatus(spent, Number(budget.monthly_budget));
+            {/* Título de sección */}
+            <div>
+              <p className="text-sm font-medium text-foreground mb-1">Presupuesto por Categoría</p>
+              <p className="text-xs text-muted-foreground">Progreso del mes actual</p>
+            </div>
 
-              return (
-                <Card key={budget.id} className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <h3 className="text-sm font-bold text-foreground">{budget.category.name}</h3>
-                        <p className="text-[10px] text-muted-foreground">
-                          ${spent.toLocaleString()} de ${Number(budget.monthly_budget).toLocaleString()}
-                        </p>
+            {/* Lista de Presupuestos */}
+            <div className="space-y-3">
+              {budgets.map((budget) => {
+                const spent = currentExpenses[budget.category_id] || 0;
+                const budgetAmount = Number(budget.monthly_budget);
+                const percentUsed = (spent / budgetAmount) * 100;
+                const remaining = budgetAmount - spent;
+                const isWarning = percentUsed >= 80;
+                const isCritical = percentUsed >= 100;
+
+                return (
+                  <Card 
+                    key={budget.id} 
+                    className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] active:scale-95 transition-all"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 flex-1">
+                          <span className="text-2xl">{getCategoryIcon(budget.category.name)}</span>
+                          <div className="flex-1">
+                            <p className="text-sm font-bold text-foreground">{budget.category.name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              ${spent.toLocaleString()} de ${budgetAmount.toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {isWarning && (
+                            <AlertCircle className={`h-4 w-4 ${isCritical ? 'text-destructive' : 'text-yellow-500'}`} />
+                          )}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className={`text-xs font-bold ${status.color}`}>
-                          {percentage.toFixed(0)}%
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => deleteBudget(budget.id)}
-                          className="h-8 w-8 p-0 hover:bg-destructive/10"
-                        >
-                          <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                        </Button>
+
+                      <div className="space-y-2">
+                        <Progress 
+                          value={Math.min(percentUsed, 100)} 
+                          className={`h-2.5 ${
+                            isCritical ? 'bg-destructive/20' : 
+                            isWarning ? 'bg-yellow-500/20' : 
+                            'bg-muted'
+                          }`}
+                        />
+                        <div className="flex items-center justify-between">
+                          <span className={`text-xs font-medium ${
+                            isCritical ? 'text-destructive' : 
+                            isWarning ? 'text-yellow-600' : 
+                            'text-success'
+                          }`}>
+                            {percentUsed.toFixed(0)}% usado
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {percentUsed < 100 
+                              ? `Quedan $${remaining.toLocaleString()}` 
+                              : `Excedido $${Math.abs(remaining).toLocaleString()}`
+                            }
+                          </span>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="relative h-3 bg-gradient-to-r from-[hsl(220,60%,10%)] to-[hsl(240,55%,8%)] rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all duration-500 ${
-                          percentage >= 90 
-                            ? 'bg-gradient-to-r from-red-600 via-red-500 to-red-600' 
-                            : percentage >= 75
-                            ? 'bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500'
-                            : 'bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500'
-                        }`}
-                        style={{ 
-                          width: `${Math.min(percentage, 100)}%`,
-                          boxShadow: percentage >= 90
-                            ? '0 0 15px rgba(239, 68, 68, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.2)'
-                            : percentage >= 75
-                            ? '0 0 15px rgba(251, 191, 36, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.2)'
-                            : '0 0 15px rgba(4, 120, 87, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.2)'
-                        }}
-                      />
+                      {/* Mensaje de estado */}
+                      {isCritical && (
+                        <div className="bg-destructive/10 rounded-lg p-2 border border-destructive/20">
+                          <p className="text-xs text-destructive font-medium">
+                            ⚠️ Has superado tu presupuesto. Considera reducir gastos en esta categoría.
+                          </p>
+                        </div>
+                      )}
+                      {isWarning && !isCritical && (
+                        <div className="bg-yellow-50 rounded-lg p-2 border border-yellow-200">
+                          <p className="text-xs text-yellow-700 font-medium">
+                            ⚡ Te estás acercando al límite. Controla tus gastos.
+                          </p>
+                        </div>
+                      )}
+                      {!isWarning && (
+                        <div className="bg-success/10 rounded-lg p-2 border border-success/20">
+                          <p className="text-xs text-success font-medium">
+                            ✅ Vas muy bien. Sigue así.
+                          </p>
+                        </div>
+                      )}
                     </div>
+                  </Card>
+                );
+              })}
+            </div>
 
-                    <p className={`text-[10px] font-semibold text-center ${status.color}`}>
-                      {status.status}
+            {/* Resumen de alertas */}
+            {budgets.some(b => {
+              const spent = currentExpenses[b.category_id] || 0;
+              const percentage = (spent / Number(b.monthly_budget)) * 100;
+              return percentage >= 80;
+            }) && (
+              <Card className="p-4 bg-yellow-50 rounded-[20px] shadow-xl border border-yellow-200">
+                <div className="flex items-center gap-3">
+                  <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-bold text-yellow-900">
+                      Atención a tus presupuestos
+                    </p>
+                    <p className="text-xs text-yellow-700">
+                      {budgets.filter(b => {
+                        const spent = currentExpenses[b.category_id] || 0;
+                        const percentage = (spent / Number(b.monthly_budget)) * 100;
+                        return percentage >= 80;
+                      }).length} categoría(s) cerca o sobre el límite
                     </p>
                   </div>
-                </Card>
-              );
-            })
-          )}
-        </div>
+                </div>
+              </Card>
+            )}
+          </>
+        )}
       </div>
 
       <BottomNav />
