@@ -400,7 +400,7 @@ export default function Logros() {
         <div className="mb-6">
           <Button
             type="button"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/aspirations-analysis")}
             variant="ghost"
             size="icon"
             className="mb-4 bg-white/80 backdrop-blur-md rounded-[20px] shadow-lg hover:bg-white text-foreground h-10 w-10 hover:scale-105 transition-all border border-gray-200/50"
