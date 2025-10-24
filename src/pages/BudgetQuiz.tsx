@@ -569,7 +569,7 @@ export default function BudgetQuiz() {
               {showForecast && aiForecast && !hasBankConnection && (
                 <div className="bg-white/10 backdrop-blur-sm rounded-[15px] p-2.5 space-y-1.5 border-2 border-white/20 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 animate-fade-in">
                   <div className="flex items-center justify-center gap-2">
-                    <span className="text-xl animate-pulse">🤖</span>
+                    <span className="text-xl animate-pulse">✨</span>
                     <div className="text-left">
                       <p className="text-[9px] font-semibold text-foreground">Pronóstico de IA</p>
                       <p className="text-[7px] text-muted-foreground">Últimos 6 meses</p>
@@ -641,10 +641,10 @@ export default function BudgetQuiz() {
                       <span className="text-xs font-medium">Calculando...</span>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center gap-1.5">
-                      <span className="text-2xl animate-pulse">🏦</span>
-                      <span className="text-[9px] font-medium text-center leading-tight">IA detectará tu ingreso promedio</span>
-                    </div>
+                  <div className="flex flex-col items-center gap-1.5">
+                    <span className="text-2xl animate-pulse">✨</span>
+                    <span className="text-[9px] font-medium text-center leading-tight">IA detectará tu ingreso promedio</span>
+                  </div>
                   )}
                 </Button>
               )}
@@ -656,7 +656,7 @@ export default function BudgetQuiz() {
                   className="w-full h-auto py-3 rounded-[20px] border-2 border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
                   <div className="flex flex-col items-center gap-1.5">
-                    <span className="text-2xl animate-pulse">🏦</span>
+                    <span className="text-2xl animate-pulse">✨</span>
                     <span className="text-[9px] font-medium text-center leading-tight">Conectar Banco para que la IA detecte tu ingreso</span>
                   </div>
                 </Button>
@@ -727,7 +727,7 @@ export default function BudgetQuiz() {
                           <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-[12px] p-2 mb-2 border border-primary/20">
                             <div className="flex items-center justify-between mb-1">
                               <div className="flex items-center gap-1.5">
-                                <span className="text-base">🤖</span>
+                                <span className="text-base">✨</span>
                                 <span className="text-[10px] font-semibold text-foreground">Estimación IA</span>
                               </div>
                               <span className="text-sm font-bold text-primary">
