@@ -23,7 +23,7 @@ export default function BudgetProgressWidget({ categories = [], hasBudgets = fal
   // Si no tiene presupuestos configurados, mostrar invitación
   if (!hasBudgets || categories.length === 0) {
     return (
-      <Card className="p-6 bg-gradient-to-br from-blue-50 to-purple-50 rounded-[20px] shadow-xl border-2 border-blue-200 hover:scale-105 active:scale-95 transition-all">
+      <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 transition-all">
         <div className="text-center space-y-4">
           <div className="text-5xl">📊</div>
           <div>
