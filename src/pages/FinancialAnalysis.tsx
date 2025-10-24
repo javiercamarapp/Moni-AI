@@ -787,7 +787,7 @@ export default function FinancialAnalysis() {
             })()}
 
             {/* 5. PRESUPUESTO VIVO */}
-            {analysis?.budgetProgress && <BudgetProgressWidget {...analysis?.budgetProgress} />}
+            <BudgetProgressWidget {...(analysis?.budgetProgress || {})} />
 
             {/* 6. DEUDA INTELIGENTE */}
             {analysis?.debtPlan && analysis?.debtPlan.debts && analysis?.debtPlan.debts.length > 0 && <DebtPaymentPlanWidget {...analysis?.debtPlan} />}
