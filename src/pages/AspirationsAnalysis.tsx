@@ -799,17 +799,18 @@ export default function AspirationsAnalysis() {
           {/* Gráfica de Barras Comparativa */}
           <div className="mt-4 sm:mt-6">
             <h4 className="text-xs sm:text-sm font-bold text-foreground mb-2 sm:mb-3">Visualización Comparativa</h4>
-            <div className="h-[250px] sm:h-[300px] w-full">
+            <div className="h-[400px] sm:h-[500px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart 
                   data={comparativeData} 
                   layout="vertical"
-                  margin={{ top: 5, right: 20, left: 80, bottom: 5 }}
+                  margin={{ top: 10, right: 30, left: 100, bottom: 10 }}
+                  barSize={35}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis 
                     type="number"
-                    tick={{ fontSize: 9 }}
+                    tick={{ fontSize: 11 }}
                     tickFormatter={(value) => 
                       value >= 1000000 
                         ? `${(value / 1000000).toFixed(1)}M` 
@@ -821,8 +822,8 @@ export default function AspirationsAnalysis() {
                   <YAxis 
                     type="category" 
                     dataKey="category" 
-                    width={60}
-                    tick={{ fontSize: 9 }}
+                    width={80}
+                    tick={{ fontSize: 12 }}
                   />
                   <Tooltip 
                     formatter={(value: number) => 
@@ -838,8 +839,8 @@ export default function AspirationsAnalysis() {
                     }}
                   />
                   <Legend 
-                    wrapperStyle={{ fontSize: '10px' }}
-                    iconSize={8}
+                    wrapperStyle={{ fontSize: '12px' }}
+                    iconSize={10}
                   />
                   <Bar dataKey="current" fill="#3b82f6" name="Actual" radius={[0, 4, 4, 0]} />
                   <Bar dataKey="aspiration" fill="#8b5cf6" name="Meta" radius={[0, 4, 4, 0]} />
