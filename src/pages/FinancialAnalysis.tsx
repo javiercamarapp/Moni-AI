@@ -793,6 +793,66 @@ export default function FinancialAnalysis() {
               </DialogContent>
             </Dialog>
 
+            {/* Liquidez - Grid Compacto Mejorado */}
+            <div className="space-y-2">
+              <p className="text-xs font-bold text-foreground flex items-center gap-1">
+                <Droplets className="h-3 w-3" /> Liquidez y Estabilidad
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-muted-foreground">Balance</span>
+                    <div className="flex items-center gap-1">
+                      <DollarSign className="h-3 w-3 text-success" />
+                      {(analysis?.metrics?.balance ?? 0) >= 0 ? <span className="text-success text-xs">↑</span> : <span className="text-destructive text-xs">↓</span>}
+                    </div>
+                  </div>
+                  <p className={`text-lg font-bold ${(analysis?.metrics?.balance ?? 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
+                    ${formatK(analysis?.metrics?.balance)}k
+                  </p>
+                  <p className="text-[10px] text-muted-foreground">MoM: +2.3%</p>
+                </Card>
+
+                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-muted-foreground">Ahorro</span>
+                    <PiggyBank className="h-3 w-3 text-purple-500" />
+                  </div>
+                  <p className="text-lg font-bold text-purple-600">{analysis?.metrics?.savingsRate ?? 0}%</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    meta: {(analysis?.metrics?.liquidityMonths ?? 0) >= 3 ? '22%' : '20%'} 
+                    {(analysis?.metrics?.savingsRate ?? 0) >= 20 && ' 🎯'}
+                  </p>
+                </Card>
+
+                <Card className={`p-3 bg-white rounded-[20px] shadow-xl border cursor-pointer hover:scale-105 transition-transform duration-200 ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'border-emerald-200 bg-emerald-50/50' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'border-yellow-200 bg-yellow-50/50' : 'border-red-200 bg-red-50/50'}`}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-muted-foreground">Liquidez</span>
+                    <Droplets className={`h-3 w-3 ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'text-emerald-600' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'text-yellow-600' : 'text-red-600'}`} />
+                  </div>
+                  <p className={`text-lg font-bold ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'text-emerald-700' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'text-yellow-700' : 'text-red-700'}`}>
+                    {(analysis?.metrics?.liquidityMonths || 0).toFixed(1)} m
+                  </p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {(analysis?.metrics?.liquidityMonths || 0) >= 3 ? '✅ Seguro' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? '⚠️ Regular' : '🚨 Crítico'}
+                  </p>
+                </Card>
+
+                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-muted-foreground">Cash Flow</span>
+                    <TrendingUp className="h-3 w-3 text-teal-500" />
+                  </div>
+                  <p className="text-lg font-bold text-teal-600">
+                    ${formatK(analysis?.metrics?.cashFlowAccumulated)}k
+                  </p>
+                  <Button variant="ghost" size="sm" className="text-[10px] text-muted-foreground hover:text-foreground p-0 h-auto">
+                    ver por semana →
+                  </Button>
+                </Card>
+              </div>
+            </div>
+
             {/* 3. PROYECCIONES CON ESCENARIOS - Siempre mostrar con datos en caché */}
             {(() => {
               console.log('🔍 RENDERIZANDO FORECAST:', {
@@ -857,66 +917,6 @@ export default function FinancialAnalysis() {
                 >
                   Revisar subs
                 </Button>
-              </div>
-            </div>
-
-            {/* Liquidez - Grid Compacto Mejorado */}
-            <div className="space-y-2">
-              <p className="text-xs font-bold text-foreground flex items-center gap-1">
-                <Droplets className="h-3 w-3" /> Liquidez y Estabilidad
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-muted-foreground">Balance</span>
-                    <div className="flex items-center gap-1">
-                      <DollarSign className="h-3 w-3 text-success" />
-                      {(analysis?.metrics?.balance ?? 0) >= 0 ? <span className="text-success text-xs">↑</span> : <span className="text-destructive text-xs">↓</span>}
-                    </div>
-                  </div>
-                  <p className={`text-lg font-bold ${(analysis?.metrics?.balance ?? 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
-                    ${formatK(analysis?.metrics?.balance)}k
-                  </p>
-                  <p className="text-[10px] text-muted-foreground">MoM: +2.3%</p>
-                </Card>
-
-                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-muted-foreground">Ahorro</span>
-                    <PiggyBank className="h-3 w-3 text-purple-500" />
-                  </div>
-                  <p className="text-lg font-bold text-purple-600">{analysis?.metrics?.savingsRate ?? 0}%</p>
-                  <p className="text-[10px] text-muted-foreground">
-                    meta: {(analysis?.metrics?.liquidityMonths ?? 0) >= 3 ? '22%' : '20%'} 
-                    {(analysis?.metrics?.savingsRate ?? 0) >= 20 && ' 🎯'}
-                  </p>
-                </Card>
-
-                <Card className={`p-3 bg-white rounded-[20px] shadow-xl border cursor-pointer hover:scale-105 transition-transform duration-200 ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'border-emerald-200 bg-emerald-50/50' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'border-yellow-200 bg-yellow-50/50' : 'border-red-200 bg-red-50/50'}`}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-muted-foreground">Liquidez</span>
-                    <Droplets className={`h-3 w-3 ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'text-emerald-600' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'text-yellow-600' : 'text-red-600'}`} />
-                  </div>
-                  <p className={`text-lg font-bold ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'text-emerald-700' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'text-yellow-700' : 'text-red-700'}`}>
-                    {(analysis?.metrics?.liquidityMonths || 0).toFixed(1)} m
-                  </p>
-                  <p className="text-[10px] text-muted-foreground">
-                    {(analysis?.metrics?.liquidityMonths || 0) >= 3 ? '✅ Seguro' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? '⚠️ Regular' : '🚨 Crítico'}
-                  </p>
-                </Card>
-
-                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-muted-foreground">Cash Flow</span>
-                    <TrendingUp className="h-3 w-3 text-teal-500" />
-                  </div>
-                  <p className="text-lg font-bold text-teal-600">
-                    ${formatK(analysis?.metrics?.cashFlowAccumulated)}k
-                  </p>
-                  <Button variant="ghost" size="sm" className="text-[10px] text-muted-foreground hover:text-foreground p-0 h-auto">
-                    ver por semana →
-                  </Button>
-                </Card>
               </div>
             </div>
 
