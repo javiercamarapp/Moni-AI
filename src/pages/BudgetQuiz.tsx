@@ -428,31 +428,31 @@ export default function BudgetQuiz() {
 
         {/* Step 2: Categories */}
         {step === 2 && (
-          <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in">
-            <div className="space-y-6">
+          <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in">
+            <div className="space-y-3">
               <div className="text-center">
-                <div className="text-5xl mb-3">📊</div>
-                <h2 className="text-2xl font-bold text-foreground mb-2">
+                <div className="text-4xl mb-2">📊</div>
+                <h2 className="text-xl font-bold text-foreground mb-1">
                   ¿En qué categorías gastas?
                 </h2>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Selecciona las categorías que quieres controlar
                 </p>
               </div>
               
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 {DEFAULT_CATEGORIES.map(category => (
                   <button
                     key={category.id}
                     onClick={() => handleCategoryToggle(category.id)}
-                    className={`p-4 rounded-[20px] border-2 transition-all ${
+                    className={`p-3 rounded-[15px] border-2 transition-all ${
                       selectedCategories.includes(category.id)
                         ? 'border-primary bg-primary/10 scale-95'
                         : 'border-blue-100 bg-white hover:border-primary/50'
                     }`}
                   >
-                    <div className="text-3xl mb-2">{category.icon}</div>
-                    <p className="text-xs font-medium text-foreground">
+                    <div className="text-2xl mb-1">{category.icon}</div>
+                    <p className="text-[10px] font-medium text-foreground leading-tight">
                       {category.name}
                     </p>
                     {selectedCategories.includes(category.id) && (
