@@ -29,6 +29,7 @@ export default function BudgetQuiz() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [monthlyIncome, setMonthlyIncome] = useState("");
+  const [displayValue, setDisplayValue] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [budgets, setBudgets] = useState<Record<string, number>>({});
   const [user, setUser] = useState<any>(null);
@@ -59,14 +60,22 @@ export default function BudgetQuiz() {
     setUserCategories(data || []);
   };
 
-  const formatDisplayValue = (value: string) => {
-    if (!value || value === "0") return "";
-    const number = parseFloat(value);
-    if (isNaN(number)) return "";
-    return new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(number);
+  const handleIncomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    const numericValue = input.replace(/[^\d]/g, '');
+    
+    setMonthlyIncome(numericValue);
+    
+    if (numericValue) {
+      const number = parseFloat(numericValue);
+      const formatted = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(number);
+      setDisplayValue(formatted);
+    } else {
+      setDisplayValue("");
+    }
   };
 
   const handleCategoryToggle = (categoryId: string) => {
@@ -215,17 +224,12 @@ export default function BudgetQuiz() {
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-3xl font-bold text-muted-foreground">$</span>
                   <Input
-                    type="number"
-                    placeholder="0"
-                    value={monthlyIncome}
-                    onChange={(e) => setMonthlyIncome(e.target.value)}
+                    type="text"
+                    placeholder="0.00"
+                    value={displayValue}
+                    onChange={handleIncomeChange}
                     className="text-3xl text-center font-bold h-16 rounded-[20px] border-2 border-blue-100 pl-12"
                   />
-                  {monthlyIncome && (
-                    <div className="mt-1 text-sm text-center text-muted-foreground">
-                      {formatDisplayValue(monthlyIncome)}
-                    </div>
-                  )}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Ingresa tu ingreso mensual neto aproximado
