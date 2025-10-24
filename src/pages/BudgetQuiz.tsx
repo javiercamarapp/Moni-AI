@@ -316,7 +316,7 @@ export default function BudgetQuiz() {
                   ) : (
                     <div className="flex flex-col items-center gap-1">
                       <span className="text-2xl">🏦</span>
-                      <span className="text-xs font-medium text-center">IA detectará tu ingreso promedio</span>
+                      <span className="text-[10px] font-medium text-center leading-tight">IA detectará tu ingreso promedio</span>
                     </div>
                   )}
                 </Button>
@@ -330,7 +330,7 @@ export default function BudgetQuiz() {
                 >
                   <div className="flex flex-col items-center gap-1">
                     <span className="text-2xl">🏦</span>
-                    <span className="text-xs font-medium text-center">Conectar Banco para que la IA detecte tu ingreso</span>
+                    <span className="text-[10px] font-medium text-center leading-tight">Conectar Banco para que la IA detecte tu ingreso</span>
                   </div>
                 </Button>
               )}
