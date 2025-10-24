@@ -408,13 +408,13 @@ export default function Logros() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
 
-          <Card className="bg-white/60 backdrop-blur-xl rounded-[20px] shadow-lg border border-gray-200/50 p-6 mb-6">
+          <Card className="bg-white/60 backdrop-blur-xl rounded-[20px] shadow-lg border border-gray-200/50 p-3 mb-6">
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 mb-3 shadow-lg">
-                <span className="text-3xl">🏆</span>
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 mb-2 shadow-lg">
+                <span className="text-2xl">🏆</span>
               </div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">Tus Logros</h1>
-              <p className="text-sm text-muted-foreground">
+              <h1 className="text-xl font-bold text-foreground mb-1">Tus Logros</h1>
+              <p className="text-xs text-muted-foreground">
                 Progreso actual: <span className="font-semibold text-foreground">{currentProgress.toFixed(1)}%</span> ({currentLevel} / 10,000)
               </p>
             </div>
