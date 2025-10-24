@@ -934,26 +934,27 @@ export default function BudgetQuiz() {
                 
               {/* Budget vs Savings Visualization */}
               <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100">
-                <div className="relative h-6 bg-gradient-to-r from-gray-800 to-gray-900 rounded-full border border-white/10 overflow-hidden shadow-inner">
-                  {/* Barra de presupuesto gastado - Rojo metálico brillante */}
+                <div className="relative h-5 bg-gradient-to-r from-[hsl(220,60%,10%)] to-[hsl(240,55%,8%)] rounded-full border border-white/10 overflow-hidden shadow-inner">
                   <div
-                    className="absolute left-0 top-0 h-full bg-gradient-to-r from-red-600 via-red-500 to-red-600 transition-all duration-500"
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      percentageOfIncome > 100 
+                        ? 'bg-gradient-to-r from-red-600 via-red-500 to-red-600' 
+                        : percentageOfIncome > 75
+                        ? 'bg-gradient-to-r from-yellow-500 via-amber-400 to-yellow-500'
+                        : 'bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500'
+                    }`}
                     style={{ 
                       width: `${Math.min(percentageOfIncome, 100)}%`,
-                      boxShadow: '0 0 20px rgba(239, 68, 68, 0.8), inset 0 1px 3px rgba(255, 255, 255, 0.3), inset 0 -1px 3px rgba(0, 0, 0, 0.3)'
-                    }}
-                  />
-                  {/* Barra de ahorro - Verde brillante */}
-                  <div
-                    className="absolute right-0 top-0 h-full bg-gradient-to-r from-emerald-500 to-green-600 transition-all duration-500"
-                    style={{ 
-                      width: `${Math.max(0, 100 - percentageOfIncome)}%`,
-                      boxShadow: '0 0 20px rgba(16, 185, 129, 0.8), inset 0 1px 3px rgba(255, 255, 255, 0.3), inset 0 -1px 3px rgba(0, 0, 0, 0.3)'
+                      boxShadow: percentageOfIncome > 100
+                        ? '0 0 20px rgba(239, 68, 68, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)'
+                        : percentageOfIncome > 75
+                        ? '0 0 20px rgba(251, 191, 36, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)'
+                        : '0 0 20px rgba(4, 120, 87, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2)'
                     }}
                   />
                   {/* Texto centrado mostrando el ahorro */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-xs font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                    <span className="text-[10px] font-bold text-white drop-shadow-lg">
                       Ahorrando: {Math.max(0, 100 - percentageOfIncome).toFixed(0)}%
                     </span>
                   </div>
