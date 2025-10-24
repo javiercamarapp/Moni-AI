@@ -506,44 +506,44 @@ export default function Logros() {
 
         {/* Dialog de explicación */}
         <Dialog open={!!selectedBadge} onOpenChange={(open) => !open && setSelectedBadge(null)}>
-          <DialogContent className="bg-white/70 backdrop-blur-xl border-gray-200/50 rounded-[24px] shadow-2xl max-w-md data-[state=open]:animate-scale-in">
+          <DialogContent className="bg-white/70 backdrop-blur-xl border-gray-200/50 rounded-[24px] shadow-2xl max-w-xs data-[state=open]:animate-scale-in">
             {selectedBadge && (
               <>
                 <DialogHeader>
-                  <div className="flex flex-col items-center text-center mb-4">
-                    {/* Icono grande */}
+                  <div className="flex flex-col items-center text-center mb-2">
+                    {/* Icono */}
                     <div className={`
-                      w-20 h-20 rounded-full flex items-center justify-center mb-4
+                      w-14 h-14 rounded-full flex items-center justify-center mb-3
                       ${currentLevel >= selectedBadge.level 
                         ? `bg-gradient-to-br ${selectedBadge.color} shadow-lg` 
                         : 'bg-gray-200 shadow-md'
                       }
                     `}>
                       {currentLevel >= selectedBadge.level ? (
-                        <span className="text-5xl">{selectedBadge.emoji}</span>
+                        <span className="text-3xl">{selectedBadge.emoji}</span>
                       ) : (
-                        <Lock className="w-10 h-10 text-gray-400" />
+                        <Lock className="w-7 h-7 text-gray-400" />
                       )}
                     </div>
 
                     {/* Título */}
-                    <DialogTitle className="text-2xl font-bold text-foreground mb-2">
+                    <DialogTitle className="text-lg font-bold text-foreground mb-1">
                       {selectedBadge.name}
                     </DialogTitle>
 
                     {/* Nivel y porcentaje */}
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="text-sm font-semibold text-muted-foreground">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xs font-semibold text-muted-foreground">
                         Nivel {selectedBadge.level}
                       </span>
-                      <span className="text-sm font-semibold text-primary">
+                      <span className="text-xs font-semibold text-primary">
                         {selectedBadge.growthPercentage}%
                       </span>
                     </div>
 
                     {/* Badge de estado */}
                     <div className={`
-                      px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm mb-4
+                      px-2.5 py-1 rounded-full text-[10px] font-semibold shadow-sm mb-3
                       ${currentLevel >= selectedBadge.level 
                         ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' 
                         : 'bg-gray-200 text-gray-600'
@@ -554,27 +554,29 @@ export default function Logros() {
                   </div>
                 </DialogHeader>
 
-                {/* Descripción */}
+                {/* Descripción - Solo si está desbloqueado */}
                 <DialogDescription asChild>
-                  <div className="space-y-4">
-                    <div className="bg-white/50 backdrop-blur-md rounded-[16px] p-4 border border-gray-200/30">
-                      <h4 className="text-sm font-bold text-foreground mb-2">Descripción</h4>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {selectedBadge.description}
-                      </p>
-                    </div>
+                  <div className="space-y-3">
+                    {currentLevel >= selectedBadge.level ? (
+                      <>
+                        <div className="bg-white/50 backdrop-blur-md rounded-[16px] p-3 border border-gray-200/30">
+                          <h4 className="text-xs font-bold text-foreground mb-1">Descripción</h4>
+                          <p className="text-xs text-muted-foreground leading-relaxed">
+                            {selectedBadge.description}
+                          </p>
+                        </div>
 
-                    <div className="bg-white/50 backdrop-blur-md rounded-[16px] p-4 border border-gray-200/30">
-                      <h4 className="text-sm font-bold text-foreground mb-2">Significado</h4>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {selectedBadge.explanation}
-                      </p>
-                    </div>
-
-                    {currentLevel < selectedBadge.level && (
-                      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-[16px] p-4 border border-blue-200/50">
-                        <h4 className="text-sm font-bold text-foreground mb-2">Para desbloquear</h4>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
+                        <div className="bg-white/50 backdrop-blur-md rounded-[16px] p-3 border border-gray-200/30">
+                          <h4 className="text-xs font-bold text-foreground mb-1">Significado</h4>
+                          <p className="text-xs text-muted-foreground leading-relaxed">
+                            {selectedBadge.explanation}
+                          </p>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-[16px] p-3 border border-blue-200/50">
+                        <h4 className="text-xs font-bold text-foreground mb-1">Para desbloquear</h4>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
                           Alcanza el {selectedBadge.growthPercentage}% de tus aspiraciones para desbloquear este logro.
                         </p>
                       </div>
