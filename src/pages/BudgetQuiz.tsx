@@ -297,6 +297,10 @@ export default function BudgetQuiz() {
       console.log('Estimaciones de IA recibidas:', data?.estimates);
       
       if (data?.estimates) {
+        console.log('Todas las estimaciones recibidas:', JSON.stringify(data.estimates, null, 2));
+        Object.keys(data.estimates).forEach(catId => {
+          console.log(`Categoría ${catId}: $${data.estimates[catId]}`);
+        });
         setCategoryEstimates(data.estimates);
         console.log('Estado actualizado con estimaciones:', data.estimates);
         console.log('¿Mascotas tiene estimación?', 'mascotas' in data.estimates, data.estimates.mascotas);
@@ -675,13 +679,18 @@ export default function BudgetQuiz() {
                               ${budgets[category.id].toLocaleString()}
                             </span>
                           )}
-                          {categoryEstimates[category.id] && !budgets[category.id] && (
-                            <div className="bg-primary/10 px-2 py-1 rounded-lg">
-                              <p className="text-[9px] text-primary font-semibold">
-                                IA: ${categoryEstimates[category.id].toLocaleString()}
-                              </p>
-                            </div>
-                          )}
+                          {(() => {
+                            const hasEstimate = categoryEstimates[category.id];
+                            const hasBudget = budgets[category.id];
+                            console.log(`Categoría ${category.id}:`, { hasEstimate, hasBudget, estimate: categoryEstimates[category.id], budget: budgets[category.id] });
+                            return hasEstimate && !hasBudget ? (
+                              <div className="bg-primary/10 px-2 py-1 rounded-lg">
+                                <p className="text-[9px] text-primary font-semibold">
+                                  IA: ${categoryEstimates[category.id].toLocaleString()}
+                                </p>
+                              </div>
+                            ) : null;
+                          })()}
                           <ArrowRight className={`h-4 w-4 text-muted-foreground transition-transform ${
                             expandedCategory === category.id ? 'rotate-90' : ''
                           }`} />
