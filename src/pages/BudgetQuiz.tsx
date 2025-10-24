@@ -668,7 +668,7 @@ export default function BudgetQuiz() {
                           💡 {category.insight}
                         </p>
                         
-                        {categoryEstimates[category.id] && (
+                        {categoryEstimates[category.id] && !budgets[category.id] && (
                           <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-[12px] p-2 mb-2 border border-primary/20">
                             <div className="flex items-center justify-between mb-1">
                               <div className="flex items-center gap-1.5">
@@ -691,6 +691,23 @@ export default function BudgetQuiz() {
                             >
                               Aceptar estimación
                             </Button>
+                          </div>
+                        )}
+
+                        {budgets[category.id] && budgets[category.id] > 0 && (
+                          <div className="bg-gradient-to-r from-gray-50 to-white rounded-[12px] p-3 mb-2 border border-gray-200">
+                            <p className="text-[10px] font-semibold text-foreground mb-2">
+                              Presupuesto asignado
+                            </p>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] font-semibold text-muted-foreground">$</span>
+                              <Input
+                                type="number"
+                                value={budgets[category.id]}
+                                onChange={(e) => updateBudget(category.id, e.target.value)}
+                                className="flex-1 h-9 text-sm font-bold text-right"
+                              />
+                            </div>
                           </div>
                         )}
                         
