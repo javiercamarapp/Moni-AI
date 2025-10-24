@@ -340,3 +340,15 @@
 .gradient-border-stop-hover:hover {
   animation-play-state: paused;
 }
+
+/* Hide scrollbar for carousel */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

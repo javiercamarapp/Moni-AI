@@ -631,133 +631,196 @@ export default function FinancialAnalysis() {
                   Análisis Financiero
                 </h1>
                 <p className="text-xs text-muted-foreground">
-                  {period === 'month' ? 'Mes actual' : 'Año completo'}
+                  Desliza para ver mes y año
                 </p>
               </div>
-              <Tabs value={period} onValueChange={setPeriod}>
-                <TabsList className="h-10 bg-white rounded-[20px] shadow-xl border border-blue-100">
-                  <TabsTrigger 
-                    value="month" 
-                    className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-[16px] transition-all"
-                  >
-                    Mes
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="year" 
-                    className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-[16px] transition-all"
-                  >
-                    Año
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
             </div>
 
             {/* Mostrar métricas instantáneas (siempre disponibles del caché) */}
             {(quickMetrics || analysis) ? (
           <>
-            {/* Animated Income & Expense Card */}
-            <Card 
-              className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer hover:scale-105 active:scale-95 transition-all" 
-              style={{ animationDelay: '0ms' }}
-              onClick={() => navigate('/balance')}
-            >
-              {(() => {
-                // CRITICAL: Usar siempre la misma fuente que el Dashboard
-                // - Mes: dashboardData (tiempo real del mes actual)
-                // - Año: quickMetrics (calculado de TODA la BD, 1000 transacciones)
-                const income = period === 'month' 
-                  ? dashboardData.monthlyIncome 
-                  : (quickMetrics?.totalIncome || 0);
-                const expenses = period === 'month'
-                  ? dashboardData.monthlyExpenses
-                  : (quickMetrics?.totalExpenses || 0);
-                const balance = income - expenses;
-                const maxValue = Math.max(income, expenses);
-                
-                console.log('🎨 UI MOSTRANDO CARD (period:', period, '):', {
-                  ingresos: income,
-                  gastos: expenses,
-                  balance: balance,
-                  fuente: period === 'month' ? 'dashboardData (tiempo real)' : 'quickMetrics (TODA LA BD)',
-                  dashboardIncome: dashboardData.monthlyIncome,
-                  dashboardExpenses: dashboardData.monthlyExpenses,
-                  quickMetricsIncome: quickMetrics?.totalIncome,
-                  quickMetricsExpenses: quickMetrics?.totalExpenses
-                });
-                
-                return (
-                  <>
-                    {/* Ingresos */}
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
-                            <TrendingUp className="w-5 h-5 text-success" />
+            {/* Animated Income & Expense Card with Carousel */}
+            <div className="overflow-x-auto snap-x snap-mandatory flex gap-4 pb-2 scrollbar-hide">
+              {/* Card Mensual */}
+              <Card 
+                className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer hover:scale-105 active:scale-95 transition-all" 
+                style={{ animationDelay: '0ms' }}
+                onClick={() => navigate('/balance')}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-semibold text-primary">📅 Mes Actual</p>
+                  <p className="text-[10px] text-muted-foreground">← Desliza →</p>
+                </div>
+                {(() => {
+                  const income = dashboardData.monthlyIncome;
+                  const expenses = dashboardData.monthlyExpenses;
+                  const balance = income - expenses;
+                  const maxValue = Math.max(income, expenses);
+                  
+                  return (
+                    <>
+                      {/* Ingresos */}
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
+                              <TrendingUp className="w-5 h-5 text-success" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-foreground">Ingresos</p>
+                              <p className="text-xs text-muted-foreground">Mes actual</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-sm font-bold text-foreground">Ingresos</p>
-                            <p className="text-xs text-muted-foreground">Período actual</p>
-                          </div>
+                          <p className="text-lg font-black text-success">
+                            ${(income / 1000).toFixed(0)}k
+                          </p>
                         </div>
-                        <p className="text-lg font-black text-success">
-                          ${(income / 1000).toFixed(0)}k
-                        </p>
-                      </div>
-                      <div className="relative h-2.5 bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out"
-                          style={{ 
-                            width: `${maxValue > 0 ? (income / maxValue * 100) : 0}%`,
-                            background: 'linear-gradient(90deg, #10b981, #22c55e, #10b981)',
-                            backgroundSize: '200% 100%',
-                            animation: 'slideIn 1.5s ease-out, gradient-shift 3s ease-in-out infinite'
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Gastos */}
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center">
-                            <TrendingDown className="w-5 h-5 text-destructive" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-foreground">Gastos</p>
-                            <p className="text-xs text-muted-foreground">Período actual</p>
-                          </div>
+                        <div className="relative h-2.5 bg-muted rounded-full overflow-hidden">
+                          <div 
+                            className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out"
+                            style={{ 
+                              width: `${maxValue > 0 ? (income / maxValue * 100) : 0}%`,
+                              background: 'linear-gradient(90deg, #10b981, #22c55e, #10b981)',
+                              backgroundSize: '200% 100%',
+                              animation: 'slideIn 1.5s ease-out, gradient-shift 3s ease-in-out infinite'
+                            }}
+                          />
                         </div>
-                        <p className="text-lg font-black text-destructive">
-                          ${(expenses / 1000).toFixed(0)}k
-                        </p>
                       </div>
-                      <div className="relative h-2.5 bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out"
-                          style={{ 
-                            width: `${maxValue > 0 ? (expenses / maxValue * 100) : 0}%`,
-                            background: 'linear-gradient(90deg, #dc2626, #ef4444, #dc2626)',
-                            backgroundSize: '200% 100%',
-                            animation: 'slideIn 1.5s ease-out 0.3s both, gradient-shift 3s ease-in-out infinite'
-                          }}
-                        />
-                      </div>
-                    </div>
 
-                    {/* Balance */}
-                    <div className="pt-2 border-t border-border">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-bold text-foreground">Balance</p>
-                        <p className={`text-xl font-black ${balance >= 0 ? 'text-success' : 'text-destructive'}`}>
-                          {balance >= 0 ? '+' : ''}${(balance / 1000).toFixed(0)}k
-                        </p>
+                      {/* Gastos */}
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center">
+                              <TrendingDown className="w-5 h-5 text-destructive" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-foreground">Gastos</p>
+                              <p className="text-xs text-muted-foreground">Mes actual</p>
+                            </div>
+                          </div>
+                          <p className="text-lg font-black text-destructive">
+                            ${(expenses / 1000).toFixed(0)}k
+                          </p>
+                        </div>
+                        <div className="relative h-2.5 bg-muted rounded-full overflow-hidden">
+                          <div 
+                            className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out"
+                            style={{ 
+                              width: `${maxValue > 0 ? (expenses / maxValue * 100) : 0}%`,
+                              background: 'linear-gradient(90deg, #dc2626, #ef4444, #dc2626)',
+                              backgroundSize: '200% 100%',
+                              animation: 'slideIn 1.5s ease-out 0.3s both, gradient-shift 3s ease-in-out infinite'
+                            }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </>
-                );
-              })()}
-            </Card>
+
+                      {/* Balance */}
+                      <div className="pt-2 border-t border-border">
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-bold text-foreground">Balance</p>
+                          <p className={`text-xl font-black ${balance >= 0 ? 'text-success' : 'text-destructive'}`}>
+                            {balance >= 0 ? '+' : ''}${(balance / 1000).toFixed(0)}k
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  );
+                })()}
+              </Card>
+
+              {/* Card Anual */}
+              <Card 
+                className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer hover:scale-105 active:scale-95 transition-all" 
+                style={{ animationDelay: '100ms' }}
+                onClick={() => navigate('/balance')}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-semibold text-purple-600">📊 Año Completo</p>
+                  <p className="text-[10px] text-muted-foreground">← Desliza →</p>
+                </div>
+                {(() => {
+                  const income = quickMetrics?.totalIncome || 0;
+                  const expenses = quickMetrics?.totalExpenses || 0;
+                  const balance = income - expenses;
+                  const maxValue = Math.max(income, expenses);
+                  
+                  return (
+                    <>
+                      {/* Ingresos */}
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
+                              <TrendingUp className="w-5 h-5 text-success" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-foreground">Ingresos</p>
+                              <p className="text-xs text-muted-foreground">Año completo</p>
+                            </div>
+                          </div>
+                          <p className="text-lg font-black text-success">
+                            ${(income / 1000).toFixed(0)}k
+                          </p>
+                        </div>
+                        <div className="relative h-2.5 bg-muted rounded-full overflow-hidden">
+                          <div 
+                            className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out"
+                            style={{ 
+                              width: `${maxValue > 0 ? (income / maxValue * 100) : 0}%`,
+                              background: 'linear-gradient(90deg, #10b981, #22c55e, #10b981)',
+                              backgroundSize: '200% 100%',
+                              animation: 'slideIn 1.5s ease-out, gradient-shift 3s ease-in-out infinite'
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Gastos */}
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center">
+                              <TrendingDown className="w-5 h-5 text-destructive" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-foreground">Gastos</p>
+                              <p className="text-xs text-muted-foreground">Año completo</p>
+                            </div>
+                          </div>
+                          <p className="text-lg font-black text-destructive">
+                            ${(expenses / 1000).toFixed(0)}k
+                          </p>
+                        </div>
+                        <div className="relative h-2.5 bg-muted rounded-full overflow-hidden">
+                          <div 
+                            className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out"
+                            style={{ 
+                              width: `${maxValue > 0 ? (expenses / maxValue * 100) : 0}%`,
+                              background: 'linear-gradient(90deg, #dc2626, #ef4444, #dc2626)',
+                              backgroundSize: '200% 100%',
+                              animation: 'slideIn 1.5s ease-out 0.3s both, gradient-shift 3s ease-in-out infinite'
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Balance */}
+                      <div className="pt-2 border-t border-border">
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-bold text-foreground">Balance</p>
+                          <p className={`text-xl font-black ${balance >= 0 ? 'text-success' : 'text-destructive'}`}>
+                            {balance >= 0 ? '+' : ''}${(balance / 1000).toFixed(0)}k
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  );
+                })()}
+              </Card>
+            </div>
 
             {/* Risk Indicators */}
             <RiskIndicatorsWidget
