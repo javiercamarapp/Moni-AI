@@ -326,35 +326,35 @@ export default function BudgetQuiz() {
 
               {/* AI Forecast Card */}
               {showForecast && aiForecast && !hasBankConnection && (
-                <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-[15px] p-4 space-y-3 border border-primary/20">
+                <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-[15px] p-2 space-y-1.5 border border-primary/20 animate-fade-in">
                   <div className="flex items-center justify-center gap-2">
-                    <span className="text-3xl">🤖</span>
+                    <span className="text-2xl">🤖</span>
                     <div className="text-left">
-                      <p className="text-xs font-semibold text-foreground">Pronóstico de IA</p>
-                      <p className="text-[10px] text-muted-foreground">Basado en tus últimos 6 meses</p>
+                      <p className="text-[10px] font-semibold text-foreground">Pronóstico de IA</p>
+                      <p className="text-[8px] text-muted-foreground">Últimos 6 meses</p>
                     </div>
                   </div>
-                  <div className="text-center">
-                    <p className="text-3xl font-bold text-primary">${aiForecast.toLocaleString()}</p>
-                    <p className="text-xs text-muted-foreground mt-1">Ingreso mensual promedio</p>
+                  <div className="text-center py-1">
+                    <p className="text-2xl font-bold text-primary">${aiForecast.toLocaleString()}</p>
+                    <p className="text-[8px] text-muted-foreground">Ingreso mensual promedio</p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-1.5">
                     <Button
                       onClick={() => {
                         setMonthlyIncome(aiForecast.toString());
                         setShowForecast(false);
                         toast.success("Pronóstico aplicado");
                       }}
-                      className="flex-1 bg-primary hover:bg-primary/90 text-white h-10 text-sm font-semibold rounded-[15px]"
+                      className="flex-1 bg-primary hover:bg-primary/90 text-white h-8 text-xs font-semibold rounded-[12px]"
                     >
-                      Usar Pronóstico
+                      Usar
                     </Button>
                     <Button
                       onClick={() => setShowForecast(false)}
                       variant="outline"
-                      className="flex-1 h-10 text-sm rounded-[15px] border-primary/30"
+                      className="flex-1 h-8 text-xs rounded-[12px] border-primary/30"
                     >
-                      Ingresar Manual
+                      Manual
                     </Button>
                   </div>
                 </div>
