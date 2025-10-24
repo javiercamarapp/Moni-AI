@@ -920,6 +920,13 @@ export default function FinancialAnalysis() {
               </div>
             </div>
 
+            {/* Liquidez de Emergencia */}
+            <LiquidityGaugeWidget 
+              months={analysis?.metrics?.liquidityMonths || 0}
+              liquidAssets={analysis?.metrics?.totalLiquidAssets ?? 0}
+              monthlyExpenses={analysis?.metrics?.totalExpenses ?? 0}
+            />
+
             {/* Control de Gastos - Compacto */}
             <div className="space-y-2">
               <p className="text-xs font-bold text-foreground flex items-center gap-1">
@@ -1186,24 +1193,16 @@ export default function FinancialAnalysis() {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <CategoryBreakdownWidget 
-                categories={[
-                  { name: 'Vivienda', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.3, color: '#8b5cf6' },
-                  { name: 'Alimentación', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.25, color: '#ec4899' },
-                  { name: 'Transporte', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.15, color: '#f59e0b' },
-                  { name: 'Servicios', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.12, color: '#10b981' },
-                  { name: 'Entretenimiento', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.10, color: '#3b82f6' },
-                  { name: 'Otros', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.08, color: '#ef4444' },
-                ]}
-              />
-              
-              <LiquidityGaugeWidget 
-                months={analysis?.metrics?.liquidityMonths || 0}
-                liquidAssets={analysis?.metrics?.totalLiquidAssets ?? 0}
-                monthlyExpenses={analysis?.metrics?.totalExpenses ?? 0}
-              />
-            </div>
+            <CategoryBreakdownWidget 
+              categories={[
+                { name: 'Vivienda', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.3, color: '#8b5cf6' },
+                { name: 'Alimentación', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.25, color: '#ec4899' },
+                { name: 'Transporte', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.15, color: '#f59e0b' },
+                { name: 'Servicios', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.12, color: '#10b981' },
+                { name: 'Entretenimiento', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.10, color: '#3b82f6' },
+                { name: 'Otros', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.08, color: '#ef4444' },
+              ]}
+            />
           </>
         ) : (
           <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center">
