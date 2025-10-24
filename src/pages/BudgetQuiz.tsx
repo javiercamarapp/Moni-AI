@@ -425,10 +425,18 @@ export default function BudgetQuiz() {
     
     setLoading(true);
     try {
+      console.log('=== GUARDANDO PRESUPUESTOS ===');
+      console.log('Categorías seleccionadas:', selectedCategories);
+      console.log('Budgets actuales:', budgets);
+      console.log('Subcategory budgets:', subcategoryBudgets);
+      
       // Para cada categoría seleccionada, buscar o crear la categoría en la BD
       for (const categoryId of selectedCategories) {
         const categoryData = DEFAULT_CATEGORIES.find(c => c.id === categoryId);
         if (!categoryData) continue;
+
+        console.log(`\nProcesando categoría: ${categoryData.name} (${categoryId})`);
+        console.log(`Presupuesto a guardar: ${budgets[categoryId]}`);
 
         // Buscar si ya existe la categoría del usuario
         let existingCategory = userCategories.find(
@@ -450,9 +458,18 @@ export default function BudgetQuiz() {
 
           if (catError) throw catError;
           existingCategory = newCategory;
+          console.log('Categoría creada:', existingCategory);
+        } else {
+          console.log('Categoría ya existe:', existingCategory);
         }
 
         // Crear el presupuesto
+        console.log('Insertando presupuesto en DB:', {
+          user_id: user.id,
+          category_id: existingCategory.id,
+          monthly_budget: budgets[categoryId]
+        });
+        
         const { error: budgetError } = await supabase
           .from('category_budgets')
           .insert({
@@ -461,9 +478,15 @@ export default function BudgetQuiz() {
             monthly_budget: budgets[categoryId]
           });
 
-        if (budgetError) throw budgetError;
+        if (budgetError) {
+          console.error('Error guardando presupuesto:', budgetError);
+          throw budgetError;
+        }
+        
+        console.log('Presupuesto guardado exitosamente');
       }
 
+      console.log('=== TODOS LOS PRESUPUESTOS GUARDADOS ===');
       toast.success("¡Presupuestos configurados exitosamente!");
       navigate('/gestionar-categorias');
     } catch (error) {
@@ -849,12 +872,20 @@ export default function BudgetQuiz() {
                                   handleCategoryToggle(category.id);
                                 } else {
                                   // Sumar todos los montos de las subcategorías
+                                  console.log(`\n=== AGREGANDO CATEGORÍA: ${category.name} ===`);
+                                  console.log('Subcategorías:', category.subcategories);
+                                  
                                   const subcategoryTotal = category.subcategories.reduce((sum, sub) => {
-                                    return sum + (subcategoryBudgets[sub.id] || 0);
+                                    const amount = subcategoryBudgets[sub.id] || 0;
+                                    console.log(`  ${sub.name} (${sub.id}): $${amount}`);
+                                    return sum + amount;
                                   }, 0);
+                                  
+                                  console.log(`TOTAL CALCULADO: $${subcategoryTotal}`);
                                   
                                   // Si hay un total de subcategorías, agregarlo al budget
                                   if (subcategoryTotal > 0) {
+                                    console.log('Asignando al budget del estado');
                                     setBudgets({ ...budgets, [category.id]: subcategoryTotal });
                                   }
                                   
