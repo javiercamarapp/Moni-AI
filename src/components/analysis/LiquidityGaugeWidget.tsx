@@ -1,6 +1,9 @@
 import { Card } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { Droplets } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { subMonths, startOfMonth } from "date-fns";
 
 interface LiquidityGaugeWidgetProps {
   months: number;
@@ -13,9 +16,44 @@ export default function LiquidityGaugeWidget({
   liquidAssets, 
   monthlyExpenses 
 }: LiquidityGaugeWidgetProps) {
+  // Calcular el promedio de gastos de los últimos 6 meses con IA
+  const { data: avgMonthlyExpenses } = useQuery({
+    queryKey: ['avg-monthly-expenses-6m'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return 0;
+
+      // Obtener transacciones de los últimos 6 meses
+      const sixMonthsAgo = startOfMonth(subMonths(new Date(), 6));
+      const { data: transactions } = await supabase
+        .from('transactions')
+        .select('amount, transaction_date')
+        .eq('user_id', user.id)
+        .eq('type', 'gasto')
+        .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0]);
+
+      if (!transactions || transactions.length === 0) return 0;
+
+      // Agrupar por mes y calcular totales
+      const monthlyTotals = new Map<string, number>();
+      transactions.forEach(t => {
+        const monthKey = t.transaction_date.substring(0, 7); // YYYY-MM
+        monthlyTotals.set(monthKey, (monthlyTotals.get(monthKey) || 0) + Number(t.amount));
+      });
+
+      // Calcular promedio solo de los meses que tienen datos
+      const months = Array.from(monthlyTotals.values());
+      return months.length > 0 ? months.reduce((sum, val) => sum + val, 0) / months.length : 0;
+    },
+    staleTime: 1000 * 60 * 5, // Cache por 5 minutos
+  });
+
   const validMonths = months && !isNaN(months) ? Math.max(0, months) : 0;
   const validLiquidAssets = liquidAssets && !isNaN(liquidAssets) ? liquidAssets : 0;
-  const validExpenses = monthlyExpenses && !isNaN(monthlyExpenses) && monthlyExpenses > 0 ? monthlyExpenses : 0;
+  // Usar el promedio calculado por IA si está disponible, si no usar el prop
+  const validExpenses = avgMonthlyExpenses && avgMonthlyExpenses > 0 
+    ? avgMonthlyExpenses 
+    : (monthlyExpenses && !isNaN(monthlyExpenses) && monthlyExpenses > 0 ? monthlyExpenses : 0);
 
   const maxMonths = 6;
   const percentage = validExpenses > 0 ? Math.min((validMonths / maxMonths) * 100, 100) : 0;
