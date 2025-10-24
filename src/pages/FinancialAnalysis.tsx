@@ -797,7 +797,7 @@ export default function FinancialAnalysis() {
 
             {/* Llamados a la Acción */}
             <div className="space-y-2">
-              <p className="text-xs font-medium text-foreground">🎯 Acciones Recomendadas</p>
+              <p className="text-xs font-bold text-foreground">🎯 Acciones Recomendadas</p>
               <div className="grid grid-cols-2 gap-2">
                 <Button 
                   variant="ghost" 
@@ -836,7 +836,7 @@ export default function FinancialAnalysis() {
 
             {/* Liquidez - Grid Compacto Mejorado */}
             <div className="space-y-2">
-              <p className="text-xs font-medium text-foreground flex items-center gap-1">
+              <p className="text-xs font-bold text-foreground flex items-center gap-1">
                 <Droplets className="h-3 w-3" /> Liquidez y Estabilidad
               </p>
               <div className="grid grid-cols-2 gap-2">
@@ -896,7 +896,7 @@ export default function FinancialAnalysis() {
 
             {/* Control de Gastos - Compacto */}
             <div className="space-y-2">
-              <p className="text-xs font-medium text-foreground flex items-center gap-1">
+              <p className="text-xs font-bold text-foreground flex items-center gap-1">
                 <TrendingDown className="h-3 w-3" /> Control de Gastos
               </p>
               <div className="grid grid-cols-2 gap-2">
@@ -955,7 +955,7 @@ export default function FinancialAnalysis() {
 
             {/* Endeudamiento Mejorado */}
             <div className="space-y-2">
-              <p className="text-xs font-medium text-foreground flex items-center gap-1">
+              <p className="text-xs font-bold text-foreground flex items-center gap-1">
                 <Shield className="h-3 w-3" /> Endeudamiento
               </p>
               {(analysis?.metrics?.totalDebt ?? 0) > 0 ? <>
@@ -991,7 +991,7 @@ export default function FinancialAnalysis() {
 
             {/* Inversión y Rentabilidad Mejorado */}
             <div className="space-y-2">
-              <p className="text-xs font-medium text-foreground flex items-center gap-1">
+              <p className="text-xs font-bold text-foreground flex items-center gap-1">
                 <TrendingUp className="h-3 w-3" /> Inversión & Rentabilidad
               </p>
               <div className="grid grid-cols-4 gap-2">
@@ -1020,7 +1020,7 @@ export default function FinancialAnalysis() {
 
             {/* Estabilidad y Metas Mejorado */}
             <div className="space-y-2">
-              <p className="text-xs font-medium text-foreground flex items-center gap-1">
+              <p className="text-xs font-bold text-foreground flex items-center gap-1">
                 <Target className="h-3 w-3" /> Estabilidad & Metas
               </p>
               <div className="grid grid-cols-2 gap-2">
@@ -1063,7 +1063,7 @@ export default function FinancialAnalysis() {
             <Dialog>
               <DialogTrigger asChild>
                 <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 active:scale-95 transition-all">
-                  <p className="text-xs font-medium text-foreground mb-2 flex items-center gap-1">
+                  <p className="text-xs font-bold text-foreground mb-2 flex items-center gap-1">
                     <BarChart3 className="h-3 w-3" /> Análisis Moni AI
                   </p>
                   <div className="text-xs text-foreground leading-relaxed line-clamp-3">
@@ -1105,7 +1105,7 @@ export default function FinancialAnalysis() {
 
             {/* Gráficas adicionales */}
             <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100">
-              <p className="text-xs font-medium text-muted-foreground mb-2">Ingresos vs Gastos</p>
+              <p className="text-xs font-bold text-foreground mb-2">Ingresos vs Gastos</p>
               <ResponsiveContainer width="100%" height={150}>
                 <BarChart data={[{
               name: 'Ing',
