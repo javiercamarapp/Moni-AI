@@ -101,36 +101,40 @@ const CategoryExpenses = () => {
       const startDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
       const endDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
 
-      // Obtener todas las transacciones de gastos del mes
-      const { data: transactionsData } = await supabase
-        .from('transactions')
-        .select('*, categories(name, color)')
-        .eq('user_id', user.id)
-        .eq('type', 'gasto')
-        .gte('transaction_date', startDate.toISOString().split('T')[0])
-        .lte('transaction_date', endDate.toISOString().split('T')[0])
-        .order('transaction_date', { ascending: false });
-
-      // Filtrar transacciones que pertenecen a esta categoría de presupuesto
-      const filteredTransactions = (transactionsData || []).filter(t => {
-        const txCategoryName = t.categories?.name || '';
-        const budgetCategory = categoryMapping[txCategoryName] || txCategoryName;
-        return budgetCategory === categoryName;
-      });
-
-      setTransactions(filteredTransactions);
-
-      // Obtener presupuesto configurado
+      // Obtener presupuesto configurado primero
       const { data: budgetData } = await supabase
         .from('category_budgets')
-        .select('*, categories(name)')
+        .select('*, categories!inner(id, name)')
         .eq('user_id', user.id)
         .eq('categories.name', categoryName)
-        .single();
+        .maybeSingle();
 
       if (budgetData) {
         setBudget(Number(budgetData.monthly_budget));
       }
+
+      // Obtener IDs de categorías que pertenecen a esta categoría de presupuesto
+      const categoryIds = Object.entries(categoryMapping)
+        .filter(([_, budgetCat]) => budgetCat === categoryName)
+        .map(([specificCat, _]) => specificCat);
+
+      // Si la categoría de presupuesto no está en el mapeo, usar el nombre directo
+      if (categoryIds.length === 0) {
+        categoryIds.push(categoryName);
+      }
+
+      // Obtener transacciones filtradas en el servidor
+      const { data: transactionsData } = await supabase
+        .from('transactions')
+        .select('*, categories!inner(name, color)')
+        .eq('user_id', user.id)
+        .eq('type', 'gasto')
+        .in('categories.name', categoryIds)
+        .gte('transaction_date', startDate.toISOString().split('T')[0])
+        .lte('transaction_date', endDate.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false });
+
+      setTransactions(transactionsData || []);
 
     } catch (error) {
       console.error('Error fetching data:', error);
