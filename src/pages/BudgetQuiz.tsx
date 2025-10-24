@@ -493,7 +493,6 @@ export default function BudgetQuiz() {
                       onClick={() => {
                         setMonthlyIncome(aiForecast.toString());
                         setShowForecast(false);
-                        toast.success("Pronóstico aplicado");
                       }}
                       className="flex-1 bg-primary hover:bg-primary/90 text-white h-7 text-[10px] font-semibold rounded-[10px] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all"
                     >
