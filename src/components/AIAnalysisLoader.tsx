@@ -59,8 +59,6 @@ export function AIAnalysisLoader({ message = "Analizando...", fullScreen = false
             <BarChart3 className="w-12 h-12 text-primary" />
           </motion.div>
         </div>
-        
-        <p className="text-base text-foreground font-medium text-center px-4">{message}</p>
       </div>
     </div>
   );
