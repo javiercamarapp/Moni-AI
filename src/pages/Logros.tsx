@@ -506,7 +506,7 @@ export default function Logros() {
 
         {/* Dialog de explicación */}
         <Dialog open={!!selectedBadge} onOpenChange={(open) => !open && setSelectedBadge(null)}>
-          <DialogContent className="bg-white/80 backdrop-blur-xl border-gray-200/50 rounded-[24px] shadow-2xl max-w-md">
+          <DialogContent className="bg-white/70 backdrop-blur-xl border-gray-200/50 rounded-[24px] shadow-2xl max-w-md data-[state=open]:animate-scale-in">
             {selectedBadge && (
               <>
                 <DialogHeader>
