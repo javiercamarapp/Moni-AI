@@ -739,7 +739,25 @@ export default function BudgetQuiz() {
                           ))}
                         </div>
                         <Button
-                          onClick={() => handleCategoryToggle(category.id)}
+                          onClick={() => {
+                            if (selectedCategories.includes(category.id)) {
+                              handleCategoryToggle(category.id);
+                            } else {
+                              // Sumar todos los montos de las subcategorías
+                              const subcategoryTotal = category.subcategories.reduce((sum, sub) => {
+                                return sum + (subcategoryBudgets[sub.id] || 0);
+                              }, 0);
+                              
+                              // Si hay un total de subcategorías, agregarlo al budget
+                              if (subcategoryTotal > 0) {
+                                setBudgets({ ...budgets, [category.id]: subcategoryTotal });
+                              }
+                              
+                              // Agregar la categoría
+                              handleCategoryToggle(category.id);
+                              setExpandedCategory(null);
+                            }
+                          }}
                           className={`w-full mt-2 h-10 text-xs font-semibold rounded-[15px] shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all ${
                             selectedCategories.includes(category.id)
                               ? 'bg-destructive hover:bg-destructive/90 text-white'
