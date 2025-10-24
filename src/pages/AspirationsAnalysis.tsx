@@ -858,27 +858,29 @@ export default function AspirationsAnalysis() {
               </div>
               <h3 className="text-xs font-bold text-foreground">Tus Logros</h3>
             </div>
-            <div className="flex flex-col items-end">
-              <p className="text-[8px] text-muted-foreground">Score Moni</p>
-              <div className="flex items-center gap-0.5">
-                <span className="text-[10px]">⭐</span>
-                <p className="text-sm font-bold text-foreground">{userScore}</p>
-              </div>
-            </div>
+            <Button
+              onClick={() => navigate("/logros")}
+              size="sm"
+              className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white text-[10px] h-7 px-3 rounded-full shadow-md hover:shadow-lg transition-all"
+            >
+              Ver todos
+            </Button>
           </div>
 
           {/* Badges Carousel */}
           {badges.length > 0 ? (
-            <BadgeCarousel
-              items={badges.map((badge, index) => (
-                <BadgeCard
-                  key={index}
-                  badge={badge}
-                  index={index}
-                  onCardClose={() => {}}
-                />
-              ))}
-            />
+            <div className="overflow-x-auto">
+              <BadgeCarousel
+                items={badges.map((badge, index) => (
+                  <BadgeCard
+                    key={index}
+                    badge={badge}
+                    index={index}
+                    onCardClose={() => {}}
+                  />
+                ))}
+              />
+            </div>
           ) : (
             <div className="text-center py-3">
               <span className="text-2xl opacity-50 block mb-1.5">🏆</span>
