@@ -1020,20 +1020,19 @@ export default function BudgetQuiz() {
         <Button
           onClick={handleNext}
           disabled={loading}
-          className="w-full h-12 bg-white/90 backdrop-blur-xl border-2 border-white/60 hover:bg-white/95 text-foreground rounded-[20px] font-semibold text-base shadow-2xl hover:shadow-white/60 hover:scale-105 active:scale-95 transition-all"
-          style={{ textShadow: '0 1px 2px rgba(255,255,255,0.5)' }}
+          className="w-full h-11 bg-white rounded-[20px] shadow-xl hover:shadow-2xl border border-blue-100 hover:border-primary/50 text-foreground font-semibold text-sm hover:scale-105 active:scale-95 transition-all"
         >
           {loading ? (
             "Guardando..."
           ) : step === 3 ? (
             <>
-              <Check className="h-5 w-5 mr-2" />
+              <Check className="h-4 w-4 mr-2" />
               Guardar Presupuestos
             </>
           ) : (
             <>
               Continuar
-              <ArrowRight className="h-5 w-5 ml-2" />
+              <ArrowRight className="h-4 w-4 ml-2" />
             </>
           )}
         </Button>
