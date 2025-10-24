@@ -93,13 +93,13 @@ export default function Budgets() {
       // Mapeo de categorías específicas a categorías generales de presupuesto
       const categoryMapping: Record<string, string[]> = {
         'vivienda': ['luz', 'agua', 'gas', 'internet', 'renta', 'mantenimiento'],
-        'transporte': ['gasolina', 'uber', 'estacionamiento', 'mantenimiento auto'],
-        'alimentación': ['supermercado', 'restaurantes', 'café', 'rappi', 'uber eats', 'bar y copas'],
-        'servicios y suscripciones': ['netflix', 'spotify', 'amazon prime', 'disney+', 'hbo max', 'teléfono'],
-        'salud y bienestar': ['gym', 'farmacia', 'médico', 'dentista'],
-        'entretenimiento y estilo de vida': ['cine', 'conciertos', 'night club', 'eventos', 'ropa', 'amazon', 'mercado libre'],
-        'ahorro e inversión': ['inversiones'],
-        'mascotas': ['veterinario', 'comida mascotas']
+        'transporte': ['gasolina', 'uber', 'estacionamiento', 'mantenimiento auto', 'transporte'],
+        'alimentación': ['supermercado', 'restaurantes', 'café', 'rappi', 'uber eats', 'bar y copas', 'bar', 'comida'],
+        'servicios y suscripciones': ['netflix', 'spotify', 'amazon prime', 'disney+', 'disney', 'hbo max', 'hbo', 'teléfono', 'telefono', 'suscripción', 'suscripcion'],
+        'salud y bienestar': ['gym', 'farmacia', 'médico', 'medico', 'dentista', 'salud'],
+        'entretenimiento y estilo de vida': ['cine', 'conciertos', 'night club', 'eventos', 'ropa', 'amazon', 'mercado libre', 'tecnología', 'tecnologia', 'entretenimiento'],
+        'ahorro e inversión': ['inversiones', 'inversión', 'inversion', 'ahorro'],
+        'mascotas': ['veterinario', 'comida mascotas', 'mascota']
       };
 
       // Calcular gastos por categoría del mes
@@ -113,23 +113,37 @@ export default function Budgets() {
 
       console.log('=== DEBUG GASTOS ===');
       console.log('Total de transacciones:', expenseData?.length);
+      console.log('Presupuestos cargados:', budgets.length);
 
-      // Buscar las categorías de presupuesto en la BD
-      const budgetCategoryNames = budgets.map(b => b.category.name.toLowerCase().trim());
-      
       // Agrupar gastos por categoría general
       const expensesByGeneralCategory: Record<string, number> = {};
       
       (expenseData || []).forEach(t => {
         if (t.categories && t.categories.name) {
           const specificCategoryName = t.categories.name.toLowerCase().trim();
+          console.log('Procesando gasto:', specificCategoryName, Number(t.amount));
           
           // Buscar a qué categoría general pertenece este gasto
+          let matched = false;
           for (const [generalCategory, specificCategories] of Object.entries(categoryMapping)) {
-            if (specificCategories.some(cat => specificCategoryName.includes(cat) || cat.includes(specificCategoryName))) {
+            // Buscar coincidencia exacta o parcial
+            const isMatch = specificCategories.some(cat => {
+              const catLower = cat.toLowerCase();
+              return specificCategoryName === catLower || 
+                     specificCategoryName.includes(catLower) || 
+                     catLower.includes(specificCategoryName);
+            });
+            
+            if (isMatch) {
               expensesByGeneralCategory[generalCategory] = (expensesByGeneralCategory[generalCategory] || 0) + Number(t.amount);
+              console.log(`✓ Mapeado "${specificCategoryName}" a "${generalCategory}"`);
+              matched = true;
               break;
             }
+          }
+          
+          if (!matched) {
+            console.log(`✗ No se encontró mapeo para "${specificCategoryName}"`);
           }
         }
       });
