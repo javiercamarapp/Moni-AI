@@ -287,56 +287,56 @@ export default function BudgetQuiz() {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
-      <div className="mx-auto px-4 py-6 space-y-6" style={{ maxWidth: '600px' }}>
+      <div className="mx-auto px-4 py-4 space-y-4" style={{ maxWidth: '600px' }}>
         {/* Header */}
         <div className="flex items-center justify-between">
           <Button
             variant="ghost"
             onClick={() => step === 1 ? navigate('/dashboard') : setStep(step - 1)}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-10 w-10 p-0"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-9 w-9 p-0"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="flex gap-2">
             {[1, 2, 3].map(s => (
               <div
                 key={s}
-                className={`h-2 w-8 rounded-full transition-all ${
+                className={`h-1.5 w-6 rounded-full transition-all ${
                   s === step ? 'bg-primary' : s < step ? 'bg-primary/50' : 'bg-gray-300'
                 }`}
               />
             ))}
           </div>
-          <div className="w-10" />
+          <div className="w-9" />
         </div>
 
         {/* Step 1: Income */}
         {step === 1 && (
-          <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in">
-            <div className="text-center space-y-6">
-              <div className="text-6xl">💰</div>
+          <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in">
+            <div className="text-center space-y-3">
+              <div className="text-4xl">💰</div>
               <div>
-                <h2 className="text-2xl font-bold text-foreground mb-2">
+                <h2 className="text-xl font-bold text-foreground mb-1">
                   ¿Cuál es tu ingreso mensual?
                 </h2>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Esto nos ayudará a sugerir presupuestos realistas
                 </p>
               </div>
 
               {/* AI Forecast Card */}
               {showForecast && aiForecast && !hasBankConnection && (
-                <div className="bg-white/10 backdrop-blur-sm rounded-[15px] p-3 space-y-2 border-2 border-white/20 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 animate-fade-in">
+                <div className="bg-white/10 backdrop-blur-sm rounded-[15px] p-2.5 space-y-1.5 border-2 border-white/20 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 animate-fade-in">
                   <div className="flex items-center justify-center gap-2">
-                    <span className="text-2xl animate-pulse">🤖</span>
+                    <span className="text-xl animate-pulse">🤖</span>
                     <div className="text-left">
-                      <p className="text-[10px] font-semibold text-foreground">Pronóstico de IA</p>
-                      <p className="text-[8px] text-muted-foreground">Últimos 6 meses</p>
+                      <p className="text-[9px] font-semibold text-foreground">Pronóstico de IA</p>
+                      <p className="text-[7px] text-muted-foreground">Últimos 6 meses</p>
                     </div>
                   </div>
-                  <div className="text-center py-1">
-                    <p className="text-2xl font-bold text-primary drop-shadow-lg">${aiForecast.toLocaleString()}</p>
-                    <p className="text-[8px] text-muted-foreground">Ingreso mensual promedio</p>
+                  <div className="text-center py-0.5">
+                    <p className="text-xl font-bold text-primary drop-shadow-lg">${aiForecast.toLocaleString()}</p>
+                    <p className="text-[7px] text-muted-foreground">Ingreso mensual promedio</p>
                   </div>
                   <div className="flex gap-1.5">
                     <Button
@@ -345,14 +345,14 @@ export default function BudgetQuiz() {
                         setShowForecast(false);
                         toast.success("Pronóstico aplicado");
                       }}
-                      className="flex-1 bg-primary hover:bg-primary/90 text-white h-8 text-xs font-semibold rounded-[12px] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all"
+                      className="flex-1 bg-primary hover:bg-primary/90 text-white h-7 text-[10px] font-semibold rounded-[10px] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all"
                     >
                       Usar
                     </Button>
                     <Button
                       onClick={() => setShowForecast(false)}
                       variant="outline"
-                      className="flex-1 h-8 text-xs rounded-[12px] border-white/30 bg-white/5 hover:bg-white/10 hover:scale-105 active:scale-95 transition-all"
+                      className="flex-1 h-7 text-[10px] rounded-[10px] border-white/30 bg-white/5 hover:bg-white/10 hover:scale-105 active:scale-95 transition-all"
                     >
                       Manual
                     </Button>
@@ -365,17 +365,17 @@ export default function BudgetQuiz() {
                   onClick={calculateAverageIncome}
                   disabled={calculatingIncome}
                   variant="outline"
-                  className="w-full h-auto py-4 rounded-[20px] border-2 border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  className="w-full h-auto py-3 rounded-[20px] border-2 border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
                   {calculatingIncome ? (
                     <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                      <span className="text-sm font-medium">Calculando...</span>
+                      <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                      <span className="text-xs font-medium">Calculando...</span>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center gap-2">
-                      <span className="text-3xl animate-pulse">🏦</span>
-                      <span className="text-xs font-medium text-center leading-tight">IA detectará tu ingreso promedio</span>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <span className="text-2xl animate-pulse">🏦</span>
+                      <span className="text-[9px] font-medium text-center leading-tight">IA detectará tu ingreso promedio</span>
                     </div>
                   )}
                 </Button>
@@ -385,11 +385,11 @@ export default function BudgetQuiz() {
                 <Button
                   onClick={() => navigate('/bank-connection')}
                   variant="outline"
-                  className="w-full h-auto py-4 rounded-[20px] border-2 border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  className="w-full h-auto py-3 rounded-[20px] border-2 border-white/20 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
-                  <div className="flex flex-col items-center gap-2">
-                    <span className="text-3xl animate-pulse">🏦</span>
-                    <span className="text-[10px] font-medium text-center leading-tight">Conectar Banco para que la IA detecte tu ingreso</span>
+                  <div className="flex flex-col items-center gap-1.5">
+                    <span className="text-2xl animate-pulse">🏦</span>
+                    <span className="text-[9px] font-medium text-center leading-tight">Conectar Banco para que la IA detecte tu ingreso</span>
                   </div>
                 </Button>
               )}
@@ -494,7 +494,7 @@ export default function BudgetQuiz() {
         <Button
           onClick={handleNext}
           disabled={loading}
-          className="w-full h-14 bg-white/90 backdrop-blur-xl border-2 border-white/60 hover:bg-white/95 text-foreground rounded-[20px] font-semibold text-lg shadow-2xl hover:shadow-white/60 hover:scale-105 active:scale-95 transition-all"
+          className="w-full h-12 bg-white/90 backdrop-blur-xl border-2 border-white/60 hover:bg-white/95 text-foreground rounded-[20px] font-semibold text-base shadow-2xl hover:shadow-white/60 hover:scale-105 active:scale-95 transition-all"
           style={{ textShadow: '0 1px 2px rgba(255,255,255,0.5)' }}
         >
           {loading ? (
