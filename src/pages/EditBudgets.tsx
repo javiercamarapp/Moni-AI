@@ -186,16 +186,48 @@ export default function EditBudgets() {
               })
             );
           } else {
-            // Usar subcategorías predeterminadas basadas en el nombre de la categoría
+            // Usar subcategorías predeterminadas pero buscar si tienen presupuesto asignado
             const categoryNameLower = budget.category.name.toLowerCase();
             const defaultSubs = DEFAULT_SUBCATEGORIES[categoryNameLower] || [];
             
-            subcategoriesWithBudget = defaultSubs.map(sub => ({
-              id: sub.id,
-              name: sub.name,
-              budget_id: undefined,
-              monthly_budget: 0
-            }));
+            // Para cada subcategoría predeterminada, buscar si existe un presupuesto con ese nombre
+            subcategoriesWithBudget = await Promise.all(
+              defaultSubs.map(async (sub) => {
+                // Buscar categoría con este nombre que sea hija de la categoría actual
+                const { data: existingCategory } = await supabase
+                  .from('categories')
+                  .select('id')
+                  .eq('user_id', user.id)
+                  .eq('name', sub.name)
+                  .eq('parent_id', budget.category_id)
+                  .maybeSingle();
+
+                let monthly_budget = 0;
+                let budget_id = undefined;
+
+                if (existingCategory) {
+                  // Si existe la categoría, buscar su presupuesto
+                  const { data: budgetData } = await supabase
+                    .from('category_budgets')
+                    .select('id, monthly_budget')
+                    .eq('user_id', user.id)
+                    .eq('category_id', existingCategory.id)
+                    .maybeSingle();
+
+                  if (budgetData) {
+                    monthly_budget = Number(budgetData.monthly_budget);
+                    budget_id = budgetData.id;
+                  }
+                }
+
+                return {
+                  id: existingCategory?.id || sub.id,
+                  name: sub.name,
+                  budget_id,
+                  monthly_budget
+                };
+              })
+            );
           }
 
           console.log(`Subcategorías con presupuesto para ${budget.category.name}:`, subcategoriesWithBudget);
@@ -443,27 +475,17 @@ export default function EditBudgets() {
                         </div>
                       )}
 
-                      {/* Botones de acción */}
-                      <div className="flex gap-2 pt-2">
+                      {/* Botón de guardar */}
+                      <div className="pt-2">
                         <Button
                           onClick={async () => {
-                            // Guardar cambios de esta categoría
                             await handleSave();
                             setExpandedCategory(null);
                           }}
-                          className="flex-1 h-8 text-[10px] bg-primary hover:bg-primary/90 text-white rounded-[8px] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all"
+                          className="w-full h-9 text-xs bg-primary hover:bg-primary/90 text-white rounded-[12px] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all font-semibold"
                         >
-                          <Save className="h-3 w-3 mr-1" />
+                          <Save className="h-4 w-4 mr-1.5" />
                           Guardar
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setExpandedCategory(null);
-                          }}
-                          variant="outline"
-                          className="flex-1 h-8 text-[10px] rounded-[8px] border-gray-300 hover:bg-gray-50"
-                        >
-                          Listo
                         </Button>
                       </div>
                     </div>
