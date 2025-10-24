@@ -215,15 +215,24 @@ const Dashboard = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
+        console.log('🔍 Cargando presupuestos para usuario:', user.id);
+
         // Get total monthly budget from category_budgets
-        const { data: budgetData } = await supabase
+        const { data: budgetData, error: budgetError } = await supabase
           .from('category_budgets')
           .select('monthly_budget')
           .eq('user_id', user.id);
 
+        console.log('📊 Presupuestos encontrados:', budgetData);
+        if (budgetError) console.error('❌ Error al cargar presupuestos:', budgetError);
+
         if (budgetData && budgetData.length > 0) {
           const total = budgetData.reduce((sum, b) => sum + Number(b.monthly_budget), 0);
+          console.log('💰 Total presupuesto:', total);
           setTotalBudget(total);
+        } else {
+          console.log('⚠️ No se encontraron presupuestos configurados');
+          setTotalBudget(0);
         }
 
         // Get current month expenses
@@ -231,7 +240,7 @@ const Dashboard = () => {
         const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
         const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-        const { data: expenseData } = await supabase
+        const { data: expenseData, error: expenseError } = await supabase
           .from('transactions')
           .select('amount')
           .eq('user_id', user.id)
@@ -239,12 +248,16 @@ const Dashboard = () => {
           .gte('transaction_date', firstDay.toISOString().split('T')[0])
           .lte('transaction_date', lastDay.toISOString().split('T')[0]);
 
+        console.log('💸 Gastos del mes encontrados:', expenseData?.length || 0);
+        if (expenseError) console.error('❌ Error al cargar gastos:', expenseError);
+
         if (expenseData) {
           const total = expenseData.reduce((sum, t) => sum + Number(t.amount), 0);
+          console.log('📈 Total gastos del mes:', total);
           setCurrentMonthExpenses(total);
         }
       } catch (error) {
-        console.error('Error loading budget data:', error);
+        console.error('❌ Error general cargando datos de presupuesto:', error);
       }
     };
 
