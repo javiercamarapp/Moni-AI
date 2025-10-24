@@ -5,7 +5,13 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Edit2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Subcategory {
   id: string;
@@ -205,6 +211,7 @@ export default function BudgetQuiz() {
   const [showManualInput, setShowManualInput] = useState(false);
   const [categoryEstimates, setCategoryEstimates] = useState<Record<string, number>>({});
   const [customSubcategories, setCustomSubcategories] = useState<Record<string, string>>({});
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
 
   useEffect(() => {
     checkAuth();
@@ -981,24 +988,27 @@ export default function BudgetQuiz() {
                   const budgetPercentage = monthlyIncome ? (budgets[catId] / Number(monthlyIncome)) * 100 : 0;
                   
                   return (
-                    <div key={catId} className="p-3 bg-gradient-to-r from-gray-50 to-white rounded-[12px] border border-gray-100">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-xl">{category.icon}</span>
-                        <div className="flex-1">
-                          <p className="text-xs font-semibold text-foreground">
-                            {category.name}
-                          </p>
-                          <p className="text-[9px] text-muted-foreground">
-                            Sugerido: {category.suggestedPercentage}%
-                          </p>
+                    <div key={catId} className="p-4 bg-white rounded-[15px] border-2 border-blue-100 shadow-lg hover:shadow-xl transition-all">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{category.icon}</span>
+                          <div>
+                            <p className="text-sm font-bold text-foreground">
+                              {category.name}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground">
+                              Sugerido: {category.suggestedPercentage}%
+                            </p>
+                          </div>
                         </div>
                         <div className="text-right">
-                          <Input
-                            type="number"
-                            value={budgets[catId] || 0}
-                            onChange={(e) => updateBudget(catId, e.target.value)}
-                            className="w-24 h-10 text-right text-sm font-bold bg-gradient-to-br from-white to-blue-50 border-2 border-blue-200 rounded-[12px] shadow-md focus:border-primary focus:ring-2 focus:ring-primary/30 focus:shadow-lg transition-all hover:shadow-xl"
-                          />
+                          <button
+                            onClick={() => setEditingCategoryId(catId)}
+                            className="w-28 h-12 text-right text-base font-bold bg-white rounded-[12px] border-2 border-primary/30 shadow-md hover:shadow-xl hover:border-primary transition-all flex items-center justify-between px-3"
+                          >
+                            <Edit2 className="h-4 w-4 text-primary/60" />
+                            <span>${budgets[catId] || 0}</span>
+                          </button>
                           <p className="text-base font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mt-1 animate-pulse">
                             {budgetPercentage.toFixed(1)}%
                           </p>
@@ -1033,6 +1043,71 @@ export default function BudgetQuiz() {
             </>
           )}
         </Button>
+        
+        {/* Dialog para editar subcategorías */}
+        <Dialog open={editingCategoryId !== null} onOpenChange={(open) => !open && setEditingCategoryId(null)}>
+          <DialogContent className="max-w-md bg-white rounded-[20px] border-2 border-blue-100">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold text-center">
+                {editingCategoryId && DEFAULT_CATEGORIES.find(c => c.id === editingCategoryId)?.icon} {editingCategoryId && DEFAULT_CATEGORIES.find(c => c.id === editingCategoryId)?.name}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3 max-h-[400px] overflow-y-auto py-2">
+              {editingCategoryId && DEFAULT_CATEGORIES.find(c => c.id === editingCategoryId)?.subcategories.map(sub => (
+                <div key={sub.id} className="p-3 bg-gradient-to-r from-blue-50 to-white rounded-[12px] border border-blue-100">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs font-medium text-foreground flex-1">
+                      • {sub.name}
+                    </span>
+                    <div className="relative flex items-center">
+                      <span className="absolute left-2 text-xs font-semibold text-muted-foreground">$</span>
+                      <Input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="0"
+                        value={subcategoryBudgets[sub.id] ? subcategoryBudgets[sub.id].toLocaleString() : ""}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^\d]/g, '');
+                          updateSubcategoryBudget(sub.id, value);
+                          
+                          // Actualizar el total de la categoría
+                          if (editingCategoryId) {
+                            const category = DEFAULT_CATEGORIES.find(c => c.id === editingCategoryId);
+                            if (category) {
+                              const total = category.subcategories.reduce((sum, subcat) => {
+                                if (subcat.id === sub.id) {
+                                  return sum + (Number(value) || 0);
+                                }
+                                return sum + (subcategoryBudgets[subcat.id] || 0);
+                              }, 0);
+                              setBudgets({ ...budgets, [editingCategoryId]: total });
+                            }
+                          }
+                        }}
+                        className="w-28 h-9 text-xs text-right font-semibold pl-6 pr-2 bg-white border-2 border-blue-200 rounded-[10px] focus:border-primary focus:ring-2 focus:ring-primary/30"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="pt-3 border-t border-blue-100">
+              <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-100 to-purple-100 rounded-[12px]">
+                <span className="text-sm font-bold text-foreground">Total</span>
+                <span className="text-lg font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  ${editingCategoryId ? (budgets[editingCategoryId] || 0).toLocaleString() : 0}
+                </span>
+              </div>
+            </div>
+            <Button
+              onClick={() => setEditingCategoryId(null)}
+              className="w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-[12px] font-semibold shadow-lg"
+            >
+              <Check className="h-5 w-5 mr-2" />
+              Guardar
+            </Button>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
