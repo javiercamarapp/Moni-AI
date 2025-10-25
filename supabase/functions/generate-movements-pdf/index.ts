@@ -1,4 +1,5 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -17,12 +18,16 @@ interface Transaction {
   } | null;
 }
 
-Deno.serve(async (req) => {
+serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     const { userId, transactions } = await req.json();
     console.log('Generating movements PDF for user:', userId);
 
@@ -41,10 +46,55 @@ Deno.serve(async (req) => {
 
     const balance = totalIncome - totalExpense;
 
-    // Logo en base64 (MONI AI logo)
-    const logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABLAAAAEsCAYAAADHm4vGAAAACXBIWXMAAAsTAAALEwEAmpwYAAAKT2lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVNnVFPpFj333vRCS4iAlEtvUhUIIFJCi4AUkSYqIQkQSogMADIC4gAACIQCgAACBAAAgEQAOEQAaAAAMYAAgAPAA0AgQCAYA';
+    // Generate AI insights
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    let aiInsights = '';
 
-    // Generar HTML del documento
+    if (LOVABLE_API_KEY) {
+      try {
+        const contextInfo = `Últimos 50 Movimientos Financieros
+Total de Ingresos: $${totalIncome.toFixed(2)}
+Total de Gastos: $${totalExpense.toFixed(2)}
+Balance: $${balance.toFixed(2)}
+Número de transacciones: ${transactions.length}`;
+
+        const aiPrompt = `Analiza los siguientes datos financieros y proporciona conclusiones e insights valiosos:
+
+${contextInfo}
+
+Proporciona:
+1. Un análisis del comportamiento financiero en estos últimos movimientos
+2. 3-4 conclusiones clave sobre patrones y tendencias observadas
+3. 2-3 recomendaciones específicas y accionables para mejorar las finanzas
+
+Mantén el tono profesional y estructurado. Limita tu respuesta a 250 palabras.`;
+
+        const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages: [
+              { role: 'system', content: 'Eres un asesor financiero experto que proporciona análisis claros y recomendaciones prácticas en español.' },
+              { role: 'user', content: aiPrompt }
+            ],
+          }),
+        });
+
+        if (aiResponse.ok) {
+          const aiData = await aiResponse.json();
+          aiInsights = (aiData.choices?.[0]?.message?.content || '').replace(/\*/g, '');
+        }
+      } catch (aiError) {
+        console.error('Error generating AI insights:', aiError);
+        aiInsights = 'No se pudieron generar insights automáticos para este reporte.';
+      }
+    }
+
+    // Generate HTML document
     const html = `
 <!DOCTYPE html>
 <html>
@@ -219,32 +269,55 @@ Deno.serve(async (req) => {
       font-weight: 600;
     }
     
-    .footer {
-      margin-top: 50px;
-      padding-top: 20px;
-      border-top: 2px solid #e5e7eb;
-      text-align: center;
-      color: #666;
-      font-size: 12px;
+    .insights-box {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 8px;
+      padding: 25px;
+      margin-top: 20px;
     }
     
-    .footer p {
-      margin: 5px 0;
+    .insights-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #0c4a6e;
+      margin-bottom: 15px;
+    }
+    
+    .insights-content {
+      font-size: 14px;
+      color: #334155;
+      line-height: 1.8;
+      white-space: pre-line;
+    }
+    
+    .footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    
+    @media print {
+      body { padding: 20px; }
+      .section { page-break-inside: avoid; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Header -->
+    <!-- Header with Logo -->
     <div class="header">
-      <div>
-        <div class="logo">MONI</div>
-        <div class="logo-subtitle">FINANCE</div>
+      <div style="margin-right: 20px;">
+        <div class="logo">MONI AI.</div>
+        <div class="logo-subtitle">Coach financiero</div>
       </div>
       <div class="header-info">
-        <h1>Últimos 50 Movimientos</h1>
+        <h1>Reporte de Últimos 50 Movimientos</h1>
         <p>Generado el ${new Date().toLocaleDateString('es-MX', { 
-          day: 'numeric', 
+          day: '2-digit', 
           month: 'long', 
           year: 'numeric' 
         })}</p>
@@ -253,27 +326,24 @@ Deno.serve(async (req) => {
 
     <!-- Summary Section -->
     <div class="section">
-      <h2 class="section-title">Resumen Financiero</h2>
+      <h2 class="section-title">💰 Resumen Financiero</h2>
       <div class="metrics-grid">
         <div class="metric-card">
           <div class="metric-label">Total Ingresos</div>
           <div class="metric-value positive">$${totalIncome.toLocaleString('es-MX', { 
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
+            minimumFractionDigits: 0
           })}</div>
         </div>
         <div class="metric-card">
           <div class="metric-label">Total Gastos</div>
           <div class="metric-value negative">$${totalExpense.toLocaleString('es-MX', { 
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
+            minimumFractionDigits: 0
           })}</div>
         </div>
         <div class="metric-card">
           <div class="metric-label">Balance</div>
-          <div class="metric-value balance">$${balance.toLocaleString('es-MX', { 
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
+          <div class="metric-value ${balance >= 0 ? 'positive' : 'negative'}">$${balance.toLocaleString('es-MX', { 
+            minimumFractionDigits: 0
           })}</div>
         </div>
       </div>
@@ -281,15 +351,16 @@ Deno.serve(async (req) => {
 
     <!-- Transactions Table -->
     <div class="section">
-      <h2 class="section-title">Detalle de Movimientos</h2>
+      <h2 class="section-title">📋 Detalle de Movimientos</h2>
       <div class="table-container">
         <table>
           <thead>
             <tr>
-              <th>Fecha</th>
-              <th>Descripción</th>
-              <th>Categoría</th>
-              <th style="text-align: right;">Monto</th>
+              <th style="width: 12%;">Fecha</th>
+              <th style="width: 10%;">Tipo</th>
+              <th style="width: 35%;">Descripción</th>
+              <th style="width: 23%;">Categoría</th>
+              <th style="width: 20%; text-align: right;">Monto</th>
             </tr>
           </thead>
           <tbody>
@@ -300,15 +371,14 @@ Deno.serve(async (req) => {
                 <tr>
                   <td>${date.toLocaleDateString('es-MX', { 
                     day: '2-digit', 
-                    month: 'short', 
-                    year: 'numeric' 
+                    month: 'short'
                   })}</td>
-                  <td><strong>${transaction.description}</strong></td>
-                  <td>${transaction.categories?.name || 'Sin categoría'}</td>
+                  <td><span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; ${isIncome ? 'background: #d1fae5; color: #065f46;' : 'background: #fee2e2; color: #991b1b;'}">${isIncome ? 'Ingreso' : 'Gasto'}</span></td>
+                  <td>${transaction.description || 'Sin descripción'}</td>
+                  <td>${transaction.categories?.name || 'General'}</td>
                   <td style="text-align: right;" class="${isIncome ? 'amount-positive' : 'amount-negative'}">
                     ${isIncome ? '+' : '-'}$${Number(transaction.amount).toLocaleString('es-MX', { 
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2
+                      minimumFractionDigits: 2
                     })}
                   </td>
                 </tr>
@@ -319,11 +389,40 @@ Deno.serve(async (req) => {
       </div>
     </div>
 
+    <!-- Desglose por tipo -->
+    <div class="section">
+      <h2 class="section-title">📊 Desglose por Tipo</h2>
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Cantidad de Ingresos</div>
+          <div class="metric-value">${transactions.filter((t: Transaction) => t.type === 'ingreso').length}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Cantidad de Gastos</div>
+          <div class="metric-value">${transactions.filter((t: Transaction) => t.type === 'gasto').length}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Total Movimientos</div>
+          <div class="metric-value">${transactions.length}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conclusiones e Insights -->
+    ${aiInsights ? `
+    <div class="section">
+      <h2 class="section-title">📊 Conclusiones e Insights</h2>
+      <div class="insights-box">
+        <div class="insights-title">Análisis Inteligente</div>
+        <div class="insights-content">${aiInsights}</div>
+      </div>
+    </div>
+    ` : ''}
+
     <!-- Footer -->
     <div class="footer">
-      <p><strong>MONI</strong> - Tu coach financiero personal</p>
-      <p>Este documento es un resumen de tus últimos 50 movimientos registrados</p>
-      <p>© ${new Date().getFullYear()} MONI. Todos los derechos reservados.</p>
+      <p>Este reporte fue generado automáticamente por MONI AI - Tu asistente financiero inteligente</p>
+      <p style="margin-top: 5px;">Para imprimir como PDF: Presiona Ctrl+P (Cmd+P en Mac) y selecciona "Guardar como PDF"</p>
     </div>
   </div>
 </body>
