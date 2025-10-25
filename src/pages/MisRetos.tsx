@@ -167,6 +167,16 @@ export default function MisRetos() {
               const daysStatus = JSON.parse(challenge.days_status || '[]');
               const dayNames = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
               
+              // Calculate which day we're on
+              const startDate = new Date(challenge.start_date);
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+              startDate.setHours(0, 0, 0, 0);
+              
+              const daysPassed = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+              const currentDayIndex = Math.min(daysPassed, 6); // 0-6 for Sunday-Saturday
+              const isLastDay = currentDayIndex === 6;
+              
               return (
                 <Card 
                   key={challenge.id} 
@@ -175,9 +185,16 @@ export default function MisRetos() {
                 >
                   <div className="relative z-10">
                     <div className="mb-2">
-                      <h4 className="text-sm font-bold text-foreground drop-shadow-sm mb-0.5 line-clamp-1 leading-tight">
-                        {challenge.title}
-                      </h4>
+                      <div className="flex items-center justify-between mb-0.5">
+                        <h4 className="text-sm font-bold text-foreground drop-shadow-sm line-clamp-1 leading-tight">
+                          {challenge.title}
+                        </h4>
+                        {isLastDay && (
+                          <Badge className="bg-orange-500/20 text-orange-700 text-[8px] border-orange-500/30 px-1 py-0">
+                            Último día
+                          </Badge>
+                        )}
+                      </div>
                       <p className="text-[10px] text-foreground/70 drop-shadow-sm line-clamp-2 leading-tight">
                         {challenge.description}
                       </p>
@@ -208,13 +225,14 @@ export default function MisRetos() {
                           const isCompleted = dayStatus?.completed === true;
                           const isFailed = dayStatus?.completed === false;
                           const isPending = !dayStatus;
+                          const isCurrentDay = dayIndex === currentDayIndex;
                           
                           return (
                             <div 
                               key={dayIndex} 
                               className="flex flex-col items-center"
                             >
-                              <span className="text-[8px] text-foreground/70 mb-0.5">
+                              <span className={`text-[8px] mb-0.5 ${isCurrentDay ? 'text-blue-600 font-bold' : 'text-foreground/70'}`}>
                                 {dayNames[dayIndex]}
                               </span>
                               <div 
@@ -224,7 +242,7 @@ export default function MisRetos() {
                                     : isFailed 
                                     ? 'bg-red-500/80 text-white'
                                     : 'bg-gray-200 text-gray-400'
-                                }`}
+                                } ${isCurrentDay ? 'ring-2 ring-blue-500 ring-offset-1' : ''}`}
                               >
                                 {isCompleted && '✓'}
                                 {isFailed && '✗'}
