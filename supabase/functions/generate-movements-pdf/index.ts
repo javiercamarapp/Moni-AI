@@ -41,236 +41,296 @@ Deno.serve(async (req) => {
 
     const balance = totalIncome - totalExpense;
 
+    // Logo en base64 (MONI AI logo)
+    const logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABLAAAAEsCAYAAADHm4vGAAAACXBIWXMAAAsTAAALEwEAmpwYAAAKT2lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVNnVFPpFj333vRCS4iAlEtvUhUIIFJCi4AUkSYqIQkQSogMADIC4gAACIQCgAACBAAAgEQAOEQAaAAAMYAAgAPAA0AgQCAYA';
+
     // Generar HTML del documento
     const html = `
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movimientos - MONI AI</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: #1f2937;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 40px 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 30px;
-            border-bottom: 3px solid #e5e7eb;
-        }
-        .logo {
-            font-size: 32px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-        .title {
-            font-size: 24px;
-            color: #374151;
-            margin-bottom: 5px;
-        }
-        .date {
-            color: #6b7280;
-            font-size: 14px;
-        }
-        .summary {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .summary-card {
-            background: #f9fafb;
-            padding: 20px;
-            border-radius: 12px;
-            border: 2px solid #e5e7eb;
-        }
-        .summary-card.income {
-            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-            border-color: #6ee7b7;
-        }
-        .summary-card.expense {
-            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
-            border-color: #f87171;
-        }
-        .summary-card.balance {
-            background: linear-gradient(135deg, #f0f9ff 0%, #bfdbfe 100%);
-            border-color: #60a5fa;
-        }
-        .summary-label {
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: #6b7280;
-            margin-bottom: 8px;
-        }
-        .summary-amount {
-            font-size: 24px;
-            font-weight: 800;
-        }
-        .summary-card.income .summary-amount { color: #059669; }
-        .summary-card.expense .summary-amount { color: #dc2626; }
-        .summary-card.balance .summary-amount { color: #2563eb; }
-        
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #1f2937;
-        }
-        .transaction {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-        }
-        .transaction.income {
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border-color: #86efac;
-        }
-        .transaction.expense {
-            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-            border-color: #fca5a5;
-        }
-        .transaction-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            font-size: 16px;
-        }
-        .transaction.income .transaction-icon {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        }
-        .transaction.expense .transaction-icon {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        }
-        .transaction-details {
-            flex: 1;
-        }
-        .transaction-description {
-            font-weight: 600;
-            font-size: 14px;
-            color: #1f2937;
-        }
-        .transaction-meta {
-            font-size: 11px;
-            color: #6b7280;
-            margin-top: 2px;
-        }
-        .transaction-amount {
-            font-weight: 800;
-            font-size: 14px;
-        }
-        .transaction.income .transaction-amount { color: #059669; }
-        .transaction.expense .transaction-amount { color: #dc2626; }
-        
-        .footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 2px solid #e5e7eb;
-            text-align: center;
-            color: #6b7280;
-            font-size: 12px;
-        }
-        
-        @media print {
-            body { background: white; padding: 0; }
-            .container { box-shadow: none; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Últimos 50 Movimientos - MONI AI</title>
+  <style>
+    @media print {
+      body { margin: 0; }
+      .no-print { display: none; }
+    }
+    
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #ffffff;
+      color: #1a1a1a;
+      padding: 40px;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid #000000;
+    }
+    
+    .logo {
+      font-size: 32px;
+      font-weight: 900;
+      color: #000000;
+      margin-right: 20px;
+      letter-spacing: -1px;
+    }
+    
+    .logo-subtitle {
+      font-size: 12px;
+      font-weight: 400;
+      color: #666666;
+      letter-spacing: 4px;
+      margin-top: -5px;
+    }
+    
+    .header-info {
+      flex: 1;
+    }
+    
+    .header-info h1 {
+      font-size: 24px;
+      color: #1a1a1a;
+      margin-bottom: 5px;
+    }
+    
+    .header-info p {
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .section {
+      margin-bottom: 35px;
+    }
+    
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+    
+    .metric-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .metric-label {
+      font-size: 12px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .metric-value {
+      font-size: 26px;
+      font-weight: bold;
+      color: #1a1a1a;
+    }
+    
+    .metric-value.positive {
+      color: #10b981;
+    }
+    
+    .metric-value.negative {
+      color: #ef4444;
+    }
+    
+    .metric-value.balance {
+      color: #3b82f6;
+    }
+    
+    .table-container {
+      overflow-x: auto;
+      margin-bottom: 25px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    
+    thead {
+      background: #f3f4f6;
+    }
+    
+    th {
+      padding: 12px 10px;
+      text-align: left;
+      font-weight: 600;
+      color: #374151;
+      border-bottom: 2px solid #d1d5db;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #e5e7eb;
+      color: #1a1a1a;
+      font-size: 13px;
+      vertical-align: top;
+    }
+    
+    tbody tr:hover {
+      background: #f9fafb;
+    }
+    
+    .amount-positive {
+      color: #10b981;
+      font-weight: 600;
+    }
+    
+    .amount-negative {
+      color: #ef4444;
+      font-weight: 600;
+    }
+    
+    .footer {
+      margin-top: 50px;
+      padding-top: 20px;
+      border-top: 2px solid #e5e7eb;
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+    }
+    
+    .footer p {
+      margin: 5px 0;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">MONI AI</div>
-            <h1 class="title">Últimos 50 Movimientos</h1>
-            <p class="date">Generado el ${new Date().toLocaleDateString('es-MX', { 
-              day: 'numeric', 
-              month: 'long', 
-              year: 'numeric' 
-            })}</p>
-        </div>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <div class="logo">MONI</div>
+        <div class="logo-subtitle">FINANCE</div>
+      </div>
+      <div class="header-info">
+        <h1>Últimos 50 Movimientos</h1>
+        <p>Generado el ${new Date().toLocaleDateString('es-MX', { 
+          day: 'numeric', 
+          month: 'long', 
+          year: 'numeric' 
+        })}</p>
+      </div>
+    </div>
 
-        <div class="summary">
-            <div class="summary-card income">
-                <div class="summary-label">Total Ingresos</div>
-                <div class="summary-amount">$${totalIncome.toLocaleString('es-MX', { 
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                })}</div>
-            </div>
-            <div class="summary-card expense">
-                <div class="summary-label">Total Gastos</div>
-                <div class="summary-amount">$${totalExpense.toLocaleString('es-MX', { 
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                })}</div>
-            </div>
-            <div class="summary-card balance">
-                <div class="summary-label">Balance</div>
-                <div class="summary-amount">$${balance.toLocaleString('es-MX', { 
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                })}</div>
-            </div>
+    <!-- Summary Section -->
+    <div class="section">
+      <h2 class="section-title">Resumen Financiero</h2>
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Total Ingresos</div>
+          <div class="metric-value positive">$${totalIncome.toLocaleString('es-MX', { 
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          })}</div>
         </div>
+        <div class="metric-card">
+          <div class="metric-label">Total Gastos</div>
+          <div class="metric-value negative">$${totalExpense.toLocaleString('es-MX', { 
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          })}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Balance</div>
+          <div class="metric-value balance">$${balance.toLocaleString('es-MX', { 
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          })}</div>
+        </div>
+      </div>
+    </div>
 
-        <h2 class="section-title">Detalle de Movimientos</h2>
-        ${transactions.map((transaction: Transaction) => {
-          const isIncome = transaction.type === 'ingreso';
-          const date = new Date(transaction.transaction_date);
-          return `
-            <div class="transaction ${isIncome ? 'income' : 'expense'}">
-                <div class="transaction-icon">${isIncome ? '💰' : '💳'}</div>
-                <div class="transaction-details">
-                    <div class="transaction-description">${transaction.description}</div>
-                    <div class="transaction-meta">
-                        ${date.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })}
-                        ${transaction.categories?.name ? ` • ${transaction.categories.name}` : ''}
-                    </div>
-                </div>
-                <div class="transaction-amount">
+    <!-- Transactions Table -->
+    <div class="section">
+      <h2 class="section-title">Detalle de Movimientos</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Descripción</th>
+              <th>Categoría</th>
+              <th style="text-align: right;">Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${transactions.map((transaction: Transaction) => {
+              const isIncome = transaction.type === 'ingreso';
+              const date = new Date(transaction.transaction_date);
+              return `
+                <tr>
+                  <td>${date.toLocaleDateString('es-MX', { 
+                    day: '2-digit', 
+                    month: 'short', 
+                    year: 'numeric' 
+                  })}</td>
+                  <td><strong>${transaction.description}</strong></td>
+                  <td>${transaction.categories?.name || 'Sin categoría'}</td>
+                  <td style="text-align: right;" class="${isIncome ? 'amount-positive' : 'amount-negative'}">
                     ${isIncome ? '+' : '-'}$${Number(transaction.amount).toLocaleString('es-MX', { 
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2
                     })}
-                </div>
-            </div>
-          `;
-        }).join('')}
-
-        <div class="footer">
-            <p><strong>MONI AI</strong> - Tu coach financiero personal</p>
-            <p>Este documento es un resumen de tus movimientos registrados</p>
-        </div>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
     </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p><strong>MONI</strong> - Tu coach financiero personal</p>
+      <p>Este documento es un resumen de tus últimos 50 movimientos registrados</p>
+      <p>© ${new Date().getFullYear()} MONI. Todos los derechos reservados.</p>
+    </div>
+  </div>
 </body>
 </html>
     `;
 
-    const filename = `Movimientos_${new Date().toISOString().split('T')[0]}.html`;
+    const filename = `Ultimos_50_Movimientos_${new Date().toISOString().split('T')[0]}.html`;
 
     return new Response(
       JSON.stringify({ html, filename }),
