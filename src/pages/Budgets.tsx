@@ -155,77 +155,35 @@ export default function Budgets() {
       const income = (incomeData || []).reduce((sum, t) => sum + Number(t.amount), 0);
       setMonthlyIncome(income);
 
-      // Mapeo de categorías específicas a categorías generales de presupuesto
-      const categoryMapping: Record<string, string[]> = {
-        'vivienda': ['luz', 'agua', 'gas', 'internet', 'renta', 'mantenimiento'],
-        'transporte': ['gasolina', 'uber', 'estacionamiento', 'mantenimiento auto', 'transporte'],
-        'alimentación': ['supermercado', 'restaurantes', 'café', 'rappi', 'uber eats', 'bar y copas', 'bar', 'comida'],
-        'servicios y suscripciones': ['netflix', 'spotify', 'amazon prime', 'disney+', 'disney', 'hbo max', 'hbo', 'teléfono', 'telefono', 'suscripción', 'suscripcion'],
-        'salud y bienestar': ['gym', 'farmacia', 'médico', 'medico', 'dentista', 'salud'],
-        'entretenimiento y estilo de vida': ['cine', 'conciertos', 'night club', 'eventos', 'ropa', 'amazon', 'mercado libre', 'tecnología', 'tecnologia', 'entretenimiento'],
-        'ahorro e inversión': ['inversiones', 'inversión', 'inversion', 'ahorro'],
-        'mascotas': ['veterinario', 'comida mascotas', 'mascota']
-      };
-
-      // Calcular gastos por categoría del mes
+      console.log('=== CALCULANDO GASTOS POR CATEGORÍA ===');
+      
+      // Obtener todas las transacciones de gastos del mes con sus categorías
       const { data: expenseData } = await supabase
         .from('transactions')
-        .select('amount, category_id, categories(id, name)')
+        .select('amount, category_id, categories(id, name, parent_id)')
         .eq('user_id', user.id)
         .eq('type', 'gasto')
         .gte('transaction_date', firstDay.toISOString().split('T')[0])
         .lte('transaction_date', lastDay.toISOString().split('T')[0]);
 
-      console.log('=== DEBUG GASTOS ===');
-      console.log('Total de transacciones:', expenseData?.length);
-      console.log('Presupuestos cargados:', budgets.length);
+      console.log('Total transacciones de gasto:', expenseData?.length);
 
-      // Agrupar gastos por categoría general
-      const expensesByGeneralCategory: Record<string, number> = {};
+      // Agrupar gastos por categoría principal
+      const expensesByCategory: Record<string, number> = {};
       
       (expenseData || []).forEach(t => {
-        if (t.categories && t.categories.name) {
-          const specificCategoryName = t.categories.name.toLowerCase().trim();
-          console.log('Procesando gasto:', specificCategoryName, Number(t.amount));
+        if (t.categories) {
+          // Si la categoría tiene parent_id, buscar la categoría principal
+          let mainCategoryId = t.categories.parent_id || t.categories.id;
           
-          // Buscar a qué categoría general pertenece este gasto
-          let matched = false;
-          for (const [generalCategory, specificCategories] of Object.entries(categoryMapping)) {
-            // Buscar coincidencia exacta o parcial
-            const isMatch = specificCategories.some(cat => {
-              const catLower = cat.toLowerCase();
-              return specificCategoryName === catLower || 
-                     specificCategoryName.includes(catLower) || 
-                     catLower.includes(specificCategoryName);
-            });
-            
-            if (isMatch) {
-              expensesByGeneralCategory[generalCategory] = (expensesByGeneralCategory[generalCategory] || 0) + Number(t.amount);
-              console.log(`✓ Mapeado "${specificCategoryName}" a "${generalCategory}"`);
-              matched = true;
-              break;
-            }
-          }
+          // Acumular el gasto en la categoría principal
+          expensesByCategory[mainCategoryId] = (expensesByCategory[mainCategoryId] || 0) + Number(t.amount);
           
-          if (!matched) {
-            console.log(`✗ No se encontró mapeo para "${specificCategoryName}"`);
-          }
+          console.log(`Gasto: $${t.amount} - Categoría: ${t.categories.name} - ID Principal: ${mainCategoryId}`);
         }
       });
 
-      console.log('Gastos agrupados por categoría general:', expensesByGeneralCategory);
-
-      // Mapear a los IDs de las categorías de presupuesto
-      const expensesByCategory: Record<string, number> = {};
-      budgets.forEach(budget => {
-        const categoryName = budget.category.name.toLowerCase().trim();
-        if (expensesByGeneralCategory[categoryName]) {
-          expensesByCategory[budget.category_id] = expensesByGeneralCategory[categoryName];
-        }
-      });
-
-      console.log('Gastos mapeados a IDs de presupuestos:', expensesByCategory);
-
+      console.log('Gastos agrupados por categoría principal:', expensesByCategory);
       setCurrentExpenses(expensesByCategory);
     } catch (error) {
       console.error('Error loading monthly data:', error);
