@@ -85,45 +85,41 @@ serve(async (req) => {
       .map(c => `- ${c.name} (ID: ${c.id})`)
       .join('\n');
 
-    const prompt = `Analiza esta transacción y asígnala a la categoría más apropiada:
+    const prompt = `Categoriza esta transacción mexicana:
 
-Descripción: ${description}
+Descripción: "${description}"
 Monto: $${amount}
-Tipo: ${type}
 
-Categorías disponibles:
+CATEGORÍAS DISPONIBLES Y SUS IDs:
 ${categoryList}
 
-GUÍA DE CATEGORIZACIÓN CON EJEMPLOS:
+REGLAS DE CATEGORIZACIÓN (PRIORIDAD):
 
-🏠 Vivienda: renta, hipoteca, mantenimiento, predial, luz, agua, gas, internet fijo, teléfono fijo, limpieza, seguridad del hogar
+1. ENTRETENIMIENTO Y ESTILO DE VIDA:
+   - Cine, Cinemex, Cinepolis → SIEMPRE entretenimiento
+   - Bar, Antro, Club, Discoteca → SIEMPRE entretenimiento
+   - Best Buy, Apple Store → SIEMPRE entretenimiento (tecnología/electrónica)
+   - Liverpool, Palacio de Hierro → entretenimiento (compras)
+   
+2. ALIMENTACIÓN:
+   - Walmart, Soriana, Chedraui, Costco, Sam's → SIEMPRE alimentación
+   - Restaurantes, Cafés, Fondas → alimentación
+   - Rappi, Uber Eats, Didi Food → alimentación
 
-🚗 Transporte: gasolina, carga eléctrica, mensualidad auto, transporte público, metro, uber, didi, taxi, estacionamiento, peajes, mantenimiento vehicular, seguro auto
+3. SERVICIOS Y SUSCRIPCIONES:
+   - Netflix, Spotify, Disney+, HBO, Amazon Prime → servicios
+   - Telcel, Izzi, Telmex → servicios
 
-🍽️ Alimentación: walmart, soriana, chedraui, bodega aurrera, costco, sams, supermercado, mercado, despensa, víveres, restaurantes, comidas fuera, café, starbucks, snacks, antojos, rappi, uber eats, didi food, sin delantal, apps de comida
-
-🧾 Servicios y suscripciones: netflix, spotify, disney+, amazon prime, apps premium, software, membresías digitales, teléfono móvil, planes celular
-
-🩺 Salud y bienestar: seguro médico, medicinas, farmacia, consultas médicas, doctor, hospital, gimnasio, clases fitness, suplementos, terapia
-
-🎓 Educación y desarrollo: colegiaturas, escuela, universidad, cursos, talleres, capacitación, libros, herramientas aprendizaje, clases extracurriculares
-
-💳 Deudas y créditos: tarjetas de crédito, préstamos personales, créditos hipotecarios, crédito automotriz, intereses, pagos mínimos, refinanciamiento
-
-🎉 Entretenimiento y estilo de vida: cine, cinemex, cinepolis, bar, antro, club nocturno, fiestas, conciertos, teatro, best buy, apple store, liverpool, palacio de hierro, elektra, coppel, compras tecnología, compras electrónica, ropa, moda, accesorios, belleza, salón, spa, viajes, escapadas, hobbies, videojuegos, juegos, amazon compras no esenciales, mercado libre compras
-
-💸 Ahorro e inversión: ahorro mensual, fondo emergencia, inversiones, fondos, cetes, crypto, acciones, afore, retiro
-
-🐾 Mascotas: veterinario, veterinaria, comida para mascotas, pet shop, petco, petland, alimento perro, alimento gato, accesorios mascotas, juguetes mascotas, estética mascotas, baño mascotas, vacunas mascotas, seguro mascotas
-
-🤝 Apoyos y otros: apoyo familiar, pensión alimenticia, ayuda hijos, donaciones, caridad, otros gastos varios
+4. VIVIENDA:
+   - CFE, Luz, Agua CDMX, Gas Natural → vivienda
+   - Renta, Predial → vivienda
 
 INSTRUCCIONES:
-1. Usa la categoría MÁS ESPECÍFICA que coincida con la descripción
-2. Si identificas claramente la categoría, responde SOLO con su ID (UUID entre paréntesis)
-3. Si NO puedes identificar con confianza la categoría correcta, responde: "NO_IDENTIFICADO" (esto asignará a "Gastos no identificados")
-4. NO inventes categorías
-5. NO des explicaciones`;
+- Lee la descripción con atención
+- Si la descripción contiene alguna palabra clave de arriba, usa ESA categoría
+- Responde SOLO con el UUID (el texto entre paréntesis)
+- NO uses "NO_IDENTIFICADO" para lugares conocidos como Walmart, Cine, Bar, Best Buy, Apple Store
+- NO des explicaciones adicionales`;
 
     console.log('Consultando IA para transacción:', description);
 
@@ -134,18 +130,17 @@ INSTRUCCIONES:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: 'openai/gpt-5-mini',
         messages: [
           {
             role: 'system',
-            content: 'Eres un experto en finanzas personales. Categoriza transacciones usando el sentido común basándote en el nombre del establecimiento o descripción. Solo usa "NO_IDENTIFICADO" cuando realmente no hay ninguna categoría apropiada.'
+            content: 'Eres un categorizador de transacciones. SIEMPRE debes elegir una categoría apropiada basándote en las palabras clave de la descripción. Responde SOLO con el UUID de la categoría, sin explicaciones.'
           },
           {
             role: 'user',
             content: prompt
           }
         ],
-        temperature: 0.2,
       }),
     });
 
