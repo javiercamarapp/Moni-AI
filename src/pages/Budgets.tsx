@@ -256,11 +256,15 @@ export default function Budgets() {
       'vivienda': '🏠',
       'transporte': '🚗',
       'alimentación': '🍽️',
-      'servicios': '💡',
-      'salud': '💊',
-      'entretenimiento': '🎮',
-      'ahorro': '💰',
+      'servicios y suscripciones': '🧾',
+      'salud y bienestar': '🩺',
+      'educación y desarrollo': '🎓',
+      'deudas y créditos': '💳',
+      'entretenimiento y estilo de vida': '🎉',
+      'ahorro e inversión': '💸',
+      'apoyos y otros': '🤝',
       'mascotas': '🐾',
+      'categoría personalizada': '⭐',
     };
     return icons[name.toLowerCase()] || '📊';
   };
