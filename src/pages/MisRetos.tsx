@@ -104,18 +104,20 @@ export default function MisRetos() {
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="p-4 flex items-center gap-3">
-        <Button
-          onClick={() => navigate("/dashboard")}
-          variant="ghost"
-          size="icon"
-          className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-xl font-bold text-foreground">Mis Retos</h1>
-          <p className="text-xs text-muted-foreground">Desafíos personalizados</p>
+      <div className="sticky top-0 z-50 backdrop-blur-xl bg-gradient-to-b from-white/95 via-white/90 to-white/80 border-b border-white/20 shadow-lg">
+        <div className="p-4 flex items-center gap-3">
+          <Button
+            onClick={() => navigate("/dashboard")}
+            variant="ghost"
+            size="icon"
+            className="bg-white rounded-full shadow-xl hover:bg-white/90 text-foreground h-11 w-11 hover:scale-105 transition-all border border-blue-100/50"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div className="flex-1">
+            <h1 className="text-xl font-bold text-foreground">Mis Retos</h1>
+            <p className="text-xs text-muted-foreground">Desafíos personalizados</p>
+          </div>
         </div>
       </div>
 
