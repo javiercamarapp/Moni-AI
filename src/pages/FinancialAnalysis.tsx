@@ -867,7 +867,7 @@ export default function FinancialAnalysis() {
                     Análisis Completo Moni AI
                   </DialogTitle>
                 </DialogHeader>
-                <div className="text-sm text-foreground leading-relaxed whitespace-pre-line max-h-[60vh] overflow-y-auto p-2 rounded-[20px] bg-white/50">
+                <div className="text-sm text-foreground leading-snug whitespace-pre-line max-h-[60vh] overflow-y-auto p-2 rounded-[20px] bg-white/50 space-y-1">
                   {cleanMarkdown(analysis?.analysis)}
                 </div>
               </DialogContent>
