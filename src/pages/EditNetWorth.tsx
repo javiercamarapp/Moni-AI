@@ -475,13 +475,22 @@ export default function EditNetWorth() {
                                     )}
                                   </>
                                 ) : (
-                                  <span className="text-[10px] text-foreground flex-1">
-                                    • {item.name}
-                                  </span>
+                                  <div className="flex-1">
+                                    <p className="text-[10px] font-semibold text-foreground">
+                                      • {item.name}
+                                    </p>
+                                  </div>
                                 )}
                               </div>
-                              <div className="flex items-center gap-2">
-                                <div className="relative flex items-center flex-1">
+                              <div className="space-y-1">
+                                <Input
+                                  type="text"
+                                  placeholder="Nombre de tu cuenta (ej: BBVA, Santander)"
+                                  value={assetValues[item.id]?.nombre || ""}
+                                  onChange={(e) => updateItemValue(item.id, 'nombre', e.target.value, true)}
+                                  className="w-full h-7 text-[10px] bg-white border-gray-200"
+                                />
+                                <div className="relative flex items-center">
                                   <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
                                   <Input
                                     type="text"
@@ -606,13 +615,22 @@ export default function EditNetWorth() {
                                     )}
                                   </>
                                 ) : (
-                                  <span className="text-[10px] text-foreground flex-1">
-                                    • {item.name}
-                                  </span>
+                                  <div className="flex-1">
+                                    <p className="text-[10px] font-semibold text-foreground">
+                                      • {item.name}
+                                    </p>
+                                  </div>
                                 )}
                               </div>
-                              <div className="flex items-center gap-2">
-                                <div className="relative flex items-center flex-1">
+                              <div className="space-y-1">
+                                <Input
+                                  type="text"
+                                  placeholder="Nombre de tu deuda (ej: BBVA Oro, Chase Sapphire)"
+                                  value={liabilityValues[item.id]?.nombre || ""}
+                                  onChange={(e) => updateItemValue(item.id, 'nombre', e.target.value, false)}
+                                  className="w-full h-7 text-[10px] bg-white border-gray-200"
+                                />
+                                <div className="relative flex items-center">
                                   <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
                                   <Input
                                     type="text"
