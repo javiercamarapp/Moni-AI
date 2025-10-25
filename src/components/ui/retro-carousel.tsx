@@ -96,7 +96,7 @@ const RetroCarousel = ({items, initialScroll = 0}: CarouselProps) => {
   }, [initialScroll]);
 
   return (
-    <div className="relative w-full mt-6">
+    <div className="relative w-full mt-2">
       <div
         className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth [scrollbar-width:none] py-5"
         ref={carouselRef}
