@@ -277,19 +277,25 @@ const GestionarCategorias = () => {
     });
     setShowAddDialog(true);
   };
-  const renderCategoryCard = (category: Category, isSubcategory: boolean = false) => <div key={category.id}>
+  const renderCategoryCard = (category: Category, isSubcategory: boolean = false) => {
+    // Extraer emoji y nombre limpio
+    const emojiMatch = category.name.match(/^([\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}])\s*/u);
+    const emoji = emojiMatch ? emojiMatch[1] : getCategoryIcon(category.name);
+    const cleanName = emojiMatch ? category.name.replace(/^([\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}])\s*/u, '') : category.name;
+    
+    return <div key={category.id}>
       <Card className={`p-4 bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0 animate-fade-in hover:shadow-xl transition-all duration-300 ${isSubcategory ? 'ml-8 mt-2' : ''}`}>
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             {!isSubcategory ? (
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-white/50 to-white/30 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0">
-                {getCategoryIcon(category.name)}
+                {emoji}
               </div>
             ) : (
               <div className={`w-12 h-12 rounded-2xl ${category.color} flex-shrink-0`} />
             )}
             <div className="flex-1 min-w-0 overflow-hidden">
-              <p className="text-sm font-semibold text-foreground truncate">{category.name}</p>
+              <p className="text-sm font-semibold text-foreground truncate">{cleanName}</p>
               {!isSubcategory && category.subcategories && category.subcategories.length > 0 && <p className="text-xs text-muted-foreground truncate">{category.subcategories.length} subcategorías</p>}
             </div>
           </div>
@@ -309,6 +315,7 @@ const GestionarCategorias = () => {
       {/* Render subcategories */}
       {!isSubcategory && category.subcategories && category.subcategories.map(subcat => renderCategoryCard(subcat, true))}
     </div>;
+  };
   if (loading) {
     return <LoadingScreen />;
   }
