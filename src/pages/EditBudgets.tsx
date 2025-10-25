@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, ArrowRight, Save } from "lucide-react";
+import { ArrowLeft, ArrowRight, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 
@@ -552,6 +552,29 @@ export default function EditBudgets() {
                                       className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-white border-gray-200"
                                     />
                                   </div>
+                                  {sub.id.startsWith('personalizado_') && (
+                                    <Button
+                                      onClick={() => {
+                                        // Eliminar subcategoría
+                                        const index = category.subcategories.findIndex(s => s.id === sub.id);
+                                        if (index > -1) {
+                                          category.subcategories.splice(index, 1);
+                                        }
+                                        // Limpiar datos asociados
+                                        const newCustomSubcats = { ...customSubcategories };
+                                        delete newCustomSubcats[sub.id];
+                                        setCustomSubcategories(newCustomSubcats);
+                                        
+                                        const newSubcatBudgets = { ...subcategoryBudgets };
+                                        delete newSubcatBudgets[sub.id];
+                                        setSubcategoryBudgets(newSubcatBudgets);
+                                      }}
+                                      variant="ghost"
+                                      className="h-7 w-7 p-0 hover:bg-destructive/10 hover:text-destructive"
+                                    >
+                                      <Trash2 className="h-3.5 w-3.5" />
+                                    </Button>
+                                  )}
                                 </>
                               ) : (
                                 <>
