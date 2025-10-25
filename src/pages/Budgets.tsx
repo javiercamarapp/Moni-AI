@@ -320,23 +320,23 @@ export default function Budgets() {
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="sticky top-0 z-50 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm px-4 py-4">
+      <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-border/40 px-4 py-3">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between gap-3">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate('/dashboard')}
-              className="rounded-full shadow-sm border-0 h-8 w-8 flex-shrink-0"
+              className="rounded-full bg-white/80 shadow-sm hover:bg-white h-8 w-8 flex-shrink-0"
             >
               <ArrowLeft className="h-4 w-4 text-gray-700" />
             </Button>
-            <h1 className="text-lg font-bold text-foreground flex-1 text-center">Presupuesto Mensual</h1>
+            <h1 className="text-base font-semibold text-foreground flex-1 text-center">Presupuesto Mensual</h1>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate('/edit-budgets')}
-              className="rounded-full shadow-sm border-0 h-8 w-8 flex-shrink-0"
+              className="rounded-full bg-white/80 shadow-sm hover:bg-white h-8 w-8 flex-shrink-0"
             >
               <Pencil className="h-4 w-4 text-gray-700" />
             </Button>
