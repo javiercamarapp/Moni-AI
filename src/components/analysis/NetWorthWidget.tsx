@@ -97,7 +97,12 @@ export default function NetWorthWidget() {
               tickLine={false}
               axisLine={{ stroke: 'hsl(var(--border))' }}
             />
-            <YAxis hide />
+            <YAxis 
+              tickFormatter={(value) => (value === 0 ? '' : value)}
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: '#9E9E9E', fontSize: 12 }}
+            />
             <Tooltip
               contentStyle={{ 
                 backgroundColor: 'rgba(0,0,0,0.95)', 
