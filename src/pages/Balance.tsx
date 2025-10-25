@@ -273,28 +273,45 @@ const Balance = () => {
       // Create a map for quick category lookup
       const categoryMap = new Map(allCategories?.map(cat => [cat.id, cat]) || []);
 
-      // Fetch transactions in a single query (simpler and more reliable)
-      // Supabase limit is 1000 but we can increase it
-      const { data: transactions, error: txError } = await supabase
-        .from('transactions')
-        .select('*, categories(id, name, color, type, parent_id)')
-        .eq('user_id', user.id)
-        .gte('transaction_date', startDate.toISOString().split('T')[0])
-        .lte('transaction_date', endDate.toISOString().split('T')[0])
-        .order('transaction_date', { ascending: false })
-        .limit(10000); // Increased limit to handle all transactions
+      // Fetch ALL transactions with proper pagination
+      let allTransactions: any[] = [];
+      let hasMore = true;
+      let lastId: string | null = null;
       
-      if (txError) {
-        console.error('Error fetching transactions:', txError);
-        return;
+      while (hasMore) {
+        let query = supabase
+          .from('transactions')
+          .select('*, categories(id, name, color, type, parent_id)')
+          .eq('user_id', user.id)
+          .gte('transaction_date', startDate.toISOString().split('T')[0])
+          .lte('transaction_date', endDate.toISOString().split('T')[0])
+          .order('id', { ascending: true })
+          .limit(1000);
+        
+        // Use cursor-based pagination
+        if (lastId) {
+          query = query.gt('id', lastId);
+        }
+        
+        const { data: pageData, error: txError } = await query;
+        
+        if (txError) {
+          console.error('Error fetching transactions:', txError);
+          break;
+        }
+        
+        if (!pageData || pageData.length === 0) {
+          hasMore = false;
+          break;
+        }
+        
+        allTransactions = [...allTransactions, ...pageData];
+        lastId = pageData[pageData.length - 1].id;
+        hasMore = pageData.length === 1000; // Continue if we got full page
       }
       
-      if (!transactions) {
-        console.log('No transactions found');
-        return;
-      }
-      
-      console.log('📊 Transactions loaded:', transactions.length);
+      const transactions = allTransactions;
+      console.log('📊 Total transactions loaded:', transactions.length);
       if (!transactions) return;
       console.log('=== BALANCE PAGE CALCULATIONS ===');
       console.log('View mode:', viewMode);
