@@ -17,6 +17,17 @@ const iconMap = {
   'Activos intangibles': Sparkles,
 };
 
+// Helper function to format large numbers
+const formatCurrency = (value: number): string => {
+  if (value >= 1000000) {
+    return `$${(value / 1000000).toFixed(2)}M`;
+  }
+  if (value >= 100000) {
+    return `$${(value / 1000).toFixed(0)}k`;
+  }
+  return `$${value.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+};
+
 export default function Assets() {
   const navigate = useNavigate();
   const { data: netWorthData, isLoading } = useNetWorth('1Y');
@@ -160,7 +171,7 @@ export default function Assets() {
                       </div>
                       <div className="text-right flex-shrink-0 ml-2">
                         <p className="font-bold text-emerald-700 text-sm break-words">
-                          ${Number(asset.valor).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          {formatCurrency(Number(asset.valor))}
                         </p>
                         {asset.moneda !== 'MXN' && (
                           <p className="text-[10px] text-muted-foreground">{asset.moneda}</p>

@@ -15,6 +15,17 @@ interface CategorySectionProps {
   isEmpty?: boolean;
 }
 
+// Helper function to format large numbers
+const formatCurrency = (value: number): string => {
+  if (value >= 1000000) {
+    return `$${(value / 1000000).toFixed(2)}M`;
+  }
+  if (value >= 100000) {
+    return `$${(value / 1000).toFixed(0)}k`;
+  }
+  return `$${value.toLocaleString('es-MX', { maximumFractionDigits: 0 })}`;
+};
+
 export function CategorySection({
   title,
   total,
@@ -55,9 +66,7 @@ export function CategorySection({
         </div>
         <div className="flex items-center gap-2">
           <p className="font-bold text-foreground text-sm">
-            ${total >= 100000 
-              ? `${(total / 1000).toFixed(0)}k` 
-              : total.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+            {formatCurrency(total)}
           </p>
           {!isEmpty && (
             isExpanded ? (
