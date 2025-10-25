@@ -472,16 +472,16 @@ const GestionarCategorias = () => {
 
       {/* Edit Dialog */}
       <Dialog open={!!editingCategory} onOpenChange={open => !open && setEditingCategory(null)}>
-        <DialogContent>
+        <DialogContent className="bg-white/95 backdrop-blur-md rounded-[24px] shadow-lg border-0 max-w-[90%] sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-xl font-semibold text-foreground">
               Editar Categoría
             </DialogTitle>
           </DialogHeader>
           
-          <form onSubmit={handleEditCategory} className="space-y-6 pt-2">
-            <div className="space-y-3">
-              <Label htmlFor="edit-name" className="text-sm font-medium text-gray-700">
+          <form onSubmit={handleEditCategory} className="space-y-5">
+            <div className="space-y-2">
+              <Label htmlFor="edit-name" className="text-foreground/90 text-base">
                 Nombre de la categoría
               </Label>
               <Input 
@@ -492,13 +492,13 @@ const GestionarCategorias = () => {
                   name: e.target.value
                 } : null)} 
                 required 
-                className="bg-white/80 backdrop-blur-sm border-gray-200 focus:border-primary/30 focus:ring-primary/20 text-gray-900 h-12 rounded-xl transition-all" 
+                className="bg-white border-blue-100 text-foreground h-14" 
               />
             </div>
 
-            <div className="space-y-3">
-              <Label className="text-sm font-medium text-gray-700">Color</Label>
-              <div className="grid grid-cols-5 gap-2.5">
+            <div className="space-y-2">
+              <Label className="text-foreground/90 text-base">Color</Label>
+              <div className="grid grid-cols-5 gap-2">
                 {colorOptions.map(color => <button 
                   key={color} 
                   type="button" 
@@ -506,14 +506,14 @@ const GestionarCategorias = () => {
                     ...editingCategory,
                     color
                   } : null)} 
-                  className={`w-full h-11 rounded-xl ${color} border-2 ${editingCategory?.color === color ? 'border-primary ring-2 ring-primary/20 scale-105' : 'border-gray-200/50'} hover:border-primary/50 hover:scale-105 transition-all duration-200 shadow-sm`} 
+                  className={`w-full h-12 rounded-lg ${color} border-2 ${editingCategory?.color === color ? 'border-primary' : 'border-blue-100'} hover:border-primary/50 transition-colors`} 
                 />)}
               </div>
             </div>
 
             <Button 
               type="submit" 
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all h-12 font-medium"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all h-12 font-semibold"
             >
               Guardar Cambios
             </Button>
