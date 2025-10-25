@@ -96,7 +96,30 @@ export default function Budgets() {
 
       if (catError) throw catError;
 
-      // Para cada categoría principal, obtener su presupuesto
+      // Obtener rango de fechas del mes actual
+      const now = new Date();
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+      // Obtener gastos del mes actual por categoría
+      const { data: expenseData } = await supabase
+        .from('transactions')
+        .select('amount, category_id, categories(id, name, parent_id)')
+        .eq('user_id', user.id)
+        .eq('type', 'gasto')
+        .gte('transaction_date', firstDay.toISOString().split('T')[0])
+        .lte('transaction_date', lastDay.toISOString().split('T')[0]);
+
+      // Calcular gastos por categoría principal
+      const expensesByCategory: Record<string, number> = {};
+      (expenseData || []).forEach((expense: any) => {
+        if (expense.category_id && expense.categories) {
+          const categoryId = expense.categories.parent_id || expense.category_id;
+          expensesByCategory[categoryId] = (expensesByCategory[categoryId] || 0) + Number(expense.amount);
+        }
+      });
+
+      // Para cada categoría principal, obtener su presupuesto O verificar si tiene gastos
       const budgetPromises = (categories || []).map(async (category) => {
         const { data: budget } = await supabase
           .from('category_budgets')
@@ -105,11 +128,14 @@ export default function Budgets() {
           .eq('category_id', category.id)
           .maybeSingle();
 
-        if (budget) {
+        const hasExpenses = expensesByCategory[category.id] > 0;
+
+        // Incluir la categoría si tiene presupuesto O si tiene gastos
+        if (budget || hasExpenses) {
           return {
-            id: budget.id,
+            id: budget?.id || `temp-${category.id}`,
             category_id: category.id,
-            monthly_budget: budget.monthly_budget,
+            monthly_budget: budget?.monthly_budget || 0,
             category: {
               id: category.id,
               name: category.name,
