@@ -235,7 +235,10 @@ const ChallengeCard = ({
     return () => window.removeEventListener("keydown", handleEscapeKey);
   }, [isExpanded]);
 
-  const progress = (challenge.current_amount / challenge.target_amount) * 100;
+  // Para retos de reducción de gastos, el progreso es cuánto NO has gastado
+  const saved = challenge.target_amount - challenge.current_amount;
+  const progress = Math.max(0, (saved / challenge.target_amount) * 100);
+  
   const daysStatus = Array.isArray(challenge.days_status) ? challenge.days_status : [];
   const dayNames = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
   const dayNamesFull = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
