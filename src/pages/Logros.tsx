@@ -400,34 +400,31 @@ export default function Logros() {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-32">
-      <div className="container mx-auto px-4 py-6 max-w-2xl mb-8">
-        {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-4 bg-card rounded-[20px] card-glow p-4 hover-lift">
+      {/* Header */}
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm mb-6">
+        <div className="container mx-auto px-4 py-6 max-w-2xl">
+          <div className="flex items-center gap-4">
             <Button
               type="button"
               onClick={() => navigate("/aspirations-analysis")}
               variant="ghost"
               size="icon"
-              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100 flex-shrink-0"
+              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-5 w-5 text-gray-700" />
             </Button>
             
-            <div className="flex-1">
-              <h1 className="text-xl font-bold text-foreground">Tus Logros</h1>
-              <p className="text-xs text-muted-foreground">
-                Sistema de reconocimientos
-              </p>
-            </div>
-            
-            <div className="flex-shrink-0">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg">
-                <span className="text-2xl">🏆</span>
-              </div>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Tus Logros</h1>
+              <p className="text-sm text-gray-500">Sistema de reconocimientos</p>
             </div>
           </div>
+        </div>
+      </div>
 
+      <div className="container mx-auto px-4 max-w-2xl">
+        {/* Progress Card */}
+        <div className="mb-6">
           <Card className="bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg border border-blue-100 p-3">
             <div className="text-center">
               <p className="text-xs text-muted-foreground mb-1">
