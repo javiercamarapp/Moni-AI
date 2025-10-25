@@ -96,8 +96,9 @@ ${categoryList}
 
 EJEMPLOS DE CATEGORIZACIÓN:
 - Walmart, Soriana, Chedraui, mercado, supermercado → Alimentación
-- Antro, bar, cine, cinemex, cinepolis, teatro, concierto, spotify, netflix → Entretenimiento (si existe) o Servicios y suscripciones
-- Best Buy, Apple Store, tienda de electrónicos, gadgets → Salud y bienestar (si no hay otra más apropiada)
+- Antro, bar, cine, cinemex, cinepolis, teatro, concierto → Entretenimiento y estilo de vida
+- Best Buy, Apple Store, tienda de electrónicos, gadgets, tecnología → Entretenimiento y estilo de vida
+- Spotify, Netflix, Disney+, Amazon Prime → Servicios y suscripciones
 - Uber, taxi, gasolina, estacionamiento → Transporte
 - Luz, agua, gas, internet, teléfono → Servicios y suscripciones
 
