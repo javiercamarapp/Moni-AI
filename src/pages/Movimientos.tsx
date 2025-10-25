@@ -138,37 +138,50 @@ export default function Movimientos() {
           ) : (
             <ScrollArea className="h-[calc(100vh-320px)]">
               <div className="space-y-1 pr-4">
-                {transactions.map((transaction) => (
-                  <div 
-                    key={transaction.id}
-                    className="flex items-center gap-2 py-2 px-3 bg-muted/30 rounded backdrop-blur-sm border border-border hover:bg-muted/50 transition-all"
-                  >
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-base shadow-lg shrink-0">
-                      {transaction.type === 'ingreso' ? '💰' : '💳'}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-foreground truncate">
-                        {transaction.description}
-                      </p>
-                      <div className="flex items-center gap-1">
-                        <span className="text-[10px] text-muted-foreground">
-                          {new Date(transaction.transaction_date).toLocaleDateString('es-MX')}
-                        </span>
-                        {transaction.categories?.name && (
-                          <>
-                            <span className="text-[10px] text-muted-foreground">•</span>
-                            <span className="text-[10px] text-muted-foreground truncate">
-                              {transaction.categories.name}
-                            </span>
-                          </>
-                        )}
+                {transactions.map((transaction) => {
+                  const isIncome = transaction.type === 'ingreso';
+                  return (
+                    <div 
+                      key={transaction.id}
+                      className={`flex items-center gap-2 py-2 px-3 rounded backdrop-blur-sm border transition-all ${
+                        isIncome 
+                          ? 'bg-green-50/80 border-green-200 hover:bg-green-100/80' 
+                          : 'bg-red-50/80 border-red-200 hover:bg-red-100/80'
+                      }`}
+                    >
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-base shadow-lg shrink-0 ${
+                        isIncome
+                          ? 'bg-gradient-to-br from-green-400 to-green-600'
+                          : 'bg-gradient-to-br from-red-400 to-red-600'
+                      }`}>
+                        <span className="text-white">{isIncome ? '💰' : '💳'}</span>
                       </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-foreground truncate">
+                          {transaction.description}
+                        </p>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[10px] text-muted-foreground">
+                            {new Date(transaction.transaction_date).toLocaleDateString('es-MX')}
+                          </span>
+                          {transaction.categories?.name && (
+                            <>
+                              <span className="text-[10px] text-muted-foreground">•</span>
+                              <span className="text-[10px] text-muted-foreground truncate">
+                                {transaction.categories.name}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <p className={`text-base font-black shrink-0 ${
+                        isIncome ? 'text-green-700' : 'text-red-700'
+                      }`}>
+                        {isIncome ? '+' : '-'}${Number(transaction.amount).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      </p>
                     </div>
-                    <p className={`text-base font-black shrink-0 ${transaction.type === 'ingreso' ? 'text-primary' : 'text-destructive'}`}>
-                      {transaction.type === 'ingreso' ? '+' : '-'}${Number(transaction.amount).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                    </p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </ScrollArea>
           )}
