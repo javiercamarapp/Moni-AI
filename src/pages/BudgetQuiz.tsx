@@ -539,6 +539,20 @@ export default function BudgetQuiz() {
       }
 
       console.log('=== TODOS LOS PRESUPUESTOS GUARDADOS ===');
+      
+      // Marcar el quiz de presupuesto como completado
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ budget_quiz_completed: true })
+        .eq('id', user.id);
+
+      if (profileError) {
+        console.error('Error actualizando perfil:', profileError);
+      } else {
+        console.log('Quiz de presupuesto marcado como completado');
+      }
+      
+      toast.success("Presupuesto creado exitosamente");
       navigate('/budgets');
     } catch (error) {
       console.error('Error saving budgets:', error);

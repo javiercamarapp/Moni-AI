@@ -29,8 +29,46 @@ export default function Budgets() {
   const [currentExpenses, setCurrentExpenses] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    loadBudgets();
+    checkBudgetQuizStatus();
   }, []);
+
+  const checkBudgetQuizStatus = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
+
+      // Verificar si el usuario ha completado el quiz de presupuesto
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('budget_quiz_completed')
+        .eq('id', user.id)
+        .single();
+
+      // Si no ha completado el quiz, verificar si tiene presupuestos
+      if (!profile?.budget_quiz_completed) {
+        const { data: existingBudgets } = await supabase
+          .from('category_budgets')
+          .select('id')
+          .eq('user_id', user.id)
+          .limit(1);
+
+        // Si no tiene presupuestos, redirigir al quiz
+        if (!existingBudgets || existingBudgets.length === 0) {
+          navigate('/budget-quiz');
+          return;
+        }
+      }
+
+      // Cargar presupuestos normalmente
+      loadBudgets();
+    } catch (error) {
+      console.error('Error checking budget quiz status:', error);
+      loadBudgets();
+    }
+  };
 
   useEffect(() => {
     if (budgets.length > 0) {

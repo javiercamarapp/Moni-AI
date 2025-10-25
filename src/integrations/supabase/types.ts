@@ -456,6 +456,7 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          budget_quiz_completed: boolean | null
           created_at: string
           email: string | null
           full_name: string | null
@@ -467,6 +468,7 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          budget_quiz_completed?: boolean | null
           created_at?: string
           email?: string | null
           full_name?: string | null
@@ -478,6 +480,7 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          budget_quiz_completed?: boolean | null
           created_at?: string
           email?: string | null
           full_name?: string | null
