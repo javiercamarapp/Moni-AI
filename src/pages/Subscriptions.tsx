@@ -171,18 +171,22 @@ export default function Subscriptions() {
   return (
     <div className="min-h-screen animated-wave-bg pb-24">
       {/* Header */}
-      <div className="p-4 flex items-center gap-3 border-b border-border/30 bg-card/50 backdrop-blur-sm">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleBack}
-          className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-xl font-bold text-foreground">Suscripciones</h1>
-          <p className="text-xs text-muted-foreground">Pagadas 3+ meses • Monto fijo</p>
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleBack}
+              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
+            >
+              <ArrowLeft className="h-4 w-4 text-gray-700" />
+            </Button>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Suscripciones</h1>
+              <p className="text-sm text-gray-500">Pagadas 3+ meses • Monto fijo</p>
+            </div>
+          </div>
         </div>
       </div>
 
