@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Sparkles, Calendar, TrendingUp, CheckCircle, XCircle, Target } from "lucide-react";
+import { ArrowLeft, Sparkles, Calendar, TrendingUp, CheckCircle, XCircle, Target, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -19,7 +19,25 @@ export default function MisRetos() {
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchChallenges();
+    verifyProgress(); // Verificar progreso al cargar
   }, []);
+
+  const verifyProgress = async () => {
+    try {
+      console.log('🔍 Verificando progreso de retos...');
+      const { data, error } = await supabase.functions.invoke('verify-challenge-progress');
+      
+      if (error) {
+        console.error('Error verificando progreso:', error);
+      } else {
+        console.log('✅ Progreso verificado:', data);
+        // Recargar retos después de verificar
+        await fetchChallenges();
+      }
+    } catch (error) {
+      console.error('Error al verificar progreso:', error);
+    }
+  };
 
   const fetchChallenges = async () => {
     try {
@@ -132,7 +150,18 @@ export default function MisRetos() {
       </div>
 
       <div className="px-4 py-3 space-y-6">
-        <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">Mis retos de la semana</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">Mis retos de la semana</h2>
+          <Button
+            onClick={verifyProgress}
+            variant="ghost"
+            size="sm"
+            className="text-xs"
+          >
+            <RefreshCw className="w-3 h-3 mr-1" />
+            Actualizar
+          </Button>
+        </div>
         
         {loading ? (
           <div className="grid grid-cols-2 gap-3">
