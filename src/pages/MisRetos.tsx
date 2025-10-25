@@ -183,7 +183,7 @@ export default function MisRetos() {
         ) : (
           <div>
             <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight mb-4">
-              Tus retos personalizados
+              Sugerencias de la IA
             </h2>
             <div className="space-y-4">
               {challenges.map((challenge, index) => (
@@ -567,9 +567,16 @@ const ChallengeCard = ({
               )}
               
               {challenge.status === 'pending' && (
-                <Badge className="mt-2 text-xs bg-blue-100 text-blue-700 border-blue-200">
-                  Sugerido
-                </Badge>
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAccept(challenge.id);
+                  }}
+                  size="sm"
+                  className="mt-2 w-full bg-green-600 hover:bg-green-700 text-white border-0"
+                >
+                  Aceptar reto
+                </Button>
               )}
               
               {isLastDay && challenge.status === 'active' && (
