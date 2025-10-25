@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ArrowLeft, TrendingUp, TrendingDown, ChevronDown, ChevronUp, Building2, CreditCard, Home, Wallet, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
@@ -47,6 +47,23 @@ export default function NetWorth() {
   const [selectedInstitution, setSelectedInstitution] = useState<string>('All');
   const [showSemiLiquidFilter, setShowSemiLiquidFilter] = useState(false);
   const [selectedSemiLiquidType, setSelectedSemiLiquidType] = useState<string>('All');
+  const [dropdownPosition, setDropdownPosition] = useState<'bottom' | 'top'>('bottom');
+  const semiLiquidButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (showSemiLiquidFilter && semiLiquidButtonRef.current) {
+      const rect = semiLiquidButtonRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      
+      // Si hay menos de 300px abajo, mostrar arriba
+      if (spaceBelow < 300 && spaceAbove > spaceBelow) {
+        setDropdownPosition('top');
+      } else {
+        setDropdownPosition('bottom');
+      }
+    }
+  }, [showSemiLiquidFilter]);
 
   const { data: hasData, isLoading: checkingData, refetch: refetchHasData } = useHasNetWorthData();
   const { data: netWorthData, isLoading: loadingData } = useNetWorth(timeRange);
@@ -387,6 +404,7 @@ export default function NetWorth() {
           <h2 className="text-xl font-bold text-foreground drop-shadow-lg">Activos Semi Líquidos</h2>
           <div className="relative">
             <Button
+              ref={semiLiquidButtonRef}
               variant="ghost"
               size="sm"
               onClick={() => setShowSemiLiquidFilter(!showSemiLiquidFilter)}
@@ -400,7 +418,10 @@ export default function NetWorth() {
             </Button>
             
             {showSemiLiquidFilter && (
-              <div className="absolute right-0 top-full mt-2 bg-white backdrop-blur-md rounded-[20px] shadow-xl border border-blue-100 py-2 min-w-[200px] z-50">
+              <div className={cn(
+                "absolute right-0 bg-white backdrop-blur-md rounded-[20px] shadow-xl border border-blue-100 py-2 min-w-[200px] z-50",
+                dropdownPosition === 'bottom' ? "top-full mt-2" : "bottom-full mb-2"
+              )}>
                 <button
                   onClick={() => {
                     setSelectedSemiLiquidType('All');
