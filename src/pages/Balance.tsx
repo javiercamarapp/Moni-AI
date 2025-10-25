@@ -278,12 +278,25 @@ const Balance = () => {
       let page = 0;
       const pageSize = 1000;
       let hasMore = true;
+      const fetchedIds = new Set<string>(); // Track IDs to prevent duplicates
+      
       while (hasMore) {
         const {
           data: pageData
         } = await supabase.from('transactions').select('*, categories(id, name, color, type, parent_id)').eq('user_id', user.id).gte('transaction_date', startDate.toISOString().split('T')[0]).lte('transaction_date', endDate.toISOString().split('T')[0]).range(page * pageSize, (page + 1) * pageSize - 1);
+        
         if (pageData && pageData.length > 0) {
-          allTransactions = [...allTransactions, ...pageData];
+          // Filter out duplicates
+          const newTransactions = pageData.filter(t => {
+            if (fetchedIds.has(t.id)) {
+              console.warn('⚠️ Duplicate transaction detected:', t.id);
+              return false;
+            }
+            fetchedIds.add(t.id);
+            return true;
+          });
+          
+          allTransactions = [...allTransactions, ...newTransactions];
           hasMore = pageData.length === pageSize;
           page++;
         } else {
@@ -291,6 +304,7 @@ const Balance = () => {
         }
       }
       const transactions = allTransactions;
+      console.log('📊 Unique transactions loaded:', transactions.length, 'Pages fetched:', page);
       if (!transactions) return;
       console.log('=== BALANCE PAGE CALCULATIONS ===');
       console.log('View mode:', viewMode);
