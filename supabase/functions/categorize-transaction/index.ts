@@ -114,12 +114,14 @@ GUÍA DE CATEGORIZACIÓN CON EJEMPLOS:
 
 💸 Ahorro e inversión: ahorro mensual, fondo emergencia, inversiones, fondos, cetes, crypto, acciones, afore, retiro
 
-🤝 Apoyos y otros: apoyo familiar, pensión alimenticia, ayuda hijos, donaciones, caridad, mascotas (veterinario, comida mascotas, accesorios mascotas), otros gastos no clasificados
+🐾 Mascotas: veterinario, veterinaria, comida para mascotas, pet shop, petco, petland, alimento perro, alimento gato, accesorios mascotas, juguetes mascotas, estética mascotas, baño mascotas, vacunas mascotas, seguro mascotas
+
+🤝 Apoyos y otros: apoyo familiar, pensión alimenticia, ayuda hijos, donaciones, caridad, otros gastos varios
 
 INSTRUCCIONES:
 1. Usa la categoría MÁS ESPECÍFICA que coincida con la descripción
-2. Responde SOLO con el ID de la categoría (UUID entre paréntesis)
-3. Si definitivamente no hay categoría apropiada, responde: "NO_IDENTIFICADO"
+2. Si identificas claramente la categoría, responde SOLO con su ID (UUID entre paréntesis)
+3. Si NO puedes identificar con confianza la categoría correcta, responde: "NO_IDENTIFICADO" (esto asignará a "Gastos no identificados")
 4. NO inventes categorías
 5. NO des explicaciones`;
 
