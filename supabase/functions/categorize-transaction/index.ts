@@ -85,7 +85,7 @@ serve(async (req) => {
       .map(c => `- ${c.name} (ID: ${c.id})`)
       .join('\n');
 
-    const prompt = `Analiza esta transacción y asígnala a la categoría más apropiada:
+    const prompt = `Analiza esta transacción y asígnala a la categoría más apropiada de las disponibles:
 
 Descripción: ${description}
 Monto: $${amount}
@@ -94,20 +94,20 @@ Tipo: ${type}
 Categorías disponibles:
 ${categoryList}
 
-EJEMPLOS DE CATEGORIZACIÓN:
+EJEMPLOS DE CATEGORIZACIÓN (usa las categorías disponibles arriba):
 - Walmart, Soriana, Chedraui, mercado, supermercado → Alimentación
-- Antro, bar, cine, cinemex, cinepolis, teatro, concierto → Entretenimiento y estilo de vida
-- Best Buy, Apple Store, tienda de electrónicos, gadgets, tecnología → Entretenimiento y estilo de vida
+- Antro, bar, cine, cinemex, cinepolis, teatro, concierto, Best Buy, Apple Store → Servicios y suscripciones
 - Spotify, Netflix, Disney+, Amazon Prime → Servicios y suscripciones
 - Uber, taxi, gasolina, estacionamiento → Transporte
 - Luz, agua, gas, internet, teléfono → Servicios y suscripciones
+- Gimnasio, doctor, farmacia, hospital → Salud y bienestar
 
-INSTRUCCIONES:
-1. Identifica la categoría más apropiada basándote en la descripción
-2. Si encuentras una categoría apropiada, responde SOLO con su ID (el texto entre paréntesis)
-3. Si definitivamente NO hay ninguna categoría apropiada, responde: "NO_IDENTIFICADO"
-4. NO inventes categorías
-5. NO des explicaciones adicionales
+INSTRUCCIONES CRÍTICAS:
+1. SOLO puedes usar las categorías listadas arriba con sus IDs
+2. Si encuentras una categoría apropiada, responde SOLO con su ID exacto (el UUID entre paréntesis)
+3. Si NO hay ninguna categoría apropiada en la lista, responde: "NO_IDENTIFICADO"
+4. NO inventes categorías que no estén en la lista
+5. NO des explicaciones
 6. Responde SOLO con el ID o "NO_IDENTIFICADO"`;
 
     console.log('Consultando IA para transacción:', description);
