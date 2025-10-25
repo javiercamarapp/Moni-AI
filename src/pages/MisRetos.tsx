@@ -573,7 +573,7 @@ const ChallengeCard = ({
                     onAccept(challenge.id);
                   }}
                   size="sm"
-                  className="mt-2 w-full bg-green-600 hover:bg-green-700 text-white border-0"
+                  className="mt-2 w-full bg-white/80 backdrop-blur-md hover:bg-white text-foreground shadow-md hover:shadow-lg transition-all border border-gray-200/50 font-semibold rounded-full"
                 >
                   Aceptar reto
                 </Button>
