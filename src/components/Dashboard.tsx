@@ -1714,7 +1714,7 @@ const Dashboard = () => {
                   <Button
                     onClick={() => navigate("/mis-retos")}
                     size="sm"
-                    className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
+                    className="bg-white/80 backdrop-blur-md hover:bg-white text-foreground shadow-md hover:shadow-lg transition-all border border-gray-200/50 font-semibold rounded-full"
                   >
                     <Sparkles className="w-4 h-4 mr-2" />
                     Ver retos recomendados por IA
