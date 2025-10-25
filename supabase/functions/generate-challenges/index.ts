@@ -78,14 +78,26 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Generate challenges using AI
-    const prompt = `Analiza estos patrones de gasto del último mes y genera ${count} retos semanales específicos y motivadores:
+    // Generate challenges using AI - enfocados en gastos hormiga y pequeños
+    const prompt = `Analiza estos patrones de gasto del último mes y genera ${count} retos semanales específicos para REDUCIR GASTOS HORMIGA:
 
 ${spendingArray.map(s => `- ${s.name}: $${s.total.toFixed(2)} en ${s.count} transacciones (último mes)`).join('\n')}
 
-Para cada categoría, genera un reto semanal realista que ayude a reducir el gasto en un 20-30%. 
-Los retos deben ser alcanzables y motivadores.
-Formato: título corto y motivador, descripción específica del reto, y la meta de gasto semanal.`;
+ENFÓCATE EN ESTOS TIPOS DE RETOS:
+1. 🏪 Reducir compras impulsivas en OXXO, 7-Eleven, tienditas
+2. 🍕 Eliminar o reducir deliverys de comida (Uber Eats, Rappi, DiDi Food)
+3. ☕ Ahorrar en cafés, snacks, antojos diarios
+4. 💸 Evitar gastos hormiga (chicles, refrescos, dulces)
+5. 📱 Reducir suscripciones innecesarias o compras en apps
+
+IMPORTANTE:
+- Los retos deben ser sobre GASTOS PEQUEÑOS Y FRECUENTES, no grandes gastos
+- Deben motivar a revisar TODAS las transacciones diarias
+- Propón metas realistas de reducción del 30-50% en estos gastos
+- Usa lenguaje motivador y desafiante
+- Incluye tips prácticos (ej: "lleva tu café de casa", "prepara lunch")
+
+Formato: título corto y motivador, descripción específica del reto con tips, y la meta de gasto semanal.`;
 
     console.log('🤖 Llamando a Lovable AI para generar retos...');
 
