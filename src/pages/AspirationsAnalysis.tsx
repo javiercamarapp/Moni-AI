@@ -476,7 +476,7 @@ export default function AspirationsAnalysis() {
   }
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-4">
+    <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
@@ -499,7 +499,7 @@ export default function AspirationsAnalysis() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6 max-w-2xl">
+      <div className="mx-auto px-4 py-6 space-y-4" style={{ maxWidth: '600px' }}>
 
         {/* Net Worth Comparison Card */}
         <Card className="p-3 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
