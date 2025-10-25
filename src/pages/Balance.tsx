@@ -21,70 +21,7 @@ interface CategoryBalance {
   percentage: number;
 }
 
-// Mapeo de categorías a grupos
-const categoryGroupMapping: Record<string, string> = {
-  // Comidas
-  'restaurante': 'Comidas',
-  'restaurantes': 'Comidas',
-  'comida': 'Comidas',
-  'alimentos': 'Comidas',
-  'supermercado': 'Comidas',
-  'despensa': 'Comidas',
-  'cafetería': 'Comidas',
-  // Entretenimiento
-  'entretenimiento': 'Entretenimiento',
-  'cine': 'Entretenimiento',
-  'teatro': 'Entretenimiento',
-  'concierto': 'Entretenimiento',
-  'museo': 'Entretenimiento',
-  'videojuegos': 'Entretenimiento',
-  // Salidas nocturnas
-  'bar': 'Salidas Nocturnas',
-  'bares': 'Salidas Nocturnas',
-  'antro': 'Salidas Nocturnas',
-  'discoteca': 'Salidas Nocturnas',
-  'fiesta': 'Salidas Nocturnas',
-  // Servicios
-  'servicios': 'Servicios',
-  'electricidad': 'Servicios',
-  'agua': 'Servicios',
-  'gas': 'Servicios',
-  'internet': 'Servicios',
-  'teléfono': 'Servicios',
-  // Streaming
-  'streaming': 'Streaming',
-  'netflix': 'Streaming',
-  'spotify': 'Streaming',
-  'disney': 'Streaming',
-  'prime': 'Streaming',
-  'hbo': 'Streaming',
-  // Auto
-  'auto': 'Auto',
-  'gasolina': 'Auto',
-  'combustible': 'Auto',
-  'mecánico': 'Auto',
-  'reparación': 'Auto',
-  'estacionamiento': 'Auto',
-  'uber': 'Auto',
-  'taxi': 'Auto'
-};
-
-// Colores metálicos oscuros para grupos de gastos
-const groupColors: Record<string, string> = {
-  'Comidas': 'hsl(25, 60%, 35%)',
-  // Bronce
-  'Entretenimiento': 'hsl(280, 50%, 32%)',
-  // Morado metálico
-  'Salidas Nocturnas': 'hsl(340, 55%, 30%)',
-  // Rojo metálico
-  'Servicios': 'hsl(200, 55%, 32%)',
-  // Azul metálico
-  'Streaming': 'hsl(145, 45%, 30%)',
-  // Verde metálico
-  'Auto': 'hsl(45, 60%, 35%)',
-  // Dorado oscuro
-  'Otros': 'hsl(220, 45%, 28%)' // Azul acero
-};
+// Los grupos ahora se obtienen directamente de la base de datos usando parent_id
 
 // Colores metálicos oscuros para categorías de ingresos
 const incomeCategoryColors: string[] = ['hsl(210, 55%, 35%)',
@@ -105,15 +42,6 @@ const incomeCategoryColors: string[] = ['hsl(210, 55%, 35%)',
 ];
 const getIncomeCategoryColor = (index: number): string => {
   return incomeCategoryColors[index % incomeCategoryColors.length];
-};
-const getCategoryGroup = (categoryName: string): string => {
-  const lowerName = categoryName.toLowerCase();
-  for (const [key, group] of Object.entries(categoryGroupMapping)) {
-    if (lowerName.includes(key)) {
-      return group;
-    }
-  }
-  return 'Otros';
 };
 const Balance = () => {
   const navigate = useNavigate();
@@ -328,6 +256,15 @@ const Balance = () => {
         endDate = new Date(currentMonth.getFullYear(), 11, 31);
       }
 
+      // Fetch ALL categories to build parent-child relationships
+      const { data: allCategories } = await supabase
+        .from('categories')
+        .select('id, name, color, type, parent_id')
+        .eq('user_id', user.id);
+
+      // Create a map for quick category lookup
+      const categoryMap = new Map(allCategories?.map(cat => [cat.id, cat]) || []);
+
       // Fetch ALL transactions using pagination (Supabase has 1000 record default limit)
       let allTransactions: any[] = [];
       let page = 0;
@@ -336,7 +273,7 @@ const Balance = () => {
       while (hasMore) {
         const {
           data: pageData
-        } = await supabase.from('transactions').select('*, categories(id, name, color, type)').eq('user_id', user.id).gte('transaction_date', startDate.toISOString().split('T')[0]).lte('transaction_date', endDate.toISOString().split('T')[0]).range(page * pageSize, (page + 1) * pageSize - 1);
+        } = await supabase.from('transactions').select('*, categories(id, name, color, type, parent_id)').eq('user_id', user.id).gte('transaction_date', startDate.toISOString().split('T')[0]).lte('transaction_date', endDate.toISOString().split('T')[0]).range(page * pageSize, (page + 1) * pageSize - 1);
         if (pageData && pageData.length > 0) {
           allTransactions = [...allTransactions, ...pageData];
           hasMore = pageData.length === pageSize;
@@ -389,7 +326,7 @@ const Balance = () => {
       setIngresosByCategory(ingresosWithPercentage);
       localStorage.setItem('balance_ingresos', JSON.stringify(ingresosWithPercentage));
 
-      // Process gastos with grouping
+      // Process gastos with database category hierarchy
       const gastosData = transactions.filter(t => t.type === 'gasto');
       const totalGast = gastosData.reduce((sum, t) => sum + Number(t.amount), 0);
       setTotalGastos(totalGast);
@@ -400,24 +337,44 @@ const Balance = () => {
       console.log('Balance:', totalIng - totalGast);
       console.log('Tasa Ahorro:', totalIng > 0 ? (totalIng - totalGast) / totalIng * 100 : 0);
       console.log('==================================');
+      
+      // Group by parent category if exists, otherwise by category itself
       const gastosGroupMap = new Map<string, {
         name: string;
         color: string;
         total: number;
       }>();
+      
       gastosData.forEach(t => {
         if (t.categories) {
-          const groupName = getCategoryGroup(t.categories.name);
-          const groupColor = groupColors[groupName] || groupColors['Otros'];
-          const existing = gastosGroupMap.get(groupName) || {
+          const category = t.categories;
+          let groupId: string;
+          let groupName: string;
+          let groupColor: string;
+          
+          // If category has a parent, use parent for grouping
+          if (category.parent_id && categoryMap.has(category.parent_id)) {
+            const parentCategory = categoryMap.get(category.parent_id)!;
+            groupId = parentCategory.id;
+            groupName = parentCategory.name;
+            groupColor = parentCategory.color;
+          } else {
+            // Otherwise, use the category itself
+            groupId = category.id;
+            groupName = category.name;
+            groupColor = category.color;
+          }
+          
+          const existing = gastosGroupMap.get(groupId) || {
             name: groupName,
             color: groupColor,
             total: 0
           };
           existing.total += Number(t.amount);
-          gastosGroupMap.set(groupName, existing);
+          gastosGroupMap.set(groupId, existing);
         }
       });
+      
       const gastosWithPercentage: CategoryBalance[] = Array.from(gastosGroupMap.entries()).map(([id, data]) => ({
         id,
         name: data.name,
