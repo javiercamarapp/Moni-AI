@@ -45,6 +45,8 @@ export default function NetWorth() {
   const [showForm, setShowForm] = useState(false);
   const [showInstitutionFilter, setShowInstitutionFilter] = useState(false);
   const [selectedInstitution, setSelectedInstitution] = useState<string>('All');
+  const [showSemiLiquidFilter, setShowSemiLiquidFilter] = useState(false);
+  const [selectedSemiLiquidType, setSelectedSemiLiquidType] = useState<string>('All');
 
   const { data: hasData, isLoading: checkingData, refetch: refetchHasData } = useHasNetWorthData();
   const { data: netWorthData, isLoading: loadingData } = useNetWorth(timeRange);
@@ -383,6 +385,57 @@ export default function NetWorth() {
       <div className="px-4 mt-6">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-xl font-bold text-foreground drop-shadow-lg">Activos Semi Líquidos</h2>
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowSemiLiquidFilter(!showSemiLiquidFilter)}
+              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-9 px-3 gap-2 text-foreground"
+            >
+              <div className="flex flex-col gap-0.5">
+                <div className="h-0.5 w-3 bg-foreground/70"></div>
+                <div className="h-0.5 w-3 bg-foreground/70"></div>
+              </div>
+              <span className="text-xs font-medium">Filtrar</span>
+            </Button>
+            
+            {showSemiLiquidFilter && (
+              <div className="absolute right-0 top-full mt-2 bg-white backdrop-blur-md rounded-[20px] shadow-xl border border-blue-100 py-2 min-w-[200px] z-50">
+                <button
+                  onClick={() => {
+                    setSelectedSemiLiquidType('All');
+                    setShowSemiLiquidFilter(false);
+                  }}
+                  className={cn(
+                    "w-full text-left px-4 py-2.5 text-sm hover:bg-primary/10 transition-colors font-medium",
+                    selectedSemiLiquidType === 'All' ? "bg-primary/20 text-foreground" : "text-foreground/80"
+                  )}
+                >
+                  Todos los tipos
+                </button>
+                {Array.from(new Set(
+                  assets
+                    .filter(a => isSemiLiquidAsset(a.categoria))
+                    .map(a => a.subcategoria)
+                    .filter(Boolean)
+                )).map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => {
+                      setSelectedSemiLiquidType(type!);
+                      setShowSemiLiquidFilter(false);
+                    }}
+                    className={cn(
+                      "w-full text-left px-4 py-2.5 text-sm hover:bg-primary/10 transition-colors font-medium",
+                      selectedSemiLiquidType === type ? "bg-primary/20 text-foreground" : "text-foreground/80"
+                    )}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Total Semi Líquido */}
@@ -391,6 +444,7 @@ export default function NetWorth() {
           <p className="text-2xl font-bold text-emerald-700 break-words">
             ${assets
               .filter(a => isSemiLiquidAsset(a.categoria))
+              .filter(a => selectedSemiLiquidType === 'All' || a.subcategoria === selectedSemiLiquidType)
               .reduce((sum, a) => sum + Number(a.valor), 0)
               .toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
@@ -399,6 +453,7 @@ export default function NetWorth() {
         <div className="space-y-3">
           {assets
             .filter(account => isSemiLiquidAsset(account.categoria))
+            .filter(account => selectedSemiLiquidType === 'All' || account.subcategoria === selectedSemiLiquidType)
             .map((account) => {
               const iconName = getIconForCategory(account.categoria);
               const Icon = iconMap[iconName];
@@ -435,9 +490,11 @@ export default function NetWorth() {
               );
             })}
             
-          {assets.filter(a => isSemiLiquidAsset(a.categoria)).length === 0 && (
+          {assets.filter(a => isSemiLiquidAsset(a.categoria)).filter(a => selectedSemiLiquidType === 'All' || a.subcategoria === selectedSemiLiquidType).length === 0 && (
             <div className="p-8 text-center text-muted-foreground bg-white rounded-[20px] border border-blue-100 shadow-xl">
-              No hay activos semi líquidos registrados
+              {selectedSemiLiquidType === 'All' 
+                ? 'No hay activos semi líquidos registrados'
+                : `No hay activos de tipo ${selectedSemiLiquidType}`}
             </div>
           )}
         </div>
