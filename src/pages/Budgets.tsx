@@ -419,10 +419,10 @@ export default function Budgets() {
             </Card>
 
             {/* Título de sección */}
-            <div className="text-center space-y-2 py-2">
-              <div className="text-4xl">📊</div>
-              <p className="text-base font-semibold text-foreground">Presupuesto por Categoría</p>
-              <p className="text-xs text-muted-foreground">Progreso del mes actual</p>
+            <div className="text-center space-y-0.5 py-1">
+              <div className="text-2xl">📊</div>
+              <p className="text-xs font-semibold text-foreground">Presupuesto por Categoría</p>
+              <p className="text-[9px] text-muted-foreground">Progreso del mes actual</p>
             </div>
 
             {/* Lista de Presupuestos en dos columnas */}
