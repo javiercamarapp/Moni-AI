@@ -86,6 +86,26 @@ export default function MisRetos() {
     }
   };
 
+  const deleteAllChallenges = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('challenges')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      toast.success('Retos eliminados correctamente');
+      await fetchChallenges();
+    } catch (error) {
+      console.error('Error eliminando retos:', error);
+      toast.error('Error al eliminar los retos');
+    }
+  };
+
   const generateNewChallenges = async () => {
     try {
       setGeneratingChallenges(true);
@@ -160,6 +180,16 @@ export default function MisRetos() {
               <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Mis Retos</h1>
               <p className="text-sm text-gray-500">Desafíos personalizados</p>
             </div>
+            {challenges.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={deleteAllChallenges}
+                className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0"
+              >
+                <X className="h-4 w-4 text-gray-700" />
+              </Button>
+            )}
           </div>
         </div>
       </div>
