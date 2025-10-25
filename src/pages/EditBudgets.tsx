@@ -8,133 +8,178 @@ import { ArrowLeft, ArrowRight, Save } from "lucide-react";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 
-interface Budget {
-  id: string;
-  category_id: string;
-  monthly_budget: number;
-  category: {
-    id: string;
-    name: string;
-    color: string;
-  };
-  subcategories?: Subcategory[];
-}
-
 interface Subcategory {
   id: string;
   name: string;
-  budget_id?: string;
-  monthly_budget: number;
 }
 
-const MAIN_CATEGORIES = [
-  { name: 'Vivienda', icon: '🏠' },
-  { name: 'Transporte', icon: '🚗' },
-  { name: 'Alimentación', icon: '🍽️' },
-  { name: 'Servicios y suscripciones', icon: '🧾' },
-  { name: 'Salud y bienestar', icon: '🩺' },
-  { name: 'Educación y desarrollo', icon: '🎓' },
-  { name: 'Deudas y créditos', icon: '💳' },
-  { name: 'Entretenimiento y estilo de vida', icon: '🎉' },
-  { name: 'Ahorro e inversión', icon: '💸' },
-  { name: 'Apoyos y otros', icon: '🤝' },
-  { name: 'Mascotas', icon: '🐾' },
+interface Category {
+  id: string;
+  name: string;
+  icon: string;
+  suggestedPercentage: number;
+  subcategories: Subcategory[];
+  insight: string;
+}
+
+const DEFAULT_CATEGORIES: Category[] = [
+  { 
+    id: 'vivienda', 
+    name: 'Vivienda', 
+    icon: '🏠', 
+    suggestedPercentage: 30,
+    insight: 'Mide estabilidad y proporción ideal (<30% de ingresos)',
+    subcategories: [
+      { id: 'renta', name: 'Renta o hipoteca' },
+      { id: 'mantenimiento', name: 'Mantenimiento o predial' },
+      { id: 'luz', name: 'Luz' },
+      { id: 'agua', name: 'Agua' },
+      { id: 'gas', name: 'Gas' },
+      { id: 'internet', name: 'Internet y teléfono' },
+      { id: 'limpieza', name: 'Servicio de limpieza / seguridad' },
+    ]
+  },
+  { 
+    id: 'transporte', 
+    name: 'Transporte', 
+    icon: '🚗', 
+    suggestedPercentage: 15,
+    insight: 'Detecta sobrecostos o hábitos de transporte ineficiente',
+    subcategories: [
+      { id: 'gasolina', name: 'Gasolina / carga eléctrica' },
+      { id: 'mensualidad_auto', name: 'Mensualidad de automóvil' },
+      { id: 'publico', name: 'Transporte público' },
+      { id: 'uber', name: 'Uber, Didi, taxis' },
+      { id: 'estacionamiento', name: 'Estacionamiento o peajes' },
+      { id: 'mantenimiento_vehiculo', name: 'Mantenimiento del vehículo / seguro' },
+    ]
+  },
+  { 
+    id: 'alimentacion', 
+    name: 'Alimentación', 
+    icon: '🍽️', 
+    suggestedPercentage: 20,
+    insight: 'Es la categoría donde más fuga de dinero hay',
+    subcategories: [
+      { id: 'supermercado', name: 'Supermercado' },
+      { id: 'restaurantes', name: 'Comidas fuera de casa' },
+      { id: 'cafe', name: 'Café / snacks / antojos' },
+      { id: 'apps_comida', name: 'Apps de comida (Rappi, Uber Eats, etc.)' },
+    ]
+  },
+  { 
+    id: 'servicios', 
+    name: 'Servicios y suscripciones', 
+    icon: '🧾', 
+    suggestedPercentage: 8,
+    insight: 'Ideal para detectar "gastos hormiga" o suscripciones olvidadas',
+    subcategories: [
+      { id: 'streaming', name: 'Streaming (Netflix, Spotify, etc.)' },
+      { id: 'apps_premium', name: 'Apps premium (IA, productividad, edición, etc.)' },
+      { id: 'software', name: 'Suscripciones de software / membresías' },
+      { id: 'telefono', name: 'Teléfono móvil' },
+    ]
+  },
+  { 
+    id: 'salud', 
+    name: 'Salud y bienestar', 
+    icon: '🩺', 
+    suggestedPercentage: 5,
+    insight: 'Muestra equilibrio entre autocuidado y exceso de gasto',
+    subcategories: [
+      { id: 'seguro_medico', name: 'Seguro médico' },
+      { id: 'medicinas', name: 'Medicinas' },
+      { id: 'consultas', name: 'Consultas médicas' },
+      { id: 'gimnasio', name: 'Gimnasio, clases, suplementos' },
+    ]
+  },
+  { 
+    id: 'educacion', 
+    name: 'Educación y desarrollo', 
+    icon: '🎓', 
+    suggestedPercentage: 5,
+    insight: 'Refleja gasto de crecimiento o inversión en conocimiento',
+    subcategories: [
+      { id: 'colegiaturas', name: 'Colegiaturas' },
+      { id: 'cursos', name: 'Cursos / talleres' },
+      { id: 'libros', name: 'Libros o herramientas de aprendizaje' },
+      { id: 'extracurriculares', name: 'Clases extracurriculares' },
+    ]
+  },
+  { 
+    id: 'deudas', 
+    name: 'Deudas y créditos', 
+    icon: '💳', 
+    suggestedPercentage: 5,
+    insight: 'Ayuda a calcular el índice de endeudamiento (<35% recomendable)',
+    subcategories: [
+      { id: 'tarjetas', name: 'Tarjetas de crédito' },
+      { id: 'prestamos', name: 'Préstamos personales' },
+      { id: 'hipotecarios', name: 'Créditos hipotecarios' },
+      { id: 'intereses', name: 'Intereses / pagos mínimos' },
+    ]
+  },
+  { 
+    id: 'entretenimiento', 
+    name: 'Entretenimiento y estilo de vida', 
+    icon: '🎉', 
+    suggestedPercentage: 7,
+    insight: 'Identifica exceso de gasto emocional o impulsivo',
+    subcategories: [
+      { id: 'salidas', name: 'Salidas, fiestas, bares' },
+      { id: 'ropa', name: 'Ropa, accesorios, belleza' },
+      { id: 'viajes', name: 'Viajes o escapadas' },
+      { id: 'hobbies', name: 'Hobbies, videojuegos, mascotas' },
+    ]
+  },
+  { 
+    id: 'ahorro', 
+    name: 'Ahorro e inversión', 
+    icon: '💸', 
+    suggestedPercentage: 10,
+    insight: 'Mide disciplina financiera (objetivo: al menos 10-20% de ingresos)',
+    subcategories: [
+      { id: 'ahorro_mensual', name: 'Ahorro mensual' },
+      { id: 'fondo_emergencia', name: 'Fondo de emergencia' },
+      { id: 'inversion', name: 'Inversión (fondos, CETES, cripto, etc.)' },
+      { id: 'retiro', name: 'Aportación a retiro (AFORE, IRA, etc.)' },
+    ]
+  },
+  { 
+    id: 'apoyos', 
+    name: 'Apoyos y otros', 
+    icon: '🤝', 
+    suggestedPercentage: 0,
+    insight: 'Permite ajustar el "balance neto real" del mes',
+    subcategories: [
+      { id: 'apoyo_familiar', name: 'Apoyo familiar / hijos / pareja' },
+      { id: 'donaciones', name: 'Donaciones' },
+      { id: 'otros', name: 'Otros gastos no clasificados' },
+    ]
+  },
+  { 
+    id: 'mascotas', 
+    name: 'Mascotas', 
+    icon: '🐾', 
+    suggestedPercentage: 3,
+    insight: 'Cuida de tus compañeros peludos de forma responsable',
+    subcategories: [
+      { id: 'comida_mascotas', name: 'Comida y snacks' },
+      { id: 'veterinario', name: 'Veterinario y medicinas' },
+      { id: 'accesorios_mascotas', name: 'Accesorios y juguetes' },
+      { id: 'estetica_mascotas', name: 'Estética y cuidado' },
+      { id: 'seguro_mascotas', name: 'Seguro de mascotas' },
+    ]
+  },
 ];
-
-const CATEGORY_ICONS: Record<string, string> = {
-  'vivienda': '🏠',
-  'transporte': '🚗',
-  'alimentación': '🍽️',
-  'servicios y suscripciones': '🧾',
-  'salud y bienestar': '🩺',
-  'educación y desarrollo': '🎓',
-  'deudas y créditos': '💳',
-  'entretenimiento y estilo de vida': '🎉',
-  'ahorro e inversión': '💸',
-  'apoyos y otros': '🤝',
-  'mascotas': '🐾',
-};
-
-const DEFAULT_SUBCATEGORIES: Record<string, { id: string; name: string }[]> = {
-  'vivienda': [
-    { id: 'renta', name: 'Renta o hipoteca' },
-    { id: 'mantenimiento', name: 'Mantenimiento o predial' },
-    { id: 'luz', name: 'Luz' },
-    { id: 'agua', name: 'Agua' },
-    { id: 'gas', name: 'Gas' },
-    { id: 'internet', name: 'Internet y teléfono' },
-    { id: 'limpieza', name: 'Servicio de limpieza / seguridad' },
-  ],
-  'transporte': [
-    { id: 'gasolina', name: 'Gasolina / carga eléctrica' },
-    { id: 'transporte_publico', name: 'Transporte público' },
-    { id: 'uber', name: 'Uber, Didi, taxis' },
-    { id: 'estacionamiento', name: 'Estacionamiento o peajes' },
-    { id: 'mantenimiento_auto', name: 'Mantenimiento del vehículo / seguro' },
-  ],
-  'alimentación': [
-    { id: 'supermercado', name: 'Supermercado' },
-    { id: 'restaurantes', name: 'Comidas fuera de casa' },
-    { id: 'cafe', name: 'Café / snacks / antojos' },
-    { id: 'apps_comida', name: 'Apps de comida (Rappi, Uber Eats, etc.)' },
-  ],
-  'servicios y suscripciones': [
-    { id: 'streaming', name: 'Streaming (Netflix, Spotify, etc.)' },
-    { id: 'apps_premium', name: 'Apps premium (IA, productividad, edición, etc.)' },
-    { id: 'suscripciones_software', name: 'Suscripciones de software / membresías' },
-    { id: 'telefono', name: 'Teléfono móvil' },
-  ],
-  'salud y bienestar': [
-    { id: 'seguro_medico', name: 'Seguro médico' },
-    { id: 'medicinas', name: 'Medicinas' },
-    { id: 'consultas', name: 'Consultas médicas' },
-    { id: 'gimnasio', name: 'Gimnasio, clases, suplementos' },
-  ],
-  'educación y desarrollo': [
-    { id: 'colegiaturas', name: 'Colegiaturas' },
-    { id: 'cursos', name: 'Cursos / talleres' },
-    { id: 'libros', name: 'Libros o herramientas de aprendizaje' },
-    { id: 'clases_extra', name: 'Clases extracurriculares' },
-  ],
-  'deudas y créditos': [
-    { id: 'tarjetas', name: 'Tarjetas de crédito' },
-    { id: 'prestamos', name: 'Préstamos personales / automotriz' },
-    { id: 'creditos', name: 'Créditos hipotecarios' },
-    { id: 'intereses', name: 'Intereses / pagos mínimos' },
-  ],
-  'entretenimiento y estilo de vida': [
-    { id: 'salidas', name: 'Salidas, fiestas, bares' },
-    { id: 'ropa', name: 'Ropa, accesorios, belleza' },
-    { id: 'viajes', name: 'Viajes o escapadas' },
-    { id: 'hobbies', name: 'Hobbies, videojuegos, mascotas' },
-  ],
-  'ahorro e inversión': [
-    { id: 'ahorro_mensual', name: 'Ahorro mensual' },
-    { id: 'fondo_emergencia', name: 'Fondo de emergencia' },
-    { id: 'inversion', name: 'Inversión (fondos, CETES, cripto, etc.)' },
-    { id: 'retiro', name: 'Aportación a retiro (AFORE, IRA, etc.)' },
-  ],
-  'apoyos y otros': [
-    { id: 'apoyo_familiar', name: 'Apoyo familiar / hijos / pareja' },
-    { id: 'donaciones', name: 'Donaciones' },
-    { id: 'otros', name: 'Otros gastos no clasificados' },
-  ],
-  'mascotas': [
-    { id: 'comida_mascotas', name: 'Comida y snacks' },
-    { id: 'veterinario', name: 'Veterinario y medicinas' },
-    { id: 'accesorios_mascotas', name: 'Accesorios y juguetes' },
-    { id: 'estetica_mascotas', name: 'Estética y cuidado' },
-  ],
-};
 
 export default function EditBudgets() {
   const navigate = useNavigate();
-  const [budgets, setBudgets] = useState<Budget[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [editedBudgets, setEditedBudgets] = useState<Record<string, string>>({});
-  const [editedSubcategoryBudgets, setEditedSubcategoryBudgets] = useState<Record<string, string>>({});
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [budgets, setBudgets] = useState<Record<string, number>>({});
+  const [subcategoryBudgets, setSubcategoryBudgets] = useState<Record<string, number>>({});
 
   useEffect(() => {
     loadBudgets();
@@ -148,126 +193,75 @@ export default function EditBudgets() {
         return;
       }
 
-      console.log('Cargando presupuestos para usuario:', user.id);
-
-      // Cargar SOLO categorías principales con presupuesto (parent_id IS NULL)
-      const { data: mainCategories, error: catError } = await supabase
+      // Cargar todas las categorías principales del usuario
+      const { data: userCategories } = await supabase
         .from('categories')
-        .select('id, name, color')
+        .select('id, name')
         .eq('user_id', user.id)
         .is('parent_id', null);
 
-      if (catError) throw catError;
+      if (!userCategories) {
+        setLoading(false);
+        return;
+      }
 
-      // Para cada categoría principal, buscar su presupuesto
-      const budgetsData = await Promise.all(
-        (mainCategories || []).map(async (cat) => {
-          const { data: budgetData } = await supabase
+      // Crear mapa de categorías por nombre
+      const categoryMap = new Map(userCategories.map(c => [c.name.toLowerCase(), c.id]));
+
+      const loadedBudgets: Record<string, number> = {};
+      const loadedSubcategoryBudgets: Record<string, number> = {};
+
+      // Para cada categoría predeterminada
+      for (const category of DEFAULT_CATEGORIES) {
+        const catId = categoryMap.get(category.name.toLowerCase());
+        
+        if (catId) {
+          // Cargar presupuesto de categoría principal
+          const { data: budget } = await supabase
             .from('category_budgets')
-            .select('id, monthly_budget')
+            .select('monthly_budget')
             .eq('user_id', user.id)
-            .eq('category_id', cat.id)
+            .eq('category_id', catId)
             .maybeSingle();
 
-          return {
-            id: budgetData?.id || '',
-            category_id: cat.id,
-            monthly_budget: budgetData?.monthly_budget || 0,
-            category: {
-              id: cat.id,
-              name: cat.name,
-              color: cat.color
-            }
-          };
-        })
-      );
+          if (budget) {
+            loadedBudgets[category.id] = Number(budget.monthly_budget);
+          }
 
-      const data = budgetsData;
-
-      console.log('Categorías principales cargadas:', data);
-
-      // Para cada categoría, cargar sus subcategorías
-      const budgetsWithSubcategories = await Promise.all(
-        (data || []).map(async (budget) => {
-          console.log(`Buscando subcategorías para: ${budget.category.name} (${budget.category_id})`);
-          
-          // SIEMPRE usar las subcategorías predeterminadas
-          const categoryNameLower = budget.category.name.toLowerCase();
-          const defaultSubs = DEFAULT_SUBCATEGORIES[categoryNameLower] || [];
-          
-          // Buscar subcategorías guardadas en la BD
-          const { data: savedSubcats } = await supabase
+          // Cargar subcategorías
+          const { data: subcategories } = await supabase
             .from('categories')
             .select('id, name')
             .eq('user_id', user.id)
-            .eq('parent_id', budget.category_id);
+            .eq('parent_id', catId);
 
-          console.log(`Subcategorías guardadas encontradas para ${budget.category.name}:`, savedSubcats);
+          if (subcategories) {
+            for (const subcat of subcategories) {
+              // Buscar en DEFAULT_CATEGORIES la subcategoría correspondiente
+              const defaultSubcat = category.subcategories.find(
+                s => s.name.toLowerCase() === subcat.name.toLowerCase()
+              );
 
-          // Crear mapa de subcategorías guardadas por nombre
-          const savedSubcatsMap = new Map(
-            (savedSubcats || []).map(sc => [sc.name.toLowerCase(), sc])
-          );
-
-          // Para cada subcategoría predeterminada, buscar si ya está guardada y tiene presupuesto
-          const subcategoriesWithBudget: Subcategory[] = await Promise.all(
-            defaultSubs.map(async (defaultSub) => {
-              const savedSubcat = savedSubcatsMap.get(defaultSub.name.toLowerCase());
-              
-              if (savedSubcat) {
-                // Si la subcategoría ya existe, buscar su presupuesto
+              if (defaultSubcat) {
+                // Cargar presupuesto de subcategoría
                 const { data: subcatBudget } = await supabase
                   .from('category_budgets')
-                  .select('id, monthly_budget')
+                  .select('monthly_budget')
                   .eq('user_id', user.id)
-                  .eq('category_id', savedSubcat.id)
+                  .eq('category_id', subcat.id)
                   .maybeSingle();
 
-                return {
-                  id: savedSubcat.id,
-                  name: savedSubcat.name,
-                  budget_id: subcatBudget?.id,
-                  monthly_budget: subcatBudget?.monthly_budget || 0
-                };
-              } else {
-                // Si no existe, usar el ID temporal y sin presupuesto
-                return {
-                  id: defaultSub.id,
-                  name: defaultSub.name,
-                  budget_id: undefined,
-                  monthly_budget: 0
-                };
+                if (subcatBudget) {
+                  loadedSubcategoryBudgets[defaultSubcat.id] = Number(subcatBudget.monthly_budget);
+                }
               }
-            })
-          );
+            }
+          }
+        }
+      }
 
-          console.log(`Subcategorías con presupuesto para ${budget.category.name}:`, subcategoriesWithBudget);
-
-          return {
-            ...budget,
-            subcategories: subcategoriesWithBudget
-          };
-        })
-      );
-
-      console.log('Budgets finales con subcategorías:', budgetsWithSubcategories);
-      setBudgets(budgetsWithSubcategories);
-
-      // Inicializar valores editables para categorías principales
-      const initialEdited: Record<string, string> = {};
-      const initialSubcatEdited: Record<string, string> = {};
-      
-      budgetsWithSubcategories.forEach(b => {
-        initialEdited[b.category_id] = String(Number(b.monthly_budget));
-        
-        // Inicializar subcategorías
-        b.subcategories?.forEach(sub => {
-          initialSubcatEdited[sub.id] = String(Number(sub.monthly_budget));
-        });
-      });
-      
-      setEditedBudgets(initialEdited);
-      setEditedSubcategoryBudgets(initialSubcatEdited);
+      setBudgets(loadedBudgets);
+      setSubcategoryBudgets(loadedSubcategoryBudgets);
 
     } catch (error) {
       console.error('Error loading budgets:', error);
@@ -277,23 +271,17 @@ export default function EditBudgets() {
     }
   };
 
-  const handleAmountChange = (categoryId: string, value: string) => {
-    // Solo permitir números
-    const cleanValue = value.replace(/[^\d]/g, '');
-    setEditedBudgets(prev => ({
-      ...prev,
-      [categoryId]: cleanValue
-    }));
-  };
-
-  const formatCurrency = (value: string): string => {
-    if (!value || value === "0") return "";
-    const number = parseFloat(value);
-    if (isNaN(number)) return "";
+  const formatCurrency = (value: number): string => {
+    if (!value || value === 0) return "";
     return new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
-    }).format(number);
+    }).format(value);
+  };
+
+  const updateSubcategoryBudget = (subcategoryId: string, value: string) => {
+    const numValue = value === "" ? 0 : Number(value);
+    setSubcategoryBudgets({ ...subcategoryBudgets, [subcategoryId]: numValue });
   };
 
   const handleSave = async () => {
@@ -302,78 +290,124 @@ export default function EditBudgets() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Actualizar presupuestos de categorías principales
-      for (const budget of budgets) {
-        const newAmount = Number(editedBudgets[budget.category_id] || 0);
+      // Para cada categoría predeterminada
+      for (const category of DEFAULT_CATEGORIES) {
+        const categoryBudget = budgets[category.id];
         
-        if (budget.id) {
-          // Si ya existe el presupuesto, actualizarlo si cambió
-          if (newAmount !== Number(budget.monthly_budget)) {
-            const { error } = await supabase
-              .from('category_budgets')
-              .update({ monthly_budget: newAmount })
-              .eq('id', budget.id);
+        // Solo procesar si tiene presupuesto o subcategorías con presupuesto
+        const hasSubcategoryBudgets = category.subcategories.some(
+          sub => subcategoryBudgets[sub.id] && subcategoryBudgets[sub.id] > 0
+        );
 
-            if (error) throw error;
-          }
-        } else if (newAmount > 0) {
-          // Si no existe y el monto es mayor a 0, crear el presupuesto
-          const { error } = await supabase
-            .from('category_budgets')
+        if (!categoryBudget && !hasSubcategoryBudgets) continue;
+
+        // Buscar o crear categoría principal
+        let { data: existingCategory } = await supabase
+          .from('categories')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('name', category.name)
+          .is('parent_id', null)
+          .maybeSingle();
+
+        let categoryId = existingCategory?.id;
+
+        if (!categoryId) {
+          const { data: newCategory, error: catError } = await supabase
+            .from('categories')
             .insert({
               user_id: user.id,
-              category_id: budget.category_id,
-              monthly_budget: newAmount
-            });
+              name: category.name,
+              type: 'gasto',
+              color: 'bg-primary/20',
+              parent_id: null
+            })
+            .select('id')
+            .single();
 
-          if (error) throw error;
+          if (catError) throw catError;
+          categoryId = newCategory.id;
         }
 
-        // Actualizar presupuestos de subcategorías
-        if (budget.subcategories) {
-          for (const subcat of budget.subcategories) {
-            const newSubAmount = Number(editedSubcategoryBudgets[subcat.id] || 0);
-            
-            // Solo procesar si hay un monto asignado
-            if (newSubAmount > 0) {
-              if (subcat.budget_id) {
-                // Actualizar presupuesto existente
-                if (newSubAmount !== Number(subcat.monthly_budget)) {
-                  const { error } = await supabase
-                    .from('category_budgets')
-                    .update({ monthly_budget: newSubAmount })
-                    .eq('id', subcat.budget_id);
+        // Guardar o actualizar presupuesto de categoría principal
+        if (categoryBudget && categoryBudget > 0) {
+          const { data: existingBudget } = await supabase
+            .from('category_budgets')
+            .select('id')
+            .eq('user_id', user.id)
+            .eq('category_id', categoryId)
+            .maybeSingle();
 
-                  if (error) throw error;
-                }
-              } else {
-                // Crear subcategoría y presupuesto nuevo
-                // Primero crear la subcategoría en la tabla categories
-                const { data: newSubcat, error: subcatError } = await supabase
-                  .from('categories')
-                  .insert({
-                    user_id: user.id,
-                    name: subcat.name,
-                    type: 'gasto',
-                    color: 'bg-primary/20',
-                    parent_id: budget.category_id
-                  })
-                  .select()
-                  .single();
+          if (existingBudget) {
+            await supabase
+              .from('category_budgets')
+              .update({ monthly_budget: categoryBudget })
+              .eq('id', existingBudget.id);
+          } else {
+            await supabase
+              .from('category_budgets')
+              .insert({
+                user_id: user.id,
+                category_id: categoryId,
+                monthly_budget: categoryBudget
+              });
+          }
+        }
 
-                if (subcatError) throw subcatError;
+        // Guardar subcategorías
+        for (const subcategory of category.subcategories) {
+          const subcatBudget = subcategoryBudgets[subcategory.id];
+          
+          if (subcatBudget && subcatBudget > 0) {
+            // Buscar o crear subcategoría
+            let { data: existingSubcat } = await supabase
+              .from('categories')
+              .select('id')
+              .eq('user_id', user.id)
+              .eq('name', subcategory.name)
+              .eq('parent_id', categoryId)
+              .maybeSingle();
 
-                // Luego crear su presupuesto
-                const { error: budgetError } = await supabase
-                  .from('category_budgets')
-                  .insert({
-                    user_id: user.id,
-                    category_id: newSubcat.id,
-                    monthly_budget: newSubAmount
-                  });
+            let subcatId = existingSubcat?.id;
 
-                if (budgetError) throw budgetError;
-              }
+            if (!subcatId) {
+              const { data: newSubcat, error: subcatError } = await supabase
+                .from('categories')
+                .insert({
+                  user_id: user.id,
+                  name: subcategory.name,
+                  type: 'gasto',
+                  color: 'bg-primary/20',
+                  parent_id: categoryId
+                })
+                .select('id')
+                .single();
+
+              if (subcatError) throw subcatError;
+              subcatId = newSubcat.id;
+            }
+
+            // Guardar o actualizar presupuesto de subcategoría
+            const { data: existingSubcatBudget } = await supabase
+              .from('category_budgets')
+              .select('id')
+              .eq('user_id', user.id)
+              .eq('category_id', subcatId)
+              .maybeSingle();
+
+            if (existingSubcatBudget) {
+              await supabase
+                .from('category_budgets')
+                .update({ monthly_budget: subcatBudget })
+                .eq('id', existingSubcatBudget.id);
+            } else {
+              await supabase
+                .from('category_budgets')
+                .insert({
+                  user_id: user.id,
+                  category_id: subcatId,
+                  monthly_budget: subcatBudget
+                });
             }
           }
         }
@@ -387,11 +421,6 @@ export default function EditBudgets() {
     } finally {
       setSaving(false);
     }
-  };
-
-  const getCategoryIcon = (name: string) => {
-    const lowerName = name.toLowerCase();
-    return CATEGORY_ICONS[lowerName] || '📊';
   };
 
   if (loading) {
@@ -418,7 +447,7 @@ export default function EditBudgets() {
           <div className="w-9" />
         </div>
 
-        {/* Instrucciones */}
+        {/* Main Card */}
         <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in">
           <div className="space-y-4">
             <div className="text-center">
@@ -427,128 +456,106 @@ export default function EditBudgets() {
                 Modifica tus presupuestos
               </h2>
               <p className="text-xs text-muted-foreground">
-                Toca cada categoría para ajustar el monto mensual
+                Toca para ver subcategorías y ajustar montos
               </p>
             </div>
 
-            {/* Lista de presupuestos */}
+            {/* Categories List */}
             <div className="space-y-2">
-              {budgets.map((budget, index) => (
-                <div key={budget.id} className="space-y-1">
+              {DEFAULT_CATEGORIES.map((category, index) => (
+                <div key={category.id} className="space-y-1">
                   <button
                     onClick={() => setExpandedCategory(
-                      expandedCategory === budget.category_id ? null : budget.category_id
+                      expandedCategory === category.id ? null : category.id
                     )}
                     className="w-full p-3 rounded-[15px] border-2 transition-all text-left border-blue-100 bg-white hover:border-primary/50 animate-fade-in"
                     style={{ animationDelay: `${index * 0.05}s` }}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-2xl">{getCategoryIcon(budget.category.name)}</span>
+                        <span className="text-2xl">{category.icon}</span>
                         <div>
                           <p className="text-sm font-semibold text-foreground">
-                            {budget.category.name}
+                            {category.name}
                           </p>
                           <p className="text-[9px] text-muted-foreground">
-                            Presupuesto mensual
+                            {category.suggestedPercentage}% sugerido
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-foreground">
-                          ${formatCurrency(editedBudgets[budget.category_id] || "0")}
-                        </span>
+                        {budgets[category.id] && budgets[category.id] > 0 && (
+                          <span className="text-sm font-bold text-foreground">
+                            ${formatCurrency(budgets[category.id])}
+                          </span>
+                        )}
                         <ArrowRight className={`h-4 w-4 text-muted-foreground transition-transform ${
-                          expandedCategory === budget.category_id ? 'rotate-90' : ''
+                          expandedCategory === category.id ? 'rotate-90' : ''
                         }`} />
                       </div>
                     </div>
                   </button>
 
-                  {/* Panel expandido para editar */}
-                  {expandedCategory === budget.category_id && (
-                    <div className="ml-4 pl-4 border-l-2 border-primary/20 py-2 animate-fade-in space-y-2">
-                      {/* Monto de categoría principal */}
-                      <div className="bg-gradient-to-r from-gray-50 to-white rounded-[12px] p-3 border border-gray-200">
-                        <p className="text-[10px] font-semibold text-foreground mb-2">
-                          Presupuesto total de la categoría
-                        </p>
-                        
-                        <div className="relative mb-3">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg font-bold text-muted-foreground">$</span>
-                          <Input
-                            type="text"
-                            inputMode="numeric"
-                            placeholder="0"
-                            value={formatCurrency(editedBudgets[budget.category_id] || "0")}
-                            onChange={(e) => handleAmountChange(budget.category_id, e.target.value)}
-                            className="text-xl text-center font-bold h-12 rounded-[10px] border-2 border-primary/20 pl-8 bg-white"
-                          />
-                        </div>
+                  {/* Expanded Panel */}
+                  {expandedCategory === category.id && (
+                    <div className="ml-4 pl-4 border-l-2 border-primary/20 space-y-1.5 py-2 animate-fade-in">
+                      <p className="text-[9px] text-muted-foreground italic mb-2">
+                        💡 {category.insight}
+                      </p>
 
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={() => {
-                              setExpandedCategory(null);
-                            }}
-                            className="flex-1 h-8 text-[10px] bg-primary hover:bg-primary/90 text-white rounded-[8px] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all"
-                          >
-                            Listo
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              setEditedBudgets(prev => ({
-                                ...prev,
-                                [budget.category_id]: String(Number(budget.monthly_budget))
-                              }));
-                            }}
-                            variant="outline"
-                            className="flex-1 h-8 text-[10px] rounded-[8px] border-gray-300 hover:bg-gray-50"
-                          >
-                            Restaurar
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* Subcategorías */}
-                      {budget.subcategories && budget.subcategories.length > 0 && (
-                        <div className="space-y-1.5">
-                          <p className="text-[9px] text-muted-foreground font-semibold mb-1">
-                            Subcategorías
-                          </p>
-                          {budget.subcategories.map((subcat) => (
-                            <div key={subcat.id} className="bg-gray-50 rounded-lg px-3 py-2">
-                              <div className="flex items-center justify-between gap-2 mb-1">
-                                <p className="text-[10px] font-medium text-foreground">{subcat.name}</p>
-                              </div>
-                              <div className="relative">
-                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-muted-foreground">$</span>
+                      {/* Subcategories */}
+                      <div className="space-y-1.5">
+                        {category.subcategories.map((sub) => (
+                          <div key={sub.id} className="bg-gray-50 rounded-lg px-2 py-2">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-[10px] text-foreground flex-1">
+                                • {sub.name}
+                              </span>
+                              <div className="relative flex items-center">
+                                <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
                                 <Input
                                   type="text"
                                   inputMode="numeric"
                                   placeholder="0"
-                                  value={formatCurrency(editedSubcategoryBudgets[subcat.id] || "0")}
+                                  value={subcategoryBudgets[sub.id] ? formatCurrency(subcategoryBudgets[sub.id]) : ""}
                                   onChange={(e) => {
-                                    const cleanValue = e.target.value.replace(/[^\d]/g, '');
-                                    setEditedSubcategoryBudgets(prev => ({
-                                      ...prev,
-                                      [subcat.id]: cleanValue
-                                    }));
+                                    const value = e.target.value.replace(/[^\d]/g, '');
+                                    updateSubcategoryBudget(sub.id, value);
                                   }}
-                                  className="h-8 text-sm text-center bg-white border-gray-200 pl-6"
+                                  className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-white border-gray-200"
                                 />
                               </div>
                             </div>
-                          ))}
-                        </div>
-                      )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Action Button */}
+                      <Button
+                        onClick={() => {
+                          // Calcular total de subcategorías
+                          const subcategoryTotal = category.subcategories.reduce((sum, sub) => {
+                            return sum + (subcategoryBudgets[sub.id] || 0);
+                          }, 0);
+                          
+                          // Actualizar budget de categoría principal
+                          if (subcategoryTotal > 0) {
+                            setBudgets({ ...budgets, [category.id]: subcategoryTotal });
+                          }
+                          
+                          setExpandedCategory(null);
+                        }}
+                        className="w-full mt-2 h-10 text-xs font-semibold bg-primary hover:bg-primary/90 text-white rounded-[15px] shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all"
+                      >
+                        Cambiar
+                      </Button>
                     </div>
                   )}
                 </div>
               ))}
             </div>
 
-            {/* Botón de guardar */}
+            {/* Save Button */}
             <Button
               onClick={handleSave}
               disabled={saving}
