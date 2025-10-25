@@ -8,6 +8,7 @@ import { ArrowLeft, ArrowRight, Trash2, Wallet, Home, TrendingUp, FileText, Spar
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { LoadingScreen } from "@/components/LoadingScreen";
 
 interface Item {
   id: string;
@@ -359,11 +360,7 @@ export default function EditNetWorth() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
