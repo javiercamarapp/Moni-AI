@@ -422,7 +422,7 @@ export default function Logros() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 max-w-2xl -mt-4">
+      <div className="container mx-auto px-4 max-w-2xl mt-4">
         {/* Progress Card */}
         <div className="mb-6">
           <Card className="bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg border border-blue-100 p-3">
