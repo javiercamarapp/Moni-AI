@@ -243,16 +243,19 @@ export default function MisRetos() {
                     <span className="text-xl">{categoryEmoji}</span>
                     {category}
                   </h3>
-                  <RetroCarousel 
-                    items={limitedChallenges.map((challenge, index) => (
-                      <ChallengeCard
-                        key={challenge.id}
-                        challenge={challenge}
-                        index={index}
-                        onAccept={acceptChallenge}
-                      />
-                    ))}
-                  />
+                  <div className="relative">
+                    <div className="flex overflow-x-auto gap-4 pb-4 px-1 snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-400">
+                      {limitedChallenges.map((challenge, index) => (
+                        <div key={challenge.id} className="flex-shrink-0 w-[85%] sm:w-[45%] md:w-[30%] snap-start">
+                          <ChallengeCard
+                            challenge={challenge}
+                            index={index}
+                            onAccept={acceptChallenge}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               );
             })}
