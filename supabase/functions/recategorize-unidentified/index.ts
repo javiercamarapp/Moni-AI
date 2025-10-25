@@ -47,14 +47,16 @@ serve(async (req) => {
       );
     }
 
-    // Obtener transacciones sin categoría o con "Gastos no identificados"
+    // Obtener TODAS las transacciones sin categoría (NULL) o con "Gastos no identificados"
+    // Esto incluye transacciones históricas que nunca fueron categorizadas
     const { data: transactions, error: txError } = await supabase
       .from('transactions')
       .select('id, description, amount')
       .eq('user_id', user.id)
       .eq('type', 'gasto')
       .or(`category_id.is.null,category_id.eq.${unidentifiedCategory.id}`)
-      .order('transaction_date', { ascending: false });
+      .order('transaction_date', { ascending: false })
+      .limit(500); // Limitar a 500 para evitar timeouts
 
     if (txError) throw txError;
 

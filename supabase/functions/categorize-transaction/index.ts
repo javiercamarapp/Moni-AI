@@ -100,7 +100,7 @@ GUÍA DE CATEGORIZACIÓN CON EJEMPLOS:
 
 🚗 Transporte: gasolina, carga eléctrica, mensualidad auto, transporte público, metro, uber, didi, taxi, estacionamiento, peajes, mantenimiento vehicular, seguro auto
 
-🍽️ Alimentación: walmart, soriana, chedraui, supermercado, mercado, restaurantes, comidas fuera, café, snacks, antojos, rappi, uber eats, apps de comida
+🍽️ Alimentación: walmart, soriana, chedraui, bodega aurrera, costco, sams, supermercado, mercado, despensa, víveres, restaurantes, comidas fuera, café, starbucks, snacks, antojos, rappi, uber eats, didi food, sin delantal, apps de comida
 
 🧾 Servicios y suscripciones: netflix, spotify, disney+, amazon prime, apps premium, software, membresías digitales, teléfono móvil, planes celular
 
@@ -110,7 +110,7 @@ GUÍA DE CATEGORIZACIÓN CON EJEMPLOS:
 
 💳 Deudas y créditos: tarjetas de crédito, préstamos personales, créditos hipotecarios, crédito automotriz, intereses, pagos mínimos, refinanciamiento
 
-🎉 Entretenimiento y estilo de vida: cine, cinemex, cinepolis, bar, antro, fiestas, conciertos, teatro, best buy, apple store, ropa, accesorios, belleza, salón, viajes, escapadas, hobbies, videojuegos, juegos
+🎉 Entretenimiento y estilo de vida: cine, cinemex, cinepolis, bar, antro, club nocturno, fiestas, conciertos, teatro, best buy, apple store, liverpool, palacio de hierro, elektra, coppel, compras tecnología, compras electrónica, ropa, moda, accesorios, belleza, salón, spa, viajes, escapadas, hobbies, videojuegos, juegos, amazon compras no esenciales, mercado libre compras
 
 💸 Ahorro e inversión: ahorro mensual, fondo emergencia, inversiones, fondos, cetes, crypto, acciones, afore, retiro
 
