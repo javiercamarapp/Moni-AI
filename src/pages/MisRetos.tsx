@@ -1,27 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, Sparkles, Calendar, TrendingUp, CheckCircle, XCircle, Target, RefreshCw } from "lucide-react";
+import { ArrowLeft, Sparkles, X, Quote } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { format, differenceInDays } from "date-fns";
+import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { RetroCarousel } from "@/components/ui/retro-carousel";
 
 export default function MisRetos() {
   const navigate = useNavigate();
   const [challenges, setChallenges] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [generatingChallenges, setGeneratingChallenges] = useState(false);
-  const [selectedChallenge, setSelectedChallenge] = useState<any>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchChallenges();
-    verifyProgress(); // Verificar progreso al cargar
+    verifyProgress();
   }, []);
 
   const verifyProgress = async () => {
@@ -152,15 +151,11 @@ export default function MisRetos() {
       </div>
 
       <div className="px-4 py-3 space-y-6">
-        <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">Mis retos de la semana</h2>
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">Retos de la semana</h2>
         
         {loading ? (
-          <div className="grid grid-cols-2 gap-3">
-            {[1, 2].map((i) => (
-              <Card key={i} className="p-2.5 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 animate-pulse">
-                <div className="h-32 bg-gray-200 rounded"></div>
-              </Card>
-            ))}
+          <div className="flex justify-center py-20">
+            <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin" />
           </div>
         ) : challenges.length === 0 ? (
           <Card className="p-8 text-center bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0">
@@ -181,269 +176,307 @@ export default function MisRetos() {
             </Button>
           </Card>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
-            {challenges.slice(0, 2).map((challenge, index) => {
-              const progress = (challenge.current_amount / challenge.target_amount) * 100;
-              // days_status already comes parsed from Supabase (JSONB type)
-              const daysStatus = Array.isArray(challenge.days_status) ? challenge.days_status : [];
-              const dayNames = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
-              
-              // Calculate which day we're on
-              const startDate = new Date(challenge.start_date);
-              const today = new Date();
-              today.setHours(0, 0, 0, 0);
-              startDate.setHours(0, 0, 0, 0);
-              
-              const daysPassed = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-              const currentDayIndex = Math.min(daysPassed, 6); // 0-6 for Sunday-Saturday
-              const isLastDay = currentDayIndex === 6;
-              
-              return (
-                <Card 
-                  key={challenge.id} 
-                  className="w-full p-2.5 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden min-w-0 cursor-pointer hover:shadow-lg transition-shadow"
-                  style={{ transform: 'translate3d(0, 0, 0)' }}
-                  onClick={() => setSelectedChallenge(challenge)}
-                >
-                  <div className="relative z-10">
-                    {isLastDay && (
-                      <Badge className="w-full bg-orange-500/20 text-orange-700 text-[9px] border-orange-500/30 mb-2 justify-center">
-                        🔥 Último día del reto
-                      </Badge>
-                    )}
-                    
-                    <div className="mb-2">
-                      <h4 className="text-sm font-bold text-foreground drop-shadow-sm mb-0.5 line-clamp-1 leading-tight">
-                        {challenge.title}
-                      </h4>
-                      <p className="text-[10px] text-foreground/70 drop-shadow-sm line-clamp-2 leading-tight">
-                        {challenge.description}
-                      </p>
-                    </div>
-                    
-                    <div className="mb-2">
-                      <div className="flex justify-between items-baseline mb-1">
-                        <span className="text-base font-bold text-foreground drop-shadow-sm">
-                          ${challenge.current_amount.toFixed(0)}
-                        </span>
-                        <span className="text-[10px] text-foreground/70 drop-shadow-sm">
-                          de ${challenge.target_amount}
-                        </span>
-                      </div>
-                      
-                      <div className="relative h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-green-600 rounded-full"
-                          style={{ width: `${Math.min(progress, 100)}%` }}
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="bg-gray-100 backdrop-blur-sm rounded p-1.5 border border-gray-200 mb-2">
-                      <div className="flex justify-between gap-0.5">
-                        {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
-                          const dayStatus = daysStatus[dayIndex];
-                          const isCompleted = dayStatus?.completed === true;
-                          const isFailed = dayStatus?.completed === false;
-                          const isPending = !dayStatus;
-                          const isCurrentDay = dayIndex === currentDayIndex;
-                          
-                          return (
-                            <div 
-                              key={dayIndex} 
-                              className="flex flex-col items-center"
-                            >
-                              <span className={`text-[8px] mb-0.5 ${isCurrentDay ? 'text-blue-600 font-bold' : 'text-foreground/70'}`}>
-                                {dayNames[dayIndex]}
-                              </span>
-                              <div 
-                                className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
-                                  isCompleted 
-                                    ? 'bg-green-500/80 text-white' 
-                                    : isFailed 
-                                    ? 'bg-red-500/80 text-white'
-                                    : 'bg-gray-200 text-gray-400'
-                                } ${isCurrentDay ? 'ring-2 ring-blue-500 ring-offset-1' : ''}`}
-                              >
-                                {isCompleted && '✓'}
-                                {isFailed && '✗'}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                    
-                    {challenge.status === 'pending' ? (
-                      <Button 
-                        size="sm" 
-                        className="w-full bg-green-600 hover:bg-green-700 text-white border-0 h-7 text-[10px] font-medium"
-                        onClick={() => acceptChallenge(challenge.id)}
-                      >
-                        Aceptar reto
-                      </Button>
-                    ) : (
-                      <div className="text-center py-1">
-                        <Badge className="bg-green-500/20 text-green-700 text-[9px] border-green-500/30">
-                          En progreso
-                        </Badge>
-                      </div>
-                    )}
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
+          <RetroCarousel 
+            items={challenges.slice(0, 2).map((challenge, index) => (
+              <ChallengeCard
+                key={challenge.id}
+                challenge={challenge}
+                index={index}
+                onAccept={acceptChallenge}
+              />
+            ))}
+          />
         )}
       </div>
-
-      {/* Modal de detalle del reto */}
-      <Dialog open={!!selectedChallenge} onOpenChange={(open) => !open && setSelectedChallenge(null)}>
-        <DialogContent className="max-w-lg bg-white/95 backdrop-blur-sm">
-          {selectedChallenge && (() => {
-            const progress = (selectedChallenge.current_amount / selectedChallenge.target_amount) * 100;
-            const daysStatus = Array.isArray(selectedChallenge.days_status) ? selectedChallenge.days_status : [];
-            const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-            
-            const startDate = new Date(selectedChallenge.start_date);
-            const endDate = new Date(selectedChallenge.end_date);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            startDate.setHours(0, 0, 0, 0);
-            
-            const daysPassed = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-            const currentDayIndex = Math.min(daysPassed, 6);
-            const isLastDay = currentDayIndex === 6;
-            
-            return (
-              <>
-                <DialogHeader>
-                  <DialogTitle className="text-2xl font-bold text-gray-900">
-                    {selectedChallenge.title}
-                  </DialogTitle>
-                </DialogHeader>
-                
-                <div className="space-y-6 mt-4">
-                  {isLastDay && (
-                    <Badge className="w-full bg-orange-500/20 text-orange-700 border-orange-500/30 justify-center py-2">
-                      🔥 ¡Último día del reto!
-                    </Badge>
-                  )}
-                  
-                  <div>
-                    <p className="text-gray-700 text-base leading-relaxed">
-                      {selectedChallenge.description}
-                    </p>
-                  </div>
-                  
-                  <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6">
-                    <div className="flex justify-between items-baseline mb-3">
-                      <div>
-                        <p className="text-sm text-gray-600 mb-1">Progreso actual</p>
-                        <p className="text-3xl font-bold text-gray-900">
-                          ${selectedChallenge.current_amount.toFixed(0)}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm text-gray-600 mb-1">Meta semanal</p>
-                        <p className="text-2xl font-bold text-purple-600">
-                          ${selectedChallenge.target_amount.toFixed(0)}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="relative h-4 bg-white/50 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-green-500 to-green-600 rounded-full transition-all duration-500"
-                        style={{ width: `${Math.min(progress, 100)}%` }}
-                      />
-                    </div>
-                    <p className="text-sm text-gray-600 mt-2 text-center">
-                      {progress.toFixed(1)}% completado
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Progreso diario</h3>
-                    <div className="space-y-2">
-                      {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
-                        const dayStatus = daysStatus[dayIndex];
-                        const isCompleted = dayStatus?.completed === true;
-                        const isFailed = dayStatus?.completed === false;
-                        const isPending = !dayStatus;
-                        const isCurrentDay = dayIndex === currentDayIndex;
-                        
-                        return (
-                          <div 
-                            key={dayIndex}
-                            className={`flex items-center justify-between p-3 rounded-xl ${
-                              isCurrentDay ? 'bg-blue-50 border-2 border-blue-200' : 'bg-gray-50'
-                            }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div 
-                                className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold ${
-                                  isCompleted 
-                                    ? 'bg-green-500 text-white' 
-                                    : isFailed 
-                                    ? 'bg-red-500 text-white'
-                                    : 'bg-gray-200 text-gray-400'
-                                }`}
-                              >
-                                {isCompleted && '✓'}
-                                {isFailed && '✗'}
-                                {isPending && '·'}
-                              </div>
-                              <div>
-                                <p className={`font-medium ${isCurrentDay ? 'text-blue-700' : 'text-gray-900'}`}>
-                                  {dayNames[dayIndex]}
-                                </p>
-                                {dayStatus?.date && (
-                                  <p className="text-xs text-gray-500">
-                                    {format(new Date(dayStatus.date), 'd MMM', { locale: es })}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              {dayStatus && (
-                                <p className={`text-sm font-semibold ${
-                                  isCompleted ? 'text-green-600' : isFailed ? 'text-red-600' : 'text-gray-500'
-                                }`}>
-                                  ${dayStatus.amount?.toFixed(0) || 0}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-3">
-                    {selectedChallenge.status === 'pending' ? (
-                      <Button 
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          acceptChallenge(selectedChallenge.id);
-                          setSelectedChallenge(null);
-                        }}
-                      >
-                        Aceptar reto
-                      </Button>
-                    ) : (
-                      <Badge className="flex-1 bg-green-500/20 text-green-700 border-green-500/30 justify-center py-2">
-                        ✓ Reto en progreso
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </>
-            );
-          })()}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
+
+// Challenge Card Component - Similar to ScoreCard
+const ChallengeCard = ({
+  challenge,
+  index,
+  onAccept,
+}: {
+  challenge: any;
+  index: number;
+  onAccept: (id: string) => void;
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleExpand = () => setIsExpanded(true);
+  const handleCollapse = () => setIsExpanded(false);
+
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        handleCollapse();
+      }
+    };
+
+    if (isExpanded) {
+      const scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
+      document.body.dataset.scrollY = scrollY.toString();
+    } else {
+      const scrollY = parseInt(document.body.dataset.scrollY || "0", 10);
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.style.overflow = "";
+      window.scrollTo({top: scrollY, behavior: "instant"});
+    }
+
+    window.addEventListener("keydown", handleEscapeKey);
+    return () => window.removeEventListener("keydown", handleEscapeKey);
+  }, [isExpanded]);
+
+  const progress = (challenge.current_amount / challenge.target_amount) * 100;
+  const daysStatus = Array.isArray(challenge.days_status) ? challenge.days_status : [];
+  const dayNames = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
+  const dayNamesFull = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  
+  const startDate = new Date(challenge.start_date);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  startDate.setHours(0, 0, 0, 0);
+  
+  const daysPassed = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+  const currentDayIndex = Math.min(daysPassed, 6);
+  const isLastDay = currentDayIndex === 6;
+
+  const getColors = () => {
+    if (challenge.status === 'pending') return {
+      bg: 'bg-blue-600',
+      gradient: 'from-blue-500 to-blue-600',
+      ring: 'ring-blue-600',
+      badge: 'bg-white',
+      badgeText: 'text-blue-600',
+      overlay: 'bg-blue-400',
+    };
+    if (progress >= 80) return {
+      bg: 'bg-emerald-600',
+      gradient: 'from-emerald-500 to-emerald-600',
+      ring: 'ring-emerald-600',
+      badge: 'bg-white',
+      badgeText: 'text-emerald-600',
+      overlay: 'bg-emerald-400',
+    };
+    if (progress >= 50) return {
+      bg: 'bg-yellow-500',
+      gradient: 'from-yellow-400 to-yellow-500',
+      ring: 'ring-yellow-500',
+      badge: 'bg-white',
+      badgeText: 'text-yellow-600',
+      overlay: 'bg-yellow-300',
+    };
+    return {
+      bg: 'bg-orange-500',
+      gradient: 'from-orange-400 to-orange-500',
+      ring: 'ring-orange-500',
+      badge: 'bg-white',
+      badgeText: 'text-orange-600',
+      overlay: 'bg-orange-300',
+    };
+  };
+
+  const colors = getColors();
+
+  return (
+    <>
+      <AnimatePresence>
+        {isExpanded && (
+          <div className="fixed inset-0 h-screen overflow-hidden z-50 flex items-center justify-center">
+            <motion.div
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+              className="bg-black/50 backdrop-blur-lg h-full w-full fixed inset-0"
+              onClick={handleCollapse}
+            />
+            <motion.div
+              initial={{opacity: 0, scale: 0.9}}
+              animate={{opacity: 1, scale: 1}}
+              exit={{opacity: 0, scale: 0.9}}
+              ref={containerRef}
+              className={`max-w-4xl w-full mx-4 bg-gradient-to-b ${colors.gradient} h-3/4 z-[60] p-4 md:p-10 rounded-3xl relative overflow-y-auto`}
+            >
+              <button
+                className="sticky top-4 h-10 w-10 right-0 ml-auto bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 flex items-center justify-center"
+                onClick={handleCollapse}
+              >
+                <X className="h-4 w-4 text-gray-700" />
+              </button>
+              
+              <motion.p className="px-0 md:px-20 text-2xl md:text-4xl font-bold text-white mt-4">
+                {challenge.title}
+              </motion.p>
+              
+              <motion.p className="px-0 md:px-20 text-xl font-semibold text-white/90 mt-4">
+                ${challenge.current_amount.toFixed(0)} / ${challenge.target_amount.toFixed(0)}
+              </motion.p>
+              
+              {isLastDay && (
+                <div className="px-0 md:px-20 mt-4">
+                  <Badge className="bg-orange-500/20 text-white border-orange-200/30 py-2 px-4">
+                    🔥 ¡Último día del reto!
+                  </Badge>
+                </div>
+              )}
+              
+              <div className="py-8 text-white/90 px-0 md:px-20 text-lg leading-relaxed">
+                <Quote className="h-6 w-6 text-white mb-4" />
+                {challenge.description}
+              </div>
+              
+              <div className="px-0 md:px-20 space-y-3 mb-8">
+                <h3 className="text-xl font-bold text-white mb-4">Progreso semanal</h3>
+                {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
+                  const dayStatus = daysStatus[dayIndex];
+                  const isCompleted = dayStatus?.completed === true;
+                  const isFailed = dayStatus?.completed === false;
+                  const isCurrentDay = dayIndex === currentDayIndex;
+                  
+                  return (
+                    <div 
+                      key={dayIndex}
+                      className={`flex items-center justify-between p-4 rounded-xl ${
+                        isCurrentDay ? 'bg-white/30' : 'bg-white/20'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div 
+                          className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold ${
+                            isCompleted 
+                              ? 'bg-green-500 text-white' 
+                              : isFailed 
+                              ? 'bg-red-500 text-white'
+                              : 'bg-white/50 text-white'
+                          }`}
+                        >
+                          {isCompleted && '✓'}
+                          {isFailed && '✗'}
+                          {!isCompleted && !isFailed && '·'}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-white">
+                            {dayNamesFull[dayIndex]}
+                          </p>
+                          {dayStatus?.date && (
+                            <p className="text-xs text-white/70">
+                              {format(new Date(dayStatus.date), 'd MMM', { locale: es })}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        {dayStatus && (
+                          <p className="text-sm font-bold text-white">
+                            ${dayStatus.amount?.toFixed(0) || 0}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {challenge.status === 'pending' && (
+                <div className="px-0 md:px-20">
+                  <Button 
+                    className="w-full bg-white text-gray-900 hover:bg-white/90"
+                    onClick={() => {
+                      onAccept(challenge.id);
+                      handleCollapse();
+                    }}
+                  >
+                    Aceptar este reto
+                  </Button>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+      
+      <motion.button
+        onClick={handleExpand}
+        className=""
+        whileHover={{
+          rotateX: 2,
+          rotateY: 2,
+          rotate: 3,
+          scale: 1.02,
+          transition: {duration: 0.3, ease: "easeOut"},
+        }}
+      >
+        <div
+          className={`${index % 2 === 0 ? "rotate-1" : "-rotate-1"} rounded-3xl bg-gradient-to-br ${colors.gradient} h-[400px] md:h-[450px] w-72 md:w-80 overflow-hidden flex flex-col items-center justify-center relative z-10 shadow-2xl border-4 ${colors.ring}`}
+        >
+          <div className={`absolute inset-0 opacity-30 ${colors.overlay}`} />
+          
+          <div className="relative z-10 flex flex-col items-center justify-center p-6">
+            <div className={`w-24 h-24 rounded-full ${colors.badge} flex items-center justify-center mb-4 shadow-lg`}>
+              <span className={`text-3xl font-bold ${colors.badgeText}`}>
+                {Math.round(progress)}%
+              </span>
+            </div>
+            
+            <motion.p className="text-white text-xl md:text-2xl font-bold text-center mt-2">
+              {challenge.title}
+            </motion.p>
+            
+            <motion.p className="text-white text-lg font-semibold text-center mt-3">
+              ${challenge.current_amount.toFixed(0)} / ${challenge.target_amount.toFixed(0)}
+            </motion.p>
+            
+            <div className="flex gap-1 mt-4 mb-2">
+              {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
+                const dayStatus = daysStatus[dayIndex];
+                const isCompleted = dayStatus?.completed === true;
+                const isFailed = dayStatus?.completed === false;
+                const isCurrentDay = dayIndex === currentDayIndex;
+                
+                return (
+                  <div key={dayIndex} className="flex flex-col items-center">
+                    <span className={`text-[9px] text-white/80 mb-0.5 ${isCurrentDay ? 'font-bold' : ''}`}>
+                      {dayNames[dayIndex]}
+                    </span>
+                    <div 
+                      className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
+                        isCompleted 
+                          ? 'bg-green-500 text-white' 
+                          : isFailed 
+                          ? 'bg-red-500 text-white'
+                          : 'bg-white/30 text-white'
+                      } ${isCurrentDay ? 'ring-2 ring-white' : ''}`}
+                    >
+                      {isCompleted && '✓'}
+                      {isFailed && '✗'}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {challenge.status === 'pending' && (
+              <Badge className="mt-4 bg-white/20 text-white border-white/30">
+                Sugerido para ti
+              </Badge>
+            )}
+            
+            {isLastDay && (
+              <Badge className="mt-4 bg-orange-500/30 text-white border-orange-200/30">
+                🔥 Último día
+              </Badge>
+            )}
+          </div>
+        </div>
+      </motion.button>
+    </>
+  );
+};
