@@ -84,15 +84,15 @@ export default function NetWorth() {
       return (
         <div className="min-h-screen bg-background flex flex-col">
           {/* Header with back button */}
-          <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-background/80 to-transparent backdrop-blur-sm">
+          <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
             <div className="container mx-auto px-4 py-4">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => navigate(-1)}
-                className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12"
+                className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10"
               >
-                <ArrowLeft className="h-5 w-5 text-foreground" />
+                <ArrowLeft className="h-4 w-4 text-gray-700" />
               </Button>
             </div>
           </div>
@@ -110,10 +110,10 @@ export default function NetWorth() {
           {/* Content */}
           <div className="flex-1 flex flex-col items-center justify-center px-6 pb-12 -mt-20 relative z-10">
             <div className="max-w-md text-center space-y-6">
-              <h1 className="text-4xl font-bold text-foreground">
+              <h1 className="text-4xl font-semibold text-gray-900 tracking-tight">
                 Vamos a conocernos mejor
               </h1>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-gray-600">
                 Nutre a tu Moni AI personal con tu información y empieza a ver la diferencia
               </p>
               <Button 
@@ -137,20 +137,20 @@ export default function NetWorth() {
     return (
       <div className="min-h-screen animated-wave-bg pb-20">
         {/* Header */}
-        <div className="bg-background/95 backdrop-blur-sm sticky top-0 z-40">
+        <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => navigate(-1)}
-                className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12 flex-shrink-0"
+                className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
               >
-                <ArrowLeft className="h-5 w-5 text-foreground" />
+                <ArrowLeft className="h-4 w-4 text-gray-700" />
               </Button>
               <div className="flex-1 min-w-0">
-                <h1 className="text-xl sm:text-2xl font-bold text-foreground">Patrimonio Neto</h1>
-                <p className="text-sm text-foreground/80 font-medium">Evolución de tu riqueza</p>
+                <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Patrimonio Neto</h1>
+                <p className="text-sm text-gray-500">Evolución de tu riqueza</p>
               </div>
             </div>
           </div>
@@ -158,8 +158,8 @@ export default function NetWorth() {
         
         <div className="max-w-7xl mx-auto px-4 py-6">
           {/* Skeleton del contenido principal */}
-          <Card className="p-6 bg-white border-blue-100 animate-pulse rounded-[20px] shadow-xl">
-            <div className="h-80 bg-primary/10 rounded-[20px]"></div>
+          <Card className="p-6 bg-white/80 backdrop-blur-sm border-0 animate-pulse rounded-3xl shadow-sm">
+            <div className="h-80 bg-gray-100 rounded-2xl"></div>
           </Card>
         </div>
 
@@ -171,7 +171,7 @@ export default function NetWorth() {
   if (!netWorthData) {
     return (
       <div className="min-h-screen animated-wave-bg flex items-center justify-center pb-20">
-        <p className="text-foreground font-semibold text-lg drop-shadow-lg">Error cargando datos</p>
+        <p className="text-foreground font-semibold text-lg">Error cargando datos</p>
         <BottomNav />
       </div>
     );
@@ -205,20 +205,20 @@ export default function NetWorth() {
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="bg-background/95 backdrop-blur-sm sticky top-0 z-40">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate("/dashboard")}
-              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12 flex-shrink-0"
+              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
             >
-              <ArrowLeft className="h-5 w-5 text-foreground" />
+              <ArrowLeft className="h-4 w-4 text-gray-700" />
             </Button>
             <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground">Patrimonio Neto</h1>
-              <p className="text-sm text-foreground/80 font-medium">Evolución de tu riqueza</p>
+              <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Patrimonio Neto</h1>
+              <p className="text-sm text-gray-500">Evolución de tu riqueza</p>
             </div>
           </div>
         </div>
@@ -233,7 +233,7 @@ export default function NetWorth() {
       <div className="px-4 mt-4">
         <Button 
           variant="ghost" 
-          className="w-full bg-primary/10 hover:bg-primary/20 rounded-[20px] text-primary transition-all h-auto py-3 px-4 text-xs font-semibold flex items-center justify-center border border-primary/20 hover:scale-105 active:scale-95"
+          className="w-full bg-white/80 backdrop-blur-sm hover:bg-white rounded-3xl shadow-sm hover:shadow-md transition-all h-auto py-3 px-4 text-xs font-medium flex items-center justify-center border-0"
           onClick={async () => {
             try {
               const { data: { user } } = await supabase.auth.getUser();
@@ -290,31 +290,31 @@ export default function NetWorth() {
       {/* Liquidez Section */}
       <div className="px-4 mt-2">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xl font-bold text-foreground drop-shadow-lg">Liquidez</h2>
+          <h2 className="text-xl font-semibold text-gray-900 tracking-tight">Liquidez</h2>
           <div className="relative">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowInstitutionFilter(!showInstitutionFilter)}
-              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-9 px-3 gap-2 text-foreground"
+              className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-9 px-3 gap-2"
             >
               <div className="flex flex-col gap-0.5">
-                <div className="h-0.5 w-3 bg-foreground/70"></div>
-                <div className="h-0.5 w-3 bg-foreground/70"></div>
+                <div className="h-0.5 w-3 bg-gray-700"></div>
+                <div className="h-0.5 w-3 bg-gray-700"></div>
               </div>
-              <span className="text-xs font-medium">Filtrar</span>
+              <span className="text-xs font-medium text-gray-700">Filtrar</span>
             </Button>
             
             {showInstitutionFilter && (
-              <div className="absolute right-0 top-full mt-2 bg-white backdrop-blur-md rounded-[20px] shadow-xl border border-blue-100 py-2 min-w-[200px] z-50">
+              <div className="absolute right-0 top-full mt-2 bg-white backdrop-blur-md rounded-2xl shadow-sm border-0 py-2 min-w-[200px] z-50">
                 <button
                   onClick={() => {
                     setSelectedInstitution('All');
                     setShowInstitutionFilter(false);
                   }}
                   className={cn(
-                    "w-full text-left px-4 py-2.5 text-sm hover:bg-primary/10 transition-colors font-medium",
-                    selectedInstitution === 'All' ? "bg-primary/20 text-foreground" : "text-foreground/80"
+                    "w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors font-medium",
+                    selectedInstitution === 'All' ? "bg-gray-100 text-gray-900" : "text-gray-600"
                   )}
                 >
                   Todas las instituciones
@@ -331,8 +331,8 @@ export default function NetWorth() {
                       setShowInstitutionFilter(false);
                     }}
                     className={cn(
-                      "w-full text-left px-4 py-2.5 text-sm hover:bg-primary/10 transition-colors font-medium",
-                      selectedInstitution === institution ? "bg-primary/20 text-foreground" : "text-foreground/80"
+                      "w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors font-medium",
+                      selectedInstitution === institution ? "bg-gray-100 text-gray-900" : "text-gray-600"
                     )}
                   >
                     {institution}
@@ -344,9 +344,9 @@ export default function NetWorth() {
         </div>
 
         {/* Total Líquido */}
-        <div className="mb-4 bg-white backdrop-blur-sm rounded-[20px] p-4 border border-blue-100 shadow-xl">
-          <p className="text-xs text-foreground/80 mb-1 font-medium">Efectivo Disponible</p>
-          <p className="text-2xl font-bold text-blue-900 break-words">
+        <div className="mb-4 bg-white/80 backdrop-blur-sm rounded-3xl p-4 border-0 shadow-sm">
+          <p className="text-xs text-gray-500 mb-1 font-medium">Efectivo Disponible</p>
+          <p className="text-2xl font-semibold text-blue-900 break-words tracking-tight">
             ${assets
               .filter(a => isLiquidAsset(a.categoria))
               .filter(a => selectedInstitution === 'All' || a.nombre.startsWith(selectedInstitution))
@@ -366,20 +366,20 @@ export default function NetWorth() {
               return (
                 <div
                   key={account.id}
-                  className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-[1.02] transition-all cursor-pointer border border-blue-100 animate-fade-in"
+                  className="p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer border-0 animate-fade-in"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="w-10 h-10 rounded-lg bg-primary/40 flex items-center justify-center flex-shrink-0">
-                        <Icon className="h-5 w-5 text-foreground" />
+                      <div className="w-10 h-10 rounded-xl bg-primary/40 flex items-center justify-center flex-shrink-0">
+                        <Icon className="h-5 w-5 text-gray-900" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-foreground text-sm leading-tight">{account.nombre}</p>
-                        <p className="text-xs text-foreground/70 leading-tight">{account.categoria}</p>
+                        <p className="font-semibold text-gray-900 text-sm leading-tight">{account.nombre}</p>
+                        <p className="text-xs text-gray-500 leading-tight">{account.categoria}</p>
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="font-bold text-foreground text-sm break-words">
+                      <p className="font-semibold text-gray-900 text-sm break-words">
                         ${Number(account.valor).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </p>
                     </div>
@@ -389,7 +389,7 @@ export default function NetWorth() {
             })}
             
           {assets.filter(a => isLiquidAsset(a.categoria)).filter(a => selectedInstitution === 'All' || a.nombre.startsWith(selectedInstitution)).length === 0 && (
-            <div className="p-8 text-center text-muted-foreground bg-white rounded-[20px] border border-blue-100 shadow-xl">
+            <div className="p-8 text-center text-gray-500 bg-white rounded-3xl border-0 shadow-sm">
               {selectedInstitution === 'All' 
                 ? 'No hay cuentas líquidas registradas'
                 : `No hay cuentas líquidas de ${selectedInstitution}`}
@@ -401,25 +401,25 @@ export default function NetWorth() {
       {/* Activos Semi Líquidos Section */}
       <div className="px-4 mt-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xl font-bold text-foreground drop-shadow-lg">Activos Semi Líquidos</h2>
+          <h2 className="text-xl font-semibold text-gray-900 tracking-tight">Activos Semi Líquidos</h2>
           <div className="relative">
             <Button
               ref={semiLiquidButtonRef}
               variant="ghost"
               size="sm"
               onClick={() => setShowSemiLiquidFilter(!showSemiLiquidFilter)}
-              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-9 px-3 gap-2 text-foreground"
+              className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-9 px-3 gap-2"
             >
               <div className="flex flex-col gap-0.5">
-                <div className="h-0.5 w-3 bg-foreground/70"></div>
-                <div className="h-0.5 w-3 bg-foreground/70"></div>
+                <div className="h-0.5 w-3 bg-gray-700"></div>
+                <div className="h-0.5 w-3 bg-gray-700"></div>
               </div>
-              <span className="text-xs font-medium">Filtrar</span>
+              <span className="text-xs font-medium text-gray-700">Filtrar</span>
             </Button>
             
             {showSemiLiquidFilter && (
               <div className={cn(
-                "absolute right-0 bg-white backdrop-blur-md rounded-[20px] shadow-xl border border-blue-100 py-2 min-w-[200px] z-50",
+                "absolute right-0 bg-white backdrop-blur-md rounded-2xl shadow-sm border-0 py-2 min-w-[200px] z-50",
                 dropdownPosition === 'bottom' ? "top-full mt-2" : "bottom-full mb-2"
               )}>
                 <button
@@ -428,8 +428,8 @@ export default function NetWorth() {
                     setShowSemiLiquidFilter(false);
                   }}
                   className={cn(
-                    "w-full text-left px-4 py-2.5 text-sm hover:bg-primary/10 transition-colors font-medium",
-                    selectedSemiLiquidType === 'All' ? "bg-primary/20 text-foreground" : "text-foreground/80"
+                    "w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors font-medium",
+                    selectedSemiLiquidType === 'All' ? "bg-gray-100 text-gray-900" : "text-gray-600"
                   )}
                 >
                   Todos los tipos
@@ -447,8 +447,8 @@ export default function NetWorth() {
                       setShowSemiLiquidFilter(false);
                     }}
                     className={cn(
-                      "w-full text-left px-4 py-2.5 text-sm hover:bg-primary/10 transition-colors font-medium",
-                      selectedSemiLiquidType === type ? "bg-primary/20 text-foreground" : "text-foreground/80"
+                      "w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors font-medium",
+                      selectedSemiLiquidType === type ? "bg-gray-100 text-gray-900" : "text-gray-600"
                     )}
                   >
                     {type}
@@ -460,9 +460,9 @@ export default function NetWorth() {
         </div>
 
         {/* Total Semi Líquido */}
-        <div className="mb-4 bg-white backdrop-blur-sm rounded-[20px] p-4 border border-blue-100 shadow-xl">
-          <p className="text-xs text-foreground/80 mb-1 font-medium">Inversiones y Por Cobrar</p>
-          <p className="text-2xl font-bold text-emerald-700 break-words">
+        <div className="mb-4 bg-white/80 backdrop-blur-sm rounded-3xl p-4 border-0 shadow-sm">
+          <p className="text-xs text-gray-500 mb-1 font-medium">Inversiones y Por Cobrar</p>
+          <p className="text-2xl font-semibold text-emerald-700 break-words tracking-tight">
             ${assets
               .filter(a => isSemiLiquidAsset(a.categoria))
               .filter(a => selectedSemiLiquidType === 'All' || a.subcategoria === selectedSemiLiquidType)
@@ -482,19 +482,19 @@ export default function NetWorth() {
               return (
                 <div
                   key={account.id}
-                  className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-[1.02] transition-all cursor-pointer border border-blue-100 animate-fade-in"
+                  className="p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer border-0 animate-fade-in"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="w-10 h-10 rounded-lg bg-emerald-500/40 flex items-center justify-center flex-shrink-0">
-                        <Icon className="h-5 w-5 text-foreground" />
+                      <div className="w-10 h-10 rounded-xl bg-emerald-500/40 flex items-center justify-center flex-shrink-0">
+                        <Icon className="h-5 w-5 text-gray-900" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-foreground text-sm leading-tight">{account.nombre}</p>
+                        <p className="font-semibold text-gray-900 text-sm leading-tight">{account.nombre}</p>
                         <div className="flex items-center gap-2">
-                          <p className="text-xs text-foreground/70 leading-tight">{account.categoria}</p>
+                          <p className="text-xs text-gray-500 leading-tight">{account.categoria}</p>
                           {account.subcategoria && (
-                            <Badge variant="outline" className="text-[8px] px-1.5 py-0 border-emerald-500/40 text-emerald-600 bg-emerald-50 whitespace-nowrap">
+                            <Badge variant="outline" className="text-[8px] px-1.5 py-0.5 border-emerald-500/40 text-emerald-600 bg-emerald-50 whitespace-nowrap">
                               {account.subcategoria}
                             </Badge>
                           )}
@@ -502,7 +502,7 @@ export default function NetWorth() {
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="font-bold text-foreground text-sm break-words">
+                      <p className="font-semibold text-gray-900 text-sm break-words">
                         ${Number(account.valor).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </p>
                     </div>
@@ -512,7 +512,7 @@ export default function NetWorth() {
             })}
             
           {assets.filter(a => isSemiLiquidAsset(a.categoria)).filter(a => selectedSemiLiquidType === 'All' || a.subcategoria === selectedSemiLiquidType).length === 0 && (
-            <div className="p-8 text-center text-muted-foreground bg-white rounded-[20px] border border-blue-100 shadow-xl">
+            <div className="p-8 text-center text-gray-500 bg-white rounded-3xl border-0 shadow-sm">
               {selectedSemiLiquidType === 'All' 
                 ? 'No hay activos semi líquidos registrados'
                 : `No hay activos de tipo ${selectedSemiLiquidType}`}
