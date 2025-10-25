@@ -1,6 +1,9 @@
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts';
 import { AlertCircle } from "lucide-react";
 import { RetroCarousel, ScoreCard } from "@/components/ui/retro-carousel";
+import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { ScorePopup } from "@/components/ui/celebration-confetti";
 
 interface ScoreComponents {
   savingsAndLiquidity: number;
@@ -19,6 +22,15 @@ interface ScoreBreakdownProps {
 }
 
 export default function ScoreBreakdownWidget({ components, scoreMoni, changeReason, previousScore, loadingReason }: ScoreBreakdownProps) {
+  const [showCelebration, setShowCelebration] = useState(false);
+  const scoreChange = previousScore ? scoreMoni - previousScore : 0;
+
+  useEffect(() => {
+    if (Math.abs(scoreChange) >= 5) {
+      setShowCelebration(true);
+    }
+  }, [scoreChange]);
+
   const radarData = [
     { 
       dimension: 'Ahorro', 
@@ -52,22 +64,48 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
     }
   ];
 
-  const scoreChange = previousScore ? scoreMoni - previousScore : 0;
-
   return (
-    <div className="space-y-3">
-      <div className="bg-white rounded-[20px] shadow-xl border border-blue-100 p-4">
-        <p className="text-xs font-medium text-foreground/80 mb-1">Score Moni</p>
-        <div className="flex items-baseline gap-2">
-          <p className="text-3xl font-bold text-foreground">{scoreMoni}</p>
-          <span className="text-sm text-muted-foreground">/100</span>
-          {scoreChange !== 0 && (
-            <span className={`text-xs font-medium ${scoreChange > 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-              {scoreChange > 0 ? '↑' : '↓'} {Math.abs(scoreChange)} pts
-            </span>
-          )}
-        </div>
-      </div>
+    <>
+      <ScorePopup 
+        show={showCelebration} 
+        scoreChange={scoreChange}
+        onComplete={() => setShowCelebration(false)}
+      />
+      
+      <div className="space-y-3">
+        <motion.div 
+          className="bg-white rounded-[20px] shadow-xl border border-blue-100 p-4"
+          initial={{ scale: 1 }}
+          animate={scoreChange > 0 ? { 
+            scale: [1, 1.05, 1],
+            borderColor: ['rgba(59, 130, 246, 0.1)', 'rgba(16, 185, 129, 0.5)', 'rgba(59, 130, 246, 0.1)']
+          } : {}}
+          transition={{ duration: 0.6 }}
+        >
+          <p className="text-xs font-medium text-foreground/80 mb-1">Score Moni</p>
+          <div className="flex items-baseline gap-2">
+            <motion.p 
+              className="text-3xl font-bold text-foreground"
+              key={scoreMoni}
+              initial={{ scale: 1 }}
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 0.5 }}
+            >
+              {scoreMoni}
+            </motion.p>
+            <span className="text-sm text-muted-foreground">/100</span>
+            {scoreChange !== 0 && (
+              <motion.span 
+                className={`text-xs font-medium ${scoreChange > 0 ? 'text-emerald-600' : 'text-red-600'}`}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                {scoreChange > 0 ? '↑' : '↓'} {Math.abs(scoreChange)} pts
+              </motion.span>
+            )}
+          </div>
+        </motion.div>
 
       <div className="bg-white rounded-[20px] shadow-xl border border-blue-100 p-4">
         <div className="h-[320px]">
@@ -142,6 +180,7 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
           ))}
         />
       </div>
-    </div>
+      </div>
+    </>
   );
 }

@@ -11,6 +11,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import Autoplay from 'embla-carousel-autoplay';
 import { useToast } from "@/hooks/use-toast";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import { motion } from "framer-motion";
+import { GoalMilestone } from "@/components/ui/celebration-confetti";
 import bannerInvestment from '@/assets/banner-investment.jpg';
 import bannerGoals from '@/assets/banner-goals.jpg';
 import bannerGroups from '@/assets/banner-groups.jpg';
@@ -53,6 +55,42 @@ const Dashboard = () => {
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
   const [totalBudget, setTotalBudget] = useState(0);
   const [currentMonthExpenses, setCurrentMonthExpenses] = useState(0);
+  
+  // Goal milestone celebration state
+  const [goalMilestone, setGoalMilestone] = useState<{
+    show: boolean;
+    milestone: 'start' | '25' | '50' | '75' | '100';
+    goalName: string;
+  }>({ show: false, milestone: 'start', goalName: '' });
+  const [previousGoalProgress, setPreviousGoalProgress] = useState<Record<string, number>>({});
+  
+  // Check for goal milestone achievements
+  useEffect(() => {
+    goals.forEach(goal => {
+      const currentProgress = (goal.current / goal.target) * 100;
+      const prevProgress = previousGoalProgress[goal.id] || 0;
+      
+      // Check for milestone crossings
+      const milestones = [25, 50, 75, 100];
+      milestones.forEach(milestone => {
+        if (prevProgress < milestone && currentProgress >= milestone) {
+          setGoalMilestone({
+            show: true,
+            milestone: milestone.toString() as any,
+            goalName: goal.title
+          });
+        }
+      });
+      
+      // Update previous progress
+      if (currentProgress !== prevProgress) {
+        setPreviousGoalProgress(prev => ({
+          ...prev,
+          [goal.id]: currentProgress
+        }));
+      }
+    });
+  }, [goals]);
   
   // Sync recentTransactions when dashboardData updates - use ref to avoid infinite loop
   useEffect(() => {
@@ -975,7 +1013,15 @@ const Dashboard = () => {
   const achievements: any[] = []; // Los logros se implementarán en el futuro basados en la actividad del usuario
   
   return (
-    <div className="min-h-screen animated-wave-bg pb-20">
+    <>
+      <GoalMilestone 
+        show={goalMilestone.show}
+        milestone={goalMilestone.milestone}
+        goalName={goalMilestone.goalName}
+        onComplete={() => setGoalMilestone({ show: false, milestone: 'start', goalName: '' })}
+      />
+      
+      <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header superior con logo y notificaciones */}
       <div className="p-2 flex justify-between items-start">
         {/* Logo banner - esquina superior izquierda */}
@@ -1540,55 +1586,83 @@ const Dashboard = () => {
                   'from-[hsl(145,60%,25%)] to-[hsl(145,55%,15%)] border-[hsl(145,70%,45%)]/40',
                 ];
                 const gradient = gradients[index % gradients.length];
-                return <Card key={goal.id} className={`w-full p-4 sm:p-6 bg-gradient-to-br ${gradient} card-glow shadow-2xl border-2 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in min-w-0`} style={{
-                  animationDelay: `${index * 100}ms`
-                }}>
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
-                        
-                        <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-4 relative z-10">
-                          <div className="flex-1">
-                            <div className="flex items-center flex-wrap space-x-2 mb-2 gap-1">
-                              <h4 className="text-base sm:text-lg font-semibold text-white drop-shadow-lg">{goal.title}</h4>
-                              {goal.type === 'group' && <Badge variant="outline" className="text-xs text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                                  <Users className="w-3 h-3 mr-1" />
-                                  {goal.members} personas
-                                </Badge>}
-                            </div>
-                            <p className="text-xs sm:text-sm text-white/90 drop-shadow">Meta: {goal.deadline}</p>
+                
+                return (
+                  <motion.div
+                    key={goal.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <Card 
+                      className={`w-full p-4 sm:p-6 bg-gradient-to-br ${gradient} card-glow shadow-2xl border-2 relative overflow-hidden hover:scale-105 transition-transform duration-200 min-w-0`}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
+                      
+                      <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-4 relative z-10">
+                        <div className="flex-1">
+                          <div className="flex items-center flex-wrap space-x-2 mb-2 gap-1">
+                            <h4 className="text-base sm:text-lg font-semibold text-white drop-shadow-lg">{goal.title}</h4>
+                            {goal.type === 'group' && <Badge variant="outline" className="text-xs text-white border-white/30 bg-white/10 backdrop-blur-sm">
+                                <Users className="w-3 h-3 mr-1" />
+                                {goal.members} personas
+                              </Badge>}
                           </div>
-                          <div className="text-left sm:text-right">
-                            <p className="text-base sm:text-lg font-semibold text-white drop-shadow-lg">
-                              ${Number(goal.current).toLocaleString()}
-                            </p>
-                            <p className="text-xs sm:text-sm text-white/90 drop-shadow">
-                              de ${Number(goal.target).toLocaleString()}
-                            </p>
-                          </div>
+                          <p className="text-xs sm:text-sm text-white/90 drop-shadow">Meta: {goal.deadline}</p>
+                        </div>
+                        <div className="text-left sm:text-right">
+                          <p className="text-base sm:text-lg font-semibold text-white drop-shadow-lg">
+                            ${Number(goal.current).toLocaleString()}
+                          </p>
+                          <p className="text-xs sm:text-sm text-white/90 drop-shadow">
+                            de ${Number(goal.target).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="relative z-10">
+                        <div className="relative h-3 bg-white/10 rounded-full overflow-hidden backdrop-blur-sm border border-white/20 mb-2">
+                          <motion.div 
+                            className="h-full bg-gradient-to-r from-white/60 to-white/90 rounded-full relative"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${Math.min(goalProgress, 100)}%` }}
+                            transition={{ duration: 1, ease: "easeOut" }}
+                          >
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
+                            {goalProgress >= 100 && (
+                              <motion.div
+                                className="absolute inset-0"
+                                animate={{
+                                  boxShadow: [
+                                    '0 0 0px rgba(255,255,255,0)',
+                                    '0 0 20px rgba(255,255,255,0.8)',
+                                    '0 0 0px rgba(255,255,255,0)'
+                                  ]
+                                }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                              />
+                            )}
+                          </motion.div>
                         </div>
                         
-                        <div className="relative z-10">
-                          <div className="relative h-3 bg-white/10 rounded-full overflow-hidden backdrop-blur-sm border border-white/20 mb-2">
-                            <div 
-                              className="h-full bg-gradient-to-r from-white/60 to-white/90 rounded-full transition-all duration-1000 ease-out relative"
-                              style={{ 
-                                width: `${Math.min(goalProgress, 100)}%`,
-                                animation: 'slide-in-right 1s ease-out'
-                              }}
-                            >
-                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
-                            </div>
-                          </div>
-                          
-                          <div className="flex justify-between items-center text-xs sm:text-sm">
-                            <span className="text-white/90 drop-shadow">
-                              ${(Number(goal.target) - Number(goal.current)).toLocaleString()} restante
-                            </span>
-                            <span className="text-white font-bold text-sm sm:text-base drop-shadow-lg">
-                              {Math.round(goalProgress)}%
-                            </span>
-                          </div>
+                        <div className="flex justify-between items-center text-xs sm:text-sm">
+                          <span className="text-white/90 drop-shadow">
+                            ${(Number(goal.target) - Number(goal.current)).toLocaleString()} restante
+                          </span>
+                          <motion.span 
+                            className="text-white font-bold text-sm sm:text-base drop-shadow-lg"
+                            key={goalProgress}
+                            initial={{ scale: 1 }}
+                            animate={{ scale: [1, 1.15, 1] }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            {Math.round(goalProgress)}%
+                          </motion.span>
                         </div>
-                      </Card>;
+                      </div>
+                    </Card>
+                  </motion.div>
+                );
               })}
               </div>
             </div>
@@ -1814,6 +1888,7 @@ const Dashboard = () => {
 
       <BottomNav />
     </div>
+    </>
   );
 };
 
