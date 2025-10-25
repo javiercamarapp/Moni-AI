@@ -6,16 +6,36 @@ export type TimeRange = '1M' | '3M' | '6M' | '1Y' | 'All';
 
 interface Asset {
   id: string;
-  name: string;
-  value: number;
-  category: string;
+  nombre: string;
+  valor: number;
+  categoria: string;
+  subcategoria: string | null;
+  descripcion: string | null;
+  moneda: string;
+  liquidez_porcentaje: number;
+  tasa_rendimiento: number | null;
+  fecha_adquisicion: string | null;
+  es_activo_fijo: boolean;
+  created_at: string;
+  updated_at: string;
+  user_id: string;
 }
 
 interface Liability {
   id: string;
-  name: string;
-  value: number;
-  category: string;
+  nombre: string;
+  valor: number;
+  categoria: string;
+  subcategoria: string | null;
+  descripcion: string | null;
+  moneda: string;
+  tasa_interes: number | null;
+  fecha_inicio: string | null;
+  fecha_vencimiento: string | null;
+  es_corto_plazo: boolean;
+  created_at: string;
+  updated_at: string;
+  user_id: string;
 }
 
 interface NetWorthSnapshot {
@@ -66,7 +86,7 @@ export function useNetWorth(timeRange: TimeRange) {
 
       // Fetch current assets
       const { data: assets, error: assetsError } = await supabase
-        .from('assets')
+        .from('activos')
         .select('*')
         .eq('user_id', user.id);
 
@@ -74,15 +94,15 @@ export function useNetWorth(timeRange: TimeRange) {
 
       // Fetch current liabilities
       const { data: liabilities, error: liabilitiesError } = await supabase
-        .from('liabilities')
+        .from('pasivos')
         .select('*')
         .eq('user_id', user.id);
 
       if (liabilitiesError) throw liabilitiesError;
 
       // Calculate current totals
-      const totalAssets = assets?.reduce((sum, a) => sum + Number(a.value), 0) || 0;
-      const totalLiabilities = liabilities?.reduce((sum, l) => sum + Number(l.value), 0) || 0;
+      const totalAssets = assets?.reduce((sum, a) => sum + Number(a.valor), 0) || 0;
+      const totalLiabilities = liabilities?.reduce((sum, l) => sum + Number(l.valor), 0) || 0;
       const currentNetWorth = totalAssets - totalLiabilities;
 
       // Format date labels based on time range
@@ -224,13 +244,13 @@ export function useHasNetWorthData() {
       if (!user) return false;
 
       const { data: assets } = await supabase
-        .from('assets')
+        .from('activos')
         .select('id')
         .eq('user_id', user.id)
         .limit(1);
 
       const { data: liabilities } = await supabase
-        .from('liabilities')
+        .from('pasivos')
         .select('id')
         .eq('user_id', user.id)
         .limit(1);

@@ -79,11 +79,11 @@ export default function Liabilities() {
 
   const { liabilities, totalLiabilities } = netWorthData;
 
-  const currentLiabilities = liabilities.filter(l => isCurrentLiability(l.category, l.name));
-  const nonCurrentLiabilities = liabilities.filter(l => !isCurrentLiability(l.category, l.name));
+  const currentLiabilities = liabilities.filter(l => isCurrentLiability(l.es_corto_plazo));
+  const nonCurrentLiabilities = liabilities.filter(l => !isCurrentLiability(l.es_corto_plazo));
 
-  const totalCurrent = currentLiabilities.reduce((sum, l) => sum + Number(l.value), 0);
-  const totalNonCurrent = nonCurrentLiabilities.reduce((sum, l) => sum + Number(l.value), 0);
+  const totalCurrent = currentLiabilities.reduce((sum, l) => sum + Number(l.valor), 0);
+  const totalNonCurrent = nonCurrentLiabilities.reduce((sum, l) => sum + Number(l.valor), 0);
 
   const displayLiabilities = 
     filter === 'Current' ? currentLiabilities :
@@ -231,9 +231,9 @@ export default function Liabilities() {
             </Button>
           </div>
           {displayLiabilities.map((liability) => {
-            const iconName = getIconForCategory(liability.category);
+            const iconName = getIconForCategory(liability.categoria);
             const Icon = iconMap[iconName];
-            const isCurrent = isCurrentLiability(liability.category, liability.name);
+            const isCurrent = isCurrentLiability(liability.es_corto_plazo);
             
             return (
               <div
@@ -254,9 +254,9 @@ export default function Liabilities() {
                       )} />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="font-bold text-foreground text-sm leading-tight">{liability.name}</p>
+                      <p className="font-bold text-foreground text-sm leading-tight">{liability.nombre}</p>
                       <div className="flex items-center gap-2">
-                        <p className="text-xs text-foreground/70 leading-tight">{liability.category}</p>
+                        <p className="text-xs text-foreground/70 leading-tight">{liability.categoria}</p>
                         <Badge 
                           variant="outline" 
                           className={cn(
@@ -273,7 +273,7 @@ export default function Liabilities() {
                   </div>
                   <div className="text-right flex-shrink-0 ml-2">
                     <p className="font-bold text-destructive text-sm break-words">
-                      ${Number(liability.value).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      ${Number(liability.valor).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
                   </div>
                 </div>

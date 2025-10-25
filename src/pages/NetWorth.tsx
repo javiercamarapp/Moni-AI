@@ -199,14 +199,14 @@ export default function NetWorth() {
 
   const filteredAssets = assetFilter === 'All' 
     ? assets 
-    : assets.filter(a => a.category === assetFilter);
+    : assets.filter(a => a.categoria === assetFilter);
 
   const filteredLiabilities = liabilityFilter === 'All'
     ? liabilities
-    : liabilities.filter(l => l.category === liabilityFilter);
+    : liabilities.filter(l => l.categoria === liabilityFilter);
 
-  const assetCategories = ['All', ...Array.from(new Set(assets.map(a => a.category)))];
-  const liabilityCategories = ['All', ...Array.from(new Set(liabilities.map(l => l.category)))];
+  const assetCategories = ['All', ...Array.from(new Set(assets.map(a => a.categoria)))];
+  const liabilityCategories = ['All', ...Array.from(new Set(liabilities.map(l => l.categoria)))];
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
@@ -327,8 +327,8 @@ export default function NetWorth() {
                 </button>
                 {Array.from(new Set(
                   assets
-                    .filter(a => isLiquidAsset(a.category, a.name))
-                    .map(a => a.name.split(' ')[0]) // Get first word as institution name
+                    .filter(a => isLiquidAsset(a.es_activo_fijo))
+                    .map(a => a.nombre.split(' ')[0]) // Get first word as institution name
                 )).map((institution) => (
                   <button
                     key={institution}
@@ -354,19 +354,19 @@ export default function NetWorth() {
           <p className="text-xs text-foreground/80 mb-1 font-medium">Efectivo Disponible</p>
           <p className="text-2xl font-bold text-blue-900 break-words">
             ${assets
-              .filter(a => isLiquidAsset(a.category, a.name))
-              .filter(a => selectedInstitution === 'All' || a.name.startsWith(selectedInstitution))
-              .reduce((sum, a) => sum + Number(a.value), 0)
+              .filter(a => isLiquidAsset(a.es_activo_fijo))
+              .filter(a => selectedInstitution === 'All' || a.nombre.startsWith(selectedInstitution))
+              .reduce((sum, a) => sum + Number(a.valor), 0)
               .toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
         </div>
 
         <div className="space-y-3">
           {assets
-            .filter(account => isLiquidAsset(account.category, account.name))
-            .filter(account => selectedInstitution === 'All' || account.name.startsWith(selectedInstitution))
+            .filter(account => isLiquidAsset(account.es_activo_fijo))
+            .filter(account => selectedInstitution === 'All' || account.nombre.startsWith(selectedInstitution))
             .map((account) => {
-              const iconName = getIconForCategory(account.category);
+              const iconName = getIconForCategory(account.categoria);
               const Icon = iconMap[iconName];
               
               return (
@@ -380,13 +380,13 @@ export default function NetWorth() {
                         <Icon className="h-5 w-5 text-foreground" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-foreground text-sm leading-tight">{account.name}</p>
-                        <p className="text-xs text-foreground/70 leading-tight">{account.category}</p>
+                        <p className="font-bold text-foreground text-sm leading-tight">{account.nombre}</p>
+                        <p className="text-xs text-foreground/70 leading-tight">{account.categoria}</p>
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
                       <p className="font-bold text-foreground text-sm break-words">
-                        ${Number(account.value).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        ${Number(account.valor).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </p>
                     </div>
                   </div>
@@ -394,7 +394,7 @@ export default function NetWorth() {
               );
             })}
             
-          {assets.filter(a => isLiquidAsset(a.category, a.name)).filter(a => selectedInstitution === 'All' || a.name.startsWith(selectedInstitution)).length === 0 && (
+          {assets.filter(a => isLiquidAsset(a.es_activo_fijo)).filter(a => selectedInstitution === 'All' || a.nombre.startsWith(selectedInstitution)).length === 0 && (
             <div className="p-8 text-center text-muted-foreground bg-white rounded-[20px] border border-blue-100 shadow-xl">
               {selectedInstitution === 'All' 
                 ? 'No hay cuentas líquidas registradas'
