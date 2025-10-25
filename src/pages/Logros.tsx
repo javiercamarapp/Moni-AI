@@ -403,7 +403,7 @@ export default function Logros() {
       <div className="container mx-auto px-4 py-6 max-w-2xl mb-8">
         {/* Header */}
         <div className="mb-6">
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-3 mb-4 bg-white rounded-[20px] shadow-xl p-4 border border-blue-100">
             <Button
               type="button"
               onClick={() => navigate("/aspirations-analysis")}
