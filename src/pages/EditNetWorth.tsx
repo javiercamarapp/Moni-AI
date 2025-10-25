@@ -441,7 +441,7 @@ export default function EditNetWorth() {
                           {category.items.map((item) => (
                             <div key={item.id} className="bg-gray-50 rounded-lg px-2 py-2">
                               <div className="flex items-center justify-between gap-2 mb-1">
-                                {category.id.includes('personalizado') ? (
+                                {item.id.includes('custom_') || category.id.includes('personalizado') ? (
                                   <>
                                     <Input
                                       type="text"
@@ -452,7 +452,7 @@ export default function EditNetWorth() {
                                       }}
                                       className="flex-1 h-7 text-[10px] bg-white border-gray-200"
                                     />
-                                    {item.id.includes('personalizado_') && item.id !== category.items[0].id && (
+                                    {(item.id.includes('personalizado_') || item.id.includes('custom_')) && (
                                       <Button
                                         onClick={() => {
                                           const index = category.items.findIndex(s => s.id === item.id);
@@ -507,23 +507,22 @@ export default function EditNetWorth() {
                           ))}
                         </div>
 
-                        {/* Add button for custom category */}
-                        {category.id.includes('personalizado') && (
-                          <div className="flex justify-center mt-2">
-                            <Button
-                              onClick={() => {
-                                const newId = `activo_personalizado_${Date.now()}`;
-                                const newItem = { id: newId, name: `Concepto ${category.items.length + 1}` };
-                                category.items.push(newItem);
-                                setCustomItems({ ...customItems });
-                              }}
-                              variant="ghost"
-                              className="h-8 w-8 p-0 rounded-full bg-primary/10 hover:bg-primary/20 text-primary font-bold"
-                            >
-                              +
-                            </Button>
-                          </div>
-                        )}
+                        {/* Add subcuenta button - para todas las categorías */}
+                        <div className="flex justify-center mt-2">
+                          <Button
+                            onClick={() => {
+                              const newId = `custom_${category.id}_${Date.now()}`;
+                              const newItem = { id: newId, name: `Subcuenta ${category.items.length + 1}` };
+                              category.items.push(newItem);
+                              setCustomItems({ ...customItems });
+                            }}
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 text-[10px] rounded-full bg-primary/10 hover:bg-primary/20 text-primary font-semibold px-4"
+                          >
+                            + Agregar subcuenta
+                          </Button>
+                        </div>
 
                         {/* Action Button */}
                         <Button
@@ -580,7 +579,7 @@ export default function EditNetWorth() {
                           {category.items.map((item) => (
                             <div key={item.id} className="bg-gray-50 rounded-lg px-2 py-2">
                               <div className="flex items-center justify-between gap-2 mb-1">
-                                {category.id.includes('personalizado') ? (
+                                {item.id.includes('custom_') || category.id.includes('personalizado') ? (
                                   <>
                                     <Input
                                       type="text"
@@ -591,7 +590,7 @@ export default function EditNetWorth() {
                                       }}
                                       className="flex-1 h-7 text-[10px] bg-white border-gray-200"
                                     />
-                                    {item.id.includes('personalizado_') && item.id !== category.items[0].id && (
+                                    {(item.id.includes('personalizado_') || item.id.includes('custom_')) && (
                                       <Button
                                         onClick={() => {
                                           const index = category.items.findIndex(s => s.id === item.id);
@@ -646,23 +645,22 @@ export default function EditNetWorth() {
                           ))}
                         </div>
 
-                        {/* Add button for custom category */}
-                        {category.id.includes('personalizado') && (
-                          <div className="flex justify-center mt-2">
-                            <Button
-                              onClick={() => {
-                                const newId = `pasivo_personalizado_${Date.now()}`;
-                                const newItem = { id: newId, name: `Concepto ${category.items.length + 1}` };
-                                category.items.push(newItem);
-                                setCustomItems({ ...customItems });
-                              }}
-                              variant="ghost"
-                              className="h-8 w-8 p-0 rounded-full bg-primary/10 hover:bg-primary/20 text-primary font-bold"
-                            >
-                              +
-                            </Button>
-                          </div>
-                        )}
+                        {/* Add subcuenta button - para todas las categorías */}
+                        <div className="flex justify-center mt-2">
+                          <Button
+                            onClick={() => {
+                              const newId = `custom_${category.id}_${Date.now()}`;
+                              const newItem = { id: newId, name: `Subcuenta ${category.items.length + 1}` };
+                              category.items.push(newItem);
+                              setCustomItems({ ...customItems });
+                            }}
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 text-[10px] rounded-full bg-primary/10 hover:bg-primary/20 text-primary font-semibold px-4"
+                          >
+                            + Agregar subcuenta
+                          </Button>
+                        </div>
 
                         {/* Action Button */}
                         <Button
