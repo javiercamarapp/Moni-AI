@@ -366,23 +366,23 @@ export default function Budgets() {
         ) : (
           <>
             {/* Resumen General */}
-            <Card className="p-3 bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0">
-              <div className="space-y-2">
-                <div className="text-center pb-1">
-                  <div className="text-2xl mb-1">💰</div>
-                  <p className="text-sm font-semibold text-foreground">Resumen del Mes</p>
+            <Card className="p-2 bg-white/90 backdrop-blur-md rounded-[20px] shadow-lg border-0">
+              <div className="space-y-1.5">
+                <div className="text-center pb-0.5">
+                  <div className="text-xl mb-0.5">💰</div>
+                  <p className="text-xs font-semibold text-foreground">Resumen del Mes</p>
                 </div>
 
                 {/* Métricas principales */}
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-1.5">
                   <button
                     onClick={() => navigate('/edit-budgets')}
-                    className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[18px] p-2.5 border-0 hover:from-white/90 hover:to-white/70 hover:scale-105 hover:shadow-md active:scale-95 transition-all duration-300 w-full cursor-pointer shadow-sm"
+                    className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[16px] p-2 border-0 hover:from-white/90 hover:to-white/70 hover:scale-105 hover:shadow-md active:scale-95 transition-all duration-300 w-full cursor-pointer shadow-sm"
                   >
-                    <div className="flex flex-col items-center gap-1 text-center">
-                      <Target className="h-4 w-4 text-primary transition-transform duration-300 group-hover:scale-110" />
-                      <span className="text-[10px] text-muted-foreground font-medium">Presupuestado</span>
-                      <p className="text-base font-bold text-primary">
+                    <div className="flex flex-col items-center gap-0.5 text-center">
+                      <Target className="h-3.5 w-3.5 text-primary transition-transform duration-300 group-hover:scale-110" />
+                      <span className="text-[9px] text-muted-foreground font-medium">Presupuestado</span>
+                      <p className="text-sm font-bold text-primary">
                         ${(totalBudget / 1000).toFixed(0)}k
                       </p>
                     </div>
@@ -390,12 +390,12 @@ export default function Budgets() {
                   
                   <button
                     onClick={() => navigate('/gastos')}
-                    className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[18px] p-2.5 border-0 hover:from-white/90 hover:to-white/70 hover:scale-105 hover:shadow-md active:scale-95 transition-all duration-300 w-full cursor-pointer shadow-sm"
+                    className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[16px] p-2 border-0 hover:from-white/90 hover:to-white/70 hover:scale-105 hover:shadow-md active:scale-95 transition-all duration-300 w-full cursor-pointer shadow-sm"
                   >
-                    <div className="flex flex-col items-center gap-1 text-center">
-                      <TrendingUp className="h-4 w-4 text-destructive transition-transform duration-300 group-hover:scale-110" />
-                      <span className="text-[10px] text-muted-foreground font-medium">Gastado</span>
-                      <p className="text-base font-bold text-destructive">
+                    <div className="flex flex-col items-center gap-0.5 text-center">
+                      <TrendingUp className="h-3.5 w-3.5 text-destructive transition-transform duration-300 group-hover:scale-110" />
+                      <span className="text-[9px] text-muted-foreground font-medium">Gastado</span>
+                      <p className="text-sm font-bold text-destructive">
                         ${(Object.values(currentExpenses).reduce((sum, val) => sum + val, 0) / 1000).toFixed(0)}k
                       </p>
                     </div>
@@ -403,12 +403,12 @@ export default function Budgets() {
                 </div>
 
                 {/* Disponible para gastar */}
-                <div className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[18px] p-2.5 border-0 text-center shadow-sm animate-fade-in">
-                  <span className="text-[10px] text-muted-foreground font-medium tracking-wide">Disponible</span>
-                  <p className={`text-lg font-bold mt-0.5 mb-0.5 transition-all duration-300 ${remainingBudget >= 0 ? 'text-success' : 'text-destructive'}`}>
+                <div className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[16px] p-2 border-0 text-center shadow-sm animate-fade-in">
+                  <span className="text-[9px] text-muted-foreground font-medium tracking-wide">Disponible</span>
+                  <p className={`text-base font-bold mt-0.5 mb-0.5 transition-all duration-300 ${remainingBudget >= 0 ? 'text-success' : 'text-destructive'}`}>
                     ${Math.abs(remainingBudget).toLocaleString()}
                   </p>
-                  <p className="text-[10px] text-muted-foreground">
+                  <p className="text-[9px] text-muted-foreground">
                     {remainingBudget >= 0 ? 'para gastar' : 'sobre presupuesto'}
                   </p>
                 </div>
