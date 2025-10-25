@@ -284,29 +284,57 @@ const ChallengeCard = ({
       badgeText: 'text-blue-600',
       overlay: 'bg-blue-400',
     };
-    if (progress >= 80) return {
-      bg: 'bg-emerald-600',
-      gradient: 'from-emerald-500 to-emerald-600',
-      ring: 'ring-emerald-600',
-      badge: 'bg-white',
-      badgeText: 'text-emerald-600',
-      overlay: 'bg-emerald-400',
-    };
-    if (progress >= 50) return {
-      bg: 'bg-yellow-500',
-      gradient: 'from-yellow-400 to-yellow-500',
-      ring: 'ring-yellow-500',
-      badge: 'bg-white',
-      badgeText: 'text-yellow-600',
-      overlay: 'bg-yellow-300',
-    };
+    
+    // Colores diferentes según tipo de reto
+    if (challengeType === 'spending_limit') {
+      if (progress >= 80) return {
+        bg: 'bg-red-600',
+        gradient: 'from-red-500 to-red-600',
+        ring: 'ring-red-600',
+        badge: 'bg-white',
+        badgeText: 'text-red-600',
+        overlay: 'bg-red-400',
+      };
+      return {
+        bg: 'bg-emerald-600',
+        gradient: 'from-emerald-500 to-emerald-600',
+        ring: 'ring-emerald-600',
+        badge: 'bg-white',
+        badgeText: 'text-emerald-600',
+        overlay: 'bg-emerald-400',
+      };
+    }
+    
+    if (challengeType === 'days_without') {
+      return {
+        bg: 'bg-purple-600',
+        gradient: 'from-purple-500 to-purple-600',
+        ring: 'ring-purple-600',
+        badge: 'bg-white',
+        badgeText: 'text-purple-600',
+        overlay: 'bg-purple-400',
+      };
+    }
+    
+    if (challengeType === 'daily_budget') {
+      return {
+        bg: 'bg-orange-600',
+        gradient: 'from-orange-500 to-orange-600',
+        ring: 'ring-orange-600',
+        badge: 'bg-white',
+        badgeText: 'text-orange-600',
+        overlay: 'bg-orange-400',
+      };
+    }
+    
+    // savings_goal
     return {
-      bg: 'bg-orange-500',
-      gradient: 'from-orange-400 to-orange-500',
-      ring: 'ring-orange-500',
+      bg: 'bg-cyan-600',
+      gradient: 'from-cyan-500 to-cyan-600',
+      ring: 'ring-cyan-600',
       badge: 'bg-white',
-      badgeText: 'text-orange-600',
-      overlay: 'bg-orange-300',
+      badgeText: 'text-cyan-600',
+      overlay: 'bg-cyan-400',
     };
   };
 
@@ -453,12 +481,45 @@ const ChallengeCard = ({
         >
           <div className={`absolute inset-0 opacity-30 ${colors.overlay}`} />
           
-          <div className="relative z-10 flex flex-col items-center justify-center p-3">
-            <div className={`w-12 h-12 rounded-full ${colors.badge} flex items-center justify-center mb-2 shadow-lg`}>
-              <span className={`text-sm font-bold ${colors.badgeText}`}>
-                {Math.round(progress)}%
-              </span>
-            </div>
+            <div className="relative z-10 flex flex-col items-center justify-center p-3">
+            {/* Diferentes visualizaciones según tipo */}
+            {challengeType === 'spending_limit' && (
+              <div className="flex flex-col items-center">
+                <div className="relative w-8 h-20 bg-white/30 rounded-full overflow-hidden mb-1">
+                  <div 
+                    className="absolute bottom-0 left-0 right-0 bg-white transition-all"
+                    style={{ height: `${Math.min(100, progress)}%` }}
+                  />
+                </div>
+                <span className={`text-[10px] font-bold text-white`}>
+                  {Math.round(progress)}%
+                </span>
+              </div>
+            )}
+            
+            {challengeType === 'days_without' && (
+              <div className={`w-12 h-12 rounded-full ${colors.badge} flex items-center justify-center mb-2 shadow-lg`}>
+                <span className={`text-sm font-bold ${colors.badgeText}`}>
+                  {daysStatus.filter(d => d.completed === true).length}/{challenge.daily_goal || 5}
+                </span>
+              </div>
+            )}
+            
+            {challengeType === 'daily_budget' && (
+              <div className={`w-12 h-12 rounded-full ${colors.badge} flex items-center justify-center mb-2 shadow-lg`}>
+                <span className={`text-xs font-bold ${colors.badgeText}`}>
+                  {daysStatus.filter(d => d.completed === true).length}/7
+                </span>
+              </div>
+            )}
+            
+            {challengeType === 'savings_goal' && (
+              <div className={`w-12 h-12 rounded-full ${colors.badge} flex items-center justify-center mb-2 shadow-lg`}>
+                <span className={`text-sm font-bold ${colors.badgeText}`}>
+                  {Math.round(progress)}%
+                </span>
+              </div>
+            )}
             
             <motion.p className="text-white text-xs md:text-sm font-bold text-center mt-1 line-clamp-2">
               {challenge.title}

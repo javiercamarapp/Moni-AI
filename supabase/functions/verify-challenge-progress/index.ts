@@ -169,11 +169,11 @@ async function verifyChallenge(supabase: any, challenge: Challenge) {
         const dailyTarget = challenge.target_amount / 7;
         wasCompleted = daySpending <= dailyTarget;
         console.log(`🎯 Tipo: daily_budget | Meta: $${dailyTarget.toFixed(2)} | Gasto: $${daySpending.toFixed(2)} | Cumplido: ${wasCompleted}`);
-      } else {
-        // Para "spending_limit": se verifica al final de la semana
+      } else if (challengeType === 'spending_limit' || challengeType === 'savings_goal') {
+        // Para "spending_limit" y "savings_goal": se verifica al final de la semana
         // Día por día solo acumulamos el gasto
         wasCompleted = null; // No se verifica día por día
-        console.log(`🎯 Tipo: spending_limit | Gasto acumulado: $${daySpending.toFixed(2)} (se verifica al final)`);
+        console.log(`🎯 Tipo: ${challengeType} | Gasto acumulado: $${daySpending.toFixed(2)} (se verifica al final)`);
       }
 
       // Update day status - create new object

@@ -163,32 +163,35 @@ ${categoriesForChallenges.map(cat => {
   • ${status}`;
 }).join('\n\n')}
 
-TIPOS DE RETOS (USA VARIEDAD):
+TIPOS DE RETOS (VARÍA LA DISTRIBUCIÓN):
 
-🎯 TIPO 1 - "spending_limit" (Límite semanal con barra de progreso):
-   - Ej: "Gasta máximo $1,500 esta semana en el super" 
+🎯 TIPO 1 - "spending_limit" (Límite semanal con barra VERTICAL):
+   - Ej: "Gasta máximo $1,500 esta semana en super" 
    - Meta: 25% menos del presupuesto semanal
-   - Se muestra barra de progreso de cuánto has gastado
+   - Visual: BARRA VERTICAL que crece de abajo hacia arriba
 
 📅 TIPO 2 - "days_without" (Completar X días sin gastar):
-   - Ej: "No compres café de cafetería 5 días esta semana"
-   - Ej: "Prepara tu comida en casa 6 de 7 días"
-   - Daily goal: número de días a completar (4-6 días de 7)
-   - Se muestra calendario con palomitas por día
+   - Ej: "No compres café 5 días esta semana"
+   - Daily goal: 4-6 días de 7
+   - Visual: CONTADOR X/5 días
 
-💰 TIPO 3 - "daily_budget" (Presupuesto diario):
+💰 TIPO 3 - "daily_budget" (Presupuesto diario estricto):
    - Ej: "Gasta máximo $200 diarios en transporte"
-   - Target: presupuesto semanal dividido entre 7
-   - Se verifica día por día con calendario
+   - Target: presupuesto semanal * 0.75
+   - Visual: DÍAS CUMPLIDOS/7
 
-REGLAS:
-- Genera 12 retos: 4 de tipo "spending_limit", 4 de tipo "days_without", 4 de tipo "daily_budget"
-- TODOS buscan que el usuario AHORRE más de su presupuesto actual
-- Para "spending_limit": target_amount = presupuesto semanal * 0.75 (25% menos)
-- Para "days_without": daily_goal = 4-6 días, target irrelevante
-- Para "daily_budget": target_amount = presupuesto semanal, se divide entre 7 días
-- Sé creativo con los títulos y descripciones motivadoras
-- Tips concretos de cómo lograrlo`;
+🎨 TIPO 4 - "savings_goal" (Meta de ahorro):
+   - Ej: "Ahorra $500 esta semana"
+   - Target: 25% del presupuesto
+   - Visual: PORCENTAJE circular
+
+REGLAS CRÍTICAS:
+- Genera 12 retos VARIADOS: 3 "spending_limit", 3 "days_without", 3 "daily_budget", 3 "savings_goal"
+- Para "spending_limit": target_amount = presupuesto semanal * 0.75
+- Para "days_without": daily_goal = 4-6, target_amount = 0
+- Para "daily_budget": target_amount = presupuesto semanal * 0.75
+- Para "savings_goal": target_amount = presupuesto semanal * 0.25
+- Títulos motivadores y tips prácticos`;
 
     console.log('🤖 Llamando a Lovable AI para generar retos...');
 
@@ -228,8 +231,8 @@ REGLAS:
                       category: { type: "string", description: "Categoría de gasto" },
                       challenge_type: { 
                         type: "string", 
-                        enum: ["spending_limit", "days_without", "daily_budget"],
-                        description: "Tipo de reto: spending_limit (barra progreso), days_without (días sin gastar), daily_budget (presupuesto diario)" 
+                        enum: ["spending_limit", "days_without", "daily_budget", "savings_goal"],
+                        description: "VARÍA LOS TIPOS: spending_limit (barra), days_without (calendario), daily_budget (diario), savings_goal (ahorro)" 
                       },
                       weekly_target: { type: "number", description: "Meta de gasto semanal en pesos" },
                       daily_goal: { type: "number", description: "Solo para days_without: número de días a completar (4-6)" }
