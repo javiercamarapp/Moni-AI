@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Pencil, AlertCircle, TrendingUp, Target } from "lucide-react";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
+import { LoadingScreen } from "@/components/LoadingScreen";
 
 interface Budget {
   id: string;
@@ -312,11 +313,7 @@ export default function Budgets() {
   const savingsPercentage = monthlyIncome > 0 ? ((monthlyIncome - totalBudget) / monthlyIncome) * 100 : 0;
 
   if (loading) {
-    return (
-      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
