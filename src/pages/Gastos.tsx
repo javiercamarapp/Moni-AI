@@ -358,31 +358,31 @@ const Gastos = () => {
               <p className="text-xs text-gray-500">Gestiona tus salidas</p>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
           <Button
             size="icon"
             onClick={handleWhatsAppRegister}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10"
+            className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-8 w-8"
           >
-            <img src={whatsappLogo} alt="WhatsApp" className="w-5 h-5 object-contain" />
+            <img src={whatsappLogo} alt="WhatsApp" className="w-4 h-4 object-contain" />
           </Button>
 
           <Button
             size="icon"
             onClick={handleCameraCapture}
             disabled={isProcessingReceipt}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10 disabled:opacity-50"
+            className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-8 w-8 disabled:opacity-50"
           >
-            <Camera className="h-5 w-5 text-foreground" />
+            <Camera className="h-4 w-4 text-gray-700" />
           </Button>
           
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
             <DialogTrigger asChild>
               <Button
                 size="icon"
-                className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-8 w-8"
+                className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-8 w-8"
               >
-                <Plus className="h-4 w-4 text-foreground" />
+                <Plus className="h-4 w-4 text-gray-700" />
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100 max-h-[85vh] overflow-y-auto max-w-md w-[90%] animate-fade-in">
@@ -534,9 +534,9 @@ const Gastos = () => {
           <Button
             size="icon"
             onClick={() => navigate('/categorias')}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-8 w-8"
+            className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-8 w-8"
           >
-            <Sliders className="h-4 w-4 text-foreground" />
+            <Sliders className="h-4 w-4 text-gray-700" />
           </Button>
         </div>
           </div>
