@@ -102,10 +102,10 @@ interface ScorePopupProps {
 
 export function ScorePopup({ show, scoreChange, onComplete }: ScorePopupProps) {
   useEffect(() => {
-    if (show && scoreChange > 0) {
+    if (show && scoreChange !== 0) {
       const timer = setTimeout(() => {
         onComplete?.();
-      }, 2000);
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, [show, scoreChange, onComplete]);
@@ -115,58 +115,54 @@ export function ScorePopup({ show, scoreChange, onComplete }: ScorePopupProps) {
   const isPositive = scoreChange > 0;
 
   return (
-    <AnimatePresence>
-      <motion.div
-        className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
+    <div className="fixed top-4 right-4 z-50 pointer-events-none">
+      <AnimatePresence>
         <motion.div
           className={`
-            px-8 py-4 rounded-[20px] shadow-2xl border-2
+            px-4 py-2.5 rounded-[16px] shadow-xl border-2
             ${isPositive 
               ? 'bg-gradient-to-br from-emerald-500 to-green-600 border-emerald-300' 
               : 'bg-gradient-to-br from-red-500 to-orange-600 border-red-300'
             }
           `}
-          initial={{ scale: 0, y: 20 }}
+          initial={{ opacity: 0, x: 100, y: -20 }}
           animate={{ 
-            scale: [0, 1.2, 1],
-            y: [20, -10, 0],
+            opacity: 1,
+            x: 0,
+            y: 0,
           }}
-          exit={{ scale: 0, opacity: 0 }}
+          exit={{ opacity: 0, x: 100 }}
           transition={{
-            duration: 0.5,
+            duration: 0.4,
             ease: [0.34, 1.56, 0.64, 1]
           }}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <motion.div
-              className="text-4xl"
+              className="text-2xl"
               animate={{ 
                 rotate: [0, -10, 10, -10, 0],
-                scale: [1, 1.2, 1]
+                scale: [1, 1.15, 1]
               }}
               transition={{
-                duration: 0.6,
-                repeat: 2,
+                duration: 0.5,
+                repeat: 1,
               }}
             >
               {isPositive ? '🎉' : '📉'}
             </motion.div>
             <div className="text-white">
-              <p className="text-sm font-medium">
-                {isPositive ? '¡Score Moni subió!' : 'Score Moni bajó'}
+              <p className="text-xs font-medium">
+                {isPositive ? 'Score Moni' : 'Score Moni'}
               </p>
-              <p className="text-2xl font-bold">
+              <p className="text-lg font-bold">
                 {isPositive ? '+' : ''}{scoreChange} pts
               </p>
             </div>
           </div>
         </motion.div>
-      </motion.div>
-    </AnimatePresence>
+      </AnimatePresence>
+    </div>
   );
 }
 

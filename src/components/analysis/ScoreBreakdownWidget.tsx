@@ -23,13 +23,19 @@ interface ScoreBreakdownProps {
 
 export default function ScoreBreakdownWidget({ components, scoreMoni, changeReason, previousScore, loadingReason }: ScoreBreakdownProps) {
   const [showCelebration, setShowCelebration] = useState(false);
+  const [hasShownCelebration, setHasShownCelebration] = useState(false);
   const scoreChange = previousScore ? scoreMoni - previousScore : 0;
 
   useEffect(() => {
-    if (Math.abs(scoreChange) >= 5) {
+    // Solo mostrar si el cambio es >= 5 puntos y no se ha mostrado antes
+    if (Math.abs(scoreChange) >= 5 && !hasShownCelebration) {
       setShowCelebration(true);
+      setHasShownCelebration(true);
+      
+      // Guardar en localStorage que ya se mostró para este cambio
+      localStorage.setItem(`score_celebration_${scoreMoni}`, 'shown');
     }
-  }, [scoreChange]);
+  }, [scoreChange, scoreMoni, hasShownCelebration]);
 
   const radarData = [
     { 
