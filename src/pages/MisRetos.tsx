@@ -84,10 +84,10 @@ export default function MisRetos() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      toast.info('🤖 Moni AI está analizando tus transacciones...');
+      toast.info('🤖 Moni AI está analizando tus 12 categorías...');
 
       const { data, error } = await supabase.functions.invoke('generate-challenges', {
-        body: { userId: user.id }
+        body: { userId: user.id, count: 12 } // Generate 12 challenges
       });
 
       if (error) throw error;
@@ -185,10 +185,10 @@ export default function MisRetos() {
           <div>
             <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-purple-600" />
-              Retos recomendados AI
+              Retos recomendados AI (12 categorías)
             </h2>
             <RetroCarousel 
-              items={challenges.filter(c => c.status === 'pending').slice(0, 3).map((challenge, index) => (
+              items={challenges.filter(c => c.status === 'pending').slice(0, 12).map((challenge, index) => (
                 <ChallengeCard
                   key={challenge.id}
                   challenge={challenge}

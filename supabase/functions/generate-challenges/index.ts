@@ -27,10 +27,10 @@ serve(async (req) => {
       });
     }
 
-    // Get how many challenges to generate and userId (default: 2)
-    const { count = 2, userId } = await req.json().catch(() => ({ count: 2, userId: null }));
+    // Get how many challenges to generate and userId (default: 12 for all categories)
+    const { count = 12, userId } = await req.json().catch(() => ({ count: 12, userId: null }));
 
-    console.log('🎯 Generando retos para usuario:', user.id, 'Count:', count);
+    console.log('🎯 Generando 12 retos (uno por categoría) para usuario:', user.id);
 
     // Get user's budgets by category
     const { data: budgets } = await supabase
@@ -39,6 +39,16 @@ serve(async (req) => {
       .eq("user_id", user.id);
 
     console.log('💰 Presupuestos encontrados:', budgets?.length || 0);
+
+    // Get all user categories
+    const { data: allCategories } = await supabase
+      .from("categories")
+      .select("id, name")
+      .eq("user_id", user.id)
+      .eq("type", "gasto")
+      .order("name");
+
+    console.log('📁 Categorías de gasto:', allCategories?.length || 0);
 
     // Get user's recent transactions (last month for analysis)
     const oneMonthAgo = new Date();
@@ -74,6 +84,20 @@ serve(async (req) => {
       exceedsBy: number;
     }> = {};
     
+    // Initialize all categories
+    allCategories?.forEach(cat => {
+      const budget = budgets?.find(b => b.categories?.name === cat.name);
+      const monthlyBudget = budget?.monthly_budget || 0;
+      categoryAnalysis[cat.name] = {
+        categoryName: cat.name,
+        dailySpend: 0,
+        weeklySpend: 0,
+        monthlyBudget,
+        transactionCount: 0,
+        exceedsBy: 0
+      };
+    });
+    
     transactions.forEach(t => {
       const catName = t.categories?.name || "Otros";
       if (!categoryAnalysis[catName]) {
@@ -102,58 +126,64 @@ serve(async (req) => {
       }
     });
 
-    // Prioritize categories with budgets that are being exceeded or have high spending
+    // Get ALL categories for 12 challenges
     const categoriesForChallenges = Object.values(categoryAnalysis)
-      .filter(cat => cat.monthlyBudget > 0 || cat.weeklySpend > 100) // Has budget or significant spending
-      .sort((a, b) => b.exceedsBy - a.exceedsBy) // Most exceeded first
-      .slice(0, Math.max(count, 5)); // Get top categories
+      .sort((a, b) => {
+        // Prioritize: categories with spending > categories with budgets > rest
+        if (b.transactionCount !== a.transactionCount) {
+          return b.transactionCount - a.transactionCount;
+        }
+        return b.exceedsBy - a.exceedsBy;
+      })
+      .slice(0, 12); // Always generate 12 challenges
 
-    console.log('📊 Categorías para análisis:', categoriesForChallenges.length);
+    console.log('📊 Generando 12 retos para categorías:', categoriesForChallenges.map(c => c.categoryName).join(', '));
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Generate challenges using AI - enfocados en gastos hormiga y presupuesto
-    const prompt = `Analiza el presupuesto mensual vs gasto real de este usuario y genera ${count} retos semanales para REDUCIR GASTOS HORMIGA:
+    // Generate challenges using AI - 12 retos, uno por categoría
+    const prompt = `Genera EXACTAMENTE 12 retos semanales, UNO POR CADA CATEGORÍA de gasto, analizando presupuesto vs gasto real:
 
-ANÁLISIS DE CATEGORÍAS:
+ANÁLISIS DE LAS 12 CATEGORÍAS:
 ${categoriesForChallenges.map(cat => {
-  const status = cat.exceedsBy > 0 ? `⚠️ EXCEDE presupuesto por $${cat.exceedsBy.toFixed(2)}` : 
+  const status = cat.transactionCount === 0 ? `Sin transacciones` :
+                 cat.exceedsBy > 0 ? `⚠️ EXCEDE presupuesto por $${cat.exceedsBy.toFixed(2)}` : 
                  cat.monthlyBudget > 0 ? `✅ Dentro de presupuesto` : 
                  `Sin presupuesto definido`;
-  return `- ${cat.categoryName}:
+  return `${cat.categoryName}:
   • Presupuesto mensual: $${cat.monthlyBudget.toFixed(2)}
-  • Gasto diario promedio: $${cat.dailySpend.toFixed(2)}
-  • Gasto semanal promedio: $${cat.weeklySpend.toFixed(2)}
-  • ${cat.transactionCount} transacciones (último mes)
-  • Estado: ${status}`;
+  • Gasto diario: $${cat.dailySpend.toFixed(2)}
+  • Gasto semanal: $${cat.weeklySpend.toFixed(2)}
+  • ${cat.transactionCount} transacciones
+  • ${status}`;
 }).join('\n\n')}
 
-ENFÓCATE EN ESTOS TIPOS DE RETOS ESPECÍFICOS:
-1. 🏪 **OXXO/Tienditas**: "Semana sin OXXO" - llevar lunch/snacks de casa
-2. 🍕 **Deliverys**: "Cero deliverys esta semana" - cocinar en casa
-3. ☕ **Cafés/Antojos**: "Mi café de casa" - eliminar cafés comprados
-4. 💸 **Gastos hormiga**: "Detector de gastos hormiga" - revisar cada gasto diario
-5. 🎮 **Apps/Suscripciones**: "Auditoría digital" - cancelar suscripciones no usadas
-6. 🚗 **Transporte**: "Ruta inteligente" - combinar viajes, usar transporte público
-7. 🍔 **Comida fuera**: "Chef casero" - máximo X comidas fuera por semana
-8. 🛒 **Supermercado**: "Lista inteligente" - no comprar por impulso
-9. 🎬 **Entretenimiento**: "Entretenimiento gratis" - usar opciones sin costo
-10. 👕 **Ropa**: "Armario creativo" - combinar lo que ya tienes
-11. 💡 **Servicios**: "Ahorro energético" - reducir consumo
-12. 🎁 **Otros**: "Gasto consciente" - cuestionar cada compra
+GENERA UN RETO ESPECÍFICO PARA CADA CATEGORÍA (12 TOTAL):
 
-REGLAS IMPORTANTES:
-- Prioriza categorías que EXCEDEN su presupuesto
-- Usa el gasto DIARIO/SEMANAL real para calcular metas realistas
-- Meta semanal = reducir 30-50% del gasto semanal actual
-- Incluye tips PRÁCTICOS y ACCIONABLES
-- Lenguaje motivador tipo "desafío" o "misión"
-- Menciona cuánto AHORRARÁN si cumplen el reto
+1. 🏠 **Vivienda**: Reducir servicios (agua, luz, gas)
+2. 🚗 **Transporte**: Combinar viajes, transporte público
+3. 🍽️ **Alimentación**: Cocinar en casa, meal prep
+4. 🧾 **Servicios/Suscripciones**: Cancelar no usadas
+5. 🩺 **Salud**: Prevención, genéricos
+6. 🎓 **Educación**: Recursos gratuitos online
+7. 💳 **Deudas**: Plan de pago acelerado
+8. 🎉 **Entretenimiento**: Opciones gratuitas
+9. 💸 **Ahorro**: Automatizar ahorro
+10. 🤝 **Apoyos**: Revisar necesidad real
+11. 🐾 **Mascotas**: Compras inteligentes
+12. ❓ **No identificados**: Categorizar y reducir
 
-Formato JSON: título motivador, descripción con tips específicos, categoría, y meta de gasto semanal en pesos.`;
+REGLAS CRÍTICAS:
+- Genera EXACTAMENTE 12 retos (uno por categoría)
+- Si una categoría no tiene gastos, igual genera un reto preventivo
+- Meta semanal = 30-50% menos del gasto actual (o $50-200 si no hay gastos)
+- Tips PRÁCTICOS específicos de la categoría
+- Lenguaje motivador tipo "misión" o "desafío"
+
+FORMATO: título motivador, descripción con 2-3 tips accionables, categoría exacta, meta semanal en pesos.`;
 
     console.log('🤖 Llamando a Lovable AI para generar retos...');
 
@@ -228,9 +258,9 @@ Formato JSON: título motivador, descripción con tips específicos, categoría,
       throw new Error("No se pudo generar retos");
     }
 
-    const generatedChallenges = JSON.parse(toolCall.function.arguments).challenges.slice(0, count);
+    const generatedChallenges = JSON.parse(toolCall.function.arguments).challenges.slice(0, 12); // Always 12
 
-    console.log('✨ Retos generados:', generatedChallenges.length);
+    console.log('✨ Retos generados:', generatedChallenges.length, 'retos');
 
     // Create challenge records
     const now = new Date();
