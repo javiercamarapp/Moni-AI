@@ -361,6 +361,25 @@ export default function Budgets() {
           </Button>
         </div>
 
+        {/* Botón temporal para forzar recategorización */}
+        <Card className="p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-[20px] shadow-xl border border-amber-200">
+          <div className="flex items-center gap-3">
+            <div className="text-2xl">🤖</div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-foreground">Recategorizar transacciones</p>
+              <p className="text-xs text-muted-foreground">Categoriza automáticamente tus gastos</p>
+            </div>
+            <Button
+              onClick={handleRecategorize}
+              disabled={isRecategorizing}
+              className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-[15px] shadow-lg hover:scale-105 active:scale-95 transition-all"
+              size="sm"
+            >
+              {isRecategorizing ? "Procesando..." : "Categorizar"}
+            </Button>
+          </div>
+        </Card>
+
         {budgets.length === 0 ? (
           <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center animate-fade-in hover:scale-[1.02] active:scale-[0.98] transition-all">
             <div className="text-5xl mb-4 animate-pulse">📊</div>
@@ -472,7 +491,10 @@ export default function Budgets() {
                       key={budget.id} 
                       className="p-3 bg-white rounded-[15px] shadow-lg border border-blue-100 hover:scale-105 active:scale-95 transition-all animate-fade-in cursor-pointer"
                       style={{ animationDelay: `${index * 0.1}s` }}
-                      onClick={() => navigate(`/category-expenses?category=${budget.category_id}&name=${encodeURIComponent(budget.category.name)}`)}
+                      onClick={() => {
+                        console.log('Navegando a categoría:', budget.category_id, budget.category.name);
+                        navigate(`/category-expenses?category=${budget.category.name}`);
+                      }}
                     >
                       <div className="space-y-2">
                         <div className="text-center">

@@ -47,19 +47,14 @@ serve(async (req) => {
       );
     }
 
-    // Obtener transacciones del mes actual que están en "Gastos no identificados"
-    const currentDate = new Date();
-    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-
+    // Obtener transacciones sin categoría o con "Gastos no identificados"
     const { data: transactions, error: txError } = await supabase
       .from('transactions')
       .select('id, description, amount')
       .eq('user_id', user.id)
-      .eq('category_id', unidentifiedCategory.id)
       .eq('type', 'gasto')
-      .gte('transaction_date', firstDayOfMonth.toISOString().split('T')[0])
-      .lte('transaction_date', lastDayOfMonth.toISOString().split('T')[0]);
+      .or(`category_id.is.null,category_id.eq.${unidentifiedCategory.id}`)
+      .order('transaction_date', { ascending: false });
 
     if (txError) throw txError;
 

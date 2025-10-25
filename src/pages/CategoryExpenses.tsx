@@ -101,39 +101,58 @@ const CategoryExpenses = () => {
       const startDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
       const endDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
 
-      // Obtener presupuesto configurado primero
+      // Buscar la categoría principal por nombre
+      const { data: mainCategory } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('name', categoryName)
+        .is('parent_id', null)
+        .maybeSingle();
+
+      if (!mainCategory) {
+        console.log('Categoría no encontrada:', categoryName);
+        setTransactions([]);
+        setLoading(false);
+        return;
+      }
+
+      // Obtener presupuesto configurado
       const { data: budgetData } = await supabase
         .from('category_budgets')
-        .select('*, categories!inner(id, name)')
+        .select('monthly_budget')
         .eq('user_id', user.id)
-        .eq('categories.name', categoryName)
+        .eq('category_id', mainCategory.id)
         .maybeSingle();
 
       if (budgetData) {
         setBudget(Number(budgetData.monthly_budget));
       }
 
-      // Obtener IDs de categorías que pertenecen a esta categoría de presupuesto
-      const categoryIds = Object.entries(categoryMapping)
-        .filter(([_, budgetCat]) => budgetCat === categoryName)
-        .map(([specificCat, _]) => specificCat);
+      // Obtener todas las subcategorías de esta categoría principal
+      const { data: subCategories } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('parent_id', mainCategory.id);
 
-      // Si la categoría de presupuesto no está en el mapeo, usar el nombre directo
-      if (categoryIds.length === 0) {
-        categoryIds.push(categoryName);
-      }
+      // IDs de categorías a buscar: la principal + todas sus subcategorías
+      const categoryIdsToSearch = [mainCategory.id, ...(subCategories || []).map(c => c.id)];
 
-      // Obtener transacciones filtradas en el servidor
+      console.log('Buscando transacciones para categorías:', categoryIdsToSearch);
+
+      // Obtener transacciones de la categoría principal y sus subcategorías
       const { data: transactionsData } = await supabase
         .from('transactions')
-        .select('*, categories!inner(name, color)')
+        .select('*, categories(name, color, parent_id)')
         .eq('user_id', user.id)
         .eq('type', 'gasto')
-        .in('categories.name', categoryIds)
+        .in('category_id', categoryIdsToSearch)
         .gte('transaction_date', startDate.toISOString().split('T')[0])
         .lte('transaction_date', endDate.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
 
+      console.log('Transacciones encontradas:', transactionsData?.length || 0);
       setTransactions(transactionsData || []);
 
     } catch (error) {
