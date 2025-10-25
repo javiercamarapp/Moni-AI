@@ -1731,7 +1731,8 @@ const Dashboard = () => {
                 <div className="grid grid-cols-2 gap-3">
                   {challenges.slice(0, 2).map((challenge, index) => {
                     const progress = (challenge.current_amount / challenge.target_amount) * 100;
-                    const daysStatus = JSON.parse(challenge.days_status || '[]');
+                    // days_status already comes parsed from Supabase (JSONB type)
+                    const daysStatus = Array.isArray(challenge.days_status) ? challenge.days_status : [];
                     const dayNames = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
                     
                     const gradients = [
