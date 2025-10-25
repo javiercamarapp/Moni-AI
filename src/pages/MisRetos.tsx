@@ -123,7 +123,7 @@ export default function MisRetos() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+      <div className="px-4 py-6 space-y-6">
         {/* Generar Nuevos Retos */}
         <Card className="p-6 bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-2 border-purple-200/50">
           <div className="flex items-center justify-between mb-4">
