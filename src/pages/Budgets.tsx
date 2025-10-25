@@ -303,8 +303,12 @@ export default function Budgets() {
   };
 
   const percentageOfIncome = monthlyIncome > 0 ? (totalBudget / monthlyIncome) * 100 : 0;
-  const remainingBudget = totalBudget - Object.values(currentExpenses).reduce((sum, val) => sum + val, 0);
+  const totalSpent = Object.values(currentExpenses).reduce((sum, val) => sum + val, 0);
+  const remainingBudget = totalBudget - totalSpent;
   const savingsPercentage = monthlyIncome > 0 ? ((monthlyIncome - totalBudget) / monthlyIncome) * 100 : 0;
+  const totalPercentUsed = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
+  const isTotalWarning = totalPercentUsed >= 80;
+  const isTotalCritical = totalPercentUsed >= 100;
 
   if (loading) {
     return (
@@ -356,10 +360,14 @@ export default function Budgets() {
         ) : (
           <>
             {/* Resumen General */}
-            <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] active:scale-[0.98] transition-all animate-fade-in">
+            <Card className={`p-2 bg-white rounded-[20px] shadow-xl border-2 hover:scale-[1.02] active:scale-[0.98] transition-all animate-fade-in ${
+              isTotalCritical ? 'border-destructive/60 bg-destructive/5' :
+              isTotalWarning ? 'border-yellow-500/60 bg-yellow-50/50' :
+              'border-success/60 bg-success/5'
+            }`}>
               <div className="space-y-1">
                 <div className="text-center">
-                  <div className="text-sm">💰</div>
+                  <div className="text-sm">{isTotalCritical ? '🚨' : isTotalWarning ? '⚠️' : '💰'}</div>
                   <p className="text-[9px] font-bold text-foreground">Resumen del Mes</p>
                 </div>
 
