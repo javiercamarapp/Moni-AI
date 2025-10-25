@@ -34,7 +34,7 @@ import Budgets from "./pages/Budgets";
 import EditBudgets from "./pages/EditBudgets";
 import BudgetQuiz from "./pages/BudgetQuiz";
 import Movimientos from "./pages/Movimientos";
-import EditAssetsLiabilities from "./pages/EditAssetsLiabilities";
+import EditNetWorth from "./pages/EditNetWorth";
 
 import Subscriptions from "./pages/Subscriptions";
 import DailyExpenses from './pages/DailyExpenses';
@@ -98,7 +98,7 @@ function App() {
           <Route path="/category-expenses" element={<CategoryExpenses />} />
           <Route path="/gestionar-categorias" element={<GestionarCategorias />} />
           <Route path="/movimientos" element={<Movimientos />} />
-          <Route path="/edit-assets-liabilities" element={<EditAssetsLiabilities />} />
+          <Route path="/edit-assets-liabilities" element={<EditNetWorth />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
