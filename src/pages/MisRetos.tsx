@@ -185,7 +185,7 @@ export default function MisRetos() {
           <div>
             <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-purple-600" />
-              Retos recomendados AI (12 categorías)
+              Retos recomendados AI
             </h2>
             <RetroCarousel 
               items={challenges.filter(c => c.status === 'pending').slice(0, 12).map((challenge, index) => (
