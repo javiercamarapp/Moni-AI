@@ -430,26 +430,26 @@ const ChallengeCard = ({
         }}
       >
         <div
-          className={`${index % 2 === 0 ? "rotate-1" : "-rotate-1"} rounded-3xl bg-gradient-to-br ${colors.gradient} h-[400px] md:h-[450px] w-72 md:w-80 overflow-hidden flex flex-col items-center justify-center relative z-10 shadow-2xl border-4 ${colors.ring}`}
+          className={`${index % 2 === 0 ? "rotate-1" : "-rotate-1"} rounded-2xl bg-gradient-to-br ${colors.gradient} h-[200px] md:h-[225px] w-36 md:w-40 overflow-hidden flex flex-col items-center justify-center relative z-10 shadow-xl border-2 ${colors.ring}`}
         >
           <div className={`absolute inset-0 opacity-30 ${colors.overlay}`} />
           
-          <div className="relative z-10 flex flex-col items-center justify-center p-6">
-            <div className={`w-24 h-24 rounded-full ${colors.badge} flex items-center justify-center mb-4 shadow-lg`}>
-              <span className={`text-3xl font-bold ${colors.badgeText}`}>
+          <div className="relative z-10 flex flex-col items-center justify-center p-3">
+            <div className={`w-12 h-12 rounded-full ${colors.badge} flex items-center justify-center mb-2 shadow-lg`}>
+              <span className={`text-lg font-bold ${colors.badgeText}`}>
                 {Math.round(progress)}%
               </span>
             </div>
             
-            <motion.p className="text-white text-xl md:text-2xl font-bold text-center mt-2">
+            <motion.p className="text-white text-xs md:text-sm font-bold text-center mt-1 line-clamp-2">
               {challenge.title}
             </motion.p>
             
-            <motion.p className="text-white text-lg font-semibold text-center mt-3">
+            <motion.p className="text-white text-[10px] md:text-xs font-semibold text-center mt-1">
               ${challenge.current_amount.toFixed(0)} / ${challenge.target_amount.toFixed(0)}
             </motion.p>
             
-            <div className="flex gap-1 mt-4 mb-2">
+            <div className="flex gap-0.5 mt-2 mb-1">
               {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
                 const dayStatus = daysStatus[dayIndex];
                 const isCompleted = dayStatus?.completed === true;
@@ -458,17 +458,17 @@ const ChallengeCard = ({
                 
                 return (
                   <div key={dayIndex} className="flex flex-col items-center">
-                    <span className={`text-[9px] text-white/80 mb-0.5 ${isCurrentDay ? 'font-bold' : ''}`}>
+                    <span className={`text-[7px] text-white/80 mb-0.5 ${isCurrentDay ? 'font-bold' : ''}`}>
                       {dayNames[dayIndex]}
                     </span>
                     <div 
-                      className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
+                      className={`w-3 h-3 rounded-full flex items-center justify-center text-[8px] font-bold ${
                         isCompleted 
                           ? 'bg-green-500 text-white' 
                           : isFailed 
                           ? 'bg-red-500 text-white'
                           : 'bg-white/30 text-white'
-                      } ${isCurrentDay ? 'ring-2 ring-white' : ''}`}
+                      } ${isCurrentDay ? 'ring-1 ring-white' : ''}`}
                     >
                       {isCompleted && '✓'}
                       {isFailed && '✗'}
@@ -479,13 +479,13 @@ const ChallengeCard = ({
             </div>
 
             {challenge.status === 'pending' && (
-              <Badge className="mt-4 bg-white/20 text-white border-white/30">
-                Sugerido para ti
+              <Badge className="mt-2 text-[8px] px-1 py-0 bg-white/20 text-white border-white/30">
+                Sugerido
               </Badge>
             )}
             
             {isLastDay && (
-              <Badge className="mt-4 bg-orange-500/30 text-white border-orange-200/30">
+              <Badge className="mt-2 text-[8px] px-1 py-0 bg-orange-500/30 text-white border-orange-200/30">
                 🔥 Último día
               </Badge>
             )}
