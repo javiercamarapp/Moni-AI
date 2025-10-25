@@ -21,7 +21,25 @@ interface CategoryBalance {
   percentage: number;
 }
 
-// Los grupos ahora se obtienen directamente de la base de datos usando parent_id
+// Colores vibrantes para categorías de gastos (gráfica de pie)
+const expenseCategoryColors: string[] = [
+  'hsl(0, 70%, 55%)',     // Rojo vibrante
+  'hsl(30, 75%, 55%)',    // Naranja
+  'hsl(45, 80%, 55%)',    // Amarillo dorado
+  'hsl(150, 60%, 45%)',   // Verde
+  'hsl(200, 70%, 50%)',   // Azul cielo
+  'hsl(260, 65%, 55%)',   // Púrpura
+  'hsl(340, 70%, 55%)',   // Rosa
+  'hsl(180, 60%, 45%)',   // Turquesa
+  'hsl(280, 60%, 50%)',   // Violeta
+  'hsl(20, 75%, 55%)',    // Naranja rojizo
+  'hsl(90, 55%, 45%)',    // Verde lima
+  'hsl(220, 65%, 55%)',   // Azul royal
+];
+
+const getExpenseCategoryColor = (index: number): string => {
+  return expenseCategoryColors[index % expenseCategoryColors.length];
+};
 
 // Colores metálicos oscuros para categorías de ingresos
 const incomeCategoryColors: string[] = ['hsl(210, 55%, 35%)',
@@ -471,10 +489,10 @@ const Balance = () => {
         }
       });
       
-      const gastosWithPercentage: CategoryBalance[] = Array.from(gastosGroupMap.entries()).map(([id, data]) => ({
+      const gastosWithPercentage: CategoryBalance[] = Array.from(gastosGroupMap.entries()).map(([id, data], index) => ({
         id,
         name: data.name,
-        color: data.color,
+        color: getExpenseCategoryColor(index), // Usar colores vibrantes para la gráfica
         total: data.total,
         percentage: totalGast > 0 ? data.total / totalGast * 100 : 0
       })).sort((a, b) => b.total - a.total);
