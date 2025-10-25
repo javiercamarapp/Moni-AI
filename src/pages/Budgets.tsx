@@ -328,7 +328,10 @@ export default function Budgets() {
 
                 {/* Métricas principales */}
                 <div className="grid grid-cols-2 gap-1.5">
-                  <div className="bg-white/10 backdrop-blur-sm rounded-[10px] p-1.5 border-2 border-white/20 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all">
+                  <button
+                    onClick={() => navigate('/edit-budgets')}
+                    className="bg-white/10 backdrop-blur-sm rounded-[10px] p-1.5 border-2 border-white/20 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all w-full cursor-pointer"
+                  >
                     <div className="flex flex-col items-center gap-0.5 text-center">
                       <Target className="h-3 w-3 text-primary" />
                       <span className="text-[7px] text-muted-foreground font-medium">Presupuestado</span>
@@ -336,7 +339,7 @@ export default function Budgets() {
                         ${(totalBudget / 1000).toFixed(0)}k
                       </p>
                     </div>
-                  </div>
+                  </button>
                   
                   <button
                     onClick={() => navigate('/gastos')}
