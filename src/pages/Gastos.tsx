@@ -281,7 +281,7 @@ const Gastos = () => {
         return;
       }
 
-      const { error } = await supabase
+      const { data: newTransaction, error } = await supabase
         .from('transactions')
         .insert({
           user_id: user.id,
@@ -293,9 +293,27 @@ const Gastos = () => {
           frequency: validationResult.data.frequency,
           transaction_date: validationResult.data.transaction_date,
           type: validationResult.data.type,
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
+
+      // Si no tiene categoría y es un gasto, categorizar automáticamente con IA
+      if (!validationResult.data.category_id && validationResult.data.type === 'gasto' && newTransaction) {
+        console.log('Categorizando automáticamente transacción:', newTransaction.id);
+        supabase.functions.invoke('categorize-transaction', {
+          body: {
+            transactionId: newTransaction.id,
+            userId: user.id,
+            description: validationResult.data.description,
+            amount: validationResult.data.amount,
+            type: validationResult.data.type
+          }
+        }).catch(error => {
+          console.error('Error categorizando transacción:', error);
+        });
+      }
 
       toast({
         title: "Gasto registrado",

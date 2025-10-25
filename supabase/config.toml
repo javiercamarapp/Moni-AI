@@ -7,10 +7,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.categorize-transaction]
-verify_jwt = true
-
-[functions.categorize-transactions]
-verify_jwt = true
+verify_jwt = false
 
 [functions.send-proactive-message]
 verify_jwt = true

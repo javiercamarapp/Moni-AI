@@ -27,7 +27,6 @@ export default function Budgets() {
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [totalBudget, setTotalBudget] = useState(0);
   const [currentExpenses, setCurrentExpenses] = useState<Record<string, number>>({});
-  const [categorizingAI, setCategorizingAI] = useState(false);
 
   useEffect(() => {
     checkBudgetQuizStatus();
@@ -218,26 +217,6 @@ export default function Budgets() {
     }
   };
 
-  const categorizeWithAI = async () => {
-    setCategorizingAI(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('categorize-transactions');
-
-      if (error) throw error;
-
-      toast.success(data.message);
-      
-      // Recargar los datos después de categorizar
-      await loadMonthlyData();
-      
-    } catch (error) {
-      console.error('Error categorizando con IA:', error);
-      toast.error("Error al categorizar transacciones");
-    } finally {
-      setCategorizingAI(false);
-    }
-  };
-
   const getCategoryIcon = (name: string) => {
     const icons: Record<string, string> = {
       'vivienda': '🏠',
@@ -252,6 +231,7 @@ export default function Budgets() {
       'apoyos y otros': '🤝',
       'mascotas': '🐾',
       'categoría personalizada': '⭐',
+      'gastos no identificados': '❓',
     };
     return icons[name.toLowerCase()] || '📊';
   };
@@ -365,35 +345,6 @@ export default function Budgets() {
               <p className="text-sm font-bold text-foreground">Presupuesto por Categoría</p>
               <p className="text-[10px] text-muted-foreground">Progreso del mes actual</p>
             </div>
-
-            {/* Botón de categorización con IA */}
-            {Object.keys(currentExpenses).length === 0 && !loadingMonthlyData && (
-              <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] active:scale-[0.98] transition-all">
-                <div className="text-center space-y-3">
-                  <div className="text-4xl">🤖</div>
-                  <p className="text-sm font-bold text-foreground">
-                    Categoriza tus transacciones con IA
-                  </p>
-                  <p className="text-[10px] text-muted-foreground leading-tight">
-                    La IA analizará tus transacciones y las asignará automáticamente a las categorías correctas
-                  </p>
-                  <Button
-                    onClick={categorizeWithAI}
-                    disabled={categorizingAI}
-                    className="bg-primary text-primary-foreground rounded-[20px] shadow-lg hover:scale-105 active:scale-95 transition-all w-full"
-                  >
-                    {categorizingAI ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Categorizando...
-                      </>
-                    ) : (
-                      '🤖 Categorizar con IA'
-                    )}
-                  </Button>
-                </div>
-              </Card>
-            )}
 
             {/* Lista de Presupuestos en dos columnas */}
             <div className="grid grid-cols-2 gap-2.5">

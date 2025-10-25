@@ -1,20 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-// Validation functions
-function sanitizeString(str: string, maxLength: number): string {
-  return str.trim().slice(0, maxLength);
-}
-
-function isValidUUID(uuid: string): boolean {
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  return uuidRegex.test(uuid);
-}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -22,49 +12,101 @@ serve(async (req) => {
   }
 
   try {
-    const { description, amount, type, userId, merchantName } = await req.json();
-    
-    // Validate inputs
-    if (!description || typeof description !== 'string') {
-      throw new Error('Invalid description');
-    }
-    if (!amount || typeof amount !== 'number' || amount <= 0 || amount > 999999.99) {
-      throw new Error('Invalid amount');
-    }
-    if (!type || !['ingreso', 'gasto', 'income', 'expense'].includes(type)) {
-      throw new Error('Invalid transaction type');
-    }
-    if (!userId || !isValidUUID(userId)) {
-      throw new Error('Invalid user ID');
-    }
-    
-    // Sanitize inputs
-    const cleanDescription = sanitizeString(description, 200);
-    const cleanMerchantName = merchantName ? sanitizeString(merchantName, 100) : '';
-    
+    const { transactionId, userId, description, amount, type } = await req.json();
+
+    console.log('Categorizando transacción:', { transactionId, userId, description, amount, type });
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+
+    if (!lovableApiKey) {
+      throw new Error('LOVABLE_API_KEY not configured');
+    }
+
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Obtener categorías del usuario
-    const { data: categories } = await supabase
+    // Obtener las categorías del usuario
+    const { data: categories, error: catError } = await supabase
       .from('categories')
       .select('id, name, type')
       .eq('user_id', userId)
-      .eq('type', type);
+      .is('parent_id', null);
 
-    const categoriesInfo = categories?.map(c => c.name).join(', ') || 'ninguna';
-
-    // Usar IA para categorizar
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY not configured');
+    if (catError) {
+      console.error('Error obteniendo categorías:', catError);
+      throw catError;
     }
+
+    // Buscar o crear categoría de "Gastos no identificados"
+    let unidentifiedCategory = categories?.find(c => 
+      c.name.toLowerCase() === 'gastos no identificados' && c.type === 'gasto'
+    );
+
+    if (!unidentifiedCategory && type === 'gasto') {
+      console.log('Creando categoría "Gastos no identificados"');
+      const { data: newCat, error: createError } = await supabase
+        .from('categories')
+        .insert({
+          user_id: userId,
+          name: 'Gastos no identificados',
+          type: 'gasto',
+          color: 'bg-gray-500/20'
+        })
+        .select()
+        .single();
+
+      if (createError) {
+        console.error('Error creando categoría no identificados:', createError);
+      } else {
+        unidentifiedCategory = newCat;
+        console.log('Categoría "Gastos no identificados" creada:', unidentifiedCategory.id);
+      }
+    }
+
+    // Filtrar categorías según el tipo de transacción
+    const availableCategories = categories?.filter(c => c.type === type) || [];
+    
+    if (availableCategories.length === 0) {
+      console.log('No hay categorías disponibles para tipo:', type);
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: 'No hay categorías disponibles',
+          categoryId: null 
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Listar las 12 categorías principales para la IA (excluyendo gastos no identificados)
+    const categoryList = availableCategories
+      .filter(c => c.name.toLowerCase() !== 'gastos no identificados')
+      .map(c => `- ${c.name} (ID: ${c.id})`)
+      .join('\n');
+
+    const prompt = `Analiza esta transacción y determina si pertenece claramente a alguna de las siguientes categorías:
+
+Descripción: ${description}
+Monto: $${amount}
+Tipo: ${type}
+
+Categorías disponibles:
+${categoryList}
+
+INSTRUCCIONES CRÍTICAS:
+1. Si la transacción claramente pertenece a una de estas categorías, responde SOLO con el ID de esa categoría (el texto entre paréntesis)
+2. Si NO estás seguro o NO encaja claramente en ninguna categoría, responde exactamente: "NO_IDENTIFICADO"
+3. NO inventes categorías
+4. NO des explicaciones adicionales
+5. Responde SOLO con el ID o "NO_IDENTIFICADO"`;
+
+    console.log('Consultando IA para transacción:', description);
 
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Authorization': `Bearer ${lovableApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -72,100 +114,71 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `Eres un asistente que categoriza transacciones financieras.
-
-Categorías disponibles del usuario: ${categoriesInfo}
-
-Basándote en la descripción y el comercio, elige la categoría más apropiada.
-Si ninguna aplica, sugiere una nueva categoría.
-
-Responde SOLO con un JSON:
-{
-  "category": "nombre de categoría existente o nueva",
-  "confidence": "high" | "medium" | "low",
-  "reason": "breve explicación"
-}`
+            content: 'Eres un experto en finanzas personales. Categoriza transacciones de forma conservadora. Si no estás seguro, responde "NO_IDENTIFICADO".'
           },
           {
             role: 'user',
-            content: `Transacción: "${cleanDescription}"${cleanMerchantName ? `\nComerciante: "${cleanMerchantName}"` : ''}\nMonto: $${amount}`
+            content: prompt
           }
         ],
-        temperature: 0.2
-      })
+        temperature: 0.2,
+      }),
     });
 
     if (!aiResponse.ok) {
-      throw new Error('AI API error');
+      const errorText = await aiResponse.text();
+      console.error('Error de IA:', errorText);
+      throw new Error(`AI API error: ${errorText}`);
     }
 
     const aiData = await aiResponse.json();
-    const aiContent = aiData.choices[0].message.content;
-    
-    const jsonMatch = aiContent.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error('Invalid AI response');
-    }
-    
-    const categorization = JSON.parse(jsonMatch[0]);
-    
-    // Validate AI response structure
-    if (!categorization.category || typeof categorization.category !== 'string' || 
-        categorization.category.length > 50) {
-      throw new Error('Invalid category in AI response');
-    }
-    if (!['high', 'medium', 'low'].includes(categorization.confidence)) {
-      categorization.confidence = 'low';
-    }
-    if (categorization.reason && categorization.reason.length > 200) {
-      categorization.reason = categorization.reason.slice(0, 200);
-    }
-    
-    // Sanitize AI response
-    categorization.category = sanitizeString(categorization.category, 50);
+    const aiResult = aiData.choices[0].message.content.trim();
 
-    // Buscar categoría existente
-    let categoryId = null;
-    if (categories) {
-      const matchedCategory = categories.find(c => 
-        c.name.toLowerCase() === categorization.category.toLowerCase()
-      );
-      
-      if (matchedCategory) {
-        categoryId = matchedCategory.id;
+    console.log('Respuesta de IA:', aiResult);
+
+    let categoryId: string | null = null;
+
+    if (aiResult === 'NO_IDENTIFICADO' || !availableCategories.some(c => c.id === aiResult)) {
+      // Usar categoría de gastos no identificados
+      if (unidentifiedCategory) {
+        categoryId = unidentifiedCategory.id;
+        console.log('Asignado a "Gastos no identificados"');
       } else {
-        // Crear nueva categoría
-        const { data: newCategory } = await supabase
-          .from('categories')
-          .insert({
-            user_id: userId,
-            name: categorization.category,
-            type,
-            color: type === 'ingreso' ? 'bg-primary/20' : 'bg-destructive/20'
-          })
-          .select()
-          .single();
-        
-        if (newCategory) {
-          categoryId = newCategory.id;
-        }
+        console.log('No se pudo asignar categoría');
+      }
+    } else {
+      // Usar la categoría sugerida por la IA
+      categoryId = aiResult;
+      console.log('Asignado a categoría:', categoryId);
+    }
+
+    // Actualizar la transacción
+    if (categoryId) {
+      const { error: updateError } = await supabase
+        .from('transactions')
+        .update({ category_id: categoryId })
+        .eq('id', transactionId);
+
+      if (updateError) {
+        console.error('Error actualizando transacción:', updateError);
+        throw updateError;
       }
     }
 
-    return new Response(JSON.stringify({
-      categoryId,
-      categoryName: categorization.category,
-      confidence: categorization.confidence,
-      reason: categorization.reason
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        categoryId,
+        wasIdentified: aiResult !== 'NO_IDENTIFICADO'
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
 
   } catch (error) {
-    console.error('Categorization error:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    console.error('Error en categorize-transaction:', error);
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
   }
 });
