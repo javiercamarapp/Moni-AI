@@ -418,7 +418,7 @@ export default function EditBudgets() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pb-20">
+    <div className="min-h-screen animated-wave-bg pb-20">
       <div className="mx-auto px-4 py-6 space-y-6" style={{ maxWidth: '600px' }}>
         {/* Header */}
         <div className="flex items-center justify-between">
