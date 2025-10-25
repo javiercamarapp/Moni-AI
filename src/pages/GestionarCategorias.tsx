@@ -38,6 +38,25 @@ const GestionarCategorias = () => {
   const [subcategoryNames, setSubcategoryNames] = useState<string[]>([]);
   const [parentCategoryForSubcategory, setParentCategoryForSubcategory] = useState<Category | null>(null);
   const colorOptions = ['bg-primary/20', 'bg-secondary/20', 'bg-accent/20', 'bg-red-500/20', 'bg-orange-500/20', 'bg-yellow-500/20', 'bg-green-500/20', 'bg-blue-500/20', 'bg-purple-500/20', 'bg-pink-500/20'];
+  
+  const getCategoryIcon = (name: string) => {
+    const icons: Record<string, string> = {
+      'vivienda': '🏠',
+      'transporte': '🚗',
+      'alimentación': '🍽️',
+      'servicios y suscripciones': '🧾',
+      'salud y bienestar': '🩺',
+      'educación y desarrollo': '🎓',
+      'deudas y créditos': '💳',
+      'entretenimiento y estilo de vida': '🎉',
+      'ahorro e inversión': '💸',
+      'apoyos y otros': '🤝',
+      'mascotas': '🐾',
+      'categoría personalizada': '⭐',
+      'gastos no identificados': '❓',
+    };
+    return icons[name.toLowerCase()] || '📊';
+  };
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -236,7 +255,9 @@ const GestionarCategorias = () => {
       <Card className={`p-4 bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0 animate-fade-in hover:shadow-xl transition-all duration-300 ${isSubcategory ? 'ml-8 mt-2' : ''}`}>
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className={`w-12 h-12 rounded-2xl ${category.color} flex-shrink-0`} />
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-white/50 to-white/30 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0">
+              {getCategoryIcon(category.name)}
+            </div>
             <div className="flex-1 min-w-0 overflow-hidden">
               <p className="text-sm font-semibold text-foreground truncate">{category.name}</p>
               {!isSubcategory && category.subcategories && category.subcategories.length > 0 && <p className="text-xs text-muted-foreground truncate">{category.subcategories.length} subcategorías</p>}
