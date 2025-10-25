@@ -11,6 +11,7 @@ import { TrendingUp, TrendingDown, DollarSign, PiggyBank, Home, Target, MessageS
 import moniAiLogo from "@/assets/moni-ai-horizontal.png";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import BottomNav from '@/components/BottomNav';
+import { LoadingScreen } from '@/components/LoadingScreen';
 import SafeToSpendWidget from "@/components/analysis/SafeToSpendWidget";
 import NetWorthWidget from "@/components/analysis/NetWorthWidget";
 import ForecastWidget from "@/components/analysis/ForecastWidget";
@@ -595,32 +596,7 @@ export default function FinancialAnalysis() {
   return (
     <>
       {loading ? (
-        <div className="min-h-screen animated-wave-bg pb-20 animate-fade-in">
-          <div className="mx-auto px-4 py-4 space-y-4" style={{ maxWidth: '600px' }}>
-            {/* Header Skeleton */}
-            <div className="flex items-center justify-between gap-3">
-              <Skeleton className="h-10 w-10 rounded-[20px]" />
-              <div className="flex-1">
-                <Skeleton className="h-6 w-48 mb-1" />
-                <Skeleton className="h-4 w-32" />
-              </div>
-              <Skeleton className="h-10 w-10 rounded-[20px]" />
-            </div>
-
-            {/* Cards Skeleton */}
-            <div className="space-y-3">
-              <Skeleton className="h-32 w-full rounded-[20px]" />
-              <Skeleton className="h-40 w-full rounded-[20px]" />
-              <Skeleton className="h-48 w-full rounded-[20px]" />
-              <div className="grid grid-cols-2 gap-3">
-                <Skeleton className="h-32 w-full rounded-[20px]" />
-                <Skeleton className="h-32 w-full rounded-[20px]" />
-              </div>
-              <Skeleton className="h-56 w-full rounded-[20px]" />
-            </div>
-          </div>
-          <BottomNav />
-        </div>
+        <LoadingScreen />
       ) : (
         <div className="min-h-screen animated-wave-bg pb-24 animate-fade-in">
           {/* Header */}
