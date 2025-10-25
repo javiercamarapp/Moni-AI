@@ -320,21 +320,26 @@ export default function Budgets() {
     <div className="min-h-screen animated-wave-bg pb-20">
       <div className="mx-auto px-4 py-4 space-y-4" style={{ maxWidth: '600px' }}>
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
           <Button
             variant="ghost"
+            size="icon"
             onClick={() => navigate('/dashboard')}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 active:scale-95 transition-all border border-blue-100 h-9 w-9 p-0"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-10 w-10"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className="text-lg font-bold text-foreground">💰 Presupuesto Mensual</h1>
+          <div className="flex-1">
+            <h1 className="text-xl font-bold text-foreground">Presupuesto Mensual</h1>
+            <p className="text-xs text-muted-foreground">Control de gastos</p>
+          </div>
           <Button
             variant="ghost"
+            size="icon"
             onClick={() => navigate('/edit-budgets')}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 active:scale-95 transition-all border border-blue-100 h-9 w-9 p-0"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-10 w-10"
           >
-            <Pencil className="h-4 w-4" />
+            <Pencil className="h-5 w-5" />
           </Button>
         </div>
 

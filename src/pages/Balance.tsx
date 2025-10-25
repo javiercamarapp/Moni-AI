@@ -420,13 +420,18 @@ const Balance = () => {
       {/* Header */}
       <div className="bg-background/95 backdrop-blur-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-12 w-12">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/dashboard')}
+              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-lg sm:text-xl font-bold text-foreground">Análisis de Balance</h1>
-              <p className="text-xs sm:text-sm text-foreground/80 font-medium">Ingresos y Gastos</p>
+            <div className="flex-1">
+              <h1 className="text-xl font-bold text-foreground">Análisis de Balance</h1>
+              <p className="text-xs text-muted-foreground">Ingresos y Gastos</p>
             </div>
           </div>
         </div>

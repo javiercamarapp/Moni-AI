@@ -76,7 +76,7 @@ export default function NotificationHistory() {
             onClick={() => navigate("/dashboard")}
             variant="ghost"
             size="icon"
-            className="bg-white/80 backdrop-blur-md rounded-[20px] shadow-lg hover:bg-white text-foreground h-10 w-10 hover:scale-105 transition-all border border-gray-200/50 flex-shrink-0"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100 flex-shrink-0"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -89,7 +89,7 @@ export default function NotificationHistory() {
           </div>
           
           <div className="relative flex-shrink-0">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg">
               <Bell className="h-5 w-5 text-white" />
             </div>
             {unreadCount > 0 && (

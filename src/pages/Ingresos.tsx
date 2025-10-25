@@ -303,40 +303,36 @@ const Ingresos = () => {
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="p-4 flex items-center justify-between border-b border-border/30 bg-card/50 backdrop-blur-sm">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/balance')}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-12 w-12"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
-              Tus Ingresos
-            </h1>
-            <p className="text-sm text-muted-foreground">Gestiona tus entradas</p>
-          </div>
+      <div className="p-4 flex items-center gap-3 border-b border-border/30 bg-card/50 backdrop-blur-sm">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate('/balance')}
+          className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <div className="flex-1">
+          <h1 className="text-xl font-bold text-foreground">Tus Ingresos</h1>
+          <p className="text-xs text-muted-foreground">Gestiona tus entradas</p>
         </div>
 
         <div className="flex gap-2">
           <Button
             size="icon"
             onClick={handleWhatsAppRegister}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-8 w-8"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10"
           >
-            <img src={whatsappLogo} alt="WhatsApp" className="w-4 h-4 object-contain" />
+            <img src={whatsappLogo} alt="WhatsApp" className="w-5 h-5 object-contain" />
           </Button>
 
           <Button
             size="icon"
             onClick={handleCameraCapture}
             disabled={isProcessingReceipt}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-8 w-8 disabled:opacity-50"
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-10 w-10 disabled:opacity-50"
           >
-            <Camera className="h-4 w-4 text-foreground" />
+            <Camera className="h-5 w-5 text-foreground" />
           </Button>
           
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>

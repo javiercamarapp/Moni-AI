@@ -413,17 +413,19 @@ const Profile = () => {
       {/* Header */}
       <div className="bg-background/95 backdrop-blur-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate("/dashboard")}
-              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12"
+              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-10 w-10"
             >
               <ArrowLeft className="h-5 w-5 text-foreground" />
             </Button>
-            <h1 className="text-xl font-bold text-foreground">Perfil</h1>
-            <div className="w-12"></div>
+            <div className="flex-1">
+              <h1 className="text-xl font-bold text-foreground">Perfil</h1>
+              <p className="text-xs text-muted-foreground">Configuración de cuenta</p>
+            </div>
           </div>
         </div>
       </div>

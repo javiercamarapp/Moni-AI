@@ -32,15 +32,19 @@ const FinancialChat = () => {
   return (
     <div className="min-h-screen animated-wave-bg pb-4">
       {/* Header con botón de regreso */}
-      <div className="p-4">
+      <div className="p-4 flex items-center gap-3">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => navigate(-1)}
-          className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12"
+          className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-10 w-10"
         >
           <ArrowLeft className="h-5 w-5 text-foreground" />
         </Button>
+        <div className="flex-1">
+          <h1 className="text-xl font-bold text-foreground">Chat Financiero</h1>
+          <p className="text-xs text-muted-foreground">Consulta con tu asesor</p>
+        </div>
       </div>
 
       <div className="container mx-auto max-w-3xl px-4 pb-8">

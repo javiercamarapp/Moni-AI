@@ -63,20 +63,18 @@ const NewGoal = () => {
   return (
     <div className="min-h-screen animated-wave-bg">
       {/* Header */}
-      <div className="p-4 flex items-center gap-4">
+      <div className="p-4 flex items-center gap-3">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => navigate(-1)}
-          className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12"
+          className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-10 w-10"
         >
           <ArrowLeft className="h-5 w-5 text-foreground" />
         </Button>
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white">
-            Nueva Meta
-          </h1>
-          <p className="text-sm text-white/80">Crea una meta de ahorro</p>
+        <div className="flex-1">
+          <h1 className="text-xl font-bold text-foreground">Nueva Meta</h1>
+          <p className="text-xs text-muted-foreground">Crea una meta de ahorro</p>
         </div>
       </div>
 

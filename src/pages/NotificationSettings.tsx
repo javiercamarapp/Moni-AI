@@ -113,20 +113,18 @@ export default function NotificationSettings() {
     <div className="min-h-screen animated-wave-bg pb-24">
       <div className="max-w-md mx-auto">
         {/* Header */}
-        <div className="p-4 flex items-center justify-between border-b border-border/30 bg-card/50 backdrop-blur-sm">
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => navigate("/profile")}
-              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-12 w-12"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground">Notificaciones</h1>
-              <p className="text-xs sm:text-sm text-foreground/70">Configura tus alertas inteligentes</p>
-            </div>
+        <div className="p-4 flex items-center gap-3 border-b border-border/30 bg-card/50 backdrop-blur-sm">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => navigate("/profile")}
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div className="flex-1">
+            <h1 className="text-xl font-bold text-foreground">Notificaciones</h1>
+            <p className="text-xs text-muted-foreground">Configura tus alertas</p>
           </div>
           {autoSaveStatus !== 'idle' && (
             <div className="flex items-center gap-2 text-sm text-foreground animate-fade-in">
