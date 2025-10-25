@@ -418,64 +418,64 @@ export default function EditBudgets() {
   }
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-20">
-      <div className="mx-auto px-4 py-4 space-y-4" style={{ maxWidth: '600px' }}>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pb-20">
+      <div className="mx-auto px-4 py-6 space-y-6" style={{ maxWidth: '600px' }}>
         {/* Header */}
         <div className="flex items-center justify-between">
           <Button
             variant="ghost"
             onClick={() => navigate('/budgets')}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 active:scale-95 transition-all border border-blue-100 h-9 w-9 p-0"
+            className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 p-0"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4 text-gray-700" />
           </Button>
-          <h1 className="text-lg font-bold text-foreground">✏️ Editar Presupuesto</h1>
-          <div className="w-9" />
+          <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Presupuesto</h1>
+          <div className="w-10" />
         </div>
 
         {/* Main Card */}
-        <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in">
-          <div className="space-y-4">
+        <Card className="p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 animate-fade-in">
+          <div className="space-y-6">
             <div className="text-center">
-              <div className="text-4xl mb-2">📊</div>
-              <h2 className="text-xl font-bold text-foreground mb-1">
+              <div className="text-3xl mb-1.5">📊</div>
+              <h2 className="text-lg font-semibold text-gray-900 mb-1 tracking-tight">
                 Modifica tus presupuestos
               </h2>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-gray-500">
                 Toca para ver subcategorías y ajustar montos
               </p>
             </div>
 
             {/* Categories List */}
-            <div className="space-y-2">
+            <div className="space-y-3">
               {DEFAULT_CATEGORIES.map((category, index) => (
-                <div key={category.id} className="space-y-1">
+                <div key={category.id} className="space-y-2">
                   <button
                     onClick={() => setExpandedCategory(
                       expandedCategory === category.id ? null : category.id
                     )}
-                    className="w-full p-3 rounded-[15px] border-2 transition-all text-left border-blue-100 bg-white hover:border-primary/50 animate-fade-in"
+                    className="w-full p-4 rounded-2xl transition-all text-left bg-white hover:bg-gray-50 border-0 shadow-sm hover:shadow-md animate-fade-in"
                     style={{ animationDelay: `${index * 0.05}s` }}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl">{category.icon}</span>
+                      <div className="flex items-center gap-3">
+                        <span className="text-3xl">{category.icon}</span>
                         <div>
-                          <p className="text-sm font-semibold text-foreground">
+                          <p className="text-sm font-semibold text-gray-900">
                             {category.name}
                           </p>
-                          <p className="text-[9px] text-muted-foreground">
+                          <p className="text-xs text-gray-500">
                             {category.suggestedPercentage}% sugerido
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         {budgets[category.id] && budgets[category.id] > 0 && (
-                          <span className="text-sm font-bold text-foreground">
+                          <span className="text-sm font-bold text-gray-900">
                             ${formatCurrency(budgets[category.id])}
                           </span>
                         )}
-                        <ArrowRight className={`h-4 w-4 text-muted-foreground transition-transform ${
+                        <ArrowRight className={`h-5 w-5 text-gray-400 transition-transform ${
                           expandedCategory === category.id ? 'rotate-90' : ''
                         }`} />
                       </div>
@@ -484,16 +484,16 @@ export default function EditBudgets() {
 
                   {/* Expanded Panel */}
                   {expandedCategory === category.id && (
-                    <div className="ml-4 pl-4 border-l-2 border-primary/20 space-y-1.5 py-2 animate-fade-in">
-                      <p className="text-[9px] text-muted-foreground italic mb-2">
+                    <div className="ml-2 pl-4 border-l-2 border-gray-200 space-y-2 py-3 animate-fade-in">
+                      <p className="text-xs text-gray-500 italic mb-3">
                         💡 {category.insight}
                       </p>
 
                       {/* Subcategories */}
-                      <div className="space-y-1.5">
+                      <div className="space-y-2">
                         {category.subcategories.map((sub) => (
-                          <div key={sub.id} className="bg-gray-50 rounded-lg px-2 py-2">
-                            <div className="flex items-center justify-between gap-2">
+                          <div key={sub.id} className="bg-gray-50/50 rounded-xl px-3 py-3 border border-gray-100">
+                            <div className="flex items-center justify-between gap-2 mb-2">
                               {category.id === 'personalizada' ? (
                                 <>
                                   <Input
@@ -503,10 +503,10 @@ export default function EditBudgets() {
                                     onChange={(e) => {
                                       setCustomSubcategories({ ...customSubcategories, [sub.id]: e.target.value });
                                     }}
-                                    className="flex-1 h-7 text-[10px] bg-white border-gray-200"
+                                    className="flex-1 h-8 text-xs bg-white border-gray-200 rounded-lg"
                                   />
                                   <div className="relative flex items-center">
-                                    <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
+                                    <span className="absolute left-3 text-xs font-medium text-gray-500">$</span>
                                     <Input
                                       type="text"
                                       inputMode="numeric"
@@ -516,7 +516,7 @@ export default function EditBudgets() {
                                         const value = e.target.value.replace(/[^\d]/g, '');
                                         updateSubcategoryBudget(sub.id, value);
                                       }}
-                                      className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-white border-gray-200"
+                                      className="w-24 h-8 text-xs text-right font-medium pl-6 pr-3 bg-white border-gray-200 rounded-lg"
                                     />
                                   </div>
                                   {sub.id.startsWith('personalizado_') && (
@@ -537,19 +537,19 @@ export default function EditBudgets() {
                                         setSubcategoryBudgets(newSubcatBudgets);
                                       }}
                                       variant="ghost"
-                                      className="h-7 w-7 p-0 hover:bg-destructive/10 hover:text-destructive"
+                                      className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 rounded-lg"
                                     >
-                                      <Trash2 className="h-3.5 w-3.5" />
+                                      <Trash2 className="h-4 w-4" />
                                     </Button>
                                   )}
                                 </>
                               ) : (
                                 <>
-                                  <span className="text-[10px] text-foreground flex-1">
+                                  <span className="text-xs font-medium text-gray-700 flex-1">
                                     • {sub.name}
                                   </span>
                                   <div className="relative flex items-center">
-                                    <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
+                                    <span className="absolute left-3 text-xs font-medium text-gray-500">$</span>
                                     <Input
                                       type="text"
                                       inputMode="numeric"
@@ -559,7 +559,7 @@ export default function EditBudgets() {
                                         const value = e.target.value.replace(/[^\d]/g, '');
                                         updateSubcategoryBudget(sub.id, value);
                                       }}
-                                      className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-white border-gray-200"
+                                      className="w-24 h-8 text-xs text-right font-medium pl-6 pr-3 bg-white border-gray-200 rounded-lg"
                                     />
                                   </div>
                                 </>
@@ -571,7 +571,7 @@ export default function EditBudgets() {
 
                       {/* Add button for custom category */}
                       {category.id === 'personalizada' && (
-                        <div className="flex justify-center mt-2">
+                        <div className="flex justify-center mt-3">
                           <Button
                             onClick={() => {
                               const newId = `personalizado_${Date.now()}`;
@@ -580,9 +580,10 @@ export default function EditBudgets() {
                               setCustomSubcategories({ ...customSubcategories });
                             }}
                             variant="ghost"
-                            className="h-8 w-8 p-0 rounded-full bg-primary/10 hover:bg-primary/20 text-primary font-bold"
+                            size="sm"
+                            className="h-9 text-xs rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-5"
                           >
-                            +
+                            + Agregar subcuenta
                           </Button>
                         </div>
                       )}
@@ -702,9 +703,9 @@ export default function EditBudgets() {
                           }
                         }}
                         disabled={saving}
-                        className="w-full mt-2 h-10 text-xs font-semibold bg-primary hover:bg-primary/90 text-white rounded-[15px] shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
+                        className="w-full mt-4 h-11 text-sm font-medium bg-gray-900 hover:bg-gray-800 text-white rounded-xl shadow-sm hover:shadow-md transition-all disabled:opacity-50"
                       >
-                        {saving ? 'Guardando...' : 'Cambiar'}
+                        {saving ? 'Guardando...' : 'Guardar Cambios'}
                       </Button>
                     </div>
                   )}
@@ -716,9 +717,9 @@ export default function EditBudgets() {
             <Button
               onClick={handleSave}
               disabled={saving}
-              className="w-full bg-primary rounded-[20px] shadow-xl hover:scale-105 active:scale-95 transition-all font-bold text-base py-6"
+              className="w-full h-12 text-sm font-medium bg-gray-900 hover:bg-gray-800 text-white rounded-xl shadow-sm hover:shadow-md transition-all disabled:opacity-50"
             >
-              {saving ? 'Guardando...' : 'Guardar Cambios'}
+              {saving ? 'Guardando...' : 'Guardar Todo'}
             </Button>
           </div>
         </Card>

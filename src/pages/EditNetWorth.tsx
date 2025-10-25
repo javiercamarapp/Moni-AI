@@ -386,11 +386,11 @@ export default function EditNetWorth() {
         <Card className="p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 animate-fade-in">
           <div className="space-y-6">
             <div className="text-center">
-              <div className="text-5xl mb-3">💰</div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2 tracking-tight">
+              <div className="text-3xl mb-1.5">💰</div>
+              <h2 className="text-lg font-semibold text-gray-900 mb-1 tracking-tight">
                 Gestiona tu patrimonio
               </h2>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs text-gray-500">
                 Toca una categoría para ver y editar tus cuentas
               </p>
             </div>
