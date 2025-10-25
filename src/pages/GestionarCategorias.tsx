@@ -233,23 +233,23 @@ const GestionarCategorias = () => {
     setShowAddDialog(true);
   };
   const renderCategoryCard = (category: Category, isSubcategory: boolean = false) => <div key={category.id}>
-      <Card className={`p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in hover:scale-[1.02] transition-all ${isSubcategory ? 'ml-8 mt-2' : ''}`}>
+      <Card className={`p-4 bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0 animate-fade-in hover:shadow-xl transition-all duration-300 ${isSubcategory ? 'ml-8 mt-2' : ''}`}>
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className={`w-12 h-12 rounded-lg ${category.color} flex-shrink-0`} />
+            <div className={`w-12 h-12 rounded-2xl ${category.color} flex-shrink-0`} />
             <div className="flex-1 min-w-0 overflow-hidden">
-              <p className="text-base font-bold text-foreground truncate">{category.name}</p>
-              {!isSubcategory && category.subcategories && category.subcategories.length > 0 && <p className="text-xs text-foreground/60 truncate">{category.subcategories.length} subcategorías</p>}
+              <p className="text-sm font-semibold text-foreground truncate">{category.name}</p>
+              {!isSubcategory && category.subcategories && category.subcategories.length > 0 && <p className="text-xs text-muted-foreground truncate">{category.subcategories.length} subcategorías</p>}
             </div>
           </div>
           <div className="flex gap-1 flex-shrink-0">
-            {!isSubcategory && <Button size="icon" variant="ghost" onClick={() => openAddSubcategoryDialog(category)} className="text-primary hover:bg-primary/10 hover:scale-110 transition-all h-8 w-8 flex-shrink-0" title="Agregar subcategoría">
+            {!isSubcategory && <Button size="icon" variant="ghost" onClick={() => openAddSubcategoryDialog(category)} className="text-primary hover:bg-primary/10 rounded-full hover:scale-105 active:scale-95 transition-all h-8 w-8 flex-shrink-0" title="Agregar subcategoría">
                 <Plus className="h-4 w-4" />
               </Button>}
-            <Button size="icon" variant="ghost" onClick={() => setEditingCategory(category)} className="hover:bg-accent hover:scale-110 transition-all h-8 w-8 flex-shrink-0">
+            <Button size="icon" variant="ghost" onClick={() => setEditingCategory(category)} className="hover:bg-accent/20 rounded-full hover:scale-105 active:scale-95 transition-all h-8 w-8 flex-shrink-0">
               <Edit2 className="h-4 w-4 text-foreground" />
             </Button>
-            <Button size="icon" variant="ghost" onClick={() => setDeleteCategory(category)} className="text-destructive hover:bg-destructive/10 hover:scale-110 transition-all h-8 w-8 flex-shrink-0">
+            <Button size="icon" variant="ghost" onClick={() => setDeleteCategory(category)} className="text-destructive hover:bg-destructive/10 rounded-full hover:scale-105 active:scale-95 transition-all h-8 w-8 flex-shrink-0">
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
@@ -263,8 +263,8 @@ const GestionarCategorias = () => {
   }
   return <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="bg-background/95 backdrop-blur-sm sticky top-0 z-40 border-b border-border/50 shadow-sm">
-        <div className="container mx-auto px-4 py-4">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4 flex-1">
               <Button 
@@ -274,15 +274,15 @@ const GestionarCategorias = () => {
                   e.preventDefault();
                   navigate(-1);
                 }} 
-                className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12"
+                className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
               >
-                <ArrowLeft className="h-5 w-5 text-foreground" />
+                <ArrowLeft className="h-4 w-4 text-gray-700" />
               </Button>
-              <div className="flex-1">
-                <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">
                   Gestionar Categorías
                 </h1>
-                <p className="text-sm text-muted-foreground">Personaliza tus categorías</p>
+                <p className="text-sm text-gray-500">Personaliza tus categorías</p>
               </div>
             </div>
 
@@ -297,13 +297,13 @@ const GestionarCategorias = () => {
                     color: 'bg-primary/20',
                     parent_id: null
                   });
-                }} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100 transition-all hover:scale-105 h-12 w-12 flex-shrink-0">
-                  <Plus className="h-5 w-5 text-foreground" />
+                }} className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0">
+                  <Plus className="h-4 w-4 text-gray-700" />
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100 max-w-[85%] sm:max-w-md">
+              <DialogContent className="bg-white/95 backdrop-blur-md rounded-[24px] shadow-lg border-0 max-w-[90%] sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle className="text-2xl font-bold text-foreground">
+                  <DialogTitle className="text-xl font-semibold text-foreground">
                     {parentCategoryForSubcategory ? `Nueva Subcategoría de "${parentCategoryForSubcategory.name}"` : 'Nueva Categoría'}
                   </DialogTitle>
                 </DialogHeader>
@@ -329,10 +329,10 @@ const GestionarCategorias = () => {
                             type: 'ingreso',
                             parent_id: null
                           })} 
-                          className={`flex-1 rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all h-12 ${
+                          className={`flex-1 rounded-full shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all h-10 font-medium ${
                             newCategory.type === 'ingreso' 
                               ? 'bg-primary text-white hover:bg-primary/90' 
-                              : 'bg-white text-foreground hover:bg-gray-50'
+                              : 'bg-white/80 backdrop-blur-sm border-0 text-foreground hover:bg-white'
                           }`}
                         >
                           Ingreso
@@ -344,10 +344,10 @@ const GestionarCategorias = () => {
                             type: 'gasto',
                             parent_id: null
                           })} 
-                          className={`flex-1 rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all h-12 ${
+                          className={`flex-1 rounded-full shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all h-10 font-medium ${
                             newCategory.type === 'gasto' 
                               ? 'bg-primary text-white hover:bg-primary/90' 
-                              : 'bg-white text-foreground hover:bg-gray-50'
+                              : 'bg-white/80 backdrop-blur-sm border-0 text-foreground hover:bg-white'
                           }`}
                         >
                           Gasto
@@ -370,7 +370,7 @@ const GestionarCategorias = () => {
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>)}
-                        <Button type="button" variant="outline" onClick={() => setSubcategoryNames([...subcategoryNames, ''])} className="w-full bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-gray-50 hover:scale-105 transition-all h-12">
+                        <Button type="button" variant="outline" onClick={() => setSubcategoryNames([...subcategoryNames, ''])} className="w-full bg-white/80 backdrop-blur-sm rounded-full shadow-sm border-0 hover:bg-white hover:shadow-md hover:scale-105 active:scale-95 transition-all h-10 font-medium">
                           <Plus className="h-4 w-4 mr-2" />
                           Agregar Subcategoría
                         </Button>
@@ -387,7 +387,7 @@ const GestionarCategorias = () => {
                     </div>
                   </div>
 
-                  <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 hover:shadow-2xl transition-all duration-200 h-14 text-lg font-semibold">
+                  <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all h-12 font-semibold">
                     {parentCategoryForSubcategory ? 'Crear Subcategoría' : 'Crear Categoría'}
                   </Button>
                 </form>
@@ -398,13 +398,13 @@ const GestionarCategorias = () => {
       </div>
 
       {/* Tabs: Ingresos y Gastos */}
-      <div className="px-4">
+      <div className="max-w-7xl mx-auto px-4">
         <Tabs defaultValue="ingresos" className="w-full">
-          <TabsList className="w-full bg-white rounded-[20px] shadow-xl border border-blue-100">
-            <TabsTrigger value="ingresos" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white rounded-[16px] font-semibold">
+          <TabsList className="w-full bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0 p-1">
+            <TabsTrigger value="ingresos" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white rounded-[20px] font-semibold transition-all">
               Ingresos ({ingresos.length})
             </TabsTrigger>
-            <TabsTrigger value="gastos" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white rounded-[16px] font-semibold">
+            <TabsTrigger value="gastos" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white rounded-[20px] font-semibold transition-all">
               Gastos ({gastos.length})
             </TabsTrigger>
           </TabsList>
@@ -421,9 +421,9 @@ const GestionarCategorias = () => {
 
       {/* Edit Dialog */}
       <Dialog open={!!editingCategory} onOpenChange={open => !open && setEditingCategory(null)}>
-        <DialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100 max-w-[85%] sm:max-w-md">
+        <DialogContent className="bg-white/95 backdrop-blur-md rounded-[24px] shadow-lg border-0 max-w-[90%] sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-foreground">
+            <DialogTitle className="text-xl font-semibold text-foreground">
               Editar Categoría
             </DialogTitle>
           </DialogHeader>
@@ -449,7 +449,7 @@ const GestionarCategorias = () => {
               </div>
             </div>
 
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 hover:shadow-2xl transition-all duration-200 h-14 text-lg font-semibold">
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all h-12 font-semibold">
               Guardar Cambios
             </Button>
           </form>
@@ -458,18 +458,18 @@ const GestionarCategorias = () => {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deleteCategory} onOpenChange={open => !open && setDeleteCategory(null)}>
-        <AlertDialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100 max-w-[85%] sm:max-w-md">
+        <AlertDialogContent className="bg-white/95 backdrop-blur-md rounded-[24px] shadow-lg border-0 max-w-[90%] sm:max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-2xl font-bold text-foreground">¿Eliminar categoría?</AlertDialogTitle>
-            <AlertDialogDescription className="text-muted-foreground">
+            <AlertDialogTitle className="text-xl font-semibold text-foreground">¿Eliminar categoría?</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed">
               Esta acción no se puede deshacer. La categoría "{deleteCategory?.name}" será eliminada permanentemente.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-white rounded-[20px] shadow-xl border border-blue-100 text-foreground hover:bg-gray-50 hover:scale-105 active:scale-95 hover:shadow-2xl transition-all duration-200 h-12 text-base font-semibold">
+            <AlertDialogCancel className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm border-0 text-foreground hover:bg-white hover:shadow-md hover:scale-105 active:scale-95 transition-all h-10 px-4 font-medium">
               Cancelar
             </AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteCategory} className="bg-destructive rounded-[20px] shadow-xl hover:bg-destructive/90 text-destructive-foreground hover:scale-105 active:scale-95 hover:shadow-2xl transition-all duration-200 h-12 text-base font-semibold">
+            <AlertDialogAction onClick={handleDeleteCategory} className="bg-destructive rounded-full shadow-sm hover:bg-destructive/90 text-destructive-foreground hover:scale-105 active:scale-95 hover:shadow-md transition-all h-10 px-4 font-medium">
               Eliminar
             </AlertDialogAction>
           </AlertDialogFooter>
