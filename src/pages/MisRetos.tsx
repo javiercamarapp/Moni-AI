@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft, Sparkles, Calendar, TrendingUp, CheckCircle, XCircle, Target, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
@@ -15,6 +16,7 @@ export default function MisRetos() {
   const [challenges, setChallenges] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [generatingChallenges, setGeneratingChallenges] = useState(false);
+  const [selectedChallenge, setSelectedChallenge] = useState<any>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -199,8 +201,9 @@ export default function MisRetos() {
               return (
                 <Card 
                   key={challenge.id} 
-                  className="w-full p-2.5 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden min-w-0"
+                  className="w-full p-2.5 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden min-w-0 cursor-pointer hover:shadow-lg transition-shadow"
                   style={{ transform: 'translate3d(0, 0, 0)' }}
+                  onClick={() => setSelectedChallenge(challenge)}
                 >
                   <div className="relative z-10">
                     {isLastDay && (
@@ -293,6 +296,154 @@ export default function MisRetos() {
           </div>
         )}
       </div>
+
+      {/* Modal de detalle del reto */}
+      <Dialog open={!!selectedChallenge} onOpenChange={(open) => !open && setSelectedChallenge(null)}>
+        <DialogContent className="max-w-lg bg-white/95 backdrop-blur-sm">
+          {selectedChallenge && (() => {
+            const progress = (selectedChallenge.current_amount / selectedChallenge.target_amount) * 100;
+            const daysStatus = Array.isArray(selectedChallenge.days_status) ? selectedChallenge.days_status : [];
+            const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            
+            const startDate = new Date(selectedChallenge.start_date);
+            const endDate = new Date(selectedChallenge.end_date);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            startDate.setHours(0, 0, 0, 0);
+            
+            const daysPassed = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+            const currentDayIndex = Math.min(daysPassed, 6);
+            const isLastDay = currentDayIndex === 6;
+            
+            return (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-bold text-gray-900">
+                    {selectedChallenge.title}
+                  </DialogTitle>
+                </DialogHeader>
+                
+                <div className="space-y-6 mt-4">
+                  {isLastDay && (
+                    <Badge className="w-full bg-orange-500/20 text-orange-700 border-orange-500/30 justify-center py-2">
+                      🔥 ¡Último día del reto!
+                    </Badge>
+                  )}
+                  
+                  <div>
+                    <p className="text-gray-700 text-base leading-relaxed">
+                      {selectedChallenge.description}
+                    </p>
+                  </div>
+                  
+                  <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6">
+                    <div className="flex justify-between items-baseline mb-3">
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">Progreso actual</p>
+                        <p className="text-3xl font-bold text-gray-900">
+                          ${selectedChallenge.current_amount.toFixed(0)}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm text-gray-600 mb-1">Meta semanal</p>
+                        <p className="text-2xl font-bold text-purple-600">
+                          ${selectedChallenge.target_amount.toFixed(0)}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="relative h-4 bg-white/50 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-green-500 to-green-600 rounded-full transition-all duration-500"
+                        style={{ width: `${Math.min(progress, 100)}%` }}
+                      />
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2 text-center">
+                      {progress.toFixed(1)}% completado
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Progreso diario</h3>
+                    <div className="space-y-2">
+                      {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
+                        const dayStatus = daysStatus[dayIndex];
+                        const isCompleted = dayStatus?.completed === true;
+                        const isFailed = dayStatus?.completed === false;
+                        const isPending = !dayStatus;
+                        const isCurrentDay = dayIndex === currentDayIndex;
+                        
+                        return (
+                          <div 
+                            key={dayIndex}
+                            className={`flex items-center justify-between p-3 rounded-xl ${
+                              isCurrentDay ? 'bg-blue-50 border-2 border-blue-200' : 'bg-gray-50'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div 
+                                className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold ${
+                                  isCompleted 
+                                    ? 'bg-green-500 text-white' 
+                                    : isFailed 
+                                    ? 'bg-red-500 text-white'
+                                    : 'bg-gray-200 text-gray-400'
+                                }`}
+                              >
+                                {isCompleted && '✓'}
+                                {isFailed && '✗'}
+                                {isPending && '·'}
+                              </div>
+                              <div>
+                                <p className={`font-medium ${isCurrentDay ? 'text-blue-700' : 'text-gray-900'}`}>
+                                  {dayNames[dayIndex]}
+                                </p>
+                                {dayStatus?.date && (
+                                  <p className="text-xs text-gray-500">
+                                    {format(new Date(dayStatus.date), 'd MMM', { locale: es })}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              {dayStatus && (
+                                <p className={`text-sm font-semibold ${
+                                  isCompleted ? 'text-green-600' : isFailed ? 'text-red-600' : 'text-gray-500'
+                                }`}>
+                                  ${dayStatus.amount?.toFixed(0) || 0}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-3">
+                    {selectedChallenge.status === 'pending' ? (
+                      <Button 
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          acceptChallenge(selectedChallenge.id);
+                          setSelectedChallenge(null);
+                        }}
+                      >
+                        Aceptar reto
+                      </Button>
+                    ) : (
+                      <Badge className="flex-1 bg-green-500/20 text-green-700 border-green-500/30 justify-center py-2">
+                        ✓ Reto en progreso
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
