@@ -303,12 +303,8 @@ export default function Budgets() {
   };
 
   const percentageOfIncome = monthlyIncome > 0 ? (totalBudget / monthlyIncome) * 100 : 0;
-  const totalSpent = Object.values(currentExpenses).reduce((sum, val) => sum + val, 0);
-  const remainingBudget = totalBudget - totalSpent;
+  const remainingBudget = totalBudget - Object.values(currentExpenses).reduce((sum, val) => sum + val, 0);
   const savingsPercentage = monthlyIncome > 0 ? ((monthlyIncome - totalBudget) / monthlyIncome) * 100 : 0;
-  const totalPercentUsed = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
-  const isTotalWarning = totalPercentUsed >= 80;
-  const isTotalCritical = totalPercentUsed >= 100;
 
   if (loading) {
     return (
@@ -360,14 +356,10 @@ export default function Budgets() {
         ) : (
           <>
             {/* Resumen General */}
-            <Card className={`p-2 bg-white rounded-[20px] shadow-xl border-2 hover:scale-[1.02] active:scale-[0.98] transition-all animate-fade-in ${
-              isTotalCritical ? 'border-destructive/60 bg-destructive/5' :
-              isTotalWarning ? 'border-yellow-500/60 bg-yellow-50/50' :
-              'border-success/60 bg-success/5'
-            }`}>
+            <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] active:scale-[0.98] transition-all animate-fade-in">
               <div className="space-y-1">
                 <div className="text-center">
-                  <div className="text-sm">{isTotalCritical ? '🚨' : isTotalWarning ? '⚠️' : '💰'}</div>
+                  <div className="text-sm">💰</div>
                   <p className="text-[9px] font-bold text-foreground">Resumen del Mes</p>
                 </div>
 
@@ -453,7 +445,11 @@ export default function Budgets() {
                   return (
                     <Card 
                       key={budget.id} 
-                      className="p-3 bg-white rounded-[15px] shadow-lg border border-blue-100 hover:scale-105 active:scale-95 transition-all animate-fade-in cursor-pointer"
+                      className={`p-3 rounded-[15px] shadow-lg border-2 hover:scale-105 active:scale-95 transition-all animate-fade-in cursor-pointer ${
+                        isCritical ? 'bg-red-500 border-red-600' :
+                        isWarning ? 'bg-yellow-400 border-yellow-500' :
+                        'bg-green-500 border-green-600'
+                      }`}
                       style={{ animationDelay: `${index * 0.1}s` }}
                       onClick={() => {
                         console.log('Navegando a categoría:', budget.category_id, budget.category.name);
@@ -463,36 +459,24 @@ export default function Budgets() {
                       <div className="space-y-2">
                         <div className="text-center">
                           <span className="text-2xl">{getCategoryIcon(budget.category.name)}</span>
-                          <p className="text-[10px] font-bold text-foreground leading-tight">{budget.category.name}</p>
+                          <p className="text-[10px] font-bold text-white leading-tight">{budget.category.name}</p>
                         </div>
 
                         <div className="space-y-1">
                           <Progress 
                             value={Math.min(percentUsed, 100)} 
-                            className={`h-1.5 ${
-                              isCritical ? 'bg-destructive/20' : 
-                              isWarning ? 'bg-yellow-500/20' : 
-                              'bg-muted'
-                            }`}
+                            className="h-1.5 bg-white/30"
                           />
-                          <p className={`text-[9px] text-center font-bold ${
-                            isCritical ? 'text-destructive' : 
-                            isWarning ? 'text-yellow-600' : 
-                            'text-success'
-                          }`}>
+                          <p className="text-[9px] text-center font-bold text-white">
                             {percentUsed.toFixed(0)}%
                           </p>
                         </div>
 
                         <div className="text-center space-y-0.5">
-                          <p className="text-[8px] text-muted-foreground leading-tight">
+                          <p className="text-[8px] text-white/90 leading-tight">
                             ${spent.toLocaleString()} / ${budgetAmount.toLocaleString()}
                           </p>
-                          <p className={`text-[9px] font-bold leading-tight ${
-                            isCritical ? 'text-destructive' : 
-                            isWarning ? 'text-yellow-600' : 
-                            'text-success'
-                          }`}>
+                          <p className="text-[9px] font-bold leading-tight text-white">
                             {percentUsed < 100 
                               ? `Quedan $${remaining.toLocaleString()}` 
                               : `Excedido $${Math.abs(remaining).toLocaleString()}`
@@ -501,16 +485,8 @@ export default function Budgets() {
                         </div>
 
                         {/* Botón de estado */}
-                        <div className={`rounded-[10px] p-1.5 ${
-                          isCritical ? 'bg-destructive/10 border-2 border-destructive/30' :
-                          isWarning ? 'bg-yellow-50 border-2 border-yellow-500/30' :
-                          'bg-success/10 border-2 border-success/30'
-                        }`}>
-                          <p className={`text-[9px] font-bold text-center leading-tight ${
-                            isCritical ? 'text-destructive' :
-                            isWarning ? 'text-yellow-700' :
-                            'text-success'
-                          }`}>
+                        <div className="rounded-[10px] p-1.5 bg-white/20 border-2 border-white/40">
+                          <p className="text-[9px] font-bold text-center leading-tight text-white">
                             {isCritical ? '⚠️ Mal' : isWarning ? '⚡ Cuidado' : '✅ Muy Bien'}
                           </p>
                         </div>
