@@ -33,6 +33,7 @@ import EditAspirations from "./pages/EditAspirations";
 import Budgets from "./pages/Budgets";
 import EditBudgets from "./pages/EditBudgets";
 import BudgetQuiz from "./pages/BudgetQuiz";
+import Movimientos from "./pages/Movimientos";
 
 import Subscriptions from "./pages/Subscriptions";
 import DailyExpenses from './pages/DailyExpenses';
@@ -95,6 +96,7 @@ function App() {
           <Route path="/budget-quiz" element={<BudgetQuiz />} />
           <Route path="/category-expenses" element={<CategoryExpenses />} />
           <Route path="/gestionar-categorias" element={<GestionarCategorias />} />
+          <Route path="/movimientos" element={<Movimientos />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

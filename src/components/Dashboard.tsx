@@ -17,7 +17,7 @@ import bannerGroups from '@/assets/banner-groups.jpg';
 import bannerHalloween from '@/assets/banner-halloween.png';
 import heroAuth from '@/assets/moni-ai-logo.png';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
-import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User, BarChart3, AlertCircle, CreditCard, RefreshCw } from 'lucide-react';
+import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User, BarChart3, AlertCircle, CreditCard, RefreshCw, List } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
 import SafeToSpendWidget from '@/components/analysis/SafeToSpendWidget';
 import AICoachInsightsWidget from '@/components/analysis/AICoachInsightsWidget';
@@ -1109,7 +1109,7 @@ const Dashboard = () => {
       </div>
 
       <div className="px-3 sm:px-4 space-y-6 overflow-x-hidden max-w-full">
-        {/* Quick Stats - 4 botones horizontales en una línea */}
+        {/* Quick Stats - Primera fila: 4 botones */}
         <div className="grid grid-cols-4 gap-2 sm:gap-3">
           <button 
             className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer animate-fade-in border border-blue-100" 
@@ -1179,6 +1179,25 @@ const Dashboard = () => {
                 <p className="text-xs sm:text-base font-bold text-foreground leading-tight">
                   ${totalBudget > 0 ? (totalBudget / 1000).toFixed(0) : 0}k
                 </p>
+              </div>
+            </div>
+          </button>
+        </div>
+
+        {/* Segunda fila: Botón de Movimientos */}
+        <div className="grid grid-cols-1">
+          <button 
+            onClick={() => navigate('/movimientos')}
+            className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer animate-fade-in border border-blue-100" 
+            style={{ animationDelay: '500ms' }}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-purple-500/40 flex items-center justify-center flex-shrink-0">
+                <List className="w-5 h-5 text-foreground" />
+              </div>
+              <div className="flex-1 text-left">
+                <p className="text-xs text-foreground/80 leading-tight">Ver todos los movimientos</p>
+                <p className="text-sm font-bold text-foreground leading-tight">Últimos 50 registros</p>
               </div>
             </div>
           </button>
