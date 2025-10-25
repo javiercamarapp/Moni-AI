@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      activos: {
+        Row: {
+          categoria: string
+          created_at: string | null
+          descripcion: string | null
+          es_activo_fijo: boolean | null
+          fecha_adquisicion: string | null
+          id: string
+          liquidez_porcentaje: number | null
+          moneda: string | null
+          nombre: string
+          subcategoria: string | null
+          tasa_rendimiento: number | null
+          updated_at: string | null
+          user_id: string
+          valor: number | null
+        }
+        Insert: {
+          categoria: string
+          created_at?: string | null
+          descripcion?: string | null
+          es_activo_fijo?: boolean | null
+          fecha_adquisicion?: string | null
+          id?: string
+          liquidez_porcentaje?: number | null
+          moneda?: string | null
+          nombre: string
+          subcategoria?: string | null
+          tasa_rendimiento?: number | null
+          updated_at?: string | null
+          user_id: string
+          valor?: number | null
+        }
+        Update: {
+          categoria?: string
+          created_at?: string | null
+          descripcion?: string | null
+          es_activo_fijo?: boolean | null
+          fecha_adquisicion?: string | null
+          id?: string
+          liquidez_porcentaje?: number | null
+          moneda?: string | null
+          nombre?: string
+          subcategoria?: string | null
+          tasa_rendimiento?: number | null
+          updated_at?: string | null
+          user_id?: string
+          valor?: number | null
+        }
+        Relationships: []
+      }
       assets: {
         Row: {
           category: string
@@ -450,6 +501,57 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
           weekly_analysis?: boolean | null
+        }
+        Relationships: []
+      }
+      pasivos: {
+        Row: {
+          categoria: string
+          created_at: string | null
+          descripcion: string | null
+          es_corto_plazo: boolean | null
+          fecha_inicio: string | null
+          fecha_vencimiento: string | null
+          id: string
+          moneda: string | null
+          nombre: string
+          subcategoria: string | null
+          tasa_interes: number | null
+          updated_at: string | null
+          user_id: string
+          valor: number | null
+        }
+        Insert: {
+          categoria: string
+          created_at?: string | null
+          descripcion?: string | null
+          es_corto_plazo?: boolean | null
+          fecha_inicio?: string | null
+          fecha_vencimiento?: string | null
+          id?: string
+          moneda?: string | null
+          nombre: string
+          subcategoria?: string | null
+          tasa_interes?: number | null
+          updated_at?: string | null
+          user_id: string
+          valor?: number | null
+        }
+        Update: {
+          categoria?: string
+          created_at?: string | null
+          descripcion?: string | null
+          es_corto_plazo?: boolean | null
+          fecha_inicio?: string | null
+          fecha_vencimiento?: string | null
+          id?: string
+          moneda?: string | null
+          nombre?: string
+          subcategoria?: string | null
+          tasa_interes?: number | null
+          updated_at?: string | null
+          user_id?: string
+          valor?: number | null
         }
         Relationships: []
       }

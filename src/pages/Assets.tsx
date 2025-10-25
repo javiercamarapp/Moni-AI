@@ -35,39 +35,8 @@ export default function Assets() {
   const { data: netWorthData, isLoading } = useNetWorth('1Y');
 
   // Helper function to check if an asset is liquid
-  const isLiquidAsset = (category: string, name?: string) => {
-    const cat = category.toLowerCase();
-    const accountName = name?.toLowerCase() || '';
-    
-    // Activos NO líquidos (tienen prioridad en la exclusión)
-    const illiquidKeywords = [
-      'retirement', 'pension', 'retiro', 'pensión', '401k', 'ira', 'roth',
-      'property', 'real estate', 'propiedad', 'inmueble', 'edificio',
-      'machinery', 'maquinaria', 'equipment', 'equipo',
-      'certificate', 'certificado', 'cd',
-      'annuity', 'anualidad', 'plan', 'jubilación', 'jubilacion',
-      'vehicle', 'vehiculo', 'auto', 'carro', 'coche',
-      'jewelry', 'joyeria', 'art', 'arte', 'collection', 'colección'
-    ];
-    
-    const hasIlliquidKeyword = illiquidKeywords.some(keyword => 
-      cat.includes(keyword) || accountName.includes(keyword)
-    );
-    
-    if (hasIlliquidKeyword) {
-      return false;
-    }
-    
-    // Activos líquidos
-    const liquidKeywords = [
-      'cash', 'efectivo', 'dinero',
-      'checking', 'corriente', 'cuenta corriente',
-      'saving', 'ahorro', 'cuenta de ahorro',
-      'money market', 'mercado de dinero',
-      'deposit', 'depósito', 'depósito a la vista'
-    ];
-    
-    return liquidKeywords.some(keyword => cat.includes(keyword));
+  const isLiquidAsset = (esActivoFijo: boolean) => {
+    return !esActivoFijo;
   };
 
   if (isLoading || !netWorthData) {
@@ -103,11 +72,11 @@ export default function Assets() {
 
   const { assets, totalAssets } = netWorthData;
 
-  const liquidAssets = assets.filter(a => isLiquidAsset(a.category, a.name));
-  const fixedAssets = assets.filter(a => !isLiquidAsset(a.category, a.name));
+  const liquidAssets = assets.filter(a => isLiquidAsset(a.es_activo_fijo));
+  const fixedAssets = assets.filter(a => !isLiquidAsset(a.es_activo_fijo));
 
-  const totalLiquid = liquidAssets.reduce((sum, a) => sum + Number(a.value), 0);
-  const totalFixed = fixedAssets.reduce((sum, a) => sum + Number(a.value), 0);
+  const totalLiquid = liquidAssets.reduce((sum, a) => sum + Number(a.valor), 0);
+  const totalFixed = fixedAssets.reduce((sum, a) => sum + Number(a.valor), 0);
 
   const displayAssets = 
     filter === 'Liquid' ? liquidAssets :
@@ -255,9 +224,9 @@ export default function Assets() {
             </Button>
           </div>
           {displayAssets.map((asset) => {
-            const iconName = getIconForCategory(asset.category);
+            const iconName = getIconForCategory(asset.categoria);
             const Icon = iconMap[iconName];
-            const isLiquid = isLiquidAsset(asset.category, asset.name);
+            const isLiquid = isLiquidAsset(asset.es_activo_fijo);
             
             return (
               <div
@@ -278,9 +247,9 @@ export default function Assets() {
                       )} />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="font-bold text-foreground text-sm leading-tight">{asset.name}</p>
+                      <p className="font-bold text-foreground text-sm leading-tight">{asset.nombre}</p>
                       <div className="flex items-center gap-2">
-                        <p className="text-xs text-foreground/70 leading-tight">{asset.category}</p>
+                        <p className="text-xs text-foreground/70 leading-tight">{asset.categoria}</p>
                         <Badge 
                           variant="outline" 
                           className={cn(
@@ -297,7 +266,7 @@ export default function Assets() {
                   </div>
                   <div className="text-right flex-shrink-0 ml-2">
                     <p className="font-bold text-emerald-700 text-sm break-words">
-                      ${Number(asset.value).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      ${Number(asset.valor).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
                   </div>
                 </div>

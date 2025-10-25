@@ -49,16 +49,30 @@ const liabilityCategories = [
 
 type ExistingAsset = {
   id: string;
-  name: string;
-  value: number;
-  category: string;
+  nombre: string;
+  valor: number;
+  categoria: string;
+  subcategoria: string | null;
+  descripcion: string | null;
+  moneda: string;
+  liquidez_porcentaje: number;
+  tasa_rendimiento: number | null;
+  fecha_adquisicion: string | null;
+  es_activo_fijo: boolean;
 };
 
 type ExistingLiability = {
   id: string;
-  name: string;
-  value: number;
-  category: string;
+  nombre: string;
+  valor: number;
+  categoria: string;
+  subcategoria: string | null;
+  descripcion: string | null;
+  moneda: string;
+  tasa_interes: number | null;
+  fecha_inicio: string | null;
+  fecha_vencimiento: string | null;
+  es_corto_plazo: boolean;
 };
 
 export default function EditAssetsLiabilities() {
@@ -71,9 +85,15 @@ export default function EditAssetsLiabilities() {
   const [newAssetName, setNewAssetName] = useState("");
   const [newAssetValue, setNewAssetValue] = useState("");
   const [newAssetCategory, setNewAssetCategory] = useState("");
+  const [newAssetSubcategoria, setNewAssetSubcategoria] = useState("");
+  const [newAssetDescripcion, setNewAssetDescripcion] = useState("");
+  const [newAssetMoneda, setNewAssetMoneda] = useState("MXN");
   const [newLiabilityName, setNewLiabilityName] = useState("");
   const [newLiabilityValue, setNewLiabilityValue] = useState("");
   const [newLiabilityCategory, setNewLiabilityCategory] = useState("");
+  const [newLiabilitySubcategoria, setNewLiabilitySubcategoria] = useState("");
+  const [newLiabilityDescripcion, setNewLiabilityDescripcion] = useState("");
+  const [newLiabilityMoneda, setNewLiabilityMoneda] = useState("MXN");
   const [showAddAsset, setShowAddAsset] = useState(false);
   const [showAddLiability, setShowAddLiability] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -92,17 +112,17 @@ export default function EditAssetsLiabilities() {
 
       // Cargar activos existentes
       const { data: assets } = await supabase
-        .from('assets')
+        .from('activos')
         .select('*')
         .eq('user_id', user.id)
-        .order('value', { ascending: false });
+        .order('valor', { ascending: false });
 
       // Cargar pasivos existentes
       const { data: liabilities } = await supabase
-        .from('liabilities')
+        .from('pasivos')
         .select('*')
         .eq('user_id', user.id)
-        .order('value', { ascending: false });
+        .order('valor', { ascending: false });
 
       setExistingAssets(assets || []);
       setExistingLiabilities(liabilities || []);
@@ -112,18 +132,17 @@ export default function EditAssetsLiabilities() {
     }
   };
 
-  const isLiquidAsset = (category: string) => {
-    const liquidCategories = ['Checking', 'Savings', 'Investments'];
-    return liquidCategories.includes(category);
+  const isLiquidAsset = (esActivoFijo: boolean) => {
+    return !esActivoFijo;
   };
 
-  const isCurrentLiability = (category: string) => {
-    return category === 'Credit';
+  const isCurrentLiability = (esCortoplazo: boolean) => {
+    return esCortoplazo;
   };
 
   const handleAddAsset = async () => {
     if (!newAssetName.trim() || !newAssetValue || !newAssetCategory) {
-      toast.error("Completa todos los campos");
+      toast.error("Completa todos los campos obligatorios");
       return;
     }
 
@@ -132,13 +151,19 @@ export default function EditAssetsLiabilities() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      const esActivoFijo = ['Property', 'Other'].includes(newAssetCategory);
+
       const { error } = await supabase
-        .from('assets')
+        .from('activos')
         .insert({
           user_id: user.id,
-          name: newAssetName.trim(),
-          value: parseFloat(newAssetValue),
-          category: newAssetCategory
+          nombre: newAssetName.trim(),
+          valor: parseFloat(newAssetValue),
+          categoria: newAssetCategory,
+          subcategoria: newAssetSubcategoria.trim() || null,
+          descripcion: newAssetDescripcion.trim() || null,
+          moneda: newAssetMoneda,
+          es_activo_fijo: esActivoFijo
         });
 
       if (error) throw error;
@@ -147,6 +172,9 @@ export default function EditAssetsLiabilities() {
       setNewAssetName("");
       setNewAssetValue("");
       setNewAssetCategory("");
+      setNewAssetSubcategoria("");
+      setNewAssetDescripcion("");
+      setNewAssetMoneda("MXN");
       setShowAddAsset(false);
       loadData();
     } catch (error) {
@@ -159,7 +187,7 @@ export default function EditAssetsLiabilities() {
 
   const handleAddLiability = async () => {
     if (!newLiabilityName.trim() || !newLiabilityValue || !newLiabilityCategory) {
-      toast.error("Completa todos los campos");
+      toast.error("Completa todos los campos obligatorios");
       return;
     }
 
@@ -168,13 +196,19 @@ export default function EditAssetsLiabilities() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      const esCortoplazo = newLiabilityCategory === 'Credit';
+
       const { error } = await supabase
-        .from('liabilities')
+        .from('pasivos')
         .insert({
           user_id: user.id,
-          name: newLiabilityName.trim(),
-          value: parseFloat(newLiabilityValue),
-          category: newLiabilityCategory
+          nombre: newLiabilityName.trim(),
+          valor: parseFloat(newLiabilityValue),
+          categoria: newLiabilityCategory,
+          subcategoria: newLiabilitySubcategoria.trim() || null,
+          descripcion: newLiabilityDescripcion.trim() || null,
+          moneda: newLiabilityMoneda,
+          es_corto_plazo: esCortoplazo
         });
 
       if (error) throw error;
@@ -183,6 +217,9 @@ export default function EditAssetsLiabilities() {
       setNewLiabilityName("");
       setNewLiabilityValue("");
       setNewLiabilityCategory("");
+      setNewLiabilitySubcategoria("");
+      setNewLiabilityDescripcion("");
+      setNewLiabilityMoneda("MXN");
       setShowAddLiability(false);
       loadData();
     } catch (error) {
@@ -198,7 +235,7 @@ export default function EditAssetsLiabilities() {
 
     try {
       const { error } = await supabase
-        .from('assets')
+        .from('activos')
         .delete()
         .eq('id', id);
 
@@ -217,7 +254,7 @@ export default function EditAssetsLiabilities() {
 
     try {
       const { error } = await supabase
-        .from('liabilities')
+        .from('pasivos')
         .delete()
         .eq('id', id);
 
@@ -231,21 +268,21 @@ export default function EditAssetsLiabilities() {
     }
   };
 
-  const handleUpdateAsset = async (id: string, field: 'name' | 'value', value: string) => {
+  const handleUpdateAsset = async (id: string, field: 'nombre' | 'valor' | 'descripcion', value: string) => {
     try {
-      const updateData = field === 'value' 
-        ? { value: parseFloat(value) }
-        : { name: value };
+      const updateData = field === 'valor' 
+        ? { valor: parseFloat(value) }
+        : { [field]: value };
 
       const { error } = await supabase
-        .from('assets')
+        .from('activos')
         .update(updateData)
         .eq('id', id);
 
       if (error) throw error;
 
       setExistingAssets(prev => prev.map(a => 
-        a.id === id ? { ...a, [field]: field === 'value' ? parseFloat(value) : value } : a
+        a.id === id ? { ...a, [field]: field === 'valor' ? parseFloat(value) : value } : a
       ));
     } catch (error) {
       console.error('Error updating asset:', error);
@@ -253,21 +290,21 @@ export default function EditAssetsLiabilities() {
     }
   };
 
-  const handleUpdateLiability = async (id: string, field: 'name' | 'value', value: string) => {
+  const handleUpdateLiability = async (id: string, field: 'nombre' | 'valor' | 'descripcion', value: string) => {
     try {
-      const updateData = field === 'value' 
-        ? { value: parseFloat(value) }
-        : { name: value };
+      const updateData = field === 'valor' 
+        ? { valor: parseFloat(value) }
+        : { [field]: value };
 
       const { error } = await supabase
-        .from('liabilities')
+        .from('pasivos')
         .update(updateData)
         .eq('id', id);
 
       if (error) throw error;
 
       setExistingLiabilities(prev => prev.map(l => 
-        l.id === id ? { ...l, [field]: field === 'value' ? parseFloat(value) : value } : l
+        l.id === id ? { ...l, [field]: field === 'valor' ? parseFloat(value) : value } : l
       ));
     } catch (error) {
       console.error('Error updating liability:', error);
@@ -275,10 +312,10 @@ export default function EditAssetsLiabilities() {
     }
   };
 
-  const liquidAssets = existingAssets.filter(a => isLiquidAsset(a.category));
-  const fixedAssets = existingAssets.filter(a => !isLiquidAsset(a.category));
-  const currentLiabilities = existingLiabilities.filter(l => isCurrentLiability(l.category));
-  const nonCurrentLiabilities = existingLiabilities.filter(l => !isCurrentLiability(l.category));
+  const liquidAssets = existingAssets.filter(a => isLiquidAsset(a.es_activo_fijo));
+  const fixedAssets = existingAssets.filter(a => !isLiquidAsset(a.es_activo_fijo));
+  const currentLiabilities = existingLiabilities.filter(l => isCurrentLiability(l.es_corto_plazo));
+  const nonCurrentLiabilities = existingLiabilities.filter(l => !isCurrentLiability(l.es_corto_plazo));
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
@@ -350,11 +387,11 @@ export default function EditAssetsLiabilities() {
                       </div>
                       <div className="flex-1 space-y-2">
                         <Input
-                          value={asset.name}
-                          onChange={(e) => handleUpdateAsset(asset.id, 'name', e.target.value)}
+                          value={asset.nombre}
+                          onChange={(e) => handleUpdateAsset(asset.id, 'nombre', e.target.value)}
                           onBlur={(e) => {
-                            if (e.target.value.trim() !== asset.name) {
-                              handleUpdateAsset(asset.id, 'name', e.target.value.trim());
+                            if (e.target.value.trim() !== asset.nombre) {
+                              handleUpdateAsset(asset.id, 'nombre', e.target.value.trim());
                             }
                           }}
                           className="font-bold text-base bg-white/50 border-gray-200/50"
@@ -364,11 +401,11 @@ export default function EditAssetsLiabilities() {
                           <span className="text-lg font-semibold text-muted-foreground">$</span>
                           <Input
                             type="number"
-                            value={asset.value}
-                            onChange={(e) => handleUpdateAsset(asset.id, 'value', e.target.value)}
+                            value={asset.valor}
+                            onChange={(e) => handleUpdateAsset(asset.id, 'valor', e.target.value)}
                             onBlur={(e) => {
-                              if (parseFloat(e.target.value) !== asset.value) {
-                                handleUpdateAsset(asset.id, 'value', e.target.value);
+                              if (parseFloat(e.target.value) !== asset.valor) {
+                                handleUpdateAsset(asset.id, 'valor', e.target.value);
                               }
                             }}
                             className="flex-1 text-lg font-semibold bg-white/50 border-gray-200/50"
@@ -383,7 +420,10 @@ export default function EditAssetsLiabilities() {
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
-                        <p className="text-xs text-muted-foreground font-medium">{asset.category}</p>
+                        <p className="text-xs text-muted-foreground font-medium">{asset.categoria}</p>
+                        {asset.descripcion && (
+                          <p className="text-xs text-muted-foreground italic">{asset.descripcion}</p>
+                        )}
                       </div>
                     </div>
                   </Card>
@@ -439,11 +479,11 @@ export default function EditAssetsLiabilities() {
                       </div>
                       <div className="flex-1 space-y-2">
                         <Input
-                          value={asset.name}
-                          onChange={(e) => handleUpdateAsset(asset.id, 'name', e.target.value)}
+                          value={asset.nombre}
+                          onChange={(e) => handleUpdateAsset(asset.id, 'nombre', e.target.value)}
                           onBlur={(e) => {
-                            if (e.target.value.trim() !== asset.name) {
-                              handleUpdateAsset(asset.id, 'name', e.target.value.trim());
+                            if (e.target.value.trim() !== asset.nombre) {
+                              handleUpdateAsset(asset.id, 'nombre', e.target.value.trim());
                             }
                           }}
                           className="font-bold text-base bg-white/50 border-gray-200/50"
@@ -453,11 +493,11 @@ export default function EditAssetsLiabilities() {
                           <span className="text-lg font-semibold text-muted-foreground">$</span>
                           <Input
                             type="number"
-                            value={asset.value}
-                            onChange={(e) => handleUpdateAsset(asset.id, 'value', e.target.value)}
+                            value={asset.valor}
+                            onChange={(e) => handleUpdateAsset(asset.id, 'valor', e.target.value)}
                             onBlur={(e) => {
-                              if (parseFloat(e.target.value) !== asset.value) {
-                                handleUpdateAsset(asset.id, 'value', e.target.value);
+                              if (parseFloat(e.target.value) !== asset.valor) {
+                                handleUpdateAsset(asset.id, 'valor', e.target.value);
                               }
                             }}
                             className="flex-1 text-lg font-semibold bg-white/50 border-gray-200/50"
@@ -472,7 +512,10 @@ export default function EditAssetsLiabilities() {
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
-                        <p className="text-xs text-muted-foreground font-medium">{asset.category}</p>
+                        <p className="text-xs text-muted-foreground font-medium">{asset.categoria}</p>
+                        {asset.descripcion && (
+                          <p className="text-xs text-muted-foreground italic">{asset.descripcion}</p>
+                        )}
                       </div>
                     </div>
                   </Card>
@@ -536,16 +579,51 @@ export default function EditAssetsLiabilities() {
                       </div>
 
                       <div>
-                        <Label className="text-sm font-semibold">Valor</Label>
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg font-semibold">$</span>
-                          <Input
-                            type="number"
-                            value={newAssetValue}
-                            onChange={(e) => setNewAssetValue(e.target.value)}
-                            placeholder="0"
-                            className="flex-1 bg-white/50 border-gray-200/50 focus:border-primary/50"
-                          />
+                        <Label className="text-sm font-semibold">Subcategoría (opcional)</Label>
+                        <Input
+                          value={newAssetSubcategoria}
+                          onChange={(e) => setNewAssetSubcategoria(e.target.value)}
+                          placeholder="Ej: Cuenta corriente"
+                          className="bg-white/50 border-gray-200/50 focus:border-primary/50"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="text-sm font-semibold">Descripción (opcional)</Label>
+                        <Input
+                          value={newAssetDescripcion}
+                          onChange={(e) => setNewAssetDescripcion(e.target.value)}
+                          placeholder="Detalles adicionales"
+                          className="bg-white/50 border-gray-200/50 focus:border-primary/50"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <Label className="text-sm font-semibold">Valor</Label>
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg font-semibold">$</span>
+                            <Input
+                              type="number"
+                              value={newAssetValue}
+                              onChange={(e) => setNewAssetValue(e.target.value)}
+                              placeholder="0"
+                              className="flex-1 bg-white/50 border-gray-200/50 focus:border-primary/50"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label className="text-sm font-semibold">Moneda</Label>
+                          <select
+                            value={newAssetMoneda}
+                            onChange={(e) => setNewAssetMoneda(e.target.value)}
+                            className="w-full p-2 border rounded-xl bg-white/50 border-gray-200/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
+                          >
+                            <option value="MXN">MXN</option>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                          </select>
                         </div>
                       </div>
 
@@ -564,6 +642,9 @@ export default function EditAssetsLiabilities() {
                             setNewAssetName("");
                             setNewAssetValue("");
                             setNewAssetCategory("");
+                            setNewAssetSubcategoria("");
+                            setNewAssetDescripcion("");
+                            setNewAssetMoneda("MXN");
                           }}
                           variant="outline"
                           className="bg-white/50 hover:bg-white/80"
@@ -613,11 +694,11 @@ export default function EditAssetsLiabilities() {
                       </div>
                       <div className="flex-1 space-y-2">
                         <Input
-                          value={liability.name}
-                          onChange={(e) => handleUpdateLiability(liability.id, 'name', e.target.value)}
+                          value={liability.nombre}
+                          onChange={(e) => handleUpdateLiability(liability.id, 'nombre', e.target.value)}
                           onBlur={(e) => {
-                            if (e.target.value.trim() !== liability.name) {
-                              handleUpdateLiability(liability.id, 'name', e.target.value.trim());
+                            if (e.target.value.trim() !== liability.nombre) {
+                              handleUpdateLiability(liability.id, 'nombre', e.target.value.trim());
                             }
                           }}
                           className="font-bold text-base bg-white/50 border-gray-200/50"
@@ -627,11 +708,11 @@ export default function EditAssetsLiabilities() {
                           <span className="text-lg font-semibold text-muted-foreground">$</span>
                           <Input
                             type="number"
-                            value={liability.value}
-                            onChange={(e) => handleUpdateLiability(liability.id, 'value', e.target.value)}
+                            value={liability.valor}
+                            onChange={(e) => handleUpdateLiability(liability.id, 'valor', e.target.value)}
                             onBlur={(e) => {
-                              if (parseFloat(e.target.value) !== liability.value) {
-                                handleUpdateLiability(liability.id, 'value', e.target.value);
+                              if (parseFloat(e.target.value) !== liability.valor) {
+                                handleUpdateLiability(liability.id, 'valor', e.target.value);
                               }
                             }}
                             className="flex-1 text-lg font-semibold bg-white/50 border-gray-200/50"
@@ -646,7 +727,10 @@ export default function EditAssetsLiabilities() {
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
-                        <p className="text-xs text-muted-foreground font-medium">{liability.category}</p>
+                        <p className="text-xs text-muted-foreground font-medium">{liability.categoria}</p>
+                        {liability.descripcion && (
+                          <p className="text-xs text-muted-foreground italic">{liability.descripcion}</p>
+                        )}
                       </div>
                     </div>
                   </Card>
@@ -699,11 +783,11 @@ export default function EditAssetsLiabilities() {
                       </div>
                       <div className="flex-1 space-y-2">
                         <Input
-                          value={liability.name}
-                          onChange={(e) => handleUpdateLiability(liability.id, 'name', e.target.value)}
+                          value={liability.nombre}
+                          onChange={(e) => handleUpdateLiability(liability.id, 'nombre', e.target.value)}
                           onBlur={(e) => {
-                            if (e.target.value.trim() !== liability.name) {
-                              handleUpdateLiability(liability.id, 'name', e.target.value.trim());
+                            if (e.target.value.trim() !== liability.nombre) {
+                              handleUpdateLiability(liability.id, 'nombre', e.target.value.trim());
                             }
                           }}
                           className="font-bold text-base bg-white/50 border-gray-200/50"
@@ -713,11 +797,11 @@ export default function EditAssetsLiabilities() {
                           <span className="text-lg font-semibold text-muted-foreground">$</span>
                           <Input
                             type="number"
-                            value={liability.value}
-                            onChange={(e) => handleUpdateLiability(liability.id, 'value', e.target.value)}
+                            value={liability.valor}
+                            onChange={(e) => handleUpdateLiability(liability.id, 'valor', e.target.value)}
                             onBlur={(e) => {
-                              if (parseFloat(e.target.value) !== liability.value) {
-                                handleUpdateLiability(liability.id, 'value', e.target.value);
+                              if (parseFloat(e.target.value) !== liability.valor) {
+                                handleUpdateLiability(liability.id, 'valor', e.target.value);
                               }
                             }}
                             className="flex-1 text-lg font-semibold bg-white/50 border-gray-200/50"
@@ -732,7 +816,10 @@ export default function EditAssetsLiabilities() {
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
-                        <p className="text-xs text-muted-foreground font-medium">{liability.category}</p>
+                        <p className="text-xs text-muted-foreground font-medium">{liability.categoria}</p>
+                        {liability.descripcion && (
+                          <p className="text-xs text-muted-foreground italic">{liability.descripcion}</p>
+                        )}
                       </div>
                     </div>
                   </Card>
@@ -795,16 +882,51 @@ export default function EditAssetsLiabilities() {
                       </div>
 
                       <div>
-                        <Label className="text-sm font-semibold">Valor</Label>
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg font-semibold">$</span>
-                          <Input
-                            type="number"
-                            value={newLiabilityValue}
-                            onChange={(e) => setNewLiabilityValue(e.target.value)}
-                            placeholder="0"
-                            className="flex-1 bg-white/50 border-gray-200/50 focus:border-primary/50"
-                          />
+                        <Label className="text-sm font-semibold">Subcategoría (opcional)</Label>
+                        <Input
+                          value={newLiabilitySubcategoria}
+                          onChange={(e) => setNewLiabilitySubcategoria(e.target.value)}
+                          placeholder="Ej: Visa clásica"
+                          className="bg-white/50 border-gray-200/50 focus:border-primary/50"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="text-sm font-semibold">Descripción (opcional)</Label>
+                        <Input
+                          value={newLiabilityDescripcion}
+                          onChange={(e) => setNewLiabilityDescripcion(e.target.value)}
+                          placeholder="Detalles adicionales"
+                          className="bg-white/50 border-gray-200/50 focus:border-primary/50"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <Label className="text-sm font-semibold">Valor</Label>
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg font-semibold">$</span>
+                            <Input
+                              type="number"
+                              value={newLiabilityValue}
+                              onChange={(e) => setNewLiabilityValue(e.target.value)}
+                              placeholder="0"
+                              className="flex-1 bg-white/50 border-gray-200/50 focus:border-primary/50"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label className="text-sm font-semibold">Moneda</Label>
+                          <select
+                            value={newLiabilityMoneda}
+                            onChange={(e) => setNewLiabilityMoneda(e.target.value)}
+                            className="w-full p-2 border rounded-xl bg-white/50 border-gray-200/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
+                          >
+                            <option value="MXN">MXN</option>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                          </select>
                         </div>
                       </div>
 
@@ -823,6 +945,9 @@ export default function EditAssetsLiabilities() {
                             setNewLiabilityName("");
                             setNewLiabilityValue("");
                             setNewLiabilityCategory("");
+                            setNewLiabilitySubcategoria("");
+                            setNewLiabilityDescripcion("");
+                            setNewLiabilityMoneda("MXN");
                           }}
                           variant="outline"
                           className="bg-white/50 hover:bg-white/80"
