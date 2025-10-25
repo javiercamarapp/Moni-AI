@@ -1057,7 +1057,7 @@ const Dashboard = () => {
         <AICoachInsightsWidget monthlyIncome={monthlyIncome} monthlyExpenses={monthlyExpenses} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} balance={monthlyIncome - monthlyExpenses} />
       </div>
 
-      <div className="mx-4 space-y-4 sm:space-y-6 overflow-x-hidden">
+      <div className="mx-4 space-y-4 sm:space-y-6">
         {/* Quick Stats - 4 botones horizontales en una línea */}
         <div className="grid grid-cols-4 gap-2 sm:gap-3">
           <button 
@@ -1460,10 +1460,10 @@ const Dashboard = () => {
           </Card>
 
 
-        <div className="grid lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+        <div className="grid lg:grid-cols-3 gap-6">
           
           {/* Main Goals Section */}
-          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+          <div className="lg:col-span-2 space-y-6">
             <div>
               <div className="flex flex-row justify-between items-center mb-4">
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Tus Metas</h3>
@@ -1489,7 +1489,7 @@ const Dashboard = () => {
                   'from-[hsl(145,60%,25%)] to-[hsl(145,55%,15%)] border-[hsl(145,70%,45%)]/40',
                 ];
                 const gradient = gradients[index % gradients.length];
-                return <Card key={goal.id} className={`p-4 sm:p-6 bg-gradient-to-br ${gradient} card-glow shadow-2xl border-2 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in w-full`} style={{
+                return <Card key={goal.id} className={`p-4 sm:p-6 bg-gradient-to-br ${gradient} card-glow shadow-2xl border-2 relative overflow-hidden hover:scale-105 transition-transform duration-200 animate-fade-in`} style={{
                   animationDelay: `${index * 100}ms`
                 }}>
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
@@ -1574,7 +1574,7 @@ const Dashboard = () => {
                   <p className="text-gray-700">Generando tus primeros 2 retos semanales...</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   {challenges.slice(0, 2).map((challenge, index) => {
                     const progress = (challenge.current_amount / challenge.target_amount) * 100;
                     const daysStatus = JSON.parse(challenge.days_status || '[]');
@@ -1587,9 +1587,9 @@ const Dashboard = () => {
                     const gradient = gradients[index % gradients.length];
                     
                     return (
-                       <Card 
+                      <Card 
                         key={challenge.id} 
-                        className="p-2.5 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden w-full"
+                        className="p-2.5 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden"
                         style={{ transform: 'translate3d(0, 0, 0)' }}
                       >
                         <div className="relative z-10">
@@ -1679,10 +1679,10 @@ const Dashboard = () => {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-6">
             
             {/* Recent Transactions */}
-            <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden h-[220px] flex flex-col cursor-pointer w-full">
+            <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden h-[220px] flex flex-col cursor-pointer">
               <GlowingEffect
                 spread={40}
                 glow={true}
