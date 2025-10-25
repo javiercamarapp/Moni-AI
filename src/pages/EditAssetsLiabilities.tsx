@@ -283,7 +283,7 @@ export default function EditAssetsLiabilities() {
     <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
       <div className="bg-background/95 backdrop-blur-sm sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-4 max-w-2xl">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
@@ -301,7 +301,7 @@ export default function EditAssetsLiabilities() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+      <div className="container mx-auto px-4 py-6 max-w-2xl space-y-6">
         <Tabs defaultValue={initialTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="assets">
@@ -329,7 +329,7 @@ export default function EditAssetsLiabilities() {
               </div>
 
               {liquidAssets.map((asset) => (
-                <Card key={asset.id} className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
+                <Card key={asset.id} className="p-4 bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg border border-blue-100">
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-lg bg-blue-500/30 flex items-center justify-center flex-shrink-0">
                       <Droplet className="h-5 w-5 text-blue-600" />
@@ -382,7 +382,7 @@ export default function EditAssetsLiabilities() {
                     setShowAddAsset(true);
                     setNewAssetCategory('Checking');
                   }}
-                  className="w-full bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100"
+                  className="w-full bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg hover:bg-white/80 border border-blue-100 hover:scale-105 transition-all"
                   variant="outline"
                 >
                   <Plus className="h-4 w-4 mr-2" />
@@ -404,7 +404,7 @@ export default function EditAssetsLiabilities() {
               </div>
 
               {fixedAssets.map((asset) => (
-                <Card key={asset.id} className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
+                <Card key={asset.id} className="p-4 bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg border border-blue-100">
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-lg bg-amber-500/30 flex items-center justify-center flex-shrink-0">
                       <Home className="h-5 w-5 text-amber-600" />
@@ -456,7 +456,7 @@ export default function EditAssetsLiabilities() {
                   setShowAddAsset(true);
                   setNewAssetCategory('Property');
                 }}
-                className="w-full bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100"
+                className="w-full bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg hover:bg-white/80 border border-blue-100 hover:scale-105 transition-all"
                 variant="outline"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -466,7 +466,7 @@ export default function EditAssetsLiabilities() {
 
             {/* Formulario para agregar activo */}
             {showAddAsset && (
-              <Card className="p-4 bg-white rounded-[20px] shadow-xl border-2 border-primary">
+              <Card className="p-4 bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg border-2 border-primary">
                 <h3 className="text-lg font-bold text-foreground mb-4">Agregar Nuevo Activo</h3>
                 
                 <div className="space-y-4">
@@ -549,7 +549,7 @@ export default function EditAssetsLiabilities() {
               </div>
 
               {currentLiabilities.map((liability) => (
-                <Card key={liability.id} className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
+                <Card key={liability.id} className="p-4 bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg border border-blue-100">
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-lg bg-red-500/30 flex items-center justify-center flex-shrink-0">
                       <CreditCard className="h-5 w-5 text-red-600" />
@@ -600,7 +600,7 @@ export default function EditAssetsLiabilities() {
                   setShowAddLiability(true);
                   setNewLiabilityCategory('Credit');
                 }}
-                className="w-full bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100"
+                className="w-full bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg hover:bg-white/80 border border-blue-100 hover:scale-105 transition-all"
                 variant="outline"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -621,7 +621,7 @@ export default function EditAssetsLiabilities() {
               </div>
 
               {nonCurrentLiabilities.map((liability) => (
-                <Card key={liability.id} className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
+                <Card key={liability.id} className="p-4 bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg border border-blue-100">
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-lg bg-amber-500/30 flex items-center justify-center flex-shrink-0">
                       <Building2 className="h-5 w-5 text-amber-600" />
@@ -672,7 +672,7 @@ export default function EditAssetsLiabilities() {
                   setShowAddLiability(true);
                   setNewLiabilityCategory('Mortgage');
                 }}
-                className="w-full bg-white rounded-[20px] shadow-xl hover:bg-white/90 border border-blue-100"
+                className="w-full bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg hover:bg-white/80 border border-blue-100 hover:scale-105 transition-all"
                 variant="outline"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -682,7 +682,7 @@ export default function EditAssetsLiabilities() {
 
             {/* Formulario para agregar pasivo */}
             {showAddLiability && (
-              <Card className="p-4 bg-white rounded-[20px] shadow-xl border-2 border-primary">
+              <Card className="p-4 bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg border-2 border-primary">
                 <h3 className="text-lg font-bold text-foreground mb-4">Agregar Nuevo Pasivo</h3>
                 
                 <div className="space-y-4">
