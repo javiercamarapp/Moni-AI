@@ -49,10 +49,14 @@ export default function NetWorth() {
   const { data: hasData, isLoading: checkingData, refetch: refetchHasData } = useHasNetWorthData();
   const { data: netWorthData, isLoading: loadingData } = useNetWorth(timeRange);
 
-  // Helper function to check if an asset is liquid
-  const isLiquidAsset = (esActivoFijo: boolean) => {
-    // Assets marked as "activo fijo" are NOT liquid
-    return !esActivoFijo;
+  // Helper function to check if an asset is liquid (solo efectivo disponible)
+  const isLiquidAsset = (categoria: string) => {
+    return categoria === 'Activos líquidos';
+  };
+
+  // Helper function to check if an asset is semi-liquid
+  const isSemiLiquidAsset = (categoria: string) => {
+    return categoria === 'Activos financieros' || categoria === 'Activos por cobrar';
   };
 
   // Mostrar formulario si definitivamente no hay datos (no mientras está cargando)
@@ -298,7 +302,7 @@ export default function NetWorth() {
                 </button>
                 {Array.from(new Set(
                   assets
-                    .filter(a => isLiquidAsset(a.es_activo_fijo))
+                    .filter(a => isLiquidAsset(a.categoria))
                     .map(a => a.nombre.split(' ')[0]) // Get first word as institution name
                 )).map((institution) => (
                   <button
@@ -325,7 +329,7 @@ export default function NetWorth() {
           <p className="text-xs text-foreground/80 mb-1 font-medium">Efectivo Disponible</p>
           <p className="text-2xl font-bold text-blue-900 break-words">
             ${assets
-              .filter(a => isLiquidAsset(a.es_activo_fijo))
+              .filter(a => isLiquidAsset(a.categoria))
               .filter(a => selectedInstitution === 'All' || a.nombre.startsWith(selectedInstitution))
               .reduce((sum, a) => sum + Number(a.valor), 0)
               .toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -334,7 +338,7 @@ export default function NetWorth() {
 
         <div className="space-y-3">
           {assets
-            .filter(account => isLiquidAsset(account.es_activo_fijo))
+            .filter(account => isLiquidAsset(account.categoria))
             .filter(account => selectedInstitution === 'All' || account.nombre.startsWith(selectedInstitution))
             .map((account) => {
               const iconName = getIconForCategory(account.categoria);
@@ -365,11 +369,75 @@ export default function NetWorth() {
               );
             })}
             
-          {assets.filter(a => isLiquidAsset(a.es_activo_fijo)).filter(a => selectedInstitution === 'All' || a.nombre.startsWith(selectedInstitution)).length === 0 && (
+          {assets.filter(a => isLiquidAsset(a.categoria)).filter(a => selectedInstitution === 'All' || a.nombre.startsWith(selectedInstitution)).length === 0 && (
             <div className="p-8 text-center text-muted-foreground bg-white rounded-[20px] border border-blue-100 shadow-xl">
               {selectedInstitution === 'All' 
                 ? 'No hay cuentas líquidas registradas'
                 : `No hay cuentas líquidas de ${selectedInstitution}`}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Activos Semi Líquidos Section */}
+      <div className="px-4 mt-6">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-xl font-bold text-foreground drop-shadow-lg">Activos Semi Líquidos</h2>
+        </div>
+
+        {/* Total Semi Líquido */}
+        <div className="mb-4 bg-white backdrop-blur-sm rounded-[20px] p-4 border border-blue-100 shadow-xl">
+          <p className="text-xs text-foreground/80 mb-1 font-medium">Inversiones y Por Cobrar</p>
+          <p className="text-2xl font-bold text-emerald-700 break-words">
+            ${assets
+              .filter(a => isSemiLiquidAsset(a.categoria))
+              .reduce((sum, a) => sum + Number(a.valor), 0)
+              .toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          {assets
+            .filter(account => isSemiLiquidAsset(account.categoria))
+            .map((account) => {
+              const iconName = getIconForCategory(account.categoria);
+              const Icon = iconMap[iconName];
+              
+              return (
+                <div
+                  key={account.id}
+                  className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-[1.02] transition-all cursor-pointer border border-blue-100 animate-fade-in"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="w-10 h-10 rounded-lg bg-emerald-500/40 flex items-center justify-center flex-shrink-0">
+                        <Icon className="h-5 w-5 text-foreground" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-foreground text-sm leading-tight">{account.nombre}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-xs text-foreground/70 leading-tight">{account.categoria}</p>
+                          {account.subcategoria && (
+                            <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-emerald-500/40 text-emerald-600 bg-emerald-50">
+                              {account.subcategoria}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <p className="font-bold text-foreground text-sm break-words">
+                        ${Number(account.valor).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            
+          {assets.filter(a => isSemiLiquidAsset(a.categoria)).length === 0 && (
+            <div className="p-8 text-center text-muted-foreground bg-white rounded-[20px] border border-blue-100 shadow-xl">
+              No hay activos semi líquidos registrados
             </div>
           )}
         </div>
