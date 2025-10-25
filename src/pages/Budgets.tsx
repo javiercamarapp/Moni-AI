@@ -117,6 +117,8 @@ export default function Budgets() {
         }
       });
 
+      console.log('📊 Gastos por categoría detectados:', expensesByCategory);
+
       // Para cada categoría principal, obtener su presupuesto O verificar si tiene gastos
       const budgetPromises = (categories || []).map(async (category) => {
         const { data: budget } = await supabase
@@ -130,6 +132,9 @@ export default function Budgets() {
 
         // Incluir la categoría si tiene presupuesto O si tiene gastos
         if (budget || hasExpenses) {
+          if (hasExpenses && !budget) {
+            console.log(`✅ Mostrando categoría "${category.name}" con gastos pero sin presupuesto asignado`);
+          }
           return {
             id: budget?.id || `temp-${category.id}`,
             category_id: category.id,
