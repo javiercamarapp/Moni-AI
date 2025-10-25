@@ -84,19 +84,41 @@ export default function Budgets() {
         return;
       }
 
-      const { data, error } = await supabase
-        .from('category_budgets')
-        .select(`
-          id,
-          category_id,
-          monthly_budget,
-          category:categories (
-            id,
-            name,
-            color
-          )
-        `)
-        .eq('user_id', user.id);
+      // Cargar solo las categorías principales (sin parent_id)
+      const { data: categories, error: catError } = await supabase
+        .from('categories')
+        .select('id, name, color')
+        .eq('user_id', user.id)
+        .is('parent_id', null);
+
+      if (catError) throw catError;
+
+      // Para cada categoría principal, obtener su presupuesto
+      const budgetPromises = (categories || []).map(async (category) => {
+        const { data: budget } = await supabase
+          .from('category_budgets')
+          .select('id, monthly_budget')
+          .eq('user_id', user.id)
+          .eq('category_id', category.id)
+          .maybeSingle();
+
+        if (budget) {
+          return {
+            id: budget.id,
+            category_id: category.id,
+            monthly_budget: budget.monthly_budget,
+            category: {
+              id: category.id,
+              name: category.name,
+              color: category.color
+            }
+          };
+        }
+        return null;
+      });
+
+      const data = (await Promise.all(budgetPromises)).filter(Boolean);
+      const error = null;
 
       if (error) throw error;
 
