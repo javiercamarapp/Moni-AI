@@ -348,57 +348,59 @@ const ChallengeCard = ({
                 {challenge.description}
               </div>
               
-              <div className="px-0 md:px-20 space-y-3 mb-8">
-                <h3 className="text-xl font-bold text-white mb-4">Progreso semanal</h3>
-                {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
-                  const dayStatus = daysStatus[dayIndex];
-                  const isCompleted = dayStatus?.completed === true;
-                  const isFailed = dayStatus?.completed === false;
-                  const isCurrentDay = dayIndex === currentDayIndex;
-                  
-                  return (
-                    <div 
-                      key={dayIndex}
-                      className={`flex items-center justify-between p-4 rounded-xl ${
-                        isCurrentDay ? 'bg-white/30' : 'bg-white/20'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div 
-                          className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold ${
-                            isCompleted 
-                              ? 'bg-green-500 text-white' 
-                              : isFailed 
-                              ? 'bg-red-500 text-white'
-                              : 'bg-white/50 text-white'
-                          }`}
-                        >
-                          {isCompleted && '✓'}
-                          {isFailed && '✗'}
-                          {!isCompleted && !isFailed && '·'}
+              {challenge.status !== 'pending' && (
+                <div className="px-0 md:px-20 space-y-3 mb-8">
+                  <h3 className="text-xl font-bold text-white mb-4">Progreso semanal</h3>
+                  {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
+                    const dayStatus = daysStatus[dayIndex];
+                    const isCompleted = dayStatus?.completed === true;
+                    const isFailed = dayStatus?.completed === false;
+                    const isCurrentDay = dayIndex === currentDayIndex;
+                    
+                    return (
+                      <div 
+                        key={dayIndex}
+                        className={`flex items-center justify-between p-4 rounded-xl ${
+                          isCurrentDay ? 'bg-white/30' : 'bg-white/20'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div 
+                            className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold ${
+                              isCompleted 
+                                ? 'bg-green-500 text-white' 
+                                : isFailed 
+                                ? 'bg-red-500 text-white'
+                                : 'bg-white/50 text-white'
+                            }`}
+                          >
+                            {isCompleted && '✓'}
+                            {isFailed && '✗'}
+                            {!isCompleted && !isFailed && '·'}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-white">
+                              {dayNamesFull[dayIndex]}
+                            </p>
+                            {dayStatus?.date && (
+                              <p className="text-xs text-white/70">
+                                {format(new Date(dayStatus.date), 'd MMM', { locale: es })}
+                              </p>
+                            )}
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-semibold text-white">
-                            {dayNamesFull[dayIndex]}
-                          </p>
-                          {dayStatus?.date && (
-                            <p className="text-xs text-white/70">
-                              {format(new Date(dayStatus.date), 'd MMM', { locale: es })}
+                        <div className="text-right">
+                          {dayStatus && (
+                            <p className="text-sm font-bold text-white">
+                              ${dayStatus.amount?.toFixed(0) || 0}
                             </p>
                           )}
                         </div>
                       </div>
-                      <div className="text-right">
-                        {dayStatus && (
-                          <p className="text-sm font-bold text-white">
-                            ${dayStatus.amount?.toFixed(0) || 0}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
 
               {challenge.status === 'pending' && (
                 <div className="px-0 md:px-20">
