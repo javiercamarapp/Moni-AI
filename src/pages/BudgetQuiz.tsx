@@ -491,19 +491,19 @@ export default function BudgetQuiz() {
           console.log('Presupuesto guardado exitosamente');
         }
 
-        // Ahora guardar las subcategorías con sus presupuestos
+        // Guardar las subcategorías solo como referencia (sin presupuesto)
         for (const subcategory of categoryData.subcategories) {
           const subcatBudget = subcategoryBudgets[subcategory.id];
           
-          // Solo guardar si tiene presupuesto asignado
+          // Solo crear la subcategoría si se asignó algún presupuesto
           if (subcatBudget && subcatBudget > 0) {
             // Obtener el nombre personalizado si existe
             const subcatName = customSubcategories[subcategory.id] || subcategory.name;
             
-            console.log(`  Guardando subcategoría: ${subcatName} con presupuesto: ${subcatBudget}`);
+            console.log(`  Creando subcategoría de referencia: ${subcatName}`);
 
-            // Crear la subcategoría en la BD
-            const { data: newSubcategory, error: subcatError } = await supabase
+            // Crear la subcategoría en la BD solo como referencia
+            const { error: subcatError } = await supabase
               .from('categories')
               .insert({
                 user_id: user.id,
@@ -511,28 +511,12 @@ export default function BudgetQuiz() {
                 type: 'gasto',
                 color: 'bg-primary/20',
                 parent_id: existingCategory.id
-              })
-              .select()
-              .single();
+              });
 
             if (subcatError) {
               console.error('Error creando subcategoría:', subcatError);
-              continue; // Continuar con la siguiente subcategoría
-            }
-
-            // Crear el presupuesto para la subcategoría
-            const { error: subcatBudgetError } = await supabase
-              .from('category_budgets')
-              .insert({
-                user_id: user.id,
-                category_id: newSubcategory.id,
-                monthly_budget: subcatBudget
-              });
-
-            if (subcatBudgetError) {
-              console.error('Error guardando presupuesto de subcategoría:', subcatBudgetError);
             } else {
-              console.log(`  Subcategoría ${subcatName} guardada exitosamente`);
+              console.log(`  Subcategoría ${subcatName} creada como referencia`);
             }
           }
         }
