@@ -119,7 +119,7 @@ export function ScorePopup({ show, scoreChange, onComplete }: ScorePopupProps) {
       <AnimatePresence>
         <motion.div
           className={`
-            px-4 py-2.5 rounded-[16px] shadow-xl border-2
+            px-3 py-2 rounded-[12px] shadow-lg border
             ${isPositive 
               ? 'bg-gradient-to-br from-emerald-500 to-green-600 border-emerald-300' 
               : 'bg-gradient-to-br from-red-500 to-orange-600 border-red-300'
@@ -137,9 +137,9 @@ export function ScorePopup({ show, scoreChange, onComplete }: ScorePopupProps) {
             ease: [0.34, 1.56, 0.64, 1]
           }}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <motion.div
-              className="text-2xl"
+              className="text-lg"
               animate={{ 
                 rotate: [0, -10, 10, -10, 0],
                 scale: [1, 1.15, 1]
@@ -152,10 +152,10 @@ export function ScorePopup({ show, scoreChange, onComplete }: ScorePopupProps) {
               {isPositive ? '🎉' : '📉'}
             </motion.div>
             <div className="text-white">
-              <p className="text-xs font-medium">
+              <p className="text-[10px] font-medium leading-tight">
                 {isPositive ? 'Score Moni' : 'Score Moni'}
               </p>
-              <p className="text-lg font-bold">
+              <p className="text-sm font-bold leading-tight">
                 {isPositive ? '+' : ''}{scoreChange} pts
               </p>
             </div>
