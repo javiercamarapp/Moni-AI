@@ -436,7 +436,7 @@ const ChallengeCard = ({
           
           <div className="relative z-10 flex flex-col items-center justify-center p-3">
             <div className={`w-12 h-12 rounded-full ${colors.badge} flex items-center justify-center mb-2 shadow-lg`}>
-              <span className={`text-lg font-bold ${colors.badgeText}`}>
+              <span className={`text-sm font-bold ${colors.badgeText}`}>
                 {Math.round(progress)}%
               </span>
             </div>
