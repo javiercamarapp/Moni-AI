@@ -81,31 +81,30 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
         onComplete={() => setShowCelebration(false)}
       />
       
-      <div className="space-y-3">
+      <div className="space-y-4">
         <motion.div 
-          className="bg-white rounded-[20px] shadow-xl border border-blue-100 p-4"
+          className="bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0 p-5 hover:shadow-xl transition-all duration-300"
           initial={{ scale: 1 }}
           animate={scoreChange > 0 ? { 
-            scale: [1, 1.05, 1],
-            borderColor: ['rgba(59, 130, 246, 0.1)', 'rgba(16, 185, 129, 0.5)', 'rgba(59, 130, 246, 0.1)']
+            scale: [1, 1.02, 1],
           } : {}}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-xs font-medium text-foreground/80 mb-1">Score Moni</p>
+          <p className="text-sm font-medium text-muted-foreground mb-2">Score Moni</p>
           <div className="flex items-baseline gap-2">
             <motion.p 
-              className="text-3xl font-bold text-foreground"
+              className="text-4xl font-bold text-foreground"
               key={scoreMoni}
               initial={{ scale: 1 }}
-              animate={{ scale: [1, 1.2, 1] }}
+              animate={{ scale: [1, 1.15, 1] }}
               transition={{ duration: 0.5 }}
             >
               {scoreMoni}
             </motion.p>
-            <span className="text-sm text-muted-foreground">/100</span>
+            <span className="text-base text-muted-foreground">/100</span>
             {scoreChange !== 0 && (
               <motion.span 
-                className={`text-xs font-medium ${scoreChange > 0 ? 'text-emerald-600' : 'text-red-600'}`}
+                className={`text-sm font-semibold ${scoreChange > 0 ? 'text-emerald-600' : 'text-red-600'}`}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
@@ -116,11 +115,11 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
           </div>
         </motion.div>
 
-      <div className="bg-white rounded-[20px] shadow-xl border border-blue-100 p-4">
+      <div className="bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0 p-5 hover:shadow-xl transition-all duration-300">
         <div className="h-[320px]">
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart data={radarData} margin={{ top: 5, right: 30, bottom: 5, left: 30 }}>
-              <PolarGrid stroke="rgba(0,0,0,0.05)" />
+              <PolarGrid stroke="rgba(139, 92, 246, 0.1)" />
               <PolarAngleAxis 
                 dataKey="dimension" 
                 tick={{ fill: 'hsl(var(--foreground))', fontSize: 12, fontWeight: 600 }}
@@ -128,7 +127,7 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
               <PolarRadiusAxis 
                 angle={90} 
                 domain={[0, 30]}
-                tick={{ fill: 'hsl(var(--foreground))', fontSize: 11 }}
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
               />
               <Radar
                 name="Score"
@@ -141,10 +140,11 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
               <Tooltip
                 contentStyle={{ 
                   backgroundColor: 'white', 
-                  border: '1px solid hsl(var(--border))', 
-                  borderRadius: '8px',
+                  border: 'none', 
+                  borderRadius: '16px',
                   fontSize: '13px',
-                  padding: '12px'
+                  padding: '12px',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                 }}
                 labelStyle={{ color: 'hsl(var(--foreground))', fontWeight: 'bold' }}
               />
@@ -154,26 +154,26 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
       </div>
 
       {(changeReason || loadingReason) && (
-        <div className="bg-purple-500/10 rounded-[20px] p-4 border border-purple-500/30">
-          <div className="flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+        <div className="bg-gradient-to-br from-purple-50/90 to-violet-50/90 backdrop-blur-md rounded-[24px] p-5 border-0 shadow-lg">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <p className="text-xs font-medium text-purple-700">¿Por qué cambió?</p>
+              <p className="text-sm font-semibold text-purple-700 mb-1">¿Por qué cambió?</p>
               {loadingReason ? (
                 <div className="flex items-center gap-2 mt-1">
                   <div className="w-3 h-3 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
-                  <p className="text-xs text-foreground/70">Analizando cambios...</p>
+                  <p className="text-sm text-foreground/70">Analizando cambios...</p>
                 </div>
               ) : (
-                <p className="text-xs text-foreground/70 mt-1">{changeReason}</p>
+                <p className="text-sm text-foreground/70 leading-relaxed mt-1">{changeReason}</p>
               )}
             </div>
           </div>
         </div>
       )}
 
-      <div className="space-y-2">
-        <h3 className="text-base font-bold text-foreground mb-1">Desglose por Componente</h3>
+      <div className="space-y-3">
+        <h3 className="text-lg font-semibold text-foreground">Desglose por Componente</h3>
         <RetroCarousel 
           items={radarData.map((item, index) => (
             <ScoreCard
