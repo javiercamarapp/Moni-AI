@@ -494,7 +494,7 @@ export default function NetWorth() {
                         <div className="flex items-center gap-2">
                           <p className="text-xs text-foreground/70 leading-tight">{account.categoria}</p>
                           {account.subcategoria && (
-                            <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-emerald-500/40 text-emerald-600 bg-emerald-50">
+                            <Badge variant="outline" className="text-[8px] px-1.5 py-0 border-emerald-500/40 text-emerald-600 bg-emerald-50 whitespace-nowrap">
                               {account.subcategoria}
                             </Badge>
                           )}
