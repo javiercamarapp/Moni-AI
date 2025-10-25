@@ -366,23 +366,23 @@ export default function Budgets() {
         ) : (
           <>
             {/* Resumen General */}
-            <Card className="p-5 bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0">
-              <div className="space-y-4">
-                <div className="text-center pb-2">
-                  <div className="text-3xl mb-2">💰</div>
-                  <p className="text-base font-semibold text-foreground">Resumen del Mes</p>
+            <Card className="p-3 bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0">
+              <div className="space-y-2">
+                <div className="text-center pb-1">
+                  <div className="text-2xl mb-1">💰</div>
+                  <p className="text-sm font-semibold text-foreground">Resumen del Mes</p>
                 </div>
 
                 {/* Métricas principales */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => navigate('/edit-budgets')}
-                    className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[18px] p-4 border-0 hover:from-white/90 hover:to-white/70 transition-all duration-300 w-full cursor-pointer shadow-sm"
+                    className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[18px] p-2.5 border-0 hover:from-white/90 hover:to-white/70 transition-all duration-300 w-full cursor-pointer shadow-sm"
                   >
-                    <div className="flex flex-col items-center gap-2 text-center">
-                      <Target className="h-5 w-5 text-primary" />
-                      <span className="text-xs text-muted-foreground font-medium">Presupuestado</span>
-                      <p className="text-xl font-bold text-primary">
+                    <div className="flex flex-col items-center gap-1 text-center">
+                      <Target className="h-4 w-4 text-primary" />
+                      <span className="text-[10px] text-muted-foreground font-medium">Presupuestado</span>
+                      <p className="text-base font-bold text-primary">
                         ${(totalBudget / 1000).toFixed(0)}k
                       </p>
                     </div>
@@ -390,12 +390,12 @@ export default function Budgets() {
                   
                   <button
                     onClick={() => navigate('/gastos')}
-                    className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[18px] p-4 border-0 hover:from-white/90 hover:to-white/70 transition-all duration-300 w-full cursor-pointer shadow-sm"
+                    className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[18px] p-2.5 border-0 hover:from-white/90 hover:to-white/70 transition-all duration-300 w-full cursor-pointer shadow-sm"
                   >
-                    <div className="flex flex-col items-center gap-2 text-center">
-                      <TrendingUp className="h-5 w-5 text-destructive" />
-                      <span className="text-xs text-muted-foreground font-medium">Gastado</span>
-                      <p className="text-xl font-bold text-destructive">
+                    <div className="flex flex-col items-center gap-1 text-center">
+                      <TrendingUp className="h-4 w-4 text-destructive" />
+                      <span className="text-[10px] text-muted-foreground font-medium">Gastado</span>
+                      <p className="text-base font-bold text-destructive">
                         ${(Object.values(currentExpenses).reduce((sum, val) => sum + val, 0) / 1000).toFixed(0)}k
                       </p>
                     </div>
@@ -403,12 +403,12 @@ export default function Budgets() {
                 </div>
 
                 {/* Disponible para gastar */}
-                <div className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[18px] p-4 border-0 text-center shadow-sm">
-                  <span className="text-xs text-muted-foreground font-medium tracking-wide">Disponible</span>
-                  <p className={`text-2xl font-bold mt-1 mb-1 ${remainingBudget >= 0 ? 'text-success' : 'text-destructive'}`}>
+                <div className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[18px] p-2.5 border-0 text-center shadow-sm">
+                  <span className="text-[10px] text-muted-foreground font-medium tracking-wide">Disponible</span>
+                  <p className={`text-lg font-bold mt-0.5 mb-0.5 ${remainingBudget >= 0 ? 'text-success' : 'text-destructive'}`}>
                     ${Math.abs(remainingBudget).toLocaleString()}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-[10px] text-muted-foreground">
                     {remainingBudget >= 0 ? 'para gastar' : 'sobre presupuesto'}
                   </p>
                 </div>
