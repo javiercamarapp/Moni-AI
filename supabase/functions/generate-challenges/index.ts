@@ -32,6 +32,22 @@ serve(async (req) => {
 
     console.log('🎯 Generando 12 retos (uno por categoría) para usuario:', user.id);
 
+    // Define the 12 standard expense categories with emojis
+    const STANDARD_CATEGORIES = [
+      '🏠 Vivienda',
+      '🚗 Transporte',
+      '🍽️ Alimentación',
+      '🧾 Servicios y suscripciones',
+      '🩺 Salud y bienestar',
+      '🎓 Educación y desarrollo',
+      '💳 Deudas y créditos',
+      '🎉 Entretenimiento y estilo de vida',
+      '💸 Ahorro e inversión',
+      '🤝 Apoyos y otros',
+      '🐾 Mascotas',
+      '❓ Gastos no identificados'
+    ];
+
     // Get user's budgets by category
     const { data: budgets } = await supabase
       .from("category_budgets")
@@ -39,16 +55,6 @@ serve(async (req) => {
       .eq("user_id", user.id);
 
     console.log('💰 Presupuestos encontrados:', budgets?.length || 0);
-
-    // Get all user categories
-    const { data: allCategories } = await supabase
-      .from("categories")
-      .select("id, name")
-      .eq("user_id", user.id)
-      .eq("type", "gasto")
-      .order("name");
-
-    console.log('📁 Categorías de gasto:', allCategories?.length || 0);
 
     // Get user's recent transactions (last month for analysis)
     const oneMonthAgo = new Date();
@@ -64,17 +70,7 @@ serve(async (req) => {
 
     console.log('💳 Transacciones encontradas:', transactions?.length || 0);
 
-    if (!transactions || transactions.length === 0) {
-      console.log('⚠️ No hay transacciones para analizar');
-      return new Response(JSON.stringify({ 
-        error: 'No hay suficientes transacciones del último mes para generar retos personalizados',
-        challenges: [] 
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Analyze spending patterns by category AND compare with budgets
+    // Initialize analysis for all 12 standard categories
     const categoryAnalysis: Record<string, { 
       categoryName: string;
       dailySpend: number;
@@ -84,12 +80,12 @@ serve(async (req) => {
       exceedsBy: number;
     }> = {};
     
-    // Initialize all categories
-    allCategories?.forEach(cat => {
-      const budget = budgets?.find(b => b.categories?.name === cat.name);
-      const monthlyBudget = budget?.monthly_budget || 0;
-      categoryAnalysis[cat.name] = {
-        categoryName: cat.name,
+    // Initialize with standard categories
+    STANDARD_CATEGORIES.forEach(catName => {
+      const budget = budgets?.find(b => b.categories?.name === catName);
+      const monthlyBudget = budget?.monthly_budget || 1000; // Default budget if not set
+      categoryAnalysis[catName] = {
+        categoryName: catName,
         dailySpend: 0,
         weeklySpend: 0,
         monthlyBudget,
@@ -98,44 +94,30 @@ serve(async (req) => {
       };
     });
     
-    transactions.forEach(t => {
-      const catName = t.categories?.name || "Otros";
-      if (!categoryAnalysis[catName]) {
-        const budget = budgets?.find(b => b.categories?.name === catName);
-        const monthlyBudget = budget?.monthly_budget || 0;
-        categoryAnalysis[catName] = { 
-          categoryName: catName,
-          dailySpend: 0, 
-          weeklySpend: 0,
-          monthlyBudget,
-          transactionCount: 0,
-          exceedsBy: 0
-        };
-      }
-      const amount = Number(t.amount);
-      categoryAnalysis[catName].dailySpend += amount / 30; // Aprox daily
-      categoryAnalysis[catName].weeklySpend += amount / 4.33; // Aprox weekly
-      categoryAnalysis[catName].transactionCount += 1;
-    });
-
-    // Calculate how much each category exceeds budget
-    Object.values(categoryAnalysis).forEach(cat => {
-      if (cat.monthlyBudget > 0) {
-        const monthlyActual = cat.weeklySpend * 4.33;
-        cat.exceedsBy = monthlyActual - cat.monthlyBudget;
-      }
-    });
-
-    // Get ALL categories for 12 challenges
-    const categoriesForChallenges = Object.values(categoryAnalysis)
-      .sort((a, b) => {
-        // Prioritize: categories with spending > categories with budgets > rest
-        if (b.transactionCount !== a.transactionCount) {
-          return b.transactionCount - a.transactionCount;
+    // Add transaction data if exists
+    if (transactions && transactions.length > 0) {
+      transactions.forEach(t => {
+        const catName = t.categories?.name;
+        // Only count if it matches one of our standard categories
+        if (catName && categoryAnalysis[catName]) {
+          const amount = Number(t.amount);
+          categoryAnalysis[catName].dailySpend += amount / 30;
+          categoryAnalysis[catName].weeklySpend += amount / 4.33;
+          categoryAnalysis[catName].transactionCount += 1;
         }
-        return b.exceedsBy - a.exceedsBy;
-      })
-      .slice(0, 12); // Always generate 12 challenges
+      });
+
+      // Calculate how much each category exceeds budget
+      Object.values(categoryAnalysis).forEach(cat => {
+        if (cat.monthlyBudget > 0) {
+          const monthlyActual = cat.weeklySpend * 4.33;
+          cat.exceedsBy = monthlyActual - cat.monthlyBudget;
+        }
+      });
+    }
+
+    // Use all 12 standard categories
+    const categoriesForChallenges = STANDARD_CATEGORIES.map(catName => categoryAnalysis[catName]);
 
     console.log('📊 Generando 12 retos para categorías:', categoriesForChallenges.map(c => c.categoryName).join(', '));
 
