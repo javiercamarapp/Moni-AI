@@ -195,7 +195,7 @@ const CategoryExpenses = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground whitespace-nowrap">
               {getCategoryEmoji(categoryName)} {categoryName}
             </h1>
             <p className="text-sm text-muted-foreground">Detalle de gastos</p>
