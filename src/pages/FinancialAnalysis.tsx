@@ -34,7 +34,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function FinancialAnalysis() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true); // Start with true to show loader initially
+  
+  // Check if we have cached data to avoid showing loader unnecessarily
+  const hasCachedData = (() => {
+    const cacheKey = `financialAnalysis_full_month_cache`;
+    const cached = localStorage.getItem(cacheKey);
+    return !!cached;
+  })();
+  
+  const [loading, setLoading] = useState(!hasCachedData); // Only show loader if no cache
   const [period, setPeriod] = useState("month");
   const [user, setUser] = useState<any>(null);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
@@ -587,7 +595,7 @@ export default function FinancialAnalysis() {
   return (
     <>
       {loading ? (
-        <div className="min-h-screen animated-wave-bg pb-20">
+        <div className="min-h-screen animated-wave-bg pb-20 animate-fade-in">
           <div className="mx-auto px-4 py-4 space-y-4" style={{ maxWidth: '600px' }}>
             {/* Header Skeleton */}
             <div className="flex items-center justify-between gap-3">
@@ -614,7 +622,7 @@ export default function FinancialAnalysis() {
           <BottomNav />
         </div>
       ) : (
-        <div className="min-h-screen animated-wave-bg pb-24">
+        <div className="min-h-screen animated-wave-bg pb-24 animate-fade-in">
           <div className="mx-4 space-y-4">
             {/* Header */}
             <div className="flex items-center justify-between pt-4 mb-4">
