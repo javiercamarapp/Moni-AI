@@ -255,9 +255,13 @@ const GestionarCategorias = () => {
       <Card className={`p-4 bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0 animate-fade-in hover:shadow-xl transition-all duration-300 ${isSubcategory ? 'ml-8 mt-2' : ''}`}>
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-white/50 to-white/30 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0">
-              {getCategoryIcon(category.name)}
-            </div>
+            {!isSubcategory ? (
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-white/50 to-white/30 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0">
+                {getCategoryIcon(category.name)}
+              </div>
+            ) : (
+              <div className={`w-12 h-12 rounded-2xl ${category.color} flex-shrink-0`} />
+            )}
             <div className="flex-1 min-w-0 overflow-hidden">
               <p className="text-sm font-semibold text-foreground truncate">{category.name}</p>
               {!isSubcategory && category.subcategories && category.subcategories.length > 0 && <p className="text-xs text-muted-foreground truncate">{category.subcategories.length} subcategorías</p>}
