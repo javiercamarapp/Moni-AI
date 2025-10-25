@@ -183,12 +183,12 @@ export default function MisRetos() {
 
         {challenges.filter(c => c.status === 'pending').length > 0 && (
           <div>
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight flex items-center gap-2 mb-4">
               <Sparkles className="w-5 h-5 text-purple-600" />
               Retos recomendados AI
             </h2>
-            <RetroCarousel 
-              items={challenges.filter(c => c.status === 'pending').slice(0, 12).map((challenge, index) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {challenges.filter(c => c.status === 'pending').slice(0, 12).map((challenge, index) => (
                 <ChallengeCard
                   key={challenge.id}
                   challenge={challenge}
@@ -196,7 +196,7 @@ export default function MisRetos() {
                   onAccept={acceptChallenge}
                 />
               ))}
-            />
+            </div>
           </div>
         )}
       </div>
