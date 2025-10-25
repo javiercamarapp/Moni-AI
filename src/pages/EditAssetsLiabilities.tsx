@@ -12,42 +12,6 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
 import { ASSET_CATEGORIES, LIABILITY_CATEGORIES, type AssetCategory, type LiabilityCategory } from "@/lib/categoryDefinitions";
 
-const assetCategories = [
-  { name: 'Cuentas bancarias (ahorro + cheques)', category: 'Checking', examples: ['BBVA Cuenta Ahorro', 'Santander Nómina', 'Banorte Smart'] },
-  { name: 'Inversiones financieras (fondos, CETES, bonos)', category: 'Investments', examples: ['CETES 28 días', 'Fondo GBM+', 'Bonos HSBC'] },
-  { name: 'Acciones o ETFs en bolsa', category: 'Investments', examples: ['Apple (AAPL)', 'Tesla (TSLA)', 'VOO ETF'] },
-  { name: 'Criptomonedas', category: 'Investments', examples: ['Bitcoin (BTC)', 'Ethereum (ETH)', 'USDT Stablecoin'] },
-  { name: 'Propiedad principal (casa o departamento)', category: 'Property', examples: ['Casa Polanco', 'Depto Reforma', 'Casa Santa Fe'] },
-  { name: 'Propiedades adicionales (en renta o inversión)', category: 'Property', examples: ['Depto en Renta Centro', 'Local Comercial', 'Casa Playa'] },
-  { name: 'Vehículos (auto o moto)', category: 'Other', examples: ['Toyota Corolla 2020', 'Honda CRV', 'Moto Italika'] },
-  { name: 'Ahorro para el retiro (Afore o plan privado)', category: 'Savings', examples: ['Afore Sura', 'Plan Pensión', 'Afore XXI Banorte'] },
-  { name: 'Seguros con valor de rescate / inversión', category: 'Savings', examples: ['Seguro Vida GNP', 'Plan Metlife', 'AXA Inversión'] },
-  { name: 'Dinero prestado a terceros (por cobrar)', category: 'Other', examples: ['Préstamo a Juan', 'Deuda Socio', 'Préstamo Hermano'] },
-  { name: 'Participaciones en empresas o startups', category: 'Investments', examples: ['Startup Tech', 'Negocio Restaurante', 'Empresa Familiar'] },
-  { name: 'Propiedad intelectual (marca, royalties, licencias)', category: 'Other', examples: ['Marca Registrada', 'Royalties Libro', 'Patente Software'] },
-  { name: 'Saldos en apps fintech (MercadoPago, PayPal, Revolut)', category: 'Checking', examples: ['Mercado Pago', 'PayPal USD', 'Revolut EUR'] },
-  { name: 'Inventario o mercancía para venta', category: 'Other', examples: ['Inventario Tienda', 'Productos Bodega', 'Mercancía Online'] },
-  { name: 'Obras de arte / joyas / metales preciosos', category: 'Other', examples: ['Anillo Oro', 'Cuadro Arte', 'Monedas Plata'] },
-];
-
-const liabilityCategories = [
-  { name: 'Deuda de tarjetas de crédito', category: 'Credit', examples: ['Tarjeta Banamex', 'BBVA Azul', 'Liverpool Premium'] },
-  { name: 'Préstamo personal bancario o fintech', category: 'Loans', examples: ['Préstamo Personal HSBC', 'Kueski', 'Crédito Santander'] },
-  { name: 'Crédito automotriz', category: 'Loans', examples: ['Crédito Auto VW', 'Ford Credit', 'Santander Auto'] },
-  { name: 'Hipoteca o préstamo hipotecario', category: 'Mortgage', examples: ['Hipoteca Infonavit', 'HSBC Hipotecario', 'Scotiabank Casa'] },
-  { name: 'Créditos educativos / estudiantiles', category: 'Loans', examples: ['Crédito Universidad', 'Préstamo Maestría', 'Sofes Educativo'] },
-  { name: 'Préstamos con familiares o amigos', category: 'Other', examples: ['Préstamo Mamá', 'Deuda Hermano', 'Préstamo Amigo'] },
-  { name: 'Créditos de nómina o payroll loans', category: 'Loans', examples: ['Crédito Nómina', 'Adelanto Sueldo', 'Préstamo Empresa'] },
-  { name: 'Deudas en tiendas departamentales (Liverpool, Coppel)', category: 'Credit', examples: ['Liverpool', 'Coppel', 'Palacio de Hierro'] },
-  { name: 'Pagos diferidos / meses sin intereses', category: 'Credit', examples: ['iPhone 12 MSI', 'Laptop HP', 'Muebles 18 MSI'] },
-  { name: 'Créditos empresariales / de negocio', category: 'Loans', examples: ['Crédito Pyme', 'Capital Trabajo', 'Préstamo Negocio'] },
-  { name: 'Cuotas de mantenimiento o servicios atrasados', category: 'Other', examples: ['Mantenimiento Edificio', 'Luz CFE', 'Agua Pendiente'] },
-  { name: 'Deudas con proveedores o socios', category: 'Other', examples: ['Deuda Proveedor', 'Pago Socio', 'Factura Pendiente'] },
-  { name: 'Créditos en moneda extranjera (USD/EUR)', category: 'Loans', examples: ['Crédito USD', 'Préstamo EUR', 'Deuda Dólares'] },
-  { name: 'Impuestos o multas pendientes de pago', category: 'Other', examples: ['ISR Pendiente', 'Multa Tránsito', 'IVA por Pagar'] },
-  { name: 'Arrendamientos financieros (leasing)', category: 'Loans', examples: ['Leasing Auto', 'Renta Equipo', 'Arrendamiento Oficina'] },
-];
-
 type ExistingAsset = {
   id: string;
   nombre: string;
@@ -152,7 +116,8 @@ export default function EditAssetsLiabilities() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const esActivoFijo = ['Property', 'Other'].includes(newAssetCategory);
+      // Determinar si es activo fijo basado en la categoría
+      const esActivoFijo = newAssetCategory === 'Activos fijos';
 
       const { error } = await supabase
         .from('activos')
@@ -197,7 +162,8 @@ export default function EditAssetsLiabilities() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const esCortoplazo = newLiabilityCategory === 'Credit';
+      // Determinar si es corto plazo basado en la categoría
+      const esCortoplazo = newLiabilityCategory === 'Pasivos corrientes (corto plazo)';
 
       const { error } = await supabase
         .from('pasivos')
@@ -432,19 +398,17 @@ export default function EditAssetsLiabilities() {
               ))}
 
               {/* Agregar nuevo activo líquido */}
-              {!showAddAsset && (
-                <Button
-                  onClick={() => {
-                    setShowAddAsset(true);
-                    setNewAssetCategory('Checking');
-                  }}
-                  className="w-full bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg hover:bg-white/80 border border-blue-100 hover:scale-105 transition-all"
-                  variant="outline"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Agregar Activo Líquido
-                </Button>
-              )}
+              <Button
+                onClick={() => {
+                  setShowAddAsset(true);
+                  setNewAssetCategory('Activos líquidos');
+                }}
+                className="w-full bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg hover:bg-white/80 border border-blue-100 hover:scale-105 transition-all"
+                variant="outline"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Agregar Activo Líquido
+              </Button>
             </div>
 
             {/* Activos Fijos */}
@@ -523,11 +487,10 @@ export default function EditAssetsLiabilities() {
                 </motion.div>
               ))}
 
-              {/* Agregar nuevo activo fijo */}
               <Button
                 onClick={() => {
                   setShowAddAsset(true);
-                  setNewAssetCategory('Property');
+                  setNewAssetCategory('Activos fijos');
                 }}
                 className="w-full bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg hover:bg-white/80 border border-blue-100 hover:scale-105 transition-all"
                 variant="outline"
@@ -756,7 +719,7 @@ export default function EditAssetsLiabilities() {
               <Button
                 onClick={() => {
                   setShowAddLiability(true);
-                  setNewLiabilityCategory('Credit');
+                  setNewLiabilityCategory('Pasivos corrientes (corto plazo)');
                 }}
                 className="w-full bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg hover:bg-white/80 border border-blue-100 hover:scale-105 transition-all"
                 variant="outline"
@@ -845,7 +808,7 @@ export default function EditAssetsLiabilities() {
               <Button
                 onClick={() => {
                   setShowAddLiability(true);
-                  setNewLiabilityCategory('Mortgage');
+                  setNewLiabilityCategory('Pasivos no corrientes (largo plazo)');
                 }}
                 className="w-full bg-white/70 backdrop-blur-xl rounded-[20px] shadow-lg hover:bg-white/80 border border-blue-100 hover:scale-105 transition-all"
                 variant="outline"
@@ -873,19 +836,34 @@ export default function EditAssetsLiabilities() {
                     
                     <div className="space-y-4">
                       <div>
-                        <Label className="text-sm font-semibold">Tipo de Pasivo</Label>
+                        <Label className="text-sm font-semibold">Categoría</Label>
                         <select
                           value={newLiabilityCategory}
                           onChange={(e) => setNewLiabilityCategory(e.target.value)}
                           className="w-full p-3 border rounded-xl bg-white/50 border-gray-200/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
                         >
-                          <option value="">Selecciona...</option>
-                          {liabilityCategories.map((cat, idx) => (
-                            <option key={idx} value={cat.category}>{cat.name}</option>
+                          <option value="">Selecciona categoría...</option>
+                          {Object.keys(LIABILITY_CATEGORIES).map((cat) => (
+                            <option key={cat} value={cat}>{cat}</option>
                           ))}
-                          <option value="Custom">Pasivo Personalizado</option>
                         </select>
                       </div>
+
+                      {newLiabilityCategory && (
+                        <div>
+                          <Label className="text-sm font-semibold">Subcategoría</Label>
+                          <select
+                            value={newLiabilitySubcategoria}
+                            onChange={(e) => setNewLiabilitySubcategoria(e.target.value)}
+                            className="w-full p-3 border rounded-xl bg-white/50 border-gray-200/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
+                          >
+                            <option value="">Selecciona subcategoría...</option>
+                            {LIABILITY_CATEGORIES[newLiabilityCategory as LiabilityCategory]?.map((sub) => (
+                              <option key={sub} value={sub}>{sub}</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
 
                       <div>
                         <Label className="text-sm font-semibold">Nombre</Label>
