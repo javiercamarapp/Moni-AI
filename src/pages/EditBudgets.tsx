@@ -723,7 +723,7 @@ export default function EditBudgets() {
                             const newId = `custom_${category.id}_${Date.now()}`;
                             const newSubcategory = { 
                               id: newId, 
-                              name: `Nueva subcategoría ${(customSubcategoriesByCategory[category.id]?.length || 0) + 1}` 
+                              name: '' 
                             };
                             
                             const currentCustom = customSubcategoriesByCategory[category.id] || [];
