@@ -124,7 +124,7 @@ export default function MisRetos() {
       </div>
 
       <div className="px-4 py-6 space-y-6">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-900">Mis retos de la semana</h2>
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">Mis retos de la semana</h2>
       </div>
     </div>
   );
