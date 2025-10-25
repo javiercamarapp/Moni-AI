@@ -319,30 +319,32 @@ export default function Budgets() {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
-      <div className="mx-auto px-4 py-4 space-y-4" style={{ maxWidth: '600px' }}>
-        {/* Header */}
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/dashboard')}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-10 w-10"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-xl font-bold text-foreground">Presupuesto Mensual</h1>
-            <p className="text-xs text-muted-foreground">Control de gastos</p>
+      {/* Header */}
+      <div className="sticky top-0 z-50 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm px-4 py-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/dashboard')}
+              className="rounded-full shadow-sm border-0 h-8 w-8 flex-shrink-0"
+            >
+              <ArrowLeft className="h-4 w-4 text-gray-700" />
+            </Button>
+            <h1 className="text-lg font-bold text-foreground flex-1 text-center">Presupuesto Mensual</h1>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/edit-budgets')}
+              className="rounded-full shadow-sm border-0 h-8 w-8 flex-shrink-0"
+            >
+              <Pencil className="h-4 w-4 text-gray-700" />
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/edit-budgets')}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-10 w-10"
-          >
-            <Pencil className="h-5 w-5" />
-          </Button>
         </div>
+      </div>
+
+      <div className="mx-auto px-4 space-y-4" style={{ maxWidth: '600px' }}>
 
         {budgets.length === 0 ? (
           <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center animate-fade-in hover:scale-[1.02] active:scale-[0.98] transition-all">
