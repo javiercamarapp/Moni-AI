@@ -7,7 +7,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { addDays, addWeeks, addMonths, addYears, isBefore, startOfDay } from "date-fns";
-import { TrendingUp, TrendingDown, DollarSign, PiggyBank, Home, Target, MessageSquare, User, Droplets, AlertCircle, Zap, Activity, BarChart3, Shield, Trophy, Heart } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, PiggyBank, Home, Target, MessageSquare, User, Droplets, AlertCircle, Zap, Activity, BarChart3, Shield, Trophy, Heart, ArrowLeft } from "lucide-react";
 import moniAiLogo from "@/assets/moni-ai-horizontal.png";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import BottomNav from '@/components/BottomNav';
@@ -623,18 +623,30 @@ export default function FinancialAnalysis() {
         </div>
       ) : (
         <div className="min-h-screen animated-wave-bg pb-24 animate-fade-in">
-          <div className="mx-4 space-y-4">
-            {/* Header */}
-            <div className="flex items-center justify-between pt-4 mb-4">
-              <div>
-                <h1 className="text-xl font-bold text-foreground">
-                  Análisis Financiero
-                </h1>
-                <p className="text-xs text-muted-foreground">
-                  Desliza para ver mes y año
-                </p>
+          {/* Header */}
+          <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+            <div className="max-w-7xl mx-auto px-4 py-4">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate("/dashboard")}
+                  className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 p-0 flex-shrink-0"
+                >
+                  <ArrowLeft className="h-4 w-4 text-gray-700" />
+                </Button>
+                <div className="flex-1">
+                  <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
+                    Análisis Financiero
+                  </h1>
+                  <p className="text-xs text-gray-600">
+                    Desliza para ver mes y año
+                  </p>
+                </div>
               </div>
             </div>
+          </div>
+
+          <div className="mx-auto px-4 py-6 space-y-4" style={{ maxWidth: '600px' }}>
 
             {/* Mostrar métricas instantáneas (siempre disponibles del caché) */}
             {(quickMetrics || analysis) ? (
