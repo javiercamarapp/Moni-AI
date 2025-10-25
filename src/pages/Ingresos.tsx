@@ -88,11 +88,12 @@ const Ingresos = () => {
         endDate = new Date(currentMonth.getFullYear(), 11, 31);
       }
 
-      // Fetch ALL transactions with proper pagination (sin límite máximo)
+      // Fetch ALL transactions with proper pagination (Supabase max is 1000 per query)
       let allTransactions: any[] = [];
       let hasMore = true;
       let lastId: string | null = null;
       let pageCount = 0;
+      const PAGE_SIZE = 1000;
       
       while (hasMore) {
         let query = supabase
@@ -103,7 +104,7 @@ const Ingresos = () => {
           .gte('transaction_date', startDate.toISOString().split('T')[0])
           .lte('transaction_date', endDate.toISOString().split('T')[0])
           .order('id', { ascending: true })
-          .limit(10000);
+          .limit(PAGE_SIZE);
         
         if (lastId) {
           query = query.gt('id', lastId);
@@ -118,9 +119,9 @@ const Ingresos = () => {
         
         allTransactions = [...allTransactions, ...pageData];
         lastId = pageData[pageData.length - 1].id;
-        hasMore = pageData.length === 10000;
+        hasMore = pageData.length === PAGE_SIZE;
         pageCount++;
-        console.log(`📄 Ingresos Page ${pageCount}: ${pageData.length} loaded`);
+        console.log(`📄 Ingresos Page ${pageCount}: ${pageData.length} (total: ${allTransactions.length})`);
       }
       
       // Sort by date descending for display

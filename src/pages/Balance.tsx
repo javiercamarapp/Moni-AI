@@ -326,11 +326,12 @@ const Balance = () => {
       // Create a map for quick category lookup
       const categoryMap = new Map(allCategories?.map(cat => [cat.id, cat]) || []);
 
-      // Fetch ALL transactions with proper pagination (sin límite máximo)
+      // Fetch ALL transactions with proper pagination (Supabase max is 1000 per query)
       let allTransactions: any[] = [];
       let hasMore = true;
       let lastId: string | null = null;
       let pageCount = 0;
+      const PAGE_SIZE = 1000; // Supabase default max
       
       while (hasMore) {
         let query = supabase
@@ -340,7 +341,7 @@ const Balance = () => {
           .gte('transaction_date', startDate.toISOString().split('T')[0])
           .lte('transaction_date', endDate.toISOString().split('T')[0])
           .order('id', { ascending: true })
-          .limit(10000);
+          .limit(PAGE_SIZE);
         
         // Use cursor-based pagination
         if (lastId) {
@@ -361,9 +362,9 @@ const Balance = () => {
         
         allTransactions = [...allTransactions, ...pageData];
         lastId = pageData[pageData.length - 1].id;
-        hasMore = pageData.length === 10000; // Continue if we got full page
+        hasMore = pageData.length === PAGE_SIZE; // Continue if we got full page
         pageCount++;
-        console.log(`📄 Page ${pageCount}: ${pageData.length} transactions loaded`);
+        console.log(`📄 Page ${pageCount}: ${pageData.length} transactions (total: ${allTransactions.length})`);
       }
       
       const transactions = allTransactions;
