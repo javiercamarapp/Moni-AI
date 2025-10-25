@@ -477,21 +477,23 @@ export default function AspirationsAnalysis() {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-4">
-      {/* Header con estilo sticky */}
-      <div className="sticky top-0 z-50 bg-gradient-to-r from-blue-50/80 via-purple-50/80 to-pink-50/80 backdrop-blur-md border-b border-white/20 shadow-sm">
-        <div className="container mx-auto px-4 py-4 max-w-2xl">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate("/financial-journey")}
-              className="bg-white/80 backdrop-blur-md rounded-[20px] shadow-lg hover:bg-white text-foreground h-10 w-10 hover:scale-105 transition-all border border-gray-200/50"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div className="flex-1">
-              <h1 className="text-xl font-bold text-foreground">Análisis de Aspiraciones</h1>
-              <p className="text-xs text-muted-foreground">Compara tu progreso financiero</p>
+      {/* Header */}
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4 flex-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate("/financial-journey")}
+                className="bg-white/80 backdrop-blur-md rounded-[20px] shadow-lg hover:bg-white text-foreground h-10 w-10 hover:scale-105 transition-all border border-gray-200/50"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <div className="flex-1">
+                <h1 className="text-xl font-bold text-foreground">Análisis de Aspiraciones</h1>
+                <p className="text-xs text-muted-foreground">Compara tu progreso financiero</p>
+              </div>
             </div>
           </div>
         </div>
