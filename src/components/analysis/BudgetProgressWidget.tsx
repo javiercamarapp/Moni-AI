@@ -90,7 +90,7 @@ export default function BudgetProgressWidget({ categories = [], hasBudgets = fal
   
   // Si tiene presupuestos, mostrar progreso normal
   return (
-    <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 transition-all">
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
       <div className="space-y-3">
         <div>
           <p className="text-xs font-medium text-foreground mb-1">Presupuesto por Categoría</p>
