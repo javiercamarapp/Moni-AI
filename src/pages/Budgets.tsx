@@ -349,25 +349,31 @@ export default function Budgets() {
             {/* Lista de Presupuestos en dos columnas */}
             <div className="grid grid-cols-2 gap-2.5">
               {loadingMonthlyData ? (
-                // Mostrar mensaje de análisis mientras carga
-                <div className="col-span-2">
-                  <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center animate-fade-in">
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                      <p className="text-sm font-semibold text-foreground">
-                        🤖 Presupuestos por categoría están siendo analizados por la IA
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Esto puede tomar unos segundos...
-                      </p>
+                // Mostrar skeleton loading
+                Array.from({ length: budgets.length }).map((_, i) => (
+                  <Card 
+                    key={i}
+                    className="p-3 bg-white rounded-[15px] shadow-lg border border-blue-100 animate-pulse"
+                  >
+                    <div className="space-y-2">
+                      <div className="text-center">
+                        <div className="h-8 w-8 bg-muted rounded-full mx-auto mb-2"></div>
+                        <div className="h-3 bg-muted rounded w-20 mx-auto"></div>
+                      </div>
+                      <div className="h-2 bg-muted rounded"></div>
+                      <div className="h-3 bg-muted rounded w-16 mx-auto"></div>
                     </div>
                   </Card>
+                ))
+              ) : budgets.length === 0 ? (
+                <div className="col-span-2 text-center p-6 text-muted-foreground text-sm">
+                  No hay presupuestos configurados
                 </div>
               ) : (
                 budgets.map((budget, index) => {
                   const spent = currentExpenses[budget.category_id] || 0;
                   const budgetAmount = Number(budget.monthly_budget);
-                  const percentUsed = (spent / budgetAmount) * 100;
+                  const percentUsed = budgetAmount > 0 ? (spent / budgetAmount) * 100 : 0;
                   const remaining = budgetAmount - spent;
                   const isWarning = percentUsed >= 80;
                   const isCritical = percentUsed >= 100;
@@ -375,8 +381,9 @@ export default function Budgets() {
                   return (
                     <Card 
                       key={budget.id} 
-                      className="p-3 bg-white rounded-[15px] shadow-lg border border-blue-100 hover:scale-105 active:scale-95 transition-all animate-fade-in"
+                      className="p-3 bg-white rounded-[15px] shadow-lg border border-blue-100 hover:scale-105 active:scale-95 transition-all animate-fade-in cursor-pointer"
                       style={{ animationDelay: `${index * 0.1}s` }}
+                      onClick={() => navigate(`/category-expenses?category=${budget.category_id}&name=${encodeURIComponent(budget.category.name)}`)}
                     >
                       <div className="space-y-2">
                         <div className="text-center">
