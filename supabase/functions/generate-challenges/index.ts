@@ -32,6 +32,14 @@ serve(async (req) => {
 
     console.log('🎯 Generando retos para usuario:', user.id, 'Count:', count);
 
+    // Get user's budgets by category
+    const { data: budgets } = await supabase
+      .from("category_budgets")
+      .select("*, categories(name)")
+      .eq("user_id", user.id);
+
+    console.log('💰 Presupuestos encontrados:', budgets?.length || 0);
+
     // Get user's recent transactions (last month for analysis)
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
@@ -56,48 +64,96 @@ serve(async (req) => {
       });
     }
 
-    // Analyze spending patterns by category
-    const categorySpending: Record<string, { total: number; count: number; name: string }> = {};
+    // Analyze spending patterns by category AND compare with budgets
+    const categoryAnalysis: Record<string, { 
+      categoryName: string;
+      dailySpend: number;
+      weeklySpend: number;
+      monthlyBudget: number;
+      transactionCount: number;
+      exceedsBy: number;
+    }> = {};
     
     transactions.forEach(t => {
       const catName = t.categories?.name || "Otros";
-      if (!categorySpending[catName]) {
-        categorySpending[catName] = { total: 0, count: 0, name: catName };
+      if (!categoryAnalysis[catName]) {
+        const budget = budgets?.find(b => b.categories?.name === catName);
+        const monthlyBudget = budget?.monthly_budget || 0;
+        categoryAnalysis[catName] = { 
+          categoryName: catName,
+          dailySpend: 0, 
+          weeklySpend: 0,
+          monthlyBudget,
+          transactionCount: 0,
+          exceedsBy: 0
+        };
       }
-      categorySpending[catName].total += Number(t.amount);
-      categorySpending[catName].count += 1;
+      const amount = Number(t.amount);
+      categoryAnalysis[catName].dailySpend += amount / 30; // Aprox daily
+      categoryAnalysis[catName].weeklySpend += amount / 4.33; // Aprox weekly
+      categoryAnalysis[catName].transactionCount += 1;
     });
 
-    // Find categories with high spending
-    const spendingArray = Object.values(categorySpending)
-      .sort((a, b) => b.total - a.total)
-      .slice(0, Math.max(count, 3));
+    // Calculate how much each category exceeds budget
+    Object.values(categoryAnalysis).forEach(cat => {
+      if (cat.monthlyBudget > 0) {
+        const monthlyActual = cat.weeklySpend * 4.33;
+        cat.exceedsBy = monthlyActual - cat.monthlyBudget;
+      }
+    });
+
+    // Prioritize categories with budgets that are being exceeded or have high spending
+    const categoriesForChallenges = Object.values(categoryAnalysis)
+      .filter(cat => cat.monthlyBudget > 0 || cat.weeklySpend > 100) // Has budget or significant spending
+      .sort((a, b) => b.exceedsBy - a.exceedsBy) // Most exceeded first
+      .slice(0, Math.max(count, 5)); // Get top categories
+
+    console.log('📊 Categorías para análisis:', categoriesForChallenges.length);
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Generate challenges using AI - enfocados en gastos hormiga y pequeños
-    const prompt = `Analiza estos patrones de gasto del último mes y genera ${count} retos semanales específicos para REDUCIR GASTOS HORMIGA:
+    // Generate challenges using AI - enfocados en gastos hormiga y presupuesto
+    const prompt = `Analiza el presupuesto mensual vs gasto real de este usuario y genera ${count} retos semanales para REDUCIR GASTOS HORMIGA:
 
-${spendingArray.map(s => `- ${s.name}: $${s.total.toFixed(2)} en ${s.count} transacciones (último mes)`).join('\n')}
+ANÁLISIS DE CATEGORÍAS:
+${categoriesForChallenges.map(cat => {
+  const status = cat.exceedsBy > 0 ? `⚠️ EXCEDE presupuesto por $${cat.exceedsBy.toFixed(2)}` : 
+                 cat.monthlyBudget > 0 ? `✅ Dentro de presupuesto` : 
+                 `Sin presupuesto definido`;
+  return `- ${cat.categoryName}:
+  • Presupuesto mensual: $${cat.monthlyBudget.toFixed(2)}
+  • Gasto diario promedio: $${cat.dailySpend.toFixed(2)}
+  • Gasto semanal promedio: $${cat.weeklySpend.toFixed(2)}
+  • ${cat.transactionCount} transacciones (último mes)
+  • Estado: ${status}`;
+}).join('\n\n')}
 
-ENFÓCATE EN ESTOS TIPOS DE RETOS:
-1. 🏪 Reducir compras impulsivas en OXXO, 7-Eleven, tienditas
-2. 🍕 Eliminar o reducir deliverys de comida (Uber Eats, Rappi, DiDi Food)
-3. ☕ Ahorrar en cafés, snacks, antojos diarios
-4. 💸 Evitar gastos hormiga (chicles, refrescos, dulces)
-5. 📱 Reducir suscripciones innecesarias o compras en apps
+ENFÓCATE EN ESTOS TIPOS DE RETOS ESPECÍFICOS:
+1. 🏪 **OXXO/Tienditas**: "Semana sin OXXO" - llevar lunch/snacks de casa
+2. 🍕 **Deliverys**: "Cero deliverys esta semana" - cocinar en casa
+3. ☕ **Cafés/Antojos**: "Mi café de casa" - eliminar cafés comprados
+4. 💸 **Gastos hormiga**: "Detector de gastos hormiga" - revisar cada gasto diario
+5. 🎮 **Apps/Suscripciones**: "Auditoría digital" - cancelar suscripciones no usadas
+6. 🚗 **Transporte**: "Ruta inteligente" - combinar viajes, usar transporte público
+7. 🍔 **Comida fuera**: "Chef casero" - máximo X comidas fuera por semana
+8. 🛒 **Supermercado**: "Lista inteligente" - no comprar por impulso
+9. 🎬 **Entretenimiento**: "Entretenimiento gratis" - usar opciones sin costo
+10. 👕 **Ropa**: "Armario creativo" - combinar lo que ya tienes
+11. 💡 **Servicios**: "Ahorro energético" - reducir consumo
+12. 🎁 **Otros**: "Gasto consciente" - cuestionar cada compra
 
-IMPORTANTE:
-- Los retos deben ser sobre GASTOS PEQUEÑOS Y FRECUENTES, no grandes gastos
-- Deben motivar a revisar TODAS las transacciones diarias
-- Propón metas realistas de reducción del 30-50% en estos gastos
-- Usa lenguaje motivador y desafiante
-- Incluye tips prácticos (ej: "lleva tu café de casa", "prepara lunch")
+REGLAS IMPORTANTES:
+- Prioriza categorías que EXCEDEN su presupuesto
+- Usa el gasto DIARIO/SEMANAL real para calcular metas realistas
+- Meta semanal = reducir 30-50% del gasto semanal actual
+- Incluye tips PRÁCTICOS y ACCIONABLES
+- Lenguaje motivador tipo "desafío" o "misión"
+- Menciona cuánto AHORRARÁN si cumplen el reto
 
-Formato: título corto y motivador, descripción específica del reto con tips, y la meta de gasto semanal.`;
+Formato JSON: título motivador, descripción con tips específicos, categoría, y meta de gasto semanal en pesos.`;
 
     console.log('🤖 Llamando a Lovable AI para generar retos...');
 
