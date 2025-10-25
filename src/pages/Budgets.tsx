@@ -28,6 +28,8 @@ export default function Budgets() {
   const [totalBudget, setTotalBudget] = useState(0);
   const [currentExpenses, setCurrentExpenses] = useState<Record<string, number>>({});
   const [isCategorizingExisting, setIsCategorizingExisting] = useState(false);
+  const [hasUnidentifiedExpenses, setHasUnidentifiedExpenses] = useState(false);
+  const [isRecategorizing, setIsRecategorizing] = useState(false);
 
   useEffect(() => {
     checkBudgetQuizStatus();
@@ -200,29 +202,66 @@ export default function Budgets() {
         }
       }
 
-      // Agrupar gastos por categoría principal
-      const expensesByCategory: Record<string, number> = {};
+      // Calcular gastos por categoría principal
+      const expenses: Record<string, number> = {};
+      let unidentifiedCount = 0;
       
-      (expenseData || []).forEach(t => {
-        if (t.categories) {
-          // Si la categoría tiene parent_id, buscar la categoría principal
-          let mainCategoryId = t.categories.parent_id || t.categories.id;
-          
-          // Acumular el gasto en la categoría principal
-          expensesByCategory[mainCategoryId] = (expensesByCategory[mainCategoryId] || 0) + Number(t.amount);
-          
-          console.log(`Gasto: $${t.amount} - Categoría: ${t.categories.name} - ID Principal: ${mainCategoryId}`);
+      (expenseData || []).forEach((expense: any) => {
+        console.log('Procesando gasto:', {
+          amount: expense.amount,
+          category_id: expense.category_id,
+          category: expense.categories
+        });
+
+        if (!expense.category_id || !expense.categories) {
+          console.log('Gasto sin categoría detectado');
+          return;
         }
+
+        // Verificar si es la categoría de "Gastos no identificados"
+        if (expense.categories.name === 'Gastos no identificados') {
+          unidentifiedCount++;
+        }
+
+        // Si la categoría tiene parent_id, usar la categoría padre
+        const categoryId = expense.categories.parent_id || expense.category_id;
+        expenses[categoryId] = (expenses[categoryId] || 0) + Number(expense.amount);
+        
+        console.log(`Sumando ${expense.amount} a categoría ${categoryId}`);
       });
 
-      console.log('Gastos agrupados por categoría principal:', expensesByCategory);
-      console.log('Total de categorías con gastos:', Object.keys(expensesByCategory).length);
-      
-      setCurrentExpenses(expensesByCategory);
+      console.log('Gastos totales por categoría:', expenses);
+      console.log('Gastos no identificados:', unidentifiedCount);
+      setCurrentExpenses(expenses);
+      setHasUnidentifiedExpenses(unidentifiedCount > 0);
     } catch (error) {
       console.error('Error loading monthly data:', error);
     } finally {
       setLoadingMonthlyData(false);
+    }
+  };
+
+  const handleRecategorize = async () => {
+    setIsRecategorizing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('recategorize-unidentified');
+      
+      if (error) {
+        console.error('Error recategorizando:', error);
+        toast.error("Error al recategorizar gastos");
+      } else {
+        console.log('Recategorización completada:', data);
+        toast.success(`✅ ${data.recategorized} gastos recategorizados`);
+        // Recargar datos
+        setTimeout(() => {
+          loadMonthlyData();
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Error en recategorización:', error);
+      toast.error("Error al recategorizar gastos");
+    } finally {
+      setIsRecategorizing(false);
     }
   };
 
@@ -295,6 +334,27 @@ export default function Budgets() {
             <Pencil className="h-4 w-4" />
           </Button>
         </div>
+
+        {/* Botón de recategorización si hay gastos no identificados */}
+        {hasUnidentifiedExpenses && (
+          <Card className="p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-[20px] shadow-xl border border-amber-200 animate-fade-in">
+            <div className="flex items-center gap-3">
+              <div className="text-2xl">🤖</div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-foreground">Gastos sin categorizar</p>
+                <p className="text-xs text-muted-foreground">La IA puede categorizarlos automáticamente</p>
+              </div>
+              <Button
+                onClick={handleRecategorize}
+                disabled={isRecategorizing}
+                className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-[15px] shadow-lg hover:scale-105 active:scale-95 transition-all"
+                size="sm"
+              >
+                {isRecategorizing ? "Categorizando..." : "Categorizar"}
+              </Button>
+            </div>
+          </Card>
+        )}
 
         {budgets.length === 0 ? (
           <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center animate-fade-in hover:scale-[1.02] active:scale-[0.98] transition-all">

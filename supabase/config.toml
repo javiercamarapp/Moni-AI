@@ -12,6 +12,9 @@ verify_jwt = false
 [functions.categorize-existing-transactions]
 verify_jwt = true
 
+[functions.recategorize-unidentified]
+verify_jwt = true
+
 [functions.send-proactive-message]
 verify_jwt = true
 
