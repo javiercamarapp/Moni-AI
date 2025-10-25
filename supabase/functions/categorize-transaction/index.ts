@@ -85,7 +85,7 @@ serve(async (req) => {
       .map(c => `- ${c.name} (ID: ${c.id})`)
       .join('\n');
 
-    const prompt = `Analiza esta transacción y asígnala a la categoría más apropiada de las disponibles:
+    const prompt = `Analiza esta transacción y asígnala a la categoría más apropiada:
 
 Descripción: ${description}
 Monto: $${amount}
@@ -94,21 +94,34 @@ Tipo: ${type}
 Categorías disponibles:
 ${categoryList}
 
-EJEMPLOS DE CATEGORIZACIÓN (usa las categorías disponibles arriba):
-- Walmart, Soriana, Chedraui, mercado, supermercado → Alimentación
-- Antro, bar, cine, cinemex, cinepolis, teatro, concierto, Best Buy, Apple Store → Servicios y suscripciones
-- Spotify, Netflix, Disney+, Amazon Prime → Servicios y suscripciones
-- Uber, taxi, gasolina, estacionamiento → Transporte
-- Luz, agua, gas, internet, teléfono → Servicios y suscripciones
-- Gimnasio, doctor, farmacia, hospital → Salud y bienestar
+GUÍA DE CATEGORIZACIÓN CON EJEMPLOS:
 
-INSTRUCCIONES CRÍTICAS:
-1. SOLO puedes usar las categorías listadas arriba con sus IDs
-2. Si encuentras una categoría apropiada, responde SOLO con su ID exacto (el UUID entre paréntesis)
-3. Si NO hay ninguna categoría apropiada en la lista, responde: "NO_IDENTIFICADO"
-4. NO inventes categorías que no estén en la lista
-5. NO des explicaciones
-6. Responde SOLO con el ID o "NO_IDENTIFICADO"`;
+🏠 Vivienda: renta, hipoteca, mantenimiento, predial, luz, agua, gas, internet fijo, teléfono fijo, limpieza, seguridad del hogar
+
+🚗 Transporte: gasolina, carga eléctrica, mensualidad auto, transporte público, metro, uber, didi, taxi, estacionamiento, peajes, mantenimiento vehicular, seguro auto
+
+🍽️ Alimentación: walmart, soriana, chedraui, supermercado, mercado, restaurantes, comidas fuera, café, snacks, antojos, rappi, uber eats, apps de comida
+
+🧾 Servicios y suscripciones: netflix, spotify, disney+, amazon prime, apps premium, software, membresías digitales, teléfono móvil, planes celular
+
+🩺 Salud y bienestar: seguro médico, medicinas, farmacia, consultas médicas, doctor, hospital, gimnasio, clases fitness, suplementos, terapia
+
+🎓 Educación y desarrollo: colegiaturas, escuela, universidad, cursos, talleres, capacitación, libros, herramientas aprendizaje, clases extracurriculares
+
+💳 Deudas y créditos: tarjetas de crédito, préstamos personales, créditos hipotecarios, crédito automotriz, intereses, pagos mínimos, refinanciamiento
+
+🎉 Entretenimiento y estilo de vida: cine, cinemex, cinepolis, bar, antro, fiestas, conciertos, teatro, best buy, apple store, ropa, accesorios, belleza, salón, viajes, escapadas, hobbies, videojuegos, juegos
+
+💸 Ahorro e inversión: ahorro mensual, fondo emergencia, inversiones, fondos, cetes, crypto, acciones, afore, retiro
+
+🤝 Apoyos y otros: apoyo familiar, pensión alimenticia, ayuda hijos, donaciones, caridad, mascotas (veterinario, comida mascotas, accesorios mascotas), otros gastos no clasificados
+
+INSTRUCCIONES:
+1. Usa la categoría MÁS ESPECÍFICA que coincida con la descripción
+2. Responde SOLO con el ID de la categoría (UUID entre paréntesis)
+3. Si definitivamente no hay categoría apropiada, responde: "NO_IDENTIFICADO"
+4. NO inventes categorías
+5. NO des explicaciones`;
 
     console.log('Consultando IA para transacción:', description);
 
