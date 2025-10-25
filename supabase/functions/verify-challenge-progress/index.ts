@@ -169,19 +169,30 @@ async function verifyChallenge(supabase: any, challenge: Challenge) {
       };
     }
 
-    // Update challenge in database
+    // Update challenge in database - ensure days_status is saved as JSONB array
+    console.log(`💾 Guardando estado de días:`, JSON.stringify(daysStatus));
+    
     const { error: updateError } = await supabase
       .from('challenges')
       .update({ 
-        days_status: daysStatus,
-        current_amount: challenge.current_amount // Keep current amount as is
+        days_status: daysStatus, // This will be saved as JSONB
+        current_amount: challenge.current_amount
       })
       .eq('id', challenge.id);
 
     if (updateError) {
-      console.error('Error updating challenge:', updateError);
+      console.error('❌ Error updating challenge:', updateError);
     } else {
       console.log(`✅ Reto ${challenge.id} actualizado correctamente`);
+      
+      // Verify the update
+      const { data: updated } = await supabase
+        .from('challenges')
+        .select('days_status')
+        .eq('id', challenge.id)
+        .single();
+      
+      console.log(`🔍 Verificación después de guardar:`, typeof updated?.days_status, updated?.days_status);
     }
 
   } catch (error: any) {
