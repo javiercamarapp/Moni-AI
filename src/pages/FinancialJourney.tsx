@@ -461,7 +461,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'bronze250' && (
                       <div 
                         className={`
                           absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -564,7 +564,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'silver500' && (
                       <div 
                         className={`
                           absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -667,7 +667,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'bronze750' && (
                       <div 
                         className={`
                           absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -770,7 +770,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'gold1000' && (
                       <div 
                         className={`
                           absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -873,7 +873,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'bronze1250' && (
                       <div 
                         className={`
                           absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -976,7 +976,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'silver1500' && (
                       <div 
                         className={`
                           absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -1079,7 +1079,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'mastery1750' && (
                       <div 
                         className={`
                           absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -1182,7 +1182,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'gold2000' && (
                       <div 
                         className={`
                           absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -1285,7 +1285,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'mastery2250' && (
                       <div 
                         className={`
                           absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -1388,7 +1388,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'silver2500' && (
                       <div 
                         className={`
                           absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -1491,7 +1491,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'mastery2750' && (
                       <div 
                         className={`
                           absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -1594,7 +1594,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'gold3000' && (
                       <div 
                         className={`
                           absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -1697,7 +1697,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'ruby3250' && (
                       <div 
                         className={`
                           absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -1800,7 +1800,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'silvermastery3500' && (
                       <div 
                         className={`
                           absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -1903,7 +1903,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'ruby3750' && (
                       <div 
                         className={`
                           absolute right-full mr-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -2006,7 +2006,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'ruby4250' && (
                       <div 
                         className={`
                           absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -2109,7 +2109,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'goldmastery4000' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -2211,7 +2211,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'silvermastery4500' && (
                       <div 
                         className={`
                           absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -2310,7 +2310,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'rubymastery4750' && (
                       <div 
                         className={`
                           absolute left-full ml-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -2415,7 +2415,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'rubymastery5250' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -2520,7 +2520,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'silvermastery5500' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -2625,7 +2625,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'goldmastery6000' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -2727,7 +2727,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'platinum6250' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -2829,7 +2829,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'black6500' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -2931,7 +2931,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'platinum6750' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -3033,7 +3033,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'goldmastery7000' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -3135,7 +3135,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'platinum7250' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -3237,7 +3237,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'black7500' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -3336,7 +3336,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'platinummastery7750' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -3435,7 +3435,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'maestro8000' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -3534,7 +3534,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'shield8250' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -3633,7 +3633,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'compass8500' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -3732,7 +3732,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'box8750' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -3831,7 +3831,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'planet9000' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -3930,7 +3930,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'ship9250' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -4029,7 +4029,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'space9500' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -4128,7 +4128,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'diamond9750' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -4230,7 +4230,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'supreme10000' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -4335,7 +4335,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'rubymastery5750' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
@@ -4440,7 +4440,7 @@ export default function FinancialJourney() {
                     </button>
                     
                     {/* Tooltip al hacer hover */}
-                    {isUnlocked && (
+                    {isUnlocked && expandedBadge !== 'diamondmastery5000' && (
                       <div 
                         className={`
                           absolute top-full mt-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none
