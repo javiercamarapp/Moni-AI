@@ -30,6 +30,7 @@ import FinancialHealthPieWidget from "@/components/analysis/FinancialHealthPieWi
 import LiquidityGaugeWidget from "@/components/analysis/LiquidityGaugeWidget";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { AIAnalysisLoader } from "@/components/AIAnalysisLoader";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function FinancialAnalysis() {
   const navigate = useNavigate();
@@ -586,7 +587,32 @@ export default function FinancialAnalysis() {
   return (
     <>
       {loading ? (
-        <AIAnalysisLoader message="La IA está analizando tus transacciones" fullScreen={true} />
+        <div className="min-h-screen animated-wave-bg pb-20">
+          <div className="mx-auto px-4 py-4 space-y-4" style={{ maxWidth: '600px' }}>
+            {/* Header Skeleton */}
+            <div className="flex items-center justify-between gap-3">
+              <Skeleton className="h-10 w-10 rounded-[20px]" />
+              <div className="flex-1">
+                <Skeleton className="h-6 w-48 mb-1" />
+                <Skeleton className="h-4 w-32" />
+              </div>
+              <Skeleton className="h-10 w-10 rounded-[20px]" />
+            </div>
+
+            {/* Cards Skeleton */}
+            <div className="space-y-3">
+              <Skeleton className="h-32 w-full rounded-[20px]" />
+              <Skeleton className="h-40 w-full rounded-[20px]" />
+              <Skeleton className="h-48 w-full rounded-[20px]" />
+              <div className="grid grid-cols-2 gap-3">
+                <Skeleton className="h-32 w-full rounded-[20px]" />
+                <Skeleton className="h-32 w-full rounded-[20px]" />
+              </div>
+              <Skeleton className="h-56 w-full rounded-[20px]" />
+            </div>
+          </div>
+          <BottomNav />
+        </div>
       ) : (
         <div className="min-h-screen animated-wave-bg pb-24">
           <div className="mx-4 space-y-4">

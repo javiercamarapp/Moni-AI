@@ -8,6 +8,7 @@ import { ArrowLeft, Pencil, AlertCircle, TrendingUp, Target } from "lucide-react
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 import { LoadingScreen } from "@/components/LoadingScreen";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Budget {
   id: string;
@@ -421,17 +422,25 @@ export default function Budgets() {
 
             {/* Lista de Presupuestos en dos columnas */}
             <div className="grid grid-cols-2 gap-2.5">
-              {loadingMonthlyData || isCategorizingExisting ? (
-                // Mostrar mensaje mientras categoriza
+              {loadingMonthlyData ? (
+                // Mostrar skeletons mientras carga
+                <>
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <Skeleton key={i} className="h-36 w-full rounded-[20px]" />
+                  ))}
+                </>
+              ) : isCategorizingExisting ? (
+                // Mostrar mensaje mientras categoriza en segundo plano
                 <div className="col-span-2">
-                  <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center animate-fade-in">
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                      <p className="text-sm font-semibold text-foreground">
-                        🤖 La IA está categorizando tus transacciones
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Analizando gastos del mes para asignar categorías automáticamente...
+                  <Card className="p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-[20px] shadow-xl border border-blue-100 text-center animate-fade-in">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="flex gap-1">
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                      </div>
+                      <p className="text-xs font-semibold text-foreground">
+                        🤖 IA categorizando en segundo plano
                       </p>
                     </div>
                   </Card>
