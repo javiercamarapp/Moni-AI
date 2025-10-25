@@ -815,6 +815,10 @@ export type Database = {
       }
     }
     Functions: {
+      apply_default_categories_to_existing_users: {
+        Args: never
+        Returns: undefined
+      }
       create_default_expense_categories: {
         Args: { p_user_id: string }
         Returns: undefined
