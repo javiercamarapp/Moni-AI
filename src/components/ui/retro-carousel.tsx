@@ -62,13 +62,13 @@ const RetroCarousel = ({items, initialScroll = 0}: CarouselProps) => {
 
   const handleScrollLeft = () => {
     if (carouselRef.current) {
-      carouselRef.current.scrollBy({left: -300, behavior: "smooth"});
+      carouselRef.current.scrollBy({left: -150, behavior: "smooth"});
     }
   };
 
   const handleScrollRight = () => {
     if (carouselRef.current) {
-      carouselRef.current.scrollBy({left: 300, behavior: "smooth"});
+      carouselRef.current.scrollBy({left: 150, behavior: "smooth"});
     }
   };
 
@@ -98,9 +98,10 @@ const RetroCarousel = ({items, initialScroll = 0}: CarouselProps) => {
   return (
     <div className="relative w-full mt-2">
       <div
-        className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth [scrollbar-width:none] py-5"
+        className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth [scrollbar-width:none] py-5 touch-pan-x"
         ref={carouselRef}
         onScroll={checkScrollability}
+        style={{ WebkitOverflowScrolling: 'touch' }}
       >
         <div
           className={cn(
