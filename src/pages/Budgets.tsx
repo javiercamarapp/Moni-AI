@@ -344,20 +344,20 @@ export default function Budgets() {
         </div>
       </div>
 
-      <div className="mx-auto px-4 space-y-4" style={{ maxWidth: '600px' }}>
+      <div className="mx-auto px-5 space-y-6 pb-4" style={{ maxWidth: '600px' }}>
 
         {budgets.length === 0 ? (
-          <Card className="p-8 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border text-center">
-            <div className="text-5xl mb-4">📊</div>
-            <p className="text-base font-semibold text-foreground mb-2">
+          <Card className="p-10 bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0 text-center">
+            <div className="text-6xl mb-5">📊</div>
+            <p className="text-lg font-semibold text-foreground mb-3">
               Crea tu Presupuesto Mensual
             </p>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
               Controla tus gastos por categoría y recibe alertas cuando te acerques al límite
             </p>
             <Button
               onClick={() => navigate('/budget-quiz')}
-              className="rounded-full"
+              className="rounded-full px-6 py-5 h-auto shadow-md"
             >
               <Pencil className="h-4 w-4 mr-2" />
               Configurar Presupuesto
@@ -366,23 +366,23 @@ export default function Budgets() {
         ) : (
           <>
             {/* Resumen General */}
-            <Card className="p-4 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm">
-              <div className="space-y-3">
-                <div className="text-center">
-                  <div className="text-2xl mb-1">💰</div>
-                  <p className="text-sm font-bold text-foreground">Resumen del Mes</p>
+            <Card className="p-5 bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0">
+              <div className="space-y-4">
+                <div className="text-center pb-2">
+                  <div className="text-3xl mb-2">💰</div>
+                  <p className="text-base font-semibold text-foreground">Resumen del Mes</p>
                 </div>
 
                 {/* Métricas principales */}
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => navigate('/edit-budgets')}
-                    className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border hover:bg-white/80 transition-all w-full cursor-pointer"
+                    className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[18px] p-4 border-0 hover:from-white/90 hover:to-white/70 transition-all duration-300 w-full cursor-pointer shadow-sm"
                   >
-                    <div className="flex flex-col items-center gap-1 text-center">
-                      <Target className="h-4 w-4 text-primary" />
+                    <div className="flex flex-col items-center gap-2 text-center">
+                      <Target className="h-5 w-5 text-primary" />
                       <span className="text-xs text-muted-foreground font-medium">Presupuestado</span>
-                      <p className="text-lg font-bold text-primary">
+                      <p className="text-xl font-bold text-primary">
                         ${(totalBudget / 1000).toFixed(0)}k
                       </p>
                     </div>
@@ -390,12 +390,12 @@ export default function Budgets() {
                   
                   <button
                     onClick={() => navigate('/gastos')}
-                    className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border hover:bg-white/80 transition-all w-full cursor-pointer"
+                    className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[18px] p-4 border-0 hover:from-white/90 hover:to-white/70 transition-all duration-300 w-full cursor-pointer shadow-sm"
                   >
-                    <div className="flex flex-col items-center gap-1 text-center">
-                      <TrendingUp className="h-4 w-4 text-destructive" />
+                    <div className="flex flex-col items-center gap-2 text-center">
+                      <TrendingUp className="h-5 w-5 text-destructive" />
                       <span className="text-xs text-muted-foreground font-medium">Gastado</span>
-                      <p className="text-lg font-bold text-destructive">
+                      <p className="text-xl font-bold text-destructive">
                         ${(Object.values(currentExpenses).reduce((sum, val) => sum + val, 0) / 1000).toFixed(0)}k
                       </p>
                     </div>
@@ -403,9 +403,9 @@ export default function Budgets() {
                 </div>
 
                 {/* Disponible para gastar */}
-                <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border text-center">
-                  <span className="text-xs text-muted-foreground font-medium">Disponible</span>
-                  <p className={`text-xl font-bold ${remainingBudget >= 0 ? 'text-success' : 'text-destructive'}`}>
+                <div className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[18px] p-4 border-0 text-center shadow-sm">
+                  <span className="text-xs text-muted-foreground font-medium tracking-wide">Disponible</span>
+                  <p className={`text-2xl font-bold mt-1 mb-1 ${remainingBudget >= 0 ? 'text-success' : 'text-destructive'}`}>
                     ${Math.abs(remainingBudget).toLocaleString()}
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -416,14 +416,14 @@ export default function Budgets() {
             </Card>
 
             {/* Título de sección */}
-            <div className="text-center space-y-1">
-              <div className="text-3xl">📊</div>
-              <p className="text-sm font-bold text-foreground">Presupuesto por Categoría</p>
-              <p className="text-[10px] text-muted-foreground">Progreso del mes actual</p>
+            <div className="text-center space-y-2 py-2">
+              <div className="text-4xl">📊</div>
+              <p className="text-base font-semibold text-foreground">Presupuesto por Categoría</p>
+              <p className="text-xs text-muted-foreground">Progreso del mes actual</p>
             </div>
 
             {/* Lista de Presupuestos en dos columnas */}
-            <div className="grid grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-2 gap-3">
               {loadingMonthlyData ? (
                 // Mostrar skeletons mientras carga
                 <>
@@ -526,14 +526,14 @@ export default function Budgets() {
               const percentage = (spent / Number(b.monthly_budget)) * 100;
               return percentage >= 80;
             }) && (
-              <Card className="p-4 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border">
-                <div className="flex items-center gap-3">
-                  <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0" />
+              <Card className="p-5 bg-gradient-to-br from-amber-50/90 to-orange-50/90 backdrop-blur-md rounded-[24px] shadow-lg border-0">
+                <div className="flex items-center gap-4">
+                  <AlertCircle className="h-6 w-6 text-amber-600 flex-shrink-0" />
                   <div>
-                    <p className="text-sm font-bold text-yellow-900">
+                    <p className="text-sm font-semibold text-amber-900 mb-1">
                       Atención a tus presupuestos
                     </p>
-                    <p className="text-xs text-yellow-700">
+                    <p className="text-xs text-amber-700 leading-relaxed">
                       {budgets.filter(b => {
                         const spent = currentExpenses[b.category_id] || 0;
                         const percentage = (spent / Number(b.monthly_budget)) * 100;
