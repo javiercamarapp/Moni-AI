@@ -142,18 +142,19 @@ export default function MisRetos() {
       </div>
 
       <div className="px-4 py-3 space-y-6">
-        <Card className="p-8 text-center bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0">
-          <div className="text-6xl mb-4">🎯</div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">
+        <Card className="p-6 text-center bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0">
+          <div className="text-4xl mb-3">🎯</div>
+          <h3 className="text-lg font-bold text-gray-900 mb-2">
             No tienes retos activos
           </h3>
-          <p className="text-gray-600 mb-4">
+          <p className="text-sm text-gray-600 mb-4">
             Genera tus primeros retos personalizados con IA
           </p>
           <Button
             onClick={generateNewChallenges}
             disabled={generatingChallenges}
-            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
+            size="sm"
+            className="bg-white/80 backdrop-blur-md hover:bg-white text-foreground shadow-md hover:shadow-lg transition-all border border-gray-200/50 font-semibold rounded-full"
           >
             <Sparkles className="w-4 h-4 mr-2" />
             {generatingChallenges ? 'Generando...' : 'Generar Retos'}
