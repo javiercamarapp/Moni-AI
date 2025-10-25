@@ -22,6 +22,7 @@ export default function NotificationHistory() {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     fetchNotifications();
@@ -43,6 +44,10 @@ export default function NotificationHistory() {
 
       if (error) throw error;
       setNotifications(data || []);
+      
+      // Contar notificaciones sin leer
+      const unread = data?.filter(n => n.status === "sent").length || 0;
+      setUnreadCount(unread);
     } catch (error) {
       console.error("Error fetching notifications:", error);
     } finally {
@@ -83,8 +88,15 @@ export default function NotificationHistory() {
             </p>
           </div>
           
-          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center shadow-lg">
-            <Bell className="h-5 w-5 text-white" />
+          <div className="relative flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center shadow-lg">
+              <Bell className="h-5 w-5 text-white" />
+            </div>
+            {unreadCount > 0 && (
+              <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg animate-pulse">
+                <span className="text-[10px] font-bold text-white">{unreadCount}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -127,7 +139,10 @@ export default function NotificationHistory() {
                   transition={{ delay: index * 0.05 }}
                 >
                   <Card
-                    className="bg-white/70 backdrop-blur-xl rounded-[16px] shadow-lg border border-gray-200/50 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 overflow-hidden relative cursor-pointer"
+                    className={`
+                      bg-white/70 backdrop-blur-xl rounded-[16px] shadow-lg border border-gray-200/50 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 overflow-hidden relative cursor-pointer
+                      ${isUnread ? 'ring-2 ring-cyan-400/50 animate-pulse' : ''}
+                    `}
                   >
                     {/* Gradient overlay basado en el tipo */}
                     <div 
@@ -171,11 +186,16 @@ export default function NotificationHistory() {
                         <div className="flex-1 min-w-0">
                           {/* Título y badge */}
                           <div className="flex items-start justify-between gap-2 mb-2">
-                            <h3 className="font-bold text-sm text-foreground">
+                            <h3 className={`font-bold text-sm ${isUnread ? 'text-foreground' : 'text-foreground/70'}`}>
                               {getNotificationTitle(notification.notification_type)}
                             </h3>
                             {isUnread && (
-                              <div className="flex-shrink-0 w-2 h-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 animate-pulse" />
+                              <div className="flex items-center gap-1.5">
+                                <div className="flex-shrink-0 w-2 h-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 animate-pulse" />
+                                <Badge className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-[9px] px-1.5 py-0 animate-pulse">
+                                  NUEVO
+                                </Badge>
+                              </div>
                             )}
                           </div>
                           
