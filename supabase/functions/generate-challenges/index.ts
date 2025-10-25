@@ -132,14 +132,15 @@ serve(async (req) => {
 ANÁLISIS DE LAS 12 CATEGORÍAS Y SUS PRESUPUESTOS:
 ${categoriesForChallenges.map(cat => {
   const weeklyBudget = cat.monthlyBudget / 4.33;
-  const savingsTarget = weeklyBudget * 0.25; // Ahorrar 25% del presupuesto
+  const savingsTarget = weeklyBudget * 0.25;
   const status = cat.transactionCount === 0 ? `Sin transacciones` :
                  cat.exceedsBy > 0 ? `⚠️ EXCEDE presupuesto por $${cat.exceedsBy.toFixed(2)}` : 
                  cat.monthlyBudget > 0 ? `✅ Dentro de presupuesto` : 
                  `Sin presupuesto definido`;
   return `${cat.categoryName}:
   • Presupuesto semanal: $${weeklyBudget.toFixed(2)}
-  • Meta ahorro: $${savingsTarget.toFixed(2)} (25% menos)
+  • Genera EXACTAMENTE 5 retos para esta categoría
+  • Meta ahorro sugerida: $${savingsTarget.toFixed(2)} (25% menos)
   • Gasto actual semanal: $${cat.weeklySpend.toFixed(2)}
   • ${cat.transactionCount} transacciones/mes
   • ${status}`;
@@ -169,13 +170,15 @@ TIPOS DE RETOS (VARÍA LA DISTRIBUCIÓN):
 
 REGLAS CRÍTICAS:
 - Genera EXACTAMENTE 60 retos (5 por cada categoría)
-- Por cada categoría, genera: 2 "spending_limit", 1 "days_without", 1 "daily_budget", 1 "savings_goal"
-- CADA reto DEBE incluir el nombre COMPLETO de la categoría CON su emoji (ej: "🏠 Vivienda")
-- Para "spending_limit": target_amount = presupuesto semanal * 0.75
+- Distribuye los 5 retos de cada categoría así: 2 "spending_limit", 1 "days_without", 1 "daily_budget", 1 "savings_goal"
+- CADA reto DEBE incluir el nombre COMPLETO de la categoría CON su emoji exacto (ej: "🏠 Vivienda", "🚗 Transporte")
+- Varía los montos y días entre los retos de la misma categoría para hacerlos diferentes
+- Para "spending_limit": target_amount = presupuesto semanal * 0.75 (primer reto), * 0.60 (segundo reto)
 - Para "days_without": daily_goal = 4-6, target_amount = 0
-- Para "daily_budget": target_amount = presupuesto semanal * 0.75
+- Para "daily_budget": target_amount = presupuesto semanal / 7 * 0.85
 - Para "savings_goal": target_amount = presupuesto semanal * 0.25
-- Títulos motivadores y tips prácticos ESPECÍFICOS para cada categoría`;
+- Títulos ÚNICOS y motivadores para cada uno de los 5 retos por categoría
+- Tips prácticos ESPECÍFICOS y VARIADOS para cada reto`;
 
     console.log('🤖 Llamando a Lovable AI para generar retos...');
 
