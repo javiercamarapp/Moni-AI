@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Sparkles, Calendar, TrendingUp, CheckCircle, XCircle, Target } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
@@ -26,17 +27,39 @@ export default function MisRetos() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data: challengesData, error } = await supabase
+      // Fetch active challenges (accepted and in progress)
+      const { data: activeData, error: activeError } = await supabase
         .from('challenges')
         .select('*')
         .eq('user_id', user.id)
         .eq('status', 'active')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (activeError) throw activeError;
 
-      console.log('📊 Retos activos:', challengesData);
-      setChallenges(challengesData || []);
+      const activeChallenges = activeData || [];
+      const slotsAvailable = 2 - activeChallenges.length;
+
+      // If we need more challenges to fill 2 slots, fetch pending suggestions
+      if (slotsAvailable > 0) {
+        const { data: pendingData, error: pendingError } = await supabase
+          .from('challenges')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('status', 'pending')
+          .order('created_at', { ascending: false })
+          .limit(slotsAvailable);
+
+        if (pendingError) throw pendingError;
+
+        const pendingSuggestions = pendingData || [];
+        setChallenges([...activeChallenges, ...pendingSuggestions]);
+      } else {
+        // We already have 2 active challenges
+        setChallenges(activeChallenges);
+      }
+
+      console.log('📊 Retos cargados:', activeData);
     } catch (error) {
       console.error('Error al cargar retos:', error);
       toast.error('Error al cargar tus retos');
@@ -69,13 +92,21 @@ export default function MisRetos() {
     }
   };
 
-  const getChallengeProgress = (challenge: any) => {
-    if (!challenge.target_amount || challenge.target_amount === 0) return 0;
-    return Math.min((challenge.current_amount / challenge.target_amount) * 100, 100);
-  };
+  const acceptChallenge = async (challengeId: string) => {
+    try {
+      const { error } = await supabase
+        .from('challenges')
+        .update({ status: 'active' })
+        .eq('id', challengeId);
 
-  const getDaysRemaining = (endDate: string) => {
-    return differenceInDays(new Date(endDate), new Date());
+      if (error) throw error;
+
+      toast.success('¡Reto aceptado!');
+      await fetchChallenges();
+    } catch (error) {
+      console.error('Error al aceptar reto:', error);
+      toast.error('Error al aceptar el reto');
+    }
   };
 
   return (
@@ -104,10 +135,10 @@ export default function MisRetos() {
         <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">Mis retos de la semana</h2>
         
         {loading ? (
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <Card key={i} className="p-5 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 animate-pulse">
-                <div className="h-20 bg-gray-200 rounded"></div>
+          <div className="grid grid-cols-2 gap-3">
+            {[1, 2].map((i) => (
+              <Card key={i} className="p-2.5 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 animate-pulse">
+                <div className="h-32 bg-gray-200 rounded"></div>
               </Card>
             ))}
           </div>
@@ -130,60 +161,97 @@ export default function MisRetos() {
             </Button>
           </Card>
         ) : (
-          <div className="space-y-4">
-            {challenges.map((challenge, index) => {
-              const progress = getChallengeProgress(challenge);
-              const daysLeft = getDaysRemaining(challenge.end_date);
+          <div className="grid grid-cols-2 gap-3">
+            {challenges.slice(0, 2).map((challenge, index) => {
+              const progress = (challenge.current_amount / challenge.target_amount) * 100;
+              const daysStatus = JSON.parse(challenge.days_status || '[]');
+              const dayNames = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
               
               return (
-                <motion.div
-                  key={challenge.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                <Card 
+                  key={challenge.id} 
+                  className="w-full p-2.5 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden min-w-0"
+                  style={{ transform: 'translate3d(0, 0, 0)' }}
                 >
-                  <Card className="p-5 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 hover:shadow-md transition-all">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <h4 className="font-bold text-gray-900 text-base mb-1">
-                          {challenge.title}
-                        </h4>
-                        <p className="text-sm text-gray-600 mb-2">
-                          {challenge.description}
-                        </p>
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
-                          <Calendar className="w-3 h-3" />
-                          <span>
-                            {daysLeft > 0 ? `${daysLeft} días restantes` : 'Último día'}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-2xl">🎯</span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Progreso</span>
-                        <span className="font-bold text-gray-900">
-                          ${challenge.current_amount.toLocaleString()} / ${challenge.target_amount.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
-                        <motion.div
-                          className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${progress}%` }}
-                          transition={{ duration: 1, delay: index * 0.1 }}
-                        />
-                      </div>
-                      <p className="text-xs text-right text-gray-500">
-                        {progress.toFixed(0)}% completado
+                  <div className="relative z-10">
+                    <div className="mb-2">
+                      <h4 className="text-sm font-bold text-foreground drop-shadow-sm mb-0.5 line-clamp-1 leading-tight">
+                        {challenge.title}
+                      </h4>
+                      <p className="text-[10px] text-foreground/70 drop-shadow-sm line-clamp-2 leading-tight">
+                        {challenge.description}
                       </p>
                     </div>
-                  </Card>
-                </motion.div>
+                    
+                    <div className="mb-2">
+                      <div className="flex justify-between items-baseline mb-1">
+                        <span className="text-base font-bold text-foreground drop-shadow-sm">
+                          ${challenge.current_amount.toFixed(0)}
+                        </span>
+                        <span className="text-[10px] text-foreground/70 drop-shadow-sm">
+                          de ${challenge.target_amount}
+                        </span>
+                      </div>
+                      
+                      <div className="relative h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-green-600 rounded-full"
+                          style={{ width: `${Math.min(progress, 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gray-100 backdrop-blur-sm rounded p-1.5 border border-gray-200 mb-2">
+                      <div className="flex justify-between gap-0.5">
+                        {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
+                          const dayStatus = daysStatus[dayIndex];
+                          const isCompleted = dayStatus?.completed === true;
+                          const isFailed = dayStatus?.completed === false;
+                          const isPending = !dayStatus;
+                          
+                          return (
+                            <div 
+                              key={dayIndex} 
+                              className="flex flex-col items-center"
+                            >
+                              <span className="text-[8px] text-foreground/70 mb-0.5">
+                                {dayNames[dayIndex]}
+                              </span>
+                              <div 
+                                className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                                  isCompleted 
+                                    ? 'bg-green-500/80 text-white' 
+                                    : isFailed 
+                                    ? 'bg-red-500/80 text-white'
+                                    : 'bg-gray-200 text-gray-400'
+                                }`}
+                              >
+                                {isCompleted && '✓'}
+                                {isFailed && '✗'}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    
+                    {challenge.status === 'pending' ? (
+                      <Button 
+                        size="sm" 
+                        className="w-full bg-green-600 hover:bg-green-700 text-white border-0 h-7 text-[10px] font-medium"
+                        onClick={() => acceptChallenge(challenge.id)}
+                      >
+                        Aceptar reto
+                      </Button>
+                    ) : (
+                      <div className="text-center py-1">
+                        <Badge className="bg-green-500/20 text-green-700 text-[9px] border-green-500/30">
+                          En progreso
+                        </Badge>
+                      </div>
+                    )}
+                  </div>
+                </Card>
               );
             })}
           </div>
