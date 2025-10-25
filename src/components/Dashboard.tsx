@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,6 +26,8 @@ import AICoachInsightsWidget from '@/components/analysis/AICoachInsightsWidget';
 import BottomNav from '@/components/BottomNav';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState<any>(null);
   const [currentXP, setCurrentXP] = useState(0);
   const [nextLevelXP] = useState(100);
@@ -138,7 +140,6 @@ const Dashboard = () => {
   const [challenges, setChallenges] = useState<any[]>([]);
   const [loadingChallenges, setLoadingChallenges] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
-  const navigate = useNavigate();
   const {
     toast
   } = useToast();
@@ -201,6 +202,17 @@ const Dashboard = () => {
     }, 4000);
     return () => clearInterval(interval);
   }, []);
+
+  // Restaurar posición del scroll cuando se regresa de Financial Journey
+  useEffect(() => {
+    const savedScrollPosition = sessionStorage.getItem('dashboardScrollPosition');
+    if (savedScrollPosition && location.state?.fromFinancialJourney) {
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(savedScrollPosition));
+        sessionStorage.removeItem('dashboardScrollPosition');
+      }, 100);
+    }
+  }, [location]);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -1049,7 +1061,10 @@ const Dashboard = () => {
           <Button 
             variant="ghost" 
             className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md text-gray-900 h-10 px-3 gap-2 transition-all border-0"
-            onClick={() => navigate("/financial-journey")}
+            onClick={() => {
+              sessionStorage.setItem('dashboardScrollPosition', window.scrollY.toString());
+              navigate("/financial-journey");
+            }}
           >
             <Trophy className="h-4 w-4 text-yellow-500" />
             <span className="text-xs font-semibold">
