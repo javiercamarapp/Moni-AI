@@ -166,7 +166,9 @@ export default function NetWorthWidget() {
             <div className="flex-1 min-w-0 text-left">
               <p className="text-xs text-foreground/80 leading-tight font-medium">Activos</p>
               <p className="text-base font-bold text-emerald-700 leading-tight break-words">
-                ${totalAssets >= 100000 
+                ${totalAssets >= 1000000 
+                  ? `${(totalAssets / 1000000).toFixed(2)}M` 
+                  : totalAssets >= 100000 
                   ? `${(totalAssets / 1000).toFixed(0)}k` 
                   : totalAssets.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
               </p>
@@ -184,7 +186,9 @@ export default function NetWorthWidget() {
             <div className="flex-1 min-w-0 text-left">
               <p className="text-xs text-foreground/80 leading-tight font-medium">Pasivos</p>
               <p className="text-base font-bold text-destructive leading-tight break-words">
-                ${totalLiabilities >= 100000 
+                ${totalLiabilities >= 1000000 
+                  ? `${(totalLiabilities / 1000000).toFixed(2)}M` 
+                  : totalLiabilities >= 100000 
                   ? `${(totalLiabilities / 1000).toFixed(0)}k` 
                   : totalLiabilities.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
               </p>
