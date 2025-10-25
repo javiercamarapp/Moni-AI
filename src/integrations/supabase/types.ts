@@ -804,7 +804,15 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      resumen_patrimonio: {
+        Row: {
+          patrimonio_neto: number | null
+          total_activos: number | null
+          total_pasivos: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       insert_bank_connection_secure: {
