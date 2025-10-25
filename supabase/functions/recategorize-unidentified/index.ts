@@ -29,78 +29,88 @@ serve(async (req) => {
       throw new Error('Unauthorized');
     }
 
-    console.log('Recategorizando gastos no identificados para usuario:', user.id);
+    console.log('Iniciando categorización automática para usuario:', user.id);
 
-    // Obtener todas las transacciones marcadas como "Gastos no identificados"
+    // Obtener categoría "Gastos no identificados"
     const { data: unidentifiedCategory } = await supabase
       .from('categories')
       .select('id')
       .eq('user_id', user.id)
       .eq('name', 'Gastos no identificados')
       .eq('type', 'gasto')
-      .single();
+      .maybeSingle();
 
-    if (!unidentifiedCategory) {
-      return new Response(
-        JSON.stringify({ success: true, message: 'No hay categoría de gastos no identificados' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Obtener TODAS las transacciones sin categoría (NULL) o con "Gastos no identificados"
-    // Esto incluye transacciones históricas que nunca fueron categorizadas
+    // Obtener transacciones sin categoría o con "Gastos no identificados"
     const { data: transactions, error: txError } = await supabase
       .from('transactions')
       .select('id, description, amount')
       .eq('user_id', user.id)
       .eq('type', 'gasto')
-      .or(`category_id.is.null,category_id.eq.${unidentifiedCategory.id}`)
+      .or(unidentifiedCategory 
+        ? `category_id.is.null,category_id.eq.${unidentifiedCategory.id}`
+        : `category_id.is.null`)
       .order('transaction_date', { ascending: false })
-      .limit(500); // Limitar a 500 para evitar timeouts
+      .limit(100); // Procesar hasta 100 transacciones por vez
 
     if (txError) throw txError;
 
     if (!transactions || transactions.length === 0) {
       return new Response(
-        JSON.stringify({ success: true, message: 'No hay transacciones no identificadas para recategorizar', count: 0 }),
+        JSON.stringify({ 
+          success: true, 
+          message: 'No hay transacciones por categorizar', 
+          count: 0 
+        }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log(`Encontradas ${transactions.length} transacciones para recategorizar`);
+    console.log(`Encontradas ${transactions.length} transacciones para categorizar`);
 
-    // Recategorizar cada transacción usando la función de categorización
+    // Procesar en lotes de 10 transacciones en paralelo
+    const batchSize = 10;
     let recategorized = 0;
-    for (const transaction of transactions) {
-      try {
-        console.log(`Recategorizando: ${transaction.description} ($${transaction.amount})`);
-        
-        const { error: categorizeError } = await supabase.functions.invoke('categorize-transaction', {
-          body: {
-            transactionId: transaction.id,
-            userId: user.id,
-            description: transaction.description,
-            amount: transaction.amount,
-            type: 'gasto'
-          }
-        });
+    
+    for (let i = 0; i < transactions.length; i += batchSize) {
+      const batch = transactions.slice(i, i + batchSize);
+      
+      const batchPromises = batch.map(async (transaction) => {
+        try {
+          const { error: categorizeError } = await supabase.functions.invoke('categorize-transaction', {
+            body: {
+              transactionId: transaction.id,
+              userId: user.id,
+              description: transaction.description,
+              amount: transaction.amount,
+              type: 'gasto'
+            }
+          });
 
-        if (categorizeError) {
-          console.error(`Error categorizando ${transaction.description}:`, categorizeError);
-        } else {
-          recategorized++;
+          if (!categorizeError) {
+            recategorized++;
+            return true;
+          }
+          return false;
+        } catch (error) {
+          console.error(`Error procesando ${transaction.description}:`, error);
+          return false;
         }
-      } catch (error) {
-        console.error(`Error procesando transacción ${transaction.id}:`, error);
+      });
+
+      await Promise.all(batchPromises);
+      
+      // Pequeña pausa entre lotes para no saturar
+      if (i + batchSize < transactions.length) {
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
     }
 
-    console.log(`Recategorizadas ${recategorized} de ${transactions.length} transacciones`);
+    console.log(`Categorizadas ${recategorized} de ${transactions.length} transacciones`);
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: `Se recategorizaron ${recategorized} transacciones`,
+        message: `Se categorizaron ${recategorized} transacciones`,
         total: transactions.length,
         recategorized 
       }),

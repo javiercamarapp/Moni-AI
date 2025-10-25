@@ -28,8 +28,6 @@ export default function Budgets() {
   const [totalBudget, setTotalBudget] = useState(0);
   const [currentExpenses, setCurrentExpenses] = useState<Record<string, number>>({});
   const [isCategorizingExisting, setIsCategorizingExisting] = useState(false);
-  const [hasUnidentifiedExpenses, setHasUnidentifiedExpenses] = useState(false);
-  const [isRecategorizing, setIsRecategorizing] = useState(false);
 
   useEffect(() => {
     checkBudgetQuizStatus();
@@ -203,29 +201,30 @@ export default function Budgets() {
       console.log(`Transacciones CON categoría: ${withCategory}`);
       console.log(`Transacciones SIN categoría: ${withoutCategory}`);
 
-      // Si hay transacciones sin categoría, categorizarlas automáticamente
+      // Si hay transacciones sin categoría, categorizarlas automáticamente en segundo plano
       if (withoutCategory > 0 && !isCategorizingExisting) {
-        console.log('Iniciando categorización automática de transacciones existentes...');
+        console.log('Iniciando categorización automática en segundo plano...');
         setIsCategorizingExisting(true);
         
-        try {
-          const { data, error } = await supabase.functions.invoke('categorize-existing-transactions');
-          
-          if (error) {
-            console.error('Error categorizando transacciones existentes:', error);
-          } else {
-            console.log('Categorización completada:', data);
-            // Recargar datos después de categorizar
-            setTimeout(() => {
-              loadMonthlyData();
-            }, 2000);
-            return;
-          }
-        } catch (error) {
-          console.error('Error en categorización automática:', error);
-        } finally {
-          setIsCategorizingExisting(false);
-        }
+        // Ejecutar en segundo plano sin bloquear la UI
+        supabase.functions.invoke('recategorize-unidentified')
+          .then(({ data, error }) => {
+            if (error) {
+              console.error('Error categorizando:', error);
+            } else {
+              console.log('Categorización completada:', data);
+              // Recargar datos silenciosamente después de categorizar
+              setTimeout(() => {
+                loadMonthlyData();
+              }, 3000);
+            }
+          })
+          .catch(error => {
+            console.error('Error en categorización automática:', error);
+          })
+          .finally(() => {
+            setIsCategorizingExisting(false);
+          });
       }
 
       // Calcular gastos por categoría principal
@@ -259,7 +258,6 @@ export default function Budgets() {
       console.log('Gastos totales por categoría:', expenses);
       console.log('Gastos no identificados:', unidentifiedCount);
       setCurrentExpenses(expenses);
-      setHasUnidentifiedExpenses(unidentifiedCount > 0);
     } catch (error) {
       console.error('Error loading monthly data:', error);
     } finally {
@@ -267,29 +265,6 @@ export default function Budgets() {
     }
   };
 
-  const handleRecategorize = async () => {
-    setIsRecategorizing(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('recategorize-unidentified');
-      
-      if (error) {
-        console.error('Error recategorizando:', error);
-        toast.error("Error al recategorizar gastos");
-      } else {
-        console.log('Recategorización completada:', data);
-        toast.success(`✅ ${data.recategorized} gastos recategorizados`);
-        // Recargar datos
-        setTimeout(() => {
-          loadMonthlyData();
-        }, 1000);
-      }
-    } catch (error) {
-      console.error('Error en recategorización:', error);
-      toast.error("Error al recategorizar gastos");
-    } finally {
-      setIsRecategorizing(false);
-    }
-  };
 
   const deleteBudget = async (budgetId: string) => {
     try {
@@ -360,25 +335,6 @@ export default function Budgets() {
             <Pencil className="h-4 w-4" />
           </Button>
         </div>
-
-        {/* Botón temporal para forzar recategorización */}
-        <Card className="p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-[20px] shadow-xl border border-amber-200">
-          <div className="flex items-center gap-3">
-            <div className="text-2xl">🤖</div>
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-foreground">Recategorizar transacciones</p>
-              <p className="text-xs text-muted-foreground">Categoriza automáticamente tus gastos</p>
-            </div>
-            <Button
-              onClick={handleRecategorize}
-              disabled={isRecategorizing}
-              className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-[15px] shadow-lg hover:scale-105 active:scale-95 transition-all"
-              size="sm"
-            >
-              {isRecategorizing ? "Procesando..." : "Categorizar"}
-            </Button>
-          </div>
-        </Card>
 
         {budgets.length === 0 ? (
           <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center animate-fade-in hover:scale-[1.02] active:scale-[0.98] transition-all">
