@@ -109,8 +109,8 @@ const RetroCarousel = ({items, initialScroll = 0}: CarouselProps) => {
         />
         <div
           className={cn(
-            "flex flex-row justify-start gap-4 pl-3",
-            "max-w-5xl mx-auto",
+            "flex flex-row justify-start gap-2 pl-4",
+            "w-full",
           )}
         >
           {items.map((item, index) => {
