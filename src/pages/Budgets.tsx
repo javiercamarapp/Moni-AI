@@ -347,8 +347,8 @@ export default function Budgets() {
       <div className="mx-auto px-4 space-y-4" style={{ maxWidth: '600px' }}>
 
         {budgets.length === 0 ? (
-          <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center animate-fade-in hover:scale-[1.02] active:scale-[0.98] transition-all">
-            <div className="text-5xl mb-4 animate-pulse">📊</div>
+          <Card className="p-8 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border text-center">
+            <div className="text-5xl mb-4">📊</div>
             <p className="text-base font-semibold text-foreground mb-2">
               Crea tu Presupuesto Mensual
             </p>
@@ -357,7 +357,7 @@ export default function Budgets() {
             </p>
             <Button
               onClick={() => navigate('/budget-quiz')}
-              className="bg-white/10 backdrop-blur-sm rounded-[20px] shadow-lg border-2 border-white/20 hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95 transition-all text-primary font-semibold"
+              className="rounded-full"
             >
               <Pencil className="h-4 w-4 mr-2" />
               Configurar Presupuesto
@@ -366,23 +366,23 @@ export default function Budgets() {
         ) : (
           <>
             {/* Resumen General */}
-            <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] active:scale-[0.98] transition-all animate-fade-in">
-              <div className="space-y-1">
+            <Card className="p-4 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm">
+              <div className="space-y-3">
                 <div className="text-center">
-                  <div className="text-sm">💰</div>
-                  <p className="text-[9px] font-bold text-foreground">Resumen del Mes</p>
+                  <div className="text-2xl mb-1">💰</div>
+                  <p className="text-sm font-bold text-foreground">Resumen del Mes</p>
                 </div>
 
                 {/* Métricas principales */}
-                <div className="grid grid-cols-2 gap-1.5">
+                <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => navigate('/edit-budgets')}
-                    className="bg-white/10 backdrop-blur-sm rounded-[10px] p-1.5 border-2 border-white/20 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all w-full cursor-pointer"
+                    className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border hover:bg-white/80 transition-all w-full cursor-pointer"
                   >
-                    <div className="flex flex-col items-center gap-0.5 text-center">
-                      <Target className="h-3 w-3 text-primary" />
-                      <span className="text-[7px] text-muted-foreground font-medium">Presupuestado</span>
-                      <p className="text-sm font-bold text-primary">
+                    <div className="flex flex-col items-center gap-1 text-center">
+                      <Target className="h-4 w-4 text-primary" />
+                      <span className="text-xs text-muted-foreground font-medium">Presupuestado</span>
+                      <p className="text-lg font-bold text-primary">
                         ${(totalBudget / 1000).toFixed(0)}k
                       </p>
                     </div>
@@ -390,12 +390,12 @@ export default function Budgets() {
                   
                   <button
                     onClick={() => navigate('/gastos')}
-                    className="bg-white/10 backdrop-blur-sm rounded-[10px] p-1.5 border-2 border-white/20 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all w-full cursor-pointer"
+                    className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border hover:bg-white/80 transition-all w-full cursor-pointer"
                   >
-                    <div className="flex flex-col items-center gap-0.5 text-center">
-                      <TrendingUp className="h-3 w-3 text-destructive" />
-                      <span className="text-[7px] text-muted-foreground font-medium">Gastado</span>
-                      <p className="text-sm font-bold text-destructive">
+                    <div className="flex flex-col items-center gap-1 text-center">
+                      <TrendingUp className="h-4 w-4 text-destructive" />
+                      <span className="text-xs text-muted-foreground font-medium">Gastado</span>
+                      <p className="text-lg font-bold text-destructive">
                         ${(Object.values(currentExpenses).reduce((sum, val) => sum + val, 0) / 1000).toFixed(0)}k
                       </p>
                     </div>
@@ -403,12 +403,12 @@ export default function Budgets() {
                 </div>
 
                 {/* Disponible para gastar */}
-                <div className="bg-white/10 backdrop-blur-sm rounded-[10px] p-1.5 border-2 border-white/20 shadow-lg text-center">
-                  <span className="text-[7px] text-muted-foreground font-medium">Disponible</span>
-                  <p className={`text-base font-bold ${remainingBudget >= 0 ? 'text-success' : 'text-destructive'}`}>
+                <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border text-center">
+                  <span className="text-xs text-muted-foreground font-medium">Disponible</span>
+                  <p className={`text-xl font-bold ${remainingBudget >= 0 ? 'text-success' : 'text-destructive'}`}>
                     ${Math.abs(remainingBudget).toLocaleString()}
                   </p>
-                  <p className="text-[7px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     {remainingBudget >= 0 ? 'para gastar' : 'sobre presupuesto'}
                   </p>
                 </div>
@@ -434,7 +434,7 @@ export default function Budgets() {
               ) : isCategorizingExisting ? (
                 // Mostrar mensaje mientras categoriza en segundo plano
                 <div className="col-span-2">
-                  <Card className="p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-[20px] shadow-xl border border-blue-100 text-center animate-fade-in">
+                  <Card className="p-4 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border text-center">
                     <div className="flex flex-col items-center gap-2">
                       <div className="flex gap-1">
                         <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
@@ -463,28 +463,27 @@ export default function Budgets() {
                   return (
                     <Card 
                       key={budget.id} 
-                      className={`p-2 rounded-[12px] shadow-lg border hover:scale-105 active:scale-95 transition-all animate-fade-in cursor-pointer ${
-                        isCritical ? 'bg-gradient-to-br from-rose-50 to-rose-100 border-rose-200' :
-                        isWarning ? 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200' :
-                        'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200'
+                      className={`p-3 rounded-xl shadow-sm border hover:shadow-md transition-all cursor-pointer ${
+                        isCritical ? 'bg-rose-50/80 backdrop-blur-sm border-rose-200' :
+                        isWarning ? 'bg-amber-50/80 backdrop-blur-sm border-amber-200' :
+                        'bg-emerald-50/80 backdrop-blur-sm border-emerald-200'
                       }`}
-                      style={{ animationDelay: `${index * 0.1}s` }}
                       onClick={() => {
                         console.log('Navegando a categoría:', budget.category_id, budget.category.name);
                         navigate(`/category-expenses?category=${budget.category.name}`);
                       }}
                     >
-                      <div className="space-y-1">
+                      <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1">
-                            <span className="text-lg">{getCategoryIcon(budget.category.name)}</span>
-                            <p className={`text-[9px] font-bold leading-tight ${
+                          <div className="flex items-center gap-2">
+                            <span className="text-xl">{getCategoryIcon(budget.category.name)}</span>
+                            <p className={`text-xs font-bold ${
                               isCritical ? 'text-rose-700' :
                               isWarning ? 'text-amber-700' :
                               'text-emerald-700'
                             }`}>{budget.category.name}</p>
                           </div>
-                          <p className={`text-[8px] font-bold ${
+                          <p className={`text-xs font-bold ${
                             isCritical ? 'text-rose-600' :
                             isWarning ? 'text-amber-600' :
                             'text-emerald-600'
@@ -495,7 +494,7 @@ export default function Budgets() {
 
                         <Progress 
                           value={Math.min(percentUsed, 100)} 
-                          className={`h-1 ${
+                          className={`h-2 ${
                             isCritical ? 'bg-rose-200' :
                             isWarning ? 'bg-amber-200' :
                             'bg-emerald-200'
@@ -503,10 +502,10 @@ export default function Budgets() {
                         />
 
                         <div className="flex items-center justify-between">
-                          <p className="text-[7px] text-muted-foreground leading-tight">
+                          <p className="text-xs text-muted-foreground">
                             ${spent.toLocaleString()}
                           </p>
-                          <p className={`text-[7px] font-semibold leading-tight ${
+                          <p className={`text-xs font-semibold ${
                             isCritical ? 'text-rose-700' :
                             isWarning ? 'text-amber-700' :
                             'text-emerald-700'
@@ -527,14 +526,14 @@ export default function Budgets() {
               const percentage = (spent / Number(b.monthly_budget)) * 100;
               return percentage >= 80;
             }) && (
-              <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-[1.02] active:scale-[0.98] transition-all animate-fade-in">
+              <Card className="p-4 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border">
                 <div className="flex items-center gap-3">
-                  <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 animate-pulse" />
+                  <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0" />
                   <div>
                     <p className="text-sm font-bold text-yellow-900">
                       Atención a tus presupuestos
                     </p>
-                    <p className="text-[10px] text-yellow-700 leading-tight">
+                    <p className="text-xs text-yellow-700">
                       {budgets.filter(b => {
                         const spent = currentExpenses[b.category_id] || 0;
                         const percentage = (spent / Number(b.monthly_budget)) * 100;
