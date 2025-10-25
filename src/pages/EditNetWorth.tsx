@@ -514,7 +514,7 @@ export default function EditNetWorth() {
                           <Button
                             onClick={() => {
                               const newId = `custom_${category.id}_${Date.now()}`;
-                              const newItem = { id: newId, name: `Subcuenta ${category.items.length + 1}` };
+                              const newItem = { id: newId, name: `Cuenta personalizada ${category.items.filter(i => i.id.includes('custom_')).length + 1}` };
                               category.items.push(newItem);
                               setCustomItems({ ...customItems });
                             }}
@@ -654,7 +654,7 @@ export default function EditNetWorth() {
                           <Button
                             onClick={() => {
                               const newId = `custom_${category.id}_${Date.now()}`;
-                              const newItem = { id: newId, name: `Subcuenta ${category.items.length + 1}` };
+                              const newItem = { id: newId, name: `Deuda personalizada ${category.items.filter(i => i.id.includes('custom_')).length + 1}` };
                               category.items.push(newItem);
                               setCustomItems({ ...customItems });
                             }}
