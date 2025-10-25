@@ -718,7 +718,6 @@ export default function EditBudgets() {
               disabled={saving}
               className="w-full bg-primary rounded-[20px] shadow-xl hover:scale-105 active:scale-95 transition-all font-bold text-base py-6"
             >
-              <Save className="h-5 w-5 mr-2" />
               {saving ? 'Guardando...' : 'Guardar Cambios'}
             </Button>
           </div>
