@@ -104,24 +104,26 @@ export default function MisRetos() {
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="sticky top-0 z-50 backdrop-blur-xl bg-gradient-to-b from-white/95 via-white/90 to-white/80 border-b border-white/20 shadow-lg">
-        <div className="p-4 flex items-center gap-3">
-          <Button
-            onClick={() => navigate("/dashboard")}
-            variant="ghost"
-            size="icon"
-            className="bg-white rounded-full shadow-xl hover:bg-white/90 text-foreground h-11 w-11 hover:scale-105 transition-all border border-blue-100/50"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-xl font-bold text-foreground">Mis Retos</h1>
-            <p className="text-xs text-muted-foreground">Desafíos personalizados</p>
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/dashboard")}
+              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
+            >
+              <ArrowLeft className="h-4 w-4 text-gray-700" />
+            </Button>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Mis Retos</h1>
+              <p className="text-sm text-gray-500">Desafíos personalizados</p>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="px-4 space-y-6">
+      <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
         {/* Generar Nuevos Retos */}
         <Card className="p-6 bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-2 border-purple-200/50">
           <div className="flex items-center justify-between mb-4">
