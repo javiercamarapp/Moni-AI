@@ -108,17 +108,17 @@ export default function BudgetProgressWidget({ categories = [], hasBudgets = fal
                 className="space-y-1 cursor-pointer hover:bg-primary/5 p-2 rounded-lg transition-colors"
                 onClick={() => navigate(`/category-expenses?category=${encodeURIComponent(cat.name)}`)}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">{cat.icon}</span>
-                    <span className="text-xs text-foreground">{cat.name}</span>
+                <div className="flex items-center justify-between gap-1">
+                  <div className="flex items-center gap-1.5 min-w-0 flex-shrink">
+                    <span className="text-xs flex-shrink-0">{cat.icon}</span>
+                    <span className="text-[11px] text-foreground truncate">{cat.name}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                    <span className="text-[10px] text-muted-foreground whitespace-nowrap">
                       ${cat.spent.toLocaleString()} / ${cat.budget.toLocaleString()}
                     </span>
                     {isWarning && (
-                      <AlertCircle className={`h-3 w-3 ${isCritical ? 'text-destructive' : 'text-yellow-500'}`} />
+                      <AlertCircle className={`h-3 w-3 flex-shrink-0 ${isCritical ? 'text-destructive' : 'text-yellow-500'}`} />
                     )}
                   </div>
                 </div>
