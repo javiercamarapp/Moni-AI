@@ -88,28 +88,27 @@ const Reports = () => {
   };
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-20 overflow-visible">
+    <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="bg-background/95 backdrop-blur-sm sticky top-0 z-40">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
-              size="icon"
               onClick={() => navigate('/profile')}
-              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
+              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 p-0 flex-shrink-0"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-4 w-4 text-gray-700" />
             </Button>
             <div className="flex-1">
-              <h1 className="text-xl font-bold text-foreground">Reportes</h1>
-              <p className="text-xs text-muted-foreground">Estados de cuenta mensuales</p>
+              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Reportes</h1>
+              <p className="text-xs text-gray-600">Estados de cuenta mensuales</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="px-4 space-y-4 overflow-visible">
+      <div className="mx-auto px-4 py-6 space-y-4" style={{ maxWidth: '600px' }}>
         {/* Descripción */}
         <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
           <div className="flex items-start gap-3">
