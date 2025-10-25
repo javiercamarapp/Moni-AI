@@ -70,17 +70,30 @@ async function verifyChallenge(supabase: any, challenge: Challenge) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Initialize days_status array if empty - create a NEW array, not modify the string
+    // Initialize days_status array - handle both string and array cases
     let daysStatus = [];
     
-    if (challenge.days_status && Array.isArray(challenge.days_status)) {
-      // Make a copy of the array to avoid mutation issues
-      daysStatus = JSON.parse(JSON.stringify(challenge.days_status));
-    } else {
+    try {
+      if (typeof challenge.days_status === 'string') {
+        // Parse if it's a string
+        daysStatus = JSON.parse(challenge.days_status);
+      } else if (Array.isArray(challenge.days_status)) {
+        // Make a deep copy if it's already an array
+        daysStatus = JSON.parse(JSON.stringify(challenge.days_status));
+      }
+      
+      // Validate and initialize if needed
+      if (!Array.isArray(daysStatus) || daysStatus.length === 0) {
+        daysStatus = Array(7).fill(null).map(() => ({ completed: null }));
+      }
+    } catch (parseError) {
+      console.error('Error parsing days_status:', parseError);
       daysStatus = Array(7).fill(null).map(() => ({ completed: null }));
     }
 
     console.log(`🔍 Verificando reto: ${challenge.id} (${challenge.category})`);
+    console.log(`📅 Inicio: ${challenge.start_date} | Fin: ${challenge.end_date}`);
+    console.log(`🗓️  Hoy: ${today.toISOString().split('T')[0]}`);
 
     // Check each day of the week
     for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
