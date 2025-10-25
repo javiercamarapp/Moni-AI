@@ -1039,7 +1039,7 @@ const Dashboard = () => {
       {/* Header superior con logo y notificaciones */}
       <div className="p-2 flex justify-between items-start">
         {/* Logo banner - esquina superior izquierda */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden w-16 h-10">
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm overflow-hidden w-16 h-10">
           <img src={heroAuth} alt="Moni" className="w-full h-full object-cover" />
         </div>
         
@@ -1048,11 +1048,11 @@ const Dashboard = () => {
           {/* Botón de nivel financiero */}
           <Button 
             variant="ghost" 
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 px-3 gap-2 hover:scale-105 transition-all border border-blue-100"
+            className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md text-gray-900 h-10 px-3 gap-2 transition-all border-0"
             onClick={() => navigate("/financial-journey")}
           >
             <Trophy className="h-4 w-4 text-yellow-500" />
-            <span className="text-xs font-bold">
+            <span className="text-xs font-semibold">
               Nivel {totalAspiration > 0 ? Math.floor((netWorth / totalAspiration) * 10000) : 0}
             </span>
           </Button>
@@ -1063,7 +1063,7 @@ const Dashboard = () => {
               variant="ghost" 
               size="icon" 
               onClick={() => navigate("/notifications")}
-              className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
+              className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md text-gray-900 h-10 w-10 transition-all border-0"
             >
               <Bell className="h-5 w-5" />
             </Button>
@@ -1079,24 +1079,24 @@ const Dashboard = () => {
       {/* Header con saludo */}
       <div className="p-4 pt-2 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-base sm:text-lg font-bold text-foreground leading-tight">
+          <h1 className="text-base sm:text-lg font-semibold text-gray-900 leading-tight tracking-tight">
             ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
           </h1>
-          <p className="text-sm text-foreground">Vas excelente con tus metas financieras</p>
+          <p className="text-sm text-gray-600">Vas excelente con tus metas financieras</p>
         </div>
         
         {/* Botón de cuentas y tarjetas */}
         <Card 
-          className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer flex-shrink-0 border border-blue-100"
+          className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer flex-shrink-0 border-0"
           onClick={() => navigate('/net-worth')}
         >
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-purple-500/30 flex items-center justify-center flex-shrink-0">
-              <CreditCard className="w-4 h-4 text-foreground" />
+            <div className="w-8 h-8 rounded-xl bg-purple-500/30 flex items-center justify-center flex-shrink-0">
+              <CreditCard className="w-4 h-4 text-gray-900" />
             </div>
             <div className="text-left">
-              <p className="text-xs text-foreground/80 leading-tight whitespace-nowrap">Mis cuentas</p>
-              <p className="text-xs font-bold text-foreground leading-tight whitespace-nowrap">y tarjetas</p>
+              <p className="text-xs text-gray-600 leading-tight whitespace-nowrap">Mis cuentas</p>
+              <p className="text-xs font-semibold text-gray-900 leading-tight whitespace-nowrap">y tarjetas</p>
             </div>
           </div>
         </Card>
@@ -1104,7 +1104,7 @@ const Dashboard = () => {
 
       {/* Score Moni - Compacto */}
       {scoreMoni !== null && <div className="mx-4 mb-4">
-          <Card className="p-4 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer border border-blue-100 animate-fade-in"
+          <Card className="p-4 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm hover:shadow-md transition-all cursor-pointer border-0 animate-fade-in"
             onClick={() => {
               navigate('/score-moni');
               window.scrollTo(0, 0);
@@ -1172,8 +1172,8 @@ const Dashboard = () => {
         {/* Quick Stats - Primera fila: 4 botones */}
         <div className="grid grid-cols-4 gap-2 sm:gap-3">
           <button 
-            className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer animate-fade-in border border-blue-100" 
-            onClick={() => navigate('/balance')} 
+            className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer animate-fade-in border-0" 
+            onClick={() => navigate('/balance')}
             style={{ animationDelay: '100ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
@@ -1190,7 +1190,7 @@ const Dashboard = () => {
           </button>
 
           <button 
-            className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer animate-fade-in border border-blue-100" 
+            className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer animate-fade-in border-0" 
             style={{ animationDelay: '200ms' }}
             onClick={() => navigate('/net-worth')}
           >
@@ -1211,7 +1211,7 @@ const Dashboard = () => {
           </button>
 
           <button 
-            className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer animate-fade-in border border-blue-100" 
+            className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer animate-fade-in border-0" 
             style={{ animationDelay: '300ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
@@ -1227,7 +1227,7 @@ const Dashboard = () => {
 
           <button 
             onClick={() => navigate('/budgets')}
-            className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer animate-fade-in border border-blue-100" 
+            className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer animate-fade-in border-0" 
             style={{ animationDelay: '400ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
@@ -1258,7 +1258,7 @@ const Dashboard = () => {
         />
 
         {/* Presupuesto Mensual */}
-        <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden">
+        <Card className="p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden">
           <div className="space-y-1.5 relative z-10">
             <div className="flex items-center justify-between">
               <div>
@@ -1334,7 +1334,7 @@ const Dashboard = () => {
         {/* Grid de 2 columnas: Suscripciones y Deudas - Alineados horizontalmente siempre */}
         <div className="grid grid-cols-2 gap-2 sm:gap-4">
           {/* Widget combinado: Suscripciones + Gastos Cotidianos */}
-          <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-all active:scale-95">
+          <Card className="p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:shadow-md transition-all">
             <GlowingEffect
               spread={40}
               glow={true}
@@ -1466,7 +1466,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Widget de Deudas de Tarjetas */}
-          <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:scale-105 transition-all active:scale-95">
+          <Card className="p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:shadow-md transition-all">
             <GlowingEffect
               spread={40}
               glow={true}
@@ -1543,7 +1543,7 @@ const Dashboard = () => {
         </div>
 
         {/* WhatsApp Banner */}
-        <Card className="p-3 sm:p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden animate-fade-in hover:scale-105 transition-all cursor-pointer" style={{
+        <Card className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden animate-fade-in hover:shadow-md transition-all cursor-pointer" style={{
         animationDelay: '500ms'
       }}>
           <GlowingEffect
@@ -1577,8 +1577,8 @@ const Dashboard = () => {
           <div className="lg:col-span-2 space-y-6 w-full min-w-0">
             <div>
               <div className="flex flex-row justify-between items-center mb-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Tus Metas</h3>
-                <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-white rounded-[20px] shadow-xl border border-blue-100 text-foreground hover:bg-gray-50 text-xs sm:text-sm hover:scale-105 transition-all">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">Tus Metas</h3>
+                <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border-0 text-gray-900 hover:bg-white hover:shadow-md text-xs sm:text-sm transition-all">
                   <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   Nueva Meta
                 </Button>
@@ -1586,7 +1586,7 @@ const Dashboard = () => {
 
               <div className="space-y-3 sm:space-y-4">
                 {goals.length === 0 ? (
-                  <Card className="w-full p-4 sm:p-6 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden text-center animate-fade-in min-w-0">
+                  <Card className="w-full p-4 sm:p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden text-center animate-fade-in min-w-0">
                     <div className="relative z-10">
                       <p className="text-sm sm:text-base text-foreground/90">No tienes metas creadas aún</p>
                     </div>
@@ -1728,7 +1728,7 @@ const Dashboard = () => {
                     return (
                       <Card 
                         key={challenge.id} 
-                        className="w-full p-2.5 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden min-w-0"
+                        className="w-full p-2.5 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden min-w-0"
                         style={{ transform: 'translate3d(0, 0, 0)' }}
                       >
                         <div className="relative z-10">
@@ -1821,7 +1821,7 @@ const Dashboard = () => {
           <div className="space-y-6 w-full min-w-0">
             
             {/* Recent Transactions */}
-            <Card className="w-full p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden h-[220px] flex flex-col cursor-pointer min-w-0">
+            <Card className="w-full p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden h-[220px] flex flex-col cursor-pointer min-w-0">
               <GlowingEffect
                 spread={40}
                 glow={true}
