@@ -69,40 +69,38 @@ export default function NotificationHistory() {
   return (
     <div className="min-h-screen animated-wave-bg pb-32">
       {/* Header */}
-      <div className="px-4 pt-6 pb-4">
-        <div className="flex items-center gap-3 mb-6">
-          <Button
-            type="button"
-            onClick={() => navigate("/dashboard")}
-            variant="ghost"
-            size="icon"
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100 flex-shrink-0"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          
-          <div className="flex-1">
-            <h1 className="text-xl font-bold text-foreground">Notificaciones</h1>
-            <p className="text-xs text-muted-foreground">
-              Mensajes, recordatorios e insights
-            </p>
-          </div>
-          
-          <div className="relative flex-shrink-0">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg">
-              <Bell className="h-5 w-5 text-white" />
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between mb-1">
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/dashboard")}
+              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 p-0"
+            >
+              <ArrowLeft className="h-4 w-4 text-gray-700" />
+            </Button>
+            <div className="flex-1 text-center">
+              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Notificaciones</h1>
             </div>
-            {unreadCount > 0 && (
-              <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg animate-pulse">
-                <span className="text-[10px] font-bold text-white">{unreadCount}</span>
+            <div className="relative">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg">
+                <Bell className="h-5 w-5 text-white" />
               </div>
-            )}
+              {unreadCount > 0 && (
+                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg animate-pulse">
+                  <span className="text-[10px] font-bold text-white">{unreadCount}</span>
+                </div>
+              )}
+            </div>
           </div>
+          <p className="text-xs text-center text-gray-600">
+            Mensajes, recordatorios e insights
+          </p>
         </div>
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 max-w-2xl">
+      <div className="mx-auto px-4 py-6 space-y-4" style={{ maxWidth: '600px' }}>
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3, 4].map((i) => (
