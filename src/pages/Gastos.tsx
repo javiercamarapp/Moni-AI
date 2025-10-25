@@ -133,16 +133,45 @@ const Gastos = () => {
         endDate = new Date(currentMonth.getFullYear(), 11, 31);
       }
 
-      const { data: transactionsData } = await supabase
-        .from('transactions')
-        .select('*, categories(name, color)')
-        .eq('user_id', user.id)
-        .eq('type', 'gasto')
-        .gte('transaction_date', startDate.toISOString().split('T')[0])
-        .lte('transaction_date', endDate.toISOString().split('T')[0])
-        .order('transaction_date', { ascending: false });
-
-      setTransactions(transactionsData || []);
+      // Fetch ALL transactions with proper pagination (same as Balance page)
+      let allTransactions: any[] = [];
+      let hasMore = true;
+      let lastId: string | null = null;
+      
+      while (hasMore) {
+        let query = supabase
+          .from('transactions')
+          .select('*, categories(name, color)')
+          .eq('user_id', user.id)
+          .eq('type', 'gasto')
+          .gte('transaction_date', startDate.toISOString().split('T')[0])
+          .lte('transaction_date', endDate.toISOString().split('T')[0])
+          .order('id', { ascending: true })
+          .limit(1000);
+        
+        if (lastId) {
+          query = query.gt('id', lastId);
+        }
+        
+        const { data: pageData } = await query;
+        
+        if (!pageData || pageData.length === 0) {
+          hasMore = false;
+          break;
+        }
+        
+        allTransactions = [...allTransactions, ...pageData];
+        lastId = pageData[pageData.length - 1].id;
+        hasMore = pageData.length === 1000;
+      }
+      
+      // Sort by date descending for display
+      allTransactions.sort((a, b) => 
+        new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime()
+      );
+      
+      console.log('📊 Gastos loaded:', allTransactions.length);
+      setTransactions(allTransactions);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
