@@ -185,16 +185,30 @@ export default function MisRetos() {
             <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight mb-4">
               Sugerencias de la IA
             </h2>
-            <div className="space-y-4">
-              {challenges.map((challenge, index) => (
-                <ChallengeCard
-                  key={challenge.id}
-                  challenge={challenge}
-                  index={index}
-                  onAccept={acceptChallenge}
-                />
-              ))}
-            </div>
+            {Object.entries(
+              challenges.reduce((acc, challenge) => {
+                const category = challenge.category || 'Sin categoría';
+                if (!acc[category]) acc[category] = [];
+                acc[category].push(challenge);
+                return acc;
+              }, {} as Record<string, any[]>)
+            ).map(([category, categoryChallenges]: [string, any[]]) => (
+              <div key={category} className="mb-6">
+                <h3 className="text-md font-semibold text-gray-700 mb-3 px-1">
+                  {category}
+                </h3>
+                <div className="space-y-4">
+                  {categoryChallenges.map((challenge, index) => (
+                    <ChallengeCard
+                      key={challenge.id}
+                      challenge={challenge}
+                      index={index}
+                      onAccept={acceptChallenge}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
