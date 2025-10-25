@@ -526,14 +526,14 @@ export default function Budgets() {
               const percentage = (spent / Number(b.monthly_budget)) * 100;
               return percentage >= 80;
             }) && (
-              <Card className="p-5 bg-gradient-to-br from-amber-50/90 to-orange-50/90 backdrop-blur-md rounded-[24px] shadow-lg border-0">
-                <div className="flex items-center gap-4">
-                  <AlertCircle className="h-6 w-6 text-amber-600 flex-shrink-0" />
+              <Card className="p-3 bg-gradient-to-br from-amber-50/90 to-orange-50/90 backdrop-blur-md rounded-[20px] shadow-lg border-0">
+                <div className="flex items-center gap-2.5">
+                  <AlertCircle className="h-4 w-4 text-amber-600 flex-shrink-0" />
                   <div>
-                    <p className="text-sm font-semibold text-amber-900 mb-1">
+                    <p className="text-xs font-semibold text-amber-900 mb-0.5">
                       Atención a tus presupuestos
                     </p>
-                    <p className="text-xs text-amber-700 leading-relaxed">
+                    <p className="text-[10px] text-amber-700 leading-snug">
                       {budgets.filter(b => {
                         const spent = currentExpenses[b.category_id] || 0;
                         const percentage = (spent / Number(b.monthly_budget)) * 100;
