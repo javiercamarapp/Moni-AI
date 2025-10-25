@@ -26,17 +26,16 @@ export default function MisRetos() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Obtener retos activos y completados
       const { data: challengesData, error } = await supabase
         .from('challenges')
         .select('*')
         .eq('user_id', user.id)
-        .in('status', ['active', 'completed', 'failed'])
+        .eq('status', 'active')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      console.log('📊 Retos cargados:', challengesData);
+      console.log('📊 Retos activos:', challengesData);
       setChallenges(challengesData || []);
     } catch (error) {
       console.error('Error al cargar retos:', error);
@@ -70,23 +69,6 @@ export default function MisRetos() {
     }
   };
 
-  const acceptChallenge = async (challengeId: string) => {
-    try {
-      const { error } = await supabase
-        .from('challenges')
-        .update({ status: 'active' })
-        .eq('id', challengeId);
-
-      if (error) throw error;
-
-      toast.success('¡Reto aceptado!');
-      await fetchChallenges();
-    } catch (error) {
-      console.error('Error al aceptar reto:', error);
-      toast.error('Error al aceptar el reto');
-    }
-  };
-
   const getChallengeProgress = (challenge: any) => {
     if (!challenge.target_amount || challenge.target_amount === 0) return 0;
     return Math.min((challenge.current_amount / challenge.target_amount) * 100, 100);
@@ -95,11 +77,6 @@ export default function MisRetos() {
   const getDaysRemaining = (endDate: string) => {
     return differenceInDays(new Date(endDate), new Date());
   };
-
-  const activeChallenges = challenges.filter(c => c.status === 'active');
-  const pendingChallenges = challenges.filter(c => c.status === 'pending');
-  const completedChallenges = challenges.filter(c => c.status === 'completed');
-  const failedChallenges = challenges.filter(c => c.status === 'failed');
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
@@ -125,6 +102,92 @@ export default function MisRetos() {
 
       <div className="px-4 py-3 space-y-6">
         <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">Mis retos de la semana</h2>
+        
+        {loading ? (
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <Card key={i} className="p-5 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 animate-pulse">
+                <div className="h-20 bg-gray-200 rounded"></div>
+              </Card>
+            ))}
+          </div>
+        ) : challenges.length === 0 ? (
+          <Card className="p-8 text-center bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0">
+            <div className="text-6xl mb-4">🎯</div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              No tienes retos activos
+            </h3>
+            <p className="text-gray-600 mb-4">
+              Genera tus primeros retos personalizados con IA
+            </p>
+            <Button
+              onClick={generateNewChallenges}
+              disabled={generatingChallenges}
+              className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              {generatingChallenges ? 'Generando...' : 'Generar Retos'}
+            </Button>
+          </Card>
+        ) : (
+          <div className="space-y-4">
+            {challenges.map((challenge, index) => {
+              const progress = getChallengeProgress(challenge);
+              const daysLeft = getDaysRemaining(challenge.end_date);
+              
+              return (
+                <motion.div
+                  key={challenge.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Card className="p-5 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 hover:shadow-md transition-all">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <h4 className="font-bold text-gray-900 text-base mb-1">
+                          {challenge.title}
+                        </h4>
+                        <p className="text-sm text-gray-600 mb-2">
+                          {challenge.description}
+                        </p>
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                          <Calendar className="w-3 h-3" />
+                          <span>
+                            {daysLeft > 0 ? `${daysLeft} días restantes` : 'Último día'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-2xl">🎯</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">Progreso</span>
+                        <span className="font-bold text-gray-900">
+                          ${challenge.current_amount.toLocaleString()} / ${challenge.target_amount.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <motion.div
+                          className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${progress}%` }}
+                          transition={{ duration: 1, delay: index * 0.1 }}
+                        />
+                      </div>
+                      <p className="text-xs text-right text-gray-500">
+                        {progress.toFixed(0)}% completado
+                      </p>
+                    </div>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
