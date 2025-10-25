@@ -293,24 +293,16 @@ export default function EditNetWorth() {
       const values = isAsset ? assetValues : liabilityValues;
       const tableName = isAsset ? 'activos' : 'pasivos';
 
-      // Filtrar items con valores
-      const itemsToSave = category.items.filter(item => 
-        values[item.id] && values[item.id].valor > 0
-      );
-
-      if (itemsToSave.length === 0) {
-        toast.info("No hay valores para guardar");
-        setExpandedCategory(null);
-        return;
-      }
-
-      for (const item of itemsToSave) {
+      // Procesar todos los items de la categoría
+      for (const item of category.items) {
         const itemData = values[item.id];
-        const itemName = category.id.includes('personalizado') && customItems[item.id]
+        
+        // Obtener el nombre del item (personalizado o predeterminado)
+        const itemName = (item.id.includes('custom_') || category.id.includes('personalizado')) && customItems[item.id]
           ? customItems[item.id]
           : item.name;
 
-        // Buscar si ya existe
+        // Buscar si ya existe un registro con esta subcategoría y usuario
         const { data: existing } = await supabase
           .from(tableName)
           .select('id')
@@ -318,37 +310,46 @@ export default function EditNetWorth() {
           .eq('subcategoria', itemName)
           .maybeSingle();
 
-        const dataToSave = {
-          user_id: user.id,
-          nombre: itemData.nombre || itemName,
-          valor: itemData.valor,
-          categoria: category.name,
-          subcategoria: itemName,
-          moneda: 'MXN',
-          ...(isAsset ? {
-            es_activo_fijo: category.id === 'fijos'
-          } : {
-            es_corto_plazo: category.id === 'corrientes'
-          })
-        };
+        if (itemData && itemData.valor > 0) {
+          // Si tiene valor, insertar o actualizar
+          const dataToSave = {
+            user_id: user.id,
+            nombre: itemData.nombre || itemName,
+            valor: itemData.valor,
+            categoria: category.name,
+            subcategoria: itemName,
+            moneda: 'MXN',
+            ...(isAsset ? {
+              es_activo_fijo: category.id === 'fijos'
+            } : {
+              es_corto_plazo: category.id === 'corrientes'
+            })
+          };
 
-        if (existing) {
-          // Actualizar
+          if (existing) {
+            // Actualizar registro existente
+            await supabase
+              .from(tableName)
+              .update(dataToSave)
+              .eq('id', existing.id);
+          } else {
+            // Insertar nuevo registro
+            await supabase
+              .from(tableName)
+              .insert(dataToSave);
+          }
+        } else if (existing) {
+          // Si no tiene valor pero existe en la BD, eliminarlo
           await supabase
             .from(tableName)
-            .update(dataToSave)
+            .delete()
             .eq('id', existing.id);
-        } else {
-          // Insertar
-          await supabase
-            .from(tableName)
-            .insert(dataToSave);
         }
       }
 
       toast.success(`${category.name} actualizado`);
       setExpandedCategory(null);
-      loadData();
+      await loadData(); // Recargar datos para reflejar cambios
     } catch (error) {
       console.error('Error saving:', error);
       toast.error("Error al guardar cambios");
