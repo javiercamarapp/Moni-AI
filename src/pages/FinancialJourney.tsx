@@ -44,6 +44,9 @@ export default function FinancialJourney() {
     const saved = localStorage.getItem('last_celebrated_badges');
     return saved ? JSON.parse(saved) : [];
   });
+  const [hasSeenNotification, setHasSeenNotification] = useState(() => {
+    return localStorage.getItem('journey_notification_seen') === 'true';
+  });
 
   useEffect(() => {
     fetchAspirations();
@@ -95,52 +98,75 @@ export default function FinancialJourney() {
   const currentLevel = totalAspiration > 0 ? Math.floor((currentNetWorth / totalAspiration) * 10000) : 0;
   const targetLevel = 10000;
 
-  // Detectar avance de 0.5% y celebrar
+  // Detectar avance de 0.5% y celebrar - solo la primera vez por sesión
   useEffect(() => {
     if (currentProgress > 0) {
       const currentMilestone = Math.floor(currentProgress / 0.5) * 0.5;
       const lastMilestone = Math.floor(lastCelebratedProgress / 0.5) * 0.5;
       
+      // Si hay un nuevo avance, resetear la notificación vista y mostrar
       if (currentMilestone > lastMilestone && currentProgress > lastCelebratedProgress) {
-        setCelebrationMessage(`¡Nuevo nivel desbloqueado: ${currentMilestone.toFixed(1)}%!`);
+        setCelebrationMessage(`Avanzaste al ${currentMilestone.toFixed(1)}%`);
         setShowProgressCelebration(true);
+        setHasSeenNotification(false); // Resetear para que se pueda ver
+        localStorage.setItem('journey_notification_seen', 'false');
         setLastCelebratedProgress(currentProgress);
         localStorage.setItem('last_celebrated_journey_progress', currentProgress.toString());
+        
+        // Marcar como vista después de 5 segundos
+        setTimeout(() => {
+          setHasSeenNotification(true);
+          localStorage.setItem('journey_notification_seen', 'true');
+          setShowProgressCelebration(false);
+        }, 5000);
       }
     }
   }, [currentProgress]);
 
-  // Detectar desbloqueo de badges y celebrar
+  // Detectar desbloqueo de badges y celebrar - solo la primera vez por sesión
   const badgeLevels = [250, 500, 750, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000];
   useEffect(() => {
-    badgeLevels.forEach(level => {
-      if (currentLevel >= level && !lastCelebratedBadges.includes(level)) {
-        const badgeNames: Record<number, string> = {
-          250: "Piedra Base 🪨",
-          500: "Conector Sencillo 📎",
-          750: "Herramienta Básica 🔧",
-          1000: "Eslabón Fuerte ⛓️",
-          1500: "Engranaje Industrial ⚙️",
-          2000: "Estructura de Acero 🏗️",
-          2500: "Oro Refinado 💰",
-          3000: "Rayo de Energía ⚡",
-          4000: "Cohete de Innovación 🚀",
-          5000: "Estrella Brillante ⭐",
-          6000: "Corona Imperial 👑",
-          7000: "Cristal Precioso 💎",
-          8000: "Escudo Supremo 🛡️",
-          9000: "Joya del Infinito 💍",
-          10000: "Planeta de Libertad 🌍"
-        };
-        
-        setCelebrationMessage(`¡Insignia desbloqueada: ${badgeNames[level]}!`);
-        setShowProgressCelebration(true);
-        
-        const newBadges = [...lastCelebratedBadges, level];
-        setLastCelebratedBadges(newBadges);
-        localStorage.setItem('last_celebrated_badges', JSON.stringify(newBadges));
-      }
-    });
+    // Solo mostrar la última insignia desbloqueada
+    const unlockedBadges = badgeLevels.filter(level => 
+      currentLevel >= level && !lastCelebratedBadges.includes(level)
+    );
+    
+    if (unlockedBadges.length > 0) {
+      const latestBadge = Math.max(...unlockedBadges);
+      const badgeNames: Record<number, string> = {
+        250: "Piedra Base 🪨",
+        500: "Conector Sencillo 📎",
+        750: "Herramienta Básica 🔧",
+        1000: "Eslabón Fuerte ⛓️",
+        1500: "Engranaje Industrial ⚙️",
+        2000: "Estructura de Acero 🏗️",
+        2500: "Oro Refinado 💰",
+        3000: "Rayo de Energía ⚡",
+        4000: "Cohete de Innovación 🚀",
+        5000: "Estrella Brillante ⭐",
+        6000: "Corona Imperial 👑",
+        7000: "Cristal Precioso 💎",
+        8000: "Escudo Supremo 🛡️",
+        9000: "Joya del Infinito 💍",
+        10000: "Planeta de Libertad 🌍"
+      };
+      
+      setCelebrationMessage(`Insignia desbloqueada: ${badgeNames[latestBadge]}`);
+      setShowProgressCelebration(true);
+      setHasSeenNotification(false); // Resetear para que se pueda ver
+      localStorage.setItem('journey_notification_seen', 'false');
+      
+      const newBadges = [...lastCelebratedBadges, ...unlockedBadges];
+      setLastCelebratedBadges(newBadges);
+      localStorage.setItem('last_celebrated_badges', JSON.stringify(newBadges));
+      
+      // Marcar como vista después de 5 segundos
+      setTimeout(() => {
+        setHasSeenNotification(true);
+        localStorage.setItem('journey_notification_seen', 'true');
+        setShowProgressCelebration(false);
+      }, 5000);
+    }
   }, [currentLevel]);
 
   const generateNodes = () => {
@@ -327,12 +353,6 @@ export default function FinancialJourney() {
 
   return (
     <>
-      <JourneyCelebration 
-        show={showProgressCelebration}
-        message={celebrationMessage}
-        onComplete={() => setShowProgressCelebration(false)}
-      />
-      
       <div 
         className="min-h-screen flex flex-col relative"
         style={{
@@ -356,14 +376,24 @@ export default function FinancialJourney() {
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <Button
-              type="button"
-              onClick={() => navigate('/aspirations-analysis')}
-              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 px-4 hover:scale-105 transition-all border border-blue-100"
-            >
-              <Target className="h-4 w-4 mr-2" />
-              <span className="text-sm font-medium">Análisis</span>
-            </Button>
+            
+            {/* Mostrar notificación o botón de análisis */}
+            {showProgressCelebration ? (
+              <JourneyCelebration 
+                show={showProgressCelebration}
+                message={celebrationMessage}
+                onComplete={() => setShowProgressCelebration(false)}
+              />
+            ) : (
+              <Button
+                type="button"
+                onClick={() => navigate('/aspirations-analysis')}
+                className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground h-10 px-4 hover:scale-105 transition-all border border-blue-100"
+              >
+                <Target className="h-4 w-4 mr-2" />
+                <span className="text-sm font-medium">Análisis</span>
+              </Button>
+            )}
           </div>
           
           <Card className="p-3 bg-white/95 backdrop-blur-sm border-0 shadow-xl rounded-[20px] hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
