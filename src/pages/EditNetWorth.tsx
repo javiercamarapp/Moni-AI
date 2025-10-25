@@ -481,31 +481,48 @@ export default function EditNetWorth() {
                                     </p>
                                   </div>
                                 )}
-                              </div>
-                              <div className="space-y-1">
-                                <Input
-                                  type="text"
-                                  placeholder="Nombre de tu cuenta (ej: BBVA, Santander)"
-                                  value={assetValues[item.id]?.nombre || ""}
-                                  onChange={(e) => updateItemValue(item.id, 'nombre', e.target.value, true)}
-                                  className="w-full h-7 text-[10px] bg-white border-gray-200"
-                                />
-                                <div className="relative flex items-center">
-                                  <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
-                                  <Input
-                                    type="text"
-                                    inputMode="numeric"
-                                    placeholder="0"
-                                    value={assetValues[item.id]?.valor ? formatCurrency(assetValues[item.id].valor) : ""}
-                                    onChange={(e) => {
-                                      const value = e.target.value.replace(/[^\d]/g, '');
-                                      updateItemValue(item.id, 'valor', value, true);
-                                    }}
-                                    className="w-full h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-white border-gray-200"
-                                  />
-                                </div>
-                              </div>
-                            </div>
+                               </div>
+                               <div className="space-y-1">
+                                 <Input
+                                   type="text"
+                                   placeholder="Nombre de tu cuenta (ej: BBVA, Santander)"
+                                   value={assetValues[item.id]?.nombre || ""}
+                                   onChange={(e) => updateItemValue(item.id, 'nombre', e.target.value, true)}
+                                   className="w-full h-7 text-[10px] bg-white border-gray-200"
+                                 />
+                                 <div className="relative flex items-center">
+                                   <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
+                                   <Input
+                                     type="text"
+                                     inputMode="numeric"
+                                     placeholder="0"
+                                     value={assetValues[item.id]?.valor ? formatCurrency(assetValues[item.id].valor) : ""}
+                                     onChange={(e) => {
+                                       const value = e.target.value.replace(/[^\d]/g, '');
+                                       updateItemValue(item.id, 'valor', value, true);
+                                     }}
+                                     className="w-full h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-white border-gray-200"
+                                   />
+                                 </div>
+                               </div>
+                               {/* Botón + para agregar otra cuenta del mismo tipo */}
+                               <div className="flex justify-center mt-1">
+                                 <Button
+                                   onClick={() => {
+                                     const newId = `custom_${item.id}_${Date.now()}`;
+                                     const newItem = { id: newId, name: `${item.name} adicional` };
+                                     const insertIndex = category.items.findIndex(i => i.id === item.id) + 1;
+                                     category.items.splice(insertIndex, 0, newItem);
+                                     setCustomItems({ ...customItems });
+                                   }}
+                                   variant="ghost"
+                                   size="sm"
+                                   className="h-6 w-6 p-0 rounded-full bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs"
+                                 >
+                                   +
+                                 </Button>
+                               </div>
+                             </div>
                           ))}
                         </div>
 
@@ -644,6 +661,23 @@ export default function EditNetWorth() {
                                     className="w-full h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-white border-gray-200"
                                   />
                                 </div>
+                              </div>
+                              {/* Botón + para agregar otra deuda del mismo tipo */}
+                              <div className="flex justify-center mt-1">
+                                <Button
+                                  onClick={() => {
+                                    const newId = `custom_${item.id}_${Date.now()}`;
+                                    const newItem = { id: newId, name: `${item.name} adicional` };
+                                    const insertIndex = category.items.findIndex(i => i.id === item.id) + 1;
+                                    category.items.splice(insertIndex, 0, newItem);
+                                    setCustomItems({ ...customItems });
+                                  }}
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-6 w-6 p-0 rounded-full bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs"
+                                >
+                                  +
+                                </Button>
                               </div>
                             </div>
                           ))}
