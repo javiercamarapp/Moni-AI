@@ -1031,23 +1031,27 @@ const ChatInterface = () => {
   >
     <div className="flex flex-col h-screen relative z-10">
       {/* Header */}
-      <div className="grid grid-cols-3 items-center px-4 py-4 border-b border-border/30 bg-card/50 backdrop-blur-sm">
-        <div className="justify-self-start">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => navigate("/dashboard")} 
-            className="text-foreground hover:bg-accent/50 transition-all hover:scale-110 hover-lift fade-in-up rounded-full"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-        </div>
-        <div className="flex items-center justify-center gap-3 fade-in-up">
-          <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden w-16 h-10">
-            <img src={moniLogo} alt="Moni" className="w-full h-full object-cover" />
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/dashboard")}
+              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 p-0 flex-shrink-0"
+            >
+              <ArrowLeft className="h-4 w-4 text-gray-700" />
+            </Button>
+            <div className="flex-1 flex items-center gap-2">
+              <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden w-16 h-10">
+                <img src={moniLogo} alt="Moni" className="w-full h-full object-cover" />
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Moni AI</h1>
+                <p className="text-xs text-gray-600">Tu asistente financiero</p>
+              </div>
+            </div>
           </div>
         </div>
-        <div></div>
       </div>
 
       {/* Messages Area */}
