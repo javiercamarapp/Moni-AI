@@ -536,53 +536,9 @@ const ChallengeCard = ({
           <div className="flex items-start gap-4">
             {/* Visualización según tipo */}
             <div className="flex-shrink-0">
-              {challengeType === 'spending_limit' && (
-                <div className="w-16 h-16 relative">
-                  <div className="absolute inset-0 bg-gray-200 rounded-xl overflow-hidden">
-                    <div 
-                      className={`absolute bottom-0 left-0 right-0 ${colors.bg} transition-all`}
-                      style={{ height: `${Math.min(100, progress)}%` }}
-                    />
-                  </div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-xs font-bold text-gray-700">{Math.round(progress)}%</span>
-                  </div>
-                </div>
-              )}
-              
-              {challengeType === 'days_without' && (
-                <div className="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-purple-600">
-                      {daysStatus.filter(d => d.completed === true).length}
-                    </div>
-                    <div className="text-[10px] text-purple-600">
-                      de {challenge.daily_goal || 5}
-                    </div>
-                  </div>
-                </div>
-              )}
-              
-              {challengeType === 'daily_budget' && (
-                <div className="w-16 h-16 bg-orange-100 rounded-xl flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-orange-600">
-                      {daysStatus.filter(d => d.completed === true).length}
-                    </div>
-                    <div className="text-[10px] text-orange-600">
-                      / 7 días
-                    </div>
-                  </div>
-                </div>
-              )}
-              
-              {challengeType === 'savings_goal' && (
-                <div className="w-16 h-16 bg-cyan-100 rounded-xl flex items-center justify-center">
-                  <div className="text-2xl font-bold text-cyan-600">
-                    {Math.round(progress)}%
-                  </div>
-                </div>
-              )}
+              <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-sm border border-gray-200">
+                <span className="text-3xl">{getCategoryEmoji(challenge.category)}</span>
+              </div>
             </div>
             
             {/* Contenido */}

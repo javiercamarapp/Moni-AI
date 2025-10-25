@@ -27,10 +27,10 @@ serve(async (req) => {
       });
     }
 
-    // Get how many challenges to generate and userId (default: 12 for all categories)
-    const { count = 12, userId } = await req.json().catch(() => ({ count: 12, userId: null }));
+    // Generate 5 challenges per category (12 categories * 5 = 60 challenges)
+    const { userId } = await req.json().catch(() => ({ userId: null }));
 
-    console.log('🎯 Generando 12 retos (uno por categoría) para usuario:', user.id);
+    console.log('🎯 Generando 60 retos (5 por cada una de las 12 categorías) para usuario:', user.id);
 
     // Define the 12 standard expense categories with emojis
     const STANDARD_CATEGORIES = [
@@ -126,8 +126,8 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Generate challenges using AI - 12 retos, uno por categoría CON DIFERENTES TIPOS
-    const prompt = `Genera EXACTAMENTE 12 retos semanales VARIADOS para ayudar al usuario a AHORRAR MÁS que su presupuesto actual:
+    // Generate challenges using AI - 60 retos (5 por categoría)
+    const prompt = `Genera EXACTAMENTE 60 retos semanales (5 retos por cada una de las 12 categorías) para ayudar al usuario a AHORRAR MÁS que su presupuesto actual:
 
 ANÁLISIS DE LAS 12 CATEGORÍAS Y SUS PRESUPUESTOS:
 ${categoriesForChallenges.map(cat => {
@@ -168,12 +168,14 @@ TIPOS DE RETOS (VARÍA LA DISTRIBUCIÓN):
    - Visual: PORCENTAJE circular
 
 REGLAS CRÍTICAS:
-- Genera 12 retos VARIADOS: 3 "spending_limit", 3 "days_without", 3 "daily_budget", 3 "savings_goal"
+- Genera EXACTAMENTE 60 retos (5 por cada categoría)
+- Por cada categoría, genera: 2 "spending_limit", 1 "days_without", 1 "daily_budget", 1 "savings_goal"
+- CADA reto DEBE incluir el nombre COMPLETO de la categoría CON su emoji (ej: "🏠 Vivienda")
 - Para "spending_limit": target_amount = presupuesto semanal * 0.75
 - Para "days_without": daily_goal = 4-6, target_amount = 0
 - Para "daily_budget": target_amount = presupuesto semanal * 0.75
 - Para "savings_goal": target_amount = presupuesto semanal * 0.25
-- Títulos motivadores y tips prácticos`;
+- Títulos motivadores y tips prácticos ESPECÍFICOS para cada categoría`;
 
     console.log('🤖 Llamando a Lovable AI para generar retos...');
 
@@ -254,7 +256,7 @@ REGLAS CRÍTICAS:
       throw new Error("No se pudo generar retos");
     }
 
-    const generatedChallenges = JSON.parse(toolCall.function.arguments).challenges.slice(0, 12); // Always 12
+    const generatedChallenges = JSON.parse(toolCall.function.arguments).challenges.slice(0, 60); // 60 challenges (5 per category)
 
     console.log('✨ Retos generados:', generatedChallenges.length, 'retos');
 
