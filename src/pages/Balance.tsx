@@ -273,38 +273,28 @@ const Balance = () => {
       // Create a map for quick category lookup
       const categoryMap = new Map(allCategories?.map(cat => [cat.id, cat]) || []);
 
-      // Fetch ALL transactions using pagination (Supabase has 1000 record default limit)
-      let allTransactions: any[] = [];
-      let page = 0;
-      const pageSize = 1000;
-      let hasMore = true;
-      const fetchedIds = new Set<string>(); // Track IDs to prevent duplicates
+      // Fetch transactions in a single query (simpler and more reliable)
+      // Supabase limit is 1000 but we can increase it
+      const { data: transactions, error: txError } = await supabase
+        .from('transactions')
+        .select('*, categories(id, name, color, type, parent_id)')
+        .eq('user_id', user.id)
+        .gte('transaction_date', startDate.toISOString().split('T')[0])
+        .lte('transaction_date', endDate.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false })
+        .limit(10000); // Increased limit to handle all transactions
       
-      while (hasMore) {
-        const {
-          data: pageData
-        } = await supabase.from('transactions').select('*, categories(id, name, color, type, parent_id)').eq('user_id', user.id).gte('transaction_date', startDate.toISOString().split('T')[0]).lte('transaction_date', endDate.toISOString().split('T')[0]).range(page * pageSize, (page + 1) * pageSize - 1);
-        
-        if (pageData && pageData.length > 0) {
-          // Filter out duplicates
-          const newTransactions = pageData.filter(t => {
-            if (fetchedIds.has(t.id)) {
-              console.warn('⚠️ Duplicate transaction detected:', t.id);
-              return false;
-            }
-            fetchedIds.add(t.id);
-            return true;
-          });
-          
-          allTransactions = [...allTransactions, ...newTransactions];
-          hasMore = pageData.length === pageSize;
-          page++;
-        } else {
-          hasMore = false;
-        }
+      if (txError) {
+        console.error('Error fetching transactions:', txError);
+        return;
       }
-      const transactions = allTransactions;
-      console.log('📊 Unique transactions loaded:', transactions.length, 'Pages fetched:', page);
+      
+      if (!transactions) {
+        console.log('No transactions found');
+        return;
+      }
+      
+      console.log('📊 Transactions loaded:', transactions.length);
       if (!transactions) return;
       console.log('=== BALANCE PAGE CALCULATIONS ===');
       console.log('View mode:', viewMode);
