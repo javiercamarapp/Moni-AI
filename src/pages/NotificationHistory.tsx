@@ -78,7 +78,7 @@ export default function NotificationHistory() {
 
           <Card className="bg-white/60 backdrop-blur-xl rounded-[20px] shadow-lg border border-gray-200/50 p-3 mb-6">
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 mb-2 shadow-lg">
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-slate-600 to-slate-800 mb-2 shadow-lg">
                 <Bell className="h-5 w-5 text-white" />
               </div>
               <h1 className="text-xl font-bold text-foreground mb-1">Notificaciones</h1>
@@ -131,11 +131,11 @@ export default function NotificationHistory() {
                     {/* Gradient overlay basado en el tipo */}
                     <div 
                       className={`absolute inset-0 opacity-5 pointer-events-none bg-gradient-to-br ${
-                        notification.notification_type === "daily_summary" ? "from-blue-400 to-blue-600" :
-                        notification.notification_type === "weekly_analysis" ? "from-purple-400 to-purple-600" :
-                        notification.notification_type === "savings_tip" ? "from-green-400 to-green-600" :
-                        notification.notification_type === "goal_reminder" ? "from-orange-400 to-orange-600" :
-                        notification.notification_type === "spending_alert" ? "from-red-400 to-red-600" :
+                        notification.notification_type === "daily_summary" ? "from-blue-400 to-cyan-500" :
+                        notification.notification_type === "weekly_analysis" ? "from-slate-400 to-slate-600" :
+                        notification.notification_type === "savings_tip" ? "from-emerald-400 to-teal-600" :
+                        notification.notification_type === "goal_reminder" ? "from-amber-400 to-orange-500" :
+                        notification.notification_type === "spending_alert" ? "from-rose-400 to-red-500" :
                         "from-gray-400 to-gray-600"
                       }`}
                     />
@@ -145,11 +145,11 @@ export default function NotificationHistory() {
                         {/* Icono con gradiente */}
                         <div className={`
                           flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-md bg-gradient-to-br
-                          ${notification.notification_type === "daily_summary" ? "from-blue-400 to-blue-600" :
-                            notification.notification_type === "weekly_analysis" ? "from-purple-400 to-purple-600" :
-                            notification.notification_type === "savings_tip" ? "from-green-400 to-green-600" :
-                            notification.notification_type === "goal_reminder" ? "from-orange-400 to-orange-600" :
-                            notification.notification_type === "spending_alert" ? "from-red-400 to-red-600" :
+                          ${notification.notification_type === "daily_summary" ? "from-blue-400 to-cyan-500" :
+                            notification.notification_type === "weekly_analysis" ? "from-slate-400 to-slate-600" :
+                            notification.notification_type === "savings_tip" ? "from-emerald-400 to-teal-600" :
+                            notification.notification_type === "goal_reminder" ? "from-amber-400 to-orange-500" :
+                            notification.notification_type === "spending_alert" ? "from-rose-400 to-red-500" :
                             "from-gray-400 to-gray-600"}
                         `}>
                           {notification.notification_type === "daily_summary" ? (
@@ -174,7 +174,7 @@ export default function NotificationHistory() {
                               {getNotificationTitle(notification.notification_type)}
                             </h3>
                             {isUnread && (
-                              <div className="flex-shrink-0 w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 animate-pulse" />
+                              <div className="flex-shrink-0 w-2 h-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 animate-pulse" />
                             )}
                           </div>
                           
