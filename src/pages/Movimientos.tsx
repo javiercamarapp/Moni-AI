@@ -161,11 +161,11 @@ export default function Movimientos() {
         <Button
           onClick={handleDownloadPDF}
           disabled={downloadingPDF || transactions.length === 0}
-          className="w-full bg-primary hover:bg-primary/90 text-white gap-2"
+          className="w-full bg-white/90 hover:bg-white text-gray-900 gap-2 rounded-[16px] shadow-lg border border-gray-200/50 hover:shadow-xl transition-all py-6 font-semibold"
         >
           {downloadingPDF ? (
             <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
               Generando PDF...
             </>
           ) : (
