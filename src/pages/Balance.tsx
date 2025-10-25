@@ -86,6 +86,7 @@ const Balance = () => {
     return cached ? parseFloat(cached) : 0;
   });
   const [loading, setLoading] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [hasInitialData, setHasInitialData] = useState(() => {
     // Verificar si hay datos en caché
     const hasIngresos = localStorage.getItem('balance_ingresos');
@@ -231,6 +232,13 @@ const Balance = () => {
     }
   };
   const fetchBalanceData = async () => {
+    // Evitar llamadas concurrentes
+    if (isProcessing) {
+      console.log('⏳ Ya hay un proceso en curso, ignorando llamada');
+      return;
+    }
+    
+    setIsProcessing(true);
     // Solo mostrar loading si NO hay datos iniciales
     if (!hasInitialData) {
       setLoading(true);
@@ -301,10 +309,11 @@ const Balance = () => {
       console.log('Ingresos count:', ingresosData.length);
       console.log('Total Ingresos:', totalIng);
       
-      // Categorize income with AI
+      // Categorize income with AI - Solo si hay menos de 100 transacciones para evitar timeouts
       let categorizedIncome: any[] = [];
-      if (ingresosData.length > 0) {
+      if (ingresosData.length > 0 && ingresosData.length <= 100) {
         try {
+          console.log('🤖 Categorizando', ingresosData.length, 'ingresos con IA...');
           const { data: aiResult, error: aiError } = await supabase.functions.invoke('categorize-income', {
             body: { transactions: ingresosData }
           });
@@ -318,6 +327,7 @@ const Balance = () => {
             }));
           } else {
             categorizedIncome = aiResult.categorizedIncome;
+            console.log('✅ Ingresos categorizados con IA');
           }
         } catch (error) {
           console.error('Error en categorización de ingresos:', error);
@@ -327,6 +337,13 @@ const Balance = () => {
             category: t.categories?.name || '💼 Salario / Sueldo'
           }));
         }
+      } else {
+        // Si hay muchos ingresos, usar categorías existentes directamente
+        console.log('📊 Usando categorías existentes para', ingresosData.length, 'ingresos');
+        categorizedIncome = ingresosData.map(t => ({
+          ...t,
+          category: t.categories?.name || '💼 Salario / Sueldo'
+        }));
       }
       
       // Group by AI-detected category
@@ -417,8 +434,11 @@ const Balance = () => {
       setGastosByCategory(gastosWithPercentage);
       localStorage.setItem('balance_gastos', JSON.stringify(gastosWithPercentage));
       setHasInitialData(true);
+    } catch (error) {
+      console.error('Error fetching balance data:', error);
     } finally {
       setLoading(false);
+      setIsProcessing(false);
     }
   };
   const handlePreviousPeriod = () => {
