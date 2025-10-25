@@ -15,6 +15,8 @@ interface Challenge {
   end_date: string;
   days_status: any[];
   status: string;
+  challenge_type: string;
+  daily_goal: number | null;
 }
 
 Deno.serve(async (req) => {
@@ -154,12 +156,25 @@ async function verifyChallenge(supabase: any, challenge: Challenge) {
 
       console.log(`💸 Gasto del día en categoría "${challenge.category}": $${daySpending}`);
 
-      // Determine if challenge was met for this day
-      // For spending challenges, we want spending to be BELOW the daily target
-      const dailyTarget = challenge.target_amount / 7; // Weekly target divided by 7 days
-      const wasCompleted = daySpending <= dailyTarget;
-
-      console.log(`🎯 Meta diaria: $${dailyTarget.toFixed(2)} | Gasto: $${daySpending.toFixed(2)} | Cumplido: ${wasCompleted}`);
+      // Determine if challenge was met for this day based on challenge type
+      const challengeType = challenge.challenge_type || 'spending_limit';
+      let wasCompleted = false;
+      
+      if (challengeType === 'days_without') {
+        // Para "días sin gastar": completado si NO hubo gastos ese día
+        wasCompleted = daySpending === 0;
+        console.log(`🎯 Tipo: days_without | Gasto: $${daySpending} | Cumplido: ${wasCompleted ? 'SÍ (sin gastos)' : 'NO (hubo gastos)'}`);
+      } else if (challengeType === 'daily_budget') {
+        // Para "presupuesto diario": completado si gasto <= presupuesto diario
+        const dailyTarget = challenge.target_amount / 7;
+        wasCompleted = daySpending <= dailyTarget;
+        console.log(`🎯 Tipo: daily_budget | Meta: $${dailyTarget.toFixed(2)} | Gasto: $${daySpending.toFixed(2)} | Cumplido: ${wasCompleted}`);
+      } else {
+        // Para "spending_limit": se verifica al final de la semana
+        // Día por día solo acumulamos el gasto
+        wasCompleted = null; // No se verifica día por día
+        console.log(`🎯 Tipo: spending_limit | Gasto acumulado: $${daySpending.toFixed(2)} (se verifica al final)`);
+      }
 
       // Update day status - create new object
       daysStatus[dayIndex] = {

@@ -144,50 +144,51 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Generate challenges using AI - 12 retos, uno por categoría
-    const prompt = `Genera EXACTAMENTE 12 retos semanales MEDIBLES Y NUMÉRICOS, UNO POR CADA CATEGORÍA de gasto:
+    // Generate challenges using AI - 12 retos, uno por categoría CON DIFERENTES TIPOS
+    const prompt = `Genera EXACTAMENTE 12 retos semanales VARIADOS para ayudar al usuario a AHORRAR MÁS que su presupuesto actual:
 
-ANÁLISIS DE LAS 12 CATEGORÍAS:
+ANÁLISIS DE LAS 12 CATEGORÍAS Y SUS PRESUPUESTOS:
 ${categoriesForChallenges.map(cat => {
+  const weeklyBudget = cat.monthlyBudget / 4.33;
+  const savingsTarget = weeklyBudget * 0.25; // Ahorrar 25% del presupuesto
   const status = cat.transactionCount === 0 ? `Sin transacciones` :
                  cat.exceedsBy > 0 ? `⚠️ EXCEDE presupuesto por $${cat.exceedsBy.toFixed(2)}` : 
                  cat.monthlyBudget > 0 ? `✅ Dentro de presupuesto` : 
                  `Sin presupuesto definido`;
   return `${cat.categoryName}:
-  • Presupuesto mensual: $${cat.monthlyBudget.toFixed(2)}
-  • Gasto diario: $${cat.dailySpend.toFixed(2)}
-  • Gasto semanal: $${cat.weeklySpend.toFixed(2)}
-  • ${cat.transactionCount} transacciones
+  • Presupuesto semanal: $${weeklyBudget.toFixed(2)}
+  • Meta ahorro: $${savingsTarget.toFixed(2)} (25% menos)
+  • Gasto actual semanal: $${cat.weeklySpend.toFixed(2)}
+  • ${cat.transactionCount} transacciones/mes
   • ${status}`;
 }).join('\n\n')}
 
-GENERA UN RETO MEDIBLE Y VERIFICABLE PARA CADA CATEGORÍA (12 TOTAL):
+TIPOS DE RETOS (USA VARIEDAD):
 
-EJEMPLOS DE RETOS MEDIBLES:
-1. 🏠 **Vivienda**: "No gastes más de $X esta semana en servicios"
-2. 🚗 **Transporte**: "Limita tu gasto de transporte a $X esta semana"
-3. 🍽️ **Alimentación**: "Gasta máximo $X en comidas fuera de casa esta semana"
-4. 🧾 **Servicios**: "Mantén tus suscripciones bajo $X esta semana"
-5. 🩺 **Salud**: "No gastes más de $X en salud esta semana"
-6. 🎓 **Educación**: "Limita gastos educativos a $X esta semana"
-7. 💳 **Deudas**: "Mantén pagos de deuda en $X esta semana"
-8. 🎉 **Entretenimiento**: "Gasta máximo $X en diversión esta semana"
-9. 💸 **Ahorro**: "Ahorra mínimo $X esta semana"
-10. 🤝 **Apoyos**: "Limita apoyos a $X esta semana"
-11. 🐾 **Mascotas**: "Gasta máximo $X en mascotas esta semana"
-12. ❓ **No identificados**: "Mantén gastos sin categorizar bajo $X esta semana"
+🎯 TIPO 1 - "spending_limit" (Límite semanal con barra de progreso):
+   - Ej: "Gasta máximo $1,500 esta semana en el super" 
+   - Meta: 25% menos del presupuesto semanal
+   - Se muestra barra de progreso de cuánto has gastado
 
-REGLAS CRÍTICAS PARA RETOS MEDIBLES:
-- Genera EXACTAMENTE 12 retos (uno por categoría)
-- TODOS los retos DEBEN ser numéricos y verificables
-- Meta semanal = cantidad específica en pesos (30-50% menos del gasto actual)
-- Si no hay gastos, meta de $50-200 según la categoría
-- NO sugieras acciones cualitativas como "apaga la luz" o "cierra la llave"
-- SOLO metas de gasto máximo o ahorro mínimo que se puedan medir
-- Formato: "Gasta máximo $X en [categoría]" o "Mantén [categoría] bajo $X"
-- Tips PRÁCTICOS de cómo lograrlo (meal prep, transporte compartido, etc.)
+📅 TIPO 2 - "days_without" (Completar X días sin gastar):
+   - Ej: "No compres café de cafetería 5 días esta semana"
+   - Ej: "Prepara tu comida en casa 6 de 7 días"
+   - Daily goal: número de días a completar (4-6 días de 7)
+   - Se muestra calendario con palomitas por día
 
-FORMATO: título con meta numérica, descripción con 2-3 tips específicos, categoría exacta, meta semanal en pesos.`;
+💰 TIPO 3 - "daily_budget" (Presupuesto diario):
+   - Ej: "Gasta máximo $200 diarios en transporte"
+   - Target: presupuesto semanal dividido entre 7
+   - Se verifica día por día con calendario
+
+REGLAS:
+- Genera 12 retos: 4 de tipo "spending_limit", 4 de tipo "days_without", 4 de tipo "daily_budget"
+- TODOS buscan que el usuario AHORRE más de su presupuesto actual
+- Para "spending_limit": target_amount = presupuesto semanal * 0.75 (25% menos)
+- Para "days_without": daily_goal = 4-6 días, target irrelevante
+- Para "daily_budget": target_amount = presupuesto semanal, se divide entre 7 días
+- Sé creativo con los títulos y descripciones motivadoras
+- Tips concretos de cómo lograrlo`;
 
     console.log('🤖 Llamando a Lovable AI para generar retos...');
 
@@ -223,11 +224,17 @@ FORMATO: título con meta numérica, descripción con 2-3 tips específicos, cat
                     type: "object",
                     properties: {
                       title: { type: "string", description: "Título corto y motivador del reto" },
-                      description: { type: "string", description: "Descripción breve del reto" },
+                      description: { type: "string", description: "Descripción breve con tips concretos" },
                       category: { type: "string", description: "Categoría de gasto" },
-                      weekly_target: { type: "number", description: "Meta de gasto semanal en pesos" }
+                      challenge_type: { 
+                        type: "string", 
+                        enum: ["spending_limit", "days_without", "daily_budget"],
+                        description: "Tipo de reto: spending_limit (barra progreso), days_without (días sin gastar), daily_budget (presupuesto diario)" 
+                      },
+                      weekly_target: { type: "number", description: "Meta de gasto semanal en pesos" },
+                      daily_goal: { type: "number", description: "Solo para days_without: número de días a completar (4-6)" }
                     },
-                    required: ["title", "description", "category", "weekly_target"]
+                    required: ["title", "description", "category", "challenge_type", "weekly_target"]
                   }
                 }
               },
@@ -278,8 +285,10 @@ FORMATO: título con meta numérica, descripción con 2-3 tips específicos, cat
       title: c.title,
       description: c.description,
       category: c.category,
+      challenge_type: c.challenge_type || 'spending_limit',
       current_amount: 0,
       target_amount: c.weekly_target,
+      daily_goal: c.daily_goal || null,
       period: 'weekly',
       start_date: startOfWeek.toISOString().split('T')[0],
       end_date: endOfWeek.toISOString().split('T')[0],

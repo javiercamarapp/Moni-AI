@@ -247,13 +247,24 @@ const ChallengeCard = ({
     return () => window.removeEventListener("keydown", handleEscapeKey);
   }, [isExpanded]);
 
-  // Para retos de reducción de gastos, el progreso es cuánto NO has gastado
-  const saved = challenge.target_amount - challenge.current_amount;
-  const progress = Math.max(0, (saved / challenge.target_amount) * 100);
-  
+  // Parse days status array
   const daysStatus = Array.isArray(challenge.days_status) ? challenge.days_status : [];
   const dayNames = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
   const dayNamesFull = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  
+  // Calculate progress based on challenge type
+  const challengeType = challenge.challenge_type || 'spending_limit';
+  let progress = 0;
+  
+  if (challengeType === 'spending_limit' || challengeType === 'daily_budget') {
+    // Para límites de gasto: progreso = cuánto has gastado / límite
+    progress = Math.min(100, (challenge.current_amount / challenge.target_amount) * 100);
+  } else if (challengeType === 'days_without') {
+    // Para días sin gastar: progreso = días completados / días objetivo
+    const daysCompleted = daysStatus.filter(d => d.completed === true).length;
+    const dailyGoal = challenge.daily_goal || 5;
+    progress = (daysCompleted / dailyGoal) * 100;
+  }
   
   const startDate = new Date(challenge.start_date);
   const today = new Date();
@@ -331,9 +342,15 @@ const ChallengeCard = ({
                 {challenge.title}
               </motion.p>
               
-              <motion.p className="px-0 md:px-20 text-xl font-semibold text-white/90 mt-4">
-                ${challenge.current_amount.toFixed(0)} / ${challenge.target_amount.toFixed(0)}
-              </motion.p>
+              {challengeType === 'days_without' ? (
+                <motion.p className="px-0 md:px-20 text-xl font-semibold text-white/90 mt-4">
+                  {daysStatus.filter(d => d.completed === true).length} / {challenge.daily_goal || 5} días completados
+                </motion.p>
+              ) : (
+                <motion.p className="px-0 md:px-20 text-xl font-semibold text-white/90 mt-4">
+                  ${challenge.current_amount.toFixed(0)} / ${challenge.target_amount.toFixed(0)}
+                </motion.p>
+              )}
               
               {isLastDay && (
                 <div className="px-0 md:px-20 mt-4">
@@ -447,9 +464,15 @@ const ChallengeCard = ({
               {challenge.title}
             </motion.p>
             
-            <motion.p className="text-white text-[10px] md:text-xs font-semibold text-center mt-1">
-              ${challenge.current_amount.toFixed(0)} / ${challenge.target_amount.toFixed(0)}
-            </motion.p>
+            {challengeType === 'days_without' ? (
+              <motion.p className="text-white text-[10px] md:text-xs font-semibold text-center mt-1">
+                {daysStatus.filter(d => d.completed === true).length}/{challenge.daily_goal || 5} días
+              </motion.p>
+            ) : (
+              <motion.p className="text-white text-[10px] md:text-xs font-semibold text-center mt-1">
+                ${challenge.current_amount.toFixed(0)} / ${challenge.target_amount.toFixed(0)}
+              </motion.p>
+            )}
             
             <div className="flex gap-0.5 mt-2 mb-1">
               {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {

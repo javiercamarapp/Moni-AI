@@ -213,8 +213,10 @@ export type Database = {
       challenges: {
         Row: {
           category: string
+          challenge_type: string
           created_at: string
           current_amount: number
+          daily_goal: number | null
           days_status: Json | null
           description: string | null
           end_date: string
@@ -230,8 +232,10 @@ export type Database = {
         }
         Insert: {
           category: string
+          challenge_type?: string
           created_at?: string
           current_amount?: number
+          daily_goal?: number | null
           days_status?: Json | null
           description?: string | null
           end_date: string
@@ -247,8 +251,10 @@ export type Database = {
         }
         Update: {
           category?: string
+          challenge_type?: string
           created_at?: string
           current_amount?: number
+          daily_goal?: number | null
           days_status?: Json | null
           description?: string | null
           end_date?: string
