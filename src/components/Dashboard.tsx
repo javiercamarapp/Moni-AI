@@ -1475,9 +1475,9 @@ const Dashboard = () => {
 
               <div className="space-y-3 sm:space-y-4">
                 {goals.length === 0 ? (
-                  <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden text-center animate-fade-in">
+                  <Card className="p-4 sm:p-6 bg-white rounded-[20px] shadow-xl border border-blue-100 relative overflow-hidden text-center animate-fade-in w-full">
                     <div className="relative z-10">
-                      <p className="text-foreground/90">No tienes metas creadas aún</p>
+                      <p className="text-sm sm:text-base text-foreground/90">No tienes metas creadas aún</p>
                     </div>
                   </Card>
                 ) : goals.map((goal, index) => {
