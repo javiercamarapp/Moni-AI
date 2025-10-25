@@ -63,33 +63,33 @@ export default function NotificationHistory() {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-32">
-      <div className="container mx-auto px-4 py-6 max-w-2xl">
-        {/* Header */}
-        <div className="mb-6">
-          <Button
-            type="button"
-            onClick={() => navigate("/dashboard")}
-            variant="ghost"
-            size="icon"
-            className="mb-4 bg-white/80 backdrop-blur-md rounded-[20px] shadow-lg hover:bg-white text-foreground h-10 w-10 hover:scale-105 transition-all border border-gray-200/50"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
+      {/* Header */}
+      <div className="mb-6 px-4 pt-6">
+        <Button
+          type="button"
+          onClick={() => navigate("/dashboard")}
+          variant="ghost"
+          size="icon"
+          className="mb-4 bg-white/80 backdrop-blur-md rounded-[20px] shadow-lg hover:bg-white text-foreground h-10 w-10 hover:scale-105 transition-all border border-gray-200/50"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
 
-          <Card className="bg-white/60 backdrop-blur-xl rounded-[20px] shadow-lg border border-gray-200/50 p-3 mb-6">
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-slate-600 to-slate-800 mb-2 shadow-lg">
-                <Bell className="h-5 w-5 text-white" />
-              </div>
-              <h1 className="text-xl font-bold text-foreground mb-1">Notificaciones</h1>
-              <p className="text-xs text-muted-foreground">
-                Mensajes, recordatorios e insights
-              </p>
+        <Card className="bg-white/60 backdrop-blur-xl rounded-[20px] shadow-lg border border-gray-200/50 p-3">
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-slate-600 to-slate-800 mb-2 shadow-lg">
+              <Bell className="h-5 w-5 text-white" />
             </div>
-          </Card>
-        </div>
+            <h1 className="text-xl font-bold text-foreground mb-1">Notificaciones</h1>
+            <p className="text-xs text-muted-foreground">
+              Mensajes, recordatorios e insights
+            </p>
+          </div>
+        </Card>
+      </div>
 
-        {/* Content */}
+      {/* Content */}
+      <div className="container mx-auto px-4 max-w-2xl">
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3, 4].map((i) => (
