@@ -527,11 +527,9 @@ const ChallengeCard = ({
         )}
       </AnimatePresence>
       
-      <motion.button
+      <button
         onClick={handleExpand}
-        className="w-full"
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+        className="w-full touch-auto"
       >
         <Card
           className={`w-full p-4 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 hover:shadow-md transition-all`}
@@ -607,7 +605,7 @@ const ChallengeCard = ({
             </div>
           </div>
         </Card>
-      </motion.button>
+      </button>
     </>
   );
 };
