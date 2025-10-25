@@ -365,19 +365,31 @@ export default function EditNetWorth() {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
-      <div className="mx-auto px-4 py-6 space-y-6" style={{ maxWidth: '600px' }}>
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <Button
-            variant="ghost"
-            onClick={() => navigate(-1)}
-            className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 p-0"
-          >
-            <ArrowLeft className="h-4 w-4 text-gray-700" />
-          </Button>
-          <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Patrimonio</h1>
-          <div className="w-10" />
+      {/* Header */}
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4 flex-1">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => navigate(-1)}
+                className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
+              >
+                <ArrowLeft className="h-4 w-4 text-gray-700" />
+              </Button>
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">
+                  Patrimonio
+                </h1>
+                <p className="text-sm text-gray-500">Gestiona tus activos y pasivos</p>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div className="mx-auto px-4 py-6 space-y-6" style={{ maxWidth: '600px' }}>
 
         {/* Main Card */}
         <Card className="p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 animate-fade-in">
