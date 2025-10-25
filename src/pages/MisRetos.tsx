@@ -142,45 +142,23 @@ export default function MisRetos() {
       </div>
 
       <div className="px-4 py-3 space-y-6">
-        <div>
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">Retos activos</h2>
-          
-          {loading ? (
-            <div className="flex justify-center py-20">
-              <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin" />
-            </div>
-          ) : challenges.filter(c => c.status === 'active').length === 0 ? (
-            <Card className="p-8 text-center bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 mt-4">
-              <div className="text-6xl mb-4">🎯</div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                No tienes retos activos
-              </h3>
-              <p className="text-gray-600 mb-4">
-                Genera tus primeros retos personalizados con IA
-              </p>
-              <Button
-                onClick={generateNewChallenges}
-                disabled={generatingChallenges}
-                className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
-              >
-                <Sparkles className="w-4 h-4 mr-2" />
-                {generatingChallenges ? 'Generando...' : 'Generar Retos'}
-              </Button>
-            </Card>
-          ) : (
-            <RetroCarousel 
-              items={challenges.filter(c => c.status === 'active').slice(0, 2).map((challenge, index) => (
-                <ChallengeCard
-                  key={challenge.id}
-                  challenge={challenge}
-                  index={index}
-                  onAccept={acceptChallenge}
-                />
-              ))}
-            />
-          )}
-        </div>
-
+        <Card className="p-8 text-center bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0">
+          <div className="text-6xl mb-4">🎯</div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">
+            No tienes retos activos
+          </h3>
+          <p className="text-gray-600 mb-4">
+            Genera tus primeros retos personalizados con IA
+          </p>
+          <Button
+            onClick={generateNewChallenges}
+            disabled={generatingChallenges}
+            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            {generatingChallenges ? 'Generando...' : 'Generar Retos'}
+          </Button>
+        </Card>
       </div>
     </div>
   );
