@@ -1700,148 +1700,24 @@ const Dashboard = () => {
             <div>
               <div className="flex flex-row justify-between items-center mb-4">
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Tus Retos Semanales</h3>
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => navigate("/mis-retos")}
-                    size="sm"
-                    className="bg-white/80 backdrop-blur-md hover:bg-white text-foreground text-xs h-8 px-3 rounded-full shadow-md hover:shadow-lg transition-all border border-gray-200/50 font-semibold"
-                  >
-                    Ver mis retos
-                  </Button>
-                  {challenges.filter(c => c.status === 'active').length < 2 && challenges.some(c => c.status === 'pending') && (
-                    <Button 
-                      size="sm" 
-                      onClick={handleRegenerateChallenges} 
-                      disabled={loadingChallenges}
-                      className="bg-gray-700 hover:bg-gray-800 text-white border-0 text-xs"
-                    >
-                      <RefreshCw className="w-3 h-3 mr-1" />
-                      {loadingChallenges ? "..." : "Otros retos"}
-                    </Button>
-                  )}
-                </div>
               </div>
 
-              {challenges.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">🎯</div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    No tienes retos activos
-                  </h3>
-                  <p className="text-gray-600 mb-6">
-                    Genera tus primeros retos personalizados con IA
-                  </p>
-                  <Button
-                    onClick={() => navigate("/mis-retos")}
-                    className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
-                  >
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Ver retos recomendados por IA
-                  </Button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-3">
-                  {challenges.slice(0, 2).map((challenge, index) => {
-                    const progress = (challenge.current_amount / challenge.target_amount) * 100;
-                    // days_status already comes parsed from Supabase (JSONB type)
-                    const daysStatus = Array.isArray(challenge.days_status) ? challenge.days_status : [];
-                    const dayNames = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
-                    
-                    const gradients = [
-                      'from-[hsl(45,60%,35%)] to-[hsl(38,55%,25%)] border-[hsl(45,70%,45%)]/40',
-                      'from-[hsl(200,60%,25%)] to-[hsl(200,55%,15%)] border-[hsl(200,70%,45%)]/40',
-                    ];
-                    const gradient = gradients[index % gradients.length];
-                    
-                    return (
-                      <Card 
-                        key={challenge.id} 
-                        className="w-full p-2.5 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden min-w-0"
-                        style={{ transform: 'translate3d(0, 0, 0)' }}
-                      >
-                        <div className="relative z-10">
-                          <div className="mb-2">
-                            <h4 className="text-sm font-bold text-foreground drop-shadow-sm mb-0.5 line-clamp-1 leading-tight">
-                              {challenge.title}
-                            </h4>
-                            <p className="text-[10px] text-foreground/70 drop-shadow-sm line-clamp-2 leading-tight">
-                              {challenge.description}
-                            </p>
-                          </div>
-                          
-                          <div className="mb-2">
-                            <div className="flex justify-between items-baseline mb-1">
-                              <span className="text-base font-bold text-foreground drop-shadow-sm">
-                                ${challenge.current_amount.toFixed(0)}
-                              </span>
-                              <span className="text-[10px] text-foreground/70 drop-shadow-sm">
-                                de ${challenge.target_amount}
-                              </span>
-                            </div>
-                            
-                            <div className="relative h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-green-600 rounded-full"
-                                style={{ width: `${Math.min(progress, 100)}%` }}
-                              />
-                            </div>
-                          </div>
-                          
-                          <div className="bg-gray-100 backdrop-blur-sm rounded p-1.5 border border-gray-200 mb-2">
-                            <div className="flex justify-between gap-0.5">
-                              {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
-                                const dayStatus = daysStatus[dayIndex];
-                                const isCompleted = dayStatus?.completed === true;
-                                const isFailed = dayStatus?.completed === false;
-                                const isPending = !dayStatus;
-                                
-                                return (
-                                  <div 
-                                    key={dayIndex} 
-                                    className="flex flex-col items-center"
-                                  >
-                                    <span className="text-[8px] text-foreground/70 mb-0.5">
-                                      {dayNames[dayIndex]}
-                                    </span>
-                                    <div 
-                                      className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
-                                        isCompleted 
-                                          ? 'bg-green-500/80 text-white' 
-                                          : isFailed 
-                                          ? 'bg-red-500/80 text-white'
-                                          : 'bg-gray-200 text-gray-400'
-                                      }`}
-                                    >
-                                      {isCompleted && '✓'}
-                                      {isFailed && '✗'}
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                          
-                          {challenge.status === 'pending' ? (
-                            <Button 
-                              size="sm" 
-                              className="w-full bg-green-600 hover:bg-green-700 text-white border-0 h-7 text-[10px] font-medium"
-                              onClick={() => handleAcceptChallenge(challenge.id)}
-                            >
-                              Aceptar reto
-                            </Button>
-                          ) : (
-                            <div className="text-center py-1">
-                              <Badge className="bg-green-500/20 text-green-700 text-[9px] border-green-500/30">
-                                En progreso
-                              </Badge>
-                            </div>
-                          )}
-                        </div>
-                      </Card>
-                    );
-                  })}
-                </div>
-              )}
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">🎯</div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  No tienes retos creados aún
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Genera tus primeros retos personalizados con IA
+                </p>
+                <Button
+                  onClick={() => navigate("/mis-retos")}
+                  className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
+                >
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Ver retos recomendados por IA
+                </Button>
+              </div>
             </div>
           </div>
 
