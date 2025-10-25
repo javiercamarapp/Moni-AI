@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,8 @@ export default function FinancialAnalysis() {
   const [period, setPeriod] = useState("month");
   const [user, setUser] = useState<any>(null);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   // Usar el mismo hook que el Dashboard para datos del mes actual
   const dashboardData = useDashboardData(0);
@@ -604,9 +606,19 @@ export default function FinancialAnalysis() {
             {(quickMetrics || analysis) ? (
           <>
             {/* Animated Income & Expense Card with Carousel */}
-            <div className="overflow-x-scroll snap-x snap-mandatory flex gap-4 pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            <div className="relative">
+              <div 
+                ref={scrollContainerRef}
+                className="overflow-x-scroll snap-x snap-mandatory flex gap-4 pb-2 -mx-4 px-4 scroll-smooth" 
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                onScroll={(e) => {
+                  const container = e.currentTarget;
+                  const slideIndex = Math.round(container.scrollLeft / container.offsetWidth);
+                  setCurrentSlide(slideIndex);
+                }}
+              >
               {/* Card Mensual */}
-              <Card 
+              <Card
                 className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer transition-all flex-shrink-0" 
                 style={{ animationDelay: '0ms' }}
                 onClick={(e) => {
@@ -790,6 +802,31 @@ export default function FinancialAnalysis() {
                   );
                 })()}
               </Card>
+              </div>
+              
+              {/* Indicadores de navegación */}
+              <div className="flex justify-center gap-2 mt-3">
+                {[0, 1].map((index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      const container = scrollContainerRef.current;
+                      if (container) {
+                        container.scrollTo({
+                          left: index * container.offsetWidth,
+                          behavior: 'smooth'
+                        });
+                      }
+                    }}
+                    className={`h-2 rounded-full transition-all ${
+                      currentSlide === index 
+                        ? 'w-8 bg-primary' 
+                        : 'w-2 bg-muted-foreground/30'
+                    }`}
+                    aria-label={`Ir a slide ${index + 1}`}
+                  />
+                ))}
+              </div>
             </div>
 
             {/* Risk Indicators */}
