@@ -1702,22 +1702,25 @@ const Dashboard = () => {
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Tus Retos Semanales</h3>
               </div>
 
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">🎯</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  No tienes retos creados aún
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  Genera tus primeros retos personalizados con IA
-                </p>
-                <Button
-                  onClick={() => navigate("/mis-retos")}
-                  className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
-                >
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Ver retos recomendados por IA
-                </Button>
-              </div>
+              <Card className="w-full p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden text-center animate-fade-in">
+                <div className="relative z-10">
+                  <div className="text-4xl mb-3">🎯</div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">
+                    No tienes retos creados aún
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Genera tus primeros retos personalizados con IA
+                  </p>
+                  <Button
+                    onClick={() => navigate("/mis-retos")}
+                    size="sm"
+                    className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Ver retos recomendados por IA
+                  </Button>
+                </div>
+              </Card>
             </div>
           </div>
 
