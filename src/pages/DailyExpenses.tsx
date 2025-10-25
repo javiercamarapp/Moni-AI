@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, TrendingUp, TrendingDown, Activity, RefreshCw } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, Activity } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useQuery } from '@tanstack/react-query';
@@ -161,15 +161,6 @@ export default function DailyExpenses() {
             <p className="text-xs sm:text-sm text-foreground/70">Pagados 6+ meses consecutivos</p>
           </div>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => refetch()}
-          disabled={loading}
-          className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
-        >
-          <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
-        </Button>
       </div>
 
       <div className="p-4 space-y-4">

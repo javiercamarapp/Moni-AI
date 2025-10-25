@@ -3,9 +3,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Calendar, CreditCard, TrendingDown, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Calendar, CreditCard, TrendingDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useQuery } from '@tanstack/react-query';
 import BottomNav from '@/components/BottomNav';
 
 interface Subscription {
@@ -64,8 +65,6 @@ export default function Subscriptions() {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-  const [loading, setLoading] = useState(true);
   const [totalMonthly, setTotalMonthly] = useState(0);
 
   const handleBack = () => {
@@ -77,20 +76,15 @@ export default function Subscriptions() {
     }
   };
 
-  useEffect(() => {
-    loadSubscriptions();
-  }, []);
-
-  const loadSubscriptions = async () => {
-    try {
-      setLoading(true);
+  const { data: subscriptions = [], isLoading: loading } = useQuery({
+    queryKey: ['subscriptions'],
+    queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         navigate('/auth');
-        return;
+        return [];
       }
 
-      // Obtener TODAS las transacciones de gastos para análisis completo
       const { data: allExpenses, error: expensesError } = await supabase
         .from('transactions')
         .select('*, categories(name)')
@@ -101,14 +95,12 @@ export default function Subscriptions() {
       if (expensesError) throw expensesError;
 
       if (allExpenses && allExpenses.length > 0) {
-        // Use AI to detect subscriptions
         const { data: aiResult, error: aiError } = await supabase.functions.invoke('detect-subscriptions', {
           body: { transactions: allExpenses }
         });
 
         if (aiError) throw aiError;
 
-        // Group by subscription name
         const uniqueSubs = new Map();
         (aiResult?.subscriptions || []).forEach((sub: any) => {
           const normalizedName = sub.description.toLowerCase()
@@ -136,42 +128,30 @@ export default function Subscriptions() {
           }
         });
 
-        const detectedSubs = Array.from(uniqueSubs.values());
-        setSubscriptions(detectedSubs);
-
-        // Calculate total monthly cost
-        const total = detectedSubs.reduce((sum: number, sub: any) => {
-          const amount = sub.amount;
-          switch (sub.frequency.toLowerCase()) {
-            case 'anual':
-              return sum + (amount / 12);
-            case 'semanal':
-              return sum + (amount * 4);
-            case 'quincenal':
-              return sum + (amount * 2);
-            default: // mensual
-              return sum + amount;
-          }
-        }, 0);
-        setTotalMonthly(total);
-      } else {
-        toast({
-          title: "Sin transacciones",
-          description: "No hay suficientes transacciones para detectar suscripciones",
-          variant: "destructive",
-        });
+        return Array.from(uniqueSubs.values());
       }
-    } catch (error: any) {
-      console.error('Error loading subscriptions:', error);
-      toast({
-        title: "Error",
-        description: error.message || "No se pudieron cargar las suscripciones",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+      return [];
+    },
+    staleTime: 1000 * 60 * 10,
+    gcTime: 1000 * 60 * 15,
+  });
+
+  useEffect(() => {
+    const total = subscriptions.reduce((sum: number, sub: any) => {
+      const amount = sub.amount;
+      switch (sub.frequency.toLowerCase()) {
+        case 'anual':
+          return sum + (amount / 12);
+        case 'semanal':
+          return sum + (amount * 4);
+        case 'quincenal':
+          return sum + (amount * 2);
+        default:
+          return sum + amount;
+      }
+    }, 0);
+    setTotalMonthly(total);
+  }, [subscriptions]);
 
   const getFrequencyBadgeColor = (frequency: string) => {
     switch (frequency.toLowerCase()) {
@@ -206,15 +186,6 @@ export default function Subscriptions() {
             <p className="text-xs sm:text-sm text-foreground/70">Pagadas 3+ meses • Monto fijo</p>
           </div>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={loadSubscriptions}
-          disabled={loading}
-          className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
-        >
-          <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
-        </Button>
       </div>
 
       <div className="p-4 space-y-4">
