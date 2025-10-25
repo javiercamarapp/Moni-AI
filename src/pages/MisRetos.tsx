@@ -11,24 +11,12 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { RetroCarousel } from "@/components/ui/retro-carousel";
 
-// Mapeo de categorías a emojis
+// Extraer emoji del nombre de la categoría
 const getCategoryEmoji = (category: string): string => {
-  const emojiMap: Record<string, string> = {
-    '🏠 Vivienda': '🏠',
-    '🚗 Transporte': '🚗',
-    '🍽️ Alimentación': '🍽️',
-    '🧾 Servicios y suscripciones': '🧾',
-    '🩺 Salud y bienestar': '🩺',
-    '🎓 Educación y desarrollo': '🎓',
-    '💳 Deudas y créditos': '💳',
-    '🎉 Entretenimiento y estilo de vida': '🎉',
-    '💸 Ahorro e inversión': '💸',
-    '🤝 Apoyos y otros': '🤝',
-    '🐾 Mascotas': '🐾',
-    '❓ Gastos no identificados': '❓',
-  };
-  
-  return emojiMap[category] || '📊';
+  // Buscar el primer emoji en el string (regex que captura emojis)
+  const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/u;
+  const match = category.match(emojiRegex);
+  return match ? match[0] : '📊';
 };
 
 export default function MisRetos() {
