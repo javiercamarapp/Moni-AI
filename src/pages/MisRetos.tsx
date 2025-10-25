@@ -11,6 +11,26 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { RetroCarousel } from "@/components/ui/retro-carousel";
 
+// Mapeo de categorías a emojis
+const getCategoryEmoji = (category: string): string => {
+  const emojiMap: Record<string, string> = {
+    '🏠 Vivienda': '🏠',
+    '🚗 Transporte': '🚗',
+    '🍽️ Alimentación': '🍽️',
+    '🧾 Servicios y suscripciones': '🧾',
+    '🩺 Salud y bienestar': '🩺',
+    '🎓 Educación y desarrollo': '🎓',
+    '💳 Deudas y créditos': '💳',
+    '🎉 Entretenimiento y estilo de vida': '🎉',
+    '💸 Ahorro e inversión': '💸',
+    '🤝 Apoyos y otros': '🤝',
+    '🐾 Mascotas': '🐾',
+    '❓ Gastos no identificados': '❓',
+  };
+  
+  return emojiMap[category] || '📊';
+};
+
 export default function MisRetos() {
   const navigate = useNavigate();
   const [challenges, setChallenges] = useState<any[]>([]);
@@ -192,23 +212,32 @@ export default function MisRetos() {
                 acc[category].push(challenge);
                 return acc;
               }, {} as Record<string, any[]>)
-            ).map(([category, categoryChallenges]: [string, any[]]) => (
-              <div key={category} className="mb-6">
-                <h3 className="text-md font-semibold text-gray-700 mb-3 px-1">
-                  {category}
-                </h3>
-                <div className="space-y-4">
-                  {categoryChallenges.map((challenge, index) => (
-                    <ChallengeCard
-                      key={challenge.id}
-                      challenge={challenge}
-                      index={index}
-                      onAccept={acceptChallenge}
-                    />
-                  ))}
+            ).map(([category, categoryChallenges]: [string, any[]]) => {
+              // Limitar a máximo 5 retos por categoría
+              const limitedChallenges = categoryChallenges.slice(0, 5);
+              
+              // Obtener emoji de la categoría
+              const categoryEmoji = getCategoryEmoji(category);
+              
+              return (
+                <div key={category} className="mb-8">
+                  <h3 className="text-md font-semibold text-gray-900 mb-3 px-1 flex items-center gap-2">
+                    <span className="text-xl">{categoryEmoji}</span>
+                    {category}
+                  </h3>
+                  <RetroCarousel 
+                    items={limitedChallenges.map((challenge, index) => (
+                      <ChallengeCard
+                        key={challenge.id}
+                        challenge={challenge}
+                        index={index}
+                        onAccept={acceptChallenge}
+                      />
+                    ))}
+                  />
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
