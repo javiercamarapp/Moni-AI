@@ -63,11 +63,6 @@ export default function NetWorthWidget() {
 
       {/* Chart with high/low indicators */}
       <div className="relative h-[280px]">
-        <style>{`
-          .recharts-cartesian-axis-tick-value { display: none !important; }
-          .recharts-yAxis { display: none !important; }
-          .recharts-cartesian-axis.yAxis { display: none !important; }
-        `}</style>
         {/* High Point Label */}
         {highPoint && (
           <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 border border-blue-100 z-10 shadow-lg">
@@ -101,6 +96,12 @@ export default function NetWorthWidget() {
               tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
               tickLine={false}
               axisLine={{ stroke: 'hsl(var(--border))' }}
+            />
+            <YAxis
+              tickFormatter={(value) => (value === 0 ? '' : value)}
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: '#9E9E9E', fontSize: 12 }}
             />
             <Tooltip
               contentStyle={{ 
