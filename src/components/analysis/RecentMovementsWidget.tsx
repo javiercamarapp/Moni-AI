@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +17,7 @@ interface Transaction {
 }
 
 export default function RecentMovementsWidget() {
+  const navigate = useNavigate();
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
 
   useEffect(() => {
@@ -63,7 +65,10 @@ export default function RecentMovementsWidget() {
   };
 
   return (
-    <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all active:scale-95 relative overflow-hidden h-[220px] flex flex-col cursor-pointer animate-fade-in">
+    <Card 
+      onClick={() => navigate('/movimientos')}
+      className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all active:scale-95 relative overflow-hidden h-[220px] flex flex-col cursor-pointer animate-fade-in"
+    >
       {/* Efecto brillante */}
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent" 
            style={{

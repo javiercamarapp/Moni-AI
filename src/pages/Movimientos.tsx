@@ -2,47 +2,21 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, TrendingUp, TrendingDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { motion } from 'framer-motion';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface Transaction {
   id: string;
-  amount: number;
   description: string;
+  amount: number;
+  type: string;
   transaction_date: string;
-  type: 'income' | 'expense';
-  category_name?: string;
-  category_color?: string;
+  categories?: {
+    name: string;
+    color: string;
+  } | null;
 }
-
-// Mapeo de categorías a emojis
-const categoryEmojis: Record<string, string> = {
-  'restaurante': '🍽️',
-  'restaurantes': '🍽️',
-  'comida': '🍔',
-  'alimentos': '🛒',
-  'supermercado': '🛒',
-  'cafetería': '☕',
-  'entretenimiento': '🎬',
-  'servicios': '⚡',
-  'auto': '🚗',
-  'gasolina': '⛽',
-  'uber': '🚕',
-  'salario': '💼',
-  'freelance': '💻',
-  'inversiones': '📈',
-  'otros ingresos': '💰',
-};
-
-const getCategoryEmoji = (categoryName: string | undefined, type: string): string => {
-  if (!categoryName) return type === 'income' ? '💰' : '💸';
-  const lowerName = categoryName.toLowerCase();
-  return categoryEmojis[lowerName] || (type === 'income' ? '💰' : '💸');
-};
 
 export default function Movimientos() {
   const navigate = useNavigate();
@@ -63,47 +37,24 @@ export default function Movimientos() {
         return;
       }
 
-      // Obtener las últimas 50 transacciones con sus categorías
-      const { data: transactionsData, error } = await supabase
+      const { data, error } = await supabase
         .from('transactions')
-        .select(`
-          id,
-          amount,
-          description,
-          transaction_date,
-          type,
-          categories (
-            name,
-            color
-          )
-        `)
+        .select('*, categories(name, color)')
         .eq('user_id', user.id)
         .order('transaction_date', { ascending: false })
         .limit(50);
 
       if (error) throw error;
-
-      // Procesar las transacciones
-      const processedTransactions: Transaction[] = (transactionsData || []).map((t: any) => ({
-        id: t.id,
-        amount: Number(t.amount),
-        description: t.description,
-        transaction_date: t.transaction_date,
-        type: t.type,
-        category_name: t.categories?.name,
-        category_color: t.categories?.color,
-      }));
-
-      setTransactions(processedTransactions);
+      setTransactions(data || []);
 
       // Calcular totales
-      const income = processedTransactions
-        .filter(t => t.type === 'income')
-        .reduce((sum, t) => sum + t.amount, 0);
+      const income = (data || [])
+        .filter(t => t.type === 'ingreso')
+        .reduce((sum, t) => sum + Number(t.amount), 0);
       
-      const expense = processedTransactions
-        .filter(t => t.type === 'expense')
-        .reduce((sum, t) => sum + t.amount, 0);
+      const expense = (data || [])
+        .filter(t => t.type === 'gasto')
+        .reduce((sum, t) => sum + Number(t.amount), 0);
 
       setTotalIncome(income);
       setTotalExpense(expense);
@@ -161,89 +112,62 @@ export default function Movimientos() {
         </div>
 
         {/* Lista de transacciones */}
-        {loading ? (
-          <div className="space-y-2">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <Card key={i} className="p-3 rounded-[16px] animate-pulse bg-white/70">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
-                <div className="h-3 bg-gray-200 rounded w-1/2" />
-              </Card>
-            ))}
-          </div>
-        ) : transactions.length === 0 ? (
-          <Card className="p-8 text-center bg-white rounded-[20px] shadow-xl border border-blue-100">
-            <div className="text-5xl mb-4">📊</div>
-            <h3 className="font-bold text-foreground mb-2">No hay movimientos</h3>
-            <p className="text-sm text-muted-foreground">
-              Aquí aparecerán tus transacciones
-            </p>
-          </Card>
-        ) : (
-          <div className="space-y-2">
-            {transactions.map((transaction, index) => {
-              const isIncome = transaction.type === 'income';
-              
-              return (
-                <motion.div
-                  key={transaction.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.02 }}
-                >
-                  <Card className="p-3 rounded-[16px] shadow-md border border-gray-200/50 bg-white/80 hover:shadow-lg transition-all">
-                    <div className="flex items-center justify-between gap-3">
-                      {/* Icono y detalles */}
-                      <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <div className={`
-                          w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm
-                          ${isIncome 
-                            ? 'bg-gradient-to-br from-green-100 to-green-200' 
-                            : 'bg-gradient-to-br from-red-100 to-red-200'
-                          }
-                        `}>
-                          <span className="text-xl">
-                            {getCategoryEmoji(transaction.category_name, transaction.type)}
-                          </span>
-                        </div>
-                        
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-foreground truncate">
-                            {transaction.description}
-                          </p>
-                          <div className="flex items-center gap-2">
-                            <p className="text-xs text-muted-foreground">
-                              {format(new Date(transaction.transaction_date), 'd MMM yyyy', { locale: es })}
-                            </p>
-                            {transaction.category_name && (
-                              <Badge 
-                                className="text-[8px] px-1.5 py-0 h-4"
-                                style={{ 
-                                  backgroundColor: transaction.category_color || '#e5e7eb',
-                                  color: '#1f2937'
-                                }}
-                              >
-                                {transaction.category_name}
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Monto */}
-                      <div className="text-right flex-shrink-0">
-                        <p className={`text-base font-bold ${
-                          isIncome ? 'text-green-700' : 'text-red-700'
-                        }`}>
-                          {isIncome ? '+' : '-'}${transaction.amount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
-                        </p>
+        <Card className="bg-white rounded-[20px] shadow-xl border border-blue-100 p-4">
+          {loading ? (
+            <div className="space-y-2">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+                  <div className="h-3 bg-gray-200 rounded w-1/2" />
+                </div>
+              ))}
+            </div>
+          ) : transactions.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="text-5xl mb-4">📊</div>
+              <h3 className="font-bold text-foreground mb-2">No hay movimientos</h3>
+              <p className="text-sm text-muted-foreground">
+                Aquí aparecerán tus transacciones
+              </p>
+            </div>
+          ) : (
+            <ScrollArea className="h-[calc(100vh-320px)]">
+              <div className="space-y-1 pr-4">
+                {transactions.map((transaction) => (
+                  <div 
+                    key={transaction.id}
+                    className="flex items-center gap-2 py-2 px-3 bg-muted/30 rounded backdrop-blur-sm border border-border hover:bg-muted/50 transition-all"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-base shadow-lg shrink-0">
+                      {transaction.type === 'ingreso' ? '💰' : '💳'}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-foreground truncate">
+                        {transaction.description}
+                      </p>
+                      <div className="flex items-center gap-1">
+                        <span className="text-[10px] text-muted-foreground">
+                          {new Date(transaction.transaction_date).toLocaleDateString('es-MX')}
+                        </span>
+                        {transaction.categories?.name && (
+                          <>
+                            <span className="text-[10px] text-muted-foreground">•</span>
+                            <span className="text-[10px] text-muted-foreground truncate">
+                              {transaction.categories.name}
+                            </span>
+                          </>
+                        )}
                       </div>
                     </div>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </div>
-        )}
+                    <p className={`text-base font-black shrink-0 ${transaction.type === 'ingreso' ? 'text-primary' : 'text-destructive'}`}>
+                      {transaction.type === 'ingreso' ? '+' : '-'}${Number(transaction.amount).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          )}
+        </Card>
       </div>
     </div>
   );

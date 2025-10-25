@@ -17,7 +17,7 @@ import bannerGroups from '@/assets/banner-groups.jpg';
 import bannerHalloween from '@/assets/banner-halloween.png';
 import heroAuth from '@/assets/moni-ai-logo.png';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
-import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User, BarChart3, AlertCircle, CreditCard, RefreshCw, List } from 'lucide-react';
+import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User, BarChart3, AlertCircle, CreditCard, RefreshCw } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
 import SafeToSpendWidget from '@/components/analysis/SafeToSpendWidget';
 import AICoachInsightsWidget from '@/components/analysis/AICoachInsightsWidget';
@@ -1184,25 +1184,6 @@ const Dashboard = () => {
           </button>
         </div>
 
-        {/* Segunda fila: Botón de Movimientos */}
-        <div className="grid grid-cols-1">
-          <button 
-            onClick={() => navigate('/movimientos')}
-            className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer animate-fade-in border border-blue-100" 
-            style={{ animationDelay: '500ms' }}
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-purple-500/40 flex items-center justify-center flex-shrink-0">
-                <List className="w-5 h-5 text-foreground" />
-              </div>
-              <div className="flex-1 text-left">
-                <p className="text-xs text-foreground/80 leading-tight">Ver todos los movimientos</p>
-                <p className="text-sm font-bold text-foreground leading-tight">Últimos 50 registros</p>
-              </div>
-            </div>
-          </button>
-        </div>
-
         {/* Safe to Spend Widget */}
         <SafeToSpendWidget 
           monthlyIncome={monthlyIncome} 
@@ -1768,7 +1749,7 @@ const Dashboard = () => {
                     variant="ghost" 
                     size="sm" 
                     className="text-[10px] sm:text-[9px] text-foreground hover:bg-gray-100 hover:scale-105 transition-transform duration-200 h-6 px-2"
-                    onClick={() => navigate('/gastos')}
+                    onClick={() => navigate('/movimientos')}
                   >
                     Ver todas
                   </Button>
