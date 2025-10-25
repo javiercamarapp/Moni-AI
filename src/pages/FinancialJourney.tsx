@@ -9,6 +9,9 @@ import { Progress } from "@/components/ui/progress";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import EarthPlanet3D from "@/components/EarthPlanet3D";
 import spaceBackground from "@/assets/space-background.jpg";
+import { motion } from "framer-motion";
+import { CelebrationConfetti } from "@/components/ui/celebration-confetti";
+import { JourneyCelebration } from "@/components/ui/journey-celebration";
 
 interface JourneyNode {
   id: number;
@@ -29,6 +32,18 @@ export default function FinancialJourney() {
   const [expandedBadge, setExpandedBadge] = useState<string | null>(null);
   const netWorthData = useNetWorth("1Y");
   const currentNetWorth = netWorthData.data?.currentNetWorth || 0;
+  
+  // Estado para celebraciones
+  const [showProgressCelebration, setShowProgressCelebration] = useState(false);
+  const [celebrationMessage, setCelebrationMessage] = useState("");
+  const [lastCelebratedProgress, setLastCelebratedProgress] = useState<number>(() => {
+    const saved = localStorage.getItem('last_celebrated_journey_progress');
+    return saved ? parseFloat(saved) : 0;
+  });
+  const [lastCelebratedBadges, setLastCelebratedBadges] = useState<number[]>(() => {
+    const saved = localStorage.getItem('last_celebrated_badges');
+    return saved ? JSON.parse(saved) : [];
+  });
 
   useEffect(() => {
     fetchAspirations();
@@ -79,6 +94,54 @@ export default function FinancialJourney() {
   const currentProgress = totalAspiration > 0 ? (currentNetWorth / totalAspiration) * 100 : 0;
   const currentLevel = totalAspiration > 0 ? Math.floor((currentNetWorth / totalAspiration) * 10000) : 0;
   const targetLevel = 10000;
+
+  // Detectar avance de 0.5% y celebrar
+  useEffect(() => {
+    if (currentProgress > 0) {
+      const currentMilestone = Math.floor(currentProgress / 0.5) * 0.5;
+      const lastMilestone = Math.floor(lastCelebratedProgress / 0.5) * 0.5;
+      
+      if (currentMilestone > lastMilestone && currentProgress > lastCelebratedProgress) {
+        setCelebrationMessage(`¡Nuevo nivel desbloqueado: ${currentMilestone.toFixed(1)}%!`);
+        setShowProgressCelebration(true);
+        setLastCelebratedProgress(currentProgress);
+        localStorage.setItem('last_celebrated_journey_progress', currentProgress.toString());
+      }
+    }
+  }, [currentProgress]);
+
+  // Detectar desbloqueo de badges y celebrar
+  const badgeLevels = [250, 500, 750, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000];
+  useEffect(() => {
+    badgeLevels.forEach(level => {
+      if (currentLevel >= level && !lastCelebratedBadges.includes(level)) {
+        const badgeNames: Record<number, string> = {
+          250: "Piedra Base 🪨",
+          500: "Conector Sencillo 📎",
+          750: "Herramienta Básica 🔧",
+          1000: "Eslabón Fuerte ⛓️",
+          1500: "Engranaje Industrial ⚙️",
+          2000: "Estructura de Acero 🏗️",
+          2500: "Oro Refinado 💰",
+          3000: "Rayo de Energía ⚡",
+          4000: "Cohete de Innovación 🚀",
+          5000: "Estrella Brillante ⭐",
+          6000: "Corona Imperial 👑",
+          7000: "Cristal Precioso 💎",
+          8000: "Escudo Supremo 🛡️",
+          9000: "Joya del Infinito 💍",
+          10000: "Planeta de Libertad 🌍"
+        };
+        
+        setCelebrationMessage(`¡Insignia desbloqueada: ${badgeNames[level]}!`);
+        setShowProgressCelebration(true);
+        
+        const newBadges = [...lastCelebratedBadges, level];
+        setLastCelebratedBadges(newBadges);
+        localStorage.setItem('last_celebrated_badges', JSON.stringify(newBadges));
+      }
+    });
+  }, [currentLevel]);
 
   const generateNodes = () => {
     const nodes: JourneyNode[] = [];
@@ -263,15 +326,22 @@ export default function FinancialJourney() {
   }, [totalAspiration, currentNetWorth]); // Se ejecuta cuando cambian estos valores
 
   return (
-    <div 
-      className="min-h-screen flex flex-col relative"
-      style={{
-        backgroundImage: `url(${spaceBackground})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
-      }}
-    >
+    <>
+      <JourneyCelebration 
+        show={showProgressCelebration}
+        message={celebrationMessage}
+        onComplete={() => setShowProgressCelebration(false)}
+      />
+      
+      <div 
+        className="min-h-screen flex flex-col relative"
+        style={{
+          backgroundImage: `url(${spaceBackground})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
       {/* Header completamente fijo */}
       <div className="fixed top-0 left-0 right-0 z-40 bg-transparent backdrop-blur-sm pt-4 pb-2">
         <div className="container mx-auto px-4 max-w-2xl">
@@ -4656,5 +4726,6 @@ export default function FinancialJourney() {
         </div>
       </div>
     </div>
+    </>
   );
 }
