@@ -670,14 +670,14 @@ const Balance = () => {
                 }) => {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload;
-                    return <div className="bg-white border-2 border-gray-800 rounded-lg p-3 shadow-2xl">
-                              <p className="font-bold text-gray-900 text-base">{data.name}</p>
-                              <p className="text-sm text-gray-700 font-medium mt-1">
+                    return <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-lg border-0 ring-1 ring-gray-900/5">
+                              <p className="font-semibold text-gray-900 text-sm tracking-tight">{data.name}</p>
+                              <p className="text-lg text-gray-900 font-bold mt-1.5 tracking-tight">
                                 ${data.total.toLocaleString('es-MX', {
                           minimumFractionDigits: 2
                         })}
                               </p>
-                              <p className="text-xs text-gray-600 font-semibold">
+                              <p className="text-xs text-gray-500 font-medium mt-1">
                                 {data.percentage.toFixed(1)}% del total
                               </p>
                             </div>;
@@ -730,14 +730,14 @@ const Balance = () => {
                 }) => {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload;
-                    return <div className="bg-white border-2 border-gray-800 rounded-lg p-3 shadow-2xl">
-                              <p className="font-bold text-gray-900 text-base">{data.name}</p>
-                              <p className="text-sm text-gray-700 font-medium mt-1">
+                    return <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-lg border-0 ring-1 ring-gray-900/5">
+                              <p className="font-semibold text-gray-900 text-sm tracking-tight">{data.name}</p>
+                              <p className="text-lg text-gray-900 font-bold mt-1.5 tracking-tight">
                                 ${data.total.toLocaleString('es-MX', {
                           minimumFractionDigits: 2
                         })}
                               </p>
-                              <p className="text-xs text-gray-600 font-semibold">
+                              <p className="text-xs text-gray-500 font-medium mt-1">
                                 {data.percentage.toFixed(1)}% del total
                               </p>
                             </div>;
