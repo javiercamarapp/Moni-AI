@@ -30,20 +30,8 @@ export default function Liabilities() {
   const { data: netWorthData, isLoading } = useNetWorth('1Y');
 
   // Helper function to determine if a liability is current (short-term)
-  const isCurrentLiability = (category: string, name?: string) => {
-    const cat = category.toLowerCase();
-    const accountName = name?.toLowerCase() || '';
-    
-    // Pasivos corrientes (corto plazo - menos de 1 año)
-    const currentKeywords = [
-      'credit card', 'tarjeta', 'credito',
-      'short', 'corto plazo',
-      'payable', 'por pagar'
-    ];
-    
-    return currentKeywords.some(keyword => 
-      cat.includes(keyword) || accountName.includes(keyword)
-    );
+  const isCurrentLiability = (esCortoplazo: boolean) => {
+    return esCortoplazo;
   };
 
   if (isLoading || !netWorthData) {

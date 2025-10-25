@@ -50,38 +50,9 @@ export default function NetWorth() {
   const { data: netWorthData, isLoading: loadingData } = useNetWorth(timeRange);
 
   // Helper function to check if an asset is liquid
-  const isLiquidAsset = (category: string, name?: string) => {
-    const cat = category.toLowerCase();
-    const accountName = name?.toLowerCase() || '';
-    
-    // Activos NO líquidos (tienen prioridad en la exclusión)
-    const illiquidKeywords = [
-      'retirement', 'pension', 'retiro', 'pensión', '401k', 'ira', 'roth',
-      'property', 'real estate', 'propiedad', 'inmueble', 'edificio',
-      'machinery', 'maquinaria', 'equipment', 'equipo',
-      'certificate', 'certificado', 'cd', // CDs tienen penalidad
-      'annuity', 'anualidad', 'plan', 'jubilación', 'jubilacion'
-    ];
-    
-    // Verificar tanto la categoría como el nombre de la cuenta
-    const hasIlliquidKeyword = illiquidKeywords.some(keyword => 
-      cat.includes(keyword) || accountName.includes(keyword)
-    );
-    
-    if (hasIlliquidKeyword) {
-      return false;
-    }
-    
-    // Activos líquidos: efectivo, depósitos bancarios, valores negociables, fondos
-    const liquidKeywords = [
-      'cash', 'efectivo', 'dinero',
-      'checking', 'corriente', 'cuenta corriente',
-      'saving', 'ahorro', 'cuenta de ahorro',
-      'money market', 'mercado de dinero',
-      'deposit', 'depósito', 'depósito a la vista'
-    ];
-    
-    return liquidKeywords.some(keyword => cat.includes(keyword));
+  const isLiquidAsset = (esActivoFijo: boolean) => {
+    // Assets marked as "activo fijo" are NOT liquid
+    return !esActivoFijo;
   };
 
   // Mostrar formulario si definitivamente no hay datos (no mientras está cargando)
