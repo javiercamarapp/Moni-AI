@@ -192,6 +192,7 @@ export default function EditBudgets() {
   const [budgets, setBudgets] = useState<Record<string, number>>({});
   const [subcategoryBudgets, setSubcategoryBudgets] = useState<Record<string, number>>({});
   const [customSubcategories, setCustomSubcategories] = useState<Record<string, string>>({});
+  const [customSubcategoriesByCategory, setCustomSubcategoriesByCategory] = useState<Record<string, Subcategory[]>>({});
 
   useEffect(() => {
     loadBudgets();
@@ -222,6 +223,7 @@ export default function EditBudgets() {
 
       const loadedBudgets: Record<string, number> = {};
       const loadedSubcategoryBudgets: Record<string, number> = {};
+      const loadedCustomSubcategoriesByCategory: Record<string, Subcategory[]> = {};
 
       // Para cada categoría predeterminada
       for (const category of DEFAULT_CATEGORIES) {
@@ -248,6 +250,8 @@ export default function EditBudgets() {
             .eq('parent_id', catId);
 
           if (subcategories) {
+            const customSubcats: Subcategory[] = [];
+            
             for (const subcat of subcategories) {
               // Buscar en DEFAULT_CATEGORIES la subcategoría correspondiente
               const defaultSubcat = category.subcategories.find(
@@ -255,7 +259,7 @@ export default function EditBudgets() {
               );
 
               if (defaultSubcat) {
-                // Cargar presupuesto de subcategoría
+                // Cargar presupuesto de subcategoría predeterminada
                 const { data: subcatBudget } = await supabase
                   .from('category_budgets')
                   .select('monthly_budget')
@@ -266,7 +270,27 @@ export default function EditBudgets() {
                 if (subcatBudget) {
                   loadedSubcategoryBudgets[defaultSubcat.id] = Number(subcatBudget.monthly_budget);
                 }
+              } else {
+                // Es una subcategoría personalizada
+                const customId = `custom_${category.id}_${subcat.id}`;
+                customSubcats.push({ id: customId, name: subcat.name });
+                
+                // Cargar presupuesto de subcategoría personalizada
+                const { data: subcatBudget } = await supabase
+                  .from('category_budgets')
+                  .select('monthly_budget')
+                  .eq('user_id', user.id)
+                  .eq('category_id', subcat.id)
+                  .maybeSingle();
+
+                if (subcatBudget) {
+                  loadedSubcategoryBudgets[customId] = Number(subcatBudget.monthly_budget);
+                }
               }
+            }
+            
+            if (customSubcats.length > 0) {
+              loadedCustomSubcategoriesByCategory[category.id] = customSubcats;
             }
           }
         }
@@ -274,6 +298,7 @@ export default function EditBudgets() {
 
       setBudgets(loadedBudgets);
       setSubcategoryBudgets(loadedSubcategoryBudgets);
+      setCustomSubcategoriesByCategory(loadedCustomSubcategoriesByCategory);
 
     } catch (error) {
       console.error('Error loading budgets:', error);
@@ -398,6 +423,68 @@ export default function EditBudgets() {
             }
           }
         }
+
+        // Procesar subcategorías personalizadas adicionales
+        const customSubcats = customSubcategoriesByCategory[category.id] || [];
+        for (const customSubcat of customSubcats) {
+          const subcatBudget = subcategoryBudgets[customSubcat.id];
+          
+          if (subcatBudget && subcatBudget > 0) {
+            // Obtener nombre personalizado
+            const subcatName = customSubcategories[customSubcat.id] || customSubcat.name;
+
+            // Buscar o crear subcategoría personalizada
+            let { data: existingSubcat } = await supabase
+              .from('categories')
+              .select('id')
+              .eq('user_id', user.id)
+              .eq('name', subcatName)
+              .eq('parent_id', categoryId)
+              .maybeSingle();
+
+            let subcatId = existingSubcat?.id;
+
+            if (!subcatId) {
+              const { data: newSubcat, error: subcatError } = await supabase
+                .from('categories')
+                .insert({
+                  user_id: user.id,
+                  name: subcatName,
+                  type: 'gasto',
+                  color: 'bg-primary/20',
+                  parent_id: categoryId
+                })
+                .select('id')
+                .single();
+
+              if (subcatError) throw subcatError;
+              subcatId = newSubcat.id;
+            }
+
+            // Guardar presupuesto de subcategoría personalizada
+            const { data: existingBudget } = await supabase
+              .from('category_budgets')
+              .select('id')
+              .eq('user_id', user.id)
+              .eq('category_id', subcatId)
+              .maybeSingle();
+
+            if (existingBudget) {
+              await supabase
+                .from('category_budgets')
+                .update({ monthly_budget: subcatBudget })
+                .eq('id', existingBudget.id);
+            } else {
+              await supabase
+                .from('category_budgets')
+                .insert({
+                  user_id: user.id,
+                  category_id: subcatId,
+                  monthly_budget: subcatBudget
+                });
+            }
+          }
+        }
       }
 
       toast.success("Presupuesto actualizado");
@@ -498,6 +585,7 @@ export default function EditBudgets() {
 
                       {/* Subcategories */}
                       <div className="space-y-2">
+                        {/* Subcategorías predeterminadas */}
                         {category.subcategories.map((sub) => (
                           <div key={sub.id} className="bg-gray-50/50 rounded-xl px-3 py-3 border border-gray-100">
                             <div className="flex items-center justify-between gap-2 mb-2">
@@ -574,26 +662,83 @@ export default function EditBudgets() {
                             </div>
                           </div>
                         ))}
+
+                        {/* Subcategorías personalizadas */}
+                        {customSubcategoriesByCategory[category.id]?.map((sub) => (
+                          <div key={sub.id} className="bg-blue-50/50 rounded-xl px-3 py-3 border border-blue-200">
+                            <div className="flex items-center justify-between gap-2 mb-2">
+                              <Input
+                                type="text"
+                                placeholder="Nombre de subcategoría"
+                                value={customSubcategories[sub.id] || sub.name}
+                                onChange={(e) => {
+                                  setCustomSubcategories({ ...customSubcategories, [sub.id]: e.target.value });
+                                }}
+                                className="flex-1 h-8 text-xs bg-white border-gray-200 rounded-lg"
+                              />
+                              <div className="relative flex items-center">
+                                <span className="absolute left-3 text-xs font-medium text-gray-500">$</span>
+                                <Input
+                                  type="text"
+                                  inputMode="numeric"
+                                  placeholder="0"
+                                  value={subcategoryBudgets[sub.id] ? formatCurrency(subcategoryBudgets[sub.id]) : ""}
+                                  onChange={(e) => {
+                                    const value = e.target.value.replace(/[^\d]/g, '');
+                                    updateSubcategoryBudget(sub.id, value);
+                                  }}
+                                  className="w-24 h-8 text-xs text-right font-medium pl-6 pr-3 bg-white border-gray-200 rounded-lg"
+                                />
+                              </div>
+                              <Button
+                                onClick={() => {
+                                  // Eliminar subcategoría personalizada
+                                  const newCustomSubcats = { ...customSubcategoriesByCategory };
+                                  newCustomSubcats[category.id] = newCustomSubcats[category.id].filter(s => s.id !== sub.id);
+                                  setCustomSubcategoriesByCategory(newCustomSubcats);
+                                  
+                                  // Limpiar datos asociados
+                                  const newCustomNames = { ...customSubcategories };
+                                  delete newCustomNames[sub.id];
+                                  setCustomSubcategories(newCustomNames);
+                                  
+                                  const newSubcatBudgets = { ...subcategoryBudgets };
+                                  delete newSubcatBudgets[sub.id];
+                                  setSubcategoryBudgets(newSubcatBudgets);
+                                }}
+                                variant="ghost"
+                                className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 rounded-lg"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
                       </div>
 
-                      {/* Add button for custom category */}
-                      {category.id === 'personalizada' && (
-                        <div className="flex justify-center mt-3">
-                          <Button
-                            onClick={() => {
-                              const newId = `personalizado_${Date.now()}`;
-                              const newSubcategory = { id: newId, name: `Concepto ${category.subcategories.length + 1}` };
-                              category.subcategories.push(newSubcategory);
-                              setCustomSubcategories({ ...customSubcategories });
-                            }}
-                            variant="ghost"
-                            size="sm"
-                            className="h-9 text-xs rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-5"
-                          >
-                            + Agregar subcuenta
-                          </Button>
-                        </div>
-                      )}
+                      {/* Add button for all categories */}
+                      <div className="flex justify-center mt-3">
+                        <Button
+                          onClick={() => {
+                            const newId = `custom_${category.id}_${Date.now()}`;
+                            const newSubcategory = { 
+                              id: newId, 
+                              name: `Nueva subcategoría ${(customSubcategoriesByCategory[category.id]?.length || 0) + 1}` 
+                            };
+                            
+                            const currentCustom = customSubcategoriesByCategory[category.id] || [];
+                            setCustomSubcategoriesByCategory({
+                              ...customSubcategoriesByCategory,
+                              [category.id]: [...currentCustom, newSubcategory]
+                            });
+                          }}
+                          variant="ghost"
+                          size="sm"
+                          className="h-9 text-xs rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-5"
+                        >
+                          + Agregar subcategoría
+                        </Button>
+                      </div>
 
                       {/* Action Button */}
                       <Button
