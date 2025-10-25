@@ -425,11 +425,11 @@ const GestionarCategorias = () => {
       {/* Tabs: Ingresos y Gastos */}
       <div className="max-w-7xl mx-auto px-4">
         <Tabs defaultValue="ingresos" className="w-full">
-          <TabsList className="w-full bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0 p-1">
-            <TabsTrigger value="ingresos" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white rounded-[20px] font-semibold transition-all">
+          <TabsList className="w-full bg-white/80 backdrop-blur-sm shadow-sm border-0 rounded-2xl p-1">
+            <TabsTrigger value="ingresos" className="flex-1 data-[state=active]:bg-white data-[state=active]:shadow-sm text-gray-600 data-[state=active]:text-gray-900 transition-all rounded-xl font-medium">
               Ingresos ({ingresos.length})
             </TabsTrigger>
-            <TabsTrigger value="gastos" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white rounded-[20px] font-semibold transition-all">
+            <TabsTrigger value="gastos" className="flex-1 data-[state=active]:bg-white data-[state=active]:shadow-sm text-gray-600 data-[state=active]:text-gray-900 transition-all rounded-xl font-medium">
               Gastos ({gastos.length})
             </TabsTrigger>
           </TabsList>
