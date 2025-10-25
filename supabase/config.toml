@@ -83,3 +83,6 @@ verify_jwt = true
 
 [functions.analyze-score-change]
 verify_jwt = true
+
+[functions.categorize-income]
+verify_jwt = true

@@ -292,7 +292,7 @@ const Balance = () => {
       });
       console.log('Total transactions fetched:', transactions.length);
 
-      // Process ingresos
+      // Process ingresos with AI categorization
       const ingresosData = transactions.filter(t => t.type === 'ingreso');
       const totalIng = ingresosData.reduce((sum, t) => sum + Number(t.amount), 0);
       setTotalIngresos(totalIng);
@@ -300,29 +300,61 @@ const Balance = () => {
       
       console.log('Ingresos count:', ingresosData.length);
       console.log('Total Ingresos:', totalIng);
+      
+      // Categorize income with AI
+      let categorizedIncome: any[] = [];
+      if (ingresosData.length > 0) {
+        try {
+          const { data: aiResult, error: aiError } = await supabase.functions.invoke('categorize-income', {
+            body: { transactions: ingresosData }
+          });
+          
+          if (aiError) {
+            console.error('Error categorizando ingresos con IA:', aiError);
+            // Fallback: use existing categories
+            categorizedIncome = ingresosData.map(t => ({
+              ...t,
+              category: t.categories?.name || '💼 Salario / Sueldo'
+            }));
+          } else {
+            categorizedIncome = aiResult.categorizedIncome;
+          }
+        } catch (error) {
+          console.error('Error en categorización de ingresos:', error);
+          // Fallback: use existing categories
+          categorizedIncome = ingresosData.map(t => ({
+            ...t,
+            category: t.categories?.name || '💼 Salario / Sueldo'
+          }));
+        }
+      }
+      
+      // Group by AI-detected category
       const ingresosCategoryMap = new Map<string, {
         name: string;
         color: string;
         total: number;
       }>();
-      ingresosData.forEach(t => {
-        if (t.categories) {
-          const existing = ingresosCategoryMap.get(t.categories.id) || {
-            name: t.categories.name,
-            color: t.categories.color,
-            total: 0
-          };
-          existing.total += Number(t.amount);
-          ingresosCategoryMap.set(t.categories.id, existing);
-        }
+      
+      categorizedIncome.forEach((t, index) => {
+        const categoryName = t.category;
+        const existing = ingresosCategoryMap.get(categoryName) || {
+          name: categoryName,
+          color: getIncomeCategoryColor(index),
+          total: 0
+        };
+        existing.total += Number(t.amount);
+        ingresosCategoryMap.set(categoryName, existing);
       });
-      const ingresosWithPercentage: CategoryBalance[] = Array.from(ingresosCategoryMap.entries()).map(([id, data], index) => ({
-        id,
+      
+      const ingresosWithPercentage: CategoryBalance[] = Array.from(ingresosCategoryMap.entries()).map(([name, data], index) => ({
+        id: name,
         name: data.name,
         color: getIncomeCategoryColor(index),
         total: data.total,
         percentage: totalIng > 0 ? data.total / totalIng * 100 : 0
       })).sort((a, b) => b.total - a.total);
+      
       setIngresosByCategory(ingresosWithPercentage);
       localStorage.setItem('balance_ingresos', JSON.stringify(ingresosWithPercentage));
 
