@@ -95,18 +95,7 @@ serve(async (req) => {
       const type = transaction.amount < 0 ? 'gasto' : 'ingreso';
       const amount = Math.abs(transaction.amount);
 
-      // Usar IA para categorizar
-      const { data: categoryResult } = await supabase.functions.invoke('categorize-transaction', {
-        body: {
-          description: transaction.name,
-          amount,
-          type,
-          userId,
-          merchantName: transaction.merchant_name
-        }
-      });
-
-      // Guardar transacción
+      // Guardar transacción SIN categoría primero
       const { data: newTransaction, error: txError } = await supabase
         .from('transactions')
         .insert({
@@ -114,7 +103,7 @@ serve(async (req) => {
           type,
           amount,
           description: transaction.name,
-          category_id: categoryResult?.categoryId,
+          category_id: null, // Sin categoría inicial
           transaction_date: transaction.date,
           payment_method: 'bank_sync',
           account: transaction.account_id
@@ -128,6 +117,26 @@ serve(async (req) => {
       }
 
       console.log('Transaction saved:', newTransaction.id);
+
+      // Categorizar automáticamente con IA (solo gastos)
+      if (type === 'gasto') {
+        console.log('Categorizando transacción del banco:', newTransaction.id);
+        try {
+          await supabase.functions.invoke('categorize-transaction', {
+            body: {
+              transactionId: newTransaction.id,
+              userId,
+              description: transaction.name,
+              amount,
+              type
+            }
+          });
+          console.log('Transacción categorizada exitosamente');
+        } catch (catError) {
+          console.error('Error categorizando transacción:', catError);
+          // No detener el proceso si falla la categorización
+        }
+      }
 
       // Verificar si debe enviar alerta
       await checkAndSendAlert(supabase, userId, newTransaction);
