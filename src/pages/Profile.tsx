@@ -409,28 +409,30 @@ const Profile = () => {
   const userEmail = user?.email || '';
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-4">
+    <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="bg-background/95 backdrop-blur-sm sticky top-0 z-40">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between mb-1">
             <Button
               variant="ghost"
-              size="icon"
               onClick={() => navigate("/dashboard")}
-              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-10 w-10"
+              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 p-0"
             >
-              <ArrowLeft className="h-5 w-5 text-foreground" />
+              <ArrowLeft className="h-4 w-4 text-gray-700" />
             </Button>
-            <div className="flex-1">
-              <h1 className="text-xl font-bold text-foreground">Perfil</h1>
-              <p className="text-xs text-muted-foreground">Configuración de cuenta</p>
+            <div className="flex-1 text-center">
+              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Perfil</h1>
             </div>
+            <div className="w-10" />
           </div>
+          <p className="text-xs text-center text-gray-600">
+            Configuración de cuenta
+          </p>
         </div>
       </div>
 
-      <div className="px-4 space-y-6">
+      <div className="mx-auto px-4 py-6 space-y-4" style={{ maxWidth: '600px' }}>
         {/* User Profile Section */}
         <Card className="bg-white backdrop-blur border-blue-100 shadow-xl p-6 animate-fade-in rounded-[20px]" style={{ animationDelay: '0ms' }}>
           <div className="flex items-center space-x-4 mb-4">
