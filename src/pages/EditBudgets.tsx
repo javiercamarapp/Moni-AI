@@ -38,6 +38,7 @@ const MAIN_CATEGORIES = [
   { name: 'Entretenimiento y estilo de vida', icon: '🎉' },
   { name: 'Ahorro e inversión', icon: '💸' },
   { name: 'Apoyos y otros', icon: '🤝' },
+  { name: 'Mascotas', icon: '🐾' },
 ];
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -116,8 +117,13 @@ const DEFAULT_SUBCATEGORIES: Record<string, { id: string; name: string }[]> = {
   'apoyos y otros': [
     { id: 'apoyo_familiar', name: 'Apoyo familiar / hijos / pareja' },
     { id: 'donaciones', name: 'Donaciones' },
-    { id: 'mascotas_otros', name: 'Mascotas' },
     { id: 'otros', name: 'Otros gastos no clasificados' },
+  ],
+  'mascotas': [
+    { id: 'comida_mascotas', name: 'Comida y snacks' },
+    { id: 'veterinario', name: 'Veterinario y medicinas' },
+    { id: 'accesorios_mascotas', name: 'Accesorios y juguetes' },
+    { id: 'estetica_mascotas', name: 'Estética y cuidado' },
   ],
 };
 
@@ -185,49 +191,55 @@ export default function EditBudgets() {
         (data || []).map(async (budget) => {
           console.log(`Buscando subcategorías para: ${budget.category.name} (${budget.category_id})`);
           
-          // Buscar subcategorías (categorías con parent_id igual a esta categoría)
-          const { data: subcats } = await supabase
+          // SIEMPRE usar las subcategorías predeterminadas
+          const categoryNameLower = budget.category.name.toLowerCase();
+          const defaultSubs = DEFAULT_SUBCATEGORIES[categoryNameLower] || [];
+          
+          // Buscar subcategorías guardadas en la BD
+          const { data: savedSubcats } = await supabase
             .from('categories')
             .select('id, name')
             .eq('user_id', user.id)
             .eq('parent_id', budget.category_id);
 
-          console.log(`Subcategorías encontradas para ${budget.category.name}:`, subcats);
+          console.log(`Subcategorías guardadas encontradas para ${budget.category.name}:`, savedSubcats);
 
-          // Si no hay subcategorías guardadas, usar las predeterminadas
-          let subcategoriesWithBudget: Subcategory[] = [];
-          
-          if (subcats && subcats.length > 0) {
-            // Para cada subcategoría guardada, buscar si tiene presupuesto
-            subcategoriesWithBudget = await Promise.all(
-              subcats.map(async (subcat) => {
+          // Crear mapa de subcategorías guardadas por nombre
+          const savedSubcatsMap = new Map(
+            (savedSubcats || []).map(sc => [sc.name.toLowerCase(), sc])
+          );
+
+          // Para cada subcategoría predeterminada, buscar si ya está guardada y tiene presupuesto
+          const subcategoriesWithBudget: Subcategory[] = await Promise.all(
+            defaultSubs.map(async (defaultSub) => {
+              const savedSubcat = savedSubcatsMap.get(defaultSub.name.toLowerCase());
+              
+              if (savedSubcat) {
+                // Si la subcategoría ya existe, buscar su presupuesto
                 const { data: subcatBudget } = await supabase
                   .from('category_budgets')
                   .select('id, monthly_budget')
                   .eq('user_id', user.id)
-                  .eq('category_id', subcat.id)
-                  .single();
+                  .eq('category_id', savedSubcat.id)
+                  .maybeSingle();
 
                 return {
-                  id: subcat.id,
-                  name: subcat.name,
+                  id: savedSubcat.id,
+                  name: savedSubcat.name,
                   budget_id: subcatBudget?.id,
                   monthly_budget: subcatBudget?.monthly_budget || 0
                 };
-              })
-            );
-          } else {
-            // Usar subcategorías predeterminadas basadas en el nombre de la categoría
-            const categoryNameLower = budget.category.name.toLowerCase();
-            const defaultSubs = DEFAULT_SUBCATEGORIES[categoryNameLower] || [];
-            
-            subcategoriesWithBudget = defaultSubs.map(sub => ({
-              id: sub.id,
-              name: sub.name,
-              budget_id: undefined,
-              monthly_budget: 0
-            }));
-          }
+              } else {
+                // Si no existe, usar el ID temporal y sin presupuesto
+                return {
+                  id: defaultSub.id,
+                  name: defaultSub.name,
+                  budget_id: undefined,
+                  monthly_budget: 0
+                };
+              }
+            })
+          );
 
           console.log(`Subcategorías con presupuesto para ${budget.category.name}:`, subcategoriesWithBudget);
 
