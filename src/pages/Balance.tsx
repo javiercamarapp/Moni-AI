@@ -418,8 +418,8 @@ const Balance = () => {
   }
   return <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm sticky top-0 z-40 shadow-sm border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="px-4 pt-4 pb-2">
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm p-4">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
