@@ -85,7 +85,7 @@ serve(async (req) => {
       .map(c => `- ${c.name} (ID: ${c.id})`)
       .join('\n');
 
-    const prompt = `Analiza esta transacción y determina si pertenece claramente a alguna de las siguientes categorías:
+    const prompt = `Analiza esta transacción y asígnala a la categoría más apropiada:
 
 Descripción: ${description}
 Monto: $${amount}
@@ -94,12 +94,20 @@ Tipo: ${type}
 Categorías disponibles:
 ${categoryList}
 
-INSTRUCCIONES CRÍTICAS:
-1. Si la transacción claramente pertenece a una de estas categorías, responde SOLO con el ID de esa categoría (el texto entre paréntesis)
-2. Si NO estás seguro o NO encaja claramente en ninguna categoría, responde exactamente: "NO_IDENTIFICADO"
-3. NO inventes categorías
-4. NO des explicaciones adicionales
-5. Responde SOLO con el ID o "NO_IDENTIFICADO"`;
+EJEMPLOS DE CATEGORIZACIÓN:
+- Walmart, Soriana, Chedraui, mercado, supermercado → Alimentación
+- Antro, bar, cine, cinemex, cinepolis, teatro, concierto, spotify, netflix → Entretenimiento (si existe) o Servicios y suscripciones
+- Best Buy, Apple Store, tienda de electrónicos, gadgets → Salud y bienestar (si no hay otra más apropiada)
+- Uber, taxi, gasolina, estacionamiento → Transporte
+- Luz, agua, gas, internet, teléfono → Servicios y suscripciones
+
+INSTRUCCIONES:
+1. Identifica la categoría más apropiada basándote en la descripción
+2. Si encuentras una categoría apropiada, responde SOLO con su ID (el texto entre paréntesis)
+3. Si definitivamente NO hay ninguna categoría apropiada, responde: "NO_IDENTIFICADO"
+4. NO inventes categorías
+5. NO des explicaciones adicionales
+6. Responde SOLO con el ID o "NO_IDENTIFICADO"`;
 
     console.log('Consultando IA para transacción:', description);
 
@@ -114,7 +122,7 @@ INSTRUCCIONES CRÍTICAS:
         messages: [
           {
             role: 'system',
-            content: 'Eres un experto en finanzas personales. Categoriza transacciones de forma conservadora. Si no estás seguro, responde "NO_IDENTIFICADO".'
+            content: 'Eres un experto en finanzas personales. Categoriza transacciones usando el sentido común basándote en el nombre del establecimiento o descripción. Solo usa "NO_IDENTIFICADO" cuando realmente no hay ninguna categoría apropiada.'
           },
           {
             role: 'user',
