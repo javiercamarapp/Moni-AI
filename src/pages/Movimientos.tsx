@@ -86,26 +86,28 @@ export default function Movimientos() {
       <div className="p-4 space-y-4">
         {/* Resumen */}
         <div className="grid grid-cols-2 gap-3">
-          <Card className="p-3 rounded-[16px] shadow-lg border border-green-200/50 bg-gradient-to-br from-green-50 to-white">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                <TrendingUp className="h-4 w-4 text-green-600" />
+          <Card className="p-2 rounded-[16px] shadow-lg border border-gray-200/50 bg-white/70 backdrop-blur-xl hover:shadow-xl hover:scale-105 transition-all duration-300 overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-green-600 opacity-10 pointer-events-none" />
+            <div className="flex items-center gap-1.5 mb-0.5 relative z-10">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-md">
+                <TrendingUp className="h-3 w-3 text-white" />
               </div>
-              <p className="text-xs text-green-800 font-medium">Ingresos</p>
+              <p className="text-[10px] text-foreground font-bold">Ingresos</p>
             </div>
-            <p className="text-lg font-bold text-green-700">
+            <p className="text-sm font-bold text-foreground relative z-10">
               ${totalIncome.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
             </p>
           </Card>
 
-          <Card className="p-3 rounded-[16px] shadow-lg border border-red-200/50 bg-gradient-to-br from-red-50 to-white">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
-                <TrendingDown className="h-4 w-4 text-red-600" />
+          <Card className="p-2 rounded-[16px] shadow-lg border border-gray-200/50 bg-white/70 backdrop-blur-xl hover:shadow-xl hover:scale-105 transition-all duration-300 overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-400 to-red-600 opacity-10 pointer-events-none" />
+            <div className="flex items-center gap-1.5 mb-0.5 relative z-10">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-md">
+                <TrendingDown className="h-3 w-3 text-white" />
               </div>
-              <p className="text-xs text-red-800 font-medium">Gastos</p>
+              <p className="text-[10px] text-foreground font-bold">Gastos</p>
             </div>
-            <p className="text-lg font-bold text-red-700">
+            <p className="text-sm font-bold text-foreground relative z-10">
               ${totalExpense.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
             </p>
           </Card>
