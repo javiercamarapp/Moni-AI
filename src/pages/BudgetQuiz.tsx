@@ -434,8 +434,13 @@ export default function BudgetQuiz() {
         const categoryData = DEFAULT_CATEGORIES.find(c => c.id === categoryId);
         if (!categoryData) continue;
 
+        // Calcular el total de subcategorías para esta categoría
+        const categoryTotal = categoryData.subcategories.reduce((sum, sub) => {
+          return sum + (subcategoryBudgets[sub.id] || 0);
+        }, 0);
+
         console.log(`\nProcesando categoría: ${categoryData.name} (${categoryId})`);
-        console.log(`Presupuesto a guardar: ${budgets[categoryId]}`);
+        console.log(`Total calculado de subcategorías: ${categoryTotal}`);
 
         // Buscar si ya existe la categoría del usuario
         let existingCategory = userCategories.find(
@@ -462,27 +467,29 @@ export default function BudgetQuiz() {
           console.log('Categoría ya existe:', existingCategory);
         }
 
-        // Crear el nuevo presupuesto para la categoría principal
-        console.log('Insertando presupuesto en DB:', {
-          user_id: user.id,
-          category_id: existingCategory.id,
-          monthly_budget: budgets[categoryId]
-        });
-        
-        const { error: budgetError } = await supabase
-          .from('category_budgets')
-          .insert({
+        // Guardar el total de subcategorías como presupuesto de la categoría principal
+        if (categoryTotal > 0) {
+          console.log('Insertando presupuesto en DB:', {
             user_id: user.id,
             category_id: existingCategory.id,
-            monthly_budget: budgets[categoryId]
+            monthly_budget: categoryTotal
           });
+          
+          const { error: budgetError } = await supabase
+            .from('category_budgets')
+            .insert({
+              user_id: user.id,
+              category_id: existingCategory.id,
+              monthly_budget: categoryTotal
+            });
 
-        if (budgetError) {
-          console.error('Error guardando presupuesto:', budgetError);
-          throw budgetError;
+          if (budgetError) {
+            console.error('Error guardando presupuesto:', budgetError);
+            throw budgetError;
+          }
+          
+          console.log('Presupuesto guardado exitosamente');
         }
-        
-        console.log('Presupuesto guardado exitosamente');
 
         // Ahora guardar las subcategorías con sus presupuestos
         for (const subcategory of categoryData.subcategories) {

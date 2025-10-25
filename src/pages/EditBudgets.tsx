@@ -619,7 +619,7 @@ export default function EditBudgets() {
 
                       {/* Action Button */}
                       <Button
-                        onClick={() => {
+                        onClick={async () => {
                           // Calcular total de subcategorías
                           const subcategoryTotal = category.subcategories.reduce((sum, sub) => {
                             return sum + (subcategoryBudgets[sub.id] || 0);
@@ -630,11 +630,141 @@ export default function EditBudgets() {
                             setBudgets({ ...budgets, [category.id]: subcategoryTotal });
                           }
                           
-                          setExpandedCategory(null);
+                          // Guardar automáticamente en la base de datos
+                          setSaving(true);
+                          try {
+                            const { data: { user } } = await supabase.auth.getUser();
+                            if (!user) return;
+
+                            // Buscar o crear categoría principal
+                            let { data: existingCategory } = await supabase
+                              .from('categories')
+                              .select('id')
+                              .eq('user_id', user.id)
+                              .eq('name', category.name)
+                              .is('parent_id', null)
+                              .maybeSingle();
+
+                            let categoryId = existingCategory?.id;
+
+                            if (!categoryId) {
+                              const { data: newCategory, error: catError } = await supabase
+                                .from('categories')
+                                .insert({
+                                  user_id: user.id,
+                                  name: category.name,
+                                  type: 'gasto',
+                                  color: 'bg-primary/20',
+                                  parent_id: null
+                                })
+                                .select('id')
+                                .single();
+
+                              if (catError) throw catError;
+                              categoryId = newCategory.id;
+                            }
+
+                            // Actualizar presupuesto de categoría principal con el total
+                            if (subcategoryTotal > 0) {
+                              const { data: existingBudget } = await supabase
+                                .from('category_budgets')
+                                .select('id')
+                                .eq('user_id', user.id)
+                                .eq('category_id', categoryId)
+                                .maybeSingle();
+
+                              if (existingBudget) {
+                                await supabase
+                                  .from('category_budgets')
+                                  .update({ monthly_budget: subcategoryTotal })
+                                  .eq('id', existingBudget.id);
+                              } else {
+                                await supabase
+                                  .from('category_budgets')
+                                  .insert({
+                                    user_id: user.id,
+                                    category_id: categoryId,
+                                    monthly_budget: subcategoryTotal
+                                  });
+                              }
+                            }
+
+                            // Guardar subcategorías
+                            for (const subcategory of category.subcategories) {
+                              const subcatBudget = subcategoryBudgets[subcategory.id];
+                              
+                              if (subcatBudget && subcatBudget > 0) {
+                                // Obtener nombre personalizado si existe
+                                const subcatName = category.id === 'personalizada' && customSubcategories[subcategory.id]
+                                  ? customSubcategories[subcategory.id]
+                                  : subcategory.name;
+
+                                // Buscar o crear subcategoría
+                                let { data: existingSubcat } = await supabase
+                                  .from('categories')
+                                  .select('id')
+                                  .eq('user_id', user.id)
+                                  .eq('name', subcatName)
+                                  .eq('parent_id', categoryId)
+                                  .maybeSingle();
+
+                                let subcatId = existingSubcat?.id;
+
+                                if (!subcatId) {
+                                  const { data: newSubcat, error: subcatError } = await supabase
+                                    .from('categories')
+                                    .insert({
+                                      user_id: user.id,
+                                      name: subcatName,
+                                      type: 'gasto',
+                                      color: 'bg-primary/20',
+                                      parent_id: categoryId
+                                    })
+                                    .select('id')
+                                    .single();
+
+                                  if (subcatError) throw subcatError;
+                                  subcatId = newSubcat.id;
+                                }
+
+                                // Guardar o actualizar presupuesto de subcategoría
+                                const { data: existingSubcatBudget } = await supabase
+                                  .from('category_budgets')
+                                  .select('id')
+                                  .eq('user_id', user.id)
+                                  .eq('category_id', subcatId)
+                                  .maybeSingle();
+
+                                if (existingSubcatBudget) {
+                                  await supabase
+                                    .from('category_budgets')
+                                    .update({ monthly_budget: subcatBudget })
+                                    .eq('id', existingSubcatBudget.id);
+                                } else {
+                                  await supabase
+                                    .from('category_budgets')
+                                    .insert({
+                                      user_id: user.id,
+                                      category_id: subcatId,
+                                      monthly_budget: subcatBudget
+                                    });
+                                }
+                              }
+                            }
+
+                            toast.success(`${category.name} actualizado`);
+                            setExpandedCategory(null);
+                          } catch (error) {
+                            console.error('Error saving category:', error);
+                            toast.error("Error al guardar cambios");
+                          } finally {
+                            setSaving(false);
+                          }
                         }}
-                        className="w-full mt-2 h-10 text-xs font-semibold bg-primary hover:bg-primary/90 text-white rounded-[15px] shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all"
+                        disabled={saving}
+                        className="w-full mt-2 h-10 text-xs font-semibold bg-primary hover:bg-primary/90 text-white rounded-[15px] shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
                       >
-                        Cambiar
+                        {saving ? 'Guardando...' : 'Cambiar'}
                       </Button>
                     </div>
                   )}
