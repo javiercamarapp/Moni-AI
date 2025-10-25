@@ -23,19 +23,22 @@ interface ScoreBreakdownProps {
 
 export default function ScoreBreakdownWidget({ components, scoreMoni, changeReason, previousScore, loadingReason }: ScoreBreakdownProps) {
   const [showCelebration, setShowCelebration] = useState(false);
-  const [lastNotifiedScore, setLastNotifiedScore] = useState<number | null>(null);
+  const [lastNotifiedScore, setLastNotifiedScore] = useState<number>(() => {
+    // Cargar el último score notificado desde localStorage
+    const saved = localStorage.getItem('last_notified_score');
+    return saved ? parseInt(saved) : scoreMoni;
+  });
+  
   const scoreChange = previousScore ? scoreMoni - previousScore : 0;
 
   useEffect(() => {
-    // Mostrar notificación si hay cualquier cambio (±1) y es diferente al último notificado
-    if (scoreChange !== 0 && scoreMoni !== lastNotifiedScore) {
+    // Solo mostrar si el score actual es diferente al último que notificamos
+    if (scoreMoni !== lastNotifiedScore && scoreChange !== 0) {
       setShowCelebration(true);
       setLastNotifiedScore(scoreMoni);
-      
-      // Guardar en localStorage el último score notificado
       localStorage.setItem('last_notified_score', scoreMoni.toString());
     }
-  }, [scoreChange, scoreMoni, lastNotifiedScore]);
+  }, [scoreMoni]);
 
   const radarData = [
     { 
