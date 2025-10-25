@@ -85,6 +85,7 @@ const Dashboard = () => {
   const [isUpdatingProjections, setIsUpdatingProjections] = useState(false);
   const [challenges, setChallenges] = useState<any[]>([]);
   const [loadingChallenges, setLoadingChallenges] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const navigate = useNavigate();
   const {
     toast
@@ -262,6 +263,44 @@ const Dashboard = () => {
     };
 
     loadBudgetData();
+  }, []);
+
+  // Load unread notifications count
+  useEffect(() => {
+    const loadUnreadNotifications = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data, error } = await supabase
+          .from('notification_history')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .eq('status', 'sent');
+
+        if (error) {
+          console.error('Error loading unread notifications:', error);
+          return;
+        }
+
+        // Get count from response
+        const { count } = await supabase
+          .from('notification_history')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .eq('status', 'sent');
+
+        setUnreadNotifications(count || 0);
+      } catch (error) {
+        console.error('Error loading unread notifications:', error);
+      }
+    };
+
+    loadUnreadNotifications();
+    
+    // Refresh count every minute
+    const interval = setInterval(loadUnreadNotifications, 60000);
+    return () => clearInterval(interval);
   }, []);
 
   // Auto-scroll carousel
@@ -959,14 +998,21 @@ const Dashboard = () => {
           </Button>
           
           {/* Botón de notificaciones */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => navigate("/notifications")}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
-          >
-            <Bell className="h-5 w-5" />
-          </Button>
+          <div className="relative">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => navigate("/notifications")}
+              className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
+            >
+              <Bell className="h-5 w-5" />
+            </Button>
+            {unreadNotifications > 0 && (
+              <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg animate-pulse">
+                <span className="text-[10px] font-bold text-white">{unreadNotifications}</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
