@@ -10,6 +10,7 @@ import { ArrowLeft, Plus, X, TrendingUp, TrendingDown, Droplet, Home, CreditCard
 import BottomNav from "@/components/BottomNav";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
+import { ASSET_CATEGORIES, LIABILITY_CATEGORIES, type AssetCategory, type LiabilityCategory } from "@/lib/categoryDefinitions";
 
 const assetCategories = [
   { name: 'Cuentas bancarias (ahorro + cheques)', category: 'Checking', examples: ['BBVA Cuenta Ahorro', 'Santander Nómina', 'Banorte Smart'] },
@@ -554,19 +555,34 @@ export default function EditAssetsLiabilities() {
                     
                     <div className="space-y-4">
                       <div>
-                        <Label className="text-sm font-semibold">Tipo de Activo</Label>
+                        <Label className="text-sm font-semibold">Categoría</Label>
                         <select
                           value={newAssetCategory}
                           onChange={(e) => setNewAssetCategory(e.target.value)}
                           className="w-full p-3 border rounded-xl bg-white/50 border-gray-200/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
                         >
-                          <option value="">Selecciona...</option>
-                          {assetCategories.map((cat, idx) => (
-                            <option key={idx} value={cat.category}>{cat.name}</option>
+                          <option value="">Selecciona categoría...</option>
+                          {Object.keys(ASSET_CATEGORIES).map((cat) => (
+                            <option key={cat} value={cat}>{cat}</option>
                           ))}
-                          <option value="Custom">Activo Personalizado</option>
                         </select>
                       </div>
+
+                      {newAssetCategory && (
+                        <div>
+                          <Label className="text-sm font-semibold">Subcategoría</Label>
+                          <select
+                            value={newAssetSubcategoria}
+                            onChange={(e) => setNewAssetSubcategoria(e.target.value)}
+                            className="w-full p-3 border rounded-xl bg-white/50 border-gray-200/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
+                          >
+                            <option value="">Selecciona subcategoría...</option>
+                            {ASSET_CATEGORIES[newAssetCategory as AssetCategory]?.map((sub) => (
+                              <option key={sub} value={sub}>{sub}</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
 
                       <div>
                         <Label className="text-sm font-semibold">Nombre</Label>

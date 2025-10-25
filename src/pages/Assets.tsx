@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { ArrowLeft, Building2, CreditCard, Home, Wallet, TrendingUp, Droplet, Plus } from "lucide-react";
+import { ArrowLeft, Wallet, Home, TrendingUp, FileText, Sparkles, Plus, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,37 +6,20 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useNetWorth } from "@/hooks/useNetWorth";
 import BottomNav from "@/components/BottomNav";
+import { CategorySection } from "@/components/networth/CategorySection";
+import { ASSET_CATEGORIES, getAssetCategoryColors, type AssetCategory } from "@/lib/categoryDefinitions";
 
-type CategoryFilter = 'All' | 'Liquid' | 'Fixed';
-
-const iconMap: Record<string, any> = {
-  Building2,
-  CreditCard,
-  Home,
-  Wallet,
-  TrendingUp,
-};
-
-const getIconForCategory = (category: string) => {
-  const lowerCategory = category.toLowerCase();
-  if (lowerCategory.includes('check')) return 'Building2';
-  if (lowerCategory.includes('saving')) return 'Wallet';
-  if (lowerCategory.includes('investment')) return 'TrendingUp';
-  if (lowerCategory.includes('property') || lowerCategory.includes('mortgage')) return 'Home';
-  if (lowerCategory.includes('credit')) return 'CreditCard';
-  if (lowerCategory.includes('loan')) return 'Building2';
-  return 'Wallet';
+const iconMap = {
+  'Activos líquidos': Wallet,
+  'Activos fijos': Home,
+  'Activos financieros': TrendingUp,
+  'Activos por cobrar': FileText,
+  'Activos intangibles': Sparkles,
 };
 
 export default function Assets() {
   const navigate = useNavigate();
-  const [filter, setFilter] = useState<CategoryFilter>('All');
   const { data: netWorthData, isLoading } = useNetWorth('1Y');
-
-  // Helper function to check if an asset is liquid
-  const isLiquidAsset = (esActivoFijo: boolean) => {
-    return !esActivoFijo;
-  };
 
   if (isLoading || !netWorthData) {
     return (
@@ -72,16 +54,11 @@ export default function Assets() {
 
   const { assets, totalAssets } = netWorthData;
 
-  const liquidAssets = assets.filter(a => isLiquidAsset(a.es_activo_fijo));
-  const fixedAssets = assets.filter(a => !isLiquidAsset(a.es_activo_fijo));
-
-  const totalLiquid = liquidAssets.reduce((sum, a) => sum + Number(a.valor), 0);
-  const totalFixed = fixedAssets.reduce((sum, a) => sum + Number(a.valor), 0);
-
-  const displayAssets = 
-    filter === 'Liquid' ? liquidAssets :
-    filter === 'Fixed' ? fixedAssets :
-    [...liquidAssets, ...fixedAssets]; // Primero líquidos, después fijos
+  // Group assets by category
+  const assetsByCategory = Object.keys(ASSET_CATEGORIES).reduce((acc, category) => {
+    acc[category as AssetCategory] = assets.filter(a => a.categoria === category);
+    return acc;
+  }, {} as Record<AssetCategory, typeof assets>);
 
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
@@ -114,8 +91,8 @@ export default function Assets() {
             dinero en efectivo, inversiones, vehículos, joyas, arte y cuentas de jubilación.
           </p>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Droplet className="h-4 w-4" />
-            <span>Los activos se clasifican en líquidos (fácil conversión) y fijos (conversión lenta)</span>
+            <AlertCircle className="h-4 w-4" />
+            <span>Los activos se clasifican en líquidos, fijos, financieros, por cobrar e intangibles</span>
           </div>
         </Card>
 
@@ -127,158 +104,74 @@ export default function Assets() {
           </p>
         </div>
 
-        {/* Filter Buttons */}
-        <div className="flex gap-2">
+        {/* Gestionar Button */}
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-bold text-foreground drop-shadow-lg">
+            Categorías de Activos
+          </h3>
           <Button
-            variant={filter === 'All' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('All')}
-            className={cn(
-              "flex-1 transition-all rounded-[20px] shadow-lg font-semibold border border-blue-100 h-9",
-              filter === 'All'
-                ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105"
-                : "bg-white text-foreground hover:bg-primary/10 hover:scale-105"
-            )}
+            onClick={() => navigate('/edit-assets-liabilities')}
+            className="bg-white rounded-[16px] shadow-xl hover:bg-white/90 border border-blue-100 h-9 px-3"
+            variant="outline"
           >
-            Todos
-          </Button>
-          <Button
-            variant={filter === 'Liquid' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('Liquid')}
-            className={cn(
-              "flex-1 transition-all rounded-[20px] shadow-lg font-semibold border border-blue-100 h-9",
-              filter === 'Liquid'
-                ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105"
-                : "bg-white text-foreground hover:bg-primary/10 hover:scale-105"
-            )}
-          >
-            Líquidos
-          </Button>
-          <Button
-            variant={filter === 'Fixed' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('Fixed')}
-            className={cn(
-              "flex-1 transition-all rounded-[20px] shadow-lg font-semibold border border-blue-100 h-9",
-              filter === 'Fixed'
-                ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105"
-                : "bg-white text-foreground hover:bg-primary/10 hover:scale-105"
-            )}
-          >
-            Fijos
+            <Plus className="h-4 w-4 mr-1" />
+            <span className="text-xs font-medium">Gestionar</span>
           </Button>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-white backdrop-blur-sm rounded-[20px] p-4 border border-blue-100 shadow-xl">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-blue-500/30 flex items-center justify-center">
-                <Droplet className="h-4 w-4 text-blue-600" />
-              </div>
-              <p className="text-xs text-foreground/80 font-medium">Activos Líquidos</p>
-            </div>
-            <p className="text-lg font-bold text-foreground break-words">
-              ${totalLiquid >= 100000 
-                ? `${(totalLiquid / 1000).toFixed(0)}k` 
-                : totalLiquid.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {liquidAssets.length} cuenta{liquidAssets.length !== 1 ? 's' : ''}
-            </p>
-          </div>
-          <div className="bg-white backdrop-blur-sm rounded-[20px] p-4 border border-blue-100 shadow-xl">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-amber-500/30 flex items-center justify-center">
-                <Home className="h-4 w-4 text-amber-600" />
-              </div>
-              <p className="text-xs text-foreground/80 font-medium">Activos Fijos</p>
-            </div>
-            <p className="text-lg font-bold text-foreground break-words">
-              ${totalFixed >= 100000 
-                ? `${(totalFixed / 1000).toFixed(0)}k` 
-                : totalFixed.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {fixedAssets.length} bien{fixedAssets.length !== 1 ? 'es' : ''}
-            </p>
-          </div>
-        </div>
-
-        {/* Assets List */}
+        {/* Category Sections */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-bold text-foreground drop-shadow-lg">
-              {filter === 'Liquid' ? 'Activos Líquidos' : 
-               filter === 'Fixed' ? 'Activos Fijos' : 
-               'Todos los Activos'}
-            </h3>
-            <Button
-              onClick={() => navigate('/edit-assets-liabilities')}
-              className="bg-white rounded-[16px] shadow-xl hover:bg-white/90 border border-blue-100 h-9 px-3"
-              variant="outline"
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              <span className="text-xs font-medium">Gestionar</span>
-            </Button>
-          </div>
-          {displayAssets.map((asset) => {
-            const iconName = getIconForCategory(asset.categoria);
-            const Icon = iconMap[iconName];
-            const isLiquid = isLiquidAsset(asset.es_activo_fijo);
-            
+          {(Object.keys(ASSET_CATEGORIES) as AssetCategory[]).map((category) => {
+            const categoryAssets = assetsByCategory[category] || [];
+            const total = categoryAssets.reduce((sum, a) => sum + Number(a.valor), 0);
+            const colors = getAssetCategoryColors(category);
+            const Icon = iconMap[category];
+
             return (
-              <div
-                key={asset.id}
-                className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-[1.02] transition-all cursor-pointer border border-blue-100 animate-fade-in"
+              <CategorySection
+                key={category}
+                title={category}
+                total={total}
+                count={categoryAssets.length}
+                icon={<Icon className={cn("h-5 w-5", colors.iconColor)} />}
+                iconBgColor={colors.iconBg}
+                iconColor={colors.iconColor}
+                badgeColor={colors.badge}
+                isEmpty={categoryAssets.length === 0}
               >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <div className={cn(
-                      "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
-                      isLiquid 
-                        ? "bg-blue-500/30" 
-                        : "bg-amber-500/30"
-                    )}>
-                      <Icon className={cn(
-                        "h-5 w-5",
-                        isLiquid ? "text-blue-600" : "text-amber-600"
-                      )} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-bold text-foreground text-sm leading-tight">{asset.nombre}</p>
-                      <div className="flex items-center gap-2">
-                        <p className="text-xs text-foreground/70 leading-tight">{asset.categoria}</p>
-                        <Badge 
-                          variant="outline" 
-                          className={cn(
-                            "text-[9px] px-1.5 py-0",
-                            isLiquid 
-                              ? "border-blue-500/40 text-blue-600 bg-blue-50" 
-                              : "border-amber-500/40 text-amber-600 bg-amber-50"
-                          )}
-                        >
-                          {isLiquid ? 'Líquido' : 'Fijo'}
-                        </Badge>
+                {categoryAssets.map((asset) => (
+                  <div
+                    key={asset.id}
+                    className="p-3 bg-white rounded-[16px] shadow-md hover:scale-[1.01] transition-all cursor-pointer border border-blue-50"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-foreground text-sm leading-tight">{asset.nombre}</p>
+                        {asset.subcategoria && (
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge 
+                              variant="outline" 
+                              className={cn("text-[9px] px-1.5 py-0", colors.badge)}
+                            >
+                              {asset.subcategoria}
+                            </Badge>
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-right flex-shrink-0 ml-2">
+                        <p className="font-bold text-emerald-700 text-sm break-words">
+                          ${Number(asset.valor).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </p>
+                        {asset.moneda !== 'MXN' && (
+                          <p className="text-[10px] text-muted-foreground">{asset.moneda}</p>
+                        )}
                       </div>
                     </div>
                   </div>
-                  <div className="text-right flex-shrink-0 ml-2">
-                    <p className="font-bold text-emerald-700 text-sm break-words">
-                      ${Number(asset.valor).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </p>
-                  </div>
-                </div>
-              </div>
+                ))}
+              </CategorySection>
             );
           })}
-          
-          {displayAssets.length === 0 && (
-            <div className="p-8 text-center text-muted-foreground bg-white rounded-[20px] border border-blue-100 shadow-xl">
-              No hay activos en esta categoría
-            </div>
-          )}
         </div>
       </div>
 
