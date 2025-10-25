@@ -167,6 +167,12 @@ export default function Budgets() {
         .lte('transaction_date', lastDay.toISOString().split('T')[0]);
 
       console.log('Total transacciones de gasto:', expenseData?.length);
+      
+      // Contar transacciones con y sin categoría
+      const withCategory = expenseData?.filter(t => t.category_id !== null).length || 0;
+      const withoutCategory = expenseData?.filter(t => t.category_id === null).length || 0;
+      console.log(`Transacciones CON categoría: ${withCategory}`);
+      console.log(`Transacciones SIN categoría: ${withoutCategory}`);
 
       // Agrupar gastos por categoría principal
       const expensesByCategory: Record<string, number> = {};
@@ -184,6 +190,8 @@ export default function Budgets() {
       });
 
       console.log('Gastos agrupados por categoría principal:', expensesByCategory);
+      console.log('Total de categorías con gastos:', Object.keys(expensesByCategory).length);
+      
       setCurrentExpenses(expensesByCategory);
     } catch (error) {
       console.error('Error loading monthly data:', error);
