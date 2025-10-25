@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { AlertCircle, AlertTriangle, CheckCircle, Sparkles } from "lucide-react";
+import { AlertCircle, AlertTriangle, CheckCircle, Sparkles, ShieldAlert } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 
@@ -42,10 +42,9 @@ export default function RiskIndicatorsWidget({ indicators, hasIssues }: RiskIndi
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-2">
-        <Sparkles className="h-4 w-4 text-yellow-500" />
-        <p className="text-xs font-medium text-foreground">⚡ Análisis de Riesgos IA</p>
-      </div>
+      <p className="text-xs font-bold text-foreground flex items-center gap-1">
+        <ShieldAlert className="h-3 w-3" /> Análisis de Riesgos IA
+      </p>
       
       {!hasIssues ? (
         <Card className="p-4 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 animate-fade-in rounded-[20px] border-0">
