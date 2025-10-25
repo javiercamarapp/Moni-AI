@@ -171,6 +171,19 @@ const DEFAULT_CATEGORIES: Category[] = [
       { id: 'seguro_mascotas', name: 'Seguro de mascotas' },
     ]
   },
+  { 
+    id: 'personalizada', 
+    name: 'Categoría personalizada', 
+    icon: '⭐', 
+    suggestedPercentage: 0,
+    insight: 'Crea tu propia categoría para gastos específicos',
+    subcategories: [
+      { id: 'personalizado_1', name: 'Concepto 1' },
+      { id: 'personalizado_2', name: 'Concepto 2' },
+      { id: 'personalizado_3', name: 'Concepto 3' },
+      { id: 'personalizado_4', name: 'Concepto 4' },
+    ]
+  },
 ];
 
 export default function EditBudgets() {
@@ -180,6 +193,7 @@ export default function EditBudgets() {
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [budgets, setBudgets] = useState<Record<string, number>>({});
   const [subcategoryBudgets, setSubcategoryBudgets] = useState<Record<string, number>>({});
+  const [customSubcategories, setCustomSubcategories] = useState<Record<string, string>>({});
 
   useEffect(() => {
     loadBudgets();
@@ -359,12 +373,17 @@ export default function EditBudgets() {
           const subcatBudget = subcategoryBudgets[subcategory.id];
           
           if (subcatBudget && subcatBudget > 0) {
+            // Obtener nombre personalizado si existe (para categoría personalizada)
+            const subcatName = category.id === 'personalizada' && customSubcategories[subcategory.id]
+              ? customSubcategories[subcategory.id]
+              : subcategory.name;
+
             // Buscar o crear subcategoría
             let { data: existingSubcat } = await supabase
               .from('categories')
               .select('id')
               .eq('user_id', user.id)
-              .eq('name', subcategory.name)
+              .eq('name', subcatName)
               .eq('parent_id', categoryId)
               .maybeSingle();
 
@@ -375,7 +394,7 @@ export default function EditBudgets() {
                 .from('categories')
                 .insert({
                   user_id: user.id,
-                  name: subcategory.name,
+                  name: subcatName,
                   type: 'gasto',
                   color: 'bg-primary/20',
                   parent_id: categoryId
@@ -508,27 +527,75 @@ export default function EditBudgets() {
                         {category.subcategories.map((sub) => (
                           <div key={sub.id} className="bg-gray-50 rounded-lg px-2 py-2">
                             <div className="flex items-center justify-between gap-2">
-                              <span className="text-[10px] text-foreground flex-1">
-                                • {sub.name}
-                              </span>
-                              <div className="relative flex items-center">
-                                <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
-                                <Input
-                                  type="text"
-                                  inputMode="numeric"
-                                  placeholder="0"
-                                  value={subcategoryBudgets[sub.id] ? formatCurrency(subcategoryBudgets[sub.id]) : ""}
-                                  onChange={(e) => {
-                                    const value = e.target.value.replace(/[^\d]/g, '');
-                                    updateSubcategoryBudget(sub.id, value);
-                                  }}
-                                  className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-white border-gray-200"
-                                />
-                              </div>
+                              {category.id === 'personalizada' ? (
+                                <>
+                                  <Input
+                                    type="text"
+                                    placeholder={sub.name}
+                                    value={customSubcategories[sub.id] || ""}
+                                    onChange={(e) => {
+                                      setCustomSubcategories({ ...customSubcategories, [sub.id]: e.target.value });
+                                    }}
+                                    className="flex-1 h-7 text-[10px] bg-white border-gray-200"
+                                  />
+                                  <div className="relative flex items-center">
+                                    <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
+                                    <Input
+                                      type="text"
+                                      inputMode="numeric"
+                                      placeholder="0"
+                                      value={subcategoryBudgets[sub.id] ? formatCurrency(subcategoryBudgets[sub.id]) : ""}
+                                      onChange={(e) => {
+                                        const value = e.target.value.replace(/[^\d]/g, '');
+                                        updateSubcategoryBudget(sub.id, value);
+                                      }}
+                                      className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-white border-gray-200"
+                                    />
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                  <span className="text-[10px] text-foreground flex-1">
+                                    • {sub.name}
+                                  </span>
+                                  <div className="relative flex items-center">
+                                    <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
+                                    <Input
+                                      type="text"
+                                      inputMode="numeric"
+                                      placeholder="0"
+                                      value={subcategoryBudgets[sub.id] ? formatCurrency(subcategoryBudgets[sub.id]) : ""}
+                                      onChange={(e) => {
+                                        const value = e.target.value.replace(/[^\d]/g, '');
+                                        updateSubcategoryBudget(sub.id, value);
+                                      }}
+                                      className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-white border-gray-200"
+                                    />
+                                  </div>
+                                </>
+                              )}
                             </div>
                           </div>
                         ))}
                       </div>
+
+                      {/* Add button for custom category */}
+                      {category.id === 'personalizada' && (
+                        <div className="flex justify-center mt-2">
+                          <Button
+                            onClick={() => {
+                              const newId = `personalizado_${Date.now()}`;
+                              const newSubcategory = { id: newId, name: `Concepto ${category.subcategories.length + 1}` };
+                              category.subcategories.push(newSubcategory);
+                              setCustomSubcategories({ ...customSubcategories });
+                            }}
+                            variant="ghost"
+                            className="h-8 w-8 p-0 rounded-full bg-primary/10 hover:bg-primary/20 text-primary font-bold"
+                          >
+                            +
+                          </Button>
+                        </div>
+                      )}
 
                       {/* Action Button */}
                       <Button
