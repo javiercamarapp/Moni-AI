@@ -19,7 +19,7 @@ import bannerGroups from '@/assets/banner-groups.jpg';
 import bannerHalloween from '@/assets/banner-halloween.png';
 import heroAuth from '@/assets/moni-ai-logo.png';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
-import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User, BarChart3, AlertCircle, CreditCard, RefreshCw } from 'lucide-react';
+import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User, BarChart3, AlertCircle, CreditCard, RefreshCw, Sparkles } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
 import SafeToSpendWidget from '@/components/analysis/SafeToSpendWidget';
 import AICoachInsightsWidget from '@/components/analysis/AICoachInsightsWidget';
@@ -1723,9 +1723,21 @@ const Dashboard = () => {
               </div>
 
               {challenges.length === 0 ? (
-                <div className="text-center py-8">
-                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mb-4"></div>
-                  <p className="text-gray-700">Generando tus primeros 2 retos semanales...</p>
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">🎯</div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    No tienes retos activos
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Genera tus primeros retos personalizados con IA
+                  </p>
+                  <Button
+                    onClick={() => navigate("/mis-retos")}
+                    className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Ver retos recomendados por IA
+                  </Button>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
