@@ -64,23 +64,37 @@ const Dashboard = () => {
   }>({ show: false, milestone: 'start', goalName: '' });
   const [previousGoalProgress, setPreviousGoalProgress] = useState<Record<string, number>>({});
   
-  // Check for goal milestone achievements
+  // Check for goal milestone achievements (every 0.5% = new badge)
   useEffect(() => {
     goals.forEach(goal => {
       const currentProgress = (goal.current / goal.target) * 100;
       const prevProgress = previousGoalProgress[goal.id] || 0;
       
-      // Check for milestone crossings
-      const milestones = [25, 50, 75, 100];
-      milestones.forEach(milestone => {
-        if (prevProgress < milestone && currentProgress >= milestone) {
-          setGoalMilestone({
-            show: true,
-            milestone: milestone.toString() as any,
-            goalName: goal.title
-          });
+      // Calculate which 0.5% milestone was crossed
+      const prevMilestone = Math.floor(prevProgress / 0.5) * 0.5;
+      const currentMilestone = Math.floor(currentProgress / 0.5) * 0.5;
+      
+      // Check if we crossed a new 0.5% milestone
+      if (currentMilestone > prevMilestone && currentProgress > 0) {
+        // Determine which type of celebration to show
+        let celebrationMilestone: 'start' | '25' | '50' | '75' | '100' = 'start';
+        
+        if (currentProgress >= 100) {
+          celebrationMilestone = '100';
+        } else if (currentProgress >= 75) {
+          celebrationMilestone = '75';
+        } else if (currentProgress >= 50) {
+          celebrationMilestone = '50';
+        } else if (currentProgress >= 25) {
+          celebrationMilestone = '25';
         }
-      });
+        
+        setGoalMilestone({
+          show: true,
+          milestone: celebrationMilestone,
+          goalName: `${goal.title} - ${currentMilestone.toFixed(1)}%`
+        });
+      }
       
       // Update previous progress
       if (currentProgress !== prevProgress) {
