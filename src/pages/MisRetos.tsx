@@ -150,18 +150,7 @@ export default function MisRetos() {
       </div>
 
       <div className="px-4 py-3 space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">Mis retos de la semana</h2>
-          <Button
-            onClick={verifyProgress}
-            variant="ghost"
-            size="sm"
-            className="text-xs"
-          >
-            <RefreshCw className="w-3 h-3 mr-1" />
-            Actualizar
-          </Button>
-        </div>
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">Mis retos de la semana</h2>
         
         {loading ? (
           <div className="grid grid-cols-2 gap-3">
@@ -213,17 +202,16 @@ export default function MisRetos() {
                   style={{ transform: 'translate3d(0, 0, 0)' }}
                 >
                   <div className="relative z-10">
+                    {isLastDay && (
+                      <Badge className="w-full bg-orange-500/20 text-orange-700 text-[9px] border-orange-500/30 mb-2 justify-center">
+                        🔥 Último día del reto
+                      </Badge>
+                    )}
+                    
                     <div className="mb-2">
-                      <div className="flex items-center justify-between mb-0.5">
-                        <h4 className="text-sm font-bold text-foreground drop-shadow-sm line-clamp-1 leading-tight">
-                          {challenge.title}
-                        </h4>
-                        {isLastDay && (
-                          <Badge className="bg-orange-500/20 text-orange-700 text-[8px] border-orange-500/30 px-1 py-0">
-                            Último día
-                          </Badge>
-                        )}
-                      </div>
+                      <h4 className="text-sm font-bold text-foreground drop-shadow-sm mb-0.5 line-clamp-1 leading-tight">
+                        {challenge.title}
+                      </h4>
                       <p className="text-[10px] text-foreground/70 drop-shadow-sm line-clamp-2 leading-tight">
                         {challenge.description}
                       </p>

@@ -70,9 +70,13 @@ async function verifyChallenge(supabase: any, challenge: Challenge) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Initialize days_status array if empty
-    let daysStatus = challenge.days_status || [];
-    if (daysStatus.length === 0) {
+    // Initialize days_status array if empty - create a NEW array, not modify the string
+    let daysStatus = [];
+    
+    if (challenge.days_status && Array.isArray(challenge.days_status)) {
+      // Make a copy of the array to avoid mutation issues
+      daysStatus = JSON.parse(JSON.stringify(challenge.days_status));
+    } else {
       daysStatus = Array(7).fill(null).map(() => ({ completed: null }));
     }
 
@@ -144,7 +148,7 @@ async function verifyChallenge(supabase: any, challenge: Challenge) {
 
       console.log(`🎯 Meta diaria: $${dailyTarget.toFixed(2)} | Gasto: $${daySpending.toFixed(2)} | Cumplido: ${wasCompleted}`);
 
-      // Update day status
+      // Update day status - create new object
       daysStatus[dayIndex] = {
         completed: wasCompleted,
         amount: daySpending,
