@@ -959,7 +959,12 @@ const Dashboard = () => {
           </Button>
           
           {/* Botón de notificaciones */}
-          <Button variant="ghost" size="icon" className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => navigate("/notifications")}
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/20 text-foreground h-10 w-10 hover:scale-105 transition-all border border-blue-100"
+          >
             <Bell className="h-5 w-5" />
           </Button>
         </div>

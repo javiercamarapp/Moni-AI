@@ -18,6 +18,7 @@ import WhatsAppSetup from "./pages/WhatsAppSetup";
 import FinancialAnalysis from "./pages/FinancialAnalysis";
 import BankConnection from "./pages/BankConnection";
 import NotificationSettings from "./pages/NotificationSettings";
+import NotificationHistory from "./pages/NotificationHistory";
 import NetWorth from "./pages/NetWorth";
 import ScoreMoni from "./pages/ScoreMoni";
 import Assets from "./pages/Assets";
@@ -73,7 +74,8 @@ function App() {
           <Route path="/whatsapp" element={<WhatsAppSetup />} />
           <Route path="/analysis" element={<FinancialAnalysis />} />
           <Route path="/bank-connection" element={<BankConnection />} />
-          <Route path="/notifications" element={<NotificationSettings />} />
+          <Route path="/notifications" element={<NotificationHistory />} />
+          <Route path="/notification-settings" element={<NotificationSettings />} />
           <Route path="/net-worth" element={<NetWorth />} />
           <Route path="/score-moni" element={<ScoreMoni />} />
           <Route path="/assets" element={<Assets />} />
