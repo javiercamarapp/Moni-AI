@@ -147,7 +147,7 @@ const Gastos = () => {
           .gte('transaction_date', startDate.toISOString().split('T')[0])
           .lte('transaction_date', endDate.toISOString().split('T')[0])
           .order('id', { ascending: true })
-          .limit(1000);
+          .limit(10000);
         
         if (lastId) {
           query = query.gt('id', lastId);
@@ -162,7 +162,7 @@ const Gastos = () => {
         
         allTransactions = [...allTransactions, ...pageData];
         lastId = pageData[pageData.length - 1].id;
-        hasMore = pageData.length === 1000;
+        hasMore = pageData.length === 10000;
       }
       
       // Sort by date descending for display

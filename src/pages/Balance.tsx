@@ -171,22 +171,76 @@ const Balance = () => {
       } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Get transactions for the specific period (for insights)
+      // Get transactions for the specific period (for insights) with pagination
       const startDate = viewMode === 'mensual' ? new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1) : new Date(currentMonth.getFullYear(), 0, 1);
       const endDate = viewMode === 'mensual' ? new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0) : new Date(currentMonth.getFullYear(), 11, 31);
-      const {
-        data: transactions
-      } = await supabase.from('transactions').select('*, categories(name)').eq('user_id', user.id).gte('transaction_date', startDate.toISOString().split('T')[0]).lte('transaction_date', endDate.toISOString().split('T')[0]).order('transaction_date', {
-        ascending: false
-      });
+      
+      let periodTransactions: any[] = [];
+      let hasMorePeriod = true;
+      let lastIdPeriod: string | null = null;
+      
+      while (hasMorePeriod) {
+        let queryPeriod = supabase
+          .from('transactions')
+          .select('*, categories(name)')
+          .eq('user_id', user.id)
+          .gte('transaction_date', startDate.toISOString().split('T')[0])
+          .lte('transaction_date', endDate.toISOString().split('T')[0])
+          .order('id', { ascending: true })
+          .limit(10000);
+        
+        if (lastIdPeriod) {
+          queryPeriod = queryPeriod.gt('id', lastIdPeriod);
+        }
+        
+        const { data: pageData } = await queryPeriod;
+        
+        if (!pageData || pageData.length === 0) {
+          hasMorePeriod = false;
+          break;
+        }
+        
+        periodTransactions = [...periodTransactions, ...pageData];
+        lastIdPeriod = pageData[pageData.length - 1].id;
+        hasMorePeriod = pageData.length === 10000;
+      }
+      
+      periodTransactions.sort((a, b) => 
+        new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime()
+      );
 
-      // Get todas las transacciones históricas
-      const {
-        data: allTransactions
-      } = await supabase.from('transactions')
-        .select('*, categories(name)')
-        .eq('user_id', user.id)
-        .order('transaction_date', { ascending: false });
+      // Get todas las transacciones históricas with pagination
+      let allTransactions: any[] = [];
+      let hasMoreAll = true;
+      let lastIdAll: string | null = null;
+      
+      while (hasMoreAll) {
+        let queryAll = supabase
+          .from('transactions')
+          .select('*, categories(name)')
+          .eq('user_id', user.id)
+          .order('id', { ascending: true })
+          .limit(10000);
+        
+        if (lastIdAll) {
+          queryAll = queryAll.gt('id', lastIdAll);
+        }
+        
+        const { data: pageData } = await queryAll;
+        
+        if (!pageData || pageData.length === 0) {
+          hasMoreAll = false;
+          break;
+        }
+        
+        allTransactions = [...allTransactions, ...pageData];
+        lastIdAll = pageData[pageData.length - 1].id;
+        hasMoreAll = pageData.length === 10000;
+      }
+      
+      allTransactions.sort((a, b) => 
+        new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime()
+      );
       const periodLabel = getPeriodLabel();
       const {
         data,
@@ -194,8 +248,7 @@ const Balance = () => {
       } = await supabase.functions.invoke('predict-savings', {
         body: {
           userId: user.id,
-          transactions,
-          // Período específico para insights
+          transactions: periodTransactions, // Período específico para insights
           allTransactions,
           // Todo el historial para proyecciones
           totalIngresos,
@@ -286,7 +339,7 @@ const Balance = () => {
           .gte('transaction_date', startDate.toISOString().split('T')[0])
           .lte('transaction_date', endDate.toISOString().split('T')[0])
           .order('id', { ascending: true })
-          .limit(1000);
+          .limit(10000);
         
         // Use cursor-based pagination
         if (lastId) {
@@ -307,7 +360,7 @@ const Balance = () => {
         
         allTransactions = [...allTransactions, ...pageData];
         lastId = pageData[pageData.length - 1].id;
-        hasMore = pageData.length === 1000; // Continue if we got full page
+        hasMore = pageData.length === 10000; // Continue if we got full page
       }
       
       const transactions = allTransactions;
