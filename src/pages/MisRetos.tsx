@@ -84,15 +84,30 @@ export default function MisRetos() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      toast.info('🤖 Moni AI está analizando tus 12 categorías...');
+      // Verificar si el usuario completó el presupuesto
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('budget_quiz_completed')
+        .eq('id', user.id)
+        .single();
+
+      if (!profile?.budget_quiz_completed) {
+        toast.error('Primero debes completar tu presupuesto', {
+          description: 'Ve a tu perfil y completa el quiz de presupuesto para generar retos personalizados'
+        });
+        setGeneratingChallenges(false);
+        return;
+      }
+
+      toast.info('🤖 Moni AI está analizando tu presupuesto y generando 12 retos personalizados...');
 
       const { data, error } = await supabase.functions.invoke('generate-challenges', {
-        body: { userId: user.id, count: 12 } // Generate 12 challenges
+        body: { userId: user.id, count: 12 }
       });
 
       if (error) throw error;
 
-      toast.success('✨ Nuevos retos generados');
+      toast.success('✨ 12 retos generados basados en tu presupuesto');
       await fetchChallenges();
     } catch (error: any) {
       console.error('Error generando retos:', error);
@@ -142,24 +157,46 @@ export default function MisRetos() {
       </div>
 
       <div className="px-4 py-3 space-y-6">
-        <Card className="p-6 text-center bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0">
-          <div className="text-4xl mb-3">🎯</div>
-          <h3 className="text-lg font-bold text-gray-900 mb-2">
-            No tienes retos activos
-          </h3>
-          <p className="text-sm text-gray-600 mb-4">
-            Genera tus primeros retos personalizados con IA
-          </p>
-          <Button
-            onClick={generateNewChallenges}
-            disabled={generatingChallenges}
-            size="sm"
-            className="bg-white/80 backdrop-blur-md hover:bg-white text-foreground shadow-md hover:shadow-lg transition-all border border-gray-200/50 font-semibold rounded-full"
-          >
-            <Sparkles className="w-4 h-4 mr-2" />
-            {generatingChallenges ? 'Generando...' : 'Generar Retos'}
-          </Button>
-        </Card>
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin" />
+          </div>
+        ) : challenges.length === 0 ? (
+          <Card className="p-6 text-center bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0">
+            <div className="text-4xl mb-3">🎯</div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">
+              No tienes retos activos
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Genera retos personalizados que te ayuden a ahorrar 25% de tu presupuesto
+            </p>
+            <Button
+              onClick={generateNewChallenges}
+              disabled={generatingChallenges}
+              size="sm"
+              className="bg-white/80 backdrop-blur-md hover:bg-white text-foreground shadow-md hover:shadow-lg transition-all border border-gray-200/50 font-semibold rounded-full"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              {generatingChallenges ? 'Generando...' : 'Generar Retos con IA'}
+            </Button>
+          </Card>
+        ) : (
+          <div>
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight mb-4">
+              Tus retos personalizados
+            </h2>
+            <div className="space-y-4">
+              {challenges.map((challenge, index) => (
+                <ChallengeCard
+                  key={challenge.id}
+                  challenge={challenge}
+                  index={index}
+                  onAccept={acceptChallenge}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -428,116 +465,121 @@ const ChallengeCard = ({
       
       <motion.button
         onClick={handleExpand}
-        className=""
-        whileHover={{
-          rotateX: 2,
-          rotateY: 2,
-          rotate: 3,
-          scale: 1.02,
-          transition: {duration: 0.3, ease: "easeOut"},
-        }}
+        className="w-full"
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
       >
-        <div
-          className={`${index % 2 === 0 ? "rotate-1" : "-rotate-1"} rounded-2xl bg-gradient-to-br ${colors.gradient} h-[200px] md:h-[225px] w-36 md:w-40 overflow-hidden flex flex-col items-center justify-center relative z-10 shadow-xl border-2 ${colors.ring}`}
+        <Card
+          className={`w-full p-4 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 hover:shadow-md transition-all`}
         >
-          <div className={`absolute inset-0 opacity-30 ${colors.overlay}`} />
-          
-            <div className="relative z-10 flex flex-col items-center justify-center p-3">
-            {/* Diferentes visualizaciones según tipo */}
-            {challengeType === 'spending_limit' && (
-              <div className="flex flex-col items-center">
-                <div className="relative w-8 h-20 bg-white/30 rounded-full overflow-hidden mb-1">
-                  <div 
-                    className="absolute bottom-0 left-0 right-0 bg-white transition-all"
-                    style={{ height: `${Math.min(100, progress)}%` }}
-                  />
-                </div>
-                <span className={`text-[10px] font-bold text-white`}>
-                  {Math.round(progress)}%
-                </span>
-              </div>
-            )}
-            
-            {challengeType === 'days_without' && (
-              <div className={`w-12 h-12 rounded-full ${colors.badge} flex items-center justify-center mb-2 shadow-lg`}>
-                <span className={`text-sm font-bold ${colors.badgeText}`}>
-                  {daysStatus.filter(d => d.completed === true).length}/{challenge.daily_goal || 5}
-                </span>
-              </div>
-            )}
-            
-            {challengeType === 'daily_budget' && (
-              <div className={`w-12 h-12 rounded-full ${colors.badge} flex items-center justify-center mb-2 shadow-lg`}>
-                <span className={`text-xs font-bold ${colors.badgeText}`}>
-                  {daysStatus.filter(d => d.completed === true).length}/7
-                </span>
-              </div>
-            )}
-            
-            {challengeType === 'savings_goal' && (
-              <div className={`w-12 h-12 rounded-full ${colors.badge} flex items-center justify-center mb-2 shadow-lg`}>
-                <span className={`text-sm font-bold ${colors.badgeText}`}>
-                  {Math.round(progress)}%
-                </span>
-              </div>
-            )}
-            
-            <motion.p className="text-white text-xs md:text-sm font-bold text-center mt-1 line-clamp-2">
-              {challenge.title}
-            </motion.p>
-            
-            {challengeType === 'days_without' ? (
-              <motion.p className="text-white text-[10px] md:text-xs font-semibold text-center mt-1">
-                {daysStatus.filter(d => d.completed === true).length}/{challenge.daily_goal || 5} días
-              </motion.p>
-            ) : (
-              <motion.p className="text-white text-[10px] md:text-xs font-semibold text-center mt-1">
-                ${challenge.current_amount.toFixed(0)} / ${challenge.target_amount.toFixed(0)}
-              </motion.p>
-            )}
-            
-            <div className="flex gap-0.5 mt-2 mb-1">
-              {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
-                const dayStatus = daysStatus[dayIndex];
-                const isCompleted = dayStatus?.completed === true;
-                const isFailed = dayStatus?.completed === false;
-                const isCurrentDay = dayIndex === currentDayIndex;
-                
-                return (
-                  <div key={dayIndex} className="flex flex-col items-center">
-                    <span className={`text-[7px] text-white/80 mb-0.5 ${isCurrentDay ? 'font-bold' : ''}`}>
-                      {dayNames[dayIndex]}
-                    </span>
+          <div className="flex items-start gap-4">
+            {/* Visualización según tipo */}
+            <div className="flex-shrink-0">
+              {challengeType === 'spending_limit' && (
+                <div className="w-16 h-16 relative">
+                  <div className="absolute inset-0 bg-gray-200 rounded-xl overflow-hidden">
                     <div 
-                      className={`w-3 h-3 rounded-full flex items-center justify-center text-[8px] font-bold ${
-                        isCompleted 
-                          ? 'bg-green-500 text-white' 
-                          : isFailed 
-                          ? 'bg-red-500 text-white'
-                          : 'bg-white/30 text-white'
-                      } ${isCurrentDay ? 'ring-1 ring-white' : ''}`}
-                    >
-                      {isCompleted && '✓'}
-                      {isFailed && '✗'}
+                      className={`absolute bottom-0 left-0 right-0 ${colors.bg} transition-all`}
+                      style={{ height: `${Math.min(100, progress)}%` }}
+                    />
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-xs font-bold text-gray-700">{Math.round(progress)}%</span>
+                  </div>
+                </div>
+              )}
+              
+              {challengeType === 'days_without' && (
+                <div className="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-purple-600">
+                      {daysStatus.filter(d => d.completed === true).length}
+                    </div>
+                    <div className="text-[10px] text-purple-600">
+                      de {challenge.daily_goal || 5}
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              )}
+              
+              {challengeType === 'daily_budget' && (
+                <div className="w-16 h-16 bg-orange-100 rounded-xl flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-orange-600">
+                      {daysStatus.filter(d => d.completed === true).length}
+                    </div>
+                    <div className="text-[10px] text-orange-600">
+                      / 7 días
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {challengeType === 'savings_goal' && (
+                <div className="w-16 h-16 bg-cyan-100 rounded-xl flex items-center justify-center">
+                  <div className="text-2xl font-bold text-cyan-600">
+                    {Math.round(progress)}%
+                  </div>
+                </div>
+              )}
             </div>
-
-            {challenge.status === 'pending' && (
-              <Badge className="mt-2 text-[8px] px-1 py-0 bg-white/20 text-white border-white/30">
-                Sugerido
-              </Badge>
-            )}
             
-            {isLastDay && (
-              <Badge className="mt-2 text-[8px] px-1 py-0 bg-orange-500/30 text-white border-orange-200/30">
-                🔥 Último día
-              </Badge>
-            )}
+            {/* Contenido */}
+            <div className="flex-1 min-w-0">
+              <h4 className="text-sm font-bold text-gray-900 mb-1 line-clamp-2">
+                {challenge.title}
+              </h4>
+              <p className="text-xs text-gray-600 mb-2 line-clamp-2">
+                {challenge.description}
+              </p>
+              
+              {/* Progreso */}
+              {challengeType === 'spending_limit' && (
+                <div className="text-xs text-gray-500">
+                  ${challenge.current_amount.toFixed(0)} / ${challenge.target_amount.toFixed(0)}
+                </div>
+              )}
+              
+              {challengeType === 'days_without' && (
+                <div className="flex gap-1 mt-2">
+                  {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
+                    const dayStatus = daysStatus[dayIndex];
+                    const isCompleted = dayStatus?.completed === true;
+                    const isFailed = dayStatus?.completed === false;
+                    
+                    return (
+                      <div 
+                        key={dayIndex}
+                        className={`w-6 h-6 rounded flex items-center justify-center text-xs font-bold ${
+                          isCompleted 
+                            ? 'bg-green-500 text-white' 
+                            : isFailed 
+                            ? 'bg-red-500 text-white'
+                            : 'bg-gray-200 text-gray-400'
+                        }`}
+                      >
+                        {isCompleted && '✓'}
+                        {isFailed && '✗'}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              
+              {challenge.status === 'pending' && (
+                <Badge className="mt-2 text-xs bg-blue-100 text-blue-700 border-blue-200">
+                  Sugerido
+                </Badge>
+              )}
+              
+              {isLastDay && challenge.status === 'active' && (
+                <Badge className="mt-2 text-xs bg-orange-100 text-orange-700 border-orange-200">
+                  🔥 Último día
+                </Badge>
+              )}
+            </div>
           </div>
-        </div>
+        </Card>
       </motion.button>
     </>
   );
