@@ -291,6 +291,13 @@ export default function Budgets() {
   };
 
   const getCategoryIcon = (name: string) => {
+    // Extraer el emoji del nombre si ya lo tiene
+    const emojiMatch = name.match(/^([\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}])/u);
+    if (emojiMatch) {
+      return emojiMatch[1];
+    }
+    
+    // Fallback para categorías sin emoji en el nombre
     const icons: Record<string, string> = {
       'vivienda': '🏠',
       'transporte': '🚗',

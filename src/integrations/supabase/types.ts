@@ -815,6 +815,14 @@ export type Database = {
       }
     }
     Functions: {
+      create_default_expense_categories: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
+      create_default_income_categories: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
       insert_bank_connection_secure: {
         Args: {
           p_account_id: string
