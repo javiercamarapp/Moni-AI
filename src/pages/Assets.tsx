@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Building2, CreditCard, Home, Wallet, TrendingUp, Droplet } from "lucide-react";
+import { ArrowLeft, Building2, CreditCard, Home, Wallet, TrendingUp, Droplet, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -239,11 +239,21 @@ export default function Assets() {
 
         {/* Assets List */}
         <div className="space-y-3">
-          <h3 className="text-lg font-bold text-foreground mb-3 drop-shadow-lg">
-            {filter === 'Liquid' ? 'Activos Líquidos' : 
-             filter === 'Fixed' ? 'Activos Fijos' : 
-             'Todos los Activos'}
-          </h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-bold text-foreground drop-shadow-lg">
+              {filter === 'Liquid' ? 'Activos Líquidos' : 
+               filter === 'Fixed' ? 'Activos Fijos' : 
+               'Todos los Activos'}
+            </h3>
+            <Button
+              onClick={() => navigate('/edit-assets-liabilities')}
+              className="bg-white rounded-[16px] shadow-xl hover:bg-white/90 border border-blue-100 h-9 px-3"
+              variant="outline"
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              <span className="text-xs font-medium">Gestionar</span>
+            </Button>
+          </div>
           {displayAssets.map((asset) => {
             const iconName = getIconForCategory(asset.category);
             const Icon = iconMap[iconName];

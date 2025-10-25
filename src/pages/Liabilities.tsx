@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, CreditCard, Home, Building2, AlertCircle } from "lucide-react";
+import { ArrowLeft, CreditCard, Home, Building2, AlertCircle, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -215,11 +215,21 @@ export default function Liabilities() {
 
         {/* Liabilities List */}
         <div className="space-y-3">
-          <h3 className="text-lg font-bold text-foreground mb-3 drop-shadow-lg">
-            {filter === 'Current' ? 'Pasivos Corrientes' : 
-             filter === 'NonCurrent' ? 'Pasivos No Corrientes' : 
-             'Todos los Pasivos'}
-          </h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-bold text-foreground drop-shadow-lg">
+              {filter === 'Current' ? 'Pasivos Corrientes' : 
+               filter === 'NonCurrent' ? 'Pasivos No Corrientes' : 
+               'Todos los Pasivos'}
+            </h3>
+            <Button
+              onClick={() => navigate('/edit-assets-liabilities?tab=liabilities')}
+              className="bg-white rounded-[16px] shadow-xl hover:bg-white/90 border border-blue-100 h-9 px-3"
+              variant="outline"
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              <span className="text-xs font-medium">Gestionar</span>
+            </Button>
+          </div>
           {displayLiabilities.map((liability) => {
             const iconName = getIconForCategory(liability.category);
             const Icon = iconMap[iconName];
