@@ -481,14 +481,7 @@ export default function EditNetWorth() {
                                 )}
                               </div>
                               <div className="flex items-center gap-2">
-                                <Input
-                                  type="text"
-                                  placeholder="Nombre (opcional)"
-                                  value={assetValues[item.id]?.nombre || ""}
-                                  onChange={(e) => updateItemValue(item.id, 'nombre', e.target.value, true)}
-                                  className="flex-1 h-7 text-[10px] bg-white border-gray-200"
-                                />
-                                <div className="relative flex items-center">
+                                <div className="relative flex items-center flex-1">
                                   <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
                                   <Input
                                     type="text"
@@ -499,7 +492,7 @@ export default function EditNetWorth() {
                                       const value = e.target.value.replace(/[^\d]/g, '');
                                       updateItemValue(item.id, 'valor', value, true);
                                     }}
-                                    className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-white border-gray-200"
+                                    className="w-full h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-white border-gray-200"
                                   />
                                 </div>
                               </div>
@@ -619,14 +612,7 @@ export default function EditNetWorth() {
                                 )}
                               </div>
                               <div className="flex items-center gap-2">
-                                <Input
-                                  type="text"
-                                  placeholder="Nombre (opcional)"
-                                  value={liabilityValues[item.id]?.nombre || ""}
-                                  onChange={(e) => updateItemValue(item.id, 'nombre', e.target.value, false)}
-                                  className="flex-1 h-7 text-[10px] bg-white border-gray-200"
-                                />
-                                <div className="relative flex items-center">
+                                <div className="relative flex items-center flex-1">
                                   <span className="absolute left-2 text-[10px] font-semibold text-muted-foreground">$</span>
                                   <Input
                                     type="text"
@@ -637,7 +623,7 @@ export default function EditNetWorth() {
                                       const value = e.target.value.replace(/[^\d]/g, '');
                                       updateItemValue(item.id, 'valor', value, false);
                                     }}
-                                    className="w-24 h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-white border-gray-200"
+                                    className="w-full h-7 text-[10px] text-right font-semibold pl-4 pr-2 bg-white border-gray-200"
                                   />
                                 </div>
                               </div>
