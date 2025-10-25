@@ -68,22 +68,25 @@ export default function Movimientos() {
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="p-4 flex items-center gap-3 border-b border-border/30 bg-card/50 backdrop-blur-sm">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate('/dashboard')}
-          className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-xl font-bold text-foreground">Movimientos</h1>
-          <p className="text-xs text-muted-foreground">Últimos 50 movimientos</p>
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/dashboard')}
+              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 p-0 flex-shrink-0"
+            >
+              <ArrowLeft className="h-4 w-4 text-gray-700" />
+            </Button>
+            <div className="flex-1">
+              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Movimientos</h1>
+              <p className="text-xs text-gray-600">Últimos 50 movimientos</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="mx-auto px-4 py-6 space-y-4" style={{ maxWidth: '600px' }}>
         {/* Resumen */}
         <div className="grid grid-cols-2 gap-3">
           <Card className="p-2 rounded-[16px] shadow-lg border border-gray-200/50 bg-white/70 backdrop-blur-xl hover:shadow-xl hover:scale-105 transition-all duration-300 overflow-hidden relative">
