@@ -27,6 +27,7 @@ export default function Budgets() {
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [totalBudget, setTotalBudget] = useState(0);
   const [currentExpenses, setCurrentExpenses] = useState<Record<string, number>>({});
+  const [isCategorizingExisting, setIsCategorizingExisting] = useState(false);
 
   useEffect(() => {
     checkBudgetQuizStatus();
@@ -173,6 +174,31 @@ export default function Budgets() {
       const withoutCategory = expenseData?.filter(t => t.category_id === null).length || 0;
       console.log(`Transacciones CON categoría: ${withCategory}`);
       console.log(`Transacciones SIN categoría: ${withoutCategory}`);
+
+      // Si hay transacciones sin categoría, categorizarlas automáticamente
+      if (withoutCategory > 0 && !isCategorizingExisting) {
+        console.log('Iniciando categorización automática de transacciones existentes...');
+        setIsCategorizingExisting(true);
+        
+        try {
+          const { data, error } = await supabase.functions.invoke('categorize-existing-transactions');
+          
+          if (error) {
+            console.error('Error categorizando transacciones existentes:', error);
+          } else {
+            console.log('Categorización completada:', data);
+            // Recargar datos después de categorizar
+            setTimeout(() => {
+              loadMonthlyData();
+            }, 2000);
+            return;
+          }
+        } catch (error) {
+          console.error('Error en categorización automática:', error);
+        } finally {
+          setIsCategorizingExisting(false);
+        }
+      }
 
       // Agrupar gastos por categoría principal
       const expensesByCategory: Record<string, number> = {};
@@ -348,23 +374,21 @@ export default function Budgets() {
 
             {/* Lista de Presupuestos en dos columnas */}
             <div className="grid grid-cols-2 gap-2.5">
-              {loadingMonthlyData ? (
-                // Mostrar skeleton loading
-                Array.from({ length: budgets.length }).map((_, i) => (
-                  <Card 
-                    key={i}
-                    className="p-3 bg-white rounded-[15px] shadow-lg border border-blue-100 animate-pulse"
-                  >
-                    <div className="space-y-2">
-                      <div className="text-center">
-                        <div className="h-8 w-8 bg-muted rounded-full mx-auto mb-2"></div>
-                        <div className="h-3 bg-muted rounded w-20 mx-auto"></div>
-                      </div>
-                      <div className="h-2 bg-muted rounded"></div>
-                      <div className="h-3 bg-muted rounded w-16 mx-auto"></div>
+              {loadingMonthlyData || isCategorizingExisting ? (
+                // Mostrar mensaje mientras categoriza
+                <div className="col-span-2">
+                  <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center animate-fade-in">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                      <p className="text-sm font-semibold text-foreground">
+                        🤖 La IA está categorizando tus transacciones
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Analizando gastos del mes para asignar categorías automáticamente...
+                      </p>
                     </div>
                   </Card>
-                ))
+                </div>
               ) : budgets.length === 0 ? (
                 <div className="col-span-2 text-center p-6 text-muted-foreground text-sm">
                   No hay presupuestos configurados
