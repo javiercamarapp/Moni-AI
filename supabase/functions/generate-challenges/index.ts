@@ -145,7 +145,7 @@ serve(async (req) => {
     }
 
     // Generate challenges using AI - 12 retos, uno por categoría
-    const prompt = `Genera EXACTAMENTE 12 retos semanales, UNO POR CADA CATEGORÍA de gasto, analizando presupuesto vs gasto real:
+    const prompt = `Genera EXACTAMENTE 12 retos semanales MEDIBLES Y NUMÉRICOS, UNO POR CADA CATEGORÍA de gasto:
 
 ANÁLISIS DE LAS 12 CATEGORÍAS:
 ${categoriesForChallenges.map(cat => {
@@ -161,29 +161,33 @@ ${categoriesForChallenges.map(cat => {
   • ${status}`;
 }).join('\n\n')}
 
-GENERA UN RETO ESPECÍFICO PARA CADA CATEGORÍA (12 TOTAL):
+GENERA UN RETO MEDIBLE Y VERIFICABLE PARA CADA CATEGORÍA (12 TOTAL):
 
-1. 🏠 **Vivienda**: Reducir servicios (agua, luz, gas)
-2. 🚗 **Transporte**: Combinar viajes, transporte público
-3. 🍽️ **Alimentación**: Cocinar en casa, meal prep
-4. 🧾 **Servicios/Suscripciones**: Cancelar no usadas
-5. 🩺 **Salud**: Prevención, genéricos
-6. 🎓 **Educación**: Recursos gratuitos online
-7. 💳 **Deudas**: Plan de pago acelerado
-8. 🎉 **Entretenimiento**: Opciones gratuitas
-9. 💸 **Ahorro**: Automatizar ahorro
-10. 🤝 **Apoyos**: Revisar necesidad real
-11. 🐾 **Mascotas**: Compras inteligentes
-12. ❓ **No identificados**: Categorizar y reducir
+EJEMPLOS DE RETOS MEDIBLES:
+1. 🏠 **Vivienda**: "No gastes más de $X esta semana en servicios"
+2. 🚗 **Transporte**: "Limita tu gasto de transporte a $X esta semana"
+3. 🍽️ **Alimentación**: "Gasta máximo $X en comidas fuera de casa esta semana"
+4. 🧾 **Servicios**: "Mantén tus suscripciones bajo $X esta semana"
+5. 🩺 **Salud**: "No gastes más de $X en salud esta semana"
+6. 🎓 **Educación**: "Limita gastos educativos a $X esta semana"
+7. 💳 **Deudas**: "Mantén pagos de deuda en $X esta semana"
+8. 🎉 **Entretenimiento**: "Gasta máximo $X en diversión esta semana"
+9. 💸 **Ahorro**: "Ahorra mínimo $X esta semana"
+10. 🤝 **Apoyos**: "Limita apoyos a $X esta semana"
+11. 🐾 **Mascotas**: "Gasta máximo $X en mascotas esta semana"
+12. ❓ **No identificados**: "Mantén gastos sin categorizar bajo $X esta semana"
 
-REGLAS CRÍTICAS:
+REGLAS CRÍTICAS PARA RETOS MEDIBLES:
 - Genera EXACTAMENTE 12 retos (uno por categoría)
-- Si una categoría no tiene gastos, igual genera un reto preventivo
-- Meta semanal = 30-50% menos del gasto actual (o $50-200 si no hay gastos)
-- Tips PRÁCTICOS específicos de la categoría
-- Lenguaje motivador tipo "misión" o "desafío"
+- TODOS los retos DEBEN ser numéricos y verificables
+- Meta semanal = cantidad específica en pesos (30-50% menos del gasto actual)
+- Si no hay gastos, meta de $50-200 según la categoría
+- NO sugieras acciones cualitativas como "apaga la luz" o "cierra la llave"
+- SOLO metas de gasto máximo o ahorro mínimo que se puedan medir
+- Formato: "Gasta máximo $X en [categoría]" o "Mantén [categoría] bajo $X"
+- Tips PRÁCTICOS de cómo lograrlo (meal prep, transporte compartido, etc.)
 
-FORMATO: título motivador, descripción con 2-3 tips accionables, categoría exacta, meta semanal en pesos.`;
+FORMATO: título con meta numérica, descripción con 2-3 tips específicos, categoría exacta, meta semanal en pesos.`;
 
     console.log('🤖 Llamando a Lovable AI para generar retos...');
 
