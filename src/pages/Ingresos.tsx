@@ -88,10 +88,11 @@ const Ingresos = () => {
         endDate = new Date(currentMonth.getFullYear(), 11, 31);
       }
 
-      // Fetch ALL transactions with proper pagination (same as Balance page)
+      // Fetch ALL transactions with proper pagination (sin límite máximo)
       let allTransactions: any[] = [];
       let hasMore = true;
       let lastId: string | null = null;
+      let pageCount = 0;
       
       while (hasMore) {
         let query = supabase
@@ -118,6 +119,8 @@ const Ingresos = () => {
         allTransactions = [...allTransactions, ...pageData];
         lastId = pageData[pageData.length - 1].id;
         hasMore = pageData.length === 10000;
+        pageCount++;
+        console.log(`📄 Ingresos Page ${pageCount}: ${pageData.length} loaded`);
       }
       
       // Sort by date descending for display

@@ -326,10 +326,11 @@ const Balance = () => {
       // Create a map for quick category lookup
       const categoryMap = new Map(allCategories?.map(cat => [cat.id, cat]) || []);
 
-      // Fetch ALL transactions with proper pagination
+      // Fetch ALL transactions with proper pagination (sin límite máximo)
       let allTransactions: any[] = [];
       let hasMore = true;
       let lastId: string | null = null;
+      let pageCount = 0;
       
       while (hasMore) {
         let query = supabase
@@ -361,6 +362,8 @@ const Balance = () => {
         allTransactions = [...allTransactions, ...pageData];
         lastId = pageData[pageData.length - 1].id;
         hasMore = pageData.length === 10000; // Continue if we got full page
+        pageCount++;
+        console.log(`📄 Page ${pageCount}: ${pageData.length} transactions loaded`);
       }
       
       const transactions = allTransactions;
@@ -374,7 +377,7 @@ const Balance = () => {
       });
       console.log('Total transactions fetched:', transactions.length);
 
-      // Process ingresos with AI categorization
+      // Process ingresos - usar categorías existentes directamente (más rápido)
       const ingresosData = transactions.filter(t => t.type === 'ingreso');
       const totalIng = ingresosData.reduce((sum, t) => sum + Number(t.amount), 0);
       setTotalIngresos(totalIng);
@@ -383,42 +386,11 @@ const Balance = () => {
       console.log('Ingresos count:', ingresosData.length);
       console.log('Total Ingresos:', totalIng);
       
-      // Categorize income with AI - Solo si hay menos de 100 transacciones para evitar timeouts
-      let categorizedIncome: any[] = [];
-      if (ingresosData.length > 0 && ingresosData.length <= 100) {
-        try {
-          console.log('🤖 Categorizando', ingresosData.length, 'ingresos con IA...');
-          const { data: aiResult, error: aiError } = await supabase.functions.invoke('categorize-income', {
-            body: { transactions: ingresosData }
-          });
-          
-          if (aiError) {
-            console.error('Error categorizando ingresos con IA:', aiError);
-            // Fallback: use existing categories
-            categorizedIncome = ingresosData.map(t => ({
-              ...t,
-              category: t.categories?.name || '💼 Salario / Sueldo'
-            }));
-          } else {
-            categorizedIncome = aiResult.categorizedIncome;
-            console.log('✅ Ingresos categorizados con IA');
-          }
-        } catch (error) {
-          console.error('Error en categorización de ingresos:', error);
-          // Fallback: use existing categories
-          categorizedIncome = ingresosData.map(t => ({
-            ...t,
-            category: t.categories?.name || '💼 Salario / Sueldo'
-          }));
-        }
-      } else {
-        // Si hay muchos ingresos, usar categorías existentes directamente
-        console.log('📊 Usando categorías existentes para', ingresosData.length, 'ingresos');
-        categorizedIncome = ingresosData.map(t => ({
-          ...t,
-          category: t.categories?.name || '💼 Salario / Sueldo'
-        }));
-      }
+      // Usar categorías existentes de la BD (mucho más rápido que IA)
+      const categorizedIncome = ingresosData.map(t => ({
+        ...t,
+        category: t.categories?.name || '💼 Salario / Sueldo'
+      }));
       
       // Group by AI-detected category
       const ingresosCategoryMap = new Map<string, {
