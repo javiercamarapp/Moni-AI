@@ -335,27 +335,6 @@ export default function Budgets() {
           </Button>
         </div>
 
-        {/* Botón de recategorización si hay gastos no identificados */}
-        {hasUnidentifiedExpenses && (
-          <Card className="p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-[20px] shadow-xl border border-amber-200 animate-fade-in">
-            <div className="flex items-center gap-3">
-              <div className="text-2xl">🤖</div>
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-foreground">Gastos sin categorizar</p>
-                <p className="text-xs text-muted-foreground">La IA puede categorizarlos automáticamente</p>
-              </div>
-              <Button
-                onClick={handleRecategorize}
-                disabled={isRecategorizing}
-                className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-[15px] shadow-lg hover:scale-105 active:scale-95 transition-all"
-                size="sm"
-              >
-                {isRecategorizing ? "Categorizando..." : "Categorizar"}
-              </Button>
-            </div>
-          </Card>
-        )}
-
         {budgets.length === 0 ? (
           <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center animate-fade-in hover:scale-[1.02] active:scale-[0.98] transition-all">
             <div className="text-5xl mb-4 animate-pulse">📊</div>
