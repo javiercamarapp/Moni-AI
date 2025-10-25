@@ -418,20 +418,20 @@ const Balance = () => {
   }
   return <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="px-4 pt-4 pb-2">
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm p-4">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate('/dashboard')}
-              className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white transition-all h-10 w-10"
+              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
             >
-              <ArrowLeft className="h-5 w-5 text-gray-900" />
+              <ArrowLeft className="h-4 w-4 text-gray-700" />
             </Button>
             <div className="flex-1">
-              <h1 className="text-xl font-semibold tracking-tight text-gray-900">Análisis de Balance</h1>
-              <p className="text-xs text-gray-600">Ingresos y Gastos</p>
+              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Análisis de Balance</h1>
+              <p className="text-xs text-gray-500">Ingresos y Gastos</p>
             </div>
           </div>
         </div>

@@ -303,21 +303,23 @@ const Ingresos = () => {
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="p-4 flex items-center gap-3 border-b border-gray-100 bg-white/80 backdrop-blur-sm shadow-sm">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate('/balance')}
-          className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white transition-all h-10 w-10"
-        >
-          <ArrowLeft className="h-5 w-5 text-gray-900" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-xl font-semibold tracking-tight text-gray-900">Tus Ingresos</h1>
-          <p className="text-xs text-gray-600">Gestiona tus entradas</p>
-        </div>
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/balance')}
+              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
+            >
+              <ArrowLeft className="h-4 w-4 text-gray-700" />
+            </Button>
+            <div className="flex-1">
+              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Tus Ingresos</h1>
+              <p className="text-xs text-gray-500">Gestiona tus entradas</p>
+            </div>
 
-        <div className="flex gap-2">
+            <div className="flex gap-2">
           <Button
             size="icon"
             onClick={handleWhatsAppRegister}
@@ -489,6 +491,8 @@ const Ingresos = () => {
           >
             <Sliders className="h-4 w-4 text-foreground" />
           </Button>
+        </div>
+          </div>
         </div>
       </div>
 
