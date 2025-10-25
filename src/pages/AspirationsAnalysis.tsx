@@ -477,19 +477,27 @@ export default function AspirationsAnalysis() {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-4">
-      <div className="container mx-auto px-4 py-6 max-w-2xl">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/financial-journey")}
-            className="bg-white/80 backdrop-blur-md rounded-[20px] shadow-lg hover:bg-white text-foreground h-10 w-10 hover:scale-105 transition-all border border-gray-200/50"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-xl font-bold text-foreground">Análisis de Aspiraciones</h1>
+      {/* Header con estilo sticky */}
+      <div className="sticky top-0 z-50 bg-gradient-to-r from-blue-50/80 via-purple-50/80 to-pink-50/80 backdrop-blur-md border-b border-white/20 shadow-sm">
+        <div className="container mx-auto px-4 py-4 max-w-2xl">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/financial-journey")}
+              className="bg-white/80 backdrop-blur-md rounded-[20px] shadow-lg hover:bg-white text-foreground h-10 w-10 hover:scale-105 transition-all border border-gray-200/50"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div className="flex-1">
+              <h1 className="text-xl font-bold text-foreground">Análisis de Aspiraciones</h1>
+              <p className="text-xs text-muted-foreground">Compara tu progreso financiero</p>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-6 max-w-2xl">
 
         {/* Net Worth Comparison Card */}
         <Card className="p-3 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
