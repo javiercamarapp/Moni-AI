@@ -1235,7 +1235,7 @@ const Dashboard = () => {
                 <CreditCard className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-foreground" />
               </div>
               <div className="flex-1 min-w-0 text-center sm:text-left">
-                <p className="text-[9px] sm:text-xs text-foreground/80 leading-tight">Presupuestos</p>
+                <p className="text-[9px] sm:text-xs text-foreground/80 leading-tight">Presupuesto Mensual</p>
                 <p className="text-xs sm:text-base font-bold text-foreground leading-tight">
                   ${totalBudget > 0 ? (totalBudget / 1000).toFixed(0) : 0}k
                 </p>
