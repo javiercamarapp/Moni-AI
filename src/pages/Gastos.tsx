@@ -342,18 +342,18 @@ const Gastos = () => {
   return (
     <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="p-4 flex items-center gap-3 border-b border-border/30 bg-card/50 backdrop-blur-sm">
+      <div className="p-4 flex items-center gap-3 border-b border-gray-100 bg-white/80 backdrop-blur-sm shadow-sm">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => navigate('/balance')}
-          className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
+          className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white transition-all h-10 w-10"
         >
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-5 w-5 text-gray-900" />
         </Button>
         <div className="flex-1">
-          <h1 className="text-xl font-bold text-foreground">Tus Gastos</h1>
-          <p className="text-xs text-muted-foreground">Gestiona tus salidas</p>
+          <h1 className="text-xl font-semibold tracking-tight text-gray-900">Tus Gastos</h1>
+          <p className="text-xs text-gray-600">Gestiona tus salidas</p>
         </div>
 
         <div className="flex gap-2">
@@ -570,16 +570,16 @@ const Gastos = () => {
 
       <div className="px-4 space-y-4">
         {/* Total de gastos destacado */}
-        <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-red-100 animate-fade-in">
+        <Card className="p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 animate-fade-in">
           <div className="flex items-start gap-3 mb-4">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-red-500/20">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-red-500/10">
               <TrendingDown className="h-6 w-6 text-red-600" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-foreground/60 mb-1 font-medium">
+              <p className="text-sm text-gray-600 mb-1 font-medium">
                 Total de Gastos {viewMode === 'mensual' ? 'Mensuales' : 'Anuales'}
               </p>
-              <p className="text-3xl sm:text-4xl font-bold leading-tight break-words text-red-600">
+              <p className="text-3xl sm:text-4xl font-semibold tracking-tight leading-tight break-words text-red-600">
                 ${totalGastos.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
               </p>
             </div>
@@ -587,8 +587,8 @@ const Gastos = () => {
           
           <div className="space-y-2 mb-4">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-foreground/60">Transacciones:</span>
-              <span className="text-lg font-bold text-foreground">{transactions.length}</span>
+              <span className="text-sm text-gray-600">Transacciones:</span>
+              <span className="text-lg font-semibold tracking-tight text-gray-900">{transactions.length}</span>
             </div>
           </div>
           
@@ -596,7 +596,7 @@ const Gastos = () => {
           <div>
             <Button 
               variant="ghost" 
-              className="w-full bg-muted/50 hover:bg-muted rounded-[20px] text-foreground transition-all h-auto py-3 px-4 text-xs font-semibold flex items-center justify-center"
+              className="w-full bg-gray-50 hover:bg-gray-100 rounded-2xl text-gray-900 transition-all h-auto py-3 px-4 text-xs font-semibold tracking-tight flex items-center justify-center"
               onClick={async () => {
                 try {
                   const { data: { user } } = await supabase.auth.getUser();
@@ -678,7 +678,7 @@ const Gastos = () => {
         {/* Lista de transacciones */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <h3 className="text-lg font-semibold tracking-tight text-gray-900 flex items-center gap-2">
               <TrendingDown className="h-5 w-5 text-destructive" />
               Historial de Gastos
             </h3>
@@ -696,8 +696,8 @@ const Gastos = () => {
           </div>
           
           {transactions.length === 0 ? (
-            <Card className="p-6 bg-white rounded-[20px] shadow-xl text-center border border-blue-100">
-              <p className="text-muted-foreground">No hay gastos registrados este mes</p>
+            <Card className="p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm text-center border-0">
+              <p className="text-gray-600">No hay gastos registrados este mes</p>
             </Card>
           ) : (
             [...transactions].sort((a, b) => {
@@ -720,7 +720,7 @@ const Gastos = () => {
               return (
                 <Card 
                   key={item.id} 
-                  className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all animate-fade-in active:scale-95 cursor-pointer"
+                  className="p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 hover:scale-105 transition-all animate-fade-in active:scale-95 cursor-pointer"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div className="flex items-center gap-2">

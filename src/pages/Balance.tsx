@@ -418,20 +418,20 @@ const Balance = () => {
   }
   return <div className="min-h-screen animated-wave-bg pb-20">
       {/* Header */}
-      <div className="bg-background/95 backdrop-blur-sm sticky top-0 z-40">
+      <div className="bg-white/80 backdrop-blur-sm sticky top-0 z-40 shadow-sm border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate('/dashboard')}
-              className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
+              className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white transition-all h-10 w-10"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-5 w-5 text-gray-900" />
             </Button>
             <div className="flex-1">
-              <h1 className="text-xl font-bold text-foreground">Análisis de Balance</h1>
-              <p className="text-xs text-muted-foreground">Ingresos y Gastos</p>
+              <h1 className="text-xl font-semibold tracking-tight text-gray-900">Análisis de Balance</h1>
+              <p className="text-xs text-gray-600">Ingresos y Gastos</p>
             </div>
           </div>
         </div>
@@ -440,11 +440,11 @@ const Balance = () => {
       {/* Toggle Mensual/Anual */}
       <div className="px-4 mb-4">
         <Tabs value={viewMode} onValueChange={v => setViewMode(v as 'mensual' | 'anual')} className="w-full">
-          <TabsList className="w-full bg-card/70 backdrop-blur-sm border border-border/30">
-            <TabsTrigger value="mensual" className="flex-1 data-[state=active]:bg-accent text-foreground transition-all">
+          <TabsList className="w-full bg-white/80 backdrop-blur-sm shadow-sm border-0 rounded-2xl">
+            <TabsTrigger value="mensual" className="flex-1 data-[state=active]:bg-white data-[state=active]:shadow-sm text-gray-600 data-[state=active]:text-gray-900 transition-all rounded-xl">
               Mensual
             </TabsTrigger>
-            <TabsTrigger value="anual" className="flex-1 data-[state=active]:bg-accent text-foreground transition-all">
+            <TabsTrigger value="anual" className="flex-1 data-[state=active]:bg-white data-[state=active]:shadow-sm text-gray-600 data-[state=active]:text-gray-900 transition-all rounded-xl">
               Anual
             </TabsTrigger>
           </TabsList>
@@ -454,34 +454,34 @@ const Balance = () => {
       {/* Período selector */}
       <div className="px-4 mb-4">
         <div className="flex items-center justify-between">
-          <Button variant="ghost" size="icon" onClick={handlePreviousPeriod} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10">
-            <ChevronLeft className="h-5 w-5" />
+          <Button variant="ghost" size="icon" onClick={handlePreviousPeriod} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white transition-all h-10 w-10">
+            <ChevronLeft className="h-5 w-5 text-gray-900" />
           </Button>
           
-          <div className="bg-white rounded-[20px] shadow-xl px-4 py-2 border border-blue-100">
-            <p className="text-foreground font-medium capitalize text-center">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm px-4 py-2">
+            <p className="text-gray-900 font-semibold tracking-tight capitalize text-center">
               {getPeriodLabel()}
             </p>
           </div>
 
-          <Button variant="ghost" size="icon" onClick={handleNextPeriod} className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10">
-            <ChevronRight className="h-5 w-5" />
+          <Button variant="ghost" size="icon" onClick={handleNextPeriod} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white transition-all h-10 w-10">
+            <ChevronRight className="h-5 w-5 text-gray-900" />
           </Button>
         </div>
       </div>
 
       <div className="px-4 space-y-4">
         {/* Ahorro destacado */}
-        <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in">
+        <Card className="p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 animate-fade-in">
           <div className="flex items-start gap-3 mb-4">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${ahorro >= 0 ? 'bg-emerald-500/20' : 'bg-red-500/20'}`}>
-              <Wallet className={`h-6 w-6 ${ahorro >= 0 ? 'text-emerald-600' : 'text-destructive'}`} />
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${ahorro >= 0 ? 'bg-emerald-500/10' : 'bg-red-500/10'}`}>
+              <Wallet className={`h-6 w-6 ${ahorro >= 0 ? 'text-emerald-600' : 'text-red-600'}`} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-foreground/60 mb-1 font-medium">
+              <p className="text-sm text-gray-600 mb-1 font-medium">
                 Ahorro {viewMode === 'mensual' ? 'Mensual' : 'Anual'}
               </p>
-              <p className={`text-3xl sm:text-4xl font-bold leading-tight break-words ${ahorro >= 0 ? 'text-emerald-600' : 'text-destructive'}`}>
+              <p className={`text-3xl sm:text-4xl font-semibold tracking-tight leading-tight break-words ${ahorro >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
                 ${ahorro.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
               </p>
             </div>
@@ -489,19 +489,19 @@ const Balance = () => {
           
           <div className="space-y-2 mb-4">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-foreground/60">Tasa de ahorro:</span>
-              <span className="text-lg font-bold text-foreground">{tasaAhorro.toFixed(1)}%</span>
+              <span className="text-sm text-gray-600">Tasa de ahorro:</span>
+              <span className="text-lg font-semibold tracking-tight text-gray-900">{tasaAhorro.toFixed(1)}%</span>
             </div>
             <Progress 
               value={tasaAhorro} 
               className="h-2.5 bg-transparent" 
-              indicatorClassName={ahorro >= 0 ? "bg-emerald-600" : "bg-destructive"}
+              indicatorClassName={ahorro >= 0 ? "bg-emerald-600" : "bg-red-600"}
             />
           </div>
           
           {/* Botón de descarga de PDF */}
           <div>
-            <Button variant="ghost" className="w-full bg-muted/50 hover:bg-muted rounded-[20px] text-foreground transition-all h-auto py-3 px-4 text-xs font-semibold flex items-center justify-center" onClick={async () => {
+            <Button variant="ghost" className="w-full bg-gray-50 hover:bg-gray-100 rounded-2xl text-gray-900 transition-all h-auto py-3 px-4 text-xs font-semibold tracking-tight flex items-center justify-center" onClick={async () => {
             try {
               // Get current user
               const {
@@ -618,13 +618,13 @@ const Balance = () => {
         </div>
 
         {/* Ingresos por categoría */}
-        <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-blue-100 overflow-hidden animate-fade-in">
-          <div className="flex items-center gap-2 mb-2">
+        <Card className="p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 overflow-hidden animate-fade-in">
+          <div className="flex items-center gap-2 mb-4">
             <TrendingUp className="h-5 w-5 text-success" />
-            <h3 className="text-lg font-semibold text-card-foreground">Ingresos por Categoría</h3>
+            <h3 className="text-lg font-semibold tracking-tight text-gray-900">Ingresos por Categoría</h3>
           </div>
           
-          {ingresosByCategory.length === 0 ? <p className="text-card-foreground/70 text-center py-4">No hay ingresos registrados</p> : <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {ingresosByCategory.length === 0 ? <p className="text-gray-600 text-center py-4">No hay ingresos registrados</p> : <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Gráfica */}
               <div className="w-full h-[280px] md:h-[320px] flex items-center justify-center">
                 <ResponsiveContainer width="100%" height="100%">
@@ -678,13 +678,13 @@ const Balance = () => {
         </Card>
 
         {/* Gastos por categoría */}
-        <Card className="p-5 bg-white rounded-[20px] shadow-xl border border-blue-100 overflow-hidden animate-fade-in">
-          <div className="flex items-center gap-2 mb-2">
+        <Card className="p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 overflow-hidden animate-fade-in">
+          <div className="flex items-center gap-2 mb-4">
             <TrendingDown className="h-5 w-5 text-destructive" />
-            <h3 className="text-lg font-semibold text-card-foreground">Gastos por Categoría</h3>
+            <h3 className="text-lg font-semibold tracking-tight text-gray-900">Gastos por Categoría</h3>
           </div>
           
-          {gastosByCategory.length === 0 ? <p className="text-card-foreground/70 text-center py-4">No hay gastos registrados</p> : <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {gastosByCategory.length === 0 ? <p className="text-gray-600 text-center py-4">No hay gastos registrados</p> : <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Gráfica */}
               <div className="w-full h-[280px] md:h-[320px] flex items-center justify-center">
                 <ResponsiveContainer width="100%" height="100%">
