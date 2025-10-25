@@ -179,9 +179,6 @@ const DEFAULT_CATEGORIES: Category[] = [
     insight: 'Crea tu propia categoría para gastos específicos',
     subcategories: [
       { id: 'personalizado_1', name: 'Concepto 1' },
-      { id: 'personalizado_2', name: 'Concepto 2' },
-      { id: 'personalizado_3', name: 'Concepto 3' },
-      { id: 'personalizado_4', name: 'Concepto 4' },
     ]
   },
 ];
