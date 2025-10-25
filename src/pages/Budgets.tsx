@@ -445,10 +445,10 @@ export default function Budgets() {
                   return (
                     <Card 
                       key={budget.id} 
-                      className={`p-3 rounded-[15px] shadow-lg border-2 hover:scale-105 active:scale-95 transition-all animate-fade-in cursor-pointer ${
-                        isCritical ? 'bg-red-500 border-red-600' :
-                        isWarning ? 'bg-yellow-400 border-yellow-500' :
-                        'bg-green-500 border-green-600'
+                      className={`p-2 rounded-[12px] shadow-lg border hover:scale-105 active:scale-95 transition-all animate-fade-in cursor-pointer ${
+                        isCritical ? 'bg-gradient-to-br from-rose-50 to-rose-100 border-rose-200' :
+                        isWarning ? 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200' :
+                        'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200'
                       }`}
                       style={{ animationDelay: `${index * 0.1}s` }}
                       onClick={() => {
@@ -456,38 +456,44 @@ export default function Budgets() {
                         navigate(`/category-expenses?category=${budget.category.name}`);
                       }}
                     >
-                      <div className="space-y-2">
-                        <div className="text-center">
-                          <span className="text-2xl">{getCategoryIcon(budget.category.name)}</span>
-                          <p className="text-[10px] font-bold text-white leading-tight">{budget.category.name}</p>
-                        </div>
-
-                        <div className="space-y-1">
-                          <Progress 
-                            value={Math.min(percentUsed, 100)} 
-                            className="h-1.5 bg-white/30"
-                          />
-                          <p className="text-[9px] text-center font-bold text-white">
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1">
+                            <span className="text-lg">{getCategoryIcon(budget.category.name)}</span>
+                            <p className={`text-[9px] font-bold leading-tight ${
+                              isCritical ? 'text-rose-700' :
+                              isWarning ? 'text-amber-700' :
+                              'text-emerald-700'
+                            }`}>{budget.category.name}</p>
+                          </div>
+                          <p className={`text-[8px] font-bold ${
+                            isCritical ? 'text-rose-600' :
+                            isWarning ? 'text-amber-600' :
+                            'text-emerald-600'
+                          }`}>
                             {percentUsed.toFixed(0)}%
                           </p>
                         </div>
 
-                        <div className="text-center space-y-0.5">
-                          <p className="text-[8px] text-white/90 leading-tight">
-                            ${spent.toLocaleString()} / ${budgetAmount.toLocaleString()}
-                          </p>
-                          <p className="text-[9px] font-bold leading-tight text-white">
-                            {percentUsed < 100 
-                              ? `Quedan $${remaining.toLocaleString()}` 
-                              : `Excedido $${Math.abs(remaining).toLocaleString()}`
-                            }
-                          </p>
-                        </div>
+                        <Progress 
+                          value={Math.min(percentUsed, 100)} 
+                          className={`h-1 ${
+                            isCritical ? 'bg-rose-200' :
+                            isWarning ? 'bg-amber-200' :
+                            'bg-emerald-200'
+                          }`}
+                        />
 
-                        {/* Botón de estado */}
-                        <div className="rounded-[10px] p-1.5 bg-white/20 border-2 border-white/40">
-                          <p className="text-[9px] font-bold text-center leading-tight text-white">
-                            {isCritical ? '⚠️ Mal' : isWarning ? '⚡ Cuidado' : '✅ Muy Bien'}
+                        <div className="flex items-center justify-between">
+                          <p className="text-[7px] text-muted-foreground leading-tight">
+                            ${spent.toLocaleString()}
+                          </p>
+                          <p className={`text-[7px] font-semibold leading-tight ${
+                            isCritical ? 'text-rose-700' :
+                            isWarning ? 'text-amber-700' :
+                            'text-emerald-700'
+                          }`}>
+                            {isCritical ? '⚠️ Mal' : isWarning ? '⚡ Cuidado' : '✅ Bien'}
                           </p>
                         </div>
                       </div>
