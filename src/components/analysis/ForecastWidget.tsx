@@ -220,7 +220,7 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
         {hasData && avgMonthlySavings6M !== undefined && avgMonthlySavings6M > 0 && (
           <div className="text-center pt-2">
             <p className="text-[10px] text-gray-500">
-              Esta proyección se basa en tu promedio mensual de ahorro de los últimos 6 meses (incluye mes actual): 
+              Esta proyección se basa en tu promedio mensual de ahorro de los últimos 6 meses completados: 
               <span className="font-semibold text-gray-700">
                 {" "}${Math.round(avgMonthlySavings6M).toLocaleString('es-MX')}
               </span>

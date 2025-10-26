@@ -576,21 +576,21 @@ Ejemplo formato:
     const start10Years = new Date(now);
     start10Years.setFullYear(start10Years.getFullYear() - 10);
     
-    // Usar el final del mes actual para incluir TODAS las transacciones del mes en curso
-    const endOfCurrentMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    // Usar el final del mes ANTERIOR para excluir el mes actual incompleto
+    const endOfPreviousMonth = new Date(now.getFullYear(), now.getMonth(), 0);
     
-    console.log('📊 Obteniendo transacciones históricas desde:', start10Years.toISOString().split('T')[0], 'hasta:', endOfCurrentMonth.toISOString().split('T')[0]);
+    console.log('📊 Obteniendo transacciones históricas desde:', start10Years.toISOString().split('T')[0], 'hasta:', endOfPreviousMonth.toISOString().split('T')[0]);
     
     const { data: historicalTxs } = await supabase
       .from('transactions')
       .select('*')
       .eq('user_id', userId)
       .gte('transaction_date', start10Years.toISOString().split('T')[0])
-      .lte('transaction_date', endOfCurrentMonth.toISOString().split('T')[0]);
+      .lte('transaction_date', endOfPreviousMonth.toISOString().split('T')[0]);
     
     console.log('📊 Transacciones históricas encontradas:', historicalTxs?.length || 0);
     
-    // Agrupar por mes y calcular balance mensual (incluye mes actual)
+    // Agrupar por mes y calcular balance mensual (EXCLUYE mes actual)
     const monthlyData: Record<string, { income: number; expenses: number }> = {};
     
     historicalTxs?.forEach(tx => {
