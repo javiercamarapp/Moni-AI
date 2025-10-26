@@ -191,7 +191,7 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
                 return `$${Math.round(value / 1000)}k`;
               })()}
             </p>
-            <p className="text-[7px] text-gray-500 mt-0.5">(ahorro mín. esperado)</p>
+            <p className="text-[7px] text-gray-500 mt-0.5">(75% ahorro promedio)</p>
           </div>
           <div className="bg-purple-50 rounded-lg p-1.5 border border-purple-200">
             <p className="text-[8px] text-purple-700 font-medium">Realista</p>
@@ -202,7 +202,7 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
                 return `$${Math.round(value / 1000)}k`;
               })()}
             </p>
-            <p className="text-[7px] text-gray-500 mt-0.5">(basado en tu promedio)</p>
+            <p className="text-[7px] text-gray-500 mt-0.5">(ahorro histórico promedio)</p>
           </div>
           <div className="bg-emerald-50 rounded-lg p-1.5 border border-emerald-200">
             <p className="text-[8px] text-emerald-700 font-medium">Óptimo</p>
@@ -213,7 +213,7 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
                 return `$${Math.round(value / 1000)}k`;
               })()}
             </p>
-            <p className="text-[7px] text-gray-500 mt-0.5">(si mejoras 20%)</p>
+            <p className="text-[7px] text-gray-500 mt-0.5">(+20% del promedio)</p>
           </div>
           </div>
         )}

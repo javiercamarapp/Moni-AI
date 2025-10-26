@@ -625,17 +625,18 @@ Ejemplo formato:
     const last60Months = completedMonthsBalances.slice(0, 60);
     const last120Months = completedMonthsBalances.slice(0, 120);
     
+    // Solo usar meses con datos para calcular el promedio real
     const avgMonthlySavings12M = last12Months.length > 0
       ? last12Months.reduce((sum, m) => sum + m.balance, 0) / last12Months.length
-      : balance;
+      : 0; // Si no hay datos, 0 en vez de usar balance actual
     
     const avgMonthlySavings60M = last60Months.length > 0
       ? last60Months.reduce((sum, m) => sum + m.balance, 0) / last60Months.length
-      : avgMonthlySavings12M;
+      : avgMonthlySavings12M; // Fallback a 12 meses si no hay 60
     
     const avgMonthlySavings120M = last120Months.length > 0
       ? last120Months.reduce((sum, m) => sum + m.balance, 0) / last120Months.length
-      : avgMonthlySavings60M;
+      : avgMonthlySavings60M; // Fallback a 60 meses si no hay 120
     
     console.log('📊 Promedios calculados por horizonte:', {
       promedio12Meses: Math.round(avgMonthlySavings12M),
@@ -683,9 +684,9 @@ Ejemplo formato:
       
       forecastData.push({
         month: monthLabel,
-        conservative: Math.max(0, accumulatedSavings * 0.7),
-        realistic: accumulatedSavings,
-        optimistic: accumulatedSavings * 1.3
+        conservative: Math.max(0, accumulatedSavings * 0.75), // Escenario conservador: 75% del promedio
+        realistic: accumulatedSavings, // Escenario realista: promedio histórico
+        optimistic: accumulatedSavings * 1.2 // Escenario óptimo: 20% más del promedio
       });
     }
     
