@@ -294,9 +294,9 @@ export default function EditAspirations() {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-32">
-      <div className="container mx-auto px-4 py-6 max-w-2xl">
-        {/* Header */}
-        <div className="mb-6">
+      {/* Header */}
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm mb-6">
+        <div className="container mx-auto px-4 py-4 max-w-2xl">
           <div className="flex items-center gap-3 mb-2">
             <Button
               onClick={() => navigate(-1)}
@@ -315,6 +315,9 @@ export default function EditAspirations() {
             Modifica tus metas financieras cuando lo necesites
           </p>
         </div>
+      </div>
+
+      <div className="container mx-auto px-4 max-w-2xl">
 
         <div className="space-y-6">
           {/* Bienes Raíces */}
