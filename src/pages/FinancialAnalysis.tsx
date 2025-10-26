@@ -969,49 +969,49 @@ export default function FinancialAnalysis() {
                       </p>
                     </Card>
                   </DialogTrigger>
-                  <DialogContent className="max-w-sm rounded-3xl bg-white/95 backdrop-blur-xl border-0 shadow-2xl">
+                  <DialogContent className="max-w-xs rounded-3xl bg-white/95 backdrop-blur-xl border-0 shadow-2xl">
                     <DialogHeader>
-                      <DialogTitle className="flex items-center gap-2 text-lg">
-                        <div className="p-2 bg-blue-100 rounded-xl">
-                          <Droplets className="h-4 w-4 text-blue-600" />
+                      <DialogTitle className="flex items-center gap-2 text-base">
+                        <div className="p-1.5 bg-blue-100 rounded-lg">
+                          <Droplets className="h-3.5 w-3.5 text-blue-600" />
                         </div>
-                        <span className="font-bold">Liquidez Financiera</span>
+                        <span className="font-bold">Liquidez</span>
                       </DialogTitle>
                     </DialogHeader>
-                    <div className="space-y-3 text-sm">
-                      <p className="text-muted-foreground leading-relaxed text-xs">
-                        Mide cuántos meses podrías mantener tu estilo de vida actual sin ingresos.
+                    <div className="space-y-2.5 text-sm">
+                      <p className="text-muted-foreground leading-relaxed text-[11px]">
+                        Mide cuántos meses podrías mantener tu estilo de vida sin ingresos.
                       </p>
                       
-                      <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-2xl space-y-2 border border-blue-100">
-                        <p className="text-xs font-medium text-muted-foreground">Tu liquidez actual</p>
-                        <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-3 rounded-2xl space-y-1.5 border border-blue-100">
+                        <p className="text-[10px] font-medium text-muted-foreground">Tu liquidez actual</p>
+                        <p className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                           {(analysis?.metrics?.liquidityMonths || 0).toFixed(1)} meses
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-[10px] text-muted-foreground">
                           {(analysis?.metrics?.liquidityMonths || 0) >= 3 
-                            ? '✅ Colchón financiero saludable' 
+                            ? '✅ Colchón saludable' 
                             : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 
-                            ? '⚠️ Considera aumentar tu fondo' 
-                            : '🚨 Mejora tu liquidez urgentemente'}
+                            ? '⚠️ Aumenta tu fondo' 
+                            : '🚨 Mejora urgentemente'}
                         </p>
                       </div>
 
-                      <div className="space-y-2">
-                        <p className="text-xs font-semibold text-foreground">Cálculo</p>
-                        <div className="bg-white/80 p-3 rounded-xl border border-gray-100">
-                          <p className="text-xs font-mono text-center text-muted-foreground">
+                      <div className="space-y-1.5">
+                        <p className="text-[11px] font-semibold text-foreground">Cálculo</p>
+                        <div className="bg-white/80 p-2.5 rounded-xl border border-gray-100">
+                          <p className="text-[10px] font-mono text-center text-muted-foreground">
                             Balance ÷ Gastos mensuales
                           </p>
-                          <p className="text-xs text-center text-muted-foreground mt-1">
+                          <p className="text-[10px] text-center text-muted-foreground mt-0.5">
                             ${formatK(analysis?.metrics?.balance)}k ÷ ${formatK((analysis?.metrics?.totalExpenses || 0) / 12)}k/mes
                           </p>
                         </div>
                       </div>
 
-                      <div className="bg-amber-50 border border-amber-100 p-3 rounded-xl">
-                        <p className="text-xs text-amber-900">
-                          <strong>💡 Tip:</strong> Lo ideal es tener 3-6 meses de gastos para emergencias.
+                      <div className="bg-amber-50 border border-amber-100 p-2 rounded-xl">
+                        <p className="text-[10px] text-amber-900">
+                          <strong>💡 Tip:</strong> Ideal: 3-6 meses de gastos.
                         </p>
                       </div>
                     </div>
