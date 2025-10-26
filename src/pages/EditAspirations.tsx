@@ -294,9 +294,9 @@ export default function EditAspirations() {
 
   return (
     <div className="min-h-screen animated-wave-bg pb-32">
-      {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm mb-6">
-        <div className="container mx-auto px-4 py-4 max-w-2xl">
+      <div className="container mx-auto px-4 py-6 max-w-2xl">
+        {/* Header */}
+        <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
             <Button
               onClick={() => navigate(-1)}
@@ -315,9 +315,6 @@ export default function EditAspirations() {
             Modifica tus metas financieras cuando lo necesites
           </p>
         </div>
-      </div>
-
-      <div className="container mx-auto px-4 max-w-2xl">
 
         <div className="space-y-6">
           {/* Bienes Raíces */}
@@ -332,7 +329,7 @@ export default function EditAspirations() {
                 Bienes raíces
               </p>
             </div>
-            <Card className="p-6 bg-white/80 backdrop-blur-md shadow-lg hover:shadow-xl border border-gray-200/50 rounded-3xl space-y-5 transition-all duration-300">
+            <Card className="p-4 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px] space-y-4">
               {realestateQuestions.map((q, idx) => {
                 const Icon = q.icon;
                 const isRequired = requiredQuestionsIds.includes(q.id);
@@ -375,7 +372,7 @@ export default function EditAspirations() {
                 Vehículos
               </p>
             </div>
-            <Card className="p-6 bg-white/80 backdrop-blur-md shadow-lg hover:shadow-xl border border-gray-200/50 rounded-3xl space-y-5 transition-all duration-300">
+            <Card className="p-4 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px] space-y-4">
               {vehiclesQuestions.map((q, idx) => {
                 const Icon = q.icon;
                 const isRequired = requiredQuestionsIds.includes(q.id);
@@ -418,7 +415,7 @@ export default function EditAspirations() {
                 Inversiones y dinero líquido
               </p>
             </div>
-            <Card className="p-6 bg-white/80 backdrop-blur-md shadow-lg hover:shadow-xl border border-gray-200/50 rounded-3xl space-y-5 transition-all duration-300">
+            <Card className="p-4 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px] space-y-4">
               {investmentsQuestions.map((q, idx) => {
                 const Icon = q.icon;
                 const isRequired = requiredQuestionsIds.includes(q.id);
@@ -459,16 +456,16 @@ export default function EditAspirations() {
                 onClick={addCustomAspiration}
                 size="sm"
                 variant="outline"
-                className="rounded-full bg-white/80 backdrop-blur-md border border-gray-200/50 hover:bg-gray-50 hover:border-gray-300 hover:scale-105 transition-all duration-300 shadow-sm"
+                className="rounded-[15px] border-blue-100 hover:scale-[1.02] transition-all"
               >
-                <Plus className="h-4 w-4 mr-1.5" />
+                <Plus className="h-4 w-4 mr-1" />
                 Agregar
               </Button>
             </div>
 
             <div className="space-y-3">
               {customAspirations.map((custom, index) => (
-                <Card key={index} className="p-6 bg-white/80 backdrop-blur-md shadow-lg hover:shadow-xl border border-gray-200/50 rounded-3xl transition-all duration-300">
+                <Card key={index} className="p-4 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
                   <div className="space-y-3">
                     <div>
                       <Label className="text-xs font-medium text-foreground/70 mb-1 block">
