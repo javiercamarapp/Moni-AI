@@ -26,6 +26,9 @@ import FutureCalendarWidget from "@/components/analysis/FutureCalendarWidget";
 import YearOverYearWidget from "@/components/analysis/YearOverYearWidget";
 import SeasonalTrendsWidget from "@/components/analysis/SeasonalTrendsWidget";
 import CategoryHeatmapWidget from "@/components/analysis/CategoryHeatmapWidget";
+import BurnRateWidget from "@/components/analysis/BurnRateWidget";
+import NetWorthEvolutionWidget from "@/components/analysis/NetWorthEvolutionWidget";
+import WeeklySpendingPatternWidget from "@/components/analysis/WeeklySpendingPatternWidget";
 import AICoachInsightsWidget from "@/components/analysis/AICoachInsightsWidget";
 import IncomeExpensePieWidget from "@/components/analysis/IncomeExpensePieWidget";
 import CategoryBreakdownWidget from "@/components/analysis/CategoryBreakdownWidget";
@@ -120,6 +123,18 @@ export default function FinancialAnalysis() {
   });
   const [categoryHeatmapData, setCategoryHeatmapData] = useState<any[]>(() => {
     const cached = localStorage.getItem('financialAnalysis_categoryHeatmapData');
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [burnRateData, setBurnRateData] = useState<any[]>(() => {
+    const cached = localStorage.getItem('financialAnalysis_burnRateData');
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [netWorthEvolutionData, setNetWorthEvolutionData] = useState<any[]>(() => {
+    const cached = localStorage.getItem('financialAnalysis_netWorthEvolutionData');
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [weeklySpendingData, setWeeklySpendingData] = useState<any[]>(() => {
+    const cached = localStorage.getItem('financialAnalysis_weeklySpendingData');
     return cached ? JSON.parse(cached) : [];
   });
 
@@ -396,6 +411,77 @@ export default function FinancialAnalysis() {
       
       setCategoryHeatmapData(categoryHeatmapArray);
       localStorage.setItem('financialAnalysis_categoryHeatmapData', JSON.stringify(categoryHeatmapArray));
+      
+      // Calcular Burn Rate (velocidad de gasto neto y runway)
+      const burnRateArray = historicalDataArray.map((month, index) => {
+        const netSpending = month.expenses - month.income; // Gasto neto (negativo si ahorra)
+        const runway = netSpending > 0 && balance > 0 
+          ? balance / netSpending 
+          : 999; // Si ahorra, runway infinito
+        
+        return {
+          month: month.month,
+          burnRate: Math.abs(netSpending),
+          runway: Math.min(runway, 999)
+        };
+      });
+      
+      setBurnRateData(burnRateArray);
+      localStorage.setItem('financialAnalysis_burnRateData', JSON.stringify(burnRateArray));
+      
+      // Calcular Net Worth Evolution (evolución patrimonial)
+      const { data: netWorthSnapshots } = await supabase
+        .from('net_worth_snapshots')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('snapshot_date', { ascending: true })
+        .limit(12);
+      
+      const netWorthEvolutionArray = netWorthSnapshots?.map(snapshot => {
+        const date = new Date(snapshot.snapshot_date);
+        const monthIndex = date.getMonth();
+        
+        return {
+          month: monthNames[monthIndex],
+          netWorth: Number(snapshot.net_worth),
+          assets: Number(snapshot.total_assets),
+          liabilities: Number(snapshot.total_liabilities)
+        };
+      }) || [];
+      
+      setNetWorthEvolutionData(netWorthEvolutionArray);
+      localStorage.setItem('financialAnalysis_netWorthEvolutionData', JSON.stringify(netWorthEvolutionArray));
+      
+      // Calcular Weekly Spending Pattern (patrón de gastos por día de la semana)
+      const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+      const weeklySpendingMap: Record<string, { amount: number; count: number }> = {
+        'Lun': { amount: 0, count: 0 },
+        'Mar': { amount: 0, count: 0 },
+        'Mié': { amount: 0, count: 0 },
+        'Jue': { amount: 0, count: 0 },
+        'Vie': { amount: 0, count: 0 },
+        'Sáb': { amount: 0, count: 0 },
+        'Dom': { amount: 0, count: 0 }
+      };
+      
+      historicalTxs?.forEach(tx => {
+        if (tx.type === 'expense' || tx.type === 'gasto') {
+          const date = new Date(tx.transaction_date);
+          const dayOfWeek = dayNames[date.getDay()];
+          
+          weeklySpendingMap[dayOfWeek].amount += Number(tx.amount);
+          weeklySpendingMap[dayOfWeek].count += 1;
+        }
+      });
+      
+      const weeklySpendingArray = Object.keys(weeklySpendingMap).map(day => ({
+        day,
+        amount: Math.round(weeklySpendingMap[day].amount),
+        transactionCount: weeklySpendingMap[day].count
+      }));
+      
+      setWeeklySpendingData(weeklySpendingArray);
+      localStorage.setItem('financialAnalysis_weeklySpendingData', JSON.stringify(weeklySpendingArray));
       
       // Calculate MoM (Month over Month) growth
       const monthKeys = Object.keys(monthlyData).sort();
@@ -1828,6 +1914,68 @@ export default function FinancialAnalysis() {
                   const avgMonthly = monthCount > 0 ? (totalSpent / monthCount) : 0;
                   
                   return `${topCategory.category} es tu categoría más cara con $${(totalSpent / 1000).toFixed(1)}k en 6 meses (promedio $${(avgMonthly / 1000).toFixed(1)}k/mes). Busca optimizar aquí.`;
+                })()}
+              />
+            )}
+
+            {burnRateData.length > 0 && (
+              <BurnRateWidget 
+                data={burnRateData}
+                currentSavings={analysis?.metrics?.balance || 0}
+                insight={(() => {
+                  const avgRunway = burnRateData.reduce((sum, d) => sum + d.runway, 0) / burnRateData.length;
+                  const currentBurnRate = burnRateData[burnRateData.length - 1]?.burnRate || 0;
+                  
+                  if (avgRunway > 12) {
+                    return `¡Excelente! Tus ahorros actuales durarían más de 1 año al ritmo actual de gastos. Tu burn rate promedio es $${currentBurnRate.toLocaleString('es-MX', { maximumFractionDigits: 0 })}/mes.`;
+                  } else if (avgRunway > 6) {
+                    return `Tu runway promedio es ${avgRunway.toFixed(1)} meses. Considera aumentar ahorros o reducir gastos para mayor seguridad financiera.`;
+                  } else {
+                    return `⚠️ Tu runway es de solo ${avgRunway.toFixed(1)} meses. Prioriza aumentar tu colchón de emergencia y reducir gastos innecesarios.`;
+                  }
+                })()}
+              />
+            )}
+
+            {netWorthEvolutionData.length > 0 && (
+              <NetWorthEvolutionWidget 
+                data={netWorthEvolutionData}
+                insight={(() => {
+                  if (netWorthEvolutionData.length < 2) return undefined;
+                  
+                  const first = netWorthEvolutionData[0];
+                  const last = netWorthEvolutionData[netWorthEvolutionData.length - 1];
+                  const growth = last.netWorth - first.netWorth;
+                  const growthPercentage = first.netWorth !== 0 
+                    ? ((growth / Math.abs(first.netWorth)) * 100) 
+                    : 0;
+                  
+                  if (growth > 0) {
+                    return `Tu patrimonio neto creció $${growth.toLocaleString('es-MX', { maximumFractionDigits: 0 })} (+${growthPercentage.toFixed(1)}%) desde ${first.month}. ¡Sigue así!`;
+                  } else {
+                    return `Tu patrimonio neto disminuyó $${Math.abs(growth).toLocaleString('es-MX', { maximumFractionDigits: 0 })} (${growthPercentage.toFixed(1)}%) desde ${first.month}. Revisa tus deudas y gastos.`;
+                  }
+                })()}
+              />
+            )}
+
+            {weeklySpendingData.length > 0 && (
+              <WeeklySpendingPatternWidget 
+                data={weeklySpendingData}
+                insight={(() => {
+                  const maxDay = weeklySpendingData.reduce((max, d) => d.amount > max.amount ? d : max, weeklySpendingData[0]);
+                  const minDay = weeklySpendingData.reduce((min, d) => d.amount < min.amount ? d : min, weeklySpendingData[0]);
+                  const weekendSpending = (weeklySpendingData.find(d => d.day === 'Sáb')?.amount || 0) + 
+                                         (weeklySpendingData.find(d => d.day === 'Dom')?.amount || 0);
+                  const weekdaySpending = weeklySpendingData
+                    .filter(d => !['Sáb', 'Dom'].includes(d.day))
+                    .reduce((sum, d) => sum + d.amount, 0);
+                  
+                  if (weekendSpending > weekdaySpending / 2) {
+                    return `Gastas más en fines de semana ($${weekendSpending.toLocaleString('es-MX', { maximumFractionDigits: 0 })}). ${maxDay.day} es tu día más caro con $${maxDay.amount.toLocaleString('es-MX', { maximumFractionDigits: 0 })}.`;
+                  } else {
+                    return `Tu patrón es equilibrado. ${maxDay.day} es tu día de mayor gasto con $${maxDay.amount.toLocaleString('es-MX', { maximumFractionDigits: 0 })}, mientras que ${minDay.day} es el más bajo.`;
+                  }
                 })()}
               />
             )}
