@@ -32,21 +32,23 @@ serve(async (req) => {
 
     console.log('🎯 Generando 12 retos personalizados para usuario:', user.id);
 
-    // Define the 12 standard expense categories with emojis
-    const STANDARD_CATEGORIES = [
-      '🏠 Vivienda',
-      '🚗 Transporte',
-      '🍽️ Alimentación',
-      '🧾 Servicios y suscripciones',
-      '🩺 Salud y bienestar',
-      '🎓 Educación y desarrollo',
-      '💳 Deudas y créditos',
-      '🎉 Entretenimiento y estilo de vida',
-      '💸 Ahorro e inversión',
-      '🤝 Apoyos y otros',
-      '🐾 Mascotas',
-      '❓ Gastos no identificados'
-    ];
+    // Define the 12 standard expense categories with emojis and their base names
+    const CATEGORY_MAPPING: Record<string, string> = {
+      'Vivienda': '🏠 Vivienda',
+      'Transporte': '🚗 Transporte',
+      'Alimentación': '🍽️ Alimentación',
+      'Servicios y suscripciones': '🧾 Servicios y suscripciones',
+      'Salud y bienestar': '🩺 Salud y bienestar',
+      'Educación y desarrollo': '🎓 Educación y desarrollo',
+      'Deudas y créditos': '💳 Deudas y créditos',
+      'Entretenimiento y estilo de vida': '🎉 Entretenimiento y estilo de vida',
+      'Ahorro e inversión': '💸 Ahorro e inversión',
+      'Apoyos y otros': '🤝 Apoyos y otros',
+      'Mascotas': '🐾 Mascotas',
+      'Gastos no identificados': '❓ Gastos no identificados'
+    };
+
+    const STANDARD_CATEGORIES = Object.values(CATEGORY_MAPPING);
 
     // Get user's budgets by category
     const { data: budgets } = await supabase
@@ -80,9 +82,12 @@ serve(async (req) => {
       exceedsBy: number;
     }> = {};
     
-    // Initialize with standard categories
+    // Initialize with standard categories (with emojis)
     STANDARD_CATEGORIES.forEach(catName => {
-      const budget = budgets?.find(b => b.categories?.name === catName);
+      // Remove emoji to match with database
+      const baseNameMatch = Object.entries(CATEGORY_MAPPING).find(([_, emoji]) => emoji === catName);
+      const baseName = baseNameMatch ? baseNameMatch[0] : catName;
+      const budget = budgets?.find(b => b.categories?.name === baseName || b.categories?.name === catName);
       const monthlyBudget = budget?.monthly_budget || 1000; // Default budget if not set
       categoryAnalysis[catName] = {
         categoryName: catName,
@@ -97,13 +102,18 @@ serve(async (req) => {
     // Add transaction data if exists
     if (transactions && transactions.length > 0) {
       transactions.forEach(t => {
-        const catName = t.categories?.name;
+        const dbCatName = t.categories?.name;
+        if (!dbCatName) return;
+        
+        // Map database category name to emoji version
+        const catWithEmoji = CATEGORY_MAPPING[dbCatName] || dbCatName;
+        
         // Only count if it matches one of our standard categories
-        if (catName && categoryAnalysis[catName]) {
+        if (categoryAnalysis[catWithEmoji]) {
           const amount = Number(t.amount);
-          categoryAnalysis[catName].dailySpend += amount / 30;
-          categoryAnalysis[catName].weeklySpend += amount / 4.33;
-          categoryAnalysis[catName].transactionCount += 1;
+          categoryAnalysis[catWithEmoji].dailySpend += amount / 30;
+          categoryAnalysis[catWithEmoji].weeklySpend += amount / 4.33;
+          categoryAnalysis[catWithEmoji].transactionCount += 1;
         }
       });
 
