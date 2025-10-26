@@ -126,77 +126,92 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Generate challenges using AI - 8 retos optimizados y personalizados
-    const prompt = `Eres un coach financiero experto. Analiza los datos del usuario y genera EXACTAMENTE 8 retos semanales PERSONALIZADOS, ESPECÍFICOS y ALCANZABLES.
+    // Generate challenges using AI - 8 retos ultra-específicos y accionables
+    const prompt = `Eres un coach financiero experto. Analiza PROFUNDAMENTE los datos del usuario y genera 8 retos ULTRA-ESPECÍFICOS con acciones 100% ACCIONABLES.
 
-DATOS REALES DEL USUARIO:
+DATOS DETALLADOS DEL USUARIO:
 ${categoriesForChallenges.map(cat => {
   const weeklyBudget = cat.monthlyBudget / 4.33;
-  const savingsTarget = weeklyBudget * 0.25;
   const avgTransaction = cat.transactionCount > 0 ? cat.weeklySpend / cat.transactionCount : 0;
-  const status = cat.transactionCount === 0 ? `Sin transacciones` :
-                 cat.exceedsBy > 0 ? `⚠️ EXCEDE por $${cat.exceedsBy.toFixed(2)} (${((cat.exceedsBy/cat.monthlyBudget)*100).toFixed(0)}%)` : 
-                 cat.monthlyBudget > 0 ? `✅ Dentro` : 
-                 `Sin presupuesto`;
+  const frequency = cat.transactionCount / 4.33; // transacciones por semana
+  const isFixed = frequency < 1.5; // menos de 1.5 tx/semana = probablemente fijo
+  const variability = isFixed ? "FIJO" : "VARIABLE";
   return `${cat.categoryName}:
-  Gasto actual: $${cat.weeklySpend.toFixed(2)}/semana | Presupuesto: $${weeklyBudget.toFixed(2)}/semana
-  Transacciones: ${cat.transactionCount}/mes | Promedio: $${avgTransaction.toFixed(2)}/tx
-  Estado: ${status}`;
+  • Gasto: $${cat.weeklySpend.toFixed(2)}/semana | Presupuesto: $${weeklyBudget.toFixed(2)}/semana
+  • Transacciones: ${cat.transactionCount}/mes (${frequency.toFixed(1)}/semana)
+  • Promedio: $${avgTransaction.toFixed(2)}/transacción
+  • Tipo gasto: ${variability}`;
 }).join('\n')}
 
-INSTRUCCIONES CRÍTICAS:
+REGLAS CRÍTICAS DE SELECCIÓN:
 
-1. SELECCIONA 8 CATEGORÍAS donde el usuario:
-   - Gaste MÁS dinero (prioriza alto impacto)
-   - Tenga margen real de ahorro
-   - Pueda ver resultados tangibles
+1. ❌ NUNCA generar retos para:
+   - "❓ Gastos no identificados" (obvio, no es accionable)
+   - "🏠 Vivienda" (gastos FIJOS: renta, hipoteca, predial)
+   - Categorías con < 1.5 transacciones/semana (probablemente fijos)
+   - Categorías con transacciones muy regulares en monto
 
-2. PARA CADA RETO CREA:
-   
-   TÍTULO (title):
-   - Corto, específico, motivador
-   - Incluye monto o días exactos
-   - Ejemplo BUENO: "Reduce delivery a $800 esta semana"
-   - Ejemplo MALO: "Ahorra en comida" ❌
-   
-   DESCRIPCIÓN (description):
-   - 2-3 estrategias CONCRETAS y ACCIONABLES
-   - Usa datos del usuario (ej: "Gastas $X promedio por delivery")
-   - Sugiere alternativas específicas
-   - Ejemplo BUENO: "Prepara 4 comidas en casa. Ahorro: $600/semana"
-   - Ejemplo MALO: "Trata de cocinar más" ❌
-   
-   CATEGORÍA (category):
-   - DEBE incluir emoji exacto de la lista
-   - Ejemplo: "🍕 Alimentos y Bebidas"
+2. ✅ SÍ generar retos ULTRA-ESPECÍFICOS para:
+   - Categorías VARIABLES con muchas transacciones
+   - Gastos discrecionales/impulsivos
+   - Categorías donde hay margen de optimización
 
-3. TIPOS DE RETOS (distribuye variedad):
+3. EJEMPLOS DE RETOS ESPECÍFICOS (USA ESTE NIVEL DE DETALLE):
+
+   🧾 Servicios y suscripciones:
+   ✅ "Auditoría de suscripciones: cancela 2 que no uses"
+   ✅ "Pausar Spotify/Netflix 1 mes, ahorra $300"
+   ❌ "Reduce suscripciones" (muy genérico)
+
+   🐾 Mascotas:
+   ✅ "Cortar pelo en casa esta vez, ahorra $400"
+   ✅ "Comprar comida al mayoreo, 20% menos"
+   ❌ "Gasta menos en mascotas" (no accionable)
+
+   🎉 Entretenimiento:
+   ✅ "Un viernes sin salir, ahorra $800"
+   ✅ "Esta semana $2,000 en vez de $2,500"
+   ✅ "2 películas en casa en vez de cine, ahorra $600"
+   ❌ "Controla tu entretenimiento" (genérico)
+
+   🍽️ Alimentación:
+   ✅ "4 días sin delivery, cocina en casa"
+   ✅ "Lista de compras y NO comprar extra"
+   ✅ "Meal prep domingo, ahorra $900/semana"
+
+   🚗 Transporte:
+   ✅ "3 días usar transporte público vs Uber"
+   ✅ "Carpooling 2 veces, ahorra $400"
+
+4. ESTRUCTURA DE CADA RETO:
+
+   TÍTULO: Acción específica + Monto/Meta
+   - "Cancela 2 suscripciones que no uses"
+   - "4 días sin delivery esta semana"
+   - "Máximo $2,000 en diversión (vs $2,500 usual)"
+
+   DESCRIPCIÓN: 2-3 acciones CONCRETAS
+   - Números exactos: "Gastas promedio $X"
+   - Alternativa clara: "En vez de X, haz Y"
+   - Ahorro calculado: "Ahorra $X/semana"
+
+5. TIPOS DE RETOS (distribuye):
 
    🎯 spending_limit (3 retos):
-   - target_amount = presupuesto_semanal * 0.75
-   - Para categorías con gasto alto
-   - Título: "Gasta máximo $X en [categoría]"
+   - target_amount = gasto_actual * 0.80
+   - Título: "Máximo $X esta semana (vs $Y usual)"
 
    📅 days_without (2 retos):
-   - daily_goal = 5, target_amount = 0
-   - Para gastos frecuentes/impulsivos
-   - Título: "5 días sin [gasto específico]"
+   - daily_goal = 4-5, target_amount = 0
+   - Título: "X días sin [gasto específico]"
 
    💰 daily_budget (2 retos):
-   - target_amount = (presupuesto_semanal / 7) * 0.85
-   - Para gastos diarios
+   - target_amount = (gasto_semanal / 7) * 0.85
    - Título: "Máximo $X diarios en [categoría]"
 
    🎨 savings_goal (1 reto):
-   - target_amount = presupuesto_semanal * 0.25
-   - Para categorías clave
-   - Título: "Ahorra $X en [categoría]"
-
-4. CALIDAD DE CONTENIDO:
-   - Tips ESPECÍFICOS (ej: "Compra el martes, 20% descuento")
-   - Montos REALISTAS basados en datos
-   - Lenguaje MOTIVADOR pero directo
-   - Evita frases genéricas como "intenta" o "trata"
+   - target_amount = gasto_semanal * 0.25
+   - Título: "Ahorra $X haciendo [acción específica]"
 
 FORMATO JSON:
 {
