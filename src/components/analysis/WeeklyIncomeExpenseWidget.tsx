@@ -118,25 +118,25 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
         </div>
 
         {/* Estadísticas destacadas */}
-        <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-gray-200/50">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-green-50 to-emerald-50/50 border border-green-200/50 shadow-sm">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-lg">{getDayEmoji(bestIncomeDay.dayFull)}</span>
-              <p className="text-[10px] text-green-700 font-semibold uppercase tracking-wide">Día con más ingresos</p>
+        <div className="grid grid-cols-2 gap-1.5 mt-2 pt-2 border-t border-gray-200/50">
+          <div className="p-1.5 rounded-lg bg-gradient-to-br from-green-50 to-emerald-50/50 border border-green-200/50">
+            <div className="flex items-center gap-1 mb-0.5">
+              <span className="text-xs">{getDayEmoji(bestIncomeDay.dayFull)}</span>
+              <p className="text-[8px] text-green-700 font-semibold uppercase tracking-wide">Más ingresos</p>
             </div>
-            <p className="text-sm font-bold text-green-800">{bestIncomeDay.dayFull}</p>
-            <p className="text-xs text-green-600 mt-0.5">
+            <p className="text-[10px] font-bold text-green-800">{bestIncomeDay.dayFull}</p>
+            <p className="text-[9px] text-green-600">
               ${bestIncomeDay.income.toLocaleString('es-MX', { minimumFractionDigits: 0 })}
             </p>
           </div>
 
-          <div className="p-3 rounded-xl bg-gradient-to-br from-red-50 to-rose-50/50 border border-red-200/50 shadow-sm">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-lg">{getDayEmoji(worstExpenseDay.dayFull)}</span>
-              <p className="text-[10px] text-red-700 font-semibold uppercase tracking-wide">Día con más gastos</p>
+          <div className="p-1.5 rounded-lg bg-gradient-to-br from-red-50 to-rose-50/50 border border-red-200/50">
+            <div className="flex items-center gap-1 mb-0.5">
+              <span className="text-xs">{getDayEmoji(worstExpenseDay.dayFull)}</span>
+              <p className="text-[8px] text-red-700 font-semibold uppercase tracking-wide">Más gastos</p>
             </div>
-            <p className="text-sm font-bold text-red-800">{worstExpenseDay.dayFull}</p>
-            <p className="text-xs text-red-600 mt-0.5">
+            <p className="text-[10px] font-bold text-red-800">{worstExpenseDay.dayFull}</p>
+            <p className="text-[9px] text-red-600">
               ${worstExpenseDay.expense.toLocaleString('es-MX', { minimumFractionDigits: 0 })}
             </p>
           </div>
