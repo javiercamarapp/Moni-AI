@@ -353,7 +353,7 @@ export default function EditAspirations() {
                         placeholder={q.placeholder}
                         value={formatNumberWithCommas(aspirationalAnswers[q.id] || '')}
                         onChange={(e) => handleAnswerChange(q.id, e.target.value.replace(/,/g, ''))}
-                        className="pl-7 text-sm rounded-[15px] border-blue-100"
+                        className="pl-7 text-sm rounded-[15px] border-blue-100 bg-white shadow-md"
                       />
                     </div>
                   </div>
@@ -396,7 +396,7 @@ export default function EditAspirations() {
                         placeholder={q.placeholder}
                         value={formatNumberWithCommas(aspirationalAnswers[q.id] || '')}
                         onChange={(e) => handleAnswerChange(q.id, e.target.value.replace(/,/g, ''))}
-                        className="pl-7 text-sm rounded-[15px] border-blue-100"
+                        className="pl-7 text-sm rounded-[15px] border-blue-100 bg-white shadow-md"
                       />
                     </div>
                   </div>
@@ -477,7 +477,7 @@ export default function EditAspirations() {
                         placeholder="Ej: Viaje a Europa"
                         value={custom.name}
                         onChange={(e) => updateCustomAspiration(index, "name", e.target.value)}
-                        className="text-sm rounded-[15px] border-blue-100"
+                        className="text-sm rounded-[15px] border-blue-100 bg-white shadow-md"
                       />
                     </div>
                     <div>
@@ -489,7 +489,7 @@ export default function EditAspirations() {
                         placeholder="Ej: Vacaciones familiares en verano"
                         value={custom.description}
                         onChange={(e) => updateCustomAspiration(index, "description", e.target.value)}
-                        className="text-sm rounded-[15px] border-blue-100"
+                        className="text-sm rounded-[15px] border-blue-100 bg-white shadow-md"
                       />
                     </div>
                     <div className="flex gap-2">
@@ -506,7 +506,7 @@ export default function EditAspirations() {
                             placeholder="50000"
                             value={formatNumberWithCommas(custom.amount)}
                             onChange={(e) => updateCustomAspiration(index, "amount", e.target.value.replace(/,/g, ''))}
-                            className="pl-7 text-sm rounded-[15px] border-blue-100"
+                            className="pl-7 text-sm rounded-[15px] border-blue-100 bg-white shadow-md"
                           />
                         </div>
                       </div>
