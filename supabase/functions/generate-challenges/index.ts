@@ -198,31 +198,31 @@ REGLAS CRÍTICAS DE SELECCIÓN:
 5. TIPOS DE RETOS (distribuye):
 
    🎯 spending_limit (3 retos):
-   - target_amount = gasto_actual * 0.80
+   - weekly_target = gasto_actual * 0.80, daily_goal = null
    - Título: "Máximo $X esta semana (vs $Y usual)"
 
    📅 days_without (2 retos):
-   - daily_goal = 4-5, target_amount = 0
+   - weekly_target = 0, daily_goal = 4 o 5 (ENTERO)
    - Título: "X días sin [gasto específico]"
 
    💰 daily_budget (2 retos):
-   - target_amount = (gasto_semanal / 7) * 0.85
+   - weekly_target = (gasto_semanal / 7) * 0.85, daily_goal = null
    - Título: "Máximo $X diarios en [categoría]"
 
    🎨 savings_goal (1 reto):
-   - target_amount = gasto_semanal * 0.25
+   - weekly_target = gasto_semanal * 0.25, daily_goal = null
    - Título: "Ahorra $X haciendo [acción específica]"
 
-FORMATO JSON:
+FORMATO JSON (USA ESTOS NOMBRES EXACTOS):
 {
   "challenges": [
     {
-      "title": "string (específico con monto)",
-      "description": "string (2-3 tips concretos)",
+      "title": "string",
+      "description": "string",
       "category": "string (con emoji)",
       "challenge_type": "spending_limit|days_without|daily_budget|savings_goal",
-      "target_amount": number,
-      "daily_goal": number (solo para days_without, sino null)
+      "weekly_target": number,
+      "daily_goal": integer o null (SOLO 4 o 5 para days_without)
     }
   ]
 }`;
@@ -269,7 +269,10 @@ FORMATO JSON:
                         description: "VARÍA LOS TIPOS: spending_limit (barra), days_without (calendario), daily_budget (diario), savings_goal (ahorro)" 
                       },
                       weekly_target: { type: "number", description: "Meta de gasto semanal en pesos" },
-                      daily_goal: { type: "number", description: "Solo para days_without: número de días a completar (4-6)" }
+                       daily_goal: { 
+                         type: "integer", 
+                         description: "SOLO para days_without: número ENTERO de días (4, 5 o 6). Para otros tipos: null" 
+                       }
                     },
                     required: ["title", "description", "category", "challenge_type", "weekly_target"]
                   }
@@ -325,7 +328,7 @@ FORMATO JSON:
       challenge_type: c.challenge_type || 'spending_limit',
       current_amount: 0,
       target_amount: c.weekly_target,
-      daily_goal: c.daily_goal || null,
+      daily_goal: c.daily_goal ? Math.round(c.daily_goal) : null, // Asegurar entero
       period: 'weekly',
       start_date: startOfWeek.toISOString().split('T')[0],
       end_date: endOfWeek.toISOString().split('T')[0],
