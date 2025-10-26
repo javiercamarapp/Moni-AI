@@ -92,7 +92,9 @@ export default function MisRetos() {
       // Combine both lists
       setChallenges([...(activeData || []), ...(pendingData || [])]);
 
-      console.log('📊 Retos cargados:', activeData);
+      console.log('📊 Retos cargados:', [...(activeData || []), ...(pendingData || [])].length, 'total');
+      console.log('  ✅ Activos:', activeData?.length || 0);
+      console.log('  ⏳ Pendientes:', pendingData?.length || 0);
     } catch (error) {
       console.error('Error al cargar retos:', error);
       toast.error('Error al cargar tus retos');
