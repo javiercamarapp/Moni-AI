@@ -97,6 +97,7 @@ export default function FinancialAnalysis() {
     return cached ? JSON.parse(cached) : [];
   });
   const [momGrowth, setMomGrowth] = useState<number | null>(null); // Month over Month growth
+  const [showLiquidityDialog, setShowLiquidityDialog] = useState(false); // Dialog for liquidity explanation
   
   const [showSplash, setShowSplash] = useState(false);
 
@@ -945,18 +946,77 @@ export default function FinancialAnalysis() {
                   </p>
                 </Card>
 
-                <Card className={`p-3 bg-white rounded-[20px] shadow-xl border cursor-pointer hover:scale-105 transition-transform duration-200 ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'border-emerald-200 bg-emerald-50/50' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'border-yellow-200 bg-yellow-50/50' : 'border-red-200 bg-red-50/50'}`}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-muted-foreground">Liquidez</span>
-                    <Droplets className={`h-3 w-3 ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'text-emerald-600' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'text-yellow-600' : 'text-red-600'}`} />
-                  </div>
-                  <p className={`text-lg font-bold ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'text-emerald-700' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'text-yellow-700' : 'text-red-700'}`}>
-                    {(analysis?.metrics?.liquidityMonths || 0).toFixed(1)} m
-                  </p>
-                  <p className="text-[10px] text-muted-foreground">
-                    {(analysis?.metrics?.liquidityMonths || 0) >= 3 ? '✅ Seguro' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? '⚠️ Regular' : '🚨 Crítico'}
-                  </p>
-                </Card>
+                <Dialog open={showLiquidityDialog} onOpenChange={setShowLiquidityDialog}>
+                  <DialogTrigger asChild>
+                    <Card 
+                      className={`p-3 rounded-[20px] shadow-xl border cursor-pointer hover:scale-105 transition-all duration-200 ${
+                        (analysis?.metrics?.liquidityMonths || 0) >= 3 
+                          ? 'border-emerald-200 bg-emerald-50/50 hover:bg-emerald-100/50' 
+                          : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 
+                          ? 'border-yellow-200 bg-yellow-50/50 hover:bg-yellow-100/50' 
+                          : 'border-red-200 bg-red-50/50 hover:bg-red-100/50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs text-muted-foreground">Liquidez</span>
+                        <Droplets className={`h-3 w-3 ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'text-emerald-600' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'text-yellow-600' : 'text-red-600'}`} />
+                      </div>
+                      <p className={`text-lg font-bold ${(analysis?.metrics?.liquidityMonths || 0) >= 3 ? 'text-emerald-700' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? 'text-yellow-700' : 'text-red-700'}`}>
+                        {(analysis?.metrics?.liquidityMonths || 0).toFixed(1)} m
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {(analysis?.metrics?.liquidityMonths || 0) >= 3 ? '✅ Seguro' : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 ? '⚠️ Regular' : '🚨 Crítico'}
+                      </p>
+                    </Card>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-md">
+                    <DialogHeader>
+                      <DialogTitle className="flex items-center gap-2">
+                        <Droplets className="h-5 w-5 text-blue-500" />
+                        ¿Qué es la Liquidez?
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 text-sm">
+                      <div>
+                        <p className="text-foreground leading-relaxed">
+                          La <strong>liquidez</strong> mide cuántos meses podrías mantener tu estilo de vida actual sin ingresos, usando solo tu balance disponible.
+                        </p>
+                      </div>
+                      
+                      <div className="bg-muted/50 p-4 rounded-xl space-y-2">
+                        <p className="font-semibold text-foreground">Tu liquidez actual:</p>
+                        <p className="text-2xl font-bold text-blue-600">
+                          {(analysis?.metrics?.liquidityMonths || 0).toFixed(1)} meses
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {(analysis?.metrics?.liquidityMonths || 0) >= 3 
+                            ? '✅ Tienes un colchón financiero saludable' 
+                            : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 
+                            ? '⚠️ Considera aumentar tu fondo de emergencia' 
+                            : '🚨 Es recomendable mejorar tu liquidez urgentemente'}
+                        </p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <p className="font-semibold text-foreground">¿Cómo se calcula?</p>
+                        <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-lg">
+                          <p className="text-xs font-mono">
+                            Liquidez = Balance disponible ÷ Gastos mensuales promedio
+                          </p>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          En tu caso: ${formatK(analysis?.metrics?.balance)}k ÷ ${formatK((analysis?.metrics?.totalExpenses || 0) / 12)}k/mes = {(analysis?.metrics?.liquidityMonths || 0).toFixed(1)} meses
+                        </p>
+                      </div>
+
+                      <div className="border-t pt-3">
+                        <p className="text-xs text-muted-foreground">
+                          <strong>Recomendación:</strong> Lo ideal es tener entre 3-6 meses de gastos en liquidez para cubrir emergencias.
+                        </p>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
 
                 <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
                   <div className="flex items-center justify-between mb-1">
