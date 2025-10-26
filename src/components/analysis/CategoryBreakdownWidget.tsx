@@ -46,16 +46,17 @@ export default function CategoryBreakdownWidget({ categories }: CategoryBreakdow
           </Pie>
           <Tooltip 
             contentStyle={{
-              backgroundColor: 'rgba(0, 0, 0, 0.95)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
               borderRadius: '12px',
               padding: '8px 12px',
               fontSize: '12px',
-              color: 'white',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+              color: '#1f2937',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
             }}
             labelStyle={{
-              color: 'white',
+              color: '#1f2937',
               fontWeight: '600',
               marginBottom: '4px'
             }}
