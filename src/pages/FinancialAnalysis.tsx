@@ -23,7 +23,6 @@ import RiskIndicatorsWidget from "@/components/analysis/RiskIndicatorsWidget";
 import EvolutionChartWidget from "@/components/analysis/EvolutionChartWidget";
 import HistoricalComparisonWidget from "@/components/analysis/HistoricalComparisonWidget";
 import FutureCalendarWidget from "@/components/analysis/FutureCalendarWidget";
-import RecentMovementsWidget from "@/components/analysis/RecentMovementsWidget";
 import AICoachInsightsWidget from "@/components/analysis/AICoachInsightsWidget";
 import IncomeExpensePieWidget from "@/components/analysis/IncomeExpensePieWidget";
 import CategoryBreakdownWidget from "@/components/analysis/CategoryBreakdownWidget";
@@ -1447,9 +1446,6 @@ export default function FinancialAnalysis() {
                 </div>
               </Card>
             )}
-
-            {/* Movimientos Recientes - Actualización en tiempo real */}
-            <RecentMovementsWidget />
 
             {/* Gráficas adicionales */}
             <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100">
