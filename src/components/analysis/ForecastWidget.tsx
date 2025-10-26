@@ -29,10 +29,11 @@ interface ForecastProps {
   forecastData: ForecastData[];
   goalProbability: number;
   goalETA: string;
+  avgMonthlySavings6M?: number;
   goalInfo?: GoalInfo | null;
 }
 
-export default function ForecastWidget({ forecastData, goalProbability, goalETA, goalInfo }: ForecastProps) {
+export default function ForecastWidget({ forecastData, goalProbability, goalETA, avgMonthlySavings6M, goalInfo }: ForecastProps) {
   const [timeframe, setTimeframe] = useState<'3' | '6' | '12' | '60' | '120'>('12');
   
   const monthsToShow = timeframe === '3' ? 3 : 
@@ -213,6 +214,17 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
             </p>
             <p className="text-[7px] text-gray-500 mt-0.5">(+20% del promedio)</p>
           </div>
+          </div>
+        )}
+
+        {hasData && avgMonthlySavings6M !== undefined && avgMonthlySavings6M > 0 && (
+          <div className="text-center pt-2">
+            <p className="text-[10px] text-gray-500">
+              Esta proyección se basa en tu promedio mensual de ahorro de los últimos 6 meses: 
+              <span className="font-semibold text-gray-700">
+                {" "}${Math.round(avgMonthlySavings6M).toLocaleString('es-MX')}
+              </span>
+            </p>
           </div>
         )}
 

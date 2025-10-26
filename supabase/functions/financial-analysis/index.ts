@@ -621,11 +621,16 @@ Ejemplo formato:
     })));
     
     // Calcular promedios para diferentes horizontes temporales
+    const last6Months = completedMonthsBalances.slice(0, 6);
     const last12Months = completedMonthsBalances.slice(0, 12);
     const last60Months = completedMonthsBalances.slice(0, 60);
     const last120Months = completedMonthsBalances.slice(0, 120);
     
     // Solo usar meses con datos para calcular el promedio real
+    const avgMonthlySavings6M = last6Months.length > 0
+      ? last6Months.reduce((sum, m) => sum + m.balance, 0) / last6Months.length
+      : 0;
+    
     const avgMonthlySavings12M = last12Months.length > 0
       ? last12Months.reduce((sum, m) => sum + m.balance, 0) / last12Months.length
       : 0; // Si no hay datos, 0 en vez de usar balance actual
@@ -1208,6 +1213,7 @@ Responde SOLO con el JSON array, sin texto adicional.`;
         forecastData,
         goalProbability,
         goalETA,
+        avgMonthlySavings6M: Math.round(avgMonthlySavings6M),
         goalInfo: mainGoal ? {
           title: mainGoal.title,
           target: mainGoal.target,
