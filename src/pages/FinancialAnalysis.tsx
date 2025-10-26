@@ -102,6 +102,7 @@ export default function FinancialAnalysis() {
   const [showCashFlowDialog, setShowCashFlowDialog] = useState(false); // Liquidez y Estabilidad
   
   const [showSplash, setShowSplash] = useState(false);
+  const [historicalMonthlyData, setHistoricalMonthlyData] = useState<any[]>([]);
 
   // Helper function to safely format values in thousands
   const formatK = (value: number | undefined | null): string => {
@@ -222,6 +223,25 @@ export default function FinancialAnalysis() {
           monthlyData[monthKey].expenses += Number(tx.amount);
         }
       });
+      
+      // Convertir monthlyData a array para el widget histórico (últimos 6 meses)
+      const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+      const sortedMonths = Object.keys(monthlyData).sort();
+      const last6Months = sortedMonths.slice(-6);
+      const historicalDataArray = last6Months.map(monthKey => {
+        const [year, month] = monthKey.split('-');
+        const monthIndex = parseInt(month) - 1;
+        const data = monthlyData[monthKey];
+        return {
+          month: monthNames[monthIndex],
+          income: Math.round(data.income),
+          expenses: Math.round(data.expenses),
+          savings: Math.round(data.income - data.expenses)
+        };
+      });
+      
+      setHistoricalMonthlyData(historicalDataArray);
+      console.log('📊 Historical monthly data:', historicalDataArray);
       
       // Calculate MoM (Month over Month) growth
       const monthKeys = Object.keys(monthlyData).sort();
@@ -1508,15 +1528,13 @@ export default function FinancialAnalysis() {
 
             {/* Historical Comparison */}
             <HistoricalComparisonWidget 
-              data={[
-                { month: 'May', income: 15000, expenses: 12500, savings: 2500 },
-                { month: 'Jun', income: 15500, expenses: 12400, savings: 3100 },
-                { month: 'Jul', income: 16000, expenses: 12200, savings: 3800 },
-                { month: 'Ago', income: 16200, expenses: 12000, savings: 4200 },
-                { month: 'Sep', income: 16500, expenses: 11700, savings: 4800 },
-                { month: 'Oct', income: 17000, expenses: 11800, savings: 5200 },
+              data={historicalMonthlyData.length > 0 ? historicalMonthlyData : [
+                { month: 'Sin datos', income: 0, expenses: 0, savings: 0 }
               ]}
-              insight="Tu gasto promedio bajó $1,200 desde julio. Mantén la tendencia."
+              insight={historicalMonthlyData.length >= 2 ? 
+                `Comparando tus últimos ${historicalMonthlyData.length} meses de actividad financiera.` : 
+                undefined
+              }
             />
 
             {/* Evolution Chart */}
