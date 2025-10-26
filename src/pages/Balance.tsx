@@ -321,58 +321,83 @@ const Balance = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Fetch ALL historical transactions
-      let allTransactions: any[] = [];
-      let hasMore = true;
-      let lastId: string | null = null;
+      // Get current date
+      const today = new Date();
+      const currentDayOfWeek = today.getDay(); // 0 = Domingo, 6 = Sábado
       
-      while (hasMore) {
-        let query = supabase
-          .from('transactions')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('id', { ascending: true })
-          .limit(10000);
-        
-        if (lastId) {
-          query = query.gt('id', lastId);
-        }
-        
-        const { data: pageData } = await query;
-        
-        if (!pageData || pageData.length === 0) {
-          hasMore = false;
-          break;
-        }
-        
-        allTransactions = [...allTransactions, ...pageData];
-        lastId = pageData[pageData.length - 1].id;
-        hasMore = pageData.length === 10000;
+      // Calculate start of current week (Lunes)
+      const startOfWeek = new Date(today);
+      const daysSinceMonday = currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1;
+      startOfWeek.setDate(today.getDate() - daysSinceMonday);
+      startOfWeek.setHours(0, 0, 0, 0);
+      
+      // Calculate end of current week (today)
+      const endOfWeek = new Date(today);
+      endOfWeek.setHours(23, 59, 59, 999);
+
+      console.log('📅 Semana actual:', {
+        inicio: startOfWeek.toISOString().split('T')[0],
+        fin: endOfWeek.toISOString().split('T')[0],
+        diaActual: today.getDay()
+      });
+
+      // Fetch transactions for current week only
+      const { data: weekTransactions } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('transaction_date', startOfWeek.toISOString().split('T')[0])
+        .lte('transaction_date', endOfWeek.toISOString().split('T')[0]);
+
+      if (!weekTransactions) {
+        setWeeklyData([]);
+        return;
       }
+
+      console.log('📊 Transacciones de la semana:', weekTransactions.length);
 
       // Group by day of week
       const dayMap = new Map<string, { income: number; expense: number; count: number }>();
-      const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+      const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
       
-      days.forEach(day => {
-        dayMap.set(day, { income: 0, expense: 0, count: 0 });
-      });
+      // Initialize only days that have passed this week (including today)
+      const daysToShow: string[] = [];
+      for (let i = 0; i <= daysSinceMonday; i++) {
+        const dayIndex = currentDayOfWeek === 0 ? (i === 6 ? 0 : i + 1) : (i + 1) % 7;
+        const dayName = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][dayIndex];
+        daysToShow.push(dayName);
+        dayMap.set(dayName, { income: 0, expense: 0, count: 0 });
+      }
 
-      allTransactions.forEach(t => {
-        const date = new Date(t.transaction_date);
-        const dayName = days[date.getDay()];
-        const data = dayMap.get(dayName)!;
+      // If today is Sunday, show all days
+      if (currentDayOfWeek === 0) {
+        daysToShow.length = 0;
+        ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'].forEach(day => {
+          daysToShow.push(day);
+          dayMap.set(day, { income: 0, expense: 0, count: 0 });
+        });
+      }
+
+      // Process transactions
+      weekTransactions.forEach(t => {
+        const date = new Date(t.transaction_date + 'T00:00:00');
+        const dayIndex = date.getDay();
+        const dayName = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][dayIndex];
         
-        if (t.type === 'ingreso') {
-          data.income += Number(t.amount);
-        } else {
-          data.expense += Number(t.amount);
+        if (dayMap.has(dayName)) {
+          const data = dayMap.get(dayName)!;
+          
+          if (t.type === 'ingreso') {
+            data.income += Number(t.amount);
+          } else {
+            data.expense += Number(t.amount);
+          }
+          data.count++;
         }
-        data.count++;
       });
 
-      // Convert to array format for chart
-      const weeklyDataArray: DayData[] = days.map(dayName => {
+      // Convert to array format for chart - only days that have passed
+      const weeklyDataArray: DayData[] = daysToShow.map(dayName => {
         const data = dayMap.get(dayName)!;
         return {
           day: dayName.substring(0, 3),
@@ -383,6 +408,8 @@ const Balance = () => {
         };
       });
 
+      console.log('📈 Datos procesados:', weeklyDataArray);
+
       setWeeklyData(weeklyDataArray);
 
       // Generate insight using AI
@@ -390,7 +417,12 @@ const Balance = () => {
         body: {
           analysisType: 'weekly-pattern',
           data: weeklyDataArray,
-          transactions: allTransactions
+          transactions: weekTransactions,
+          currentWeek: {
+            start: startOfWeek.toISOString().split('T')[0],
+            end: endOfWeek.toISOString().split('T')[0],
+            currentDay: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][currentDayOfWeek]
+          }
         }
       });
 

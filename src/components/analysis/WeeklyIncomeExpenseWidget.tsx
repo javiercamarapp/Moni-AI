@@ -46,7 +46,7 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
             <h3 className="text-lg font-semibold tracking-tight text-gray-900">
               Ingresos y Gastos por Día
             </h3>
-            <p className="text-xs text-muted-foreground">Análisis histórico por día de la semana</p>
+            <p className="text-xs text-muted-foreground">Semana actual en curso</p>
           </div>
         </div>
 
