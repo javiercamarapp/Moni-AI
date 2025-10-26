@@ -153,9 +153,16 @@ export default function MisRetos() {
         body: { userId: user.id, count: 12 }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Edge function error:', error);
+        throw new Error(error.message || "Error al comunicarse con el servidor");
+      }
 
-      toast.success('✨ 12 retos generados basados en tus gastos reales');
+      if (!data?.challenges || data.challenges.length === 0) {
+        throw new Error("No se pudieron generar retos. Por favor intenta nuevamente.");
+      }
+
+      toast.success(`✨ ${data.challenges.length} retos generados basados en tus gastos reales`);
       await fetchChallenges();
     } catch (error: any) {
       console.error('Error generando retos:', error);

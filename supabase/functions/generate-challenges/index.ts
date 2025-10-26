@@ -292,13 +292,32 @@ FORMATO JSON (USA ESTOS NOMBRES EXACTOS):
     }
 
     const aiData = await aiResponse.json();
+    console.log('🔍 AI Response:', JSON.stringify(aiData, null, 2));
+    
     const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
     
     if (!toolCall) {
-      throw new Error("No se pudo generar retos");
+      console.error('❌ No tool call found in AI response');
+      console.error('Message content:', aiData.choices?.[0]?.message?.content);
+      throw new Error("La IA no generó retos. Intenta nuevamente.");
     }
 
-    const generatedChallenges = JSON.parse(toolCall.function.arguments).challenges.slice(0, 12);
+    console.log('🔧 Tool call arguments:', toolCall.function.arguments);
+    
+    let parsedArgs;
+    try {
+      parsedArgs = JSON.parse(toolCall.function.arguments);
+    } catch (e) {
+      console.error('❌ Error parsing tool arguments:', e);
+      throw new Error("Error al procesar la respuesta de la IA");
+    }
+    
+    if (!parsedArgs.challenges || !Array.isArray(parsedArgs.challenges)) {
+      console.error('❌ No challenges array in parsed arguments');
+      throw new Error("La IA no generó un array de retos válido");
+    }
+
+    const generatedChallenges = parsedArgs.challenges.slice(0, 12);
 
     console.log('✨ Retos generados:', generatedChallenges.length, 'retos');
 
