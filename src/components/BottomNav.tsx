@@ -37,7 +37,10 @@ const BottomNav = () => {
         </button>
         
         <button 
-          className="flex flex-col items-center gap-1 text-foreground/70 hover:text-foreground transition-colors"
+          onClick={() => navigate('/social')}
+          className={`flex flex-col items-center gap-1 transition-colors ${
+            isActive('/social') ? 'text-foreground' : 'text-foreground/70 hover:text-foreground'
+          }`}
         >
           <Users className="w-5 h-5" />
           <span className="text-xs">Social</span>
