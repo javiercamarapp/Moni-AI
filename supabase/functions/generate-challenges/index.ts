@@ -116,21 +116,36 @@ serve(async (req) => {
       });
     }
 
-    // Use all 12 standard categories
-    const categoriesForChallenges = STANDARD_CATEGORIES.map(catName => categoryAnalysis[catName]);
+    // Filter to only categories with actual transactions
+    const categoriesWithData = STANDARD_CATEGORIES
+      .map(catName => categoryAnalysis[catName])
+      .filter(cat => cat.transactionCount > 0 && cat.weeklySpend > 0)
+      .sort((a, b) => b.weeklySpend - a.weeklySpend); // Sort by highest spend first
 
-    console.log('📊 Generando 12 retos para categorías:', categoriesForChallenges.map(c => c.categoryName).join(', '));
+    console.log('📊 Categorías con datos:', categoriesWithData.length);
+    console.log('💰 Categorías activas:', categoriesWithData.map(c => `${c.categoryName}: $${c.weeklySpend.toFixed(2)}/sem`).join(', '));
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Generate challenges using AI - 12 retos MUY específicos basados en datos reales
-    const prompt = `Eres un coach financiero. Analiza los GASTOS REALES del usuario y genera 12 RETOS ESPECÍFICOS.
+    // If no categories with data, return early
+    if (categoriesWithData.length === 0) {
+      console.log('⚠️ No hay categorías con datos suficientes para generar retos');
+      return new Response(JSON.stringify({ 
+        error: "No hay suficientes datos de gastos para generar retos. Registra algunas transacciones primero." 
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-📊 GASTOS REALES DEL USUARIO (último mes):
-${categoriesForChallenges.map(cat => {
+    // Generate challenges using AI - simple and direct
+    const prompt = `Eres un coach financiero. Crea 12 retos de ahorro basados en los gastos REALES del usuario.
+
+📊 GASTOS REALES (último mes):
+${categoriesWithData.map(cat => {
   const weeklyBudget = cat.monthlyBudget / 4.33;
   const monthlySpend = cat.weeklySpend * 4.33;
   const avgTransaction = cat.transactionCount > 0 ? monthlySpend / cat.transactionCount : 0;
@@ -143,75 +158,37 @@ ${categoriesForChallenges.map(cat => {
   🎯 Presupuesto mensual: $${cat.monthlyBudget.toFixed(2)}`;
 }).join('\n\n')}
 
-🎯 REGLAS DE SELECCIÓN:
+🎯 INSTRUCCIONES SIMPLES:
 
-1. USA LOS NÚMEROS REALES arriba para hacer retos específicos
-2. MENCIONA el gasto promedio actual del usuario en cada reto
-3. Propón reducir 20-30% del gasto actual
-4. NO incluyas categorías con 0 transacciones
+1. Genera EXACTAMENTE 12 retos
+2. USA los números reales arriba en cada reto
+3. Distribuye entre las categorías disponibles
+4. Propón reducir 20-30% del gasto actual
+5. Sé específico con las cantidades actuales
 
-EJEMPLOS CON NÚMEROS REALES:
+EJEMPLOS:
 
-Si 🎉 Entretenimiento gasta $4,500/semana:
-✅ "Diversión con $3,000 esta semana (vs $4,500 usual)"
-✅ "2 salidas en casa: ahorra $1,500 de tus $4,500"
-❌ "Controla entretenimiento" (genérico)
+- "🎉 Solo $3,000 en diversión esta semana (vs $4,500 actual)"
+- "🍽️ Cocina 4 días: baja de $2,500 a $1,800/semana"
+- "🚗 Máximo $250 en transporte (vs $350 actual)"
 
-Si 🍽️ Alimentación gasta $2,500/semana con 13 transacciones:
-✅ "Cocina 4 días: baja de $2,500 a $1,800/semana"
-✅ "Máximo $2,000 en comida (vs $2,500 actual)"
-❌ "Come en casa más seguido" (no específico)
+TIPOS DE RETOS (distribuye 12 retos):
 
-Si 🚗 Transporte gasta $350/semana:
-✅ "3 días sin Uber: de $350 a $200/semana"
-✅ "Máximo $250 en transporte (vs $350 actual)"
+1. spending_limit (4 retos): weekly_target = gasto_semanal * 0.75
+2. days_without (3 retos): weekly_target = 0, daily_goal = 4 o 5
+3. daily_budget (3 retos): weekly_target = gasto_semanal * 0.80  
+4. savings_goal (2 retos): weekly_target = gasto_semanal * 0.30
 
-Si 🧾 Servicios gasta $380/semana:
-✅ "Cancela 1 suscripción: ahorra $100/semana"
-✅ "Revisa Netflix, Spotify: baja $380 a $300"
-
-📋 FORMATO DE CADA RETO:
-
-TÍTULO: [emoji] + Acción + Números del usuario
-"🍽️ Cocina 4 días: de $2,500 a $1,800 semanales"
-"🎉 Solo $3,000 en diversión esta semana (vs $4,500)"
-
-DESCRIPCIÓN: Menciona SU gasto actual + alternativa
-"Actualmente gastas $2,500/semana en comida. Te reto a cocinar 4 días y bajar a $1,800."
-"Tu promedio en entretenimiento es $4,500/semana. Intenta 2 salidas en casa y gasta solo $3,000."
-
-🎲 TIPOS DE RETOS (distribuye 12 retos):
-
-🎯 spending_limit (4 retos):
-- weekly_target = gasto_semanal * 0.75
-- daily_goal = null
-Ejemplo: "Máximo $3,000 esta semana (vs $4,000 actual)"
-
-📅 days_without (3 retos):
-- weekly_target = 0
-- daily_goal = 4 (ENTERO, no decimales)
-Ejemplo: "4 días sin delivery esta semana"
-
-💰 daily_budget (3 retos):
-- weekly_target = gasto_semanal * 0.80
-- daily_goal = null
-Ejemplo: "Máximo $400 diarios (vs $500 actual)"
-
-🎨 savings_goal (2 retos):
-- weekly_target = gasto_semanal * 0.30
-- daily_goal = null
-Ejemplo: "Ahorra $1,200 cocinando en casa"
-
-FORMATO JSON (USA ESTOS NOMBRES EXACTOS):
+Responde con JSON:
 {
   "challenges": [
     {
-      "title": "string",
-      "description": "string",
-      "category": "string (con emoji)",
-      "challenge_type": "spending_limit|days_without|daily_budget|savings_goal",
-      "weekly_target": number,
-      "daily_goal": integer o null (SOLO 4 o 5 para days_without)
+      "title": "🍽️ Cocina 4 días: de $2,500 a $1,800",
+      "description": "Gastas $2,500/semana. Cocina 4 días y baja a $1,800.",
+      "category": "🍽️ Alimentación",
+      "challenge_type": "spending_limit",
+      "weekly_target": 1800,
+      "daily_goal": null
     }
   ]
 }`;
