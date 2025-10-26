@@ -99,6 +99,7 @@ export default function MisRetos() {
       console.error('Error al cargar retos:', error);
       toast.error('Error al cargar tus retos');
     } finally {
+      console.log('✅ fetchChallenges completado, loading=false, challenges:', challenges.length);
       setLoading(false);
     }
   };
@@ -224,6 +225,10 @@ export default function MisRetos() {
       </div>
 
       <div className="px-4 py-3 space-y-6">
+        {(() => {
+          console.log('🔍 Estado de renderizado:', { loading, challengesLength: challenges.length, generatingChallenges });
+          return null;
+        })()}
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin" />
