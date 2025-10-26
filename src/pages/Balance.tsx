@@ -13,12 +13,22 @@ import Autoplay from 'embla-carousel-autoplay';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { useToast } from '@/hooks/use-toast';
 import { LoadingScreen } from '@/components/LoadingScreen';
+import WeeklyIncomeExpenseWidget from '@/components/analysis/WeeklyIncomeExpenseWidget';
+
 interface CategoryBalance {
   id: string;
   name: string;
   color: string;
   total: number;
   percentage: number;
+}
+
+interface DayData {
+  day: string;
+  dayFull: string;
+  income: number;
+  expense: number;
+  net: number;
 }
 
 // Colores vibrantes para categorías de gastos (gráfica de pie)
@@ -129,6 +139,8 @@ const Balance = () => {
   });
   const [loadingProyecciones, setLoadingProyecciones] = useState(false);
   const [isUpdatingProjections, setIsUpdatingProjections] = useState(false);
+  const [weeklyData, setWeeklyData] = useState<DayData[]>([]);
+  const [weeklyInsight, setWeeklyInsight] = useState<string>('');
 
   // Extract year and month for PDF generation
   const selectedYear = currentMonth.getFullYear();
@@ -140,6 +152,7 @@ const Balance = () => {
   const tasaAhorro = totalIngresos > 0 ? ahorro / totalIngresos * 100 : 0;
   useEffect(() => {
     fetchBalanceData();
+    fetchWeeklyData();
   }, [currentMonth, viewMode]);
 
   // Fetch AI predictions ONCE when component loads or when actual data changes
@@ -302,6 +315,93 @@ const Balance = () => {
       setIsUpdatingProjections(false);
     }
   };
+
+  const fetchWeeklyData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Fetch ALL historical transactions
+      let allTransactions: any[] = [];
+      let hasMore = true;
+      let lastId: string | null = null;
+      
+      while (hasMore) {
+        let query = supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('id', { ascending: true })
+          .limit(10000);
+        
+        if (lastId) {
+          query = query.gt('id', lastId);
+        }
+        
+        const { data: pageData } = await query;
+        
+        if (!pageData || pageData.length === 0) {
+          hasMore = false;
+          break;
+        }
+        
+        allTransactions = [...allTransactions, ...pageData];
+        lastId = pageData[pageData.length - 1].id;
+        hasMore = pageData.length === 10000;
+      }
+
+      // Group by day of week
+      const dayMap = new Map<string, { income: number; expense: number; count: number }>();
+      const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+      
+      days.forEach(day => {
+        dayMap.set(day, { income: 0, expense: 0, count: 0 });
+      });
+
+      allTransactions.forEach(t => {
+        const date = new Date(t.transaction_date);
+        const dayName = days[date.getDay()];
+        const data = dayMap.get(dayName)!;
+        
+        if (t.type === 'ingreso') {
+          data.income += Number(t.amount);
+        } else {
+          data.expense += Number(t.amount);
+        }
+        data.count++;
+      });
+
+      // Convert to array format for chart
+      const weeklyDataArray: DayData[] = days.map(dayName => {
+        const data = dayMap.get(dayName)!;
+        return {
+          day: dayName.substring(0, 3),
+          dayFull: dayName,
+          income: data.income,
+          expense: data.expense,
+          net: data.income - data.expense
+        };
+      });
+
+      setWeeklyData(weeklyDataArray);
+
+      // Generate insight using AI
+      const { data: aiData } = await supabase.functions.invoke('financial-analysis', {
+        body: {
+          analysisType: 'weekly-pattern',
+          data: weeklyDataArray,
+          transactions: allTransactions
+        }
+      });
+
+      if (aiData?.insight) {
+        setWeeklyInsight(aiData.insight);
+      }
+    } catch (error) {
+      console.error('Error fetching weekly data:', error);
+    }
+  };
+
   const fetchBalanceData = async () => {
     // Evitar llamadas concurrentes
     if (isProcessing) {
@@ -853,6 +953,11 @@ const Balance = () => {
               </div>
             </div>}
         </Card>
+
+        {/* Widget de análisis semanal */}
+        {weeklyData.length > 0 && (
+          <WeeklyIncomeExpenseWidget data={weeklyData} insight={weeklyInsight} />
+        )}
       </div>
       
       <BottomNav />
