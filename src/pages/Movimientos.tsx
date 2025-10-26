@@ -120,7 +120,7 @@ export default function Movimientos() {
               <ArrowLeft className="h-4 w-4 text-gray-700" />
             </Button>
             <div className="flex-1">
-              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Movimientos</h1>
+              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Movimientos recientes</h1>
               <p className="text-xs text-gray-600">Últimos 50 movimientos</p>
             </div>
           </div>
