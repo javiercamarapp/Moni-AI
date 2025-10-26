@@ -332,7 +332,7 @@ export default function EditAspirations() {
                 Bienes raíces
               </p>
             </div>
-            <Card className="p-4 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px] space-y-4">
+            <Card className="p-6 bg-white/80 backdrop-blur-md shadow-lg hover:shadow-xl border border-gray-200/50 rounded-3xl space-y-5 transition-all duration-300">
               {realestateQuestions.map((q, idx) => {
                 const Icon = q.icon;
                 const isRequired = requiredQuestionsIds.includes(q.id);
@@ -375,7 +375,7 @@ export default function EditAspirations() {
                 Vehículos
               </p>
             </div>
-            <Card className="p-4 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px] space-y-4">
+            <Card className="p-6 bg-white/80 backdrop-blur-md shadow-lg hover:shadow-xl border border-gray-200/50 rounded-3xl space-y-5 transition-all duration-300">
               {vehiclesQuestions.map((q, idx) => {
                 const Icon = q.icon;
                 const isRequired = requiredQuestionsIds.includes(q.id);
@@ -418,7 +418,7 @@ export default function EditAspirations() {
                 Inversiones y dinero líquido
               </p>
             </div>
-            <Card className="p-4 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px] space-y-4">
+            <Card className="p-6 bg-white/80 backdrop-blur-md shadow-lg hover:shadow-xl border border-gray-200/50 rounded-3xl space-y-5 transition-all duration-300">
               {investmentsQuestions.map((q, idx) => {
                 const Icon = q.icon;
                 const isRequired = requiredQuestionsIds.includes(q.id);
@@ -468,7 +468,7 @@ export default function EditAspirations() {
 
             <div className="space-y-3">
               {customAspirations.map((custom, index) => (
-                <Card key={index} className="p-4 bg-white/95 backdrop-blur-sm shadow-xl border-blue-100 rounded-[20px]">
+                <Card key={index} className="p-6 bg-white/80 backdrop-blur-md shadow-lg hover:shadow-xl border border-gray-200/50 rounded-3xl transition-all duration-300">
                   <div className="space-y-3">
                     <div>
                       <Label className="text-xs font-medium text-foreground/70 mb-1 block">
