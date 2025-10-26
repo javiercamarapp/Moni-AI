@@ -175,12 +175,13 @@ ${categoriesWithData.map(cat => {
 3. Distribuye entre las categorías disponibles
 4. Propón reducir 20-30% del gasto actual
 5. Sé específico con las cantidades actuales
+6. **IMPORTANTE**: Usa las categorías EXACTAMENTE como aparecen arriba (CON EMOJIS)
 
 EJEMPLOS:
 
-- "🎉 Solo $3,000 en diversión esta semana (vs $4,500 actual)"
-- "🍽️ Cocina 4 días: baja de $2,500 a $1,800/semana"
-- "🚗 Máximo $250 en transporte (vs $350 actual)"
+- "🎉 Solo $3,000 en diversión esta semana (vs $4,500 actual)" → category: "🎉 Entretenimiento y estilo de vida"
+- "🍽️ Cocina 4 días: baja de $2,500 a $1,800/semana" → category: "🍽️ Alimentación"
+- "🚗 Máximo $250 en transporte (vs $350 actual)" → category: "🚗 Transporte"
 
 TIPOS DE RETOS (distribuye 12 retos):
 
@@ -189,7 +190,7 @@ TIPOS DE RETOS (distribuye 12 retos):
 3. daily_budget (3 retos): weekly_target = gasto_semanal * 0.80  
 4. savings_goal (2 retos): weekly_target = gasto_semanal * 0.30
 
-Responde con JSON:
+Responde con JSON (MANTÉN LOS EMOJIS EN category):
 {
   "challenges": [
     {
@@ -235,11 +236,11 @@ Responde con JSON:
                   type: "array",
                   items: {
                     type: "object",
-                    properties: {
-                      title: { type: "string", description: "Título corto y motivador del reto" },
-                      description: { type: "string", description: "Descripción breve con tips concretos" },
-                      category: { type: "string", description: "Categoría de gasto" },
-                      challenge_type: { 
+                  properties: {
+                    title: { type: "string", description: "Título corto y motivador del reto" },
+                    description: { type: "string", description: "Descripción breve con tips concretos" },
+                    category: { type: "string", description: "Categoría de gasto CON EMOJI (ej: '🍽️ Alimentación')" },
+                    challenge_type: {
                         type: "string", 
                         enum: ["spending_limit", "days_without", "daily_budget", "savings_goal"],
                         description: "VARÍA LOS TIPOS: spending_limit (barra), days_without (calendario), daily_budget (diario), savings_goal (ahorro)" 
