@@ -27,10 +27,10 @@ serve(async (req) => {
       });
     }
 
-    // Generate 15 challenges distributed across 12 categories
+    // Generate 8 challenges distributed across categories
     const { userId } = await req.json().catch(() => ({ userId: null }));
 
-    console.log('🎯 Generando 15 retos distribuidos en las 12 categorías para usuario:', user.id);
+    console.log('🎯 Generando 8 retos distribuidos para usuario:', user.id);
 
     // Define the 12 standard expense categories with emojis
     const STANDARD_CATEGORIES = [
@@ -126,8 +126,8 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Generate challenges using AI - 15 retos distribuidos
-    const prompt = `Genera EXACTAMENTE 15 retos semanales variados distribuidos en las 12 categorías de gasto para ayudar al usuario a AHORRAR:
+    // Generate challenges using AI - 8 retos optimizados
+    const prompt = `Genera EXACTAMENTE 8 retos semanales distribuidos en categorías con MÁS GASTO para ayudar al usuario a AHORRAR:
 
 ANÁLISIS DE LAS 12 CATEGORÍAS Y SUS PRESUPUESTOS:
 ${categoriesForChallenges.map(cat => {
@@ -167,17 +167,15 @@ TIPOS DE RETOS (VARÍA LA DISTRIBUCIÓN):
    - Target: 25% del presupuesto
    - Visual: PORCENTAJE circular
 
-REGLAS CRÍTICAS:
-- Genera EXACTAMENTE 15 retos distribuidos inteligentemente en las 12 categorías
-- Prioriza categorías con más gasto pero incluye variedad
+REGLAS:
+- EXACTAMENTE 8 retos
+- Prioriza las 8 categorías con MÁS gasto
 - Mezcla tipos: "spending_limit", "days_without", "daily_budget", "savings_goal"
-- CADA reto DEBE incluir el nombre COMPLETO de la categoría CON su emoji exacto (ej: "🏠 Vivienda", "🚗 Transporte")
-- Para "spending_limit": target_amount = presupuesto semanal * 0.75
-- Para "days_without": daily_goal = 4-6, target_amount = 0
-- Para "daily_budget": target_amount = presupuesto semanal / 7 * 0.85
-- Para "savings_goal": target_amount = presupuesto semanal * 0.25
-- Títulos ÚNICOS y motivadores
-- Tips prácticos ESPECÍFICOS para cada reto`;
+- Incluye emoji en category (ej: "🏠 Vivienda")
+- spending_limit: target_amount = presupuesto semanal * 0.75
+- days_without: daily_goal = 5, target_amount = 0
+- daily_budget: target_amount = presupuesto semanal / 7 * 0.85
+- savings_goal: target_amount = presupuesto semanal * 0.25`;
 
     console.log('🤖 Llamando a Lovable AI para generar retos...');
 
@@ -258,7 +256,7 @@ REGLAS CRÍTICAS:
       throw new Error("No se pudo generar retos");
     }
 
-    const generatedChallenges = JSON.parse(toolCall.function.arguments).challenges.slice(0, 15);
+    const generatedChallenges = JSON.parse(toolCall.function.arguments).challenges.slice(0, 8);
 
     console.log('✨ Retos generados:', generatedChallenges.length, 'retos');
 
