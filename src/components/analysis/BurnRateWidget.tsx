@@ -80,13 +80,13 @@ export default function BurnRateWidget({ data, currentSavings, insight }: BurnRa
                 }}
                 formatter={(value: any, name: string) => {
                   const val = Number(value);
-                  if (name === 'ahorro') {
+                  if (name === 'Balance mensual') {
                     return [
-                      `${val >= 0 ? '+' : ''}$${val.toLocaleString('es-MX', { maximumFractionDigits: 0 })}`,
-                      val >= 0 ? 'Ahorro del mes' : 'Déficit del mes'
+                      `${val >= 0 ? '+' : ''}$${Math.abs(val).toLocaleString('es-MX', { maximumFractionDigits: 0 })}`,
+                      val >= 0 ? '✅ Ahorro del mes' : '⚠️ Déficit del mes'
                     ];
                   }
-                  return [`$${val.toLocaleString('es-MX', { maximumFractionDigits: 0 })}`, 'Ahorro acumulado'];
+                  return [`$${Math.abs(val).toLocaleString('es-MX', { maximumFractionDigits: 0 })}`, '💰 Acumulado total'];
                 }}
               />
               <Legend 
