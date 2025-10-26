@@ -231,8 +231,7 @@ export default function MisRetos() {
                 return acc;
               }, {} as Record<string, any[]>)
             ).map(([category, categoryChallenges]: [string, any[]]) => {
-              // Limitar a máximo 5 retos por categoría
-              const limitedChallenges = categoryChallenges.slice(0, 5);
+              // No limitar, mostrar todos los retos de la categoría
               
               // Obtener emoji de la categoría
               const categoryEmoji = getCategoryEmoji(category);
@@ -245,7 +244,7 @@ export default function MisRetos() {
                   </h3>
                   <div className="relative">
                     <div className="flex overflow-x-auto gap-4 pb-4 px-1 snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-400">
-                      {limitedChallenges.map((challenge, index) => (
+                      {categoryChallenges.map((challenge, index) => (
                         <div key={challenge.id} className="flex-shrink-0 w-[85%] sm:w-[45%] md:w-[30%] snap-start">
                           <ChallengeCard
                             challenge={challenge}

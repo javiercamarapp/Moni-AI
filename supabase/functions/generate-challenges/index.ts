@@ -27,10 +27,10 @@ serve(async (req) => {
       });
     }
 
-    // Generate 5 challenges per category (12 categories * 5 = 60 challenges)
+    // Generate 15 challenges distributed across 12 categories
     const { userId } = await req.json().catch(() => ({ userId: null }));
 
-    console.log('🎯 Generando 60 retos (5 por cada una de las 12 categorías) para usuario:', user.id);
+    console.log('🎯 Generando 15 retos distribuidos en las 12 categorías para usuario:', user.id);
 
     // Define the 12 standard expense categories with emojis
     const STANDARD_CATEGORIES = [
@@ -126,8 +126,8 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Generate challenges using AI - 60 retos (5 por categoría)
-    const prompt = `Genera EXACTAMENTE 60 retos semanales (5 retos por cada una de las 12 categorías) para ayudar al usuario a AHORRAR MÁS que su presupuesto actual:
+    // Generate challenges using AI - 15 retos distribuidos
+    const prompt = `Genera EXACTAMENTE 15 retos semanales variados distribuidos en las 12 categorías de gasto para ayudar al usuario a AHORRAR:
 
 ANÁLISIS DE LAS 12 CATEGORÍAS Y SUS PRESUPUESTOS:
 ${categoriesForChallenges.map(cat => {
@@ -139,7 +139,6 @@ ${categoriesForChallenges.map(cat => {
                  `Sin presupuesto definido`;
   return `${cat.categoryName}:
   • Presupuesto semanal: $${weeklyBudget.toFixed(2)}
-  • Genera EXACTAMENTE 5 retos para esta categoría
   • Meta ahorro sugerida: $${savingsTarget.toFixed(2)} (25% menos)
   • Gasto actual semanal: $${cat.weeklySpend.toFixed(2)}
   • ${cat.transactionCount} transacciones/mes
@@ -169,16 +168,16 @@ TIPOS DE RETOS (VARÍA LA DISTRIBUCIÓN):
    - Visual: PORCENTAJE circular
 
 REGLAS CRÍTICAS:
-- Genera EXACTAMENTE 60 retos (5 por cada categoría)
-- Distribuye los 5 retos de cada categoría así: 2 "spending_limit", 1 "days_without", 1 "daily_budget", 1 "savings_goal"
+- Genera EXACTAMENTE 15 retos distribuidos inteligentemente en las 12 categorías
+- Prioriza categorías con más gasto pero incluye variedad
+- Mezcla tipos: "spending_limit", "days_without", "daily_budget", "savings_goal"
 - CADA reto DEBE incluir el nombre COMPLETO de la categoría CON su emoji exacto (ej: "🏠 Vivienda", "🚗 Transporte")
-- Varía los montos y días entre los retos de la misma categoría para hacerlos diferentes
-- Para "spending_limit": target_amount = presupuesto semanal * 0.75 (primer reto), * 0.60 (segundo reto)
+- Para "spending_limit": target_amount = presupuesto semanal * 0.75
 - Para "days_without": daily_goal = 4-6, target_amount = 0
 - Para "daily_budget": target_amount = presupuesto semanal / 7 * 0.85
 - Para "savings_goal": target_amount = presupuesto semanal * 0.25
-- Títulos ÚNICOS y motivadores para cada uno de los 5 retos por categoría
-- Tips prácticos ESPECÍFICOS y VARIADOS para cada reto`;
+- Títulos ÚNICOS y motivadores
+- Tips prácticos ESPECÍFICOS para cada reto`;
 
     console.log('🤖 Llamando a Lovable AI para generar retos...');
 
@@ -259,7 +258,7 @@ REGLAS CRÍTICAS:
       throw new Error("No se pudo generar retos");
     }
 
-    const generatedChallenges = JSON.parse(toolCall.function.arguments).challenges.slice(0, 60); // 60 challenges (5 per category)
+    const generatedChallenges = JSON.parse(toolCall.function.arguments).challenges.slice(0, 15);
 
     console.log('✨ Retos generados:', generatedChallenges.length, 'retos');
 
