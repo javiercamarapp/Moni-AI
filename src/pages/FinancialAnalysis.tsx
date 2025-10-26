@@ -969,49 +969,49 @@ export default function FinancialAnalysis() {
                       </p>
                     </Card>
                   </DialogTrigger>
-                  <DialogContent className="max-w-md">
+                  <DialogContent className="max-w-sm rounded-3xl bg-white/95 backdrop-blur-xl border-0 shadow-2xl">
                     <DialogHeader>
-                      <DialogTitle className="flex items-center gap-2">
-                        <Droplets className="h-5 w-5 text-blue-500" />
-                        ¿Qué es la Liquidez?
+                      <DialogTitle className="flex items-center gap-2 text-lg">
+                        <div className="p-2 bg-blue-100 rounded-xl">
+                          <Droplets className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <span className="font-bold">Liquidez Financiera</span>
                       </DialogTitle>
                     </DialogHeader>
-                    <div className="space-y-4 text-sm">
-                      <div>
-                        <p className="text-foreground leading-relaxed">
-                          La <strong>liquidez</strong> mide cuántos meses podrías mantener tu estilo de vida actual sin ingresos, usando solo tu balance disponible.
-                        </p>
-                      </div>
+                    <div className="space-y-3 text-sm">
+                      <p className="text-muted-foreground leading-relaxed text-xs">
+                        Mide cuántos meses podrías mantener tu estilo de vida actual sin ingresos.
+                      </p>
                       
-                      <div className="bg-muted/50 p-4 rounded-xl space-y-2">
-                        <p className="font-semibold text-foreground">Tu liquidez actual:</p>
-                        <p className="text-2xl font-bold text-blue-600">
+                      <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-2xl space-y-2 border border-blue-100">
+                        <p className="text-xs font-medium text-muted-foreground">Tu liquidez actual</p>
+                        <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                           {(analysis?.metrics?.liquidityMonths || 0).toFixed(1)} meses
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {(analysis?.metrics?.liquidityMonths || 0) >= 3 
-                            ? '✅ Tienes un colchón financiero saludable' 
+                            ? '✅ Colchón financiero saludable' 
                             : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 
-                            ? '⚠️ Considera aumentar tu fondo de emergencia' 
-                            : '🚨 Es recomendable mejorar tu liquidez urgentemente'}
+                            ? '⚠️ Considera aumentar tu fondo' 
+                            : '🚨 Mejora tu liquidez urgentemente'}
                         </p>
                       </div>
 
                       <div className="space-y-2">
-                        <p className="font-semibold text-foreground">¿Cómo se calcula?</p>
-                        <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-lg">
-                          <p className="text-xs font-mono">
-                            Liquidez = Balance disponible ÷ Gastos mensuales promedio
+                        <p className="text-xs font-semibold text-foreground">Cálculo</p>
+                        <div className="bg-white/80 p-3 rounded-xl border border-gray-100">
+                          <p className="text-xs font-mono text-center text-muted-foreground">
+                            Balance ÷ Gastos mensuales
+                          </p>
+                          <p className="text-xs text-center text-muted-foreground mt-1">
+                            ${formatK(analysis?.metrics?.balance)}k ÷ ${formatK((analysis?.metrics?.totalExpenses || 0) / 12)}k/mes
                           </p>
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                          En tu caso: ${formatK(analysis?.metrics?.balance)}k ÷ ${formatK((analysis?.metrics?.totalExpenses || 0) / 12)}k/mes = {(analysis?.metrics?.liquidityMonths || 0).toFixed(1)} meses
-                        </p>
                       </div>
 
-                      <div className="border-t pt-3">
-                        <p className="text-xs text-muted-foreground">
-                          <strong>Recomendación:</strong> Lo ideal es tener entre 3-6 meses de gastos en liquidez para cubrir emergencias.
+                      <div className="bg-amber-50 border border-amber-100 p-3 rounded-xl">
+                        <p className="text-xs text-amber-900">
+                          <strong>💡 Tip:</strong> Lo ideal es tener 3-6 meses de gastos para emergencias.
                         </p>
                       </div>
                     </div>
