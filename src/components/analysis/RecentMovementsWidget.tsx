@@ -67,7 +67,7 @@ export default function RecentMovementsWidget() {
   return (
     <Card 
       onClick={() => navigate('/movimientos')}
-      className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all active:scale-95 relative overflow-hidden h-[220px] flex flex-col cursor-pointer animate-fade-in"
+      className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 transition-all relative overflow-hidden h-[220px] flex flex-col cursor-pointer animate-fade-in"
     >
       <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
         <div className="flex items-center justify-between flex-shrink-0">
