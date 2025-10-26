@@ -138,11 +138,20 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
                 tick={{ fill: 'rgba(0,0,0,0.6)', fontSize: 8 }}
               />
               <Tooltip
-                contentStyle={{ 
-                  backgroundColor: 'white', 
-                  border: '1px solid rgba(0,0,0,0.1)', 
-                  borderRadius: '8px',
-                  fontSize: '9px'
+                contentStyle={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  borderRadius: '12px',
+                  padding: '8px 12px',
+                  fontSize: '12px',
+                  color: '#1f2937',
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
+                }}
+                labelStyle={{
+                  color: '#1f2937',
+                  fontWeight: '600',
+                  marginBottom: '4px'
                 }}
               />
               <Area 

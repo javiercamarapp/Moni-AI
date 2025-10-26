@@ -18,7 +18,7 @@ export default function HistoricalComparisonWidget({ data, insight }: Historical
   const avgSavings = data.reduce((sum, d) => sum + d.savings, 0) / data.length;
 
   return (
-    <Card className="p-4 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all border border-blue-100 animate-fade-in">
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl transition-all border border-blue-100 animate-fade-in">
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <BarChart3 className="h-4 w-4 text-primary" />
@@ -39,13 +39,21 @@ export default function HistoricalComparisonWidget({ data, insight }: Historical
                 tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 10 }}
               />
               <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'rgba(0,0,0,0.9)', 
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: '8px',
-                  fontSize: '11px'
+                contentStyle={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  borderRadius: '12px',
+                  padding: '8px 12px',
+                  fontSize: '12px',
+                  color: '#1f2937',
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
                 }}
-                labelStyle={{ color: 'white' }}
+                labelStyle={{
+                  color: '#1f2937',
+                  fontWeight: '600',
+                  marginBottom: '4px'
+                }}
                 formatter={(value: any) => `$${value.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
               />
               <Legend 
