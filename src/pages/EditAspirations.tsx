@@ -439,7 +439,7 @@ export default function EditAspirations() {
                         placeholder={q.placeholder}
                         value={formatNumberWithCommas(aspirationalAnswers[q.id] || '')}
                         onChange={(e) => handleAnswerChange(q.id, e.target.value.replace(/,/g, ''))}
-                        className="pl-7 text-sm rounded-[15px] border-blue-100"
+                        className="pl-7 text-sm rounded-[15px] border-blue-100 bg-white shadow-md"
                       />
                     </div>
                   </div>
