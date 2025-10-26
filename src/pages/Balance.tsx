@@ -862,6 +862,11 @@ const Balance = () => {
           </Card>
         </div>
 
+        {/* Widget de análisis semanal */}
+        {weeklyData.length > 0 && (
+          <WeeklyIncomeExpenseWidget data={weeklyData} insight={weeklyInsight} />
+        )}
+
         {/* Ingresos por categoría */}
         <Card className="p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 overflow-hidden animate-fade-in">
           <div className="flex items-center gap-2 mb-4">
@@ -981,11 +986,6 @@ const Balance = () => {
               </div>
             </div>}
         </Card>
-
-        {/* Widget de análisis semanal */}
-        {weeklyData.length > 0 && (
-          <WeeklyIncomeExpenseWidget data={weeklyData} insight={weeklyInsight} />
-        )}
       </div>
       
       <BottomNav />
