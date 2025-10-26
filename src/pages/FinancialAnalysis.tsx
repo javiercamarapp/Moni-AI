@@ -610,16 +610,16 @@ export default function FinancialAnalysis() {
         transacciones: transactions.length
       });
       
-      // Calcular Burn Rate (gasto neto mensual vs ahorro acumulado) - DESPUÉS de tener balance
-      let ahorroAcumulado = balance > 0 ? balance : 0;
+      // Calcular Burn Rate (ahorro/déficit mensual y acumulado)
+      let ahorroAcumulado = 0;
       const burnRateArray = historicalDataArray.map((month, index) => {
-        const gastoNeto = month.expenses - month.income; // Positivo = gasto más de lo que ingresa
-        ahorroAcumulado -= gastoNeto; // Ajustar ahorro acumulado
+        const ahorroMensual = month.income - month.expenses; // Positivo = ahorro, negativo = déficit
+        ahorroAcumulado += ahorroMensual; // Sumar al acumulado
         
         return {
           month: month.month,
-          gastoNeto: Math.abs(gastoNeto), // Mostrar como valor positivo
-          ahorro: Math.max(0, ahorroAcumulado) // No mostrar valores negativos
+          ahorro: Math.round(ahorroMensual), // Ahorro o déficit del mes
+          ahorroAcumulado: Math.round(ahorroAcumulado) // Total acumulado
         };
       });
       
@@ -1920,20 +1920,20 @@ export default function FinancialAnalysis() {
             {burnRateData.length > 0 && (
               <BurnRateWidget 
                 data={burnRateData}
-                currentSavings={analysis?.metrics?.balance || 0}
+                currentSavings={burnRateData[burnRateData.length - 1]?.ahorroAcumulado || 0}
                 insight={(() => {
-                  const avgGastoNeto = burnRateData.reduce((sum, d) => sum + d.gastoNeto, 0) / burnRateData.length;
-                  const ahorroActual = analysis?.metrics?.balance || 0;
-                  const mesesDuracion = avgGastoNeto > 0 ? ahorroActual / avgGastoNeto : 999;
+                  const promedioAhorro = burnRateData.reduce((sum, d) => sum + d.ahorro, 0) / burnRateData.length;
+                  const totalAcumulado = burnRateData[burnRateData.length - 1]?.ahorroAcumulado || 0;
+                  const mesesPositivos = burnRateData.filter(d => d.ahorro > 0).length;
                   
-                  if (mesesDuracion > 12) {
-                    return `¡Excelente! Con tu ahorro actual de $${ahorroActual.toLocaleString('es-MX', { maximumFractionDigits: 0 })} y gasto neto promedio de $${avgGastoNeto.toLocaleString('es-MX', { maximumFractionDigits: 0 })}/mes, tienes más de 1 año de colchón financiero.`;
-                  } else if (mesesDuracion > 6) {
-                    return `Tu ahorro actual duraría ${mesesDuracion.toFixed(1)} meses al ritmo de gasto actual. Considera aumentar tu colchón de emergencia.`;
-                  } else if (ahorroActual > 0) {
-                    return `⚠️ Tu ahorro solo duraría ${mesesDuracion.toFixed(1)} meses. Prioriza reducir gastos y aumentar tu fondo de emergencia.`;
+                  if (promedioAhorro > 5000 && totalAcumulado > 50000) {
+                    return `¡Excelente! Ahorras en promedio $${promedioAhorro.toLocaleString('es-MX', { maximumFractionDigits: 0 })}/mes. Acumulaste $${totalAcumulado.toLocaleString('es-MX', { maximumFractionDigits: 0 })} en ${burnRateData.length} meses.`;
+                  } else if (promedioAhorro > 0) {
+                    return `Ahorras $${promedioAhorro.toLocaleString('es-MX', { maximumFractionDigits: 0 })}/mes en promedio. Tienes ${mesesPositivos} meses positivos de ${burnRateData.length}. ¡Sigue así!`;
+                  } else if (totalAcumulado > 0) {
+                    return `Tu balance acumulado es $${totalAcumulado.toLocaleString('es-MX', { maximumFractionDigits: 0 })}, pero tu promedio mensual es negativo ($${Math.abs(promedioAhorro).toLocaleString('es-MX', { maximumFractionDigits: 0 })}). Reduce gastos.`;
                   } else {
-                    return `⚠️ Sin ahorro disponible y gasto neto promedio de $${avgGastoNeto.toLocaleString('es-MX', { maximumFractionDigits: 0 })}/mes. Urge crear un fondo de emergencia.`;
+                    return `⚠️ Gastas más de lo que ingresas en promedio ($${Math.abs(promedioAhorro).toLocaleString('es-MX', { maximumFractionDigits: 0 })}/mes). Prioriza aumentar ingresos o reducir gastos.`;
                   }
                 })()}
               />

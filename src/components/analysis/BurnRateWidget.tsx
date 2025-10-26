@@ -1,11 +1,11 @@
 import { Card } from "@/components/ui/card";
-import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell } from 'recharts';
 import { Flame } from "lucide-react";
 
 interface BurnRateData {
   month: string;
-  gastoNeto: number; // Gasto neto mensual
-  ahorro: number; // Ahorro disponible
+  ahorro: number; // Ahorro mensual (income - expenses, positivo = ahorro)
+  ahorroAcumulado: number; // Ahorro acumulado hasta ese mes
 }
 
 interface BurnRateProps {
@@ -15,11 +15,11 @@ interface BurnRateProps {
 }
 
 export default function BurnRateWidget({ data, currentSavings, insight }: BurnRateProps) {
-  const avgGastoNeto = data.length > 0 
-    ? data.reduce((sum, d) => sum + d.gastoNeto, 0) / data.length 
-    : 0;
+  const totalAhorroMensual = data.reduce((sum, d) => sum + d.ahorro, 0);
+  const promedioAhorro = data.length > 0 ? totalAhorroMensual / data.length : 0;
   
-  const mesesRunway = avgGastoNeto > 0 ? currentSavings / avgGastoNeto : 999;
+  const mesesPositivos = data.filter(d => d.ahorro > 0).length;
+  const mesesNegativos = data.filter(d => d.ahorro < 0).length;
 
   return (
     <Card className="p-4 bg-white rounded-[20px] shadow-xl transition-all border border-blue-100 animate-fade-in">
@@ -28,8 +28,8 @@ export default function BurnRateWidget({ data, currentSavings, insight }: BurnRa
           <div className="flex items-center gap-2">
             <Flame className="h-4 w-4 text-primary" />
             <div>
-              <p className="text-sm font-medium text-foreground">🔥 Análisis de Gastos vs Ahorros</p>
-              <p className="text-[9px] text-muted-foreground">Gasto neto mensual y tendencia de ahorro</p>
+              <p className="text-sm font-medium text-foreground">💰 Ahorro vs Gasto Mensual</p>
+              <p className="text-[9px] text-muted-foreground">Balance mensual y acumulado</p>
             </div>
           </div>
         </div>
@@ -38,7 +38,7 @@ export default function BurnRateWidget({ data, currentSavings, insight }: BurnRa
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data}>
               <defs>
-                <linearGradient id="ahorroGradient" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="ahorroAcumuladoGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
                   <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
                 </linearGradient>
@@ -53,14 +53,14 @@ export default function BurnRateWidget({ data, currentSavings, insight }: BurnRa
                 yAxisId="left"
                 stroke="rgba(0,0,0,0.5)" 
                 tick={{ fill: 'rgba(0,0,0,0.7)', fontSize: 10 }}
-                label={{ value: 'Gasto ($)', angle: -90, position: 'insideLeft', style: { fontSize: 10 } }}
+                label={{ value: 'Ahorro/Déficit ($)', angle: -90, position: 'insideLeft', style: { fontSize: 10 } }}
               />
               <YAxis 
                 yAxisId="right"
                 orientation="right"
                 stroke="rgba(0,0,0,0.5)" 
                 tick={{ fill: 'rgba(0,0,0,0.7)', fontSize: 10 }}
-                label={{ value: 'Ahorro ($)', angle: 90, position: 'insideRight', style: { fontSize: 10 } }}
+                label={{ value: 'Acumulado ($)', angle: 90, position: 'insideRight', style: { fontSize: 10 } }}
               />
               <Tooltip 
                 contentStyle={{
@@ -78,26 +78,39 @@ export default function BurnRateWidget({ data, currentSavings, insight }: BurnRa
                   fontWeight: '600',
                   marginBottom: '4px'
                 }}
-                formatter={(value: any) => `$${value.toLocaleString('es-MX', { maximumFractionDigits: 0 })}`}
+                formatter={(value: any, name: string) => {
+                  const val = Number(value);
+                  if (name === 'ahorro') {
+                    return [
+                      `${val >= 0 ? '+' : ''}$${val.toLocaleString('es-MX', { maximumFractionDigits: 0 })}`,
+                      val >= 0 ? 'Ahorro del mes' : 'Déficit del mes'
+                    ];
+                  }
+                  return [`$${val.toLocaleString('es-MX', { maximumFractionDigits: 0 })}`, 'Ahorro acumulado'];
+                }}
               />
               <Legend 
                 wrapperStyle={{ fontSize: '10px' }}
               />
               <Bar 
                 yAxisId="left"
-                dataKey="gastoNeto" 
-                fill="#f97316" 
-                name="Gasto Neto"
+                dataKey="ahorro" 
+                fill="#10b981"
+                name="Balance mensual"
                 radius={[4, 4, 0, 0]}
-              />
+              >
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.ahorro >= 0 ? '#10b981' : '#f97316'} />
+                ))}
+              </Bar>
               <Line 
                 yAxisId="right"
                 type="monotone" 
-                dataKey="ahorro" 
-                stroke="#10b981" 
+                dataKey="ahorroAcumulado" 
+                stroke="#8b5cf6" 
                 strokeWidth={3}
-                name="Ahorro Acumulado"
-                dot={{ fill: '#10b981', r: 4 }}
+                name="Acumulado"
+                dot={{ fill: '#8b5cf6', r: 4 }}
                 activeDot={{ r: 6 }}
               />
             </ComposedChart>
@@ -106,21 +119,21 @@ export default function BurnRateWidget({ data, currentSavings, insight }: BurnRa
 
         <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border">
           <div>
-            <p className="text-[10px] text-muted-foreground">Gasto neto promedio</p>
-            <p className="text-xs font-bold text-orange-600 break-words">
-              ${avgGastoNeto.toLocaleString('es-MX', { maximumFractionDigits: 0 })}/mes
+            <p className="text-[10px] text-muted-foreground">Ahorro promedio/mes</p>
+            <p className={`text-xs font-bold break-words ${promedioAhorro >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {promedioAhorro >= 0 ? '+' : ''}${promedioAhorro.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
             </p>
           </div>
           <div>
-            <p className="text-[10px] text-muted-foreground">Ahorro actual</p>
-            <p className="text-xs font-bold text-green-600">
+            <p className="text-[10px] text-muted-foreground">Total acumulado</p>
+            <p className={`text-xs font-bold ${currentSavings >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               ${currentSavings.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
             </p>
           </div>
           <div>
-            <p className="text-[10px] text-muted-foreground">Duración ahorro</p>
-            <p className={`text-sm font-bold ${mesesRunway < 3 ? 'text-red-500' : mesesRunway < 6 ? 'text-orange-500' : 'text-green-500'}`}>
-              {mesesRunway > 999 ? '∞' : `${mesesRunway.toFixed(1)} meses`}
+            <p className="text-[10px] text-muted-foreground">Balance</p>
+            <p className="text-sm font-bold text-foreground">
+              {mesesPositivos > mesesNegativos ? '📈 Positivo' : mesesPositivos < mesesNegativos ? '📉 Negativo' : '➖ Neutro'}
             </p>
           </div>
         </div>
