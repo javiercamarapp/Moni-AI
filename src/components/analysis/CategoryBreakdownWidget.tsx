@@ -20,7 +20,7 @@ export default function CategoryBreakdownWidget({ categories }: CategoryBreakdow
   const hasData = validCategories.length > 0 && total > 0;
 
   return (
-    <Card className="p-4 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all border border-blue-100 animate-fade-in">
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl transition-all border border-blue-100 animate-fade-in">
       <p className="text-sm font-medium text-foreground mb-3">📊 Gastos por Categoría</p>
       {!hasData ? (
         <div className="h-[220px] flex items-center justify-center">
@@ -35,7 +35,7 @@ export default function CategoryBreakdownWidget({ categories }: CategoryBreakdow
             cx="50%"
             cy="50%"
             labelLine={false}
-            label={({ name, percent }) => percent > 0.05 ? `${name} ${(percent * 100).toFixed(0)}%` : ''}
+            label={false}
             outerRadius={80}
             fill="#8884d8"
             dataKey="value"
@@ -46,27 +46,35 @@ export default function CategoryBreakdownWidget({ categories }: CategoryBreakdow
           </Pie>
           <Tooltip 
             contentStyle={{
-              backgroundColor: 'rgba(0,0,0,0.9)',
-              border: '1px solid rgba(255,255,255,0.2)',
-              borderRadius: '8px',
-              fontSize: '12px'
+              backgroundColor: 'rgba(0, 0, 0, 0.95)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '12px',
+              padding: '8px 12px',
+              fontSize: '12px',
+              color: 'white',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
             }}
-            formatter={(value: any) => `$${value.toLocaleString()}`}
+            labelStyle={{
+              color: 'white',
+              fontWeight: '600',
+              marginBottom: '4px'
+            }}
+            formatter={(value: any) => [`$${value.toLocaleString()}`, '']}
           />
           </PieChart>
         </ResponsiveContainer>
-        <div className="mt-3 space-y-1.5 max-h-32 overflow-y-auto">
+        <div className="mt-3 space-y-1.5 max-h-32 overflow-y-auto pr-1">
           {validCategories.map((cat, idx) => (
-            <div key={idx} className="flex justify-between items-center text-xs">
-              <div className="flex items-center gap-2">
+            <div key={idx} className="flex justify-between items-center text-xs gap-2">
+              <div className="flex items-center gap-2 min-w-0 flex-1">
                 <div 
-                  className="w-3 h-3 rounded-full" 
+                  className="w-3 h-3 rounded-full flex-shrink-0" 
                   style={{ backgroundColor: cat.color || COLORS[idx % COLORS.length] }}
                 />
-                <span className="text-muted-foreground">{cat.name}</span>
+                <span className="text-muted-foreground truncate">{cat.name}</span>
               </div>
-              <span className="text-foreground font-medium">
-                ${cat.value.toLocaleString()} ({((cat.value / total) * 100).toFixed(1)}%)
+              <span className="text-foreground font-medium flex-shrink-0 text-right">
+                ${(cat.value / 1000).toFixed(1)}k ({((cat.value / total) * 100).toFixed(0)}%)
               </span>
             </div>
           ))}
