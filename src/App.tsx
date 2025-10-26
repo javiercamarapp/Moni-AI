@@ -42,6 +42,7 @@ import Reports from './pages/Reports';
 import CategoryExpenses from './pages/CategoryExpenses';
 import Social from './pages/Social';
 import Goals from './pages/Goals';
+import AccountsCards from './pages/AccountsCards';
 
 import NotFound from "./pages/NotFound";
 
@@ -103,6 +104,7 @@ function App() {
           <Route path="/edit-assets-liabilities" element={<EditNetWorth />} />
           <Route path="/social" element={<Social />} />
           <Route path="/goals" element={<Goals />} />
+          <Route path="/accounts-cards" element={<AccountsCards />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

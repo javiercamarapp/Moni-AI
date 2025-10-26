@@ -580,7 +580,7 @@ const Profile = () => {
             <Button
               variant="ghost"
               className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
-              onClick={() => navigate('/categorias')}
+              onClick={() => navigate('/accounts-cards')}
             >
               <span className="text-foreground">Mis tarjetas/cuentas</span>
               <ChevronRight className="h-5 w-5 text-foreground/70" />
