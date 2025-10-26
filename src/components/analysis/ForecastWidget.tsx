@@ -186,7 +186,7 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
               {(() => {
                 const value = displayData[displayData.length - 1]?.conservative || 0;
                 if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-                return `$${Math.round(value / 1000)}k`;
+                return `$${Math.round(value).toLocaleString('es-MX')}`;
               })()}
             </p>
             <p className="text-[7px] text-gray-500 mt-0.5">(75% ahorro promedio)</p>
@@ -197,7 +197,7 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
               {(() => {
                 const value = displayData[displayData.length - 1]?.realistic || 0;
                 if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-                return `$${Math.round(value / 1000)}k`;
+                return `$${Math.round(value).toLocaleString('es-MX')}`;
               })()}
             </p>
             <p className="text-[7px] text-gray-500 mt-0.5">(ahorro histórico promedio)</p>
@@ -208,7 +208,7 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
               {(() => {
                 const value = displayData[displayData.length - 1]?.optimistic || 0;
                 if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-                return `$${Math.round(value / 1000)}k`;
+                return `$${Math.round(value).toLocaleString('es-MX')}`;
               })()}
             </p>
             <p className="text-[7px] text-gray-500 mt-0.5">(+20% del promedio)</p>
