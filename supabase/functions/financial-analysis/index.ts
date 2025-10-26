@@ -1105,12 +1105,12 @@ Responde SOLO con el JSON array, sin texto adicional.`;
     // Calcular promedios históricos (últimos 6 o 12 meses según el período)
     console.log('Calculating historical averages for period:', period);
     const monthsToAnalyze = period === 'year' ? 12 : 6;
-    const historicalStartDate = new Date();
-    historicalStartDate.setMonth(historicalStartDate.getMonth() - monthsToAnalyze);
+    const averagesStartDate = new Date();
+    averagesStartDate.setMonth(averagesStartDate.getMonth() - monthsToAnalyze);
     
     // Obtener transacciones históricas
     const historicalTransactions = transactions.filter(t => 
-      new Date(t.transaction_date) >= historicalStartDate
+      new Date(t.transaction_date) >= averagesStartDate
     );
     
     console.log(`Historical transactions found (last ${monthsToAnalyze} months):`, historicalTransactions.length);
