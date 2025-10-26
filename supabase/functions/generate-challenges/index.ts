@@ -337,7 +337,7 @@ Responde con JSON (MANTÉN LOS EMOJIS EN category):
         { day: 5, status: 'pending' }, // Friday
         { day: 6, status: 'pending' }  // Saturday
       ]),
-      status: 'pending', // Changed from 'active' to 'pending'
+      status: 'active',
       is_ai_generated: true
     }));
 
