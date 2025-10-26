@@ -845,7 +845,7 @@ const Dashboard = () => {
         {/* Botón de cuentas y tarjetas */}
         <Card 
           className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer flex-shrink-0 border-0"
-          onClick={() => navigate('/net-worth')}
+          onClick={() => navigate('/accounts-cards')}
         >
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-purple-500/30 flex items-center justify-center flex-shrink-0">
