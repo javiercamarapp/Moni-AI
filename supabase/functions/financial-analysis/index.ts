@@ -587,14 +587,11 @@ Ejemplo formato:
     
     console.log('📊 Transacciones históricas encontradas:', historicalTxs?.length || 0);
     
-    // Agrupar por mes y calcular balance mensual SOLO de meses completados
+    // Agrupar por mes y calcular balance mensual (incluye mes actual)
     const monthlyData: Record<string, { income: number; expenses: number }> = {};
-    const currentMonth = now.toISOString().substring(0, 7); // YYYY-MM actual
     
     historicalTxs?.forEach(tx => {
       const monthKey = tx.transaction_date.substring(0, 7); // YYYY-MM
-      // NO incluir el mes actual en el promedio histórico (aún no termina)
-      if (monthKey >= currentMonth) return;
       
       if (!monthlyData[monthKey]) {
         monthlyData[monthKey] = { income: 0, expenses: 0 };
