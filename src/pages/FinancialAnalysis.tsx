@@ -23,6 +23,9 @@ import RiskIndicatorsWidget from "@/components/analysis/RiskIndicatorsWidget";
 import EvolutionChartWidget from "@/components/analysis/EvolutionChartWidget";
 import HistoricalComparisonWidget from "@/components/analysis/HistoricalComparisonWidget";
 import FutureCalendarWidget from "@/components/analysis/FutureCalendarWidget";
+import YearOverYearWidget from "@/components/analysis/YearOverYearWidget";
+import SeasonalTrendsWidget from "@/components/analysis/SeasonalTrendsWidget";
+import CategoryHeatmapWidget from "@/components/analysis/CategoryHeatmapWidget";
 import AICoachInsightsWidget from "@/components/analysis/AICoachInsightsWidget";
 import IncomeExpensePieWidget from "@/components/analysis/IncomeExpensePieWidget";
 import CategoryBreakdownWidget from "@/components/analysis/CategoryBreakdownWidget";
@@ -105,6 +108,18 @@ export default function FinancialAnalysis() {
   const [historicalMonthlyData, setHistoricalMonthlyData] = useState<any[]>([]);
   const [evolutionData, setEvolutionData] = useState<any[]>(() => {
     const cached = localStorage.getItem('financialAnalysis_evolutionData');
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [yearOverYearData, setYearOverYearData] = useState<any[]>(() => {
+    const cached = localStorage.getItem('financialAnalysis_yearOverYearData');
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [seasonalData, setSeasonalData] = useState<any[]>(() => {
+    const cached = localStorage.getItem('financialAnalysis_seasonalData');
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [categoryHeatmapData, setCategoryHeatmapData] = useState<any[]>(() => {
+    const cached = localStorage.getItem('financialAnalysis_categoryHeatmapData');
     return cached ? JSON.parse(cached) : [];
   });
 
@@ -273,6 +288,114 @@ export default function FinancialAnalysis() {
       setEvolutionData(evolutionDataArray);
       localStorage.setItem('financialAnalysis_evolutionData', JSON.stringify(evolutionDataArray));
       localStorage.setItem('financialAnalysis_historicalMonthlyData', JSON.stringify(historicalDataArray));
+      
+      // Calcular Year-over-Year (comparar mismo mes de diferentes años)
+      const yearOverYearMap: Record<string, Record<string, number>> = {};
+      historicalTxs?.forEach(tx => {
+        const date = new Date(tx.transaction_date);
+        const year = date.getFullYear().toString();
+        const month = monthNames[date.getMonth()];
+        
+        if (!yearOverYearMap[month]) {
+          yearOverYearMap[month] = {};
+        }
+        if (!yearOverYearMap[month][year]) {
+          yearOverYearMap[month][year] = 0;
+        }
+        
+        if (tx.type === 'expense' || tx.type === 'gasto') {
+          yearOverYearMap[month][year] += Number(tx.amount);
+        }
+      });
+      
+      const yearOverYearArray = Object.keys(yearOverYearMap)
+        .map(month => ({
+          month,
+          ...yearOverYearMap[month]
+        }))
+        .filter(item => Object.keys(item).length > 2); // Al menos 1 año de datos
+      
+      setYearOverYearData(yearOverYearArray);
+      localStorage.setItem('financialAnalysis_yearOverYearData', JSON.stringify(yearOverYearArray));
+      
+      // Calcular Seasonal Trends (por trimestre)
+      const quarterMap: Record<string, { income: number; expenses: number; savings: number }> = {
+        'Q1 (Ene-Mar)': { income: 0, expenses: 0, savings: 0 },
+        'Q2 (Abr-Jun)': { income: 0, expenses: 0, savings: 0 },
+        'Q3 (Jul-Sep)': { income: 0, expenses: 0, savings: 0 },
+        'Q4 (Oct-Dic)': { income: 0, expenses: 0, savings: 0 }
+      };
+      
+      historicalTxs?.forEach(tx => {
+        const month = new Date(tx.transaction_date).getMonth();
+        let quarter: string;
+        if (month < 3) quarter = 'Q1 (Ene-Mar)';
+        else if (month < 6) quarter = 'Q2 (Abr-Jun)';
+        else if (month < 9) quarter = 'Q3 (Jul-Sep)';
+        else quarter = 'Q4 (Oct-Dic)';
+        
+        const amount = Number(tx.amount);
+        if (tx.type === 'income' || tx.type === 'ingreso') {
+          quarterMap[quarter].income += amount;
+        } else if (tx.type === 'expense' || tx.type === 'gasto') {
+          quarterMap[quarter].expenses += amount;
+        }
+      });
+      
+      const seasonalArray = Object.keys(quarterMap).map(quarter => ({
+        quarter,
+        income: Math.round(quarterMap[quarter].income),
+        expenses: Math.round(quarterMap[quarter].expenses),
+        savings: Math.round(quarterMap[quarter].income - quarterMap[quarter].expenses)
+      }));
+      
+      setSeasonalData(seasonalArray);
+      localStorage.setItem('financialAnalysis_seasonalData', JSON.stringify(seasonalArray));
+      
+      // Calcular Category Heatmap (gastos por categoría a lo largo de los meses)
+      const { data: categories } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('type', 'expense');
+      
+      const categoryMonthMap: Record<string, Record<string, number>> = {};
+      
+      historicalTxs?.forEach(tx => {
+        if (tx.type === 'expense' || tx.type === 'gasto') {
+          const monthKey = tx.transaction_date.substring(0, 7); // YYYY-MM
+          const [year, month] = monthKey.split('-');
+          const monthIndex = parseInt(month) - 1;
+          const monthLabel = monthNames[monthIndex];
+          
+          // Find category name
+          const category = categories?.find(c => c.id === tx.category_id);
+          const categoryName = category?.name || 'Sin categoría';
+          
+          if (!categoryMonthMap[categoryName]) {
+            categoryMonthMap[categoryName] = {};
+          }
+          if (!categoryMonthMap[categoryName][monthLabel]) {
+            categoryMonthMap[categoryName][monthLabel] = 0;
+          }
+          
+          categoryMonthMap[categoryName][monthLabel] += Number(tx.amount);
+        }
+      });
+      
+      const categoryHeatmapArray = Object.keys(categoryMonthMap)
+        .map(category => ({
+          category,
+          months: categoryMonthMap[category]
+        }))
+        .sort((a, b) => {
+          const sumA = Object.values(a.months).reduce((sum, val) => sum + val, 0);
+          const sumB = Object.values(b.months).reduce((sum, val) => sum + val, 0);
+          return sumB - sumA;
+        });
+      
+      setCategoryHeatmapData(categoryHeatmapArray);
+      localStorage.setItem('financialAnalysis_categoryHeatmapData', JSON.stringify(categoryHeatmapArray));
       
       // Calculate MoM (Month over Month) growth
       const monthKeys = Object.keys(monthlyData).sort();
@@ -1652,6 +1775,62 @@ export default function FinancialAnalysis() {
                 { name: 'Otros', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.08, color: '#ef4444' },
               ]}
             />
+
+            {/* New Historical Comparison Widgets */}
+            {yearOverYearData.length > 0 && (
+              <YearOverYearWidget 
+                data={yearOverYearData}
+                insight={(() => {
+                  const years = yearOverYearData.length > 0 
+                    ? Object.keys(yearOverYearData[0]).filter(key => key !== 'month')
+                    : [];
+                  if (years.length < 2) return undefined;
+                  
+                  const latestYear = Math.max(...years.map(y => parseInt(y)));
+                  const previousYear = latestYear - 1;
+                  
+                  const latestTotal = yearOverYearData.reduce((sum, item) => sum + (item[latestYear] || 0), 0);
+                  const previousTotal = yearOverYearData.reduce((sum, item) => sum + (item[previousYear] || 0), 0);
+                  const change = ((latestTotal - previousTotal) / previousTotal) * 100;
+                  
+                  return change < 0
+                    ? `Tus gastos bajaron ${Math.abs(change).toFixed(1)}% vs ${previousYear}. ¡Excelente control financiero!`
+                    : `Tus gastos aumentaron ${change.toFixed(1)}% vs ${previousYear}. Revisa gastos variables.`;
+                })()}
+              />
+            )}
+
+            {seasonalData.length > 0 && (
+              <SeasonalTrendsWidget 
+                data={seasonalData}
+                insight={(() => {
+                  const bestQuarter = seasonalData.reduce((max, q) => q.savings > max.savings ? q : max, seasonalData[0]);
+                  const worstQuarter = seasonalData.reduce((min, q) => q.savings < min.savings ? q : min, seasonalData[0]);
+                  
+                  return `Tu mejor trimestre fue ${bestQuarter.quarter} con $${(bestQuarter.savings / 1000).toFixed(1)}k ahorrados. ${worstQuarter.quarter} fue el más desafiante con $${(worstQuarter.savings / 1000).toFixed(1)}k.`;
+                })()}
+              />
+            )}
+
+            {categoryHeatmapData.length > 0 && (
+              <CategoryHeatmapWidget 
+                data={categoryHeatmapData}
+                insight={(() => {
+                  if (categoryHeatmapData.length === 0) return undefined;
+                  
+                  const topCategory = categoryHeatmapData[0];
+                  const monthValues = Object.values(topCategory.months);
+                  let totalSpent = 0;
+                  monthValues.forEach((val: any) => {
+                    totalSpent += Number(val) || 0;
+                  });
+                  const monthCount = Object.keys(topCategory.months).length;
+                  const avgMonthly = monthCount > 0 ? (totalSpent / monthCount) : 0;
+                  
+                  return `${topCategory.category} es tu categoría más cara con $${(totalSpent / 1000).toFixed(1)}k en 6 meses (promedio $${(avgMonthly / 1000).toFixed(1)}k/mes). Busca optimizar aquí.`;
+                })()}
+              />
+            )}
           </>
         ) : (
           <Card className="p-8 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center">
