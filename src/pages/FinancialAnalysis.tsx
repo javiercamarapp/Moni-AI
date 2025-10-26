@@ -103,6 +103,10 @@ export default function FinancialAnalysis() {
   
   const [showSplash, setShowSplash] = useState(false);
   const [historicalMonthlyData, setHistoricalMonthlyData] = useState<any[]>([]);
+  const [evolutionData, setEvolutionData] = useState<any[]>(() => {
+    const cached = localStorage.getItem('financialAnalysis_evolutionData');
+    return cached ? JSON.parse(cached) : [];
+  });
 
   // Helper function to safely format values in thousands
   const formatK = (value: number | undefined | null): string => {
@@ -243,7 +247,31 @@ export default function FinancialAnalysis() {
       setHistoricalMonthlyData(historicalDataArray);
       console.log('📊 Historical monthly data:', historicalDataArray);
       
-      // Guardar también para usar en el insight del widget
+      // Calcular datos de evolución con balance acumulado y score estimado
+      let accumulatedBalance = 0;
+      const evolutionDataArray = historicalDataArray.map((month, index) => {
+        accumulatedBalance += month.savings;
+        
+        // Calcular un score estimado basado en tasa de ahorro y consistencia
+        const savingsRate = month.income > 0 ? (month.savings / month.income) * 100 : 0;
+        let scoreEstimate = 40; // Base
+        if (month.savings > 0) scoreEstimate += 20;
+        if (savingsRate > 20) scoreEstimate += 20;
+        if (savingsRate > 10) scoreEstimate += 10;
+        if (month.income > 0) scoreEstimate += 10;
+        
+        return {
+          month: month.month,
+          score: Math.min(100, scoreEstimate),
+          savings: month.savings / 1000, // En miles
+          balance: accumulatedBalance / 1000, // En miles
+          income: month.income / 1000, // En miles
+          expenses: month.expenses / 1000 // En miles
+        };
+      });
+      
+      setEvolutionData(evolutionDataArray);
+      localStorage.setItem('financialAnalysis_evolutionData', JSON.stringify(evolutionDataArray));
       localStorage.setItem('financialAnalysis_historicalMonthlyData', JSON.stringify(historicalDataArray));
       
       // Calculate MoM (Month over Month) growth
@@ -1562,15 +1590,27 @@ export default function FinancialAnalysis() {
 
             {/* Evolution Chart */}
             <EvolutionChartWidget 
-              data={[
-                { month: 'May', score: 62, savings: 2.5, balance: 8.2, income: 15, expenses: 12 },
-                { month: 'Jun', score: 65, savings: 3.1, balance: 11.3, income: 15.5, expenses: 11.8 },
-                { month: 'Jul', score: 68, savings: 3.8, balance: 15.1, income: 16, expenses: 11.5 },
-                { month: 'Ago', score: 70, savings: 4.2, balance: 19.3, income: 16.2, expenses: 11.2 },
-                { month: 'Sep', score: 73, savings: 4.8, balance: 24.1, income: 16.5, expenses: 10.9 },
-                { month: 'Oct', score: 75, savings: 5.2, balance: 29.3, income: 17, expenses: 10.8 },
+              data={evolutionData.length > 0 ? evolutionData : [
+                { month: 'Sin datos', score: 40, savings: 0, balance: 0, income: 0, expenses: 0 }
               ]}
-              insight="Tu ahorro promedio subió 12% en 3 meses, pero tu gasto fijo sigue alto. Ajustar renta o servicios podría darte +4 pts."
+              insight={(() => {
+                if (evolutionData.length < 2) return undefined;
+                
+                const firstMonth = evolutionData[0];
+                const lastMonth = evolutionData[evolutionData.length - 1];
+                const scoreChange = lastMonth.score - firstMonth.score;
+                const savingsGrowth = ((lastMonth.savings - firstMonth.savings) / Math.abs(firstMonth.savings || 1)) * 100;
+                
+                if (scoreChange > 0 && savingsGrowth > 0) {
+                  return `Tu score mejoró ${scoreChange} puntos y tu ahorro creció ${savingsGrowth.toFixed(0)}% desde ${firstMonth.month}. ¡Excelente progreso!`;
+                } else if (scoreChange > 0) {
+                  return `Tu score mejoró ${scoreChange} puntos desde ${firstMonth.month}. Sigue mejorando tu tasa de ahorro.`;
+                } else if (savingsGrowth > 0) {
+                  return `Tu ahorro creció ${savingsGrowth.toFixed(0)}% desde ${firstMonth.month}. Mantén la consistencia.`;
+                } else {
+                  return `Balance acumulado: $${lastMonth.balance.toFixed(1)}k. Enfócate en aumentar tu tasa de ahorro.`;
+                }
+              })()}
             />
 
             {/* Additional Financial Health Charts */}
