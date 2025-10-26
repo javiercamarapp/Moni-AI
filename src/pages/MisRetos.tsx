@@ -36,6 +36,16 @@ export default function MisRetos() {
     verifyProgress();
   }, []);
 
+  // Auto-generar retos si no hay ninguno
+  useEffect(() => {
+    if (!loading && challenges.length === 0 && !generatingChallenges) {
+      const timer = setTimeout(() => {
+        generateNewChallenges();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [loading, challenges.length]);
+
   const verifyProgress = async () => {
     try {
       console.log('🔍 Verificando progreso de retos...');
