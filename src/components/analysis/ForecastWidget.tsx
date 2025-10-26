@@ -46,8 +46,8 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
   const hasData = displayData && displayData.length > 0 && displayData.some(d => d.realistic > 0 || d.conservative > 0 || d.optimistic > 0);
 
   return (
-    <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 transition-all">
-      <div className="space-y-2">
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl transition-all border border-blue-100 animate-fade-in">
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <TrendingUp className="h-3.5 w-3.5 text-emerald-600" />
@@ -78,7 +78,7 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
 
         {!hasData ? (
           // Loading state
-          <div className="h-32 flex flex-col items-center justify-center space-y-3">
+          <div className="h-[200px] flex flex-col items-center justify-center space-y-3">
             <div className="flex items-center gap-2">
               <motion.div
                 animate={{
@@ -110,8 +110,7 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
             </p>
           </div>
         ) : (
-          <div className="h-32">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={displayData}>
               <defs>
                 <linearGradient id="optimistic" x1="0" y1="0" x2="0" y2="1">
@@ -177,7 +176,6 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
               />
             </AreaChart>
           </ResponsiveContainer>
-          </div>
         )}
 
         {hasData && (
