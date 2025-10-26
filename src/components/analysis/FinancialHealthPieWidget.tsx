@@ -43,7 +43,7 @@ export default function FinancialHealthPieWidget({
   const healthStatus = savingsRate >= 20 ? '✅ Excelente' : savingsRate >= 10 ? '⚠️ Mejorable' : '❌ Crítico';
 
   return (
-    <Card className="p-4 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all border border-blue-100 animate-fade-in">
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl transition-all border border-blue-100 animate-fade-in">
       <div className="flex justify-between items-center mb-3">
         <p className="text-sm font-medium text-foreground">💚 Salud Financiera</p>
         <span className="text-xs text-muted-foreground">{healthStatus}</span>
@@ -55,10 +55,7 @@ export default function FinancialHealthPieWidget({
             cx="50%"
             cy="50%"
             labelLine={false}
-            label={({ name, percentage }) => {
-              const validPercentage = percentage && !isNaN(percentage) ? percentage : 0;
-              return `${name} ${validPercentage.toFixed(0)}%`;
-            }}
+            label={false}
             outerRadius={70}
             fill="#8884d8"
             dataKey="value"
@@ -69,12 +66,21 @@ export default function FinancialHealthPieWidget({
           </Pie>
           <Tooltip 
             contentStyle={{
-              backgroundColor: 'rgba(0,0,0,0.9)',
-              border: '1px solid rgba(255,255,255,0.2)',
-              borderRadius: '8px',
-              fontSize: '12px'
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              borderRadius: '12px',
+              padding: '8px 12px',
+              fontSize: '12px',
+              color: '#1f2937',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
             }}
-            formatter={(value: any) => `$${value.toLocaleString()}`}
+            labelStyle={{
+              color: '#1f2937',
+              fontWeight: '600',
+              marginBottom: '4px'
+            }}
+            formatter={(value: any) => [`$${value.toLocaleString()}`, '']}
           />
         </PieChart>
       </ResponsiveContainer>
@@ -86,7 +92,7 @@ export default function FinancialHealthPieWidget({
               <span className="text-muted-foreground">{item.name}</span>
             </div>
             <span className="text-foreground font-medium">
-              ${item.value.toLocaleString()} ({(item.percentage || 0).toFixed(1)}%)
+              ${(item.value / 1000).toFixed(1)}k ({(item.percentage || 0).toFixed(0)}%)
             </span>
           </div>
         ))}

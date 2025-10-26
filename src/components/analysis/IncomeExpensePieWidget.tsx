@@ -18,7 +18,7 @@ export default function IncomeExpensePieWidget({ income, expenses }: IncomeExpen
   ];
 
   return (
-    <Card className="p-4 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all border border-blue-100 animate-fade-in">
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl transition-all border border-blue-100 animate-fade-in">
       <p className="text-sm font-medium text-foreground mb-3">💰 Distribución Ingresos vs Gastos</p>
       {!hasData ? (
         <div className="h-[200px] flex items-center justify-center">
@@ -32,7 +32,7 @@ export default function IncomeExpensePieWidget({ income, expenses }: IncomeExpen
             cx="50%"
             cy="50%"
             labelLine={false}
-            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+            label={false}
             outerRadius={70}
             fill="#8884d8"
             dataKey="value"
@@ -43,12 +43,21 @@ export default function IncomeExpensePieWidget({ income, expenses }: IncomeExpen
           </Pie>
           <Tooltip 
             contentStyle={{
-              backgroundColor: 'rgba(0,0,0,0.9)',
-              border: '1px solid rgba(255,255,255,0.2)',
-              borderRadius: '8px',
-              fontSize: '12px'
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              borderRadius: '12px',
+              padding: '8px 12px',
+              fontSize: '12px',
+              color: '#1f2937',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
             }}
-            formatter={(value: any) => `$${value.toLocaleString()}`}
+            labelStyle={{
+              color: '#1f2937',
+              fontWeight: '600',
+              marginBottom: '4px'
+            }}
+            formatter={(value: any) => [`$${value.toLocaleString()}`, '']}
           />
         </PieChart>
       </ResponsiveContainer>
@@ -56,9 +65,23 @@ export default function IncomeExpensePieWidget({ income, expenses }: IncomeExpen
       {hasData && (
         <div className="mt-3 space-y-2">
           <div className="flex justify-between items-center text-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#10b981]" />
+              <span className="text-muted-foreground">Ingresos</span>
+            </div>
+            <span className="text-foreground font-medium">${(validIncome / 1000).toFixed(1)}k</span>
+          </div>
+          <div className="flex justify-between items-center text-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#ef4444]" />
+              <span className="text-muted-foreground">Gastos</span>
+            </div>
+            <span className="text-foreground font-medium">${(validExpenses / 1000).toFixed(1)}k</span>
+          </div>
+          <div className="pt-2 border-t border-border flex justify-between items-center text-xs">
             <span className="text-muted-foreground">Balance</span>
             <span className={`font-bold ${validIncome - validExpenses >= 0 ? 'text-primary' : 'text-destructive'}`}>
-              ${(validIncome - validExpenses).toLocaleString()}
+              ${((validIncome - validExpenses) / 1000).toFixed(1)}k
             </span>
           </div>
         </div>
