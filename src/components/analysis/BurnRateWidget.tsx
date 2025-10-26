@@ -28,7 +28,7 @@ export default function BurnRateWidget({ data, currentSavings, insight }: BurnRa
           <div className="flex items-center gap-2">
             <Flame className="h-4 w-4 text-primary" />
             <div>
-              <p className="text-sm font-medium text-foreground">💰 Ahorro vs Gasto Mensual</p>
+              <p className="text-sm font-medium text-foreground">💰 Ahorro y Acumulado</p>
               <p className="text-[9px] text-muted-foreground">Balance mensual y acumulado</p>
             </div>
           </div>
