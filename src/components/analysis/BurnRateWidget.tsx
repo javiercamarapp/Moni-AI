@@ -1,11 +1,11 @@
 import { Card } from "@/components/ui/card";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Flame } from "lucide-react";
 
 interface BurnRateData {
   month: string;
-  burnRate: number;
-  runway: number; // Meses que duraría el ahorro
+  gastoNeto: number; // Gasto neto mensual
+  ahorro: number; // Ahorro disponible
 }
 
 interface BurnRateProps {
@@ -15,23 +15,34 @@ interface BurnRateProps {
 }
 
 export default function BurnRateWidget({ data, currentSavings, insight }: BurnRateProps) {
-  const avgBurnRate = data.length > 0 
-    ? data.reduce((sum, d) => sum + d.burnRate, 0) / data.length 
+  const avgGastoNeto = data.length > 0 
+    ? data.reduce((sum, d) => sum + d.gastoNeto, 0) / data.length 
     : 0;
   
-  const currentRunway = avgBurnRate > 0 ? currentSavings / avgBurnRate : 0;
+  const mesesRunway = avgGastoNeto > 0 ? currentSavings / avgGastoNeto : 999;
 
   return (
     <Card className="p-4 bg-white rounded-[20px] shadow-xl transition-all border border-blue-100 animate-fade-in">
       <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <Flame className="h-4 w-4 text-primary" />
-          <p className="text-sm font-medium text-foreground">🔥 Velocidad de Gasto (Burn Rate)</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Flame className="h-4 w-4 text-primary" />
+            <div>
+              <p className="text-sm font-medium text-foreground">🔥 Análisis de Gastos vs Ahorros</p>
+              <p className="text-[9px] text-muted-foreground">Gasto neto mensual y tendencia de ahorro</p>
+            </div>
+          </div>
         </div>
 
         <div className="h-56">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <ComposedChart data={data}>
+              <defs>
+                <linearGradient id="ahorroGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
+                </linearGradient>
+              </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
               <XAxis 
                 dataKey="month" 
@@ -39,9 +50,17 @@ export default function BurnRateWidget({ data, currentSavings, insight }: BurnRa
                 tick={{ fill: 'rgba(0,0,0,0.7)', fontSize: 10 }}
               />
               <YAxis 
+                yAxisId="left"
                 stroke="rgba(0,0,0,0.5)" 
                 tick={{ fill: 'rgba(0,0,0,0.7)', fontSize: 10 }}
-                label={{ value: 'Meses', angle: -90, position: 'insideLeft', style: { fontSize: 10 } }}
+                label={{ value: 'Gasto ($)', angle: -90, position: 'insideLeft', style: { fontSize: 10 } }}
+              />
+              <YAxis 
+                yAxisId="right"
+                orientation="right"
+                stroke="rgba(0,0,0,0.5)" 
+                tick={{ fill: 'rgba(0,0,0,0.7)', fontSize: 10 }}
+                label={{ value: 'Ahorro ($)', angle: 90, position: 'insideRight', style: { fontSize: 10 } }}
               />
               <Tooltip 
                 contentStyle={{
@@ -59,55 +78,49 @@ export default function BurnRateWidget({ data, currentSavings, insight }: BurnRa
                   fontWeight: '600',
                   marginBottom: '4px'
                 }}
-                formatter={(value: any, name: string) => {
-                  if (name === 'burnRate') {
-                    return [`$${value.toLocaleString('es-MX')}`, 'Gasto neto'];
-                  }
-                  return [`${value.toFixed(1)} meses`, 'Runway'];
-                }}
+                formatter={(value: any) => `$${value.toLocaleString('es-MX', { maximumFractionDigits: 0 })}`}
               />
-              <ReferenceLine 
-                y={3} 
-                stroke="#ef4444" 
-                strokeDasharray="3 3" 
-                label={{ value: 'Zona crítica', position: 'right', fontSize: 10 }}
+              <Legend 
+                wrapperStyle={{ fontSize: '10px' }}
               />
-              <ReferenceLine 
-                y={6} 
-                stroke="#f59e0b" 
-                strokeDasharray="3 3" 
-                label={{ value: 'Zona segura', position: 'right', fontSize: 10 }}
+              <Bar 
+                yAxisId="left"
+                dataKey="gastoNeto" 
+                fill="#f97316" 
+                name="Gasto Neto"
+                radius={[4, 4, 0, 0]}
               />
               <Line 
+                yAxisId="right"
                 type="monotone" 
-                dataKey="runway" 
-                stroke="#ef4444" 
+                dataKey="ahorro" 
+                stroke="#10b981" 
                 strokeWidth={3}
-                name="Runway"
-                dot={{ fill: '#ef4444', r: 4 }}
+                name="Ahorro Acumulado"
+                dot={{ fill: '#10b981', r: 4 }}
                 activeDot={{ r: 6 }}
               />
-            </LineChart>
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
 
         <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border">
           <div>
             <p className="text-[10px] text-muted-foreground">Gasto neto promedio</p>
-            <p className="text-xs font-bold text-foreground break-words">
-              ${avgBurnRate.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+            <p className="text-xs font-bold text-orange-600 break-words">
+              ${avgGastoNeto.toLocaleString('es-MX', { maximumFractionDigits: 0 })}/mes
             </p>
           </div>
           <div>
-            <p className="text-[10px] text-muted-foreground">Runway actual</p>
-            <p className={`text-sm font-bold ${currentRunway < 3 ? 'text-red-500' : currentRunway < 6 ? 'text-orange-500' : 'text-green-500'}`}>
-              {currentRunway > 999 ? '∞' : `${currentRunway.toFixed(1)} meses`}
+            <p className="text-[10px] text-muted-foreground">Ahorro actual</p>
+            <p className="text-xs font-bold text-green-600">
+              ${currentSavings.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
             </p>
           </div>
           <div>
-            <p className="text-[10px] text-muted-foreground">Estado</p>
-            <p className="text-sm font-bold text-foreground">
-              {currentRunway < 3 ? '🔴 Crítico' : currentRunway < 6 ? '🟡 Alerta' : '🟢 Seguro'}
+            <p className="text-[10px] text-muted-foreground">Duración ahorro</p>
+            <p className={`text-sm font-bold ${mesesRunway < 3 ? 'text-red-500' : mesesRunway < 6 ? 'text-orange-500' : 'text-green-500'}`}>
+              {mesesRunway > 999 ? '∞' : `${mesesRunway.toFixed(1)} meses`}
             </p>
           </div>
         </div>

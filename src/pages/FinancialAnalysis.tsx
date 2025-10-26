@@ -412,23 +412,6 @@ export default function FinancialAnalysis() {
       setCategoryHeatmapData(categoryHeatmapArray);
       localStorage.setItem('financialAnalysis_categoryHeatmapData', JSON.stringify(categoryHeatmapArray));
       
-      // Calcular Burn Rate (velocidad de gasto neto y runway)
-      const burnRateArray = historicalDataArray.map((month, index) => {
-        const netSpending = month.expenses - month.income; // Gasto neto (negativo si ahorra)
-        const runway = netSpending > 0 && balance > 0 
-          ? balance / netSpending 
-          : 999; // Si ahorra, runway infinito
-        
-        return {
-          month: month.month,
-          burnRate: Math.abs(netSpending),
-          runway: Math.min(runway, 999)
-        };
-      });
-      
-      setBurnRateData(burnRateArray);
-      localStorage.setItem('financialAnalysis_burnRateData', JSON.stringify(burnRateArray));
-      
       // Calcular Net Worth Evolution (evolución patrimonial)
       const { data: netWorthSnapshots } = await supabase
         .from('net_worth_snapshots')
@@ -626,6 +609,22 @@ export default function FinancialAnalysis() {
         balance: balance,
         transacciones: transactions.length
       });
+      
+      // Calcular Burn Rate (gasto neto mensual vs ahorro acumulado) - DESPUÉS de tener balance
+      let ahorroAcumulado = balance > 0 ? balance : 0;
+      const burnRateArray = historicalDataArray.map((month, index) => {
+        const gastoNeto = month.expenses - month.income; // Positivo = gasto más de lo que ingresa
+        ahorroAcumulado -= gastoNeto; // Ajustar ahorro acumulado
+        
+        return {
+          month: month.month,
+          gastoNeto: Math.abs(gastoNeto), // Mostrar como valor positivo
+          ahorro: Math.max(0, ahorroAcumulado) // No mostrar valores negativos
+        };
+      });
+      
+      setBurnRateData(burnRateArray);
+      localStorage.setItem('financialAnalysis_burnRateData', JSON.stringify(burnRateArray));
       
       setQuickMetrics(metricsData);
       // Guardar con clave para datos anuales
@@ -1923,15 +1922,18 @@ export default function FinancialAnalysis() {
                 data={burnRateData}
                 currentSavings={analysis?.metrics?.balance || 0}
                 insight={(() => {
-                  const avgRunway = burnRateData.reduce((sum, d) => sum + d.runway, 0) / burnRateData.length;
-                  const currentBurnRate = burnRateData[burnRateData.length - 1]?.burnRate || 0;
+                  const avgGastoNeto = burnRateData.reduce((sum, d) => sum + d.gastoNeto, 0) / burnRateData.length;
+                  const ahorroActual = analysis?.metrics?.balance || 0;
+                  const mesesDuracion = avgGastoNeto > 0 ? ahorroActual / avgGastoNeto : 999;
                   
-                  if (avgRunway > 12) {
-                    return `¡Excelente! Tus ahorros actuales durarían más de 1 año al ritmo actual de gastos. Tu burn rate promedio es $${currentBurnRate.toLocaleString('es-MX', { maximumFractionDigits: 0 })}/mes.`;
-                  } else if (avgRunway > 6) {
-                    return `Tu runway promedio es ${avgRunway.toFixed(1)} meses. Considera aumentar ahorros o reducir gastos para mayor seguridad financiera.`;
+                  if (mesesDuracion > 12) {
+                    return `¡Excelente! Con tu ahorro actual de $${ahorroActual.toLocaleString('es-MX', { maximumFractionDigits: 0 })} y gasto neto promedio de $${avgGastoNeto.toLocaleString('es-MX', { maximumFractionDigits: 0 })}/mes, tienes más de 1 año de colchón financiero.`;
+                  } else if (mesesDuracion > 6) {
+                    return `Tu ahorro actual duraría ${mesesDuracion.toFixed(1)} meses al ritmo de gasto actual. Considera aumentar tu colchón de emergencia.`;
+                  } else if (ahorroActual > 0) {
+                    return `⚠️ Tu ahorro solo duraría ${mesesDuracion.toFixed(1)} meses. Prioriza reducir gastos y aumentar tu fondo de emergencia.`;
                   } else {
-                    return `⚠️ Tu runway es de solo ${avgRunway.toFixed(1)} meses. Prioriza aumentar tu colchón de emergencia y reducir gastos innecesarios.`;
+                    return `⚠️ Sin ahorro disponible y gasto neto promedio de $${avgGastoNeto.toLocaleString('es-MX', { maximumFractionDigits: 0 })}/mes. Urge crear un fondo de emergencia.`;
                   }
                 })()}
               />
