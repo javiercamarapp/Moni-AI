@@ -96,6 +96,7 @@ export default function FinancialAnalysis() {
     const cached = localStorage.getItem('financialAnalysis_futureEvents');
     return cached ? JSON.parse(cached) : [];
   });
+  const [momGrowth, setMomGrowth] = useState<number | null>(null); // Month over Month growth
   
   const [showSplash, setShowSplash] = useState(false);
 
@@ -218,6 +219,28 @@ export default function FinancialAnalysis() {
           monthlyData[monthKey].expenses += Number(tx.amount);
         }
       });
+      
+      // Calculate MoM (Month over Month) growth
+      const monthKeys = Object.keys(monthlyData).sort();
+      if (monthKeys.length >= 2) {
+        const currentMonth = monthKeys[monthKeys.length - 1];
+        const previousMonth = monthKeys[monthKeys.length - 2];
+        
+        const currentBalance = monthlyData[currentMonth].income - monthlyData[currentMonth].expenses;
+        const previousBalance = monthlyData[previousMonth].income - monthlyData[previousMonth].expenses;
+        
+        if (previousBalance !== 0) {
+          const momPercentage = ((currentBalance - previousBalance) / Math.abs(previousBalance)) * 100;
+          setMomGrowth(momPercentage);
+          console.log('📈 MoM Growth:', {
+            currentMonth,
+            previousMonth,
+            currentBalance,
+            previousBalance,
+            momPercentage: momPercentage.toFixed(1) + '%'
+          });
+        }
+      }
       
       const monthsWithData = Object.keys(monthlyData).length;
       const avgMonthlyIncome = monthsWithData > 0 
@@ -903,7 +926,11 @@ export default function FinancialAnalysis() {
                   <p className={`text-lg font-bold ${(analysis?.metrics?.balance ?? 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
                     ${formatK(analysis?.metrics?.balance)}k
                   </p>
-                  <p className="text-[10px] text-muted-foreground">MoM: +2.3%</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    MoM: {momGrowth !== null 
+                      ? `${momGrowth > 0 ? '+' : ''}${momGrowth.toFixed(1)}%` 
+                      : 'Calculando...'}
+                  </p>
                 </Card>
 
                 <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
