@@ -7,7 +7,7 @@ const Goals = () => {
         {/* Content */}
         <div className="container mx-auto px-4 py-8">
           <div className="mb-6">
-            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight animate-fade-in">
               Metas
             </h1>
             <p className="text-sm text-gray-500">
