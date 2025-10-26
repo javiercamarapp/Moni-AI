@@ -569,24 +569,23 @@ Ejemplo formato:
       }
     ].filter(a => a.impact > 0);
     
-    // Calcular promedio de ahorro mensual histórico para diferentes horizontes
-    const startOfYear = new Date(now.getFullYear(), 0, 1);
-    const start5Years = new Date(now);
-    start5Years.setFullYear(start5Years.getFullYear() - 5);
-    const start10Years = new Date(now);
-    start10Years.setFullYear(start10Years.getFullYear() - 10);
+    // Calcular promedio de ahorro mensual histórico
+    // Obtener últimos 12 meses completos (sin incluir mes actual incompleto)
+    const historicalStartDate = new Date(now);
+    historicalStartDate.setMonth(historicalStartDate.getMonth() - 12); // 12 meses atrás
     
-    // Usar el final del mes ANTERIOR para excluir el mes actual incompleto
+    // Final del mes ANTERIOR (excluye mes actual incompleto)
     const endOfPreviousMonth = new Date(now.getFullYear(), now.getMonth(), 0);
     
-    console.log('📊 Obteniendo transacciones históricas desde:', start10Years.toISOString().split('T')[0], 'hasta:', endOfPreviousMonth.toISOString().split('T')[0]);
+    console.log('📊 Obteniendo transacciones históricas desde:', historicalStartDate.toISOString().split('T')[0], 'hasta:', endOfPreviousMonth.toISOString().split('T')[0]);
     
     const { data: historicalTxs } = await supabase
       .from('transactions')
       .select('*')
       .eq('user_id', userId)
-      .gte('transaction_date', start10Years.toISOString().split('T')[0])
-      .lte('transaction_date', endOfPreviousMonth.toISOString().split('T')[0]);
+      .gte('transaction_date', historicalStartDate.toISOString().split('T')[0])
+      .lte('transaction_date', endOfPreviousMonth.toISOString().split('T')[0])
+      .order('transaction_date', { ascending: false });
     
     console.log('📊 Transacciones históricas encontradas:', historicalTxs?.length || 0);
     
@@ -607,63 +606,58 @@ Ejemplo formato:
       }
     });
     
-    const completedMonthsBalances = Object.entries(monthlyData)
-      .map(([month, data]) => ({
-        month,
-        balance: data.income - data.expenses
-      }))
-      .sort((a, b) => b.month.localeCompare(a.month)); // Más reciente primero
+    // Convertir a array ordenado por fecha (más antiguo primero)
+    const sortedMonths = Object.keys(monthlyData).sort();
     
-    console.log('📊 Meses completados analizados:', completedMonthsBalances.length);
-    console.log('📊 Balances mensuales:', completedMonthsBalances.slice(0, 12).map(m => ({ 
+    // Tomar los ÚLTIMOS 6 meses que tengan datos (más recientes)
+    const last6MonthKeys = sortedMonths.slice(-6);
+    const last12MonthKeys = sortedMonths.slice(-12);
+    
+    const last6Months = last6MonthKeys.map(month => ({
+      month,
+      balance: monthlyData[month].income - monthlyData[month].expenses
+    }));
+    
+    const last12Months = last12MonthKeys.map(month => ({
+      month,
+      balance: monthlyData[month].income - monthlyData[month].expenses
+    }));
+    
+    console.log('📊 Meses completados analizados:', sortedMonths.length);
+    console.log('📊 Últimos 12 meses con datos:', last12Months.map(m => ({ 
       month: m.month, 
       balance: Math.round(m.balance) 
     })));
     
-    // Calcular promedios para diferentes horizontes temporales
-    const last6Months = completedMonthsBalances.slice(0, 6);
-    const last12Months = completedMonthsBalances.slice(0, 12);
-    const last60Months = completedMonthsBalances.slice(0, 60);
-    const last120Months = completedMonthsBalances.slice(0, 120);
-    
-    // Solo usar meses con datos para calcular el promedio real
+    // Calcular promedios usando solo los datos disponibles
     const avgMonthlySavings6M = last6Months.length > 0
       ? last6Months.reduce((sum, m) => sum + m.balance, 0) / last6Months.length
       : 0;
     
     const avgMonthlySavings12M = last12Months.length > 0
       ? last12Months.reduce((sum, m) => sum + m.balance, 0) / last12Months.length
-      : 0; // Si no hay datos, 0 en vez de usar balance actual
+      : avgMonthlySavings6M; // Fallback a 6 meses si no hay 12
     
-    const avgMonthlySavings60M = last60Months.length > 0
-      ? last60Months.reduce((sum, m) => sum + m.balance, 0) / last60Months.length
-      : avgMonthlySavings12M; // Fallback a 12 meses si no hay 60
-    
-    const avgMonthlySavings120M = last120Months.length > 0
-      ? last120Months.reduce((sum, m) => sum + m.balance, 0) / last120Months.length
-      : avgMonthlySavings60M; // Fallback a 60 meses si no hay 120
+    // Para horizontes largos, usar el promedio de 12 meses como base
+    const avgMonthlySavings60M = avgMonthlySavings12M;
+    const avgMonthlySavings120M = avgMonthlySavings12M;
     
     console.log('📊 Últimos 6 meses completados (balance):', 
       last6Months.map(m => ({ month: m.month, balance: Math.round(m.balance) }))
     );
     
-    console.log('📊 Promedios calculados por horizonte:', {
+    console.log('📊 Promedios calculados:', {
       promedio6Meses: Math.round(avgMonthlySavings6M),
       promedio12Meses: Math.round(avgMonthlySavings12M),
-      promedio60Meses: Math.round(avgMonthlySavings60M),
-      promedio120Meses: Math.round(avgMonthlySavings120M),
       mesesUsados6M: last6Months.length,
-      mesesUsados12M: last12Months.length,
-      mesesUsados60M: last60Months.length,
-      mesesUsados120M: last120Months.length
+      mesesUsados12M: last12Months.length
     });
     
-    // Proyecciones usando promedios específicos por horizonte temporal
-    // Acumular mes a mes usando el promedio apropiado para cada periodo
+    // Proyecciones usando el promedio de 6 meses para mayor precisión
     const forecastData = [];
-    let accumulatedSavings = 0; // Mantener acumulado real
+    let accumulatedSavings = 0;
     
-    console.log('📊 Generando proyecciones con promedios por horizonte');
+    console.log('📊 Generando proyecciones usando promedio de 6 meses:', Math.round(avgMonthlySavings6M));
     
     // Generar 120 meses (10 años) de proyección
     for (let i = 1; i <= 120; i++) {
@@ -680,18 +674,8 @@ Ejemplo formato:
         monthLabel = `${monthDate.toLocaleDateString('es-MX', { month: 'short' })} '${String(monthDate.getFullYear()).slice(-2)}`;
       }
       
-      // Seleccionar el promedio apropiado según el horizonte y acumular
-      let monthlyAvgForThisMonth;
-      if (i <= 12) {
-        monthlyAvgForThisMonth = avgMonthlySavings12M; // 1er año: promedio 12 meses
-      } else if (i <= 60) {
-        monthlyAvgForThisMonth = avgMonthlySavings60M; // Años 2-5: promedio 5 años
-      } else {
-        monthlyAvgForThisMonth = avgMonthlySavings120M; // Años 6-10: promedio 10 años
-      }
-      
-      // Acumular el ahorro de este mes
-      accumulatedSavings += monthlyAvgForThisMonth;
+      // Acumular el ahorro usando el promedio de 6 meses
+      accumulatedSavings += avgMonthlySavings6M;
       
       forecastData.push({
         month: monthLabel,
@@ -706,19 +690,19 @@ Ejemplo formato:
         conservative: Math.round(forecastData[11].conservative),
         realistic: Math.round(forecastData[11].realistic),
         optimistic: Math.round(forecastData[11].optimistic),
-        promedioUsado: Math.round(avgMonthlySavings12M)
+        promedioUsado: Math.round(avgMonthlySavings6M)
       },
       año5: { 
         conservative: Math.round(forecastData[59].conservative),
         realistic: Math.round(forecastData[59].realistic),
         optimistic: Math.round(forecastData[59].optimistic),
-        promedioUsado: Math.round(avgMonthlySavings60M)
+        promedioUsado: Math.round(avgMonthlySavings6M)
       },
       año10: { 
         conservative: Math.round(forecastData[119].conservative),
         realistic: Math.round(forecastData[119].realistic),
         optimistic: Math.round(forecastData[119].optimistic),
-        promedioUsado: Math.round(avgMonthlySavings120M)
+        promedioUsado: Math.round(avgMonthlySavings6M)
       }
     });
     
