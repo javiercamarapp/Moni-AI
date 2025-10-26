@@ -643,10 +643,16 @@ Ejemplo formato:
       ? last120Months.reduce((sum, m) => sum + m.balance, 0) / last120Months.length
       : avgMonthlySavings60M; // Fallback a 60 meses si no hay 120
     
+    console.log('📊 Últimos 6 meses completados (balance):', 
+      last6Months.map(m => ({ month: m.month, balance: Math.round(m.balance) }))
+    );
+    
     console.log('📊 Promedios calculados por horizonte:', {
+      promedio6Meses: Math.round(avgMonthlySavings6M),
       promedio12Meses: Math.round(avgMonthlySavings12M),
       promedio60Meses: Math.round(avgMonthlySavings60M),
       promedio120Meses: Math.round(avgMonthlySavings120M),
+      mesesUsados6M: last6Months.length,
       mesesUsados12M: last12Months.length,
       mesesUsados60M: last60Months.length,
       mesesUsados120M: last120Months.length
