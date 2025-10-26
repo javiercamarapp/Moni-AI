@@ -459,9 +459,9 @@ export default function EditAspirations() {
                 onClick={addCustomAspiration}
                 size="sm"
                 variant="outline"
-                className="rounded-[15px] border-blue-100 hover:scale-[1.02] transition-all"
+                className="rounded-full bg-white/80 backdrop-blur-md border border-gray-200/50 hover:bg-gray-50 hover:border-gray-300 hover:scale-105 transition-all duration-300 shadow-sm"
               >
-                <Plus className="h-4 w-4 mr-1" />
+                <Plus className="h-4 w-4 mr-1.5" />
                 Agregar
               </Button>
             </div>
