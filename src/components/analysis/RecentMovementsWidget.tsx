@@ -69,14 +69,6 @@ export default function RecentMovementsWidget() {
       onClick={() => navigate('/movimientos')}
       className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all active:scale-95 relative overflow-hidden h-[220px] flex flex-col cursor-pointer animate-fade-in"
     >
-      {/* Efecto brillante */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent" 
-           style={{
-             backgroundSize: '200% 100%',
-             animation: 'shimmer 3s ease-in-out infinite',
-           }}
-      />
-      
       <div className="space-y-2 relative z-10 flex-1 flex flex-col min-h-0">
         <div className="flex items-center justify-between flex-shrink-0">
           <h3 className="text-xs font-bold text-foreground">📊 Movimientos Recientes</h3>
@@ -126,13 +118,6 @@ export default function RecentMovementsWidget() {
           </ScrollArea>
         )}
       </div>
-
-      <style>{`
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(200%); }
-        }
-      `}</style>
     </Card>
   );
 }
