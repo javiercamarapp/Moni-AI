@@ -968,6 +968,7 @@ const Dashboard = () => {
           </button>
 
           <button 
+            onClick={() => navigate('/goals')}
             className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer animate-fade-in border-0" 
             style={{ animationDelay: '300ms' }}
           >
