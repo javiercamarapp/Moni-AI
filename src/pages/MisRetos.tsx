@@ -252,14 +252,17 @@ export default function MisRetos() {
             <h2 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight mb-4">
               Sugerencias de la IA
             </h2>
-            {Object.entries(
-              challenges.reduce((acc, challenge) => {
+            {(() => {
+              console.log('🎯 Renderizando retos:', challenges.length, challenges);
+              const grouped = challenges.reduce((acc, challenge) => {
                 const category = challenge.category || 'Sin categoría';
                 if (!acc[category]) acc[category] = [];
                 acc[category].push(challenge);
                 return acc;
-              }, {} as Record<string, any[]>)
-            ).map(([category, categoryChallenges]: [string, any[]]) => {
+              }, {} as Record<string, any[]>);
+              console.log('📦 Retos agrupados:', Object.keys(grouped).length, 'categorías');
+              return Object.entries(grouped);
+            })().map(([category, categoryChallenges]: [string, any[]]) => {
               // No limitar, mostrar todos los retos de la categoría
               
               // Obtener emoji de la categoría
