@@ -13,10 +13,15 @@ import { RetroCarousel } from "@/components/ui/retro-carousel";
 
 // Extraer emoji del nombre de la categoría
 const getCategoryEmoji = (category: string): string => {
-  // Buscar el primer emoji en el string (regex que captura emojis)
   const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/u;
   const match = category.match(emojiRegex);
   return match ? match[0] : '📊';
+};
+
+// Remover emoji del nombre de la categoría
+const removeCategoryEmoji = (category: string): string => {
+  const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
+  return category.replace(emojiRegex, '').trim();
 };
 
 export default function MisRetos() {
@@ -235,12 +240,13 @@ export default function MisRetos() {
               
               // Obtener emoji de la categoría
               const categoryEmoji = getCategoryEmoji(category);
+              const categoryName = removeCategoryEmoji(category);
               
               return (
                 <div key={category} className="mb-8">
                   <h3 className="text-md font-semibold text-gray-900 mb-3 px-1 flex items-center gap-2">
                     <span className="text-xl">{categoryEmoji}</span>
-                    {category}
+                    {categoryName}
                   </h3>
                   <div className="relative">
                     <div className="flex overflow-x-auto gap-4 pb-4 px-1 snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-400">
