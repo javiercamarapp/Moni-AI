@@ -28,7 +28,7 @@ import LevelDetails from "./pages/LevelDetails";
 import AspirationsAnalysis from "./pages/AspirationsAnalysis";
 import FinancialJourney from "./pages/FinancialJourney";
 import Logros from "./pages/Logros";
-import MisRetos from "./pages/MisRetos";
+
 import EditAspirations from "./pages/EditAspirations";
 import Budgets from "./pages/Budgets";
 import EditBudgets from "./pages/EditBudgets";
@@ -87,7 +87,7 @@ function App() {
           <Route path="/aspirations-analysis" element={<AspirationsAnalysis />} />
           <Route path="/financial-journey" element={<FinancialJourney />} />
           <Route path="/logros" element={<Logros />} />
-          <Route path="/mis-retos" element={<MisRetos />} />
+          
           <Route path="/edit-aspirations" element={<EditAspirations />} />
           <Route path="/subscriptions" element={<Subscriptions />} />
           <Route path="/daily-expenses" element={<DailyExpenses />} />

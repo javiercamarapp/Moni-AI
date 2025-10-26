@@ -210,66 +210,6 @@ export type Database = {
           },
         ]
       }
-      challenges: {
-        Row: {
-          category: string
-          challenge_type: string
-          created_at: string
-          current_amount: number
-          daily_goal: number | null
-          days_status: Json | null
-          description: string | null
-          end_date: string
-          id: string
-          is_ai_generated: boolean | null
-          period: string
-          start_date: string
-          status: string
-          target_amount: number
-          title: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          category: string
-          challenge_type?: string
-          created_at?: string
-          current_amount?: number
-          daily_goal?: number | null
-          days_status?: Json | null
-          description?: string | null
-          end_date: string
-          id?: string
-          is_ai_generated?: boolean | null
-          period?: string
-          start_date: string
-          status?: string
-          target_amount: number
-          title: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          category?: string
-          challenge_type?: string
-          created_at?: string
-          current_amount?: number
-          daily_goal?: number | null
-          days_status?: Json | null
-          description?: string | null
-          end_date?: string
-          id?: string
-          is_ai_generated?: boolean | null
-          period?: string
-          start_date?: string
-          status?: string
-          target_amount?: number
-          title?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       custom_aspirations: {
         Row: {
           amount: number
