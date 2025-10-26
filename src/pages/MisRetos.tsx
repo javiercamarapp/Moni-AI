@@ -101,7 +101,7 @@ export default function MisRetos() {
     }
   };
 
-  const deleteAllChallenges = async () => {
+  const deleteAllChallenges = async (showToast = true) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -113,7 +113,9 @@ export default function MisRetos() {
 
       if (error) throw error;
 
-      toast.success('Retos eliminados correctamente');
+      if (showToast) {
+        toast.success('Retos eliminados correctamente');
+      }
       await fetchChallenges();
     } catch (error) {
       console.error('Error eliminando retos:', error);
@@ -142,6 +144,9 @@ export default function MisRetos() {
         return;
       }
 
+      // Eliminar retos anteriores primero
+      await deleteAllChallenges(false);
+
       toast.info('🤖 Moni AI está analizando tu presupuesto y generando 12 retos personalizados...');
 
       const { data, error } = await supabase.functions.invoke('generate-challenges', {
@@ -150,7 +155,7 @@ export default function MisRetos() {
 
       if (error) throw error;
 
-      toast.success('✨ 12 retos generados basados en tu presupuesto');
+      toast.success('✨ 12 retos generados basados en tus gastos reales');
       await fetchChallenges();
     } catch (error: any) {
       console.error('Error generando retos:', error);
@@ -199,7 +204,7 @@ export default function MisRetos() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={deleteAllChallenges}
+                onClick={() => deleteAllChallenges()}
                 className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0"
               >
                 <X className="h-4 w-4 text-gray-700" />

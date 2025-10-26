@@ -27,10 +27,10 @@ serve(async (req) => {
       });
     }
 
-    // Generate 8 challenges distributed across categories
+    // Generate 12 challenges distributed across categories
     const { userId } = await req.json().catch(() => ({ userId: null }));
 
-    console.log('🎯 Generando 8 retos distribuidos para usuario:', user.id);
+    console.log('🎯 Generando 12 retos personalizados para usuario:', user.id);
 
     // Define the 12 standard expense categories with emojis
     const STANDARD_CATEGORIES = [
@@ -126,92 +126,81 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Generate challenges using AI - 8 retos ultra-específicos y accionables
-    const prompt = `Eres un coach financiero experto. Analiza PROFUNDAMENTE los datos del usuario y genera 8 retos ULTRA-ESPECÍFICOS con acciones 100% ACCIONABLES.
+    // Generate challenges using AI - 12 retos MUY específicos basados en datos reales
+    const prompt = `Eres un coach financiero. Analiza los GASTOS REALES del usuario y genera 12 RETOS ESPECÍFICOS.
 
-DATOS DETALLADOS DEL USUARIO:
+📊 GASTOS REALES DEL USUARIO (último mes):
 ${categoriesForChallenges.map(cat => {
   const weeklyBudget = cat.monthlyBudget / 4.33;
-  const avgTransaction = cat.transactionCount > 0 ? cat.weeklySpend / cat.transactionCount : 0;
+  const monthlySpend = cat.weeklySpend * 4.33;
+  const avgTransaction = cat.transactionCount > 0 ? monthlySpend / cat.transactionCount : 0;
   const frequency = cat.transactionCount / 4.33; // transacciones por semana
-  const isFixed = frequency < 1.5; // menos de 1.5 tx/semana = probablemente fijo
-  const variability = isFixed ? "FIJO" : "VARIABLE";
+  
   return `${cat.categoryName}:
-  • Gasto: $${cat.weeklySpend.toFixed(2)}/semana | Presupuesto: $${weeklyBudget.toFixed(2)}/semana
-  • Transacciones: ${cat.transactionCount}/mes (${frequency.toFixed(1)}/semana)
-  • Promedio: $${avgTransaction.toFixed(2)}/transacción
-  • Tipo gasto: ${variability}`;
-}).join('\n')}
+  💰 Gasto mensual: $${monthlySpend.toFixed(2)} | Gasto semanal: $${cat.weeklySpend.toFixed(2)}
+  📅 Transacciones: ${cat.transactionCount}/mes (${frequency.toFixed(1)}/semana)
+  💵 Promedio por transacción: $${avgTransaction.toFixed(2)}
+  🎯 Presupuesto mensual: $${cat.monthlyBudget.toFixed(2)}`;
+}).join('\n\n')}
 
-REGLAS CRÍTICAS DE SELECCIÓN:
+🎯 REGLAS DE SELECCIÓN:
 
-1. ❌ NUNCA generar retos para:
-   - "❓ Gastos no identificados" (obvio, no es accionable)
-   - "🏠 Vivienda" (gastos FIJOS: renta, hipoteca, predial)
-   - Categorías con < 1.5 transacciones/semana (probablemente fijos)
-   - Categorías con transacciones muy regulares en monto
+1. USA LOS NÚMEROS REALES arriba para hacer retos específicos
+2. MENCIONA el gasto promedio actual del usuario en cada reto
+3. Propón reducir 20-30% del gasto actual
+4. NO incluyas categorías con 0 transacciones
 
-2. ✅ SÍ generar retos ULTRA-ESPECÍFICOS para:
-   - Categorías VARIABLES con muchas transacciones
-   - Gastos discrecionales/impulsivos
-   - Categorías donde hay margen de optimización
+EJEMPLOS CON NÚMEROS REALES:
 
-3. EJEMPLOS DE RETOS ESPECÍFICOS (USA ESTE NIVEL DE DETALLE):
+Si 🎉 Entretenimiento gasta $4,500/semana:
+✅ "Diversión con $3,000 esta semana (vs $4,500 usual)"
+✅ "2 salidas en casa: ahorra $1,500 de tus $4,500"
+❌ "Controla entretenimiento" (genérico)
 
-   🧾 Servicios y suscripciones:
-   ✅ "Auditoría de suscripciones: cancela 2 que no uses"
-   ✅ "Pausar Spotify/Netflix 1 mes, ahorra $300"
-   ❌ "Reduce suscripciones" (muy genérico)
+Si 🍽️ Alimentación gasta $2,500/semana con 13 transacciones:
+✅ "Cocina 4 días: baja de $2,500 a $1,800/semana"
+✅ "Máximo $2,000 en comida (vs $2,500 actual)"
+❌ "Come en casa más seguido" (no específico)
 
-   🐾 Mascotas:
-   ✅ "Cortar pelo en casa esta vez, ahorra $400"
-   ✅ "Comprar comida al mayoreo, 20% menos"
-   ❌ "Gasta menos en mascotas" (no accionable)
+Si 🚗 Transporte gasta $350/semana:
+✅ "3 días sin Uber: de $350 a $200/semana"
+✅ "Máximo $250 en transporte (vs $350 actual)"
 
-   🎉 Entretenimiento:
-   ✅ "Un viernes sin salir, ahorra $800"
-   ✅ "Esta semana $2,000 en vez de $2,500"
-   ✅ "2 películas en casa en vez de cine, ahorra $600"
-   ❌ "Controla tu entretenimiento" (genérico)
+Si 🧾 Servicios gasta $380/semana:
+✅ "Cancela 1 suscripción: ahorra $100/semana"
+✅ "Revisa Netflix, Spotify: baja $380 a $300"
 
-   🍽️ Alimentación:
-   ✅ "4 días sin delivery, cocina en casa"
-   ✅ "Lista de compras y NO comprar extra"
-   ✅ "Meal prep domingo, ahorra $900/semana"
+📋 FORMATO DE CADA RETO:
 
-   🚗 Transporte:
-   ✅ "3 días usar transporte público vs Uber"
-   ✅ "Carpooling 2 veces, ahorra $400"
+TÍTULO: [emoji] + Acción + Números del usuario
+"🍽️ Cocina 4 días: de $2,500 a $1,800 semanales"
+"🎉 Solo $3,000 en diversión esta semana (vs $4,500)"
 
-4. ESTRUCTURA DE CADA RETO:
+DESCRIPCIÓN: Menciona SU gasto actual + alternativa
+"Actualmente gastas $2,500/semana en comida. Te reto a cocinar 4 días y bajar a $1,800."
+"Tu promedio en entretenimiento es $4,500/semana. Intenta 2 salidas en casa y gasta solo $3,000."
 
-   TÍTULO: Acción específica + Monto/Meta
-   - "Cancela 2 suscripciones que no uses"
-   - "4 días sin delivery esta semana"
-   - "Máximo $2,000 en diversión (vs $2,500 usual)"
+🎲 TIPOS DE RETOS (distribuye 12 retos):
 
-   DESCRIPCIÓN: 2-3 acciones CONCRETAS
-   - Números exactos: "Gastas promedio $X"
-   - Alternativa clara: "En vez de X, haz Y"
-   - Ahorro calculado: "Ahorra $X/semana"
+🎯 spending_limit (4 retos):
+- weekly_target = gasto_semanal * 0.75
+- daily_goal = null
+Ejemplo: "Máximo $3,000 esta semana (vs $4,000 actual)"
 
-5. TIPOS DE RETOS (distribuye):
+📅 days_without (3 retos):
+- weekly_target = 0
+- daily_goal = 4 (ENTERO, no decimales)
+Ejemplo: "4 días sin delivery esta semana"
 
-   🎯 spending_limit (3 retos):
-   - weekly_target = gasto_actual * 0.80, daily_goal = null
-   - Título: "Máximo $X esta semana (vs $Y usual)"
+💰 daily_budget (3 retos):
+- weekly_target = gasto_semanal * 0.80
+- daily_goal = null
+Ejemplo: "Máximo $400 diarios (vs $500 actual)"
 
-   📅 days_without (2 retos):
-   - weekly_target = 0, daily_goal = 4 o 5 (ENTERO)
-   - Título: "X días sin [gasto específico]"
-
-   💰 daily_budget (2 retos):
-   - weekly_target = (gasto_semanal / 7) * 0.85, daily_goal = null
-   - Título: "Máximo $X diarios en [categoría]"
-
-   🎨 savings_goal (1 reto):
-   - weekly_target = gasto_semanal * 0.25, daily_goal = null
-   - Título: "Ahorra $X haciendo [acción específica]"
+🎨 savings_goal (2 retos):
+- weekly_target = gasto_semanal * 0.30
+- daily_goal = null
+Ejemplo: "Ahorra $1,200 cocinando en casa"
 
 FORMATO JSON (USA ESTOS NOMBRES EXACTOS):
 {
@@ -309,7 +298,7 @@ FORMATO JSON (USA ESTOS NOMBRES EXACTOS):
       throw new Error("No se pudo generar retos");
     }
 
-    const generatedChallenges = JSON.parse(toolCall.function.arguments).challenges.slice(0, 8);
+    const generatedChallenges = JSON.parse(toolCall.function.arguments).challenges.slice(0, 12);
 
     console.log('✨ Retos generados:', generatedChallenges.length, 'retos');
 
