@@ -99,7 +99,7 @@ export default function FinancialAnalysis() {
   const [showLiquidityDialog, setShowLiquidityDialog] = useState(false); // Dialog for liquidity explanation
   const [showBalanceDialog, setShowBalanceDialog] = useState(false);
   const [showSavingsDialog, setShowSavingsDialog] = useState(false);
-  const [showCashFlowDialog, setShowCashFlowDialog] = useState(false);
+  const [showCashFlowDialog, setShowCashFlowDialog] = useState(false); // Liquidez y Estabilidad
   
   const [showSplash, setShowSplash] = useState(false);
 
@@ -1143,14 +1143,19 @@ export default function FinancialAnalysis() {
                   <DialogTrigger asChild>
                     <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-teal-100 cursor-pointer hover:scale-105 transition-transform duration-200 hover:bg-teal-50/30">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs text-muted-foreground">Cash Flow</span>
+                        <span className="text-xs text-muted-foreground">Liquidez y Estabilidad</span>
                         <TrendingUp className="h-3 w-3 text-teal-500" />
                       </div>
                       <p className="text-lg font-bold text-teal-600">
-                        ${formatK(analysis?.metrics?.cashFlowAccumulated)}k
+                        {(() => {
+                          const liquidityMonths = analysis?.metrics?.liquidityMonths || 0;
+                          const stabilityRatio = (analysis?.metrics?.balance || 0) / ((analysis?.metrics?.totalExpenses || 1) / 30);
+                          const stabilityIndex = ((liquidityMonths * 30) + stabilityRatio) / 30;
+                          return stabilityIndex.toFixed(1);
+                        })()}x
                       </p>
                       <p className="text-[10px] text-muted-foreground">
-                        acumulado mensual
+                        índice de estabilidad
                       </p>
                     </Card>
                   </DialogTrigger>
@@ -1160,21 +1165,31 @@ export default function FinancialAnalysis() {
                         <div className="p-1.5 bg-teal-100 rounded-lg">
                           <TrendingUp className="h-3.5 w-3.5 text-teal-600" />
                         </div>
-                        <span className="font-bold">Cash Flow</span>
+                        <span className="font-bold">Liquidez y Estabilidad</span>
                       </DialogTitle>
                     </DialogHeader>
                     <div className="space-y-2.5 text-sm">
                       <p className="text-muted-foreground leading-relaxed text-[11px]">
-                        Mide el flujo de efectivo acumulado en el periodo actual.
+                        Mide tu capacidad de mantener tu nivel de vida actual y responder a imprevistos.
                       </p>
                       
                       <div className="bg-gradient-to-br from-teal-50 to-cyan-50 p-3 rounded-2xl space-y-1.5 border border-teal-100">
-                        <p className="text-[10px] font-medium text-muted-foreground">Tu cash flow</p>
+                        <p className="text-[10px] font-medium text-muted-foreground">Tu índice</p>
                         <p className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
-                          ${formatK(analysis?.metrics?.cashFlowAccumulated)}k
+                          {(() => {
+                            const liquidityMonths = analysis?.metrics?.liquidityMonths || 0;
+                            const stabilityRatio = (analysis?.metrics?.balance || 0) / ((analysis?.metrics?.totalExpenses || 1) / 30);
+                            const stabilityIndex = ((liquidityMonths * 30) + stabilityRatio) / 30;
+                            return stabilityIndex.toFixed(1);
+                          })()}x
                         </p>
                         <p className="text-[10px] text-muted-foreground">
-                          {(analysis?.metrics?.cashFlowAccumulated || 0) > 0 ? '📈 Flujo positivo' : '📉 Flujo negativo'}
+                          {(() => {
+                            const liquidityMonths = analysis?.metrics?.liquidityMonths || 0;
+                            const stabilityRatio = (analysis?.metrics?.balance || 0) / ((analysis?.metrics?.totalExpenses || 1) / 30);
+                            const stabilityIndex = ((liquidityMonths * 30) + stabilityRatio) / 30;
+                            return stabilityIndex >= 3 ? '💪 Estabilidad sólida' : stabilityIndex >= 1.5 ? '👍 Estabilidad moderada' : '⚠️ Baja estabilidad';
+                          })()}
                         </p>
                       </div>
 
@@ -1182,17 +1197,17 @@ export default function FinancialAnalysis() {
                         <p className="text-[11px] font-semibold text-foreground">Cálculo</p>
                         <div className="bg-white/80 p-2.5 rounded-xl border border-gray-100">
                           <p className="text-[10px] font-mono text-center text-muted-foreground">
-                            Ingresos - Gastos (acumulado)
+                            (Meses de Liquidez × 30 + Balance/Gasto Diario) ÷ 30
                           </p>
                           <p className="text-[10px] text-center text-muted-foreground mt-0.5">
-                            ${formatK(analysis?.metrics?.totalIncome)}k - ${formatK(analysis?.metrics?.totalExpenses)}k
+                            ({(analysis?.metrics?.liquidityMonths || 0).toFixed(1)} × 30 + ${formatK(analysis?.metrics?.balance)}k / ${formatK((analysis?.metrics?.totalExpenses || 1) / 30)}k) ÷ 30
                           </p>
                         </div>
                       </div>
 
                       <div className="bg-teal-50 border border-teal-100 p-2 rounded-xl">
                         <p className="text-[10px] text-teal-900">
-                          <strong>💡 Tip:</strong> Un cash flow positivo indica que estás generando más de lo que gastas.
+                          <strong>💡 Tip:</strong> Un índice mayor a 3x indica excelente estabilidad financiera y capacidad de ahorro.
                         </p>
                       </div>
                     </div>
