@@ -659,7 +659,7 @@ export default function FinancialAnalysis() {
               >
               {/* Card Mensual */}
               <Card
-                className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer transition-all flex-shrink-0" 
+                className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer transition-all hover:scale-105 active:scale-95 flex-shrink-0"
                 style={{ animationDelay: '0ms' }}
                 onClick={(e) => {
                   e.preventDefault();
