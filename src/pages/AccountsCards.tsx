@@ -18,8 +18,8 @@ export default function AccountsCards() {
             <ArrowLeft className="h-5 w-5 text-foreground" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-white">Mis Cuentas y Tarjetas</h1>
-            <p className="text-sm text-white/70">Gestiona tus medios de pago</p>
+            <h1 className="text-2xl font-bold text-gray-900">Mis Cuentas y Tarjetas</h1>
+            <p className="text-sm text-gray-600">Gestiona tus medios de pago</p>
           </div>
         </div>
 
