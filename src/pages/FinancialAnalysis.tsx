@@ -1593,23 +1593,38 @@ export default function FinancialAnalysis() {
               data={evolutionData.length > 0 ? evolutionData : [
                 { month: 'Sin datos', score: 40, savings: 0, balance: 0, income: 0, expenses: 0 }
               ]}
-              insight={(() => {
+              insights={(() => {
                 if (evolutionData.length < 2) return undefined;
                 
                 const firstMonth = evolutionData[0];
                 const lastMonth = evolutionData[evolutionData.length - 1];
                 const scoreChange = lastMonth.score - firstMonth.score;
-                const savingsGrowth = ((lastMonth.savings - firstMonth.savings) / Math.abs(firstMonth.savings || 1)) * 100;
+                const balanceChange = lastMonth.balance - firstMonth.balance;
+                const incomeGrowth = ((lastMonth.income - firstMonth.income) / Math.abs(firstMonth.income || 1)) * 100;
+                const expenseChange = lastMonth.expenses - firstMonth.expenses;
                 
-                if (scoreChange > 0 && savingsGrowth > 0) {
-                  return `Tu score mejoró ${scoreChange} puntos y tu ahorro creció ${savingsGrowth.toFixed(0)}% desde ${firstMonth.month}. ¡Excelente progreso!`;
-                } else if (scoreChange > 0) {
-                  return `Tu score mejoró ${scoreChange} puntos desde ${firstMonth.month}. Sigue mejorando tu tasa de ahorro.`;
-                } else if (savingsGrowth > 0) {
-                  return `Tu ahorro creció ${savingsGrowth.toFixed(0)}% desde ${firstMonth.month}. Mantén la consistencia.`;
-                } else {
-                  return `Balance acumulado: $${lastMonth.balance.toFixed(1)}k. Enfócate en aumentar tu tasa de ahorro.`;
-                }
+                // Insight para Score
+                const scoreInsight = scoreChange > 0
+                  ? `Tu score mejoró ${scoreChange.toFixed(0)} puntos desde ${firstMonth.month}. ${lastMonth.score >= 70 ? '¡Excelente nivel financiero!' : 'Sigue mejorando tu tasa de ahorro.'}`
+                  : `Tu score está estable en ${lastMonth.score.toFixed(0)} puntos. Aumenta tu tasa de ahorro para mejorar.`;
+                
+                // Insight para Balance
+                const balanceInsight = balanceChange > 0
+                  ? `Tu balance acumulado creció $${balanceChange.toFixed(1)}k desde ${firstMonth.month}. ${balanceChange > 50 ? '¡Crecimiento excepcional!' : 'Buen progreso.'}`
+                  : `Balance actual: $${lastMonth.balance.toFixed(1)}k. ${lastMonth.balance < 0 ? 'Prioriza reducir deudas.' : 'Mantén el ahorro constante.'}`;
+                
+                // Insight para Flujo
+                const flowInsight = expenseChange < 0
+                  ? `Tus gastos bajaron $${Math.abs(expenseChange).toFixed(1)}k desde ${firstMonth.month}. ${incomeGrowth > 0 ? `Y tus ingresos crecieron ${incomeGrowth.toFixed(0)}%. ¡Excelente!` : 'Trabaja en aumentar ingresos.'}`
+                  : incomeGrowth > 0
+                  ? `Tus ingresos crecieron ${incomeGrowth.toFixed(0)}% desde ${firstMonth.month}. ${expenseChange > 5 ? 'Pero tus gastos también aumentaron. Controla gastos variables.' : '¡Buen trabajo!'}`
+                  : `Ingresos: $${lastMonth.income.toFixed(1)}k | Gastos: $${lastMonth.expenses.toFixed(1)}k. Busca reducir gastos o aumentar ingresos.`;
+                
+                return {
+                  score: scoreInsight,
+                  balance: balanceInsight,
+                  flow: flowInsight
+                };
               })()}
             />
 

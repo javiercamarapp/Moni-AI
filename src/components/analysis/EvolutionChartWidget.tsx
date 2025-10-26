@@ -15,11 +15,29 @@ interface MonthData {
 
 interface EvolutionChartProps {
   data: MonthData[];
-  insight?: string;
+  insights?: {
+    score?: string;
+    balance?: string;
+    flow?: string;
+  };
 }
 
-export default function EvolutionChartWidget({ data, insight }: EvolutionChartProps) {
+export default function EvolutionChartWidget({ data, insights }: EvolutionChartProps) {
   const [view, setView] = useState<"score" | "balance" | "flow">("score");
+  
+  const getCurrentInsight = () => {
+    if (!insights) return undefined;
+    switch (view) {
+      case "score":
+        return insights.score;
+      case "balance":
+        return insights.balance;
+      case "flow":
+        return insights.flow;
+      default:
+        return undefined;
+    }
+  };
 
   const getChartConfig = () => {
     switch (view) {
@@ -124,10 +142,10 @@ export default function EvolutionChartWidget({ data, insight }: EvolutionChartPr
           </ResponsiveContainer>
         </div>
 
-        {insight && (
+        {getCurrentInsight() && (
           <div className="bg-primary/10 rounded-lg px-3 py-2 border border-primary/20 animate-fade-in">
             <p className="text-[10px] text-primary leading-snug">
-              🟢 <span className="font-medium">Insight:</span> {insight}
+              🟢 <span className="font-medium">Insight:</span> {getCurrentInsight()}
             </p>
           </div>
         )}
