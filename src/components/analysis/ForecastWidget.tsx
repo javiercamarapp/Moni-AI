@@ -138,6 +138,12 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
                 tick={{ fill: 'rgba(0,0,0,0.6)', fontSize: 8 }}
               />
               <Tooltip
+                formatter={(value: number) => {
+                  if (value >= 1000000) {
+                    return `$${(value / 1000000).toFixed(1)}M`;
+                  }
+                  return `$${Math.round(value).toLocaleString('es-MX')}`;
+                }}
                 contentStyle={{
                   backgroundColor: 'rgba(255, 255, 255, 0.95)',
                   backdropFilter: 'blur(12px)',
