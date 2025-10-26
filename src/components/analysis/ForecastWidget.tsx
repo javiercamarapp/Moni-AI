@@ -138,11 +138,17 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
                 tick={{ fill: 'rgba(0,0,0,0.6)', fontSize: 8 }}
               />
               <Tooltip
-                formatter={(value: number) => {
-                  if (value >= 1000000) {
-                    return `$${(value / 1000000).toFixed(1)}M`;
-                  }
-                  return `$${Math.round(value).toLocaleString('es-MX')}`;
+                formatter={(value: number, name: string) => {
+                  const nameMap: Record<string, string> = {
+                    'conservative': 'Conservador',
+                    'realistic': 'Realista',
+                    'optimistic': 'Óptimo'
+                  };
+                  const translatedName = nameMap[name] || name;
+                  const formattedValue = value >= 1000000 
+                    ? `$${(value / 1000000).toFixed(1)}M` 
+                    : `$${Math.round(value).toLocaleString('es-MX')}`;
+                  return [formattedValue, translatedName];
                 }}
                 contentStyle={{
                   backgroundColor: 'rgba(255, 255, 255, 0.95)',
