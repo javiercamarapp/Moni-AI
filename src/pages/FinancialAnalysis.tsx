@@ -919,35 +919,154 @@ export default function FinancialAnalysis() {
                 <Droplets className="h-3 w-3" /> Liquidez y Estabilidad
               </p>
               <div className="grid grid-cols-2 gap-2">
-                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-muted-foreground">Balance</span>
-                    <div className="flex items-center gap-1">
-                      <DollarSign className="h-3 w-3 text-success" />
-                      {(analysis?.metrics?.balance ?? 0) >= 0 ? <span className="text-success text-xs">↑</span> : <span className="text-destructive text-xs">↓</span>}
-                    </div>
-                  </div>
-                  <p className={`text-lg font-bold ${(analysis?.metrics?.balance ?? 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
-                    ${formatK(analysis?.metrics?.balance)}k
-                  </p>
-                  <p className="text-[10px] text-muted-foreground">
-                    MoM: {momGrowth !== null 
-                      ? `${momGrowth > 0 ? '+' : ''}${momGrowth.toFixed(1)}%` 
-                      : 'Calculando...'}
-                  </p>
-                </Card>
+                <Dialog open={showBalanceDialog} onOpenChange={setShowBalanceDialog}>
+                  <DialogTrigger asChild>
+                    <Card className={`p-3 rounded-[20px] shadow-xl border cursor-pointer hover:scale-105 transition-all duration-200 ${
+                      (analysis?.metrics?.balance ?? 0) >= 0 
+                        ? 'border-green-200 bg-green-50/50 hover:bg-green-100/50' 
+                        : 'border-red-200 bg-red-50/50 hover:bg-red-100/50'
+                    }`}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs text-muted-foreground">Balance</span>
+                        <DollarSign className={`h-3 w-3 ${(analysis?.metrics?.balance ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`} />
+                      </div>
+                      <p className={`text-lg font-bold ${(analysis?.metrics?.balance ?? 0) >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                        ${formatK(analysis?.metrics?.balance)}k
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        MoM: {momGrowth !== null 
+                          ? `${momGrowth > 0 ? '+' : ''}${momGrowth.toFixed(1)}%` 
+                          : 'Calculando...'}
+                      </p>
+                    </Card>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-xs rounded-3xl bg-white/95 backdrop-blur-xl border-0 shadow-2xl">
+                    <DialogHeader>
+                      <DialogTitle className="flex items-center gap-2 text-base">
+                        <div className="p-1.5 bg-green-100 rounded-lg">
+                          <DollarSign className="h-3.5 w-3.5 text-green-600" />
+                        </div>
+                        <span className="font-bold">Balance</span>
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-2.5 text-sm">
+                      <p className="text-muted-foreground leading-relaxed text-[11px]">
+                        Tu balance es la diferencia entre tus ingresos y gastos totales.
+                      </p>
+                      
+                      <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-3 rounded-2xl space-y-1.5 border border-green-100">
+                        <p className="text-[10px] font-medium text-muted-foreground">Tu balance actual</p>
+                        <p className={`text-2xl font-bold ${(analysis?.metrics?.balance ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          ${formatK(analysis?.metrics?.balance)}k
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {(analysis?.metrics?.balance ?? 0) >= 0 ? '✅ Superávit' : '🚨 Déficit'}
+                        </p>
+                      </div>
 
-                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-muted-foreground">Ahorro</span>
-                    <PiggyBank className="h-3 w-3 text-purple-500" />
-                  </div>
-                  <p className="text-lg font-bold text-purple-600">{analysis?.metrics?.savingsRate ?? 0}%</p>
-                  <p className="text-[10px] text-muted-foreground">
-                    meta: {(analysis?.metrics?.liquidityMonths ?? 0) >= 3 ? '22%' : '20%'} 
-                    {(analysis?.metrics?.savingsRate ?? 0) >= 20 && ' 🎯'}
-                  </p>
-                </Card>
+                      <div className="space-y-1.5">
+                        <p className="text-[11px] font-semibold text-foreground">Cálculo</p>
+                        <div className="bg-white/80 p-2.5 rounded-xl border border-gray-100">
+                          <p className="text-[10px] font-mono text-center text-muted-foreground">
+                            Ingresos - Gastos
+                          </p>
+                          <p className="text-[10px] text-center text-muted-foreground mt-0.5">
+                            ${formatK(analysis?.metrics?.totalIncome)}k - ${formatK(analysis?.metrics?.totalExpenses)}k
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="bg-green-50 border border-green-100 p-2 rounded-xl">
+                        <p className="text-[10px] text-green-900">
+                          <strong>💡 Tip:</strong> Un balance positivo significa que estás ahorrando.
+                        </p>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+
+                <Dialog open={showSavingsDialog} onOpenChange={setShowSavingsDialog}>
+                  <DialogTrigger asChild>
+                    <Card className={`p-3 rounded-[20px] shadow-xl border cursor-pointer hover:scale-105 transition-all duration-200 ${
+                      (analysis?.metrics?.savingsRate ?? 0) >= 20 
+                        ? 'border-purple-200 bg-purple-50/50 hover:bg-purple-100/50' 
+                        : (analysis?.metrics?.savingsRate ?? 0) >= 10 
+                        ? 'border-yellow-200 bg-yellow-50/50 hover:bg-yellow-100/50' 
+                        : 'border-red-200 bg-red-50/50 hover:bg-red-100/50'
+                    }`}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs text-muted-foreground">Ahorro</span>
+                        <PiggyBank className={`h-3 w-3 ${
+                          (analysis?.metrics?.savingsRate ?? 0) >= 20 
+                            ? 'text-purple-600' 
+                            : (analysis?.metrics?.savingsRate ?? 0) >= 10 
+                            ? 'text-yellow-600' 
+                            : 'text-red-600'
+                        }`} />
+                      </div>
+                      <p className={`text-lg font-bold ${
+                        (analysis?.metrics?.savingsRate ?? 0) >= 20 
+                          ? 'text-purple-700' 
+                          : (analysis?.metrics?.savingsRate ?? 0) >= 10 
+                          ? 'text-yellow-700' 
+                          : 'text-red-700'
+                      }`}>
+                        {analysis?.metrics?.savingsRate ?? 0}%
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        meta: {(analysis?.metrics?.liquidityMonths ?? 0) >= 3 ? '22%' : '20%'} 
+                        {(analysis?.metrics?.savingsRate ?? 0) >= 20 && ' 🎯'}
+                      </p>
+                    </Card>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-xs rounded-3xl bg-white/95 backdrop-blur-xl border-0 shadow-2xl">
+                    <DialogHeader>
+                      <DialogTitle className="flex items-center gap-2 text-base">
+                        <div className="p-1.5 bg-purple-100 rounded-lg">
+                          <PiggyBank className="h-3.5 w-3.5 text-purple-600" />
+                        </div>
+                        <span className="font-bold">Tasa de Ahorro</span>
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-2.5 text-sm">
+                      <p className="text-muted-foreground leading-relaxed text-[11px]">
+                        Porcentaje de tus ingresos que logras ahorrar cada mes.
+                      </p>
+                      
+                      <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-3 rounded-2xl space-y-1.5 border border-purple-100">
+                        <p className="text-[10px] font-medium text-muted-foreground">Tu tasa de ahorro</p>
+                        <p className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                          {analysis?.metrics?.savingsRate ?? 0}%
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {(analysis?.metrics?.savingsRate ?? 0) >= 20 
+                            ? '✅ Excelente' 
+                            : (analysis?.metrics?.savingsRate ?? 0) >= 10 
+                            ? '⚠️ Bien, mejora más' 
+                            : '🚨 Necesita mejorar'}
+                        </p>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <p className="text-[11px] font-semibold text-foreground">Cálculo</p>
+                        <div className="bg-white/80 p-2.5 rounded-xl border border-gray-100">
+                          <p className="text-[10px] font-mono text-center text-muted-foreground">
+                            (Balance ÷ Ingresos) × 100
+                          </p>
+                          <p className="text-[10px] text-center text-muted-foreground mt-0.5">
+                            (${formatK(analysis?.metrics?.balance)}k ÷ ${formatK(analysis?.metrics?.totalIncome)}k) × 100
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="bg-purple-50 border border-purple-100 p-2 rounded-xl">
+                        <p className="text-[10px] text-purple-900">
+                          <strong>💡 Tip:</strong> Meta: 20% o más de tus ingresos.
+                        </p>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
 
                 <Dialog open={showLiquidityDialog} onOpenChange={setShowLiquidityDialog}>
                   <DialogTrigger asChild>
