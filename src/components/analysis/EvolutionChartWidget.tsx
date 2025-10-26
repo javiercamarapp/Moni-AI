@@ -95,15 +95,19 @@ export default function EvolutionChartWidget({ data, insights }: EvolutionChartP
         <div className="h-48">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
               <XAxis 
                 dataKey="month" 
-                stroke="rgba(255,255,255,0.5)" 
-                tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 10 }}
+                stroke="rgba(0,0,0,0.3)" 
+                tick={{ fill: 'rgba(0,0,0,0.6)', fontSize: 10 }}
               />
               <YAxis 
-                stroke="rgba(255,255,255,0.5)" 
-                tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 10 }}
+                stroke="rgba(0,0,0,0.3)" 
+                tick={{ fill: 'rgba(0,0,0,0.6)', fontSize: 10 }}
+                tickFormatter={(value) => {
+                  if (value >= 1000) return `${(value / 1000).toFixed(0)}k`;
+                  return value.toString();
+                }}
               />
               <Tooltip 
                 contentStyle={{
