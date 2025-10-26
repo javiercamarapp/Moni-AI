@@ -25,7 +25,6 @@ import HistoricalComparisonWidget from "@/components/analysis/HistoricalComparis
 import FutureCalendarWidget from "@/components/analysis/FutureCalendarWidget";
 import YearOverYearWidget from "@/components/analysis/YearOverYearWidget";
 import SeasonalTrendsWidget from "@/components/analysis/SeasonalTrendsWidget";
-import CategoryHeatmapWidget from "@/components/analysis/CategoryHeatmapWidget";
 import BurnRateWidget from "@/components/analysis/BurnRateWidget";
 import NetWorthEvolutionWidget from "@/components/analysis/NetWorthEvolutionWidget";
 import WeeklySpendingPatternWidget from "@/components/analysis/WeeklySpendingPatternWidget";
@@ -1893,26 +1892,6 @@ export default function FinancialAnalysis() {
                   const worstQuarter = seasonalData.reduce((min, q) => q.savings < min.savings ? q : min, seasonalData[0]);
                   
                   return `Tu mejor trimestre fue ${bestQuarter.quarter} con $${(bestQuarter.savings / 1000).toFixed(1)}k ahorrados. ${worstQuarter.quarter} fue el más desafiante con $${(worstQuarter.savings / 1000).toFixed(1)}k.`;
-                })()}
-              />
-            )}
-
-            {categoryHeatmapData.length > 0 && (
-              <CategoryHeatmapWidget 
-                data={categoryHeatmapData}
-                insight={(() => {
-                  if (categoryHeatmapData.length === 0) return undefined;
-                  
-                  const topCategory = categoryHeatmapData[0];
-                  const monthValues = Object.values(topCategory.months);
-                  let totalSpent = 0;
-                  monthValues.forEach((val: any) => {
-                    totalSpent += Number(val) || 0;
-                  });
-                  const monthCount = Object.keys(topCategory.months).length;
-                  const avgMonthly = monthCount > 0 ? (totalSpent / monthCount) : 0;
-                  
-                  return `${topCategory.category} es tu categoría más cara con $${(totalSpent / 1000).toFixed(1)}k en 6 meses (promedio $${(avgMonthly / 1000).toFixed(1)}k/mes). Busca optimizar aquí.`;
                 })()}
               />
             )}
