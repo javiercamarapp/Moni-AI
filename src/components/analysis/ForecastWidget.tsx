@@ -46,7 +46,7 @@ export default function ForecastWidget({ forecastData, goalProbability, goalETA,
   const hasData = displayData && displayData.length > 0 && displayData.some(d => d.realistic > 0 || d.conservative > 0 || d.optimistic > 0);
 
   return (
-    <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 transition-all">
+    <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 transition-all">
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
