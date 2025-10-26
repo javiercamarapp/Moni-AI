@@ -474,7 +474,7 @@ export default function EditAspirations() {
                       </Label>
                       <Input
                         type="text"
-                        placeholder="Ej: Viaje a Europa"
+                        placeholder="Ej: Casa de playa"
                         value={custom.name}
                         onChange={(e) => updateCustomAspiration(index, "name", e.target.value)}
                         className="text-sm rounded-[15px] border-blue-100 bg-white shadow-md"
@@ -486,7 +486,7 @@ export default function EditAspirations() {
                       </Label>
                       <Input
                         type="text"
-                        placeholder="Ej: Vacaciones familiares en verano"
+                        placeholder="Ej: Propiedad para rentar en zona turística"
                         value={custom.description}
                         onChange={(e) => updateCustomAspiration(index, "description", e.target.value)}
                         className="text-sm rounded-[15px] border-blue-100 bg-white shadow-md"
