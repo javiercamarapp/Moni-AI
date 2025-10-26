@@ -143,16 +143,16 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
         </div>
 
         {/* Promedios */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 rounded-xl bg-green-50/50 border border-green-200/30">
-            <p className="text-[10px] text-green-700 font-medium mb-1">Promedio de ingresos</p>
-            <p className="text-sm font-bold text-green-800">
+        <div className="grid grid-cols-2 gap-1.5">
+          <div className="p-1.5 rounded-lg bg-green-50/50 border border-green-200/30">
+            <p className="text-[8px] text-green-700 font-medium mb-0.5">Promedio ingresos</p>
+            <p className="text-[10px] font-bold text-green-800">
               ${avgIncome.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
             </p>
           </div>
-          <div className="p-3 rounded-xl bg-red-50/50 border border-red-200/30">
-            <p className="text-[10px] text-red-700 font-medium mb-1">Promedio de gastos</p>
-            <p className="text-sm font-bold text-red-800">
+          <div className="p-1.5 rounded-lg bg-red-50/50 border border-red-200/30">
+            <p className="text-[8px] text-red-700 font-medium mb-0.5">Promedio gastos</p>
+            <p className="text-[10px] font-bold text-red-800">
               ${avgExpense.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
             </p>
           </div>
