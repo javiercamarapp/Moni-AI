@@ -1720,50 +1720,6 @@ export default function FinancialAnalysis() {
               </Card>
             )}
 
-            {/* Gráficas adicionales */}
-            <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100">
-              <p className="text-xs font-bold text-foreground mb-2">Ingresos vs Gastos</p>
-              <ResponsiveContainer width="100%" height={150}>
-                <BarChart data={[{
-              name: 'Ing',
-              total: analysis?.metrics?.totalIncome || quickMetrics?.totalIncome || 0
-            }, {
-              name: 'Gas',
-              total: analysis?.metrics?.totalExpenses || quickMetrics?.totalExpenses || 0
-            }, {
-              name: 'Bal',
-              total: Math.abs(analysis?.metrics?.balance || quickMetrics?.balance || 0)
-            }]}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="name" tick={{
-                fill: 'white',
-                fontSize: 10
-              }} />
-                  <YAxis tick={{
-                fill: 'white',
-                fontSize: 10
-              }} />
-                  <Tooltip contentStyle={{
-                backgroundColor: 'rgba(0,0,0,0.9)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: '8px',
-                fontSize: '11px'
-              }} labelStyle={{
-                color: 'white'
-              }} />
-                  <Bar dataKey="total" radius={[4, 4, 0, 0]}>
-                    {[{
-                  v: 1
-                }, {
-                  v: 2
-                }, {
-                  v: 3
-                }].map((_, index) => <Cell key={`cell-${index}`} fill={index === 0 ? '#10b981' : index === 1 ? '#ef4444' : (analysis?.metrics?.balance || quickMetrics?.balance || 0) >= 0 ? '#8b5cf6' : '#f59e0b'} />)}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </Card>
-
             {/* Historical Comparison */}
             <HistoricalComparisonWidget 
               data={historicalMonthlyData.length > 0 ? historicalMonthlyData : [
