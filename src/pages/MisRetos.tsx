@@ -420,110 +420,150 @@ const ChallengeCard = ({
               onClick={handleCollapse}
             />
             <motion.div
-              initial={{opacity: 0, scale: 0.9}}
-              animate={{opacity: 1, scale: 1}}
-              exit={{opacity: 0, scale: 0.9}}
+              initial={{opacity: 0, scale: 0.95, y: 20}}
+              animate={{opacity: 1, scale: 1, y: 0}}
+              exit={{opacity: 0, scale: 0.95, y: 20}}
+              transition={{duration: 0.3, ease: "easeOut"}}
               ref={containerRef}
-              className={`max-w-4xl w-full mx-4 bg-gradient-to-b ${colors.gradient} h-3/4 z-[60] p-4 md:p-10 rounded-3xl relative overflow-y-auto`}
+              className={`max-w-4xl w-full mx-4 bg-gradient-to-br ${colors.gradient} backdrop-blur-xl h-3/4 z-[60] p-6 md:p-12 rounded-[2rem] relative overflow-y-auto shadow-2xl border border-white/20`}
             >
               <button
-                className="sticky top-4 h-10 w-10 right-0 ml-auto bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 flex items-center justify-center"
+                className="sticky top-4 h-12 w-12 right-0 ml-auto bg-white/90 backdrop-blur-xl rounded-2xl shadow-lg hover:bg-white hover:scale-110 transition-all duration-300 border border-white/30 flex items-center justify-center group"
                 onClick={handleCollapse}
               >
-                <X className="h-4 w-4 text-gray-700" />
+                <X className="h-5 w-5 text-gray-700 group-hover:rotate-90 transition-transform duration-300" />
               </button>
               
-              <motion.p className="px-0 md:px-20 text-2xl md:text-4xl font-bold text-white mt-4">
-                {challenge.title}
-              </motion.p>
-              
-              {challengeType === 'days_without' ? (
-                <motion.p className="px-0 md:px-20 text-xl font-semibold text-white/90 mt-4">
-                  {daysStatus.filter(d => d.completed === true).length} / {challenge.daily_goal || 5} días completados
+              <motion.div 
+                initial={{opacity: 0, y: 10}}
+                animate={{opacity: 1, y: 0}}
+                transition={{delay: 0.1}}
+                className="space-y-6"
+              >
+                <motion.p className="px-0 md:px-20 text-3xl md:text-5xl font-black text-white mt-6 leading-tight drop-shadow-lg">
+                  {challenge.title}
                 </motion.p>
-              ) : (
-                <motion.p className="px-0 md:px-20 text-xl font-semibold text-white/90 mt-4">
-                  ${challenge.current_amount.toFixed(0)} / ${challenge.target_amount.toFixed(0)}
-                </motion.p>
-              )}
-              
-              {isLastDay && (
-                <div className="px-0 md:px-20 mt-4">
-                  <Badge className="bg-orange-500/20 text-white border-orange-200/30 py-2 px-4">
-                    🔥 ¡Último día del reto!
-                  </Badge>
+                
+                {challengeType === 'days_without' ? (
+                  <motion.div className="px-0 md:px-20">
+                    <div className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/30">
+                      <span className="text-4xl font-black text-white drop-shadow">
+                        {daysStatus.filter(d => d.completed === true).length}
+                      </span>
+                      <span className="text-white/70 text-xl font-medium">/</span>
+                      <span className="text-2xl font-bold text-white/90">
+                        {challenge.daily_goal || 5} días
+                      </span>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div className="px-0 md:px-20">
+                    <div className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/30">
+                      <span className="text-3xl font-black text-white drop-shadow">
+                        ${challenge.current_amount.toFixed(0)}
+                      </span>
+                      <span className="text-white/70 text-xl font-medium">/</span>
+                      <span className="text-xl font-bold text-white/90">
+                        ${challenge.target_amount.toFixed(0)}
+                      </span>
+                    </div>
+                  </motion.div>
+                )}
+                
+                {isLastDay && (
+                  <div className="px-0 md:px-20">
+                    <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500/30 to-red-500/30 backdrop-blur-md text-white border border-orange-200/40 py-3 px-6 rounded-2xl shadow-lg">
+                      <span className="text-2xl">🔥</span>
+                      <span className="font-bold">¡Último día del reto!</span>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="py-8 px-0 md:px-20">
+                  <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-xl">
+                    <Quote className="h-8 w-8 text-white/80 mb-4 drop-shadow" />
+                    <p className="text-white/95 text-lg md:text-xl leading-relaxed font-medium">
+                      {challenge.description}
+                    </p>
+                  </div>
                 </div>
-              )}
-              
-              <div className="py-8 text-white/90 px-0 md:px-20 text-lg leading-relaxed">
-                <Quote className="h-6 w-6 text-white mb-4" />
-                {challenge.description}
-              </div>
+              </motion.div>
               
               {challenge.status !== 'pending' && (
                 <div className="px-0 md:px-20 space-y-3 mb-8">
-                  <h3 className="text-xl font-bold text-white mb-4">Progreso semanal</h3>
-                  {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
-                    const dayStatus = daysStatus[dayIndex];
-                    const isCompleted = dayStatus?.completed === true;
-                    const isFailed = dayStatus?.completed === false;
-                    const isCurrentDay = dayIndex === currentDayIndex;
-                    
-                    return (
-                      <div 
-                        key={dayIndex}
-                        className={`flex items-center justify-between p-4 rounded-xl ${
-                          isCurrentDay ? 'bg-white/30' : 'bg-white/20'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div 
-                            className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold ${
-                              isCompleted 
-                                ? 'bg-green-500 text-white' 
-                                : isFailed 
-                                ? 'bg-red-500 text-white'
-                                : 'bg-white/50 text-white'
-                            }`}
-                          >
-                            {isCompleted && '✓'}
-                            {isFailed && '✗'}
-                            {!isCompleted && !isFailed && '·'}
-                          </div>
-                          <div>
-                            <p className="font-semibold text-white">
-                              {dayNamesFull[dayIndex]}
-                            </p>
-                            {dayStatus?.date && (
-                              <p className="text-xs text-white/70">
-                                {format(new Date(dayStatus.date), 'd MMM', { locale: es })}
+                  <h3 className="text-2xl font-black text-white mb-6 drop-shadow-lg">
+                    📊 Progreso semanal
+                  </h3>
+                  <div className="space-y-3">
+                    {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => {
+                      const dayStatus = daysStatus[dayIndex];
+                      const isCompleted = dayStatus?.completed === true;
+                      const isFailed = dayStatus?.completed === false;
+                      const isCurrentDay = dayIndex === currentDayIndex;
+                      
+                      return (
+                        <motion.div 
+                          key={dayIndex}
+                          initial={{opacity: 0, x: -20}}
+                          animate={{opacity: 1, x: 0}}
+                          transition={{delay: dayIndex * 0.05}}
+                          className={`flex items-center justify-between p-5 rounded-2xl backdrop-blur-md border transition-all duration-300 ${
+                            isCurrentDay 
+                              ? 'bg-white/30 border-white/40 shadow-lg scale-[1.02]' 
+                              : 'bg-white/15 border-white/20 hover:bg-white/25'
+                          }`}
+                        >
+                          <div className="flex items-center gap-4">
+                            <div 
+                              className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black shadow-lg transition-all duration-300 ${
+                                isCompleted 
+                                  ? 'bg-gradient-to-br from-green-400 to-green-600 text-white scale-110' 
+                                  : isFailed 
+                                  ? 'bg-gradient-to-br from-red-400 to-red-600 text-white'
+                                  : 'bg-white/40 text-white border-2 border-white/50'
+                              }`}
+                            >
+                              {isCompleted && '✓'}
+                              {isFailed && '✗'}
+                              {!isCompleted && !isFailed && '·'}
+                            </div>
+                            <div>
+                              <p className="font-bold text-white text-lg drop-shadow">
+                                {dayNamesFull[dayIndex]}
                               </p>
+                              {dayStatus?.date && (
+                                <p className="text-sm text-white/80 font-medium">
+                                  {format(new Date(dayStatus.date), 'd MMM', { locale: es })}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            {dayStatus && (
+                              <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/30">
+                                <p className="text-base font-black text-white drop-shadow">
+                                  ${dayStatus.amount?.toFixed(0) || 0}
+                                </p>
+                              </div>
                             )}
                           </div>
-                        </div>
-                        <div className="text-right">
-                          {dayStatus && (
-                            <p className="text-sm font-bold text-white">
-                              ${dayStatus.amount?.toFixed(0) || 0}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
+                        </motion.div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
 
               {challenge.status === 'pending' && (
                 <div className="px-0 md:px-20">
                   <Button 
-                    className="w-full bg-white text-gray-900 hover:bg-white/90"
+                    className="w-full bg-white text-gray-900 hover:bg-white/95 hover:scale-[1.02] font-bold text-lg py-6 rounded-2xl shadow-2xl transition-all duration-300 border-2 border-white/50"
                     onClick={() => {
                       onAccept(challenge.id);
                       handleCollapse();
                     }}
                   >
-                    Aceptar este reto
+                    ✨ Aceptar este reto
                   </Button>
                 </div>
               )}
