@@ -243,6 +243,9 @@ export default function FinancialAnalysis() {
       setHistoricalMonthlyData(historicalDataArray);
       console.log('📊 Historical monthly data:', historicalDataArray);
       
+      // Guardar también para usar en el insight del widget
+      localStorage.setItem('financialAnalysis_historicalMonthlyData', JSON.stringify(historicalDataArray));
+      
       // Calculate MoM (Month over Month) growth
       const monthKeys = Object.keys(monthlyData).sort();
       if (monthKeys.length >= 2) {
@@ -1531,10 +1534,30 @@ export default function FinancialAnalysis() {
               data={historicalMonthlyData.length > 0 ? historicalMonthlyData : [
                 { month: 'Sin datos', income: 0, expenses: 0, savings: 0 }
               ]}
-              insight={historicalMonthlyData.length >= 2 ? 
-                `Comparando tus últimos ${historicalMonthlyData.length} meses de actividad financiera.` : 
-                undefined
-              }
+              insight={(() => {
+                if (historicalMonthlyData.length < 2) return undefined;
+                
+                const firstMonth = historicalMonthlyData[0];
+                const lastMonth = historicalMonthlyData[historicalMonthlyData.length - 1];
+                const avgExpenses = historicalMonthlyData.reduce((sum, m) => sum + m.expenses, 0) / historicalMonthlyData.length;
+                const expenseChange = lastMonth.expenses - firstMonth.expenses;
+                const savingsChange = lastMonth.savings - firstMonth.savings;
+                
+                // Find best savings month
+                const bestMonth = historicalMonthlyData.reduce((best, m) => 
+                  m.savings > best.savings ? m : best, historicalMonthlyData[0]);
+                
+                // Determine trend
+                if (savingsChange > 0 && expenseChange < 0) {
+                  return `¡Excelente! Tus gastos bajaron $${Math.abs(expenseChange).toLocaleString()} y tu ahorro aumentó $${savingsChange.toLocaleString()} desde ${firstMonth.month}.`;
+                } else if (savingsChange > 0) {
+                  return `Tu ahorro aumentó $${savingsChange.toLocaleString()} desde ${firstMonth.month}. Tu mejor mes fue ${bestMonth.month} con $${bestMonth.savings.toLocaleString()} ahorrados.`;
+                } else if (expenseChange < 0) {
+                  return `Tus gastos bajaron $${Math.abs(expenseChange).toLocaleString()} desde ${firstMonth.month}. Sigue así para aumentar tu ahorro.`;
+                } else {
+                  return `Gasto promedio: $${Math.round(avgExpenses).toLocaleString()}. Tu mejor mes fue ${bestMonth.month} con $${bestMonth.savings.toLocaleString()} de ahorro.`;
+                }
+              })()}
             />
 
             {/* Evolution Chart */}
