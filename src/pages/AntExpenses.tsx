@@ -3,10 +3,19 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, AlertCircle } from 'lucide-react';
+import { ArrowLeft, AlertCircle, ChevronDown, ChevronUp, Calendar, CreditCard } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import BottomNav from '@/components/BottomNav';
+
+interface Transaction {
+  id: string;
+  description: string;
+  amount: number;
+  date: string;
+  paymentMethod: string;
+  account: string;
+}
 
 interface AntExpense {
   id: string;
@@ -16,12 +25,14 @@ interface AntExpense {
   occurrences: number;
   icon: string;
   lastDate: string;
+  breakdown: Transaction[];
 }
 
 export default function AntExpenses() {
   const navigate = useNavigate();
   const location = useLocation();
   const [totalSpent, setTotalSpent] = useState(0);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   const handleBack = () => {
     const from = location.state?.from;
@@ -85,7 +96,7 @@ export default function AntExpenses() {
             </Button>
             <div className="flex-1 min-w-0">
               <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Gastos Hormiga 🐜</h1>
-              <p className="text-sm text-gray-500">Gastos pequeños que suman mucho</p>
+              <p className="text-sm text-gray-500">Gastos menores a $200 del último mes</p>
             </div>
           </div>
         </div>
@@ -107,7 +118,7 @@ export default function AntExpenses() {
           </div>
           <div className="bg-yellow-50 rounded-lg p-3 border border-yellow-200">
             <p className="text-xs text-yellow-700">
-              💡 Los gastos hormiga son compras menores a $100 que, sumados, representan un impacto significativo en tu presupuesto
+              💡 Los gastos hormiga son compras menores a $200 del último mes que, sumados, representan un impacto significativo
             </p>
           </div>
         </Card>
@@ -124,66 +135,107 @@ export default function AntExpenses() {
         {!loading && expenses.length === 0 && (
           <Card className="p-8 text-center bg-white rounded-[20px] shadow-xl border border-yellow-100">
             <p className="text-foreground/70 mb-4">No se detectaron gastos hormiga</p>
-            <p className="text-sm text-foreground/50">La IA busca gastos menores a $100</p>
+            <p className="text-sm text-foreground/50">La IA busca gastos menores a $200 del último mes</p>
           </Card>
         )}
 
         {/* Expenses list */}
-        {!loading && expenses.map((expense: AntExpense, index) => (
-          <Card 
-            key={expense.id}
-            className="p-3 bg-white rounded-[16px] shadow-lg border border-yellow-100 hover:scale-105 transition-all animate-fade-in"
-            style={{ animationDelay: `${index * 100}ms` }}
-          >
-            <div className="flex items-start gap-3">
-              {/* Icon */}
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-100 to-yellow-200 flex items-center justify-center flex-shrink-0 border border-yellow-300">
-                <span className="text-xl">{expense.icon}</span>
-              </div>
-
-              {/* Details */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2 mb-1.5">
-                  <h3 className="font-bold text-foreground text-base truncate">{expense.category}</h3>
-                  <Badge className="bg-yellow-100 text-yellow-800 shrink-0 text-xs flex items-center gap-1">
-                    <AlertCircle className="h-3 w-3" />
-                    {expense.occurrences} veces
-                  </Badge>
+        {!loading && expenses.map((expense: AntExpense, index) => {
+          const isExpanded = expandedCategory === expense.id;
+          
+          return (
+            <Card 
+              key={expense.id}
+              className="p-3 bg-white rounded-[16px] shadow-lg border border-yellow-100 transition-all animate-fade-in overflow-hidden"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <div 
+                className="flex items-start gap-3 cursor-pointer hover:bg-yellow-50/50 rounded-lg p-2 -m-2 transition-colors"
+                onClick={() => setExpandedCategory(isExpanded ? null : expense.id)}
+              >
+                {/* Icon */}
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-100 to-yellow-200 flex items-center justify-center flex-shrink-0 border border-yellow-300">
+                  <span className="text-xl">{expense.icon}</span>
                 </div>
 
-                <div className="space-y-1.5 text-xs text-foreground/70">
-                  <div className="flex items-center justify-between">
-                    <span>Total gastado:</span>
-                    <span className="font-bold text-foreground text-base text-yellow-600">
-                      ${expense.totalSpent.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
-                    </span>
+                {/* Details */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2 mb-1.5">
+                    <h3 className="font-bold text-foreground text-base truncate">{expense.category}</h3>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Badge className="bg-yellow-100 text-yellow-800 text-xs flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        {expense.occurrences} veces
+                      </Badge>
+                      {isExpanded ? (
+                        <ChevronUp className="h-4 w-4 text-yellow-600" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4 text-yellow-600" />
+                      )}
+                    </div>
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <span>Promedio por compra:</span>
-                    <span className="font-medium text-foreground">
-                      ${expense.avgAmount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
-                    </span>
-                  </div>
+                  <div className="space-y-1.5 text-xs text-foreground/70">
+                    <div className="flex items-center justify-between">
+                      <span>Total gastado:</span>
+                      <span className="font-bold text-foreground text-base text-yellow-600">
+                        ${expense.totalSpent.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                      </span>
+                    </div>
 
-                  <div className="mt-2 bg-yellow-50 rounded p-2 border border-yellow-200">
-                    <p className="text-[10px] text-yellow-700">
-                      💰 Si reduces este gasto en 50%, ahorrarías ${(expense.totalSpent / 2).toLocaleString('es-MX')} al mes
-                    </p>
-                  </div>
+                    <div className="flex items-center justify-between">
+                      <span>Promedio por compra:</span>
+                      <span className="font-medium text-foreground">
+                        ${expense.avgAmount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                      </span>
+                    </div>
 
-                  <div className="text-[10px] text-foreground/50">
-                    Última compra: {new Date(expense.lastDate).toLocaleDateString('es-MX', { 
-                      day: 'numeric', 
-                      month: 'short', 
-                      year: 'numeric' 
-                    })}
+                    <div className="mt-2 bg-yellow-50 rounded p-2 border border-yellow-200">
+                      <p className="text-[10px] text-yellow-700">
+                        💰 Si reduces este gasto en 50%, ahorrarías ${(expense.totalSpent / 2).toLocaleString('es-MX')} al mes
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </Card>
-        ))}
+
+              {/* Breakdown - Expanded view */}
+              {isExpanded && expense.breakdown && expense.breakdown.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-yellow-200 space-y-2">
+                  <p className="text-xs font-semibold text-yellow-700 mb-3">Desglose de transacciones:</p>
+                  {expense.breakdown.map((tx, idx) => (
+                    <div 
+                      key={tx.id}
+                      className="bg-yellow-50/50 rounded-lg p-3 border border-yellow-100"
+                      style={{ animationDelay: `${idx * 50}ms` }}
+                    >
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <p className="text-sm font-medium text-foreground">{tx.description}</p>
+                        <span className="text-sm font-bold text-yellow-600 shrink-0">
+                          ${tx.amount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                      <div className="space-y-1 text-[10px] text-foreground/60">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-3 w-3" />
+                          <span>{new Date(tx.date).toLocaleDateString('es-MX', { 
+                            day: 'numeric', 
+                            month: 'short', 
+                            year: 'numeric' 
+                          })}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CreditCard className="h-3 w-3" />
+                          <span>{tx.paymentMethod} • {tx.account}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
+          );
+        })}
       </div>
 
       <BottomNav />

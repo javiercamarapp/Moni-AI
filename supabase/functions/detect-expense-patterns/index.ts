@@ -305,10 +305,19 @@ function detectVariableExpenses(transactions: Transaction[]) {
 }
 
 function detectAntExpenses(transactions: Transaction[]) {
-  // Gastos hormiga: gastos pequeños y frecuentes
-  const antExpenses = transactions.filter(t => {
+  // Gastos hormiga: gastos pequeños del ÚLTIMO MES solamente
+  // Filtrar solo transacciones del último mes
+  const oneMonthAgo = new Date();
+  oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+  
+  const lastMonthTransactions = transactions.filter(t => {
+    const txDate = new Date(t.transaction_date);
+    return txDate >= oneMonthAgo;
+  });
+  
+  const antExpenses = lastMonthTransactions.filter(t => {
     const amount = Number(t.amount);
-    return amount > 0 && amount <= 100; // Menos de $100
+    return amount > 0 && amount < 200; // Menos de $200
   });
 
   const groups = new Map<string, Transaction[]>();
@@ -327,6 +336,16 @@ function detectAntExpenses(transactions: Transaction[]) {
     const total = txs.reduce((sum, t) => sum + Number(t.amount), 0);
     const avg = total / txs.length;
     
+    // Incluir el desglose de transacciones para cada categoría
+    const breakdown = txs.map(t => ({
+      id: t.id,
+      description: t.description,
+      amount: Number(t.amount),
+      date: t.transaction_date,
+      paymentMethod: t.payment_method || 'No especificado',
+      account: t.account || 'Cuenta principal'
+    }));
+    
     result.push({
       id: `ant-${category}`,
       category: category,
@@ -335,6 +354,7 @@ function detectAntExpenses(transactions: Transaction[]) {
       occurrences: txs.length,
       icon: getCategoryIcon(category),
       lastDate: txs[txs.length - 1].transaction_date,
+      breakdown: breakdown // Agregar el desglose
     });
   });
 
