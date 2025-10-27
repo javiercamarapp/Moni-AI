@@ -33,7 +33,7 @@ export default function AntExpenses() {
   };
 
   const { data: expenses = [], isLoading: loading } = useQuery({
-    queryKey: ['ant-expenses'],
+    queryKey: ['expense-patterns', 'ant'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {

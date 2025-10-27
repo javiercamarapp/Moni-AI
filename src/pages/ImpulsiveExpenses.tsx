@@ -34,7 +34,7 @@ export default function ImpulsiveExpenses() {
   };
 
   const { data: expenses = [], isLoading: loading } = useQuery({
-    queryKey: ['impulsive-expenses'],
+    queryKey: ['expense-patterns', 'impulsive'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {

@@ -39,7 +39,7 @@ export default function FixedExpenses() {
   };
 
   const { data: expenses = [], isLoading: loading } = useQuery({
-    queryKey: ['fixed-expenses'],
+    queryKey: ['expense-patterns', 'fixed'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {

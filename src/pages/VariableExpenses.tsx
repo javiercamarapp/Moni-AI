@@ -35,7 +35,7 @@ export default function VariableExpenses() {
   };
 
   const { data: expenses = [], isLoading: loading } = useQuery({
-    queryKey: ['variable-expenses'],
+    queryKey: ['expense-patterns', 'variable'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
