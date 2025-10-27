@@ -202,16 +202,10 @@ export default function Movimientos() {
                 return (
                   <div 
                     key={transaction.id}
-                    className={`flex items-center gap-2 py-2 px-2 rounded backdrop-blur-sm border transition-all ${
-                      isIncome 
-                        ? 'bg-green-50/80 border-green-200 hover:bg-green-100/80' 
-                        : 'bg-red-50/80 border-red-200 hover:bg-red-100/80'
-                    }`}
+                    className="flex items-center gap-2 py-1.5 transition-colors hover:bg-gray-50/50"
                   >
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm shadow-lg shrink-0 ${
-                      isIncome
-                        ? 'bg-gradient-to-br from-green-400 to-green-600'
-                        : 'bg-gradient-to-br from-red-400 to-red-600'
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm shrink-0 ${
+                      isIncome ? 'bg-green-500' : 'bg-red-500'
                     }`}>
                       <span className="text-white">{isIncome ? '💰' : '💳'}</span>
                     </div>
@@ -234,7 +228,7 @@ export default function Movimientos() {
                       </div>
                     </div>
                     <p className={`text-xs font-black shrink-0 ${
-                      isIncome ? 'text-green-700' : 'text-red-700'
+                      isIncome ? 'text-green-600' : 'text-red-600'
                     }`}>
                       {isIncome ? '+' : '-'}${Number(transaction.amount).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                     </p>
