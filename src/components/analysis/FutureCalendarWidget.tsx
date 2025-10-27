@@ -58,7 +58,7 @@ export default function FutureCalendarWidget({ events }: FutureCalendarProps) {
   };
 
   return (
-    <Card className="p-4 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all border border-blue-100 animate-fade-in">
+    <Card className="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-[20px] shadow-xl border border-purple-200 animate-fade-in">
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-primary" />
