@@ -136,6 +136,10 @@ export default function FinancialAnalysis() {
     const cached = localStorage.getItem('financialAnalysis_weeklySpendingData');
     return cached ? JSON.parse(cached) : [];
   });
+  const [expensePatterns, setExpensePatterns] = useState<any>(() => {
+    const cached = localStorage.getItem('financialAnalysis_expensePatterns');
+    return cached ? JSON.parse(cached) : null;
+  });
 
   // Helper function to safely format values in thousands
   const formatK = (value: number | undefined | null): string => {
@@ -166,6 +170,7 @@ export default function FinancialAnalysis() {
       calculateQuickMetrics();
       fetchTransactionsData();
       loadAnalysis();
+      loadExpensePatterns();
     }
   }, [user]);
 
@@ -877,6 +882,58 @@ export default function FinancialAnalysis() {
     }
   };
 
+  const loadExpensePatterns = async () => {
+    if (!user?.id) {
+      console.log('User not available yet, skipping expense patterns load');
+      return;
+    }
+    
+    // Verificar caché primero - usar datos de hasta 10 minutos
+    const cacheKey = `financialAnalysis_expensePatterns_${user.id}`;
+    const cacheTimeKey = `${cacheKey}_time`;
+    const cachedTime = localStorage.getItem(cacheTimeKey);
+    const now = Date.now();
+    
+    // Si hay caché válido, usarlo
+    if (cachedTime && (now - parseInt(cachedTime)) < 10 * 60 * 1000) {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        try {
+          const data = JSON.parse(cached);
+          setExpensePatterns(data);
+          console.log('✅ Using cached expense patterns data');
+          return;
+        } catch (e) {
+          console.error('Cache parse error:', e);
+        }
+      }
+    }
+    
+    try {
+      console.log('🔄 Cargando patrones de gastos para:', user.id);
+      const { data, error } = await supabase.functions.invoke('detect-expense-patterns', {
+        body: { userId: user.id }
+      });
+      
+      if (error) {
+        console.error('Expense patterns error:', error);
+        throw error;
+      }
+      
+      if (data) {
+        console.log('📊 Patrones de gastos detectados:', data);
+        setExpensePatterns(data);
+        localStorage.setItem(cacheKey, JSON.stringify(data));
+        localStorage.setItem(cacheTimeKey, now.toString());
+        localStorage.setItem('financialAnalysis_expensePatterns', JSON.stringify(data));
+        console.log('✅ Expense patterns cached successfully');
+      }
+    } catch (error: any) {
+      console.error("Error loading expense patterns:", error);
+      // No mostrar toast para no molestar al usuario, solo log
+    }
+  };
+
   return (
     <>
       {loading ? (
@@ -1556,11 +1613,11 @@ export default function FinancialAnalysis() {
                     <AlertCircle className="h-3 w-3 text-orange-500" />
                   </div>
                   <p className="text-lg font-bold text-orange-600">
-                    ${formatK(analysis?.metrics?.fixedExpenses)}k
+                    ${formatK(expensePatterns?.fixed?.total || 0)}k
                   </p>
                   <div className="flex items-center justify-between text-[10px]">
-                    <span className="text-muted-foreground">{(analysis?.metrics?.fixedExpensesPercentage || 0).toFixed(0)}% del gasto</span>
-                    <span className="text-success">↓ -3%</span>
+                    <span className="text-muted-foreground">{expensePatterns?.fixed?.count || 0} gastos</span>
+                    <span className="text-muted-foreground">{expensePatterns?.fixed?.percentage?.toFixed(0) || 0}% del gasto</span>
                   </div>
                 </Card>
 
@@ -1573,9 +1630,12 @@ export default function FinancialAnalysis() {
                     <Zap className="h-3 w-3 text-violet-500" />
                   </div>
                   <p className="text-lg font-bold text-violet-600">
-                    ${formatK(analysis?.metrics?.variableExpenses)}k
+                    ${formatK(expensePatterns?.variable?.total || 0)}k
                   </p>
-                  <p className="text-[10px] text-muted-foreground">{(analysis?.metrics?.variableExpensesPercentage || 0).toFixed(0)}%</p>
+                  <div className="flex items-center justify-between text-[10px]">
+                    <span className="text-muted-foreground">{expensePatterns?.variable?.count || 0} gastos</span>
+                    <span className="text-muted-foreground">{expensePatterns?.variable?.percentage?.toFixed(0) || 0}% del gasto</span>
+                  </div>
                 </Card>
 
                 <Card 
@@ -1587,11 +1647,11 @@ export default function FinancialAnalysis() {
                     <span className="text-lg">🐜</span>
                   </div>
                   <p className="text-lg font-bold text-yellow-600">
-                    ${formatK(analysis?.metrics?.antExpenses)}k
+                    ${formatK(expensePatterns?.ant?.total || 0)}k
                   </p>
                   <div className="flex items-center justify-between text-[10px]">
-                    <span className="text-muted-foreground">{(analysis?.metrics?.antExpensesPercentage || 0).toFixed(1)}% ingreso</span>
-                    <span className="text-yellow-600">↑ +5%</span>
+                    <span className="text-muted-foreground">{expensePatterns?.ant?.count || 0} gastos</span>
+                    <span className="text-muted-foreground">{expensePatterns?.ant?.percentage?.toFixed(1) || 0}% del gasto</span>
                   </div>
                 </Card>
 
@@ -1603,10 +1663,10 @@ export default function FinancialAnalysis() {
                     <span className="text-xs text-muted-foreground">Impulsivos</span>
                     <AlertCircle className="h-3 w-3 text-rose-500" />
                   </div>
-                  <p className="text-lg font-bold text-rose-600">{analysis?.metrics?.impulsivePurchases ?? 0}</p>
+                  <p className="text-lg font-bold text-rose-600">{expensePatterns?.impulsive?.count || 0}</p>
                   <div className="flex items-center justify-between text-[10px]">
                     <span className="text-muted-foreground">compras</span>
-                    <span className="text-rose-500">↑ +2</span>
+                    <span className="text-muted-foreground">${formatK(expensePatterns?.impulsive?.total || 0)}k</span>
                   </div>
                 </Card>
               </div>
