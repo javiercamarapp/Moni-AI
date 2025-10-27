@@ -11,8 +11,10 @@ interface Transaction {
   description: string;
   amount: number;
   transaction_date: string;
+  type: string;
   payment_method?: string;
   account?: string;
+  category_id?: string;
   categories?: { name: string };
 }
 
@@ -22,136 +24,266 @@ serve(async (req) => {
   }
 
   try {
-    const { transactions, type } = await req.json();
+    const { userId } = await req.json();
     
-    console.log(`Analyzing ${transactions?.length || 0} transactions for type: ${type}`);
+    if (!userId) {
+      throw new Error('userId is required');
+    }
+
+    console.log(`🔍 Analyzing expense patterns for user: ${userId}`);
+
+    // Conectar a Supabase
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Obtener TODAS las transacciones de los últimos 6 meses
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    
+    const { data: transactions, error: txError } = await supabase
+      .from('transactions')
+      .select(`
+        id,
+        description,
+        amount,
+        transaction_date,
+        type,
+        payment_method,
+        account,
+        category_id,
+        categories (name)
+      `)
+      .eq('user_id', userId)
+      .eq('type', 'gasto')
+      .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
+      .order('transaction_date', { ascending: true });
+
+    if (txError) {
+      console.error('Error fetching transactions:', txError);
+      throw txError;
+    }
+
+    console.log(`📊 Found ${transactions?.length || 0} expense transactions in last 6 months`);
 
     if (!transactions || transactions.length === 0) {
       return new Response(
-        JSON.stringify({ expenses: [] }),
+        JSON.stringify({
+          fixed: { total: 0, count: 0, percentage: 0, expenses: [] },
+          variable: { total: 0, count: 0, percentage: 0, expenses: [] },
+          ant: { total: 0, count: 0, percentage: 0, expenses: [] },
+          impulsive: { total: 0, count: 0, percentage: 0, expenses: [] }
+        }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    let result: any[] = [];
+    // Calcular totales
+    const totalExpenses = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
 
-    switch (type) {
-      case 'fixed':
-        result = detectFixedExpenses(transactions);
-        break;
-      case 'variable':
-        result = detectVariableExpenses(transactions);
-        break;
-      case 'ant':
-        result = detectAntExpenses(transactions);
-        break;
-      case 'impulsive':
-        result = detectImpulsiveExpenses(transactions);
-        break;
-      default:
-        throw new Error(`Invalid type: ${type}`);
-    }
+    // Detectar patrones
+    const fixed = detectFixedExpenses(transactions);
+    const variable = detectVariableExpenses(transactions);
+    const ant = detectAntExpenses(transactions);
+    const impulsive = detectImpulsiveExpenses(transactions);
 
-    console.log(`Detected ${result.length} ${type} expenses`);
+    const fixedTotal = fixed.reduce((sum, e) => sum + e.monthlyAmount, 0);
+    const variableTotal = variable.reduce((sum, e) => sum + e.avgMonthlyAmount, 0);
+    const antTotal = ant.reduce((sum, e) => sum + e.totalSpent, 0);
+    const impulsiveTotal = impulsive.reduce((sum, e) => sum + e.amount, 0);
+
+    console.log(`💰 Totals - Fixed: ${fixedTotal}, Variable: ${variableTotal}, Ant: ${antTotal}, Impulsive: ${impulsiveTotal}`);
+
+    const result = {
+      fixed: {
+        total: fixedTotal,
+        count: fixed.length,
+        percentage: totalExpenses > 0 ? (fixedTotal / totalExpenses * 100) : 0,
+        expenses: fixed
+      },
+      variable: {
+        total: variableTotal,
+        count: variable.length,
+        percentage: totalExpenses > 0 ? (variableTotal / totalExpenses * 100) : 0,
+        expenses: variable
+      },
+      ant: {
+        total: antTotal,
+        count: ant.length,
+        percentage: totalExpenses > 0 ? (antTotal / totalExpenses * 100) : 0,
+        expenses: ant
+      },
+      impulsive: {
+        total: impulsiveTotal,
+        count: impulsive.length,
+        percentage: totalExpenses > 0 ? (impulsiveTotal / totalExpenses * 100) : 0,
+        expenses: impulsive
+      }
+    };
 
     return new Response(
-      JSON.stringify({ expenses: result }),
+      JSON.stringify(result),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error detecting expense patterns:', error);
+    console.error('❌ Error detecting expense patterns:', error);
     return new Response(
-      JSON.stringify({ error: error.message, expenses: [] }),
+      JSON.stringify({ error: error.message }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }
 });
 
 function detectFixedExpenses(transactions: Transaction[]) {
-  // Agrupar por descripción similar y monto
-  const groups = new Map<string, Transaction[]>();
+  // Agrupar transacciones por mes
+  const monthlyGroups = new Map<string, Map<string, Transaction[]>>();
   
   transactions.forEach(t => {
+    const month = t.transaction_date.substring(0, 7); // YYYY-MM
     const normalizedDesc = normalizeDescription(t.description);
-    const key = `${normalizedDesc}-${Math.round(Number(t.amount))}`;
+    const amount = Math.round(Number(t.amount));
+    const key = `${normalizedDesc}|${amount}`; // Mismo concepto + mismo monto
     
-    if (!groups.has(key)) {
-      groups.set(key, []);
+    if (!monthlyGroups.has(month)) {
+      monthlyGroups.set(month, new Map());
     }
-    groups.get(key)!.push(t);
+    
+    const monthMap = monthlyGroups.get(month)!;
+    if (!monthMap.has(key)) {
+      monthMap.set(key, []);
+    }
+    monthMap.get(key)!.push(t);
+  });
+
+  // Contar cuántos meses diferentes tiene cada concepto+monto
+  const conceptCounts = new Map<string, { months: Set<string>, transactions: Transaction[] }>();
+  
+  monthlyGroups.forEach((monthMap, month) => {
+    monthMap.forEach((txs, key) => {
+      if (!conceptCounts.has(key)) {
+        conceptCounts.set(key, { months: new Set(), transactions: [] });
+      }
+      const data = conceptCounts.get(key)!;
+      data.months.add(month);
+      data.transactions.push(...txs);
+    });
   });
 
   const fixedExpenses: any[] = [];
+  const totalMonths = monthlyGroups.size;
 
-  // Identificar gastos que se repiten mensualmente con el mismo monto
-  groups.forEach((txs, key) => {
-    if (txs.length >= 3) { // Al menos 3 ocurrencias
-      // Verificar si son mensuales
-      const dates = txs.map(t => new Date(t.transaction_date)).sort((a, b) => a.getTime() - b.getTime());
-      const isMonthly = checkIfMonthly(dates);
+  // Gastos que aparecen en al menos 50% de los meses con el mismo monto
+  conceptCounts.forEach((data, key) => {
+    const monthCount = data.months.size;
+    const appearances = monthCount / totalMonths;
+    
+    if (appearances >= 0.5 && monthCount >= 2) { // Al menos 2 meses y 50% de frecuencia
+      const amounts = data.transactions.map(t => Number(t.amount));
+      const avgAmount = amounts.reduce((sum, a) => sum + a, 0) / amounts.length;
+      const variance = calculateVariance(amounts);
+      const consistency = variance < avgAmount * 0.1; // Variación menor al 10%
       
-      if (isMonthly) {
-        const avgAmount = txs.reduce((sum, t) => sum + Number(t.amount), 0) / txs.length;
-        const latest = txs[txs.length - 1];
+      if (consistency) {
+        const latest = data.transactions[data.transactions.length - 1];
         
         fixedExpenses.push({
           id: `fixed-${key}`,
           name: latest.description,
-          amount: avgAmount,
+          monthlyAmount: avgAmount,
           frequency: 'mensual',
           category: latest.categories?.name || 'Sin categoría',
           paymentMethod: latest.payment_method || 'No especificado',
           account: latest.account || 'Cuenta principal',
-          occurrences: txs.length,
+          occurrences: data.transactions.length,
+          monthsPresent: monthCount,
           lastPaymentDate: latest.transaction_date,
           icon: getExpenseIcon(latest.description),
-          consistency: calculateConsistency(txs.map(t => Number(t.amount))),
+          consistency: ((1 - Math.sqrt(variance) / avgAmount) * 100).toFixed(1),
         });
       }
     }
   });
 
-  return fixedExpenses.sort((a, b) => b.amount - a.amount);
+  return fixedExpenses.sort((a, b) => b.monthlyAmount - a.monthlyAmount);
 }
 
 function detectVariableExpenses(transactions: Transaction[]) {
-  // Agrupar por categoría
-  const categoryGroups = new Map<string, Transaction[]>();
+  // Categorías típicamente variables
+  const variableKeywords = [
+    'alimentación', 'comida', 'restaurant', 'uber', 'didi', 'gasolina',
+    'agua', 'luz', 'gas', 'cfe', 'oxxo', 'walmart', 'soriana',
+    'farmacia', 'mercado', 'super', 'tienda', 'delivery', 'rappi'
+  ];
+
+  // Agrupar por mes y concepto normalizado
+  const monthlyGroups = new Map<string, Map<string, Transaction[]>>();
   
   transactions.forEach(t => {
+    const normalizedDesc = normalizeDescription(t.description);
     const category = t.categories?.name || 'Sin categoría';
-    if (!categoryGroups.has(category)) {
-      categoryGroups.set(category, []);
+    
+    // Verificar si es una categoría variable
+    const isVariable = variableKeywords.some(kw => 
+      normalizedDesc.includes(kw.toLowerCase()) || 
+      category.toLowerCase().includes(kw.toLowerCase())
+    );
+    
+    if (isVariable) {
+      const month = t.transaction_date.substring(0, 7); // YYYY-MM
+      
+      if (!monthlyGroups.has(normalizedDesc)) {
+        monthlyGroups.set(normalizedDesc, new Map());
+      }
+      
+      const conceptMap = monthlyGroups.get(normalizedDesc)!;
+      if (!conceptMap.has(month)) {
+        conceptMap.set(month, []);
+      }
+      conceptMap.get(month)!.push(t);
     }
-    categoryGroups.get(category)!.push(t);
   });
 
   const variableExpenses: any[] = [];
 
-  categoryGroups.forEach((txs, category) => {
-    if (txs.length >= 2) {
-      const amounts = txs.map(t => Number(t.amount));
-      const avgAmount = amounts.reduce((sum, a) => sum + a, 0) / amounts.length;
-      const variance = calculateVariance(amounts);
+  // Conceptos que aparecen en múltiples meses con montos diferentes
+  monthlyGroups.forEach((monthMap, concept) => {
+    const monthCount = monthMap.size;
+    
+    if (monthCount >= 2) { // Al menos 2 meses diferentes
+      const allTxs: Transaction[] = [];
+      const monthlyTotals: number[] = [];
       
-      // Solo incluir si hay variabilidad significativa
-      if (variance > avgAmount * 0.2) {
+      monthMap.forEach(txs => {
+        allTxs.push(...txs);
+        const monthTotal = txs.reduce((sum, t) => sum + Number(t.amount), 0);
+        monthlyTotals.push(monthTotal);
+      });
+      
+      const avgMonthly = monthlyTotals.reduce((sum, a) => sum + a, 0) / monthlyTotals.length;
+      const variance = calculateVariance(monthlyTotals);
+      const hasVariability = variance > avgMonthly * 0.15; // Variación mayor al 15%
+      
+      if (hasVariability) {
+        const latest = allTxs[allTxs.length - 1];
+        
         variableExpenses.push({
-          id: `var-${category}`,
-          name: category,
-          avgAmount: avgAmount,
-          minAmount: Math.min(...amounts),
-          maxAmount: Math.max(...amounts),
-          occurrences: txs.length,
+          id: `var-${concept}`,
+          name: latest.description,
+          avgMonthlyAmount: avgMonthly,
+          minMonthly: Math.min(...monthlyTotals),
+          maxMonthly: Math.max(...monthlyTotals),
+          category: latest.categories?.name || 'Sin categoría',
+          occurrences: allTxs.length,
+          monthsPresent: monthCount,
           variance: variance,
-          icon: getCategoryIcon(category),
-          lastTransaction: txs[txs.length - 1].transaction_date,
+          icon: getExpenseIcon(latest.description),
+          lastTransaction: latest.transaction_date,
         });
       }
     }
   });
 
-  return variableExpenses.sort((a, b) => b.avgAmount - a.avgAmount);
+  return variableExpenses.sort((a, b) => b.avgMonthlyAmount - a.avgMonthlyAmount);
 }
 
 function detectAntExpenses(transactions: Transaction[]) {

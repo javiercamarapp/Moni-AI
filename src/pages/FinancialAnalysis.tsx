@@ -910,7 +910,7 @@ export default function FinancialAnalysis() {
     }
     
     try {
-      console.log('🔄 Cargando patrones de gastos para:', user.id);
+      console.log('🔄 Detectando patrones de gastos para:', user.id);
       const { data, error } = await supabase.functions.invoke('detect-expense-patterns', {
         body: { userId: user.id }
       });
@@ -921,7 +921,12 @@ export default function FinancialAnalysis() {
       }
       
       if (data) {
-        console.log('📊 Patrones de gastos detectados:', data);
+        console.log('📊 Patrones de gastos detectados:', {
+          fijos: { total: data.fixed?.total, count: data.fixed?.count },
+          variables: { total: data.variable?.total, count: data.variable?.count },
+          hormiga: { total: data.ant?.total, count: data.ant?.count },
+          impulsivos: { total: data.impulsive?.total, count: data.impulsive?.count }
+        });
         setExpensePatterns(data);
         localStorage.setItem(cacheKey, JSON.stringify(data));
         localStorage.setItem(cacheTimeKey, now.toString());
