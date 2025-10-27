@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { motion } from "framer-motion";
 import { GoalMilestone } from "@/components/ui/celebration-confetti";
+import { addDays, addMonths, isBefore, startOfDay } from "date-fns";
 import bannerInvestment from '@/assets/banner-investment.jpg';
 import bannerGoals from '@/assets/banner-goals.jpg';
 import bannerGroups from '@/assets/banner-groups.jpg';
@@ -23,6 +24,7 @@ import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings
 import moniLogo from '/moni-logo.png';
 import SafeToSpendWidget from '@/components/analysis/SafeToSpendWidget';
 import AICoachInsightsWidget from '@/components/analysis/AICoachInsightsWidget';
+import FutureCalendarWidget from '@/components/analysis/FutureCalendarWidget';
 import BottomNav from '@/components/BottomNav';
 
 const Dashboard = () => {
@@ -57,6 +59,7 @@ const Dashboard = () => {
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
   const [totalBudget, setTotalBudget] = useState(0);
   const [currentMonthExpenses, setCurrentMonthExpenses] = useState(0);
+  const [futureEvents, setFutureEvents] = useState<any[]>([]);
   
   // Goal milestone celebration state
   const [goalMilestone, setGoalMilestone] = useState<{
@@ -373,6 +376,139 @@ const Dashboard = () => {
     }, 3000);
     return () => clearInterval(interval);
   }, [api]);
+
+  // Load future events (recurring payments predictions)
+  useEffect(() => {
+    const loadFutureEvents = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Get last 6 months of transactions for pattern detection
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+        const { data: allTx, error: allError } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', user.id)
+          .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
+          .order('transaction_date', { ascending: false });
+
+        if (allError) throw allError;
+
+        // Detect recurring payments and predict future events
+        const predicted = detectRecurringPayments(allTx || []);
+        setFutureEvents(predicted);
+      } catch (error) {
+        console.error('Error loading future events:', error);
+      }
+    };
+
+    loadFutureEvents();
+  }, []);
+
+  // Function to detect recurring payment patterns
+  const detectRecurringPayments = (transactions: any[]) => {
+    const today = startOfDay(new Date());
+    const futurePayments: any[] = [];
+    
+    // Group transactions by similar descriptions (normalize text)
+    const groupedByDescription: Record<string, any[]> = {};
+    
+    transactions.forEach(tx => {
+      const normalizedDesc = tx.description
+        .toLowerCase()
+        .replace(/\d+/g, '') // Remove numbers
+        .replace(/[^\w\s]/g, '') // Remove special chars
+        .trim();
+      
+      if (!groupedByDescription[normalizedDesc]) {
+        groupedByDescription[normalizedDesc] = [];
+      }
+      groupedByDescription[normalizedDesc].push(tx);
+    });
+
+    // Analyze each group for patterns
+    Object.entries(groupedByDescription).forEach(([desc, txs]) => {
+      if (txs.length < 2) return; // Need at least 2 occurrences
+
+      // Sort by date
+      const sortedTxs = txs.sort((a, b) => 
+        new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime()
+      );
+
+      // Calculate average interval between transactions (in days)
+      const intervals: number[] = [];
+      for (let i = 1; i < sortedTxs.length; i++) {
+        const daysDiff = Math.round(
+          (new Date(sortedTxs[i].transaction_date).getTime() - 
+           new Date(sortedTxs[i-1].transaction_date).getTime()) / 
+          (1000 * 60 * 60 * 24)
+        );
+        intervals.push(daysDiff);
+      }
+
+      const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+      const avgAmount = sortedTxs.reduce((sum, tx) => sum + Number(tx.amount), 0) / sortedTxs.length;
+
+      // Detect if it's a recurring pattern (weekly: ~7d, biweekly: ~15d, monthly: ~30d)
+      let frequency: string | null = null;
+      let predictInterval = 30; // default monthly
+
+      if (avgInterval >= 6 && avgInterval <= 8) {
+        frequency = 'Semanal';
+        predictInterval = 7;
+      } else if (avgInterval >= 13 && avgInterval <= 16) {
+        frequency = 'Quincenal';
+        predictInterval = 15;
+      } else if (avgInterval >= 28 && avgInterval <= 32) {
+        frequency = 'Mensual';
+        predictInterval = 30;
+      } else if (avgInterval >= 88 && avgInterval <= 95) {
+        frequency = 'Trimestral';
+        predictInterval = 90;
+      } else if (avgInterval >= 360 && avgInterval <= 370) {
+        frequency = 'Anual';
+        predictInterval = 365;
+      }
+
+      // Only predict if we detected a clear pattern
+      if (frequency) {
+        const lastTx = sortedTxs[sortedTxs.length - 1];
+        const lastDate = new Date(lastTx.transaction_date);
+        let nextDate = addDays(lastDate, predictInterval);
+
+        // Generate next 3 occurrences
+        const nextThreeMonths = addMonths(today, 3);
+        let count = 0;
+        
+        while (isBefore(nextDate, nextThreeMonths) && count < 3) {
+          if (!isBefore(nextDate, today)) {
+            futurePayments.push({
+              date: new Date(nextDate),
+              type: lastTx.type,
+              description: `${lastTx.description} (${frequency})`,
+              amount: Math.round(avgAmount),
+              risk: calculatePaymentRisk(nextDate, avgAmount)
+            });
+            count++;
+          }
+          nextDate = addDays(nextDate, predictInterval);
+        }
+      }
+    });
+
+    return futurePayments.sort((a, b) => a.date.getTime() - b.date.getTime());
+  };
+
+  const calculatePaymentRisk = (date: Date, amount: number): "low" | "medium" | "high" => {
+    const daysUntil = Math.ceil((date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysUntil <= 3 && amount > 1000) return "high";
+    if (daysUntil <= 7 && amount > 500) return "medium";
+    return "low";
+  };
 
   // REMOVED: Multiple separate useEffect calls for goals, score, netWorth, transactions
   // Now using optimized useDashboardData hook
@@ -1526,6 +1662,11 @@ const Dashboard = () => {
                 )}
               </div>
             </Card>
+
+            {/* Future Calendar Widget - Próximos Movimientos */}
+            {futureEvents.length > 0 && (
+              <FutureCalendarWidget events={futureEvents} />
+            )}
 
             {/* Achievements */}
             

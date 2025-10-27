@@ -22,7 +22,6 @@ import UpcomingTransactionsWidget from "@/components/analysis/UpcomingTransactio
 import RiskIndicatorsWidget from "@/components/analysis/RiskIndicatorsWidget";
 import EvolutionChartWidget from "@/components/analysis/EvolutionChartWidget";
 import HistoricalComparisonWidget from "@/components/analysis/HistoricalComparisonWidget";
-import FutureCalendarWidget from "@/components/analysis/FutureCalendarWidget";
 import YearOverYearWidget from "@/components/analysis/YearOverYearWidget";
 import SeasonalTrendsWidget from "@/components/analysis/SeasonalTrendsWidget";
 import BurnRateWidget from "@/components/analysis/BurnRateWidget";
@@ -94,10 +93,6 @@ export default function FinancialAnalysis() {
   });
   const [recentTransactions, setRecentTransactions] = useState<any[]>(() => {
     const cached = localStorage.getItem('financialAnalysis_recentTransactions');
-    return cached ? JSON.parse(cached) : [];
-  });
-  const [futureEvents, setFutureEvents] = useState<any[]>(() => {
-    const cached = localStorage.getItem('financialAnalysis_futureEvents');
     return cached ? JSON.parse(cached) : [];
   });
   const [momGrowth, setMomGrowth] = useState<number | null>(null); // Month over Month growth
@@ -674,24 +669,6 @@ export default function FinancialAnalysis() {
 
       setRecentTransactions(formattedRecent);
       localStorage.setItem('financialAnalysis_recentTransactions', JSON.stringify(formattedRecent));
-
-      // Fetch ALL transactions (last 6 months) to detect patterns
-      const sixMonthsAgo = new Date();
-      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-      
-      const { data: allTx, error: allError } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user.id)
-        .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
-        .order('transaction_date', { ascending: false });
-
-      if (allError) throw allError;
-
-      // AI analyzes patterns and predicts future payments
-      const predicted = detectRecurringPayments(allTx || []);
-      setFutureEvents(predicted);
-      localStorage.setItem('financialAnalysis_futureEvents', JSON.stringify(predicted));
       
       setLoadingTransactions(false);
     } catch (error) {
@@ -700,107 +677,6 @@ export default function FinancialAnalysis() {
     }
   };
 
-  const detectRecurringPayments = (transactions: any[]) => {
-    const today = startOfDay(new Date());
-    const futurePayments: any[] = [];
-    
-    // Group transactions by similar descriptions (normalize text)
-    const groupedByDescription: Record<string, any[]> = {};
-    
-    transactions.forEach(tx => {
-      const normalizedDesc = tx.description
-        .toLowerCase()
-        .replace(/\d+/g, '') // Remove numbers
-        .replace(/[^\w\s]/g, '') // Remove special chars
-        .trim();
-      
-      if (!groupedByDescription[normalizedDesc]) {
-        groupedByDescription[normalizedDesc] = [];
-      }
-      groupedByDescription[normalizedDesc].push(tx);
-    });
-
-    // Analyze each group for patterns
-    Object.entries(groupedByDescription).forEach(([desc, txs]) => {
-      if (txs.length < 2) return; // Need at least 2 occurrences
-
-      // Sort by date
-      const sortedTxs = txs.sort((a, b) => 
-        new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime()
-      );
-
-      // Calculate average interval between transactions (in days)
-      const intervals: number[] = [];
-      for (let i = 1; i < sortedTxs.length; i++) {
-        const daysDiff = Math.round(
-          (new Date(sortedTxs[i].transaction_date).getTime() - 
-           new Date(sortedTxs[i-1].transaction_date).getTime()) / 
-          (1000 * 60 * 60 * 24)
-        );
-        intervals.push(daysDiff);
-      }
-
-      const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-      const avgAmount = sortedTxs.reduce((sum, tx) => sum + Number(tx.amount), 0) / sortedTxs.length;
-
-      // Detect if it's a recurring pattern (weekly: ~7d, biweekly: ~15d, monthly: ~30d)
-      let frequency: string | null = null;
-      let predictInterval = 30; // default monthly
-
-      if (avgInterval >= 6 && avgInterval <= 8) {
-        frequency = 'Semanal';
-        predictInterval = 7;
-      } else if (avgInterval >= 13 && avgInterval <= 16) {
-        frequency = 'Quincenal';
-        predictInterval = 15;
-      } else if (avgInterval >= 28 && avgInterval <= 32) {
-        frequency = 'Mensual';
-        predictInterval = 30;
-      } else if (avgInterval >= 88 && avgInterval <= 95) {
-        frequency = 'Trimestral';
-        predictInterval = 90;
-      } else if (avgInterval >= 360 && avgInterval <= 370) {
-        frequency = 'Anual';
-        predictInterval = 365;
-      }
-
-      // Only predict if we detected a clear pattern
-      if (frequency) {
-        const lastTx = sortedTxs[sortedTxs.length - 1];
-        const lastDate = new Date(lastTx.transaction_date);
-        let nextDate = addDays(lastDate, predictInterval);
-
-        // Generate next 3 occurrences
-        const nextThreeMonths = addMonths(today, 3);
-        let count = 0;
-        
-        while (isBefore(nextDate, nextThreeMonths) && count < 3) {
-          if (!isBefore(nextDate, today)) {
-            futurePayments.push({
-              date: new Date(nextDate),
-              type: lastTx.type,
-              description: `${lastTx.description} (${frequency})`,
-              amount: Math.round(avgAmount),
-              risk: calculatePaymentRisk(nextDate, avgAmount)
-            });
-            count++;
-          }
-          nextDate = addDays(nextDate, predictInterval);
-        }
-      }
-    });
-
-    return futurePayments.sort((a, b) => a.date.getTime() - b.date.getTime());
-  };
-
-
-  const calculatePaymentRisk = (date: Date, amount: number): "low" | "medium" | "high" => {
-    const daysUntil = Math.ceil((date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (daysUntil <= 3 && amount > 1000) return "high";
-    if (daysUntil <= 7 && amount > 500) return "medium";
-    return "low";
-  };
   const checkAuth = async () => {
     const {
       data: {
@@ -1755,21 +1631,6 @@ export default function FinancialAnalysis() {
             </div>
 
             {/* Microcopy Empático */}
-
-            {/* Calendario de Próximos Movimientos */}
-            {loadingTransactions ? (
-              <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
-                <div className="text-center text-muted-foreground py-4">Cargando pagos futuros...</div>
-              </Card>
-            ) : futureEvents.length > 0 ? (
-              <FutureCalendarWidget events={futureEvents} />
-            ) : (
-              <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
-                <div className="text-center text-muted-foreground py-4">
-                  No hay pagos recurrentes configurados
-                </div>
-              </Card>
-            )}
 
             {/* Historical Comparison */}
             <HistoricalComparisonWidget 

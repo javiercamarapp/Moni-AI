@@ -1,11 +1,12 @@
 import { Card } from "@/components/ui/card";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { Calendar, AlertCircle } from "lucide-react";
 import { format, addDays } from "date-fns";
 import { es } from "date-fns/locale";
 
 interface FutureEvent {
   date: Date;
-  type: "income" | "expense" | "subscription";
+  type: "income" | "expense" | "subscription" | "ingreso" | "gasto";
   description: string;
   amount: number;
   risk?: "high" | "medium" | "low";
@@ -58,64 +59,85 @@ export default function FutureCalendarWidget({ events }: FutureCalendarProps) {
   };
 
   return (
-    <Card className="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-[20px] shadow-xl border border-purple-200 animate-fade-in">
-      <div className="space-y-3">
+    <Card className="p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden animate-fade-in">
+      <GlowingEffect
+        spread={40}
+        glow={true}
+        disabled={false}
+        proximity={64}
+        inactiveZone={0.01}
+        borderWidth={2}
+      />
+      <div className="space-y-2 relative z-10">
         <div className="flex items-center gap-2">
-          <Calendar className="h-4 w-4 text-primary" />
-          <p className="text-sm font-medium text-foreground">📅 Calendario de próximos movimientos</p>
+          <p className="text-sm sm:text-xs font-bold text-foreground drop-shadow-sm">📅 Próximos Movimientos</p>
         </div>
 
-        <div className="space-y-2 max-h-64 overflow-y-auto">
+        <div className="space-y-1 max-h-[240px] overflow-y-auto pr-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <style>{`
+            .space-y-1.max-h-\\[240px\\]::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
           {sortedEvents.map((event, index) => {
             const daysUntil = getDaysUntil(event.date);
             const isUrgent = daysUntil <= 3;
+            const isIncome = event.type === "income" || event.type === "ingreso";
             
             return (
               <div 
                 key={index}
-                className={`p-3 rounded-lg border ${
+                className={`flex items-center gap-2 py-2 px-2 rounded backdrop-blur-sm border transition-all ${
                   isUrgent 
-                    ? 'bg-destructive/10 border-destructive/30' 
-                    : 'bg-muted/20 border-border'
-                } hover:bg-muted/40 transition-colors`}
+                    ? 'bg-yellow-50/80 border-yellow-200 hover:bg-yellow-100/80' 
+                    : isIncome 
+                    ? 'bg-green-50/80 border-green-200 hover:bg-green-100/80' 
+                    : 'bg-red-50/80 border-red-200 hover:bg-red-100/80'
+                }`}
               >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-base">{getEventIcon(event.type)}</span>
-                      <p className="text-xs font-medium text-foreground">
-                        {event.description}
-                      </p>
-                      {isUrgent && <AlertCircle className="h-3 w-3 text-destructive" />}
-                    </div>
-                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                      <span>{format(event.date, "d 'de' MMMM", { locale: es })}</span>
-                      <span>•</span>
-                      <span>
-                        {daysUntil === 0 
-                          ? "Hoy" 
-                          : daysUntil === 1 
-                          ? "Mañana" 
-                          : `En ${daysUntil} días`
-                        }
-                      </span>
-                    </div>
-                  </div>
-                  <p className={`text-xs font-bold ${getEventColor(event.type)} break-words`}>
-                    {event.type === "income" ? "+" : "-"}${event.amount.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </p>
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm shadow-lg shrink-0 ${
+                  isUrgent
+                    ? 'bg-gradient-to-br from-yellow-400 to-yellow-600'
+                    : isIncome
+                    ? 'bg-gradient-to-br from-green-400 to-green-600'
+                    : 'bg-gradient-to-br from-red-400 to-red-600'
+                }`}>
+                  <span className="text-white">{getEventIcon(event.type)}</span>
                 </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-bold text-foreground truncate">
+                    {event.description}
+                  </p>
+                  <div className="flex items-center gap-1">
+                    <span className="text-[9px] text-muted-foreground">
+                      {format(event.date, "d MMM", { locale: es })}
+                    </span>
+                    <span className="text-[9px] text-muted-foreground">•</span>
+                    <span className="text-[9px] text-muted-foreground truncate">
+                      {daysUntil === 0 
+                        ? "Hoy" 
+                        : daysUntil === 1 
+                        ? "Mañana" 
+                        : `En ${daysUntil}d`
+                      }
+                    </span>
+                    {isUrgent && <AlertCircle className="h-3 w-3 text-yellow-600 ml-auto" />}
+                  </div>
+                </div>
+                <p className={`text-xs font-black shrink-0 ${isIncome ? 'text-green-600' : 'text-red-600'}`}>
+                  {isIncome ? '+' : '-'}${Number(event.amount).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                </p>
               </div>
             );
           })}
         </div>
 
         {sortedEvents.filter(e => getDaysUntil(e.date) <= 3).length > 0 && (
-          <div className="bg-yellow-500/10 rounded-lg px-3 py-2 border border-yellow-500/30 animate-fade-in">
-            <p className="text-[10px] text-yellow-700 leading-snug">
+          <div className="bg-yellow-50/80 rounded-lg px-2 py-1.5 border border-yellow-200">
+            <p className="text-[9px] text-yellow-700 leading-snug">
               ⚠️ <span className="font-medium">
-                {sortedEvents.filter(e => getDaysUntil(e.date) <= 3).length} movimientos próximos
-              </span> en los siguientes 3 días
+                {sortedEvents.filter(e => getDaysUntil(e.date) <= 3).length} próximos
+              </span> en 3 días
             </p>
           </div>
         )}
