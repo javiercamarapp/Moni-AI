@@ -146,7 +146,12 @@ export default function FinancialAnalysis() {
     expenses: number;
     fixed: number;
     variable: number;
-  }>({ income: 0, expenses: 0, fixed: 0, variable: 0 });
+  }>({ 
+    income: dashboardData.monthlyIncome, 
+    expenses: dashboardData.monthlyExpenses, 
+    fixed: dashboardData.fixedExpenses, 
+    variable: dashboardData.monthlyExpenses - dashboardData.fixedExpenses 
+  });
 
   // Helper function to safely format values in thousands
   const formatK = (value: number | undefined | null): string => {
@@ -189,10 +194,11 @@ export default function FinancialAnalysis() {
 
   // Efecto para actualizar cuando cambie el período de las gráficas
   useEffect(() => {
-    if (user) {
+    if (user && chartsPeriod) {
       console.log(`🔄 Actualizando gráficas para período: ${chartsPeriod}`);
       calculateCategoryBreakdown(chartsPeriod);
       calculateIncomeExpensesByPeriod(chartsPeriod).then(data => {
+        console.log(`📊 Datos calculados para ${chartsPeriod}:`, data);
         setChartsData(data);
       });
     }
@@ -947,6 +953,7 @@ export default function FinancialAnalysis() {
     if (!user?.id) return { income: 0, expenses: 0, fixed: 0, variable: 0 };
     
     try {
+      console.log(`📊 Calculando ingresos/gastos para período: ${periodType}`);
       const nowDate = new Date();
       let startDate: Date;
       let endDate: Date;
@@ -959,12 +966,16 @@ export default function FinancialAnalysis() {
         endDate = new Date(nowDate.getFullYear(), 11, 31);
       }
       
+      console.log(`📅 Rango de fechas: ${startDate.toISOString().split('T')[0]} a ${endDate.toISOString().split('T')[0]}`);
+      
       const { data: transactions } = await supabase
         .from('transactions')
         .select('*')
         .eq('user_id', user.id)
         .gte('transaction_date', startDate.toISOString().split('T')[0])
         .lte('transaction_date', endDate.toISOString().split('T')[0]);
+      
+      console.log(`💰 Transacciones encontradas: ${transactions?.length || 0}`);
       
       const income = transactions
         ?.filter(t => t.type === 'income' || t.type === 'ingreso')
@@ -980,7 +991,10 @@ export default function FinancialAnalysis() {
       
       const variableExpenses = expenses - fixedExpenses;
       
-      return { income, expenses, fixed: fixedExpenses, variable: variableExpenses };
+      const result = { income, expenses, fixed: fixedExpenses, variable: variableExpenses };
+      console.log(`✅ Resultado del cálculo:`, result);
+      
+      return result;
     } catch (error) {
       console.error('Error calculating income/expenses:', error);
       return { income: 0, expenses: 0, fixed: 0, variable: 0 };
@@ -1875,14 +1889,18 @@ export default function FinancialAnalysis() {
             {/* Additional Financial Health Charts */}
             <div className="space-y-3">
               {/* Selector de período */}
-              <div className="flex justify-center">
-                <Tabs value={chartsPeriod} onValueChange={(value) => setChartsPeriod(value as 'month' | 'year')} className="w-full max-w-md">
+              <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
+                <p className="text-sm font-medium text-foreground mb-3 text-center">📊 Selecciona el período para las gráficas</p>
+                <Tabs value={chartsPeriod} onValueChange={(value) => {
+                  console.log(`🔄 Cambiando período a: ${value}`);
+                  setChartsPeriod(value as 'month' | 'year');
+                }} className="w-full">
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="month">Mes Actual</TabsTrigger>
                     <TabsTrigger value="year">Año {new Date().getFullYear()}</TabsTrigger>
                   </TabsList>
                 </Tabs>
-              </div>
+              </Card>
 
               {/* Gráficas */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
