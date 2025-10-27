@@ -61,6 +61,9 @@ export default function FixedExpenses() {
           body: { userId: user.id }
         });
 
+        console.log('📥 Fixed expenses result:', result);
+        console.log('📊 Fixed expenses array:', result?.fixed?.expenses);
+
         if (aiError) throw aiError;
         return result?.fixed?.expenses || [];
       }

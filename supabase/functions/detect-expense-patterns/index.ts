@@ -103,6 +103,7 @@ serve(async (req) => {
     const impulsiveTotal = impulsive.reduce((sum, e) => sum + e.amount, 0);
 
     console.log(`💰 Totals - Fixed: ${fixedTotal}, Variable: ${variableTotal}, Ant: ${antTotal}, Impulsive: ${impulsiveTotal}`);
+    console.log(`📊 Counts - Fixed: ${fixed.length}, Variable: ${variable.length}, Ant: ${ant.length}, Impulsive: ${impulsive.length}`);
 
     const result = {
       fixed: {
@@ -130,6 +131,13 @@ serve(async (req) => {
         expenses: impulsive
       }
     };
+
+    console.log('📦 Result structure:', JSON.stringify({
+      fixed: { count: result.fixed.count, hasExpenses: result.fixed.expenses.length > 0 },
+      variable: { count: result.variable.count, hasExpenses: result.variable.expenses.length > 0 },
+      ant: { count: result.ant.count, hasExpenses: result.ant.expenses.length > 0 },
+      impulsive: { count: result.impulsive.count, hasExpenses: result.impulsive.expenses.length > 0 }
+    }));
 
     return new Response(
       JSON.stringify(result),
