@@ -18,8 +18,8 @@ export default function WeeklySpendingPatternWidget({ data, insight }: WeeklySpe
   const maxAmount = Math.max(...data.map(d => d.amount));
   const avgAmount = data.reduce((sum, d) => sum + d.amount, 0) / data.length;
 
-  const handleClick = () => {
-    navigate('/day-expenses');
+  const handleDayClick = (day: string) => {
+    navigate(`/day-expenses?day=${encodeURIComponent(day)}`);
   };
 
   const getColorIntensity = (amount: number) => {
@@ -51,8 +51,7 @@ export default function WeeklySpendingPatternWidget({ data, insight }: WeeklySpe
 
   return (
     <Card 
-      onClick={handleClick}
-      className="p-4 bg-gradient-to-br from-white via-blue-50/30 to-purple-50/20 rounded-[24px] shadow-2xl transition-all border border-blue-100/50 backdrop-blur-sm animate-fade-in hover:shadow-3xl cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+      className="p-4 bg-gradient-to-br from-white via-blue-50/30 to-purple-50/20 rounded-[24px] shadow-2xl transition-all border border-blue-100/50 backdrop-blur-sm animate-fade-in"
     >
       <div className="space-y-3">
         <div className="flex items-center gap-2 pb-1">
@@ -61,9 +60,8 @@ export default function WeeklySpendingPatternWidget({ data, insight }: WeeklySpe
           </div>
           <div className="flex-1">
             <p className="text-sm font-semibold text-foreground">📊 Patrón de Gastos del Mes</p>
-            <p className="text-[9px] text-muted-foreground">Gastos por día de la semana</p>
+            <p className="text-[9px] text-muted-foreground">Toca cada día para ver detalles</p>
           </div>
-          <ArrowRight className="h-4 w-4 text-primary" />
         </div>
 
         <div className="space-y-2">
@@ -73,8 +71,9 @@ export default function WeeklySpendingPatternWidget({ data, insight }: WeeklySpe
             
             return (
               <div 
-                key={dayData.day} 
-                className="space-y-1.5 p-2 rounded-xl bg-white/60 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 border border-gray-100/50 hover:shadow-md group"
+                key={dayData.day}
+                onClick={() => handleDayClick(dayData.day)}
+                className="space-y-1.5 p-2 rounded-xl bg-white/60 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 border border-gray-100/50 hover:shadow-md group cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="flex items-center justify-between">

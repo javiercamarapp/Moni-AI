@@ -26,6 +26,8 @@ const getCategoryEmoji = (categoryName: string): string => {
 
 const DayExpenses = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const selectedDay = searchParams.get('day');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -121,10 +123,12 @@ const DayExpenses = () => {
     return acc;
   }, {} as Record<string, DayOfWeekData>);
 
-  // Sort by day of week order
-  const sortedDaysOfWeek = daysOrder
-    .filter(day => transactionsByDayOfWeek[day])
-    .map(day => transactionsByDayOfWeek[day]);
+  // Filter by selected day if provided, otherwise show all
+  const sortedDaysOfWeek = selectedDay
+    ? (transactionsByDayOfWeek[selectedDay] ? [transactionsByDayOfWeek[selectedDay]] : [])
+    : daysOrder
+        .filter(day => transactionsByDayOfWeek[day])
+        .map(day => transactionsByDayOfWeek[day]);
 
   // Sort dates within each day of week (most recent first)
   sortedDaysOfWeek.forEach(dayData => {
@@ -163,9 +167,11 @@ const DayExpenses = () => {
           </Button>
           <div>
             <h1 className="text-base sm:text-lg font-bold text-foreground whitespace-nowrap">
-              📅 Gastos por Día de la Semana
+              📅 {selectedDay ? `Gastos de ${selectedDay}` : 'Gastos por Día de la Semana'}
             </h1>
-            <p className="text-sm text-muted-foreground">Patrones del mes</p>
+            <p className="text-sm text-muted-foreground">
+              {selectedDay ? 'Todas las fechas del mes' : 'Patrones del mes'}
+            </p>
           </div>
         </div>
       </div>
