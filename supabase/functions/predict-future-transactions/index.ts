@@ -63,16 +63,24 @@ serve(async (req) => {
     })) || [];
 
     const systemPrompt = `Eres un asistente financiero experto en análisis de patrones de gastos e ingresos.
-Analiza las transacciones históricas del usuario y predice los próximos movimientos que tendrá en los próximos 60 días.
+Analiza las transacciones históricas del usuario y predice ÚNICAMENTE los próximos movimientos FIJOS Y RECURRENTES con alta confianza en los próximos 60 días.
 
-Considera:
-- Patrones recurrentes (salarios mensuales, quincenales)
-- Gastos fijos (rentas, suscripciones)
-- Gastos variables pero predecibles (alimentos, transporte)
-- Fechas probables basadas en el historial
-- Montos aproximados basados en promedios
+SOLO incluye:
+- Gastos fijos mensuales (renta, colegiaturas, seguros)
+- Suscripciones activas (Netflix, Spotify, gimnasio, etc.)
+- Salarios y nóminas quincenales/mensuales
+- Pagos de servicios fijos (luz, agua, gas, teléfono, internet)
+- Cualquier gasto que se repita EXACTAMENTE cada mes
 
-IMPORTANTE: Devuelve EXACTAMENTE un array JSON válido con esta estructura:
+NO incluyas:
+- Gastos variables (alimentos, gasolina, entretenimiento)
+- Compras ocasionales
+- Gastos impredecibles
+- Movimientos sin patrón claro mensual
+
+IMPORTANTE: SOLO devuelve movimientos con confidence: "high"
+
+Devuelve EXACTAMENTE un array JSON válido con esta estructura:
 [
   {
     "date": "2025-02-15",
@@ -85,11 +93,11 @@ IMPORTANTE: Devuelve EXACTAMENTE un array JSON válido con esta estructura:
 
 - date: formato YYYY-MM-DD
 - type: "ingreso" o "gasto"
-- description: descripción clara del movimiento
-- amount: monto en número
-- confidence: "high", "medium", o "low"
+- description: descripción clara del movimiento fijo
+- amount: monto en número (promedio si varía poco)
+- confidence: SIEMPRE "high"
 
-Devuelve entre 10-30 predicciones ordenadas por fecha.`;
+Devuelve entre 5-20 predicciones de movimientos FIJOS ordenadas por fecha.`;
 
     const userPrompt = `Analiza estas transacciones históricas y predice los próximos movimientos:
 
