@@ -13,15 +13,23 @@ const Index = () => {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsLoggedIn(!!session);
+      if (session) {
+        navigate('/dashboard');
+      } else {
+        setIsLoggedIn(false);
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setIsLoggedIn(!!session);
+      if (session) {
+        navigate('/dashboard');
+      } else {
+        setIsLoggedIn(false);
+      }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-black">
