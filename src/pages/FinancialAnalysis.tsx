@@ -910,10 +910,13 @@ export default function FinancialAnalysis() {
     }
     
     try {
-      console.log('🔄 Detectando patrones de gastos para:', user.id);
+      console.log('🔄 Detectando patrones de gastos para userId:', user.id);
+      
       const { data, error } = await supabase.functions.invoke('detect-expense-patterns', {
         body: { userId: user.id }
       });
+      
+      console.log('📥 Response from edge function:', { data, error });
       
       if (error) {
         console.error('Expense patterns error:', error);

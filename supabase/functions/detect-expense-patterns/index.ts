@@ -24,9 +24,13 @@ serve(async (req) => {
   }
 
   try {
-    const { userId } = await req.json();
+    const body = await req.json();
+    console.log('📥 Request body received:', JSON.stringify(body));
+    
+    const { userId } = body;
     
     if (!userId) {
+      console.error('❌ userId not found in body:', body);
       throw new Error('userId is required');
     }
 
