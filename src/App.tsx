@@ -39,6 +39,7 @@ import EditNetWorth from "./pages/EditNetWorth";
 
 import Subscriptions from "./pages/Subscriptions";
 import DailyExpenses from './pages/DailyExpenses';
+import DayExpenses from './pages/DayExpenses';
 import Reports from './pages/Reports';
 import CategoryExpenses from './pages/CategoryExpenses';
 import Social from './pages/Social';
@@ -99,6 +100,7 @@ function App() {
           <Route path="/edit-aspirations" element={<EditAspirations />} />
           <Route path="/subscriptions" element={<Subscriptions />} />
           <Route path="/daily-expenses" element={<DailyExpenses />} />
+          <Route path="/day-expenses" element={<DayExpenses />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/budgets" element={<Budgets />} />
           <Route path="/edit-budgets" element={<EditBudgets />} />

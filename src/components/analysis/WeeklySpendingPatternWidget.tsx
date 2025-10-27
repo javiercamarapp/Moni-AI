@@ -1,5 +1,7 @@
 import { Card } from "@/components/ui/card";
-import { Calendar } from "lucide-react";
+import { Calendar, ArrowRight } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface DaySpending {
   day: string;
@@ -13,6 +15,7 @@ interface WeeklySpendingPatternProps {
 }
 
 export default function WeeklySpendingPatternWidget({ data, insight }: WeeklySpendingPatternProps) {
+  const navigate = useNavigate();
   const maxAmount = Math.max(...data.map(d => d.amount));
   const avgAmount = data.reduce((sum, d) => sum + d.amount, 0) / data.length;
 
@@ -50,10 +53,19 @@ export default function WeeklySpendingPatternWidget({ data, insight }: WeeklySpe
           <div className="p-1.5 bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg">
             <Calendar className="h-4 w-4 text-primary" />
           </div>
-          <div>
+          <div className="flex-1">
             <p className="text-sm font-semibold text-foreground">📊 Patrón de Gastos del Mes</p>
             <p className="text-[9px] text-muted-foreground">Gastos por día de la semana</p>
           </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/day-expenses')}
+            className="flex items-center gap-1 text-primary hover:text-primary/80 h-7 px-2"
+          >
+            <span className="text-xs font-medium">A cada día</span>
+            <ArrowRight className="h-3 w-3" />
+          </Button>
         </div>
 
         <div className="space-y-2">
