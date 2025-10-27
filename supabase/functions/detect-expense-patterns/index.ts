@@ -342,14 +342,37 @@ function detectAntExpenses(transactions: Transaction[]) {
 }
 
 function detectImpulsiveExpenses(transactions: Transaction[]) {
-  // Compras impulsivas: montos grandes e inusuales
+  // Compras impulsivas: SOLO los gastos MÁS FUERTES y ATÍPICOS del año
+  // No deben ser recurrentes, deben ser compras únicas y muy por encima del promedio
+  
   const amounts = transactions.map(t => Number(t.amount));
   const avg = amounts.reduce((sum, a) => sum + a, 0) / amounts.length;
   const stdDev = Math.sqrt(calculateVariance(amounts));
   
-  const threshold = avg + (stdDev * 2); // 2 desviaciones estándar por encima del promedio
+  // Umbral más estricto: 3 desviaciones estándar por encima del promedio
+  // Y debe ser al menos 5 veces el promedio
+  const threshold = Math.max(avg + (stdDev * 3), avg * 5);
   
-  const impulsive = transactions.filter(t => Number(t.amount) > threshold);
+  // Filtrar solo gastos muy por encima del umbral
+  const impulsiveCandidates = transactions.filter(t => Number(t.amount) > threshold);
+  
+  // Agrupar por concepto para eliminar recurrentes
+  const conceptGroups = new Map<string, Transaction[]>();
+  impulsiveCandidates.forEach(t => {
+    const normalizedDesc = normalizeDescription(t.description);
+    if (!conceptGroups.has(normalizedDesc)) {
+      conceptGroups.set(normalizedDesc, []);
+    }
+    conceptGroups.get(normalizedDesc)!.push(t);
+  });
+  
+  // Solo incluir conceptos que aparecen 1 o 2 veces (no recurrentes)
+  const impulsive: Transaction[] = [];
+  conceptGroups.forEach(txs => {
+    if (txs.length <= 2) {
+      impulsive.push(...txs);
+    }
+  });
   
   return impulsive.map(t => ({
     id: t.id,
