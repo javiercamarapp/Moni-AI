@@ -475,6 +475,9 @@ export default function FinancialAnalysis() {
       const weekDayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
       const last7Days: any[] = [];
       
+      console.log('📊 Total transacciones históricas:', historicalTxs?.length);
+      console.log('📊 Muestra de transacciones:', historicalTxs?.slice(0, 3));
+      
       for (let i = 6; i >= 0; i--) {
         const date = new Date(todayDate);
         date.setDate(date.getDate() - i);
@@ -486,6 +489,8 @@ export default function FinancialAnalysis() {
           tx => tx.transaction_date === dateString
         ) || [];
         
+        console.log(`📅 ${dayName} ${dayNumber} (${dateString}): ${dayTransactions.length} transacciones`);
+        
         const dayIncome = dayTransactions
           .filter(tx => tx.type === 'income' || tx.type === 'ingreso')
           .reduce((sum, tx) => sum + Number(tx.amount), 0);
@@ -493,6 +498,8 @@ export default function FinancialAnalysis() {
         const dayExpense = dayTransactions
           .filter(tx => tx.type === 'expense' || tx.type === 'gasto')
           .reduce((sum, tx) => sum + Number(tx.amount), 0);
+        
+        console.log(`  💰 Ingresos: $${dayIncome}, 💸 Gastos: $${dayExpense}`);
         
         last7Days.push({
           date: dateString,
@@ -503,6 +510,7 @@ export default function FinancialAnalysis() {
         });
       }
       
+      console.log('📊 Datos de 7 días calculados:', last7Days);
       setLast7DaysData(last7Days);
       localStorage.setItem('financialAnalysis_last7DaysData', JSON.stringify(last7Days));
       
