@@ -11,13 +11,19 @@ interface CategoryBreakdownWidgetProps {
   categories: CategoryData[];
 }
 
-const COLORS = ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#ef4444', '#14b8a6'];
+const COLORS = ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#ef4444', '#14b8a6', '#f97316', '#a855f7', '#06b6d4', '#84cc16', '#eab308'];
 
 export default function CategoryBreakdownWidget({ categories }: CategoryBreakdownWidgetProps) {
   const validCategories = categories.filter(cat => cat.value && !isNaN(cat.value) && cat.value > 0);
   const total = validCategories.reduce((sum, cat) => sum + cat.value, 0);
 
-  const hasData = validCategories.length > 0 && total > 0;
+  // Asignar colores vibrantes a cada categoría
+  const categoriesWithColors = validCategories.map((cat, index) => ({
+    ...cat,
+    color: COLORS[index % COLORS.length]
+  }));
+
+  const hasData = categoriesWithColors.length > 0 && total > 0;
 
   return (
     <Card className="p-4 bg-white rounded-[20px] shadow-xl transition-all border border-blue-100 animate-fade-in">
@@ -31,7 +37,7 @@ export default function CategoryBreakdownWidget({ categories }: CategoryBreakdow
           <ResponsiveContainer width="100%" height={220}>
         <PieChart>
           <Pie
-            data={validCategories}
+            data={categoriesWithColors}
             cx="50%"
             cy="50%"
             labelLine={false}
@@ -40,8 +46,8 @@ export default function CategoryBreakdownWidget({ categories }: CategoryBreakdow
             fill="#8884d8"
             dataKey="value"
           >
-            {validCategories.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color || COLORS[index % COLORS.length]} />
+            {categoriesWithColors.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
             ))}
           </Pie>
           <Tooltip 
@@ -65,12 +71,12 @@ export default function CategoryBreakdownWidget({ categories }: CategoryBreakdow
           </PieChart>
         </ResponsiveContainer>
         <div className="mt-3 space-y-1.5 max-h-32 overflow-y-auto pr-1">
-          {validCategories.map((cat, idx) => (
+          {categoriesWithColors.map((cat, idx) => (
             <div key={idx} className="flex justify-between items-center text-xs gap-2">
               <div className="flex items-center gap-2 min-w-0 flex-1">
                 <div 
                   className="w-3 h-3 rounded-full flex-shrink-0" 
-                  style={{ backgroundColor: cat.color || COLORS[idx % COLORS.length] }}
+                  style={{ backgroundColor: cat.color }}
                 />
                 <span className="text-muted-foreground truncate">{cat.name}</span>
               </div>
