@@ -26,16 +26,12 @@ const getCategoryEmoji = (categoryName: string): string => {
 
 const DayExpenses = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const dayParam = searchParams.get('day') || '';
-  
-  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
-  }, [currentMonth, dayParam]);
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -46,16 +42,18 @@ const DayExpenses = () => {
         return;
       }
 
-      const startDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-      const endDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+      // Últimos 7 días
+      const today = new Date();
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(today.getDate() - 7);
 
       const { data: transactionsData } = await supabase
         .from('transactions')
         .select('*, categories(name, color)')
         .eq('user_id', user.id)
         .eq('type', 'gasto')
-        .gte('transaction_date', startDate.toISOString().split('T')[0])
-        .lte('transaction_date', endDate.toISOString().split('T')[0])
+        .gte('transaction_date', sevenDaysAgo.toISOString().split('T')[0])
+        .lte('transaction_date', today.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
 
       setTransactions(transactionsData || []);
@@ -105,18 +103,6 @@ const DayExpenses = () => {
 
   const totalGastos = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
 
-  const handlePreviousPeriod = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
-  };
-
-  const handleNextPeriod = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
-  };
-
-  const getPeriodLabel = () => {
-    return currentMonth.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
-  };
-
   if (loading) {
     return <LoadingScreen />;
   }
@@ -135,38 +121,10 @@ const DayExpenses = () => {
           </Button>
           <div>
             <h1 className="text-base sm:text-lg font-bold text-foreground whitespace-nowrap">
-              📅 Gastos por Día
+              📅 Últimos 7 Días
             </h1>
-            <p className="text-sm text-muted-foreground">Detalle diario de gastos</p>
+            <p className="text-sm text-muted-foreground">Gastos de la última semana</p>
           </div>
-        </div>
-      </div>
-
-      <div className="px-4 mt-4 mb-4">
-        <div className="flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handlePreviousPeriod}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          
-          <div className="bg-white rounded-[20px] shadow-xl px-4 py-2 border border-blue-100">
-            <p className="text-foreground font-medium capitalize text-center">
-              {getPeriodLabel()}
-            </p>
-          </div>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleNextPeriod}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </Button>
         </div>
       </div>
 
@@ -178,7 +136,7 @@ const DayExpenses = () => {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm text-foreground/60 mb-1 font-medium">
-                Total del Mes
+                Total (7 días)
               </p>
               <p className="text-3xl sm:text-4xl font-bold leading-tight break-words text-red-600">
                 ${totalGastos.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
@@ -201,7 +159,7 @@ const DayExpenses = () => {
         <div className="space-y-6">
           {sortedDays.length === 0 ? (
             <Card className="p-6 bg-white rounded-[20px] shadow-xl text-center border border-blue-100">
-              <p className="text-muted-foreground">No hay gastos registrados este mes</p>
+              <p className="text-muted-foreground">No hay gastos registrados en los últimos 7 días</p>
             </Card>
           ) : (
             sortedDays.map(([dayKey, dayData]: [string, DayData]) => (
