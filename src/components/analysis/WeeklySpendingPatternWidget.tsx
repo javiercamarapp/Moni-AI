@@ -1,6 +1,5 @@
 import { Card } from "@/components/ui/card";
 import { Calendar, ArrowRight } from "lucide-react";
-import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
 interface DaySpending {
@@ -18,6 +17,10 @@ export default function WeeklySpendingPatternWidget({ data, insight }: WeeklySpe
   const navigate = useNavigate();
   const maxAmount = Math.max(...data.map(d => d.amount));
   const avgAmount = data.reduce((sum, d) => sum + d.amount, 0) / data.length;
+
+  const handleClick = () => {
+    navigate('/day-expenses');
+  };
 
   const getColorIntensity = (amount: number) => {
     if (amount === 0) return 'bg-gray-100';
@@ -47,7 +50,10 @@ export default function WeeklySpendingPatternWidget({ data, insight }: WeeklySpe
   };
 
   return (
-    <Card className="p-4 bg-gradient-to-br from-white via-blue-50/30 to-purple-50/20 rounded-[24px] shadow-2xl transition-all border border-blue-100/50 backdrop-blur-sm animate-fade-in hover:shadow-3xl">
+    <Card 
+      onClick={handleClick}
+      className="p-4 bg-gradient-to-br from-white via-blue-50/30 to-purple-50/20 rounded-[24px] shadow-2xl transition-all border border-blue-100/50 backdrop-blur-sm animate-fade-in hover:shadow-3xl cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+    >
       <div className="space-y-3">
         <div className="flex items-center gap-2 pb-1">
           <div className="p-1.5 bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg">
@@ -57,15 +63,7 @@ export default function WeeklySpendingPatternWidget({ data, insight }: WeeklySpe
             <p className="text-sm font-semibold text-foreground">📊 Patrón de Gastos del Mes</p>
             <p className="text-[9px] text-muted-foreground">Gastos por día de la semana</p>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate('/day-expenses')}
-            className="flex items-center gap-1 text-primary hover:text-primary/80 h-7 px-2"
-          >
-            <span className="text-xs font-medium">A cada día</span>
-            <ArrowRight className="h-3 w-3" />
-          </Button>
+          <ArrowRight className="h-4 w-4 text-primary" />
         </div>
 
         <div className="space-y-2">
