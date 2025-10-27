@@ -1716,35 +1716,6 @@ export default function FinancialAnalysis() {
                 </Card>}
             </div>
 
-            {/* Inversión y Rentabilidad Mejorado */}
-            <div className="space-y-2">
-              <p className="text-xs font-bold text-foreground flex items-center gap-1">
-                <TrendingUp className="h-3 w-3" /> Inversión & Rentabilidad
-              </p>
-              <div className="grid grid-cols-4 gap-2">
-                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
-                  <span className="text-[10px] text-muted-foreground">Inv.</span>
-                  <p className="text-sm font-bold text-emerald-600">{(analysis?.metrics?.investmentRate || 0).toFixed(1)}%</p>
-                  <span className="text-[9px] text-muted-foreground">🟢 Bajo</span>
-                </Card>
-                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
-                  <span className="text-[10px] text-muted-foreground">ROE</span>
-                  <p className="text-sm font-bold text-teal-600">{(analysis?.metrics?.personalROE || 0).toFixed(1)}%</p>
-                  <span className="text-[9px] text-muted-foreground">12M</span>
-                </Card>
-                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
-                  <span className="text-[10px] text-muted-foreground">Crec.</span>
-                  <p className="text-sm font-bold text-green-600">{(analysis?.metrics?.equityGrowth || 0).toFixed(1)}%</p>
-                  <span className="text-[9px] text-muted-foreground">🟡 Med</span>
-                </Card>
-                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
-                  <span className="text-[10px] text-muted-foreground">ROI</span>
-                  <p className="text-sm font-bold text-lime-600">{(analysis?.metrics?.personalROI || 0).toFixed(1)}%</p>
-                  <span className="text-[9px] text-muted-foreground">36M</span>
-                </Card>
-              </div>
-            </div>
-
             {/* Estabilidad y Metas Mejorado */}
             <div className="space-y-2">
               <p className="text-xs font-bold text-foreground flex items-center gap-1">
