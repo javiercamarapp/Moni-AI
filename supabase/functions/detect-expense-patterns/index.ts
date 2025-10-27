@@ -97,8 +97,8 @@ serve(async (req) => {
     const ant = detectAntExpenses(transactions);
     const impulsive = detectImpulsiveExpenses(transactions);
 
-    const fixedTotal = fixed.reduce((sum, e) => sum + e.monthlyAmount, 0);
-    const variableTotal = variable.reduce((sum, e) => sum + e.avgMonthlyAmount, 0);
+    const fixedTotal = fixed.reduce((sum, e) => sum + e.amount, 0);
+    const variableTotal = variable.reduce((sum, e) => sum + e.amount, 0);
     const antTotal = ant.reduce((sum, e) => sum + e.totalSpent, 0);
     const impulsiveTotal = impulsive.reduce((sum, e) => sum + e.amount, 0);
 
@@ -199,7 +199,7 @@ function detectFixedExpenses(transactions: Transaction[]) {
         fixedExpenses.push({
           id: `fixed-${key}`,
           name: latest.description,
-          monthlyAmount: avgAmount,
+          amount: avgAmount,
           frequency: 'mensual',
           category: latest.categories?.name || 'Sin categoría',
           paymentMethod: latest.payment_method || 'No especificado',
@@ -208,13 +208,13 @@ function detectFixedExpenses(transactions: Transaction[]) {
           monthsPresent: monthCount,
           lastPaymentDate: latest.transaction_date,
           icon: getExpenseIcon(latest.description),
-          consistency: ((1 - Math.sqrt(variance) / avgAmount) * 100).toFixed(1),
+          consistency: (1 - Math.sqrt(variance) / avgAmount) * 100,
         });
       }
     }
   });
 
-  return fixedExpenses.sort((a, b) => b.monthlyAmount - a.monthlyAmount);
+  return fixedExpenses.sort((a, b) => b.amount - a.amount);
 }
 
 function detectVariableExpenses(transactions: Transaction[]) {
@@ -279,7 +279,7 @@ function detectVariableExpenses(transactions: Transaction[]) {
         variableExpenses.push({
           id: `var-${concept}`,
           name: latest.description,
-          avgMonthlyAmount: avgMonthly,
+          amount: avgMonthly,
           minMonthly: Math.min(...monthlyTotals),
           maxMonthly: Math.max(...monthlyTotals),
           category: latest.categories?.name || 'Sin categoría',
@@ -293,7 +293,7 @@ function detectVariableExpenses(transactions: Transaction[]) {
     }
   });
 
-  return variableExpenses.sort((a, b) => b.avgMonthlyAmount - a.avgMonthlyAmount);
+  return variableExpenses.sort((a, b) => b.amount - a.amount);
 }
 
 function detectAntExpenses(transactions: Transaction[]) {
