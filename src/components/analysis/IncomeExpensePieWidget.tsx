@@ -80,19 +80,29 @@ export default function IncomeExpensePieWidget({ income, expenses, period, onPer
               <div className="w-3 h-3 rounded-full bg-[#10b981]" />
               <span className="text-muted-foreground">Ingresos</span>
             </div>
-            <span className="text-foreground font-medium">${(validIncome / 1000000).toFixed(2)}M</span>
+            <span className="text-foreground font-medium">
+              {validIncome >= 1000000 
+                ? `$${(validIncome / 1000000).toFixed(2)}M` 
+                : `$${validIncome.toLocaleString('es-MX', { maximumFractionDigits: 0 })}`}
+            </span>
           </div>
           <div className="flex justify-between items-center text-xs">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-[#ef4444]" />
               <span className="text-muted-foreground">Gastos</span>
             </div>
-            <span className="text-foreground font-medium">${(validExpenses / 1000000).toFixed(2)}M</span>
+            <span className="text-foreground font-medium">
+              {validExpenses >= 1000000 
+                ? `$${(validExpenses / 1000000).toFixed(2)}M` 
+                : `$${validExpenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}`}
+            </span>
           </div>
           <div className="pt-2 border-t border-border flex justify-between items-center text-xs">
             <span className="text-muted-foreground">Balance</span>
             <span className={`font-bold ${validIncome - validExpenses >= 0 ? 'text-primary' : 'text-destructive'}`}>
-              ${((validIncome - validExpenses) / 1000000).toFixed(2)}M
+              {Math.abs(validIncome - validExpenses) >= 1000000 
+                ? `$${((validIncome - validExpenses) / 1000000).toFixed(2)}M` 
+                : `$${(validIncome - validExpenses).toLocaleString('es-MX', { maximumFractionDigits: 0 })}`}
             </span>
           </div>
         </div>
