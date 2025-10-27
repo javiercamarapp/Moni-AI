@@ -66,7 +66,7 @@ export default function WeeklyIncomeExpenseWidget({ data }: WeeklyIncomeExpenseP
         {/* Header */}
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-primary" />
-          <h3 className="text-xs font-bold text-foreground">📊 Actividad Reciente</h3>
+          <h3 className="text-xs font-bold text-foreground">📊 Actividad Reciente (Últimos 7 días)</h3>
         </div>
 
         {/* Gráfico */}
