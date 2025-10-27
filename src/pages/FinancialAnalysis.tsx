@@ -136,6 +136,10 @@ export default function FinancialAnalysis() {
     const cached = localStorage.getItem('financialAnalysis_expensePatterns');
     return cached ? JSON.parse(cached) : null;
   });
+  const [categoryBreakdownData, setCategoryBreakdownData] = useState<any[]>(() => {
+    const cached = localStorage.getItem('financialAnalysis_categoryBreakdownData');
+    return cached ? JSON.parse(cached) : [];
+  });
 
   // Helper function to safely format values in thousands
   const formatK = (value: number | undefined | null): string => {
@@ -167,6 +171,7 @@ export default function FinancialAnalysis() {
       fetchTransactionsData();
       loadAnalysis();
       loadExpensePatterns();
+      calculateCategoryBreakdown();
     }
   }, [user]);
 
@@ -817,6 +822,82 @@ export default function FinancialAnalysis() {
     } catch (error: any) {
       console.error("Error loading expense patterns:", error);
       // No mostrar toast para no molestar al usuario, solo log
+    }
+  };
+
+  const calculateCategoryBreakdown = async () => {
+    if (!user?.id) {
+      console.log('User not available yet, skipping category breakdown');
+      return;
+    }
+    
+    // Verificar caché primero
+    const cacheKey = `financialAnalysis_categoryBreakdownData_${user.id}`;
+    const cacheTimeKey = `${cacheKey}_time`;
+    const cachedTime = localStorage.getItem(cacheTimeKey);
+    const now = Date.now();
+    
+    // Si hay caché válido, usarlo
+    if (cachedTime && (now - parseInt(cachedTime)) < 10 * 60 * 1000) {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        try {
+          const data = JSON.parse(cached);
+          setCategoryBreakdownData(data);
+          console.log('✅ Using cached category breakdown data');
+          return;
+        } catch (e) {
+          console.error('Cache parse error:', e);
+        }
+      }
+    }
+    
+    try {
+      console.log('🔄 Calculating category breakdown for year');
+      
+      // Obtener fechas para el año completo
+      const nowDate = new Date();
+      const startDate = new Date(nowDate.getFullYear(), 0, 1);
+      const endDate = new Date(nowDate.getFullYear(), 11, 31);
+      
+      // Obtener todas las transacciones de gastos del año
+      const { data: transactions, error: txError } = await supabase
+        .from('transactions')
+        .select('*, categories(name, color)')
+        .eq('user_id', user.id)
+        .in('type', ['gasto', 'expense'])
+        .gte('transaction_date', startDate.toISOString().split('T')[0])
+        .lte('transaction_date', endDate.toISOString().split('T')[0]);
+      
+      if (txError) throw txError;
+      
+      // Agrupar por categoría
+      const categoryMap: Record<string, { name: string; value: number; color: string }> = {};
+      
+      transactions?.forEach(tx => {
+        const categoryName = tx.categories?.name || 'Sin categoría';
+        const categoryColor = tx.categories?.color || '#9ca3af';
+        
+        if (!categoryMap[categoryName]) {
+          categoryMap[categoryName] = { name: categoryName, value: 0, color: categoryColor };
+        }
+        
+        categoryMap[categoryName].value += Number(tx.amount);
+      });
+      
+      // Convertir a array y ordenar por valor (mayor a menor)
+      const categoryArray = Object.values(categoryMap)
+        .filter(cat => cat.value > 0)
+        .sort((a, b) => b.value - a.value);
+      
+      console.log('📊 Category breakdown calculated:', categoryArray);
+      
+      setCategoryBreakdownData(categoryArray);
+      localStorage.setItem(cacheKey, JSON.stringify(categoryArray));
+      localStorage.setItem(cacheTimeKey, now.toString());
+      localStorage.setItem('financialAnalysis_categoryBreakdownData', JSON.stringify(categoryArray));
+    } catch (error) {
+      console.error('Error calculating category breakdown:', error);
     }
   };
 
@@ -1708,8 +1789,8 @@ export default function FinancialAnalysis() {
             {/* Additional Financial Health Charts */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <IncomeExpensePieWidget 
-                income={(analysis?.metrics?.totalIncome ?? quickMetrics?.totalIncome) || 0}
-                expenses={(analysis?.metrics?.totalExpenses ?? quickMetrics?.totalExpenses) || 0}
+                income={quickMetrics?.totalIncome || 0}
+                expenses={quickMetrics?.totalExpenses || 0}
               />
               
               <FinancialHealthPieWidget 
@@ -1720,13 +1801,8 @@ export default function FinancialAnalysis() {
             </div>
 
             <CategoryBreakdownWidget 
-              categories={[
-                { name: 'Vivienda', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.3, color: '#8b5cf6' },
-                { name: 'Alimentación', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.25, color: '#ec4899' },
-                { name: 'Transporte', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.15, color: '#f59e0b' },
-                { name: 'Servicios', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.12, color: '#10b981' },
-                { name: 'Entretenimiento', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.10, color: '#3b82f6' },
-                { name: 'Otros', value: (analysis?.metrics?.totalExpenses ?? 0) * 0.08, color: '#ef4444' },
+              categories={categoryBreakdownData.length > 0 ? categoryBreakdownData : [
+                { name: 'Sin datos', value: 1, color: '#9ca3af' }
               ]}
             />
 
