@@ -90,9 +90,7 @@ export default function FutureCalendarWidget({ events }: FutureCalendarProps) {
                 className="flex items-center gap-2 py-1.5 transition-colors hover:bg-gray-50/50"
               >
                 <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm shrink-0 ${
-                  isUrgent
-                    ? 'bg-yellow-500'
-                    : isIncome
+                  isIncome
                     ? 'bg-green-500'
                     : 'bg-red-500'
                 }`}>
@@ -115,7 +113,7 @@ export default function FutureCalendarWidget({ events }: FutureCalendarProps) {
                         : `En ${daysUntil}d`
                       }
                     </span>
-                    {isUrgent && <AlertCircle className="h-3 w-3 text-yellow-600 ml-auto" />}
+                    {isUrgent && <AlertCircle className="h-3 w-3 text-red-600 ml-auto" />}
                   </div>
                 </div>
                 <p className={`text-xs font-black shrink-0 ${isIncome ? 'text-green-600' : 'text-red-600'}`}>
@@ -127,8 +125,8 @@ export default function FutureCalendarWidget({ events }: FutureCalendarProps) {
         </div>
 
         {sortedEvents.filter(e => getDaysUntil(e.date) <= 3).length > 0 && (
-          <div className="bg-yellow-50/80 rounded-lg px-2 py-1.5 border border-yellow-200">
-            <p className="text-[9px] text-yellow-700 leading-snug">
+          <div className="bg-red-50/80 rounded-lg px-2 py-1.5 border border-red-200">
+            <p className="text-[9px] text-red-700 leading-snug">
               ⚠️ <span className="font-medium">
                 {sortedEvents.filter(e => getDaysUntil(e.date) <= 3).length} próximos
               </span> en 3 días
