@@ -25,12 +25,18 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    console.log('📥 Request body received:', JSON.stringify(body));
+    console.log('📥 Request body received keys:', Object.keys(body));
     
-    const { userId } = body;
+    let userId = body.userId;
+    
+    // Si viene con transactions en lugar de userId, extraer el userId de la primera transacción
+    if (!userId && body.transactions && body.transactions.length > 0) {
+      userId = body.transactions[0].user_id;
+      console.log('✅ Extracted userId from transactions:', userId);
+    }
     
     if (!userId) {
-      console.error('❌ userId not found in body:', body);
+      console.error('❌ userId not found in body');
       throw new Error('userId is required');
     }
 
