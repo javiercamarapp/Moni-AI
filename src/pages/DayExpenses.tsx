@@ -26,12 +26,13 @@ const getCategoryEmoji = (categoryName: string): string => {
 
 const DayExpenses = () => {
   const navigate = useNavigate();
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [currentMonth]);
 
   const fetchData = async () => {
     try {
@@ -42,18 +43,17 @@ const DayExpenses = () => {
         return;
       }
 
-      // Últimos 7 días
-      const today = new Date();
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(today.getDate() - 7);
+      // Obtener todo el mes actual
+      const startDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+      const endDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
 
       const { data: transactionsData } = await supabase
         .from('transactions')
         .select('*, categories(name, color)')
         .eq('user_id', user.id)
         .eq('type', 'gasto')
-        .gte('transaction_date', sevenDaysAgo.toISOString().split('T')[0])
-        .lte('transaction_date', today.toISOString().split('T')[0])
+        .gte('transaction_date', startDate.toISOString().split('T')[0])
+        .lte('transaction_date', endDate.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
 
       setTransactions(transactionsData || []);
@@ -65,43 +65,85 @@ const DayExpenses = () => {
     }
   };
 
-  // Group transactions by day
-  interface DayData {
-    dayOfWeek: string;
+  // Group transactions by day of week, then by specific date
+  interface DateGroup {
+    date: Date;
+    dateString: string;
     transactions: any[];
     total: number;
-    date: Date;
   }
 
-  const transactionsByDay = transactions.reduce((acc, transaction) => {
+  interface DayOfWeekData {
+    dayOfWeek: string;
+    dayOfWeekShort: string;
+    dates: DateGroup[];
+    total: number;
+  }
+
+  const daysOrder = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+  const daysFullNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
+  const transactionsByDayOfWeek = transactions.reduce((acc, transaction) => {
     const date = new Date(transaction.transaction_date);
-    const dayKey = date.toLocaleDateString('es-MX', { 
+    const dayOfWeekIndex = (date.getDay() + 6) % 7; // Convert to Mon=0, Sun=6
+    const dayOfWeekShort = daysOrder[dayOfWeekIndex];
+    const dayOfWeek = daysFullNames[dayOfWeekIndex];
+    const dateString = date.toLocaleDateString('es-MX', { 
       day: 'numeric',
       month: 'long',
       year: 'numeric'
     });
-    const dayOfWeek = date.toLocaleDateString('es-MX', { weekday: 'long' });
     
-    if (!acc[dayKey]) {
-      acc[dayKey] = {
+    if (!acc[dayOfWeekShort]) {
+      acc[dayOfWeekShort] = {
         dayOfWeek,
-        transactions: [],
-        total: 0,
-        date: date
+        dayOfWeekShort,
+        dates: [],
+        total: 0
       };
     }
     
-    acc[dayKey].transactions.push(transaction);
-    acc[dayKey].total += Number(transaction.amount);
+    let dateGroup = acc[dayOfWeekShort].dates.find((d: DateGroup) => d.dateString === dateString);
+    if (!dateGroup) {
+      dateGroup = {
+        date,
+        dateString,
+        transactions: [],
+        total: 0
+      };
+      acc[dayOfWeekShort].dates.push(dateGroup);
+    }
+    
+    dateGroup.transactions.push(transaction);
+    dateGroup.total += Number(transaction.amount);
+    acc[dayOfWeekShort].total += Number(transaction.amount);
     
     return acc;
-  }, {} as Record<string, DayData>);
+  }, {} as Record<string, DayOfWeekData>);
 
-  const sortedDays = Object.entries(transactionsByDay).sort((a: [string, DayData], b: [string, DayData]) => 
-    b[1].date.getTime() - a[1].date.getTime()
-  );
+  // Sort by day of week order
+  const sortedDaysOfWeek = daysOrder
+    .filter(day => transactionsByDayOfWeek[day])
+    .map(day => transactionsByDayOfWeek[day]);
+
+  // Sort dates within each day of week (most recent first)
+  sortedDaysOfWeek.forEach(dayData => {
+    dayData.dates.sort((a, b) => b.date.getTime() - a.date.getTime());
+  });
 
   const totalGastos = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
+
+  const handlePreviousMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+  };
+
+  const getMonthLabel = () => {
+    return currentMonth.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
+  };
 
   if (loading) {
     return <LoadingScreen />;
@@ -121,10 +163,38 @@ const DayExpenses = () => {
           </Button>
           <div>
             <h1 className="text-base sm:text-lg font-bold text-foreground whitespace-nowrap">
-              📅 Últimos 7 Días
+              📅 Gastos por Día de la Semana
             </h1>
-            <p className="text-sm text-muted-foreground">Gastos de la última semana</p>
+            <p className="text-sm text-muted-foreground">Patrones del mes</p>
           </div>
+        </div>
+      </div>
+
+      <div className="px-4 mt-4 mb-4">
+        <div className="flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handlePreviousMonth}
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          
+          <div className="bg-white rounded-[20px] shadow-xl px-4 py-2 border border-blue-100">
+            <p className="text-foreground font-medium capitalize text-center">
+              {getMonthLabel()}
+            </p>
+          </div>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleNextMonth}
+            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </Button>
         </div>
       </div>
 
@@ -136,7 +206,7 @@ const DayExpenses = () => {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm text-foreground/60 mb-1 font-medium">
-                Total (7 días)
+                Total del Mes
               </p>
               <p className="text-3xl sm:text-4xl font-bold leading-tight break-words text-red-600">
                 ${totalGastos.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
@@ -146,8 +216,8 @@ const DayExpenses = () => {
           
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-foreground/60">Días con gastos:</span>
-              <span className="text-lg font-bold text-foreground">{sortedDays.length}</span>
+              <span className="text-sm text-foreground/60">Días de la semana:</span>
+              <span className="text-lg font-bold text-foreground">{sortedDaysOfWeek.length}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-foreground/60">Total transacciones:</span>
@@ -157,79 +227,97 @@ const DayExpenses = () => {
         </Card>
 
         <div className="space-y-6">
-          {sortedDays.length === 0 ? (
+          {sortedDaysOfWeek.length === 0 ? (
             <Card className="p-6 bg-white rounded-[20px] shadow-xl text-center border border-blue-100">
-              <p className="text-muted-foreground">No hay gastos registrados en los últimos 7 días</p>
+              <p className="text-muted-foreground">No hay gastos registrados este mes</p>
             </Card>
           ) : (
-            sortedDays.map(([dayKey, dayData]: [string, DayData]) => (
-              <div key={dayKey} className="space-y-3 animate-fade-in">
-                <div className="flex items-center justify-between">
+            sortedDaysOfWeek.map((dayOfWeekData) => (
+              <div key={dayOfWeekData.dayOfWeekShort} className="space-y-3 animate-fade-in">
+                {/* Header del día de la semana */}
+                <div className="flex items-center justify-between bg-white rounded-[20px] shadow-xl p-4 border border-blue-100">
                   <div>
-                    <h3 className="text-lg font-bold text-foreground capitalize">
-                      {dayData.dayOfWeek}
+                    <h3 className="text-xl font-bold text-foreground capitalize">
+                      {dayOfWeekData.dayOfWeek}
                     </h3>
-                    <p className="text-sm text-muted-foreground capitalize">{dayKey}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {dayOfWeekData.dates.length} {dayOfWeekData.dates.length === 1 ? 'fecha' : 'fechas'} en el mes
+                    </p>
                   </div>
                   <div className="text-right">
                     <p className="text-xl font-bold text-red-600">
-                      -${dayData.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                      -${dayOfWeekData.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {dayData.transactions.length} {dayData.transactions.length === 1 ? 'gasto' : 'gastos'}
+                      Total del día
                     </p>
                   </div>
                 </div>
 
-                {dayData.transactions.map((transaction, index) => {
-                  const categoryEmoji = transaction.categories ? getCategoryEmoji(transaction.categories.name) : '💸';
-                  const capitalizedDescription = transaction.description.charAt(0).toUpperCase() + transaction.description.slice(1);
-                  const capitalizedPaymentMethod = transaction.payment_method 
-                    ? transaction.payment_method.charAt(0).toUpperCase() + transaction.payment_method.slice(1) 
-                    : '';
-                  
-                  return (
-                    <Card 
-                      key={transaction.id} 
-                      className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all animate-fade-in active:scale-95"
-                      style={{ animationDelay: `${index * 50}ms` }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[hsl(0,55%,40%)] to-[hsl(0,65%,35%)] flex items-center justify-center flex-shrink-0 border border-[hsl(0,60%,45%)]/70 shadow-md">
-                          <span className="text-base">{categoryEmoji}</span>
-                        </div>
-                        
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-foreground text-sm leading-tight">
-                            {capitalizedDescription}
-                          </h4>
-                          <div className="flex gap-1 flex-wrap mt-1">
-                            {transaction.categories && (
-                              <Badge 
-                                className="text-[10px] font-semibold bg-gradient-to-r from-[hsl(0,60%,45%)] to-[hsl(0,70%,40%)] text-white border-0 shadow-sm px-2 py-0.5"
-                              >
-                                {transaction.categories.name.charAt(0).toUpperCase() + transaction.categories.name.slice(1)}
-                              </Badge>
-                            )}
-                            {transaction.payment_method && (
-                              <Badge 
-                                className="text-[10px] font-semibold bg-gradient-to-r from-[hsl(280,60%,45%)] to-[hsl(280,70%,40%)] text-white border-0 shadow-sm px-2 py-0.5"
-                              >
-                                {capitalizedPaymentMethod}
-                              </Badge>
-                            )}
+                {/* Fechas específicas dentro del día */}
+                {dayOfWeekData.dates.map((dateGroup) => (
+                  <div key={dateGroup.dateString} className="ml-4 space-y-2">
+                    <div className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-blue-50 to-transparent rounded-lg">
+                      <p className="text-sm font-semibold text-foreground capitalize">
+                        📅 {dateGroup.dateString}
+                      </p>
+                      <p className="text-sm font-bold text-red-600">
+                        -${dateGroup.total.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                      </p>
+                    </div>
+
+                    {/* Transacciones de esta fecha */}
+                    {dateGroup.transactions.map((transaction, index) => {
+                      const categoryEmoji = transaction.categories ? getCategoryEmoji(transaction.categories.name) : '💸';
+                      const capitalizedDescription = transaction.description.charAt(0).toUpperCase() + transaction.description.slice(1);
+                      const capitalizedPaymentMethod = transaction.payment_method 
+                        ? transaction.payment_method.charAt(0).toUpperCase() + transaction.payment_method.slice(1) 
+                        : '';
+                      
+                      return (
+                        <Card 
+                          key={transaction.id} 
+                          className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 transition-all animate-fade-in active:scale-95 ml-4"
+                          style={{ animationDelay: `${index * 50}ms` }}
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[hsl(0,55%,40%)] to-[hsl(0,65%,35%)] flex items-center justify-center flex-shrink-0 border border-[hsl(0,60%,45%)]/70 shadow-md">
+                              <span className="text-base">{categoryEmoji}</span>
+                            </div>
+                            
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-bold text-foreground text-sm leading-tight">
+                                {capitalizedDescription}
+                              </h4>
+                              <div className="flex gap-1 flex-wrap mt-1">
+                                {transaction.categories && (
+                                  <Badge 
+                                    className="text-[10px] font-semibold bg-gradient-to-r from-[hsl(0,60%,45%)] to-[hsl(0,70%,40%)] text-white border-0 shadow-sm px-2 py-0.5"
+                                  >
+                                    {transaction.categories.name.charAt(0).toUpperCase() + transaction.categories.name.slice(1)}
+                                  </Badge>
+                                )}
+                                {transaction.payment_method && (
+                                  <Badge 
+                                    className="text-[10px] font-semibold bg-gradient-to-r from-[hsl(280,60%,45%)] to-[hsl(280,70%,40%)] text-white border-0 shadow-sm px-2 py-0.5"
+                                  >
+                                    {capitalizedPaymentMethod}
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                            
+                            <div className="text-right flex-shrink-0">
+                              <p className="text-base font-bold text-foreground">
+                                -${Number(transaction.amount).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                        
-                        <div className="text-right flex-shrink-0">
-                          <p className="text-base font-bold text-foreground">
-                            -${Number(transaction.amount).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
-                          </p>
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })}
+                        </Card>
+                      );
+                    })}
+                  </div>
+                ))}
               </div>
             ))
           )}
