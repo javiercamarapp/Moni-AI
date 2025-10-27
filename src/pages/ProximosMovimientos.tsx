@@ -2,17 +2,18 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, TrendingUp, TrendingDown, AlertCircle } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, AlertCircle, Loader2, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { format, addDays, addWeeks, addMonths, isBefore, startOfDay } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
+import { toast } from 'sonner';
 
 interface FutureEvent {
-  date: Date;
-  type: "income" | "expense" | "subscription" | "ingreso" | "gasto";
+  date: string;
+  type: "ingreso" | "gasto";
   description: string;
   amount: number;
-  risk?: "high" | "medium" | "low";
+  confidence: "high" | "medium" | "low";
 }
 
 export default function ProximosMovimientos() {
@@ -23,92 +24,10 @@ export default function ProximosMovimientos() {
   const [totalExpense, setTotalExpense] = useState(0);
 
   useEffect(() => {
-    fetchFutureEvents();
+    fetchAIPredictions();
   }, []);
 
-  const detectRecurringPayments = (transactions: any[], subscriptions: any[]) => {
-    const recurringEvents: FutureEvent[] = [];
-    const today = startOfDay(new Date());
-
-    // Detectar suscripciones activas
-    subscriptions.forEach(sub => {
-      if (!sub.is_active) return;
-      
-      let nextDate = new Date(sub.next_billing_date);
-      for (let i = 0; i < 3; i++) {
-        if (isBefore(nextDate, today)) {
-          nextDate = addMonths(nextDate, 1);
-          continue;
-        }
-        recurringEvents.push({
-          date: nextDate,
-          type: "subscription",
-          description: sub.name,
-          amount: sub.amount,
-          risk: calculatePaymentRisk(nextDate, sub.amount)
-        });
-        nextDate = addMonths(nextDate, 1);
-      }
-    });
-
-    // Detectar pagos recurrentes de transacciones
-    const groupedByDescription = transactions.reduce((acc: any, tx: any) => {
-      if (!acc[tx.description]) acc[tx.description] = [];
-      acc[tx.description].push(tx);
-      return acc;
-    }, {});
-
-    Object.entries(groupedByDescription).forEach(([description, txs]: [string, any]) => {
-      if (txs.length >= 2) {
-        const sortedTxs = txs.sort((a: any, b: any) => 
-          new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime()
-        );
-        
-        const intervals = [];
-        for (let i = 1; i < sortedTxs.length; i++) {
-          const diff = Math.abs(
-            new Date(sortedTxs[i].transaction_date).getTime() - 
-            new Date(sortedTxs[i-1].transaction_date).getTime()
-          );
-          intervals.push(diff / (1000 * 60 * 60 * 24));
-        }
-
-        const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-        if (avgInterval > 20 && avgInterval < 35) {
-          const lastTx = sortedTxs[sortedTxs.length - 1];
-          let nextDate = addDays(new Date(lastTx.transaction_date), Math.round(avgInterval));
-          
-          for (let i = 0; i < 3 && nextDate < addMonths(today, 2); i++) {
-            if (isBefore(nextDate, today)) {
-              nextDate = addDays(nextDate, Math.round(avgInterval));
-              continue;
-            }
-            recurringEvents.push({
-              date: nextDate,
-              type: lastTx.type === "ingreso" ? "income" : "expense",
-              description: description,
-              amount: lastTx.amount,
-              risk: calculatePaymentRisk(nextDate, lastTx.amount)
-            });
-            nextDate = addDays(nextDate, Math.round(avgInterval));
-          }
-        }
-      }
-    });
-
-    return recurringEvents.sort((a, b) => a.date.getTime() - b.date.getTime());
-  };
-
-  const calculatePaymentRisk = (date: Date, amount: number): "high" | "medium" | "low" => {
-    const today = new Date();
-    const daysUntil = Math.ceil((date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (daysUntil <= 3) return "high";
-    if (daysUntil <= 7) return "medium";
-    return "low";
-  };
-
-  const fetchFutureEvents = async () => {
+  const fetchAIPredictions = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -116,56 +35,75 @@ export default function ProximosMovimientos() {
         return;
       }
 
-      // Obtener transacciones históricas
-      const { data: transactions, error: txError } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('transaction_date', { ascending: false })
-        .limit(100);
+      console.log('Calling predict-future-transactions...');
+      
+      const { data, error } = await supabase.functions.invoke('predict-future-transactions', {
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        }
+      });
 
-      if (txError) throw txError;
+      if (error) {
+        console.error('Error calling function:', error);
+        toast.error('Error al predecir movimientos');
+        throw error;
+      }
 
-      const events = detectRecurringPayments(transactions || [], []);
-      setFutureEvents(events);
+      console.log('Predictions received:', data);
+
+      const predictions: FutureEvent[] = data.predictions || [];
+      setFutureEvents(predictions);
 
       // Calcular totales
-      const income = events
-        .filter(e => e.type === 'income' || e.type === 'ingreso')
+      const income = predictions
+        .filter(e => e.type === 'ingreso')
         .reduce((sum, e) => sum + Number(e.amount), 0);
       
-      const expense = events
-        .filter(e => e.type === 'expense' || e.type === 'gasto' || e.type === 'subscription')
+      const expense = predictions
+        .filter(e => e.type === 'gasto')
         .reduce((sum, e) => sum + Number(e.amount), 0);
 
       setTotalIncome(income);
       setTotalExpense(expense);
     } catch (error) {
-      console.error('Error fetching future events:', error);
+      console.error('Error fetching predictions:', error);
+      toast.error('Error al cargar predicciones');
     } finally {
       setLoading(false);
     }
   };
 
-  const getDaysUntil = (date: Date) => {
+  const getDaysUntil = (dateStr: string) => {
     const today = new Date();
-    const diffTime = date.getTime() - today.getTime();
+    const futureDate = parseISO(dateStr);
+    const diffTime = futureDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   };
 
-  const getEventIcon = (type: string) => {
-    switch (type) {
-      case "income":
-      case "ingreso":
-        return "💰";
-      case "subscription":
-        return "🔄";
-      case "expense":
-      case "gasto":
-        return "💳";
+  const getConfidenceColor = (confidence: string) => {
+    switch (confidence) {
+      case "high":
+        return "bg-green-500";
+      case "medium":
+        return "bg-yellow-500";
+      case "low":
+        return "bg-orange-500";
       default:
-        return "📅";
+        return "bg-gray-500";
+    }
+  };
+
+  const getConfidenceBadge = (confidence: string) => {
+    switch (confidence) {
+      case "high":
+        return "Alta";
+      case "medium":
+        return "Media";
+      case "low":
+        return "Baja";
+      default:
+        return "";
     }
   };
 
@@ -183,8 +121,11 @@ export default function ProximosMovimientos() {
               <ArrowLeft className="h-4 w-4 text-gray-700" />
             </Button>
             <div className="flex-1">
-              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Próximos Movimientos</h1>
-              <p className="text-xs text-gray-600">Pagos y cobros proyectados</p>
+              <h1 className="text-xl font-semibold text-gray-900 tracking-tight flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-purple-600" />
+                Próximos Movimientos
+              </h1>
+              <p className="text-xs text-gray-600">Predicciones con IA de tus futuros gastos e ingresos</p>
             </div>
           </div>
         </div>
@@ -223,20 +164,16 @@ export default function ProximosMovimientos() {
         {/* Lista de próximos movimientos */}
         <Card className="bg-white rounded-[20px] shadow-xl border border-blue-100 p-4">
           {loading ? (
-            <div className="space-y-2">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="animate-pulse">
-                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
-                  <div className="h-3 bg-gray-200 rounded w-1/2" />
-                </div>
-              ))}
+            <div className="flex flex-col items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 text-purple-600 animate-spin mb-4" />
+              <p className="text-sm text-muted-foreground">Analizando patrones con IA...</p>
             </div>
           ) : futureEvents.length === 0 ? (
             <div className="text-center py-8">
               <div className="text-5xl mb-4">📅</div>
-              <h3 className="font-bold text-foreground mb-2">No hay movimientos próximos</h3>
+              <h3 className="font-bold text-foreground mb-2">No hay predicciones disponibles</h3>
               <p className="text-sm text-muted-foreground">
-                Aquí aparecerán tus pagos y cobros proyectados
+                Necesitas más historial de transacciones para generar predicciones
               </p>
             </div>
           ) : (
@@ -244,7 +181,7 @@ export default function ProximosMovimientos() {
               {futureEvents.map((event, index) => {
                 const daysUntil = getDaysUntil(event.date);
                 const isUrgent = daysUntil <= 3;
-                const isIncome = event.type === "income" || event.type === "ingreso";
+                const isIncome = event.type === "ingreso";
                 
                 return (
                   <div 
@@ -252,22 +189,20 @@ export default function ProximosMovimientos() {
                     className="flex items-center gap-2 py-1.5 transition-colors hover:bg-gray-50/50"
                   >
                     <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm shrink-0 ${
-                      isIncome
-                        ? 'bg-green-500'
-                        : 'bg-red-500'
+                      isIncome ? 'bg-green-500' : 'bg-red-500'
                     }`}>
-                      <span className="text-white">{getEventIcon(event.type)}</span>
+                      <span className="text-white">{isIncome ? '💰' : '💳'}</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-foreground truncate">
                         {event.description}
                       </p>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1 flex-wrap">
                         <span className="text-[9px] text-muted-foreground">
-                          {format(event.date, "d MMM", { locale: es })}
+                          {format(parseISO(event.date), "d MMM", { locale: es })}
                         </span>
                         <span className="text-[9px] text-muted-foreground">•</span>
-                        <span className="text-[9px] text-muted-foreground truncate">
+                        <span className="text-[9px] text-muted-foreground">
                           {daysUntil === 0 
                             ? "Hoy" 
                             : daysUntil === 1 
@@ -275,7 +210,11 @@ export default function ProximosMovimientos() {
                             : `En ${daysUntil}d`
                           }
                         </span>
-                        {isUrgent && <AlertCircle className="h-3 w-3 text-red-600 ml-auto" />}
+                        <span className="text-[9px] text-muted-foreground">•</span>
+                        <span className={`text-[9px] px-1 py-0.5 rounded ${getConfidenceColor(event.confidence)} text-white`}>
+                          {getConfidenceBadge(event.confidence)}
+                        </span>
+                        {isUrgent && <AlertCircle className="h-3 w-3 text-red-600" />}
                       </div>
                     </div>
                     <p className={`text-xs font-black shrink-0 ${isIncome ? 'text-green-600' : 'text-red-600'}`}>
