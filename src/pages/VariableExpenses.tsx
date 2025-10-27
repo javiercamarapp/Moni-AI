@@ -54,11 +54,11 @@ export default function VariableExpenses() {
 
       if (allExpenses && allExpenses.length > 0) {
         const { data: result, error: aiError } = await supabase.functions.invoke('detect-expense-patterns', {
-          body: { transactions: allExpenses, type: 'variable' }
+          body: { userId: user.id }
         });
 
         if (aiError) throw aiError;
-        return result?.expenses || [];
+        return result?.variable?.expenses || [];
       }
       return [];
     },

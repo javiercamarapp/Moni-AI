@@ -58,11 +58,11 @@ export default function FixedExpenses() {
 
       if (allExpenses && allExpenses.length > 0) {
         const { data: result, error: aiError } = await supabase.functions.invoke('detect-expense-patterns', {
-          body: { transactions: allExpenses, type: 'fixed' }
+          body: { userId: user.id }
         });
 
         if (aiError) throw aiError;
-        return result?.expenses || [];
+        return result?.fixed?.expenses || [];
       }
       return [];
     },
