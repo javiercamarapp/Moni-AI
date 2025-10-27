@@ -62,42 +62,49 @@ serve(async (req) => {
       category: tx.category_id
     })) || [];
 
-    const systemPrompt = `Eres un asistente financiero experto en análisis de patrones de gastos e ingresos.
-Analiza las transacciones históricas del usuario y predice ÚNICAMENTE los próximos movimientos FIJOS Y RECURRENTES con alta confianza en los próximos 60 días.
+    const systemPrompt = `Eres un asistente financiero experto en análisis de gastos FIJOS Y RECURRENTES.
+Analiza las transacciones históricas y predice ÚNICAMENTE movimientos 100% FIJOS en los próximos 60 días.
 
-SOLO incluye:
-- Gastos fijos mensuales (renta, colegiaturas, seguros)
-- Suscripciones activas (Netflix, Spotify, gimnasio, etc.)
-- Salarios y nóminas quincenales/mensuales
-- Pagos de servicios fijos (luz, agua, gas, teléfono, internet)
-- Cualquier gasto que se repita EXACTAMENTE cada mes
+SOLO INCLUYE estos tipos de movimientos:
+✅ Renta o hipoteca mensual
+✅ Suscripciones digitales (Netflix, Spotify, Amazon Prime, Disney+, etc.)
+✅ Membresías (gimnasio, clubes)
+✅ Seguros (auto, casa, vida, gastos médicos)
+✅ Colegiaturas y pagos educativos mensuales
+✅ Servicios básicos FIJOS: internet, teléfono/celular plan
+✅ Salarios quincenales o mensuales (ingresos)
+✅ Pagos de créditos/préstamos con monto fijo mensual
 
-NO incluyas:
-- Gastos variables (alimentos, gasolina, entretenimiento)
-- Compras ocasionales
-- Gastos impredecibles
-- Movimientos sin patrón claro mensual
+NUNCA INCLUYAS:
+❌ Supermercados (Walmart, Soriana, Costco, Chedraui, etc.)
+❌ Gasolineras
+❌ Restaurantes, bares, cafeterías
+❌ Servicios públicos variables (luz, agua, gas) - varían cada mes
+❌ Entretenimiento (cine, conciertos, viajes)
+❌ Compras en general (ropa, electrónicos, etc.)
+❌ Farmacia o gastos médicos variables
+❌ Transporte variable (Uber, taxi, metro)
 
-IMPORTANTE: SOLO devuelve movimientos con confidence: "high"
+REGLA CLAVE: Si el monto NO es exactamente igual cada mes, NO lo incluyas.
 
-Devuelve EXACTAMENTE un array JSON válido con esta estructura:
+Devuelve EXACTAMENTE un array JSON válido:
 [
   {
     "date": "2025-02-15",
-    "type": "ingreso",
-    "description": "Salario quincenal",
-    "amount": 15000,
+    "type": "gasto",
+    "description": "Renta departamento",
+    "amount": 8000,
     "confidence": "high"
   }
 ]
 
 - date: formato YYYY-MM-DD
 - type: "ingreso" o "gasto"
-- description: descripción clara del movimiento fijo
-- amount: monto en número (promedio si varía poco)
+- description: nombre claro del gasto/ingreso fijo
+- amount: monto exacto en número
 - confidence: SIEMPRE "high"
 
-Devuelve entre 5-20 predicciones de movimientos FIJOS ordenadas por fecha.`;
+Devuelve máximo 15 predicciones de movimientos ESTRICTAMENTE FIJOS ordenadas por fecha.`;
 
     const userPrompt = `Analiza estas transacciones históricas y predice los próximos movimientos:
 
