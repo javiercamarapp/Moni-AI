@@ -18,7 +18,7 @@ interface WeeklyIncomeExpenseProps {
   insight?: string;
 }
 
-export default function WeeklyIncomeExpenseWidget({ data }: WeeklyIncomeExpenseProps) {
+export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncomeExpenseProps) {
   if (!data || data.length === 0) {
     return (
       <Card className="w-full p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden animate-fade-in">
@@ -111,6 +111,15 @@ export default function WeeklyIncomeExpenseWidget({ data }: WeeklyIncomeExpenseP
             </BarChart>
           </ResponsiveContainer>
         </div>
+
+        {/* Insight de la IA */}
+        {insight && (
+          <div className="bg-primary/10 rounded-2xl px-3 py-2.5 border border-primary/20 shadow-sm animate-fade-in">
+            <p className="text-[10px] text-primary leading-snug font-medium">
+              <span className="text-xs">🤖</span> <span className="font-semibold">Análisis IA:</span> {insight}
+            </p>
+          </div>
+        )}
       </div>
     </Card>
   );
