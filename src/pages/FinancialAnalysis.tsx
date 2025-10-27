@@ -832,7 +832,7 @@ export default function FinancialAnalysis() {
     }
     
     // Verificar caché primero
-    const cacheKey = `financialAnalysis_categoryBreakdownData_${user.id}`;
+    const cacheKey = `financialAnalysis_categoryBreakdownData_month_${user.id}`;
     const cacheTimeKey = `${cacheKey}_time`;
     const cachedTime = localStorage.getItem(cacheTimeKey);
     const now = Date.now();
@@ -853,14 +853,19 @@ export default function FinancialAnalysis() {
     }
     
     try {
-      console.log('🔄 Calculating category breakdown for year');
+      console.log('🔄 Calculating category breakdown for CURRENT MONTH');
       
-      // Obtener fechas para el año completo
+      // Obtener fechas para el MES ACTUAL
       const nowDate = new Date();
-      const startDate = new Date(nowDate.getFullYear(), 0, 1);
-      const endDate = new Date(nowDate.getFullYear(), 11, 31);
+      const startDate = new Date(nowDate.getFullYear(), nowDate.getMonth(), 1);
+      const endDate = new Date(nowDate.getFullYear(), nowDate.getMonth() + 1, 0);
       
-      // Obtener todas las transacciones de gastos del año
+      console.log('📅 Fechas para category breakdown:', {
+        inicio: startDate.toISOString().split('T')[0],
+        fin: endDate.toISOString().split('T')[0]
+      });
+      
+      // Obtener todas las transacciones de gastos del MES ACTUAL
       const { data: transactions, error: txError } = await supabase
         .from('transactions')
         .select('*, categories(name, color)')
@@ -870,6 +875,8 @@ export default function FinancialAnalysis() {
         .lte('transaction_date', endDate.toISOString().split('T')[0]);
       
       if (txError) throw txError;
+      
+      console.log('📊 Transacciones del mes obtenidas:', transactions?.length || 0);
       
       // Agrupar por categoría
       const categoryMap: Record<string, { name: string; value: number; color: string }> = {};
@@ -890,7 +897,7 @@ export default function FinancialAnalysis() {
         .filter(cat => cat.value > 0)
         .sort((a, b) => b.value - a.value);
       
-      console.log('📊 Category breakdown calculated:', categoryArray);
+      console.log('📊 Category breakdown calculated (MES ACTUAL):', categoryArray);
       
       setCategoryBreakdownData(categoryArray);
       localStorage.setItem(cacheKey, JSON.stringify(categoryArray));
