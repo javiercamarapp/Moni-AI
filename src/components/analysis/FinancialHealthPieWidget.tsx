@@ -1,16 +1,21 @@
 import { Card } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface FinancialHealthPieWidgetProps {
   savings: number;
   fixedExpenses: number;
   variableExpenses: number;
+  period: 'month' | 'year';
+  onPeriodChange: (period: 'month' | 'year') => void;
 }
 
 export default function FinancialHealthPieWidget({ 
   savings, 
   fixedExpenses, 
-  variableExpenses 
+  variableExpenses,
+  period,
+  onPeriodChange
 }: FinancialHealthPieWidgetProps) {
   const validSavings = savings && !isNaN(savings) ? Math.max(0, savings) : 0;
   const validFixed = fixedExpenses && !isNaN(fixedExpenses) ? Math.max(0, fixedExpenses) : 0;
@@ -45,8 +50,16 @@ export default function FinancialHealthPieWidget({
   return (
     <Card className="p-4 bg-white rounded-[20px] shadow-xl transition-all border border-blue-100 animate-fade-in">
       <div className="flex justify-between items-center mb-3">
-        <p className="text-sm font-medium text-foreground">💚 Salud Financiera</p>
-        <span className="text-xs text-muted-foreground">{healthStatus}</span>
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-medium text-foreground">💚 Salud Financiera</p>
+          <span className="text-xs text-muted-foreground">{healthStatus}</span>
+        </div>
+        <Tabs value={period} onValueChange={(value) => onPeriodChange(value as 'month' | 'year')} className="w-auto">
+          <TabsList className="h-7">
+            <TabsTrigger value="month" className="text-xs px-2 py-1">Mes</TabsTrigger>
+            <TabsTrigger value="year" className="text-xs px-2 py-1">Año</TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
       <ResponsiveContainer width="100%" height={200}>
         <PieChart>

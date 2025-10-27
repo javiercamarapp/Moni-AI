@@ -1888,31 +1888,20 @@ export default function FinancialAnalysis() {
 
             {/* Additional Financial Health Charts */}
             <div className="space-y-3">
-              {/* Selector de período */}
-              <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
-                <p className="text-sm font-medium text-foreground mb-3 text-center">📊 Selecciona el período para las gráficas</p>
-                <Tabs value={chartsPeriod} onValueChange={(value) => {
-                  console.log(`🔄 Cambiando período a: ${value}`);
-                  setChartsPeriod(value as 'month' | 'year');
-                }} className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="month">Mes Actual</TabsTrigger>
-                    <TabsTrigger value="year">Año {new Date().getFullYear()}</TabsTrigger>
-                  </TabsList>
-                </Tabs>
-              </Card>
-
-              {/* Gráficas */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <IncomeExpensePieWidget 
                   income={chartsData.income}
                   expenses={chartsData.expenses}
+                  period={chartsPeriod}
+                  onPeriodChange={(value) => setChartsPeriod(value)}
                 />
                 
                 <FinancialHealthPieWidget 
                   savings={chartsData.income - chartsData.expenses > 0 ? chartsData.income - chartsData.expenses : 0}
                   fixedExpenses={chartsData.fixed}
                   variableExpenses={chartsData.variable}
+                  period={chartsPeriod}
+                  onPeriodChange={(value) => setChartsPeriod(value)}
                 />
               </div>
 
@@ -1920,6 +1909,8 @@ export default function FinancialAnalysis() {
                 categories={categoryBreakdownData.length > 0 ? categoryBreakdownData : [
                   { name: 'Sin datos', value: 1, color: '#9ca3af' }
                 ]}
+                period={chartsPeriod}
+                onPeriodChange={(value) => setChartsPeriod(value)}
               />
             </div>
 

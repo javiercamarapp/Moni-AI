@@ -1,12 +1,15 @@
 import { Card } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface IncomeExpensePieWidgetProps {
   income: number;
   expenses: number;
+  period: 'month' | 'year';
+  onPeriodChange: (period: 'month' | 'year') => void;
 }
 
-export default function IncomeExpensePieWidget({ income, expenses }: IncomeExpensePieWidgetProps) {
+export default function IncomeExpensePieWidget({ income, expenses, period, onPeriodChange }: IncomeExpensePieWidgetProps) {
   const validIncome = income && !isNaN(income) ? income : 0;
   const validExpenses = expenses && !isNaN(expenses) ? expenses : 0;
 
@@ -19,7 +22,15 @@ export default function IncomeExpensePieWidget({ income, expenses }: IncomeExpen
 
   return (
     <Card className="p-4 bg-white rounded-[20px] shadow-xl transition-all border border-blue-100 animate-fade-in">
-      <p className="text-sm font-medium text-foreground mb-3">💰 Distribución Ingresos vs Gastos</p>
+      <div className="flex justify-between items-center mb-3">
+        <p className="text-sm font-medium text-foreground">💰 Distribución Ingresos vs Gastos</p>
+        <Tabs value={period} onValueChange={(value) => onPeriodChange(value as 'month' | 'year')} className="w-auto">
+          <TabsList className="h-7">
+            <TabsTrigger value="month" className="text-xs px-2 py-1">Mes</TabsTrigger>
+            <TabsTrigger value="year" className="text-xs px-2 py-1">Año</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
       {!hasData ? (
         <div className="h-[200px] flex items-center justify-center">
           <p className="text-muted-foreground text-sm">Sin datos disponibles</p>

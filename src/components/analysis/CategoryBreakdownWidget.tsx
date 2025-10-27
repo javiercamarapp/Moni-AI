@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface CategoryData {
   name: string;
@@ -9,11 +10,13 @@ interface CategoryData {
 
 interface CategoryBreakdownWidgetProps {
   categories: CategoryData[];
+  period: 'month' | 'year';
+  onPeriodChange: (period: 'month' | 'year') => void;
 }
 
 const COLORS = ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#ef4444', '#14b8a6', '#f97316', '#a855f7', '#06b6d4', '#84cc16', '#eab308'];
 
-export default function CategoryBreakdownWidget({ categories }: CategoryBreakdownWidgetProps) {
+export default function CategoryBreakdownWidget({ categories, period, onPeriodChange }: CategoryBreakdownWidgetProps) {
   const validCategories = categories.filter(cat => cat.value && !isNaN(cat.value) && cat.value > 0);
   const total = validCategories.reduce((sum, cat) => sum + cat.value, 0);
 
@@ -27,7 +30,15 @@ export default function CategoryBreakdownWidget({ categories }: CategoryBreakdow
 
   return (
     <Card className="p-4 bg-white rounded-[20px] shadow-xl transition-all border border-blue-100 animate-fade-in">
-      <p className="text-sm font-medium text-foreground mb-3">📊 Gastos por Categoría</p>
+      <div className="flex justify-between items-center mb-3">
+        <p className="text-sm font-medium text-foreground">📊 Gastos por Categoría</p>
+        <Tabs value={period} onValueChange={(value) => onPeriodChange(value as 'month' | 'year')} className="w-auto">
+          <TabsList className="h-7">
+            <TabsTrigger value="month" className="text-xs px-2 py-1">Mes</TabsTrigger>
+            <TabsTrigger value="year" className="text-xs px-2 py-1">Año</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
       {!hasData ? (
         <div className="h-[220px] flex items-center justify-center">
           <p className="text-muted-foreground text-sm">Sin datos disponibles</p>
