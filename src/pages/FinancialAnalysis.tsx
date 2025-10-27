@@ -53,6 +53,7 @@ export default function FinancialAnalysis() {
   const [loadingTransactions, setLoadingTransactions] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [chartsPeriod, setChartsPeriod] = useState<'month' | 'year'>('month');
   
   // Usar el mismo hook que el Dashboard para datos del mes actual
   const dashboardData = useDashboardData(0);
@@ -140,6 +141,12 @@ export default function FinancialAnalysis() {
     const cached = localStorage.getItem('financialAnalysis_categoryBreakdownData');
     return cached ? JSON.parse(cached) : [];
   });
+  const [chartsData, setChartsData] = useState<{
+    income: number;
+    expenses: number;
+    fixed: number;
+    variable: number;
+  }>({ income: 0, expenses: 0, fixed: 0, variable: 0 });
 
   // Helper function to safely format values in thousands
   const formatK = (value: number | undefined | null): string => {
@@ -171,9 +178,25 @@ export default function FinancialAnalysis() {
       fetchTransactionsData();
       loadAnalysis();
       loadExpensePatterns();
-      calculateCategoryBreakdown();
+      calculateCategoryBreakdown(chartsPeriod);
+      
+      // Cargar datos de ingresos/gastos para el período actual
+      calculateIncomeExpensesByPeriod(chartsPeriod).then(data => {
+        setChartsData(data);
+      });
     }
   }, [user]);
+
+  // Efecto para actualizar cuando cambie el período de las gráficas
+  useEffect(() => {
+    if (user) {
+      console.log(`🔄 Actualizando gráficas para período: ${chartsPeriod}`);
+      calculateCategoryBreakdown(chartsPeriod);
+      calculateIncomeExpensesByPeriod(chartsPeriod).then(data => {
+        setChartsData(data);
+      });
+    }
+  }, [chartsPeriod, user]);
 
   const calculateQuickMetrics = async () => {
     if (!user) return;
@@ -825,14 +848,14 @@ export default function FinancialAnalysis() {
     }
   };
 
-  const calculateCategoryBreakdown = async () => {
+  const calculateCategoryBreakdown = async (periodType: 'month' | 'year' = 'month') => {
     if (!user?.id) {
       console.log('User not available yet, skipping category breakdown');
       return;
     }
     
     // Verificar caché primero
-    const cacheKey = `financialAnalysis_categoryBreakdownData_month_${user.id}`;
+    const cacheKey = `financialAnalysis_categoryBreakdownData_${periodType}_${user.id}`;
     const cacheTimeKey = `${cacheKey}_time`;
     const cachedTime = localStorage.getItem(cacheTimeKey);
     const now = Date.now();
@@ -845,7 +868,7 @@ export default function FinancialAnalysis() {
           const data = JSON.parse(cached);
           setCategoryBreakdownData(data);
           console.log('✅ Using cached category breakdown data');
-          return;
+          return data;
         } catch (e) {
           console.error('Cache parse error:', e);
         }
@@ -853,19 +876,29 @@ export default function FinancialAnalysis() {
     }
     
     try {
-      console.log('🔄 Calculating category breakdown for CURRENT MONTH');
+      console.log(`🔄 Calculating category breakdown for ${periodType.toUpperCase()}`);
       
-      // Obtener fechas para el MES ACTUAL
       const nowDate = new Date();
-      const startDate = new Date(nowDate.getFullYear(), nowDate.getMonth(), 1);
-      const endDate = new Date(nowDate.getFullYear(), nowDate.getMonth() + 1, 0);
+      let startDate: Date;
+      let endDate: Date;
+      
+      if (periodType === 'month') {
+        // MES ACTUAL
+        startDate = new Date(nowDate.getFullYear(), nowDate.getMonth(), 1);
+        endDate = new Date(nowDate.getFullYear(), nowDate.getMonth() + 1, 0);
+      } else {
+        // AÑO ACTUAL
+        startDate = new Date(nowDate.getFullYear(), 0, 1);
+        endDate = new Date(nowDate.getFullYear(), 11, 31);
+      }
       
       console.log('📅 Fechas para category breakdown:', {
+        periodo: periodType,
         inicio: startDate.toISOString().split('T')[0],
         fin: endDate.toISOString().split('T')[0]
       });
       
-      // Obtener todas las transacciones de gastos del MES ACTUAL
+      // Obtener todas las transacciones de gastos del período
       const { data: transactions, error: txError } = await supabase
         .from('transactions')
         .select('*, categories(name, color)')
@@ -876,7 +909,7 @@ export default function FinancialAnalysis() {
       
       if (txError) throw txError;
       
-      console.log('📊 Transacciones del mes obtenidas:', transactions?.length || 0);
+      console.log(`📊 Transacciones del ${periodType} obtenidas:`, transactions?.length || 0);
       
       // Agrupar por categoría
       const categoryMap: Record<string, { name: string; value: number; color: string }> = {};
@@ -897,14 +930,60 @@ export default function FinancialAnalysis() {
         .filter(cat => cat.value > 0)
         .sort((a, b) => b.value - a.value);
       
-      console.log('📊 Category breakdown calculated (MES ACTUAL):', categoryArray);
+      console.log(`📊 Category breakdown calculated (${periodType.toUpperCase()}):`, categoryArray);
       
       setCategoryBreakdownData(categoryArray);
       localStorage.setItem(cacheKey, JSON.stringify(categoryArray));
       localStorage.setItem(cacheTimeKey, now.toString());
-      localStorage.setItem('financialAnalysis_categoryBreakdownData', JSON.stringify(categoryArray));
+      
+      return categoryArray;
     } catch (error) {
       console.error('Error calculating category breakdown:', error);
+      return [];
+    }
+  };
+
+  const calculateIncomeExpensesByPeriod = async (periodType: 'month' | 'year' = 'month') => {
+    if (!user?.id) return { income: 0, expenses: 0, fixed: 0, variable: 0 };
+    
+    try {
+      const nowDate = new Date();
+      let startDate: Date;
+      let endDate: Date;
+      
+      if (periodType === 'month') {
+        startDate = new Date(nowDate.getFullYear(), nowDate.getMonth(), 1);
+        endDate = new Date(nowDate.getFullYear(), nowDate.getMonth() + 1, 0);
+      } else {
+        startDate = new Date(nowDate.getFullYear(), 0, 1);
+        endDate = new Date(nowDate.getFullYear(), 11, 31);
+      }
+      
+      const { data: transactions } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('transaction_date', startDate.toISOString().split('T')[0])
+        .lte('transaction_date', endDate.toISOString().split('T')[0]);
+      
+      const income = transactions
+        ?.filter(t => t.type === 'income' || t.type === 'ingreso')
+        .reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+      
+      const expenses = transactions
+        ?.filter(t => t.type === 'expense' || t.type === 'gasto')
+        .reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+      
+      const fixedExpenses = transactions
+        ?.filter(t => (t.type === 'expense' || t.type === 'gasto') && t.frequency && t.frequency !== 'once')
+        .reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+      
+      const variableExpenses = expenses - fixedExpenses;
+      
+      return { income, expenses, fixed: fixedExpenses, variable: variableExpenses };
+    } catch (error) {
+      console.error('Error calculating income/expenses:', error);
+      return { income: 0, expenses: 0, fixed: 0, variable: 0 };
     }
   };
 
@@ -1794,24 +1873,37 @@ export default function FinancialAnalysis() {
             />
 
             {/* Additional Financial Health Charts */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <IncomeExpensePieWidget 
-                income={dashboardData.monthlyIncome}
-                expenses={dashboardData.monthlyExpenses}
-              />
-              
-              <FinancialHealthPieWidget 
-                savings={(analysis?.metrics?.balance ?? 0) > 0 ? (analysis?.metrics?.balance ?? 0) : 0}
-                fixedExpenses={(analysis?.metrics?.totalExpenses ?? 0) * 0.6}
-                variableExpenses={(analysis?.metrics?.totalExpenses ?? 0) * 0.4}
+            <div className="space-y-3">
+              {/* Selector de período */}
+              <div className="flex justify-center">
+                <Tabs value={chartsPeriod} onValueChange={(value) => setChartsPeriod(value as 'month' | 'year')} className="w-full max-w-md">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="month">Mes Actual</TabsTrigger>
+                    <TabsTrigger value="year">Año {new Date().getFullYear()}</TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
+
+              {/* Gráficas */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <IncomeExpensePieWidget 
+                  income={chartsData.income}
+                  expenses={chartsData.expenses}
+                />
+                
+                <FinancialHealthPieWidget 
+                  savings={chartsData.income - chartsData.expenses > 0 ? chartsData.income - chartsData.expenses : 0}
+                  fixedExpenses={chartsData.fixed}
+                  variableExpenses={chartsData.variable}
+                />
+              </div>
+
+              <CategoryBreakdownWidget 
+                categories={categoryBreakdownData.length > 0 ? categoryBreakdownData : [
+                  { name: 'Sin datos', value: 1, color: '#9ca3af' }
+                ]}
               />
             </div>
-
-            <CategoryBreakdownWidget 
-              categories={categoryBreakdownData.length > 0 ? categoryBreakdownData : [
-                { name: 'Sin datos', value: 1, color: '#9ca3af' }
-              ]}
-            />
 
             {/* New Historical Comparison Widgets */}
             {yearOverYearData.length > 0 && (
