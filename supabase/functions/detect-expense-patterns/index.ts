@@ -98,7 +98,7 @@ serve(async (req) => {
     const impulsive = detectImpulsiveExpenses(transactions);
 
     const fixedTotal = fixed.reduce((sum, e) => sum + e.amount, 0);
-    const variableTotal = variable.reduce((sum, e) => sum + e.amount, 0);
+    const variableTotal = variable.reduce((sum, e) => sum + e.avgAmount, 0);
     const antTotal = ant.reduce((sum, e) => sum + e.totalSpent, 0);
     const impulsiveTotal = impulsive.reduce((sum, e) => sum + e.amount, 0);
 
@@ -287,9 +287,9 @@ function detectVariableExpenses(transactions: Transaction[]) {
         variableExpenses.push({
           id: `var-${concept}`,
           name: latest.description,
-          amount: avgMonthly,
-          minMonthly: Math.min(...monthlyTotals),
-          maxMonthly: Math.max(...monthlyTotals),
+          avgAmount: avgMonthly,
+          minAmount: Math.min(...monthlyTotals),
+          maxAmount: Math.max(...monthlyTotals),
           category: latest.categories?.name || 'Sin categoría',
           occurrences: allTxs.length,
           monthsPresent: monthCount,
@@ -301,7 +301,7 @@ function detectVariableExpenses(transactions: Transaction[]) {
     }
   });
 
-  return variableExpenses.sort((a, b) => b.amount - a.amount);
+  return variableExpenses.sort((a, b) => b.avgAmount - a.avgAmount);
 }
 
 function detectAntExpenses(transactions: Transaction[]) {
