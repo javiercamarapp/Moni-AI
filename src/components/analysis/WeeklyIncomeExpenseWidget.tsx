@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Calendar } from "lucide-react";
 
@@ -20,8 +21,16 @@ interface WeeklyIncomeExpenseProps {
 export default function WeeklyIncomeExpenseWidget({ data }: WeeklyIncomeExpenseProps) {
   if (!data || data.length === 0) {
     return (
-      <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in">
-        <div className="text-center text-muted-foreground py-4">
+      <Card className="w-full p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden animate-fade-in">
+        <GlowingEffect
+          spread={40}
+          glow={true}
+          disabled={false}
+          proximity={64}
+          inactiveZone={0.01}
+          borderWidth={2}
+        />
+        <div className="text-center text-muted-foreground py-4 relative z-10">
           No hay datos de los últimos 7 días
         </div>
       </Card>
@@ -52,12 +61,20 @@ export default function WeeklyIncomeExpenseWidget({ data }: WeeklyIncomeExpenseP
   };
 
   return (
-    <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 animate-fade-in">
-      <div className="space-y-2">
+    <Card className="w-full p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden animate-fade-in">
+      <GlowingEffect
+        spread={40}
+        glow={true}
+        disabled={false}
+        proximity={64}
+        inactiveZone={0.01}
+        borderWidth={2}
+      />
+      <div className="space-y-2 relative z-10">
         {/* Header */}
         <div className="flex items-center gap-2">
           <Calendar className="h-3 w-3 text-primary" />
-          <h3 className="text-[11px] font-bold text-foreground">📊 Actividad Reciente (Últimos 7 días)</h3>
+          <h3 className="text-sm sm:text-xs font-bold text-foreground drop-shadow-sm">📊 Actividad Reciente (Últimos 7 días)</h3>
         </div>
 
         {/* Gráfico */}
