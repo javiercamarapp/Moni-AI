@@ -1796,8 +1796,8 @@ export default function FinancialAnalysis() {
             {/* Additional Financial Health Charts */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <IncomeExpensePieWidget 
-                income={quickMetrics?.totalIncome || 0}
-                expenses={quickMetrics?.totalExpenses || 0}
+                income={dashboardData.monthlyIncome}
+                expenses={dashboardData.monthlyExpenses}
               />
               
               <FinancialHealthPieWidget 
