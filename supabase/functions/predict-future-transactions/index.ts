@@ -111,7 +111,6 @@ Fecha actual: ${new Date().toISOString().split('T')[0]}`;
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
-        temperature: 0.7,
       }),
     });
 
