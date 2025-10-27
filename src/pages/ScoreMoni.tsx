@@ -5,9 +5,11 @@ import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import BottomNav from '@/components/BottomNav';
 import ScoreBreakdownWidget from '@/components/analysis/ScoreBreakdownWidget';
+import { useInvalidateFinancialData } from '@/hooks/useFinancialData';
 
 const ScoreMoni = () => {
   const navigate = useNavigate();
+  const invalidateFinancialData = useInvalidateFinancialData();
   const [score, setScore] = useState(() => {
     // Load from localStorage first for instant display
     const cached = localStorage.getItem('scoreMoni');
@@ -85,6 +87,9 @@ const ScoreMoni = () => {
             generateScoreExplanation(newScore, scoreData.components);
           }
         }
+        
+        // Invalidate React Query cache to sync dashboard
+        invalidateFinancialData();
       }
     } catch (error) {
       console.error('Error fetching score:', error);

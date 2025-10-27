@@ -66,7 +66,12 @@ export const useScoreMoni = () => {
         .maybeSingle();
 
       if (error) throw error;
-      return data?.score_moni || 40;
+      const score = data?.score_moni || 40;
+      
+      // Always sync localStorage with DB value
+      localStorage.setItem('scoreMoni', score.toString());
+      
+      return score;
     },
     staleTime: STALE_TIME,
     initialData: () => {
