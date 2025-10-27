@@ -29,7 +29,7 @@ export default function ImpulsiveExpenses() {
     if (from) {
       navigate(from);
     } else {
-      navigate(-1);
+      navigate('/analysis');
     }
   };
 
