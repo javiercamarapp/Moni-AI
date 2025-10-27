@@ -22,7 +22,7 @@ import UpcomingTransactionsWidget from "@/components/analysis/UpcomingTransactio
 import RiskIndicatorsWidget from "@/components/analysis/RiskIndicatorsWidget";
 import EvolutionChartWidget from "@/components/analysis/EvolutionChartWidget";
 import HistoricalComparisonWidget from "@/components/analysis/HistoricalComparisonWidget";
-import WeeklyIncomeExpenseWidget from "@/components/analysis/WeeklyIncomeExpenseWidget";
+
 import YearOverYearWidget from "@/components/analysis/YearOverYearWidget";
 import SeasonalTrendsWidget from "@/components/analysis/SeasonalTrendsWidget";
 import BurnRateWidget from "@/components/analysis/BurnRateWidget";
@@ -135,10 +135,6 @@ export default function FinancialAnalysis() {
   const [expensePatterns, setExpensePatterns] = useState<any>(() => {
     const cached = localStorage.getItem('financialAnalysis_expensePatterns');
     return cached ? JSON.parse(cached) : null;
-  });
-  const [last7DaysData, setLast7DaysData] = useState<any[]>(() => {
-    const cached = localStorage.getItem('financialAnalysis_last7DaysData');
-    return cached ? JSON.parse(cached) : [];
   });
 
   // Helper function to safely format values in thousands
@@ -470,41 +466,6 @@ export default function FinancialAnalysis() {
       setWeeklySpendingData(weeklySpendingArray);
       localStorage.setItem('financialAnalysis_weeklySpendingData', JSON.stringify(weeklySpendingArray));
       
-      // Calcular últimos 7 días con ingresos y gastos diarios
-      const todayDate = new Date();
-      const weekDayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-      const last7Days: any[] = [];
-      
-      for (let i = 6; i >= 0; i--) {
-        const date = new Date(todayDate);
-        date.setDate(date.getDate() - i);
-        const dateString = date.toISOString().split('T')[0];
-        const dayName = weekDayNames[date.getDay()];
-        const dayNumber = date.getDate();
-        
-        const dayTransactions = historicalTxs?.filter(
-          tx => tx.transaction_date === dateString
-        ) || [];
-        
-        const dayIncome = dayTransactions
-          .filter(tx => tx.type === 'income' || tx.type === 'ingreso')
-          .reduce((sum, tx) => sum + Number(tx.amount), 0);
-        
-        const dayExpense = dayTransactions
-          .filter(tx => tx.type === 'expense' || tx.type === 'gasto')
-          .reduce((sum, tx) => sum + Number(tx.amount), 0);
-        
-        last7Days.push({
-          date: dateString,
-          day: `${dayName} ${dayNumber}`,
-          income: dayIncome,
-          expense: dayExpense,
-          balance: dayIncome - dayExpense
-        });
-      }
-      
-      setLast7DaysData(last7Days);
-      localStorage.setItem('financialAnalysis_last7DaysData', JSON.stringify(last7Days));
       
       // Calculate MoM (Month over Month) growth
       const monthKeys = Object.keys(monthlyData).sort();
@@ -1674,10 +1635,6 @@ export default function FinancialAnalysis() {
             {/* Microcopy Empático */}
 
             {/* Historical Comparison */}
-            {last7DaysData.length > 0 && (
-              <WeeklyIncomeExpenseWidget data={last7DaysData} />
-            )}
-            
             <HistoricalComparisonWidget
               data={historicalMonthlyData.length > 0 ? historicalMonthlyData : [
                 { month: 'Sin datos', income: 0, expenses: 0, savings: 0 }

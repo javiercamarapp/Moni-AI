@@ -25,6 +25,7 @@ import moniLogo from '/moni-logo.png';
 import SafeToSpendWidget from '@/components/analysis/SafeToSpendWidget';
 import AICoachInsightsWidget from '@/components/analysis/AICoachInsightsWidget';
 import FutureCalendarWidget from '@/components/analysis/FutureCalendarWidget';
+import WeeklyIncomeExpenseWidget from '@/components/analysis/WeeklyIncomeExpenseWidget';
 import BottomNav from '@/components/BottomNav';
 
 const Dashboard = () => {
@@ -60,6 +61,7 @@ const Dashboard = () => {
   const [totalBudget, setTotalBudget] = useState(0);
   const [currentMonthExpenses, setCurrentMonthExpenses] = useState(0);
   const [futureEvents, setFutureEvents] = useState<any[]>([]);
+  const [last7DaysData, setLast7DaysData] = useState<any[]>([]);
   
   // Goal milestone celebration state
   const [goalMilestone, setGoalMilestone] = useState<{
@@ -117,6 +119,68 @@ const Dashboard = () => {
       setRecentTransactions(dashboardData.recentTransactions);
     }
   }, [dashboardData.recentTransactions]);
+
+  // Calcular últimos 7 días con ingresos y gastos
+  useEffect(() => {
+    const fetchLast7Days = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Obtener transacciones de los últimos 7 días
+        const todayDate = new Date();
+        const sevenDaysAgo = new Date(todayDate);
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+
+        const { data: transactions, error } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', user.id)
+          .gte('transaction_date', sevenDaysAgo.toISOString().split('T')[0])
+          .lte('transaction_date', todayDate.toISOString().split('T')[0]);
+
+        if (error) throw error;
+
+        // Calcular datos por día
+        const weekDayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+        const last7Days: any[] = [];
+
+        for (let i = 6; i >= 0; i--) {
+          const date = new Date(todayDate);
+          date.setDate(date.getDate() - i);
+          const dateString = date.toISOString().split('T')[0];
+          const dayName = weekDayNames[date.getDay()];
+          const dayNumber = date.getDate();
+
+          const dayTransactions = transactions?.filter(
+            tx => tx.transaction_date === dateString
+          ) || [];
+
+          const dayIncome = dayTransactions
+            .filter(tx => tx.type === 'income' || tx.type === 'ingreso')
+            .reduce((sum, tx) => sum + Number(tx.amount), 0);
+
+          const dayExpense = dayTransactions
+            .filter(tx => tx.type === 'expense' || tx.type === 'gasto')
+            .reduce((sum, tx) => sum + Number(tx.amount), 0);
+
+          last7Days.push({
+            date: dateString,
+            day: `${dayName} ${dayNumber}`,
+            income: dayIncome,
+            expense: dayExpense,
+            balance: dayIncome - dayExpense
+          });
+        }
+
+        setLast7DaysData(last7Days);
+      } catch (error) {
+        console.error('Error fetching last 7 days data:', error);
+      }
+    };
+
+    fetchLast7Days();
+  }, []);
   
   const [loading, setLoading] = useState(false);
   const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
@@ -1579,6 +1643,11 @@ const Dashboard = () => {
           {/* Sidebar */}
           <div className="space-y-6 w-full min-w-0">
             
+            {/* Actividad Reciente - Últimos 7 días */}
+            {last7DaysData.length > 0 && (
+              <WeeklyIncomeExpenseWidget data={last7DaysData} />
+            )}
+
             {/* Recent Transactions */}
             <Card className="w-full p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden h-[220px] flex flex-col cursor-pointer min-w-0">
               <GlowingEffect
