@@ -1534,7 +1534,7 @@ export default function FinancialAnalysis() {
                   variant="ghost" 
                   size="sm" 
                   className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 hover:scale-105 active:scale-95 transition-all text-xs h-auto py-2"
-                  onClick={() => navigate('/balance')}
+                  onClick={() => navigate('/edit-budgets')}
                 >
                   Ajustar presupuesto
                 </Button>
