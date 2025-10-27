@@ -469,33 +469,47 @@ export default function FinancialAnalysis() {
       setNetWorthEvolutionData(netWorthEvolutionArray);
       localStorage.setItem('financialAnalysis_netWorthEvolutionData', JSON.stringify(netWorthEvolutionArray));
       
-      // Calcular Monthly Spending Pattern (patrón de gastos por mes)
-      const monthNamesForPattern = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-      const monthlySpendingMap: Record<string, { amount: number; count: number }> = {};
+      // Calcular Weekly Spending Pattern del mes actual (gastos por día de la semana en el mes)
+      const dayNames = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+      const weeklySpendingMap: Record<string, { amount: number; count: number }> = {
+        'Lun': { amount: 0, count: 0 },
+        'Mar': { amount: 0, count: 0 },
+        'Mié': { amount: 0, count: 0 },
+        'Jue': { amount: 0, count: 0 },
+        'Vie': { amount: 0, count: 0 },
+        'Sáb': { amount: 0, count: 0 },
+        'Dom': { amount: 0, count: 0 }
+      };
       
-      // Inicializar todos los meses
-      monthNamesForPattern.forEach(month => {
-        monthlySpendingMap[month] = { amount: 0, count: 0 };
-      });
+      // Obtener el mes actual
+      const currentDate = new Date();
+      const currentMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      const currentMonthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
       
+      // Filtrar solo transacciones del mes actual
       historicalTxs?.forEach(tx => {
+        const txDate = new Date(tx.transaction_date);
         if (tx.type === 'expense' || tx.type === 'gasto') {
-          const date = new Date(tx.transaction_date);
-          const monthName = monthNamesForPattern[date.getMonth()];
-          
-          monthlySpendingMap[monthName].amount += Number(tx.amount);
-          monthlySpendingMap[monthName].count += 1;
+          // Solo incluir si está en el mes actual
+          if (txDate >= currentMonthStart && txDate <= currentMonthEnd) {
+            const dayOfWeek = txDate.getDay(); // 0=Domingo, 1=Lunes, etc.
+            const dayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Convertir a índice 0=Lun, 6=Dom
+            const dayName = dayNames[dayIndex];
+            
+            weeklySpendingMap[dayName].amount += Number(tx.amount);
+            weeklySpendingMap[dayName].count += 1;
+          }
         }
       });
       
-      const monthlySpendingArray = Object.keys(monthlySpendingMap).map(month => ({
-        day: month, // mantener 'day' para compatibilidad con la interfaz
-        amount: Math.round(monthlySpendingMap[month].amount),
-        transactionCount: monthlySpendingMap[month].count
+      const weeklySpendingArray = Object.keys(weeklySpendingMap).map(day => ({
+        day,
+        amount: Math.round(weeklySpendingMap[day].amount),
+        transactionCount: weeklySpendingMap[day].count
       }));
       
-      setWeeklySpendingData(monthlySpendingArray);
-      localStorage.setItem('financialAnalysis_weeklySpendingData', JSON.stringify(monthlySpendingArray));
+      setWeeklySpendingData(weeklySpendingArray);
+      localStorage.setItem('financialAnalysis_weeklySpendingData', JSON.stringify(weeklySpendingArray));
       
       
       // Calculate MoM (Month over Month) growth
@@ -1995,15 +2009,21 @@ export default function FinancialAnalysis() {
               <WeeklySpendingPatternWidget 
                 data={weeklySpendingData}
                 insight={(() => {
-                  const maxMonth = weeklySpendingData.reduce((max, d) => d.amount > max.amount ? d : max, weeklySpendingData[0]);
-                  const minMonth = weeklySpendingData.reduce((min, d) => d.amount < min.amount ? d : min, weeklySpendingData[0]);
+                  const maxDay = weeklySpendingData.reduce((max, d) => d.amount > max.amount ? d : max, weeklySpendingData[0]);
+                  const minDay = weeklySpendingData.reduce((min, d) => d.amount < min.amount ? d : min, weeklySpendingData[0]);
                   const totalSpending = weeklySpendingData.reduce((sum, d) => sum + d.amount, 0);
                   const avgSpending = totalSpending / weeklySpendingData.filter(d => d.amount > 0).length;
                   
-                  if (maxMonth.amount > avgSpending * 1.5) {
-                    return `${maxMonth.day} fue tu mes más costoso con $${maxMonth.amount.toLocaleString('es-MX', { maximumFractionDigits: 0 })}. Planifica mejor para meses similares.`;
+                  const weekendSpending = (weeklySpendingData.find(d => d.day === 'Sáb')?.amount || 0) + 
+                                         (weeklySpendingData.find(d => d.day === 'Dom')?.amount || 0);
+                  const weekdaySpending = weeklySpendingData
+                    .filter(d => !['Sáb', 'Dom'].includes(d.day))
+                    .reduce((sum, d) => sum + d.amount, 0);
+                  
+                  if (weekendSpending > weekdaySpending * 0.4) {
+                    return `Gastas más en fines de semana ($${weekendSpending.toLocaleString('es-MX', { maximumFractionDigits: 0 })}). ${maxDay.day} es tu día más caro con $${maxDay.amount.toLocaleString('es-MX', { maximumFractionDigits: 0 })}.`;
                   } else {
-                    return `Tu gasto es equilibrado. ${maxMonth.day} registró el mayor gasto con $${maxMonth.amount.toLocaleString('es-MX', { maximumFractionDigits: 0 })}, mientras que ${minMonth.day} fue el más bajo.`;
+                    return `Tu patrón es equilibrado. ${maxDay.day} es tu día de mayor gasto con $${maxDay.amount.toLocaleString('es-MX', { maximumFractionDigits: 0 })}, mientras que ${minDay.day} es el más bajo.`;
                   }
                 })()}
               />
