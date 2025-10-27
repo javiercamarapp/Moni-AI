@@ -51,8 +51,8 @@ export default function WeeklySpendingPatternWidget({ data, insight }: WeeklySpe
             <Calendar className="h-4 w-4 text-primary" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-foreground">📊 Patrón de Gastos Semanal</p>
-            <p className="text-[9px] text-muted-foreground">Análisis de comportamiento por día</p>
+            <p className="text-sm font-semibold text-foreground">📊 Patrón de Gastos Mensual</p>
+            <p className="text-[9px] text-muted-foreground">Análisis de montos por mes</p>
           </div>
         </div>
 
@@ -113,19 +113,19 @@ export default function WeeklySpendingPatternWidget({ data, insight }: WeeklySpe
 
         <div className="grid grid-cols-3 gap-2 pt-2 mt-2 border-t border-gray-200/50">
           <div className="p-2 rounded-lg bg-red-50/50 border border-red-200/30">
-            <p className="text-[9px] text-red-600 font-medium mb-0.5">Día más caro</p>
+            <p className="text-[9px] text-red-600 font-medium mb-0.5">Mes más caro</p>
             <p className="text-xs font-bold text-red-700">
               {data.reduce((max, d) => d.amount > max.amount ? d : max, data[0])?.day || '-'}
             </p>
           </div>
           <div className="p-2 rounded-lg bg-green-50/50 border border-green-200/30">
-            <p className="text-[9px] text-green-600 font-medium mb-0.5">Día más barato</p>
+            <p className="text-[9px] text-green-600 font-medium mb-0.5">Mes más bajo</p>
             <p className="text-xs font-bold text-green-700">
               {data.reduce((min, d) => d.amount < min.amount ? d : min, data[0])?.day || '-'}
             </p>
           </div>
           <div className="p-2 rounded-lg bg-primary/5 border border-primary/20">
-            <p className="text-[9px] text-primary font-medium mb-0.5">Promedio diario</p>
+            <p className="text-[9px] text-primary font-medium mb-0.5">Promedio mensual</p>
             <p className="text-xs font-bold text-primary break-words">
               ${avgAmount.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
             </p>
