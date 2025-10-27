@@ -1,8 +1,10 @@
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { Calendar, AlertCircle } from "lucide-react";
 import { format, addDays } from "date-fns";
 import { es } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
 
 interface FutureEvent {
   date: Date;
@@ -17,6 +19,8 @@ interface FutureCalendarProps {
 }
 
 export default function FutureCalendarWidget({ events }: FutureCalendarProps) {
+  const navigate = useNavigate();
+  
   // Convertir fechas a objetos Date si son strings y ordenar
   const sortedEvents = [...events]
     .map(event => ({
@@ -69,8 +73,16 @@ export default function FutureCalendarWidget({ events }: FutureCalendarProps) {
         borderWidth={2}
       />
       <div className="space-y-2 relative z-10">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between">
           <p className="text-sm sm:text-xs font-bold text-foreground drop-shadow-sm">📅 Próximos Movimientos</p>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-[10px] sm:text-[9px] text-foreground hover:bg-gray-100 hover:scale-105 transition-transform duration-200 h-6 px-2"
+            onClick={() => navigate('/proximos-movimientos')}
+          >
+            Ver todos
+          </Button>
         </div>
 
         <div className="space-y-1 max-h-[240px] overflow-y-auto pr-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>

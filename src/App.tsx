@@ -34,6 +34,7 @@ import Budgets from "./pages/Budgets";
 import EditBudgets from "./pages/EditBudgets";
 import BudgetQuiz from "./pages/BudgetQuiz";
 import Movimientos from "./pages/Movimientos";
+import ProximosMovimientos from "./pages/ProximosMovimientos";
 import EditNetWorth from "./pages/EditNetWorth";
 
 import Subscriptions from "./pages/Subscriptions";
@@ -105,6 +106,7 @@ function App() {
           <Route path="/category-expenses" element={<CategoryExpenses />} />
           <Route path="/gestionar-categorias" element={<GestionarCategorias />} />
           <Route path="/movimientos" element={<Movimientos />} />
+          <Route path="/proximos-movimientos" element={<ProximosMovimientos />} />
           <Route path="/edit-assets-liabilities" element={<EditNetWorth />} />
           <Route path="/social" element={<Social />} />
           <Route path="/goals" element={<Goals />} />
