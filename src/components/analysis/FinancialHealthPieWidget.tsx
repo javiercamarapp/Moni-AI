@@ -105,7 +105,7 @@ export default function FinancialHealthPieWidget({
               <span className="text-muted-foreground">{item.name}</span>
             </div>
             <span className="text-foreground font-medium">
-              ${(item.value / 1000).toFixed(1)}k ({(item.percentage || 0).toFixed(0)}%)
+              ${(item.value / 1000000).toFixed(2)}M ({(item.percentage || 0).toFixed(0)}%)
             </span>
           </div>
         ))}

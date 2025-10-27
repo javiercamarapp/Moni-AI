@@ -92,7 +92,7 @@ export default function CategoryBreakdownWidget({ categories, period, onPeriodCh
                 <span className="text-muted-foreground truncate">{cat.name}</span>
               </div>
               <span className="text-foreground font-medium flex-shrink-0 text-right">
-                ${(cat.value / 1000).toFixed(1)}k ({((cat.value / total) * 100).toFixed(0)}%)
+                ${(cat.value / 1000000).toFixed(2)}M ({((cat.value / total) * 100).toFixed(0)}%)
               </span>
             </div>
           ))}
