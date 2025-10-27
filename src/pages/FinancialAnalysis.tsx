@@ -1508,11 +1508,11 @@ export default function FinancialAnalysis() {
               <div className="grid grid-cols-2 gap-2">
                 <Button 
                   variant="ghost" 
-                  size="sm" 
+                  size="sm"
                   className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 hover:scale-105 active:scale-95 transition-all text-xs h-auto py-2"
-                  onClick={() => navigate('/balance')}
+                  onClick={() => navigate('/subscriptions')}
                 >
-                  Ajustar presupuesto
+                  Administrar suscripciones
                 </Button>
                 <Button 
                   variant="ghost" 
@@ -1532,11 +1532,11 @@ export default function FinancialAnalysis() {
                 </Button>
                 <Button 
                   variant="ghost" 
-                  size="sm"
+                  size="sm" 
                   className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 hover:scale-105 active:scale-95 transition-all text-xs h-auto py-2"
-                  onClick={() => navigate('/subscriptions')}
+                  onClick={() => navigate('/balance')}
                 >
-                  Administrar suscripciones
+                  Ajustar presupuesto
                 </Button>
               </div>
             </div>
