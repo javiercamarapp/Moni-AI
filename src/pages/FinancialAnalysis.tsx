@@ -1547,7 +1547,10 @@ export default function FinancialAnalysis() {
                 <TrendingDown className="h-3 w-3" /> Control de Gastos
               </p>
               <div className="grid grid-cols-2 gap-2">
-                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card 
+                  className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200"
+                  onClick={() => navigate('/fixed-expenses')}
+                >
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs text-muted-foreground">Fijos</span>
                     <AlertCircle className="h-3 w-3 text-orange-500" />
@@ -1561,7 +1564,10 @@ export default function FinancialAnalysis() {
                   </div>
                 </Card>
 
-                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card 
+                  className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200"
+                  onClick={() => navigate('/variable-expenses')}
+                >
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs text-muted-foreground">Variables</span>
                     <Zap className="h-3 w-3 text-violet-500" />
@@ -1572,7 +1578,10 @@ export default function FinancialAnalysis() {
                   <p className="text-[10px] text-muted-foreground">{(analysis?.metrics?.variableExpensesPercentage || 0).toFixed(0)}%</p>
                 </Card>
 
-                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card 
+                  className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200"
+                  onClick={() => navigate('/ant-expenses')}
+                >
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs text-muted-foreground">Hormiga</span>
                     <span className="text-lg">🐜</span>
@@ -1586,7 +1595,10 @@ export default function FinancialAnalysis() {
                   </div>
                 </Card>
 
-                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card 
+                  className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200"
+                  onClick={() => navigate('/impulsive-expenses')}
+                >
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs text-muted-foreground">Impulsivos</span>
                     <AlertCircle className="h-3 w-3 text-rose-500" />

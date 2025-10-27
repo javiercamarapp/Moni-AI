@@ -86,3 +86,6 @@ verify_jwt = true
 
 [functions.categorize-income]
 verify_jwt = true
+
+[functions.detect-expense-patterns]
+verify_jwt = true

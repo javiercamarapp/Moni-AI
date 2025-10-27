@@ -43,6 +43,10 @@ import CategoryExpenses from './pages/CategoryExpenses';
 import Social from './pages/Social';
 import Goals from './pages/Goals';
 import AccountsCards from './pages/AccountsCards';
+import FixedExpenses from './pages/FixedExpenses';
+import VariableExpenses from './pages/VariableExpenses';
+import AntExpenses from './pages/AntExpenses';
+import ImpulsiveExpenses from './pages/ImpulsiveExpenses';
 
 import NotFound from "./pages/NotFound";
 
@@ -105,6 +109,10 @@ function App() {
           <Route path="/social" element={<Social />} />
           <Route path="/goals" element={<Goals />} />
           <Route path="/accounts-cards" element={<AccountsCards />} />
+          <Route path="/fixed-expenses" element={<FixedExpenses />} />
+          <Route path="/variable-expenses" element={<VariableExpenses />} />
+          <Route path="/ant-expenses" element={<AntExpenses />} />
+          <Route path="/impulsive-expenses" element={<ImpulsiveExpenses />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
