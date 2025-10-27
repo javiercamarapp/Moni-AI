@@ -470,15 +470,12 @@ export default function FinancialAnalysis() {
       setWeeklySpendingData(weeklySpendingArray);
       localStorage.setItem('financialAnalysis_weeklySpendingData', JSON.stringify(weeklySpendingArray));
       
-      // Calcular últimos 7 días con ingresos y gastos diarios
+      // Calcular últimos 14 días con ingresos y gastos diarios para tener más datos
       const todayDate = new Date();
       const weekDayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-      const last7Days: any[] = [];
+      const last14Days: any[] = [];
       
-      console.log('📊 Total transacciones históricas:', historicalTxs?.length);
-      console.log('📊 Muestra de transacciones:', historicalTxs?.slice(0, 3));
-      
-      for (let i = 6; i >= 0; i--) {
+      for (let i = 13; i >= 0; i--) {
         const date = new Date(todayDate);
         date.setDate(date.getDate() - i);
         const dateString = date.toISOString().split('T')[0];
@@ -489,8 +486,6 @@ export default function FinancialAnalysis() {
           tx => tx.transaction_date === dateString
         ) || [];
         
-        console.log(`📅 ${dayName} ${dayNumber} (${dateString}): ${dayTransactions.length} transacciones`);
-        
         const dayIncome = dayTransactions
           .filter(tx => tx.type === 'income' || tx.type === 'ingreso')
           .reduce((sum, tx) => sum + Number(tx.amount), 0);
@@ -499,9 +494,7 @@ export default function FinancialAnalysis() {
           .filter(tx => tx.type === 'expense' || tx.type === 'gasto')
           .reduce((sum, tx) => sum + Number(tx.amount), 0);
         
-        console.log(`  💰 Ingresos: $${dayIncome}, 💸 Gastos: $${dayExpense}`);
-        
-        last7Days.push({
+        last14Days.push({
           date: dateString,
           day: `${dayName} ${dayNumber}`,
           income: dayIncome,
@@ -510,9 +503,14 @@ export default function FinancialAnalysis() {
         });
       }
       
-      console.log('📊 Datos de 7 días calculados:', last7Days);
-      setLast7DaysData(last7Days);
-      localStorage.setItem('financialAnalysis_last7DaysData', JSON.stringify(last7Days));
+      // Tomar solo los últimos 7 días con actividad o los últimos 7 días si no hay suficientes
+      const daysWithActivity = last14Days.filter(d => d.income > 0 || d.expense > 0);
+      const displayDays = daysWithActivity.length >= 7 
+        ? daysWithActivity.slice(-7) 
+        : last14Days.slice(-7);
+      
+      setLast7DaysData(displayDays);
+      localStorage.setItem('financialAnalysis_last7DaysData', JSON.stringify(displayDays));
       
       // Calculate MoM (Month over Month) growth
       const monthKeys = Object.keys(monthlyData).sort();
