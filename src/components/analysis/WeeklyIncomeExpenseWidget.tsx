@@ -345,6 +345,13 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
                     fill="hsl(0, 70%, 55%)" 
                     radius={[4, 4, 0, 0]}
                   />
+                  <Line 
+                    dataKey="Ingresos" 
+                    stroke="hsl(150, 60%, 45%)" 
+                    strokeWidth={2}
+                    dot={{ r: 3, fill: 'hsl(150, 60%, 45%)' }}
+                    activeDot={{ r: 4 }}
+                  />
                   </ComposedChart>
                 </ResponsiveContainer>
               </div>
