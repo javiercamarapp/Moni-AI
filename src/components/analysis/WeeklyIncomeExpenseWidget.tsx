@@ -288,26 +288,26 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
               );
 
               return (
-                <div className="grid grid-cols-2 gap-3 mb-4 px-2">
-                  <div className="bg-red-50 dark:bg-red-950/20 p-3 rounded-lg border border-red-200 dark:border-red-800">
-                    <p className="text-xs font-semibold text-red-700 dark:text-red-400 mb-1">
-                      Día que más gastaste
+                <div className="grid grid-cols-2 gap-2.5 mb-4 px-2">
+                  <div className="backdrop-blur-xl bg-red-500/10 dark:bg-red-500/20 p-2.5 rounded-2xl border border-red-200/30 dark:border-red-400/20 shadow-sm">
+                    <p className="text-[10px] font-medium text-red-600 dark:text-red-400 mb-0.5 tracking-wide uppercase opacity-80">
+                      Más gastaste
                     </p>
-                    <p className="text-sm font-bold text-red-900 dark:text-red-300">
+                    <p className="text-xs font-semibold text-foreground/90 mb-1">
                       {maxExpenseDay.dayFull}
                     </p>
-                    <p className="text-lg font-bold text-red-600 dark:text-red-400 mt-1">
+                    <p className="text-base font-bold text-red-600 dark:text-red-400">
                       ${maxExpenseDay.expense.toLocaleString('es-MX')}
                     </p>
                   </div>
-                  <div className="bg-green-50 dark:bg-green-950/20 p-3 rounded-lg border border-green-200 dark:border-green-800">
-                    <p className="text-xs font-semibold text-green-700 dark:text-green-400 mb-1">
-                      Día que menos gastaste
+                  <div className="backdrop-blur-xl bg-green-500/10 dark:bg-green-500/20 p-2.5 rounded-2xl border border-green-200/30 dark:border-green-400/20 shadow-sm">
+                    <p className="text-[10px] font-medium text-green-600 dark:text-green-400 mb-0.5 tracking-wide uppercase opacity-80">
+                      Menos gastaste
                     </p>
-                    <p className="text-sm font-bold text-green-900 dark:text-green-300">
+                    <p className="text-xs font-semibold text-foreground/90 mb-1">
                       {minExpenseDay.dayFull}
                     </p>
-                    <p className="text-lg font-bold text-green-600 dark:text-green-400 mt-1">
+                    <p className="text-base font-bold text-green-600 dark:text-green-400">
                       ${minExpenseDay.expense.toLocaleString('es-MX')}
                     </p>
                   </div>
