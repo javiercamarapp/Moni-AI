@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell } from 'recharts';
+import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Calendar, Maximize2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -209,7 +209,7 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
           {/* Gráfico pequeño - últimos 7 días */}
           <div className="h-28">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+              <ComposedChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis 
                   dataKey="day" 
@@ -228,16 +228,18 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
                   iconType="circle"
                 />
                 <Bar 
-                  dataKey="Ingresos" 
-                  fill="hsl(150, 60%, 45%)" 
-                  radius={[4, 4, 0, 0]}
-                />
-                <Bar 
                   dataKey="Gastos" 
                   fill="hsl(0, 70%, 55%)" 
                   radius={[4, 4, 0, 0]}
                 />
-              </BarChart>
+                <Line 
+                  dataKey="Ingresos" 
+                  stroke="hsl(150, 60%, 45%)" 
+                  strokeWidth={2}
+                  dot={{ r: 3, fill: 'hsl(150, 60%, 45%)' }}
+                  activeDot={{ r: 4 }}
+                />
+              </ComposedChart>
             </ResponsiveContainer>
           </div>
 
@@ -275,7 +277,7 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
             <ScrollArea className="w-full h-[320px]" orientation="horizontal">
               <div className="w-[1400px] h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={expandedChartData} margin={{ top: 20, right: 30, left: 5, bottom: 20 }}>
+                  <ComposedChart data={expandedChartData} margin={{ top: 20, right: 30, left: 5, bottom: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis 
                     dataKey="dayFull"
@@ -297,16 +299,18 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
                     iconType="circle"
                   />
                   <Bar 
-                    dataKey="Ingresos" 
-                    fill="hsl(150, 60%, 45%)" 
-                    radius={[4, 4, 0, 0]}
-                  />
-                  <Bar 
                     dataKey="Gastos" 
                     fill="hsl(0, 70%, 55%)" 
                     radius={[4, 4, 0, 0]}
                   />
-                  </BarChart>
+                  <Line 
+                    dataKey="Ingresos" 
+                    stroke="hsl(150, 60%, 45%)" 
+                    strokeWidth={3}
+                    dot={{ r: 4, fill: 'hsl(150, 60%, 45%)' }}
+                    activeDot={{ r: 5 }}
+                  />
+                  </ComposedChart>
                 </ResponsiveContainer>
               </div>
             </ScrollArea>
