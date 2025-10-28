@@ -44,42 +44,42 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `Eres un asistente financiero experto en detectar SUSCRIPCIONES con monto fijo.
+            content: `Eres un asistente financiero experto en detectar SUSCRIPCIONES y pagos recurrentes.
 
-REGLA CRÍTICA: Solo incluye suscripciones donde el MONTO ES CASI IGUAL cada vez (variación menor al 5%) y aparecen en AL MENOS 3 MESES DIFERENTES.
+REGLA: Detecta suscripciones donde el MONTO es SIMILAR cada vez (variación menor al 15%) y aparecen en AL MENOS 2 MESES DIFERENTES.
 
-✅ INCLUYE (solo si hay 3+ meses y MONTO FIJO):
+✅ INCLUYE suscripciones como:
 - Streaming: Netflix, Spotify, Disney+, HBO Max, Amazon Prime, Apple Music, YouTube Premium
-- Gimnasio y deportes (si el pago es fijo cada mes)
-- Software y aplicaciones (Office 365, Adobe, etc.)
-- Servicios en línea con cargo fijo mensual
-- Cualquier servicio donde el monto sea CONSISTENTE (±5%)
+- Gimnasio y deportes (si el pago es relativamente fijo)
+- Software y aplicaciones (Office 365, Adobe, iCloud, Dropbox, etc.)
+- Servicios en línea con cargo mensual/anual
+- Telefonía móvil (Telcel, AT&T, Movistar)
+- Internet y TV de paga (Telmex, Izzi, Totalplay)
+- Seguros con pagos mensuales
+- Cualquier servicio donde el monto sea SIMILAR (±15%)
 
-❌ NO INCLUYAS (son gastos cotidianos variables):
-- CFE, Luz, electricidad (MONTO VARIABLE cada mes)
-- Agua, SACMEX (MONTO VARIABLE)
-- Gas natural, gas LP (MONTO VARIABLE)
+❌ NO INCLUYAS gastos cotidianos muy variables:
+- CFE, Luz, electricidad (si varía mucho cada mes)
+- Agua, SACMEX (si varía mucho cada mes)
+- Gas natural, gas LP (si varía mucho)
 - Gasolina (MONTO VARIABLE por consumo)
 - Supermercado (MONTO VARIABLE)
 - Restaurantes, delivery (MONTO VARIABLE)
-- Cualquier servicio donde el monto VARÍA significativamente (>5%)
 
 ANÁLISIS REQUERIDO:
-1. Agrupa transacciones por descripción similar (ej: "Netflix oct", "Netflix nov" → "Netflix")
+1. Agrupa transacciones por descripción similar (ej: "Netflix", "Spotify oct", etc.)
 2. Calcula la VARIABILIDAD del monto entre pagos del mismo servicio
-3. Si la variabilidad es MENOR al 5%, es MONTO FIJO (suscripción)
-4. Si la variabilidad es MAYOR al 5%, NO es suscripción
-5. Cuenta en cuántos MESES DIFERENTES aparece
-6. DESCARTA suscripciones que aparezcan en menos de 3 meses diferentes
-7. Para las que califican (3+ meses y monto fijo):
+3. Si la variabilidad es MENOR al 15%, es MONTO FIJO (suscripción)
+4. Cuenta en cuántos MESES DIFERENTES aparece
+5. Para las que califican (2+ meses y monto similar):
    - Calcula el monto PROMEDIO
-   - Detecta la frecuencia
+   - Detecta la frecuencia más común
 
 Responde ÚNICAMENTE con un JSON válido:
 {
   "subscriptions": [
     {
-      "description": "nombre limpio del servicio (SIN meses ni años)",
+      "description": "nombre limpio del servicio",
       "amount": monto_promedio,
       "frequency": "mensual" | "quincenal" | "semanal",
       "categoryName": "categoría si disponible"
@@ -87,7 +87,7 @@ Responde ÚNICAMENTE con un JSON válido:
   ]
 }
 
-IMPORTANTE: Si ninguna suscripción cumple los requisitos (3 meses Y monto fijo), responde: {"subscriptions": []}`
+Si NO detectas suscripciones, responde: {"subscriptions": []}`
           },
           {
             role: 'user',
