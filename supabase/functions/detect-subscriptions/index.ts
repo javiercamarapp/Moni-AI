@@ -48,15 +48,20 @@ Deno.serve(async (req) => {
 
 REGLA CRÍTICA: Solo incluye suscripciones donde el MONTO SEA EXACTO o casi igual (variación menor al 2%) y aparecen en AL MENOS 2 MESES DIFERENTES.
 
-✅ INCLUYE suscripciones con MONTO FIJO como:
+✅ INCLUYE ÚNICAMENTE SUSCRIPCIONES como:
 - Streaming: Netflix, Spotify, Disney+, HBO Max, Amazon Prime, Apple Music, YouTube Premium
 - Gimnasio y deportes (si el pago es EXACTO cada mes)
 - Software y aplicaciones (Office 365, Adobe, iCloud, Dropbox, etc.)
 - Servicios en línea con cargo mensual/anual FIJO
-- Telefonía móvil con plan fijo (Telcel, AT&T, Movistar)
+- Telefonía móvil con plan fijo (Telcel, AT&T, Movistar, Hotel Cell)
 - Internet y TV de paga con tarifa fija (Telmex, Izzi, Totalplay)
 - Seguros con pagos mensuales FIJOS
-- Cualquier servicio donde el monto sea CONSISTENTE (±2%)
+- Plataformas digitales con membresía
+
+❌ NO INCLUYAS gastos fijos que NO son suscripciones:
+- RENTA, RENTA MENSUAL, ALQUILER (es un gasto fijo, NO suscripción)
+- HIPOTECA, CRÉDITO HIPOTECARIO
+- COLEGIATURAS, INSCRIPCIONES
 
 ❌ NO INCLUYAS gastos variables:
 - CFE, Luz, electricidad (MONTO VARIABLE)

@@ -672,16 +672,25 @@ const Dashboard = () => {
             } else {
               console.log('[Subscriptions] AI Result:', aiResult);
               
-              // Check for price increases and notify user
+              // Check for price increases and create notifications in database
               const subscriptionsWithIncrease = aiResult?.subscriptions?.filter((sub: any) => sub.priceIncrease) || [];
               if (subscriptionsWithIncrease.length > 0) {
-                subscriptionsWithIncrease.forEach((sub: any) => {
-                  toast({
-                    title: "🔔 Aumento de precio detectado",
-                    description: `${sub.description}: aumentó de $${sub.oldAmount?.toFixed(2)} a $${sub.newAmount?.toFixed(2)}. ¿Es el nuevo precio de tu suscripción?`,
-                    duration: 10000,
-                  });
-                });
+                // Insert notifications into database
+                for (const sub of subscriptionsWithIncrease) {
+                  await supabase
+                    .from('notification_history')
+                    .insert({
+                      user_id: user.id,
+                      notification_type: 'price_increase',
+                      message: `${sub.description}: aumentó de $${sub.oldAmount?.toFixed(2)} a $${sub.newAmount?.toFixed(2)}. ¿Es el nuevo precio de tu suscripción?`,
+                      status: 'sent',
+                      metadata: {
+                        subscription: sub.description,
+                        oldAmount: sub.oldAmount,
+                        newAmount: sub.newAmount,
+                      }
+                    });
+                }
               }
             }
 
