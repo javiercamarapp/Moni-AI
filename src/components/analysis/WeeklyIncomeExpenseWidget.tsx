@@ -86,6 +86,13 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
 
       // Process transactions
       if (monthTransactions) {
+        console.log('🔍 Muestra de transacciones:', monthTransactions.slice(0, 5).map(t => ({
+          fecha: t.transaction_date,
+          tipo: t.type,
+          monto: t.amount,
+          descripcion: t.description
+        })));
+        
         monthTransactions.forEach(t => {
           const dateStr = t.transaction_date;
           
@@ -94,6 +101,7 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
             
             if (t.type === 'ingreso') {
               data.income += Number(t.amount);
+              console.log(`✅ Ingreso encontrado: ${dateStr} - $${t.amount}`);
             } else {
               data.expense += Number(t.amount);
             }
@@ -111,7 +119,8 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
         net: data.income - data.expense
       }));
 
-      console.log('📈 Datos procesados (últimos 30 días):', last30DaysArray);
+      console.log('📈 Datos procesados (últimos 30 días):', last30DaysArray.filter(d => d.income > 0 || d.expense > 0));
+      console.log('💰 Total días con ingresos:', last30DaysArray.filter(d => d.income > 0).length);
       setExpandedData(last30DaysArray);
     } catch (error) {
       console.error('Error fetching 30 days data:', error);
