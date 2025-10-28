@@ -30,7 +30,6 @@ import NetWorthEvolutionWidget from "@/components/analysis/NetWorthEvolutionWidg
 import WeeklySpendingPatternWidget from "@/components/analysis/WeeklySpendingPatternWidget";
 import AICoachInsightsWidget from "@/components/analysis/AICoachInsightsWidget";
 import IncomeExpensePieWidget from "@/components/analysis/IncomeExpensePieWidget";
-import CategoryBreakdownWidget from "@/components/analysis/CategoryBreakdownWidget";
 import FinancialHealthPieWidget from "@/components/analysis/FinancialHealthPieWidget";
 import LiquidityGaugeWidget from "@/components/analysis/LiquidityGaugeWidget";
 import { useDashboardData } from "@/hooks/useDashboardData";
@@ -183,7 +182,6 @@ export default function FinancialAnalysis() {
       fetchTransactionsData();
       loadAnalysis();
       loadExpensePatterns();
-      calculateCategoryBreakdown(chartsPeriod);
       
       // Cargar datos de ingresos/gastos para el período actual
       calculateIncomeExpensesByPeriod(chartsPeriod).then(data => {
@@ -196,7 +194,6 @@ export default function FinancialAnalysis() {
   useEffect(() => {
     if (user && chartsPeriod) {
       console.log(`🔄 Actualizando gráficas para período: ${chartsPeriod}`);
-      calculateCategoryBreakdown(chartsPeriod);
       calculateIncomeExpensesByPeriod(chartsPeriod).then(data => {
         console.log(`📊 Datos calculados para ${chartsPeriod}:`, data);
         setChartsData(data);
@@ -1927,14 +1924,6 @@ export default function FinancialAnalysis() {
                 <IncomeExpensePieWidget 
                   income={chartsData.income}
                   expenses={chartsData.expenses}
-                  period={chartsPeriod}
-                  onPeriodChange={(value) => setChartsPeriod(value)}
-                />
-                
-                <CategoryBreakdownWidget 
-                  categories={categoryBreakdownData.length > 0 ? categoryBreakdownData : [
-                    { name: 'Sin datos', value: 1, color: '#9ca3af' }
-                  ]}
                   period={chartsPeriod}
                   onPeriodChange={(value) => setChartsPeriod(value)}
                 />
