@@ -173,6 +173,12 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
+      console.log('🖱️ Tooltip data:', {
+        fecha: data.dayFull || data.day,
+        ingresos: data.Ingresos,
+        gastos: data.Gastos,
+        balance: data.balance
+      });
       const ingresos = data.Ingresos || 0;
       const gastos = data.Gastos || 0;
       const balance = ingresos - gastos;
