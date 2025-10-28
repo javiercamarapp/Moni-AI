@@ -525,7 +525,7 @@ const Balance = () => {
       });
       console.log('Total transactions fetched:', transactions.length);
 
-      // Process ingresos - usar categorías existentes directamente (más rápido)
+      // Process ingresos - usar AI para categorizar correctamente
       const ingresosData = transactions.filter(t => t.type === 'ingreso');
       const totalIng = ingresosData.reduce((sum, t) => sum + Number(t.amount), 0);
       setTotalIngresos(totalIng);
@@ -534,37 +534,80 @@ const Balance = () => {
       console.log('Ingresos count:', ingresosData.length);
       console.log('Total Ingresos:', totalIng);
       
-      // Usar categorías existentes de la BD (mucho más rápido que IA)
-      const categorizedIncome = ingresosData.map(t => ({
-        ...t,
-        category: t.categories?.name || '💼 Salario / Sueldo'
-      }));
+      // Categorizar ingresos con AI para identificar todas las categorías (freelance, inversiones, etc.)
+      let ingresosWithPercentage: CategoryBalance[] = [];
       
-      // Group by AI-detected category
-      const ingresosCategoryMap = new Map<string, {
-        name: string;
-        color: string;
-        total: number;
-      }>();
-      
-      categorizedIncome.forEach((t, index) => {
-        const categoryName = t.category;
-        const existing = ingresosCategoryMap.get(categoryName) || {
-          name: categoryName,
-          color: getIncomeCategoryColor(index),
-          total: 0
-        };
-        existing.total += Number(t.amount);
-        ingresosCategoryMap.set(categoryName, existing);
-      });
-      
-      const ingresosWithPercentage: CategoryBalance[] = Array.from(ingresosCategoryMap.entries()).map(([name, data], index) => ({
-        id: name,
-        name: data.name,
-        color: getIncomeCategoryColor(index),
-        total: data.total,
-        percentage: totalIng > 0 ? data.total / totalIng * 100 : 0
-      })).sort((a, b) => b.total - a.total);
+      if (ingresosData.length > 0) {
+        try {
+          const { data: categorizedData, error: categorizeError } = await supabase.functions.invoke('categorize-income-statement', {
+            body: {
+              transactions: ingresosData.map(t => ({
+                description: t.description,
+                amount: Number(t.amount),
+                date: t.transaction_date
+              }))
+            }
+          });
+
+          if (categorizeError) throw categorizeError;
+
+          // Agrupar por categorías de ingresos detectadas por IA
+          const ingresosCategoryMap = new Map<string, {
+            name: string;
+            color: string;
+            total: number;
+          }>();
+          
+          categorizedData.income.forEach((cat: any, index: number) => {
+            ingresosCategoryMap.set(cat.name, {
+              name: cat.name,
+              color: getIncomeCategoryColor(index),
+              total: cat.total
+            });
+          });
+          
+          ingresosWithPercentage = Array.from(ingresosCategoryMap.entries()).map(([name, data], index) => ({
+            id: name,
+            name: data.name,
+            color: getIncomeCategoryColor(index),
+            total: data.total,
+            percentage: totalIng > 0 ? data.total / totalIng * 100 : 0
+          })).sort((a, b) => b.total - a.total);
+
+        } catch (error) {
+          console.error('Error categorizando ingresos:', error);
+          // Fallback: usar categorías de la BD
+          const categorizedIncome = ingresosData.map(t => ({
+            ...t,
+            category: t.categories?.name || '💼 Salario / Sueldo'
+          }));
+          
+          const ingresosCategoryMap = new Map<string, {
+            name: string;
+            color: string;
+            total: number;
+          }>();
+          
+          categorizedIncome.forEach((t, index) => {
+            const categoryName = t.category;
+            const existing = ingresosCategoryMap.get(categoryName) || {
+              name: categoryName,
+              color: getIncomeCategoryColor(index),
+              total: 0
+            };
+            existing.total += Number(t.amount);
+            ingresosCategoryMap.set(categoryName, existing);
+          });
+          
+          ingresosWithPercentage = Array.from(ingresosCategoryMap.entries()).map(([name, data], index) => ({
+            id: name,
+            name: data.name,
+            color: getIncomeCategoryColor(index),
+            total: data.total,
+            percentage: totalIng > 0 ? data.total / totalIng * 100 : 0
+          })).sort((a, b) => b.total - a.total);
+        }
+      }
       
       setIngresosByCategory(ingresosWithPercentage);
       localStorage.setItem('balance_ingresos', JSON.stringify(ingresosWithPercentage));
