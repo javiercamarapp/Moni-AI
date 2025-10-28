@@ -903,22 +903,6 @@ const Balance = () => {
           <WeeklyIncomeExpenseWidget data={weeklyData} insight={weeklyInsight} />
         )}
 
-        {/* Category Breakdown Widget para Gastos */}
-        {gastosByCategory.length > 0 && (
-          <CategoryBreakdownWidget 
-            title="📊 Gastos por Categoría"
-            categories={gastosByCategory.map(cat => ({
-              name: cat.name,
-              value: cat.total,
-              color: cat.color
-            }))}
-            period={viewMode === 'mensual' ? 'month' : 'year'}
-            onPeriodChange={(value) => {
-              setViewMode(value === 'month' ? 'mensual' : 'anual');
-            }}
-          />
-        )}
-
         {/* Category Breakdown Widget para Ingresos */}
         {ingresosByCategory.length > 0 && (
           <CategoryBreakdownWidget 
@@ -995,65 +979,6 @@ const Balance = () => {
             </div>}
         </Card>
 
-        {/* Gastos por categoría */}
-        <Card className="p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 overflow-hidden animate-fade-in">
-          <div className="flex items-center gap-2 mb-4">
-            <TrendingDown className="h-5 w-5 text-destructive" />
-            <h3 className="text-lg font-semibold tracking-tight text-gray-900">Gastos por Categoría</h3>
-          </div>
-          
-          {gastosByCategory.length === 0 ? <p className="text-gray-600 text-center py-4">No hay gastos registrados</p> : <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Gráfica */}
-              <div className="w-full h-[280px] md:h-[320px] flex items-center justify-center">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={gastosByCategory} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="hsl(var(--destructive))" dataKey="total">
-                      {gastosByCategory.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
-                    </Pie>
-                    <Tooltip content={({
-                  active,
-                  payload
-                }) => {
-                  if (active && payload && payload.length) {
-                    const data = payload[0].payload;
-                    return <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-lg border-0 ring-1 ring-gray-900/5">
-                              <p className="font-semibold text-gray-900 text-sm tracking-tight">{data.name}</p>
-                              <p className="text-lg text-gray-900 font-bold mt-1.5 tracking-tight">
-                                ${data.total.toLocaleString('es-MX', {
-                          minimumFractionDigits: 2
-                        })}
-                              </p>
-                              <p className="text-xs text-gray-500 font-medium mt-1">
-                                {data.percentage.toFixed(1)}% del total
-                              </p>
-                            </div>;
-                  }
-                  return null;
-                }} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              
-              {/* Categorías */}
-              <div className="flex flex-col justify-center space-y-3 py-2">
-                {gastosByCategory.map((category, index) => <div key={index} className="flex items-center gap-3">
-                    <div className="w-4 h-4 rounded-full flex-shrink-0" style={{
-                backgroundColor: category.color
-              }} />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-card-foreground truncate">
-                        {category.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        ${category.total.toLocaleString('es-MX', {
-                    minimumFractionDigits: 2
-                  })} ({category.percentage.toFixed(1)}%)
-                      </p>
-                    </div>
-                  </div>)}
-              </div>
-            </div>}
-        </Card>
       </div>
       
       <BottomNav />
