@@ -604,10 +604,14 @@ export default function FinancialAnalysis() {
       const balance = totalIncome - totalExpenses;
       const savingsRate = totalIncome > 0 ? ((balance / totalIncome) * 100) : 0;
       
-      // Calculate additional metrics
-      const fixedExpenses = transactions
-        .filter(t => (t.type === 'expense' || t.type === 'gasto') && t.frequency && t.frequency !== 'once')
-        .reduce((sum, t) => sum + Number(t.amount), 0);
+      // Calculate additional metrics - Get fixed expenses from configuration
+      const { data: fixedExpensesConfig } = await supabase
+        .from('fixed_expenses_config')
+        .select('monthly_amount')
+        .eq('user_id', user.id);
+      
+      const fixedExpenses = fixedExpensesConfig
+        ?.reduce((sum, config) => sum + Number(config.monthly_amount), 0) || 0;
       
       const variableExpenses = totalExpenses - fixedExpenses;
       const liquidityMonths = totalExpenses > 0 ? (balance / totalExpenses) : 0;
@@ -996,14 +1000,22 @@ export default function FinancialAnalysis() {
         ?.filter(t => t.type === 'expense' || t.type === 'gasto')
         .reduce((sum, t) => sum + Number(t.amount), 0) || 0;
       
-      const fixedExpenses = transactions
-        ?.filter(t => (t.type === 'expense' || t.type === 'gasto') && t.frequency && t.frequency !== 'once')
-        .reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+      // Get fixed expenses from configuration
+      const { data: fixedExpensesConfig } = await supabase
+        .from('fixed_expenses_config')
+        .select('monthly_amount')
+        .eq('user_id', user.id);
       
-      const variableExpenses = expenses - fixedExpenses;
+      const fixedExpenses = fixedExpensesConfig
+        ?.reduce((sum, config) => sum + Number(config.monthly_amount), 0) || 0;
       
-      const result = { income, expenses, fixed: fixedExpenses, variable: variableExpenses };
-      console.log(`✅ Resultado del cálculo:`, result);
+      // For year period, multiply by 12
+      const actualFixedExpenses = periodType === 'year' ? fixedExpenses * 12 : fixedExpenses;
+      
+      const variableExpenses = expenses - actualFixedExpenses;
+      
+      const result = { income, expenses, fixed: actualFixedExpenses, variable: variableExpenses };
+      console.log(`✅ Resultado del cálculo (período: ${periodType}):`, result);
       
       return result;
     } catch (error) {
