@@ -48,42 +48,38 @@ Deno.serve(async (req) => {
 
 REGLA CRÍTICA: Solo incluye suscripciones donde el MONTO SEA EXACTO o casi igual (variación menor al 2%) y aparecen en AL MENOS 2 MESES DIFERENTES.
 
+⚠️ EXCLUSIONES ABSOLUTAS - NUNCA INCLUIR:
+- RENTA, RENTA MENSUAL, ALQUILER, ARRENDAMIENTO (es un gasto fijo, NO suscripción)
+- HIPOTECA, CRÉDITO HIPOTECARIO, PAGO DE CASA
+- COLEGIATURAS, INSCRIPCIONES, MENSUALIDADES ESCOLARES
+- Cualquier descripción que contenga: "renta", "alquiler", "arrendamiento", "hipoteca"
+
 ✅ INCLUYE ÚNICAMENTE SUSCRIPCIONES como:
 - Streaming: Netflix, Spotify, Disney+, HBO Max, Amazon Prime, Apple Music, YouTube Premium
-- Gimnasio y deportes (si el pago es EXACTO cada mes)
-- Software y aplicaciones (Office 365, Adobe, iCloud, Dropbox, etc.)
+- Gimnasio y deportes: Smart Fit, Fitness, Gold's Gym (si el pago es EXACTO)
+- Software y aplicaciones: Office 365, Adobe, iCloud, Dropbox, Canva Pro
 - Servicios en línea con cargo mensual/anual FIJO
-- Telefonía móvil con plan fijo (Telcel, AT&T, Movistar, Hotel Cell)
-- Internet y TV de paga con tarifa fija (Telmex, Izzi, Totalplay)
+- Telefonía móvil con plan fijo: Telcel, AT&T, Movistar, Hotel Cell
+- Internet y TV de paga: Telmex, Izzi, Totalplay, Sky
 - Seguros con pagos mensuales FIJOS
 - Plataformas digitales con membresía
 
-❌ NO INCLUYAS gastos fijos que NO son suscripciones:
-- RENTA, RENTA MENSUAL, ALQUILER (es un gasto fijo, NO suscripción)
-- HIPOTECA, CRÉDITO HIPOTECARIO
-- COLEGIATURAS, INSCRIPCIONES
-
 ❌ NO INCLUYAS gastos variables:
-- CFE, Luz, electricidad (MONTO VARIABLE)
-- Agua, SACMEX (MONTO VARIABLE)
-- Gas natural, gas LP (MONTO VARIABLE)
-- Gasolina (MONTO VARIABLE)
-- Supermercado (MONTO VARIABLE)
-- Restaurantes, delivery (MONTO VARIABLE)
-- Telefonía móvil con consumo variable
-- Cualquier servicio donde el monto varía más del 2%
-
-DETECCIÓN DE AUMENTOS DE PRECIO:
-- Si detectas que una suscripción tiene un patrón donde el monto aumentó de forma consistente (ej: $99 → $129), marca como "priceIncrease": true
-- Indica el "oldAmount" y "newAmount" para notificar al usuario
+- CFE, Luz, electricidad
+- Agua, SACMEX
+- Gas natural, gas LP
+- Gasolina
+- Supermercado
+- Restaurantes, delivery
 
 ANÁLISIS REQUERIDO:
-1. Agrupa transacciones por descripción similar
-2. Calcula la VARIABILIDAD del monto entre pagos
-3. Si la variabilidad es MENOR al 2%, es MONTO EXACTO (suscripción)
-4. Si detectas cambio de precio consistente, márca "priceIncrease": true
-5. Cuenta en cuántos MESES DIFERENTES aparece
-6. Para las que califican (2+ meses y monto exacto):
+1. VERIFICAR que la descripción NO contenga palabras relacionadas con renta/alquiler/hipoteca
+2. Agrupa transacciones por descripción similar
+3. Calcula la VARIABILIDAD del monto entre pagos
+4. Si la variabilidad es MENOR al 2%, es MONTO EXACTO (suscripción)
+5. Si detectas cambio de precio consistente, marca "priceIncrease": true
+6. Cuenta en cuántos MESES DIFERENTES aparece
+7. Para las que califican (2+ meses y monto exacto):
    - Calcula el monto PROMEDIO actual
    - Detecta la frecuencia
 
