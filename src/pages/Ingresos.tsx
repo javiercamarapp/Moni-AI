@@ -681,7 +681,9 @@ const Ingresos = () => {
                 return Number(a.amount) - Number(b.amount);
               }
             }).map((item, index) => {
-              const transactionDate = new Date(item.transaction_date);
+              // Fix timezone issue by parsing date properly
+              const [year, month, day] = item.transaction_date.split('-').map(Number);
+              const transactionDate = new Date(year, month - 1, day);
               
               const capitalizedDescription = item.description.charAt(0).toUpperCase() + item.description.slice(1);
               const capitalizedPaymentMethod = item.payment_method 
