@@ -717,6 +717,7 @@ const Dashboard = () => {
               name: sub.name,
               amount: sub.amount,
               icon: sub.icon,
+              frequency: sub.frequency,
               dueDate: calculateNextDueDate(sub.frequency),
             }));
 
