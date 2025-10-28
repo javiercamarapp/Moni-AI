@@ -93,6 +93,14 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
           descripcion: t.description
         })));
         
+        // Check specifically for Oct 19
+        const oct19Transactions = monthTransactions.filter(t => t.transaction_date === '2025-10-19');
+        console.log('📅 Transacciones del 19 de octubre:', oct19Transactions.map(t => ({
+          tipo: t.type,
+          monto: t.amount,
+          descripcion: t.description
+        })));
+        
         monthTransactions.forEach(t => {
           const dateStr = t.transaction_date;
           
