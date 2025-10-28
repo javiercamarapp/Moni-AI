@@ -1,15 +1,21 @@
 import { Card } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from 'react';
 
 interface IncomeExpensePieWidgetProps {
-  income: number;
-  expenses: number;
-  period: 'month' | 'year';
-  onPeriodChange: (period: 'month' | 'year') => void;
+  monthlyIncome: number;
+  monthlyExpenses: number;
+  yearlyIncome: number;
+  yearlyExpenses: number;
 }
 
-export default function IncomeExpensePieWidget({ income, expenses, period, onPeriodChange }: IncomeExpensePieWidgetProps) {
+export default function IncomeExpensePieWidget({ monthlyIncome, monthlyExpenses, yearlyIncome, yearlyExpenses }: IncomeExpensePieWidgetProps) {
+  const [period, setPeriod] = useState<'month' | 'year'>('month');
+  
+  const income = period === 'month' ? monthlyIncome : yearlyIncome;
+  const expenses = period === 'month' ? monthlyExpenses : yearlyExpenses;
+  
   const validIncome = income && !isNaN(income) ? income : 0;
   const validExpenses = expenses && !isNaN(expenses) ? expenses : 0;
 
@@ -24,7 +30,7 @@ export default function IncomeExpensePieWidget({ income, expenses, period, onPer
     <Card className="p-4 bg-white rounded-[20px] shadow-xl transition-all border border-blue-100 animate-fade-in">
       <div className="flex justify-between items-center mb-3">
         <p className="text-sm font-medium text-foreground">💰 Distribución Ingresos vs Gastos</p>
-        <Tabs value={period} onValueChange={(value) => onPeriodChange(value as 'month' | 'year')} className="w-auto">
+        <Tabs value={period} onValueChange={(value) => setPeriod(value as 'month' | 'year')} className="w-auto">
           <TabsList className="h-7">
             <TabsTrigger value="month" className="text-xs px-2 py-1">Mes</TabsTrigger>
             <TabsTrigger value="year" className="text-xs px-2 py-1">Año</TabsTrigger>

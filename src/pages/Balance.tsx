@@ -115,6 +115,12 @@ const Balance = () => {
     const cached = localStorage.getItem('balance_totalGastos');
     return cached ? parseFloat(cached) : 0;
   });
+  
+  // Estados para el widget de Ingresos vs Gastos (independientes del viewMode)
+  const [monthlyIncome, setMonthlyIncome] = useState(0);
+  const [monthlyExpenses, setMonthlyExpenses] = useState(0);
+  const [yearlyIncome, setYearlyIncome] = useState(0);
+  const [yearlyExpenses, setYearlyExpenses] = useState(0);
   const [loading, setLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasInitialData, setHasInitialData] = useState(() => {
@@ -651,6 +657,35 @@ const Balance = () => {
       setGastosByCategory(gastosWithPercentage);
       localStorage.setItem('balance_gastos', JSON.stringify(gastosWithPercentage));
       setHasInitialData(true);
+      
+      // Calcular totales mensuales y anuales para el widget independiente
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonthNum = now.getMonth();
+      
+      // Calcular totales del mes actual
+      const monthStart = new Date(currentYear, currentMonthNum, 1);
+      const monthEnd = new Date(currentYear, currentMonthNum + 1, 0);
+      const monthTransactions = allTransactions.filter(t => {
+        const txDate = new Date(t.transaction_date);
+        return txDate >= monthStart && txDate <= monthEnd;
+      });
+      const monthInc = monthTransactions.filter(t => t.type === 'ingreso').reduce((sum, t) => sum + Number(t.amount), 0);
+      const monthExp = monthTransactions.filter(t => t.type === 'gasto').reduce((sum, t) => sum + Number(t.amount), 0);
+      setMonthlyIncome(monthInc);
+      setMonthlyExpenses(monthExp);
+      
+      // Calcular totales del año actual
+      const yearStart = new Date(currentYear, 0, 1);
+      const yearEnd = new Date(currentYear, 11, 31);
+      const yearTransactions = allTransactions.filter(t => {
+        const txDate = new Date(t.transaction_date);
+        return txDate >= yearStart && txDate <= yearEnd;
+      });
+      const yearInc = yearTransactions.filter(t => t.type === 'ingreso').reduce((sum, t) => sum + Number(t.amount), 0);
+      const yearExp = yearTransactions.filter(t => t.type === 'gasto').reduce((sum, t) => sum + Number(t.amount), 0);
+      setYearlyIncome(yearInc);
+      setYearlyExpenses(yearExp);
     } catch (error) {
       console.error('Error fetching balance data:', error);
     } finally {
@@ -893,12 +928,10 @@ const Balance = () => {
 
         {/* Widget de distribución Ingresos vs Gastos */}
         <IncomeExpensePieWidget 
-          income={totalIngresos}
-          expenses={totalGastos}
-          period={viewMode === 'mensual' ? 'month' : 'year'}
-          onPeriodChange={(value) => {
-            setViewMode(value === 'month' ? 'mensual' : 'anual');
-          }}
+          monthlyIncome={monthlyIncome}
+          monthlyExpenses={monthlyExpenses}
+          yearlyIncome={yearlyIncome}
+          yearlyExpenses={yearlyExpenses}
         />
 
         {/* Category Breakdown Widget para Ingresos */}
