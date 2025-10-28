@@ -493,7 +493,7 @@ export default function Budgets() {
                               'text-emerald-700'
                             }`}>{budget.category.name}</p>
                           </div>
-                          <p className={`text-xs font-bold ${
+                          <p className={`text-xs font-bold flex-shrink-0 whitespace-nowrap ${
                             isCritical ? 'text-rose-600' :
                             isWarning ? 'text-amber-600' :
                             'text-emerald-600'
