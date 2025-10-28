@@ -330,7 +330,10 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
                     interval={0}
                   />
                   <YAxis 
-                    domain={[0, (dataMax: number) => Math.ceil(dataMax * 1.1)]}
+                    domain={[0, (dataMax: number) => {
+                      const maxExpense = Math.max(...expandedChartData.map(d => d.Gastos));
+                      return Math.ceil(maxExpense * 1.1);
+                    }]}
                     tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     stroke="hsl(var(--border))"
                     tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
@@ -344,13 +347,6 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
                     dataKey="Gastos" 
                     fill="hsl(0, 70%, 55%)" 
                     radius={[4, 4, 0, 0]}
-                  />
-                  <Line 
-                    dataKey="Ingresos" 
-                    stroke="hsl(150, 60%, 45%)" 
-                    strokeWidth={2}
-                    dot={{ r: 3, fill: 'hsl(150, 60%, 45%)' }}
-                    activeDot={{ r: 4 }}
                   />
                   </ComposedChart>
                 </ResponsiveContainer>
