@@ -289,6 +289,7 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
                     interval={0}
                   />
                   <YAxis 
+                    domain={[0, 'dataMax']}
                     tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     stroke="hsl(var(--border))"
                     tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
