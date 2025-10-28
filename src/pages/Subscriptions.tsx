@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Calendar, CreditCard, TrendingDown } from 'lucide-react';
+import { ArrowLeft, Calendar, CreditCard, TrendingDown, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useQuery } from '@tanstack/react-query';
@@ -59,6 +59,27 @@ const calculateNextPaymentDate = (frequency: string): string => {
       now.setMonth(now.getMonth() + 1);
   }
   return now.toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' });
+};
+
+const getSubscriptionUrl = (name: string): string | null => {
+  const lowerName = name.toLowerCase();
+  if (lowerName.includes('netflix')) return 'https://www.netflix.com';
+  if (lowerName.includes('spotify')) return 'https://www.spotify.com';
+  if (lowerName.includes('disney')) return 'https://www.disneyplus.com';
+  if (lowerName.includes('prime') || lowerName.includes('amazon')) return 'https://www.amazon.com/prime';
+  if (lowerName.includes('hbo')) return 'https://www.hbomax.com';
+  if (lowerName.includes('apple music')) return 'https://music.apple.com';
+  if (lowerName.includes('apple tv')) return 'https://tv.apple.com';
+  if (lowerName.includes('youtube')) return 'https://www.youtube.com/premium';
+  if (lowerName.includes('shopify')) return 'https://www.shopify.com';
+  if (lowerName.includes('adobe')) return 'https://www.adobe.com';
+  if (lowerName.includes('canva')) return 'https://www.canva.com';
+  if (lowerName.includes('dropbox')) return 'https://www.dropbox.com';
+  if (lowerName.includes('google')) return 'https://one.google.com';
+  if (lowerName.includes('icloud')) return 'https://www.icloud.com';
+  if (lowerName.includes('microsoft') || lowerName.includes('office')) return 'https://www.microsoft.com/microsoft-365';
+  if (lowerName.includes('zoom')) return 'https://zoom.us';
+  return null;
 };
 
 export default function Subscriptions() {
@@ -272,6 +293,21 @@ export default function Subscriptions() {
                 </div>
               </div>
             </div>
+            
+            {/* Subscription link button */}
+            {getSubscriptionUrl(sub.name) && (
+              <div className="mt-3 pt-3 border-t border-border">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full text-xs bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700 hover:text-blue-800"
+                  onClick={() => window.open(getSubscriptionUrl(sub.name)!, '_blank')}
+                >
+                  <ExternalLink className="h-3 w-3 mr-1.5" />
+                  Ir a {sub.name}
+                </Button>
+              </div>
+            )}
           </Card>
         ))}
       </div>
