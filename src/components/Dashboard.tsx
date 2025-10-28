@@ -648,14 +648,13 @@ const Dashboard = () => {
         // Detectar suscripciones siempre
         console.log('[Subscriptions] Starting detection...');
         
-        // Fetch last 100 expense transactions for AI analysis
+        // Fetch all expense transactions for AI analysis
         const { data: allExpenses } = await supabase
           .from('transactions')
           .select('*, categories(name)')
           .eq('user_id', user.id)
           .eq('type', 'gasto')
-          .order('transaction_date', { ascending: false })
-          .limit(100);
+          .order('transaction_date', { ascending: false });
 
         console.log('[Subscriptions] Found transactions:', allExpenses?.length || 0);
 
