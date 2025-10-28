@@ -14,6 +14,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recha
 import { useToast } from '@/hooks/use-toast';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import WeeklyIncomeExpenseWidget from '@/components/analysis/WeeklyIncomeExpenseWidget';
+import CategoryBreakdownWidget from '@/components/analysis/CategoryBreakdownWidget';
 
 interface CategoryBalance {
   id: string;
@@ -865,6 +866,19 @@ const Balance = () => {
         {/* Widget de análisis semanal */}
         {weeklyData.length > 0 && (
           <WeeklyIncomeExpenseWidget data={weeklyData} insight={weeklyInsight} />
+        )}
+
+        {/* Category Breakdown Widget para Gastos */}
+        {gastosByCategory.length > 0 && (
+          <CategoryBreakdownWidget 
+            categories={gastosByCategory.map(cat => ({
+              name: cat.name,
+              value: cat.total,
+              color: cat.color
+            }))}
+            period={viewMode === 'mensual' ? 'month' : 'year'}
+            onPeriodChange={() => {}}
+          />
         )}
 
         {/* Ingresos por categoría */}

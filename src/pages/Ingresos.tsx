@@ -34,7 +34,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { LoadingScreen } from '@/components/LoadingScreen';
-import CategoryBreakdownWidget from '@/components/analysis/CategoryBreakdownWidget';
 
 const Ingresos = () => {
   const navigate = useNavigate();
@@ -57,46 +56,10 @@ const Ingresos = () => {
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState<'recent' | 'highest' | 'lowest'>('recent');
   const [isProcessingReceipt, setIsProcessingReceipt] = useState(false);
-  const [categoryBreakdownData, setCategoryBreakdownData] = useState<any[]>([]);
 
   useEffect(() => {
     fetchData();
   }, [currentMonth, viewMode]);
-
-  useEffect(() => {
-    // Calcular breakdown de categorías cuando cambien las transacciones
-    if (transactions.length > 0) {
-      const categoryTotals = new Map<string, { name: string; total: number; color: string }>();
-      
-      transactions.forEach(t => {
-        const catName = t.categories?.name || 'Sin categoría';
-        const catColor = t.categories?.color || '#9ca3af';
-        const existing = categoryTotals.get(catName);
-        
-        if (existing) {
-          existing.total += Number(t.amount);
-        } else {
-          categoryTotals.set(catName, {
-            name: catName,
-            total: Number(t.amount),
-            color: catColor
-          });
-        }
-      });
-      
-      const breakdown = Array.from(categoryTotals.values())
-        .sort((a, b) => b.total - a.total)
-        .map(cat => ({
-          name: cat.name,
-          value: cat.total,
-          color: cat.color
-        }));
-      
-      setCategoryBreakdownData(breakdown);
-    } else {
-      setCategoryBreakdownData([]);
-    }
-  }, [transactions]);
 
   const fetchData = async () => {
     try {
@@ -683,15 +646,6 @@ const Ingresos = () => {
             </Button>
           </div>
         </Card>
-
-        {/* Category Breakdown Widget */}
-        {categoryBreakdownData.length > 0 && (
-          <CategoryBreakdownWidget 
-            categories={categoryBreakdownData}
-            period={viewMode === 'mensual' ? 'month' : 'year'}
-            onPeriodChange={() => {}}
-          />
-        )}
 
         {/* Lista de transacciones */}
         <div className="space-y-3">
