@@ -1379,7 +1379,20 @@ const Dashboard = () => {
                       <div className="flex justify-between items-center">
                         <p className="text-[8px] text-foreground/70 font-semibold">Total mensual</p>
                         <p className="text-[9px] font-black text-foreground">
-                          ${upcomingSubscriptions.reduce((sum, s) => sum + s.amount, 0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                          ${upcomingSubscriptions.reduce((sum, s) => {
+                            const amount = s.amount;
+                            const freq = s.frequency?.toLowerCase() || 'mensual';
+                            switch (freq) {
+                              case 'anual':
+                                return sum + (amount / 12);
+                              case 'semanal':
+                                return sum + (amount * 4);
+                              case 'quincenal':
+                                return sum + (amount * 2);
+                              default:
+                                return sum + amount;
+                            }
+                          }, 0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                         </p>
                       </div>
                     </div>
