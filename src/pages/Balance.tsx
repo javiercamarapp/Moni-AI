@@ -544,35 +544,27 @@ const Balance = () => {
               transactions: ingresosData.map(t => ({
                 description: t.description,
                 amount: Number(t.amount),
-                date: t.transaction_date
+                type: 'ingreso'
               }))
             }
           });
 
           if (categorizeError) throw categorizeError;
 
-          // Agrupar por categorías de ingresos detectadas por IA
-          const ingresosCategoryMap = new Map<string, {
-            name: string;
-            color: string;
-            total: number;
-          }>();
-          
-          categorizedData.income.forEach((cat: any, index: number) => {
-            ingresosCategoryMap.set(cat.name, {
-              name: cat.name,
+          console.log('📊 Datos categorizados de ingresos:', categorizedData);
+
+          // Verificar que tenemos datos válidos
+          if (categorizedData && categorizedData.ingresos && Array.isArray(categorizedData.ingresos)) {
+            ingresosWithPercentage = categorizedData.ingresos.map((cat: any, index: number) => ({
+              id: cat.categoria,
+              name: cat.categoria,
               color: getIncomeCategoryColor(index),
-              total: cat.total
-            });
-          });
-          
-          ingresosWithPercentage = Array.from(ingresosCategoryMap.entries()).map(([name, data], index) => ({
-            id: name,
-            name: data.name,
-            color: getIncomeCategoryColor(index),
-            total: data.total,
-            percentage: totalIng > 0 ? data.total / totalIng * 100 : 0
-          })).sort((a, b) => b.total - a.total);
+              total: cat.monto,
+              percentage: totalIng > 0 ? (cat.monto / totalIng) * 100 : 0
+            })).sort((a, b) => b.total - a.total);
+          } else {
+            throw new Error('Estructura de datos inválida');
+          }
 
         } catch (error) {
           console.error('Error categorizando ingresos:', error);
