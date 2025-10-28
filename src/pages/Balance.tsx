@@ -871,13 +871,32 @@ const Balance = () => {
         {/* Category Breakdown Widget para Gastos */}
         {gastosByCategory.length > 0 && (
           <CategoryBreakdownWidget 
+            title="📊 Gastos por Categoría"
             categories={gastosByCategory.map(cat => ({
               name: cat.name,
               value: cat.total,
               color: cat.color
             }))}
             period={viewMode === 'mensual' ? 'month' : 'year'}
-            onPeriodChange={() => {}}
+            onPeriodChange={(value) => {
+              setViewMode(value === 'month' ? 'mensual' : 'anual');
+            }}
+          />
+        )}
+
+        {/* Category Breakdown Widget para Ingresos */}
+        {ingresosByCategory.length > 0 && (
+          <CategoryBreakdownWidget 
+            title="💰 Ingresos por Categoría"
+            categories={ingresosByCategory.map(cat => ({
+              name: cat.name,
+              value: cat.total,
+              color: cat.color
+            }))}
+            period={viewMode === 'mensual' ? 'month' : 'year'}
+            onPeriodChange={(value) => {
+              setViewMode(value === 'month' ? 'mensual' : 'anual');
+            }}
           />
         )}
 

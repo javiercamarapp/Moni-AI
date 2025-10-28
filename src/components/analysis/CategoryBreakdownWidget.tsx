@@ -12,11 +12,12 @@ interface CategoryBreakdownWidgetProps {
   categories: CategoryData[];
   period: 'month' | 'year';
   onPeriodChange: (period: 'month' | 'year') => void;
+  title?: string;
 }
 
 const COLORS = ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#ef4444', '#14b8a6', '#f97316', '#a855f7', '#06b6d4', '#84cc16', '#eab308'];
 
-export default function CategoryBreakdownWidget({ categories, period, onPeriodChange }: CategoryBreakdownWidgetProps) {
+export default function CategoryBreakdownWidget({ categories, period, onPeriodChange, title = "📊 Gastos por Categoría" }: CategoryBreakdownWidgetProps) {
   const validCategories = categories.filter(cat => cat.value && !isNaN(cat.value) && cat.value > 0);
   const total = validCategories.reduce((sum, cat) => sum + cat.value, 0);
 
@@ -31,7 +32,7 @@ export default function CategoryBreakdownWidget({ categories, period, onPeriodCh
   return (
     <Card className="p-4 bg-white rounded-[20px] shadow-xl transition-all border border-blue-100 animate-fade-in">
       <div className="flex justify-between items-center mb-3">
-        <p className="text-sm font-medium text-foreground">📊 Gastos por Categoría</p>
+        <p className="text-sm font-medium text-foreground">{title}</p>
         <Tabs value={period} onValueChange={(value) => onPeriodChange(value as 'month' | 'year')} className="w-auto">
           <TabsList className="h-7">
             <TabsTrigger value="month" className="text-xs px-2 py-1">Mes</TabsTrigger>
