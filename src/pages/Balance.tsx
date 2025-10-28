@@ -903,11 +903,11 @@ const Balance = () => {
           <WeeklyIncomeExpenseWidget data={weeklyData} insight={weeklyInsight} />
         )}
 
-        {/* Category Breakdown Widget para Gastos */}
-        {gastosByCategory.length > 0 && (
+        {/* Category Breakdown Widget para Ingresos */}
+        {ingresosByCategory.length > 0 && (
           <CategoryBreakdownWidget 
-            title="📊 Gastos por Categoría"
-            categories={gastosByCategory.map(cat => ({
+            title="💰 Ingresos por Categoría"
+            categories={ingresosByCategory.map(cat => ({
               name: cat.name,
               value: cat.total,
               color: cat.color
@@ -919,11 +919,11 @@ const Balance = () => {
           />
         )}
 
-        {/* Category Breakdown Widget para Ingresos */}
-        {ingresosByCategory.length > 0 && (
+        {/* Category Breakdown Widget para Gastos */}
+        {gastosByCategory.length > 0 && (
           <CategoryBreakdownWidget 
-            title="💰 Ingresos por Categoría"
-            categories={ingresosByCategory.map(cat => ({
+            title="📊 Gastos por Categoría"
+            categories={gastosByCategory.map(cat => ({
               name: cat.name,
               value: cat.total,
               color: cat.color
