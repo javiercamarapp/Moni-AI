@@ -67,30 +67,30 @@ const Social = () => {
 
         <div className="mx-auto px-4 py-6 space-y-4" style={{ maxWidth: '600px' }}>
           {/* User Profile Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-6">
-            <div className="flex items-center gap-4">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
+            <div className="flex items-center gap-3">
               {/* Avatar */}
-              <Avatar className="h-20 w-20 border-4 border-primary/20">
+              <Avatar className="h-12 w-12 border-2 border-primary/20">
                 <AvatarImage src={user?.user_metadata?.avatar_url} />
-                <AvatarFallback className="bg-primary/10 text-primary text-xl font-semibold">
+                <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
                   {user?.email ? getInitials(user.email) : "US"}
                 </AvatarFallback>
               </Avatar>
 
               {/* User Info */}
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-lg font-bold text-gray-900">
                   {user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Usuario"}
                 </h2>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-xs text-gray-600 mt-0.5">
                   {user?.email || "usuario@ejemplo.com"}
                 </p>
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="text-xs text-gray-500">Score Moni:</span>
-                  <span className={`text-sm font-semibold ${getScoreColor(scoreMoni)}`}>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="text-[10px] text-gray-500">Score Moni:</span>
+                  <span className={`text-xs font-semibold ${getScoreColor(scoreMoni)}`}>
                     {scoreMoni}/100
                   </span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full bg-primary/10 ${getScoreColor(scoreMoni)}`}>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 ${getScoreColor(scoreMoni)}`}>
                     {getScoreLabel(scoreMoni)}
                   </span>
                 </div>
@@ -98,8 +98,8 @@ const Social = () => {
             </div>
 
             {/* Bio/Description */}
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <p className="text-sm text-gray-600">
+            <div className="mt-3 pt-3 border-t border-gray-200">
+              <p className="text-xs text-gray-600">
                 {user?.user_metadata?.bio || "Mejorando mis finanzas con Moni AI 🚀"}
               </p>
             </div>
