@@ -44,50 +44,60 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `Eres un asistente financiero experto en detectar SUSCRIPCIONES y pagos recurrentes.
+            content: `Eres un asistente financiero experto en detectar SUSCRIPCIONES con montos EXACTOS O CASI EXACTOS.
 
-REGLA: Detecta suscripciones donde el MONTO es SIMILAR cada vez (variación menor al 15%) y aparecen en AL MENOS 2 MESES DIFERENTES.
+REGLA CRÍTICA: Solo incluye suscripciones donde el MONTO SEA EXACTO o casi igual (variación menor al 2%) y aparecen en AL MENOS 2 MESES DIFERENTES.
 
-✅ INCLUYE suscripciones como:
+✅ INCLUYE suscripciones con MONTO FIJO como:
 - Streaming: Netflix, Spotify, Disney+, HBO Max, Amazon Prime, Apple Music, YouTube Premium
-- Gimnasio y deportes (si el pago es relativamente fijo)
+- Gimnasio y deportes (si el pago es EXACTO cada mes)
 - Software y aplicaciones (Office 365, Adobe, iCloud, Dropbox, etc.)
-- Servicios en línea con cargo mensual/anual
-- Telefonía móvil (Telcel, AT&T, Movistar)
-- Internet y TV de paga (Telmex, Izzi, Totalplay)
-- Seguros con pagos mensuales
-- Cualquier servicio donde el monto sea SIMILAR (±15%)
+- Servicios en línea con cargo mensual/anual FIJO
+- Telefonía móvil con plan fijo (Telcel, AT&T, Movistar)
+- Internet y TV de paga con tarifa fija (Telmex, Izzi, Totalplay)
+- Seguros con pagos mensuales FIJOS
+- Cualquier servicio donde el monto sea CONSISTENTE (±2%)
 
-❌ NO INCLUYAS gastos cotidianos muy variables:
-- CFE, Luz, electricidad (si varía mucho cada mes)
-- Agua, SACMEX (si varía mucho cada mes)
-- Gas natural, gas LP (si varía mucho)
-- Gasolina (MONTO VARIABLE por consumo)
+❌ NO INCLUYAS gastos variables:
+- CFE, Luz, electricidad (MONTO VARIABLE)
+- Agua, SACMEX (MONTO VARIABLE)
+- Gas natural, gas LP (MONTO VARIABLE)
+- Gasolina (MONTO VARIABLE)
 - Supermercado (MONTO VARIABLE)
 - Restaurantes, delivery (MONTO VARIABLE)
+- Telefonía móvil con consumo variable
+- Cualquier servicio donde el monto varía más del 2%
+
+DETECCIÓN DE AUMENTOS DE PRECIO:
+- Si detectas que una suscripción tiene un patrón donde el monto aumentó de forma consistente (ej: $99 → $129), marca como "priceIncrease": true
+- Indica el "oldAmount" y "newAmount" para notificar al usuario
 
 ANÁLISIS REQUERIDO:
-1. Agrupa transacciones por descripción similar (ej: "Netflix", "Spotify oct", etc.)
-2. Calcula la VARIABILIDAD del monto entre pagos del mismo servicio
-3. Si la variabilidad es MENOR al 15%, es MONTO FIJO (suscripción)
-4. Cuenta en cuántos MESES DIFERENTES aparece
-5. Para las que califican (2+ meses y monto similar):
-   - Calcula el monto PROMEDIO
-   - Detecta la frecuencia más común
+1. Agrupa transacciones por descripción similar
+2. Calcula la VARIABILIDAD del monto entre pagos
+3. Si la variabilidad es MENOR al 2%, es MONTO EXACTO (suscripción)
+4. Si detectas cambio de precio consistente, márca "priceIncrease": true
+5. Cuenta en cuántos MESES DIFERENTES aparece
+6. Para las que califican (2+ meses y monto exacto):
+   - Calcula el monto PROMEDIO actual
+   - Detecta la frecuencia
 
 Responde ÚNICAMENTE con un JSON válido:
 {
   "subscriptions": [
     {
       "description": "nombre limpio del servicio",
-      "amount": monto_promedio,
+      "amount": monto_promedio_actual,
       "frequency": "mensual" | "quincenal" | "semanal",
-      "categoryName": "categoría si disponible"
+      "categoryName": "categoría si disponible",
+      "priceIncrease": true/false,
+      "oldAmount": monto_anterior (solo si priceIncrease es true),
+      "newAmount": monto_nuevo (solo si priceIncrease es true)
     }
   ]
 }
 
-Si NO detectas suscripciones, responde: {"subscriptions": []}`
+Si NO detectas suscripciones con monto exacto, responde: {"subscriptions": []}`
           },
           {
             role: 'user',
