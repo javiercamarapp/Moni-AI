@@ -1923,10 +1923,18 @@ export default function FinancialAnalysis() {
 
             {/* Additional Financial Health Charts */}
             <div className="space-y-3">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3">
                 <IncomeExpensePieWidget 
                   income={chartsData.income}
                   expenses={chartsData.expenses}
+                  period={chartsPeriod}
+                  onPeriodChange={(value) => setChartsPeriod(value)}
+                />
+                
+                <CategoryBreakdownWidget 
+                  categories={categoryBreakdownData.length > 0 ? categoryBreakdownData : [
+                    { name: 'Sin datos', value: 1, color: '#9ca3af' }
+                  ]}
                   period={chartsPeriod}
                   onPeriodChange={(value) => setChartsPeriod(value)}
                 />
@@ -1939,14 +1947,6 @@ export default function FinancialAnalysis() {
                   onPeriodChange={(value) => setChartsPeriod(value)}
                 />
               </div>
-
-              <CategoryBreakdownWidget 
-                categories={categoryBreakdownData.length > 0 ? categoryBreakdownData : [
-                  { name: 'Sin datos', value: 1, color: '#9ca3af' }
-                ]}
-                period={chartsPeriod}
-                onPeriodChange={(value) => setChartsPeriod(value)}
-              />
             </div>
 
             {/* New Historical Comparison Widgets */}
