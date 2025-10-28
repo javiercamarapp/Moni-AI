@@ -195,10 +195,10 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
               Actividad Financiera (Último Mes)
             </DialogTitle>
           </DialogHeader>
-          <ScrollArea className="w-full h-[350px]">
-            <div className="w-[1400px] h-[300px]">
+          <ScrollArea className="w-full h-[350px]" orientation="horizontal">
+            <div className="w-[1400px] h-[300px] pb-4">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={expandedChartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                <BarChart data={expandedChartData} margin={{ top: 20, right: 30, left: 5, bottom: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis 
                     dataKey="dayFull"
