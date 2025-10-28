@@ -163,17 +163,21 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
-      const balance = payload[0].payload.balance;
+      const data = payload[0].payload;
+      const ingresos = data.Ingresos || 0;
+      const gastos = data.Gastos || 0;
+      const balance = ingresos - gastos;
       const isPositive = balance >= 0;
       return (
-        <div className="bg-white p-3 rounded-lg shadow-lg border border-border">
-          <p className="text-xs font-medium mb-1">{payload[0].payload.dayFull || payload[0].payload.day}</p>
-          {payload.map((entry: any, index: number) => (
-            <p key={index} className="text-xs" style={{ color: entry.color }}>
-              {entry.name}: ${entry.value.toLocaleString('es-MX')}
-            </p>
-          ))}
-          <div className={`text-xs font-bold mt-2 pt-2 border-t ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-border">
+          <p className="text-xs font-medium mb-2">{data.dayFull || data.day}</p>
+          <p className="text-xs text-green-600 dark:text-green-400">
+            Ingresos: ${ingresos.toLocaleString('es-MX')}
+          </p>
+          <p className="text-xs text-red-600 dark:text-red-400">
+            Gastos: ${gastos.toLocaleString('es-MX')}
+          </p>
+          <div className={`text-xs font-bold mt-2 pt-2 border-t ${isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
             Balance: ${Math.abs(balance).toLocaleString('es-MX')} {isPositive ? '✓' : '✗'}
           </div>
         </div>
