@@ -82,6 +82,27 @@ const getSubscriptionUrl = (name: string): string | null => {
   return null;
 };
 
+const getUnsubscribeUrl = (name: string): string | null => {
+  const lowerName = name.toLowerCase();
+  if (lowerName.includes('netflix')) return 'https://www.netflix.com/cancelplan';
+  if (lowerName.includes('spotify')) return 'https://www.spotify.com/account/subscription/';
+  if (lowerName.includes('disney')) return 'https://www.disneyplus.com/account/subscription';
+  if (lowerName.includes('prime') || lowerName.includes('amazon')) return 'https://www.amazon.com/mc/manageprimemembership';
+  if (lowerName.includes('hbo')) return 'https://www.hbomax.com/subscription';
+  if (lowerName.includes('apple music')) return 'https://apps.apple.com/account/subscriptions';
+  if (lowerName.includes('apple tv')) return 'https://apps.apple.com/account/subscriptions';
+  if (lowerName.includes('youtube')) return 'https://www.youtube.com/paid_memberships';
+  if (lowerName.includes('shopify')) return 'https://admin.shopify.com/settings/billing';
+  if (lowerName.includes('adobe')) return 'https://account.adobe.com/plans';
+  if (lowerName.includes('canva')) return 'https://www.canva.com/settings/billing-and-teams';
+  if (lowerName.includes('dropbox')) return 'https://www.dropbox.com/account/billing';
+  if (lowerName.includes('google')) return 'https://one.google.com/settings/subscriptions';
+  if (lowerName.includes('icloud')) return 'https://apps.apple.com/account/subscriptions';
+  if (lowerName.includes('microsoft') || lowerName.includes('office')) return 'https://account.microsoft.com/services';
+  if (lowerName.includes('zoom')) return 'https://zoom.us/billing';
+  return null;
+};
+
 export default function Subscriptions() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -294,18 +315,32 @@ export default function Subscriptions() {
               </div>
             </div>
             
-            {/* Subscription link button */}
-            {getSubscriptionUrl(sub.name) && (
-              <div className="mt-3 pt-3 border-t border-border">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full text-xs bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700 hover:text-blue-800"
-                  onClick={() => window.open(getSubscriptionUrl(sub.name)!, '_blank')}
-                >
-                  <ExternalLink className="h-3 w-3 mr-1.5" />
-                  Ir a {sub.name}
-                </Button>
+            {/* Action buttons */}
+            {(getSubscriptionUrl(sub.name) || getUnsubscribeUrl(sub.name)) && (
+              <div className="mt-4 pt-3 border-t border-gray-100">
+                <div className="flex gap-2">
+                  {getSubscriptionUrl(sub.name) && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex-1 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50/50 border-0 h-9 transition-colors"
+                      onClick={() => window.open(getSubscriptionUrl(sub.name)!, '_blank')}
+                    >
+                      <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                      Abrir
+                    </Button>
+                  )}
+                  {getUnsubscribeUrl(sub.name) && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex-1 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50/50 border-0 h-9 transition-colors"
+                      onClick={() => window.open(getUnsubscribeUrl(sub.name)!, '_blank')}
+                    >
+                      Cancelar
+                    </Button>
+                  )}
+                </div>
               </div>
             )}
           </Card>
