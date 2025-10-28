@@ -29,7 +29,6 @@ import BurnRateWidget from "@/components/analysis/BurnRateWidget";
 import NetWorthEvolutionWidget from "@/components/analysis/NetWorthEvolutionWidget";
 import WeeklySpendingPatternWidget from "@/components/analysis/WeeklySpendingPatternWidget";
 import AICoachInsightsWidget from "@/components/analysis/AICoachInsightsWidget";
-import IncomeExpensePieWidget from "@/components/analysis/IncomeExpensePieWidget";
 import FinancialHealthPieWidget from "@/components/analysis/FinancialHealthPieWidget";
 import LiquidityGaugeWidget from "@/components/analysis/LiquidityGaugeWidget";
 import { useDashboardData } from "@/hooks/useDashboardData";
@@ -1921,13 +1920,6 @@ export default function FinancialAnalysis() {
             {/* Additional Financial Health Charts */}
             <div className="space-y-3">
               <div className="grid grid-cols-1 gap-3">
-                <IncomeExpensePieWidget 
-                  income={chartsData.income}
-                  expenses={chartsData.expenses}
-                  period={chartsPeriod}
-                  onPeriodChange={(value) => setChartsPeriod(value)}
-                />
-                
                 <FinancialHealthPieWidget 
                   savings={chartsData.income - chartsData.expenses > 0 ? chartsData.income - chartsData.expenses : 0}
                   fixedExpenses={chartsPeriod === 'year' ? (expensePatterns?.fixed?.total || 0) * 12 : (expensePatterns?.fixed?.total || 0)}

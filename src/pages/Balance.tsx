@@ -15,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import WeeklyIncomeExpenseWidget from '@/components/analysis/WeeklyIncomeExpenseWidget';
 import CategoryBreakdownWidget from '@/components/analysis/CategoryBreakdownWidget';
+import IncomeExpensePieWidget from '@/components/analysis/IncomeExpensePieWidget';
 
 interface CategoryBalance {
   id: string;
@@ -889,6 +890,16 @@ const Balance = () => {
         {weeklyData.length > 0 && (
           <WeeklyIncomeExpenseWidget data={weeklyData} insight={weeklyInsight} />
         )}
+
+        {/* Widget de distribución Ingresos vs Gastos */}
+        <IncomeExpensePieWidget 
+          income={totalIngresos}
+          expenses={totalGastos}
+          period={viewMode === 'mensual' ? 'month' : 'year'}
+          onPeriodChange={(value) => {
+            setViewMode(value === 'month' ? 'mensual' : 'anual');
+          }}
+        />
 
         {/* Category Breakdown Widget para Ingresos */}
         {ingresosByCategory.length > 0 && (
