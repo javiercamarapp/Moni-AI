@@ -195,15 +195,19 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
               Actividad Financiera (Último Mes)
             </DialogTitle>
           </DialogHeader>
-          <ScrollArea className="w-full">
-            <div className="min-w-[1200px] h-[300px] pr-4">
+          <ScrollArea className="w-full h-[350px]">
+            <div className="w-[1400px] h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={expandedChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <BarChart data={expandedChartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis 
-                    dataKey="day" 
+                    dataKey="dayFull"
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
                     tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     stroke="hsl(var(--border))"
+                    interval={0}
                   />
                   <YAxis 
                     tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
@@ -215,16 +219,16 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
                     wrapperStyle={{ fontSize: '11px' }}
                     iconType="circle"
                   />
-                  <Bar dataKey="Ingresos" radius={[4, 4, 0, 0]}>
-                    {expandedChartData.map((entry, index) => (
-                      <Cell key={`cell-income-${index}`} fill="hsl(150, 60%, 45%)" />
-                    ))}
-                  </Bar>
-                  <Bar dataKey="Gastos" radius={[4, 4, 0, 0]}>
-                    {expandedChartData.map((entry, index) => (
-                      <Cell key={`cell-expense-${index}`} fill="hsl(0, 70%, 55%)" />
-                    ))}
-                  </Bar>
+                  <Bar 
+                    dataKey="Ingresos" 
+                    fill="hsl(150, 60%, 45%)" 
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar 
+                    dataKey="Gastos" 
+                    fill="hsl(0, 70%, 55%)" 
+                    radius={[4, 4, 0, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
