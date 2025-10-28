@@ -322,51 +322,53 @@ const Balance = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Get last 30 days of data
+      // Get last 7 days of data
       const today = new Date();
       today.setHours(23, 59, 59, 999);
       
       const startDate = new Date(today);
-      startDate.setDate(today.getDate() - 29); // Last 30 days including today
+      startDate.setDate(today.getDate() - 6); // Last 7 days including today
       startDate.setHours(0, 0, 0, 0);
 
-      console.log('📅 Último mes:', {
+      console.log('📅 Últimos 7 días:', {
         inicio: startDate.toISOString().split('T')[0],
         fin: today.toISOString().split('T')[0]
       });
 
-      // Fetch transactions for last 30 days
-      const { data: monthTransactions } = await supabase
+      // Fetch transactions for last 7 days
+      const { data: weekTransactions } = await supabase
         .from('transactions')
         .select('*')
         .eq('user_id', user.id)
         .gte('transaction_date', startDate.toISOString().split('T')[0])
         .lte('transaction_date', today.toISOString().split('T')[0]);
 
-      console.log('📊 Transacciones del último mes:', monthTransactions?.length || 0);
+      console.log('📊 Transacciones de la semana:', weekTransactions?.length || 0);
 
-      // Create a map for all 30 days
-      const dayMap = new Map<string, { date: string; income: number; expense: number }>();
+      // Create a map for all 7 days
+      const dayMap = new Map<string, { date: string; dayName: string; income: number; expense: number }>();
       
-      // Initialize all 30 days
-      for (let i = 29; i >= 0; i--) {
+      // Initialize all 7 days
+      for (let i = 6; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(today.getDate() - i);
         date.setHours(0, 0, 0, 0);
         
         const dateStr = date.toISOString().split('T')[0];
-        const dayName = date.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' });
+        const dayName = date.toLocaleDateString('es-MX', { weekday: 'short' });
+        const fullDayName = date.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'short' });
         
         dayMap.set(dateStr, { 
-          date: dayName,
+          date: fullDayName,
+          dayName: dayName,
           income: 0, 
           expense: 0 
         });
       }
 
       // Process transactions
-      if (monthTransactions) {
-        monthTransactions.forEach(t => {
+      if (weekTransactions) {
+        weekTransactions.forEach(t => {
           const dateStr = t.transaction_date;
           
           if (dayMap.has(dateStr)) {
@@ -382,8 +384,8 @@ const Balance = () => {
       }
 
       // Convert to array format for chart
-      const monthlyDataArray: DayData[] = Array.from(dayMap.entries()).map(([dateStr, data]) => ({
-        day: data.date.split(' ')[0], // Short day name for small view
+      const weeklyDataArray: DayData[] = Array.from(dayMap.entries()).map(([dateStr, data]) => ({
+        day: data.dayName, // Short day name for small view
         dayFull: data.date, // Full date for expanded view
         date: dateStr,
         income: data.income,
@@ -391,16 +393,16 @@ const Balance = () => {
         net: data.income - data.expense
       }));
 
-      console.log('📈 Datos procesados (últimos 30 días):', monthlyDataArray.length);
+      console.log('📈 Datos procesados (últimos 7 días):', weeklyDataArray);
 
-      setWeeklyData(monthlyDataArray);
+      setWeeklyData(weeklyDataArray);
 
       // Generate insight using AI
       const { data: aiData } = await supabase.functions.invoke('financial-analysis', {
         body: {
-          analysisType: 'monthly-pattern',
-          data: monthlyDataArray,
-          transactions: monthTransactions || [],
+          analysisType: 'weekly-pattern',
+          data: weeklyDataArray,
+          transactions: weekTransactions || [],
           period: {
             start: startDate.toISOString().split('T')[0],
             end: today.toISOString().split('T')[0]
@@ -412,7 +414,7 @@ const Balance = () => {
         setWeeklyInsight(aiData.insight);
       }
     } catch (error) {
-      console.error('Error fetching monthly data:', error);
+      console.error('Error fetching weekly data:', error);
     }
   };
 
