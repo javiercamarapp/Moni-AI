@@ -28,11 +28,11 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
   const expandedData = useMemo(() => {
     if (!data || data.length === 0) return [];
     
-    // Get last 30 days of data from the API
+    // Get last 30 days of data from the API - ordered from most recent to oldest
     const today = new Date();
     const last30Days: DailyData[] = [];
     
-    for (let i = 29; i >= 0; i--) {
+    for (let i = 0; i <= 29; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() - i);
       const dateStr = date.toISOString().split('T')[0];
@@ -51,6 +51,7 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
       });
     }
     
+    console.log('🔍 Expanded Data (30 days):', last30Days);
     return last30Days;
   }, [data]);
 
@@ -94,6 +95,10 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
     Gastos: item.expense,
     balance: item.income - item.expense
   }));
+
+  console.log('📊 Chart Data (7 days):', chartData);
+  console.log('📊 Expanded Chart Data (30 days):', expandedChartData);
+  console.log('🤖 AI Insight:', insight);
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -176,10 +181,16 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
           </div>
 
           {/* Insight de la IA */}
-          {insight && (
+          {insight ? (
             <div className="bg-primary/10 rounded-2xl px-3 py-2.5 border border-primary/20 shadow-sm animate-fade-in">
               <p className="text-[10px] text-primary leading-snug font-medium">
                 <span className="text-xs">🤖</span> <span className="font-semibold">Análisis IA:</span> {insight}
+              </p>
+            </div>
+          ) : (
+            <div className="bg-muted/50 rounded-2xl px-3 py-2.5 border border-border/20 shadow-sm">
+              <p className="text-[10px] text-muted-foreground leading-snug font-medium">
+                <span className="text-xs">🤖</span> <span className="font-semibold">Análisis IA:</span> No hay suficientes datos para análisis
               </p>
             </div>
           )}
@@ -195,8 +206,8 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
               Actividad Financiera (Último Mes)
             </DialogTitle>
           </DialogHeader>
-          <ScrollArea className="w-full h-[350px]" orientation="horizontal">
-            <div className="w-[1400px] h-[300px] pb-4">
+          <ScrollArea className="w-full h-[320px]" orientation="horizontal">
+            <div className="w-[1400px] h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={expandedChartData} margin={{ top: 20, right: 30, left: 5, bottom: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
