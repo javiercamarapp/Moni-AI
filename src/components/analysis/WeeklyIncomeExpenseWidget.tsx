@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell } from 'recharts';
 import { Calendar, Maximize2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { supabase } from "@/integrations/supabase/client";
 
 interface DailyData {
   date?: string;
@@ -23,37 +24,101 @@ interface WeeklyIncomeExpenseProps {
 
 export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncomeExpenseProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [expandedData, setExpandedData] = useState<DailyData[]>([]);
+  const [isLoadingExpanded, setIsLoadingExpanded] = useState(false);
 
-  // For the expanded view, we want to show last 30 days grouped by week
-  const expandedData = useMemo(() => {
-    if (!data || data.length === 0) return [];
-    
-    // Get last 30 days of data from the API - ordered from most recent to oldest
-    const today = new Date();
-    const last30Days: DailyData[] = [];
-    
-    for (let i = 0; i <= 29; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
-      const dayName = date.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' });
-      
-      // Find existing data for this date or create empty
-      const existingData = data.find(d => d.date === dateStr);
-      
-      last30Days.push({
-        day: dayName.split(' ')[0],
-        dayFull: dayName,
-        date: dateStr,
-        income: existingData?.income || 0,
-        expense: existingData?.expense || 0,
-        net: (existingData?.income || 0) - (existingData?.expense || 0)
-      });
+  // Fetch 30 days of data when dialog opens
+  useEffect(() => {
+    if (isDialogOpen && expandedData.length === 0) {
+      fetchLast30Days();
     }
-    
-    console.log('🔍 Expanded Data (30 days):', last30Days);
-    return last30Days;
-  }, [data]);
+  }, [isDialogOpen]);
+
+  const fetchLast30Days = async () => {
+    try {
+      setIsLoadingExpanded(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Get last 30 days of data
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+      
+      const startDate = new Date(today);
+      startDate.setDate(today.getDate() - 29); // Last 30 days including today
+      startDate.setHours(0, 0, 0, 0);
+
+      console.log('📅 Últimos 30 días:', {
+        inicio: startDate.toISOString().split('T')[0],
+        fin: today.toISOString().split('T')[0]
+      });
+
+      // Fetch transactions for last 30 days
+      const { data: monthTransactions } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('transaction_date', startDate.toISOString().split('T')[0])
+        .lte('transaction_date', today.toISOString().split('T')[0]);
+
+      console.log('📊 Transacciones del mes (30 días):', monthTransactions?.length || 0);
+
+      // Create a map for all 30 days
+      const dayMap = new Map<string, { date: string; dayName: string; income: number; expense: number }>();
+      
+      // Initialize all 30 days - from most recent to oldest
+      for (let i = 0; i <= 29; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        date.setHours(0, 0, 0, 0);
+        
+        const dateStr = date.toISOString().split('T')[0];
+        const dayName = date.toLocaleDateString('es-MX', { weekday: 'short' });
+        const fullDayName = date.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' });
+        
+        dayMap.set(dateStr, { 
+          date: fullDayName,
+          dayName: dayName,
+          income: 0, 
+          expense: 0 
+        });
+      }
+
+      // Process transactions
+      if (monthTransactions) {
+        monthTransactions.forEach(t => {
+          const dateStr = t.transaction_date;
+          
+          if (dayMap.has(dateStr)) {
+            const data = dayMap.get(dateStr)!;
+            
+            if (t.type === 'ingreso') {
+              data.income += Number(t.amount);
+            } else {
+              data.expense += Number(t.amount);
+            }
+          }
+        });
+      }
+
+      // Convert to array format for chart - keep chronological order from most recent
+      const last30DaysArray: DailyData[] = Array.from(dayMap.entries()).map(([dateStr, data]) => ({
+        day: data.dayName,
+        dayFull: data.date,
+        date: dateStr,
+        income: data.income,
+        expense: data.expense,
+        net: data.income - data.expense
+      }));
+
+      console.log('📈 Datos procesados (últimos 30 días):', last30DaysArray);
+      setExpandedData(last30DaysArray);
+    } catch (error) {
+      console.error('Error fetching 30 days data:', error);
+    } finally {
+      setIsLoadingExpanded(false);
+    }
+  };
 
   if (!data || data.length === 0) {
     return (
@@ -95,10 +160,6 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
     Gastos: item.expense,
     balance: item.income - item.expense
   }));
-
-  console.log('📊 Chart Data (7 days):', chartData);
-  console.log('📊 Expanded Chart Data (30 days):', expandedChartData);
-  console.log('🤖 AI Insight:', insight);
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -206,10 +267,15 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
               Actividad Financiera (Último Mes)
             </DialogTitle>
           </DialogHeader>
-          <ScrollArea className="w-full h-[320px]" orientation="horizontal">
-            <div className="w-[1400px] h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={expandedChartData} margin={{ top: 20, right: 30, left: 5, bottom: 20 }}>
+          {isLoadingExpanded ? (
+            <div className="flex items-center justify-center h-[320px]">
+              <p className="text-sm text-muted-foreground">Cargando últimos 30 días...</p>
+            </div>
+          ) : (
+            <ScrollArea className="w-full h-[320px]" orientation="horizontal">
+              <div className="w-[1400px] h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={expandedChartData} margin={{ top: 20, right: 30, left: 5, bottom: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis 
                     dataKey="dayFull"
@@ -240,10 +306,11 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
                     fill="hsl(0, 70%, 55%)" 
                     radius={[4, 4, 0, 0]}
                   />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </ScrollArea>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </ScrollArea>
+          )}
         </DialogContent>
       </Dialog>
     </>
