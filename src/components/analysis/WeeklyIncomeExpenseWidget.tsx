@@ -1,10 +1,10 @@
+import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell } from 'recharts';
 import { Calendar, Maximize2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState } from "react";
 
 interface DailyData {
   date?: string;
