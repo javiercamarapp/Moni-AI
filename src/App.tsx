@@ -43,6 +43,7 @@ import DayExpenses from './pages/DayExpenses';
 import Reports from './pages/Reports';
 import CategoryExpenses from './pages/CategoryExpenses';
 import Social from './pages/Social';
+import SavingSimulation from './pages/SavingSimulation';
 import Goals from './pages/Goals';
 import AccountsCards from './pages/AccountsCards';
 import FixedExpenses from './pages/FixedExpenses';
@@ -111,6 +112,7 @@ function App() {
           <Route path="/proximos-movimientos" element={<ProximosMovimientos />} />
           <Route path="/edit-assets-liabilities" element={<EditNetWorth />} />
           <Route path="/social" element={<Social />} />
+          <Route path="/saving-simulation" element={<SavingSimulation />} />
           <Route path="/goals" element={<Goals />} />
           <Route path="/accounts-cards" element={<AccountsCards />} />
           <Route path="/fixed-expenses" element={<FixedExpenses />} />
