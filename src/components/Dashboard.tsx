@@ -645,65 +645,71 @@ const Dashboard = () => {
           setUpcomingSubscriptions(JSON.parse(cachedSubs));
         }
 
-        // Check if we need to update (once per day)
-        const now2 = Date.now();
-        const ONE_DAY = 24 * 60 * 60 * 1000;
-        const shouldUpdate = !lastUpdate || (now2 - parseInt(lastUpdate)) > ONE_DAY;
+        // Detectar suscripciones siempre
+        console.log('[Subscriptions] Starting detection...');
+        
+        // Fetch last 100 expense transactions for AI analysis
+        const { data: allExpenses } = await supabase
+          .from('transactions')
+          .select('*, categories(name)')
+          .eq('user_id', user.id)
+          .eq('type', 'gasto')
+          .order('transaction_date', { ascending: false })
+          .limit(100);
 
-        if (shouldUpdate) {
-          // Ejecutar AI en background sin bloquear la UI
-          setTimeout(async () => {
-            try {
-              // Fetch last 100 expense transactions for AI analysis (instead of all)
-              const { data: allExpenses } = await supabase
-                .from('transactions')
-                .select('*, categories(name)')
-                .eq('user_id', user.id)
-                .eq('type', 'gasto')
-                .order('transaction_date', { ascending: false })
-                .limit(100);
+        console.log('[Subscriptions] Found transactions:', allExpenses?.length || 0);
 
-              if (allExpenses && allExpenses.length > 0) {
-                // Use AI to detect subscriptions
-                const { data: aiResult } = await supabase.functions.invoke('detect-subscriptions', {
-                  body: { transactions: allExpenses }
-                });
+        if (allExpenses && allExpenses.length > 0) {
+          try {
+            // Use AI to detect subscriptions
+            console.log('[Subscriptions] Calling detect-subscriptions function...');
+            const { data: aiResult, error: aiError } = await supabase.functions.invoke('detect-subscriptions', {
+              body: { transactions: allExpenses }
+            });
 
-                // Agrupar por nombre de concepto para mostrar solo UNO por tipo
-                const uniqueSubs = new Map();
-                (aiResult?.subscriptions || []).forEach((sub: any) => {
-                  const normalizedName = sub.description.toLowerCase()
-                    .replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '')
-                    .replace(/\s*\d{4}$/g, '')
-                    .trim();
-                  
-                  if (!uniqueSubs.has(normalizedName)) {
-                    uniqueSubs.set(normalizedName, {
-                      name: sub.description.replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '').trim(),
-                      amount: Number(sub.amount),
-                      icon: getSubscriptionIcon(sub.description),
-                      frequency: sub.frequency || 'mensual',
-                    });
-                  }
-                });
-
-                const detectedSubs = Array.from(uniqueSubs.values()).map((sub: any, index: number) => ({
-                  id: `ai-sub-${index}`,
-                  name: sub.name,
-                  amount: sub.amount,
-                  icon: sub.icon,
-                  dueDate: calculateNextDueDate(sub.frequency),
-                }));
-
-                setUpcomingSubscriptions(detectedSubs);
-                // Cache the results
-                localStorage.setItem('cachedSubscriptions', JSON.stringify(detectedSubs));
-                localStorage.setItem('subscriptionsLastUpdate', now2.toString());
-              }
-            } catch (aiError) {
-              console.error('Error calling AI:', aiError);
+            if (aiError) {
+              console.error('[Subscriptions] Error from function:', aiError);
+            } else {
+              console.log('[Subscriptions] AI Result:', aiResult);
             }
-          }, 100); // Ejecutar después de 100ms para no bloquear
+
+            // Agrupar por nombre de concepto para mostrar solo UNO por tipo
+            const uniqueSubs = new Map();
+            (aiResult?.subscriptions || []).forEach((sub: any) => {
+              const normalizedName = sub.description.toLowerCase()
+                .replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '')
+                .replace(/\s*\d{4}$/g, '')
+                .trim();
+              
+              if (!uniqueSubs.has(normalizedName)) {
+                uniqueSubs.set(normalizedName, {
+                  name: sub.description.replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '').trim(),
+                  amount: Number(sub.amount),
+                  icon: getSubscriptionIcon(sub.description),
+                  frequency: sub.frequency || 'mensual',
+                });
+              }
+            });
+
+            const detectedSubs = Array.from(uniqueSubs.values()).map((sub: any, index: number) => ({
+              id: `ai-sub-${index}`,
+              name: sub.name,
+              amount: sub.amount,
+              icon: sub.icon,
+              dueDate: calculateNextDueDate(sub.frequency),
+            }));
+
+            console.log('[Subscriptions] Detected subscriptions:', detectedSubs.length);
+            setUpcomingSubscriptions(detectedSubs);
+            
+            // Cache the results
+            localStorage.setItem('cachedSubscriptions', JSON.stringify(detectedSubs));
+            localStorage.setItem('subscriptionsLastUpdate', Date.now().toString());
+          } catch (aiError) {
+            console.error('[Subscriptions] Error calling AI:', aiError);
+          }
+        } else {
+          console.log('[Subscriptions] No transactions found for detection');
         }
 
         // Mock credit card debts (esto se obtendría de la conexión bancaria real)
@@ -1314,7 +1320,7 @@ const Dashboard = () => {
 
                 {upcomingSubscriptions.length === 0 ? (
                   <div className="text-center py-1 flex-1 flex flex-col justify-center">
-                    <p className="text-[9px] text-foreground/70">Sin suscripciones</p>
+                    <p className="text-[9px] text-foreground/70">Detectando suscripciones...</p>
                   </div>
                 ) : (
                   <>
