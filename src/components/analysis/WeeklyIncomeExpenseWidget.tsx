@@ -50,7 +50,8 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
 
       console.log('📅 Últimos 30 días:', {
         inicio: startDate.toISOString().split('T')[0],
-        fin: today.toISOString().split('T')[0]
+        fin: today.toISOString().split('T')[0],
+        añoActual: today.getFullYear()
       });
 
       // Fetch transactions for last 30 days
