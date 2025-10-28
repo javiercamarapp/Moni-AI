@@ -21,6 +21,21 @@ export default function SubscriptionsWidget({ subscriptions, totalMonthly }: Sub
   const unusedSubs = subscriptions.filter(s => s.daysUnused >= 30);
   const increasedSubs = subscriptions.filter(s => s.priceChange && s.priceChange > 0);
 
+  // Calcular el total mensual correctamente basado en frecuencia
+  const calculatedTotal = subscriptions.reduce((sum, sub) => {
+    const amount = sub.amount;
+    switch (sub.frequency?.toLowerCase()) {
+      case 'anual':
+        return sum + (amount / 12);
+      case 'semanal':
+        return sum + (amount * 4);
+      case 'quincenal':
+        return sum + (amount * 2);
+      default:
+        return sum + amount;
+    }
+  }, 0);
+
   return (
     <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 transition-all">
       <div className="space-y-3">
@@ -28,7 +43,7 @@ export default function SubscriptionsWidget({ subscriptions, totalMonthly }: Sub
           <div>
             <p className="text-xs font-medium text-foreground">💳 Suscripciones</p>
             <p className="text-xs text-muted-foreground">
-              Total: <span className="text-purple-600 font-bold">${totalMonthly}/mes</span>
+              Total: <span className="text-purple-600 font-bold">${calculatedTotal.toFixed(0)}/mes</span>
             </p>
           </div>
           {(unusedSubs.length > 0 || increasedSubs.length > 0) && (
