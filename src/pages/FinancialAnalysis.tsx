@@ -610,10 +610,16 @@ export default function FinancialAnalysis() {
         .select('monthly_amount')
         .eq('user_id', user.id);
       
+      console.log('💰 Configuración de gastos fijos (calculateQuickMetrics):', fixedExpensesConfig);
+      
       const fixedExpenses = fixedExpensesConfig
         ?.reduce((sum, config) => sum + Number(config.monthly_amount), 0) || 0;
       
+      console.log(`💰 Total gastos fijos: $${fixedExpenses}`);
+      
       const variableExpenses = totalExpenses - fixedExpenses;
+      
+      console.log(`💰 Gastos variables: $${variableExpenses} (Total: $${totalExpenses} - Fijos: $${fixedExpenses})`);
       const liquidityMonths = totalExpenses > 0 ? (balance / totalExpenses) : 0;
       
       // Score rápido
@@ -1006,11 +1012,17 @@ export default function FinancialAnalysis() {
         .select('monthly_amount')
         .eq('user_id', user.id);
       
+      console.log('💰 Configuración de gastos fijos:', fixedExpensesConfig);
+      
       const fixedExpenses = fixedExpensesConfig
         ?.reduce((sum, config) => sum + Number(config.monthly_amount), 0) || 0;
       
+      console.log(`💰 Total gastos fijos configurados: $${fixedExpenses}`);
+      
       // For year period, multiply by 12
       const actualFixedExpenses = periodType === 'year' ? fixedExpenses * 12 : fixedExpenses;
+      
+      console.log(`💰 Gastos fijos para período ${periodType}: $${actualFixedExpenses}`);
       
       const variableExpenses = expenses - actualFixedExpenses;
       
