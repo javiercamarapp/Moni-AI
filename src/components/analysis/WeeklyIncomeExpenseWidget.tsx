@@ -274,6 +274,47 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
               <p className="text-sm text-muted-foreground">Cargando últimos 30 días...</p>
             </div>
           ) : (
+            <>
+            {/* Estadísticas de gastos */}
+            {(() => {
+              const daysWithExpenses = expandedData.filter(d => d.expense > 0);
+              if (daysWithExpenses.length === 0) return null;
+              
+              const maxExpenseDay = daysWithExpenses.reduce((max, day) => 
+                day.expense > max.expense ? day : max
+              );
+              const minExpenseDay = daysWithExpenses.reduce((min, day) => 
+                day.expense < min.expense ? day : min
+              );
+
+              return (
+                <div className="grid grid-cols-2 gap-3 mb-4 px-2">
+                  <div className="bg-red-50 dark:bg-red-950/20 p-3 rounded-lg border border-red-200 dark:border-red-800">
+                    <p className="text-xs font-semibold text-red-700 dark:text-red-400 mb-1">
+                      Día que más gastaste
+                    </p>
+                    <p className="text-sm font-bold text-red-900 dark:text-red-300">
+                      {maxExpenseDay.dayFull}
+                    </p>
+                    <p className="text-lg font-bold text-red-600 dark:text-red-400 mt-1">
+                      ${maxExpenseDay.expense.toLocaleString('es-MX')}
+                    </p>
+                  </div>
+                  <div className="bg-green-50 dark:bg-green-950/20 p-3 rounded-lg border border-green-200 dark:border-green-800">
+                    <p className="text-xs font-semibold text-green-700 dark:text-green-400 mb-1">
+                      Día que menos gastaste
+                    </p>
+                    <p className="text-sm font-bold text-green-900 dark:text-green-300">
+                      {minExpenseDay.dayFull}
+                    </p>
+                    <p className="text-lg font-bold text-green-600 dark:text-green-400 mt-1">
+                      ${minExpenseDay.expense.toLocaleString('es-MX')}
+                    </p>
+                  </div>
+                </div>
+              );
+            })()}
+            
             <ScrollArea className="w-full h-[320px]" orientation="horizontal">
               <div className="w-[1400px] h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -289,7 +330,7 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
                     interval={0}
                   />
                   <YAxis 
-                    domain={[0, 'dataMax']}
+                    domain={[0, (dataMax: number) => Math.ceil(dataMax * 1.1)]}
                     tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     stroke="hsl(var(--border))"
                     tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
@@ -304,17 +345,11 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
                     fill="hsl(0, 70%, 55%)" 
                     radius={[4, 4, 0, 0]}
                   />
-                  <Line 
-                    dataKey="Ingresos" 
-                    stroke="hsl(150, 60%, 45%)" 
-                    strokeWidth={3}
-                    dot={{ r: 4, fill: 'hsl(150, 60%, 45%)' }}
-                    activeDot={{ r: 5 }}
-                  />
                   </ComposedChart>
                 </ResponsiveContainer>
               </div>
             </ScrollArea>
+            </>
           )}
         </DialogContent>
       </Dialog>
