@@ -50,8 +50,7 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
 
       console.log('📅 Últimos 30 días:', {
         inicio: startDate.toISOString().split('T')[0],
-        fin: today.toISOString().split('T')[0],
-        añoActual: today.getFullYear()
+        fin: today.toISOString().split('T')[0]
       });
 
       // Fetch transactions for last 30 days
@@ -61,8 +60,6 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
         .eq('user_id', user.id)
         .gte('transaction_date', startDate.toISOString().split('T')[0])
         .lte('transaction_date', today.toISOString().split('T')[0]);
-
-      console.log('📊 Transacciones del mes (30 días):', monthTransactions?.length || 0);
 
       // Create a map for all 30 days
       const dayMap = new Map<string, { date: string; dayName: string; income: number; expense: number }>();
@@ -87,21 +84,6 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
 
       // Process transactions
       if (monthTransactions) {
-        console.log('🔍 Muestra de transacciones:', monthTransactions.slice(0, 5).map(t => ({
-          fecha: t.transaction_date,
-          tipo: t.type,
-          monto: t.amount,
-          descripcion: t.description
-        })));
-        
-        // Check specifically for Oct 19
-        const oct19Transactions = monthTransactions.filter(t => t.transaction_date === '2025-10-19');
-        console.log('📅 Transacciones del 19 de octubre:', oct19Transactions.map(t => ({
-          tipo: t.type,
-          monto: t.amount,
-          descripcion: t.description
-        })));
-        
         monthTransactions.forEach(t => {
           const dateStr = t.transaction_date;
           
@@ -110,7 +92,6 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
             
             if (t.type === 'ingreso') {
               data.income += Number(t.amount);
-              console.log(`✅ Ingreso encontrado: ${dateStr} - $${t.amount}`);
             } else {
               data.expense += Number(t.amount);
             }
@@ -128,8 +109,6 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
         net: data.income - data.expense
       }));
 
-      console.log('📈 Datos procesados (últimos 30 días):', last30DaysArray.filter(d => d.income > 0 || d.expense > 0));
-      console.log('💰 Total días con ingresos:', last30DaysArray.filter(d => d.income > 0).length);
       setExpandedData(last30DaysArray);
     } catch (error) {
       console.error('Error fetching 30 days data:', error);
@@ -182,12 +161,6 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
-      console.log('🖱️ Tooltip data:', {
-        fecha: data.dayFull || data.day,
-        ingresos: data.Ingresos,
-        gastos: data.Gastos,
-        balance: data.balance
-      });
       const ingresos = data.Ingresos || 0;
       const gastos = data.Gastos || 0;
       const balance = ingresos - gastos;
