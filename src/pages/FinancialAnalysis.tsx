@@ -1933,8 +1933,8 @@ export default function FinancialAnalysis() {
                 
                 <FinancialHealthPieWidget 
                   savings={chartsData.income - chartsData.expenses > 0 ? chartsData.income - chartsData.expenses : 0}
-                  fixedExpenses={chartsData.fixed}
-                  variableExpenses={chartsData.variable}
+                  fixedExpenses={expensePatterns?.fixed?.total || 0}
+                  variableExpenses={expensePatterns?.variable?.total || 0}
                   period={chartsPeriod}
                   onPeriodChange={(value) => setChartsPeriod(value)}
                 />
