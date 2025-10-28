@@ -92,7 +92,7 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
           <div className="flex items-center gap-2 justify-between">
             <div className="flex items-center gap-2">
               <Calendar className="h-3 w-3 text-primary" />
-              <h3 className="text-sm sm:text-xs font-bold text-foreground drop-shadow-sm">📊 Actividad Reciente (Últimos 7 días)</h3>
+              <h3 className="text-sm sm:text-xs font-bold text-foreground drop-shadow-sm">📊 Actividad Reciente (Último Mes)</h3>
             </div>
             <Maximize2 className="h-3 w-3 text-primary" />
           </div>
@@ -101,16 +101,16 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
           <div className="h-28">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis 
                   dataKey="day" 
-                  tick={{ fontSize: 8, fill: '#6B7280' }}
-                  stroke="#9CA3AF"
+                  tick={{ fontSize: 8, fill: 'hsl(var(--muted-foreground))' }}
+                  stroke="hsl(var(--border))"
                   interval={0}
                 />
                 <YAxis 
-                  tick={{ fontSize: 8, fill: '#6B7280' }}
-                  stroke="#9CA3AF"
+                  tick={{ fontSize: 8, fill: 'hsl(var(--muted-foreground))' }}
+                  stroke="hsl(var(--border))"
                   tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
                 />
                 <Tooltip content={<CustomTooltip />} />
@@ -120,12 +120,12 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
                 />
                 <Bar 
                   dataKey="Ingresos" 
-                  fill="#10b981" 
+                  fill="hsl(150, 60%, 45%)" 
                   radius={[4, 4, 0, 0]}
                 />
                 <Bar 
                   dataKey="Gastos" 
-                  fill="#ef4444" 
+                  fill="hsl(0, 70%, 55%)" 
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
@@ -153,33 +153,33 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
             </DialogTitle>
           </DialogHeader>
           <ScrollArea className="w-full">
-            <div className="min-w-[800px] h-[400px] pr-4">
+            <div className="min-w-[800px] h-[300px] pr-4">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis 
                     dataKey="day" 
-                    tick={{ fontSize: 11, fill: '#6B7280' }}
-                    stroke="#9CA3AF"
+                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                    stroke="hsl(var(--border))"
                   />
                   <YAxis 
-                    tick={{ fontSize: 11, fill: '#6B7280' }}
-                    stroke="#9CA3AF"
+                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                    stroke="hsl(var(--border))"
                     tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
                   />
                   <Tooltip content={<CustomTooltip />} />
                   <Legend 
-                    wrapperStyle={{ fontSize: '12px' }}
+                    wrapperStyle={{ fontSize: '11px' }}
                     iconType="circle"
                   />
                   <Bar dataKey="Ingresos" radius={[4, 4, 0, 0]}>
                     {chartData.map((entry, index) => (
-                      <Cell key={`cell-income-${index}`} fill="#10b981" />
+                      <Cell key={`cell-income-${index}`} fill="hsl(150, 60%, 45%)" />
                     ))}
                   </Bar>
                   <Bar dataKey="Gastos" radius={[4, 4, 0, 0]}>
                     {chartData.map((entry, index) => (
-                      <Cell key={`cell-expense-${index}`} fill="#ef4444" />
+                      <Cell key={`cell-expense-${index}`} fill="hsl(0, 70%, 55%)" />
                     ))}
                   </Bar>
                 </BarChart>

@@ -322,103 +322,88 @@ const Balance = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Get current date
+      // Get last 30 days of data
       const today = new Date();
-      const currentDayOfWeek = today.getDay(); // 0 = Domingo, 6 = Sábado
+      today.setHours(23, 59, 59, 999);
       
-      // Calculate start of current week (always Monday)
-      const startOfWeek = new Date(today);
-      if (currentDayOfWeek === 0) {
-        // If Sunday, go back 6 days to Monday
-        startOfWeek.setDate(today.getDate() - 6);
-      } else {
-        // For other days, go back to Monday
-        startOfWeek.setDate(today.getDate() - (currentDayOfWeek - 1));
-      }
-      startOfWeek.setHours(0, 0, 0, 0);
-      
-      // Calculate end (today at end of day)
-      const endOfWeek = new Date(today);
-      endOfWeek.setHours(23, 59, 59, 999);
+      const startDate = new Date(today);
+      startDate.setDate(today.getDate() - 29); // Last 30 days including today
+      startDate.setHours(0, 0, 0, 0);
 
-      console.log('📅 Semana actual:', {
-        inicio: startOfWeek.toISOString().split('T')[0],
-        fin: endOfWeek.toISOString().split('T')[0],
-        diaActual: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][currentDayOfWeek],
-        currentDayOfWeek
+      console.log('📅 Último mes:', {
+        inicio: startDate.toISOString().split('T')[0],
+        fin: today.toISOString().split('T')[0]
       });
 
-      // Fetch transactions for current week only
-      const { data: weekTransactions } = await supabase
+      // Fetch transactions for last 30 days
+      const { data: monthTransactions } = await supabase
         .from('transactions')
         .select('*')
         .eq('user_id', user.id)
-        .gte('transaction_date', startOfWeek.toISOString().split('T')[0])
-        .lte('transaction_date', endOfWeek.toISOString().split('T')[0]);
+        .gte('transaction_date', startDate.toISOString().split('T')[0])
+        .lte('transaction_date', today.toISOString().split('T')[0]);
 
-      console.log('📊 Transacciones de la semana:', weekTransactions?.length || 0);
+      console.log('📊 Transacciones del último mes:', monthTransactions?.length || 0);
 
-      // Initialize all days of the week that have passed (including today)
-      const dayNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-      const dayMap = new Map<string, { income: number; expense: number; count: number }>();
+      // Create a map for all 30 days
+      const dayMap = new Map<string, { date: string; income: number; expense: number }>();
       
-      // Determine how many days to show based on current day
-      let daysToShowCount = currentDayOfWeek === 0 ? 7 : currentDayOfWeek; // If Sunday, show all 7 days
-      
-      for (let i = 0; i < daysToShowCount; i++) {
-        const dayName = dayNames[i];
-        dayMap.set(dayName, { income: 0, expense: 0, count: 0 });
+      // Initialize all 30 days
+      for (let i = 29; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        date.setHours(0, 0, 0, 0);
+        
+        const dateStr = date.toISOString().split('T')[0];
+        const dayName = date.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' });
+        
+        dayMap.set(dateStr, { 
+          date: dayName,
+          income: 0, 
+          expense: 0 
+        });
       }
 
-      console.log('📅 Días a mostrar:', Array.from(dayMap.keys()));
-
       // Process transactions
-      if (weekTransactions) {
-        weekTransactions.forEach(t => {
-          const date = new Date(t.transaction_date + 'T00:00:00');
-          const dayIndex = date.getDay();
-          // Convert Sunday (0) to 6, Monday (1) to 0, etc.
-          const adjustedIndex = dayIndex === 0 ? 6 : dayIndex - 1;
-          const dayName = dayNames[adjustedIndex];
+      if (monthTransactions) {
+        monthTransactions.forEach(t => {
+          const dateStr = t.transaction_date;
           
-          console.log(`📝 Transacción ${t.transaction_date}: ${dayName}, tipo: ${t.type}, monto: ${t.amount}`);
-          
-          if (dayMap.has(dayName)) {
-            const data = dayMap.get(dayName)!;
+          if (dayMap.has(dateStr)) {
+            const data = dayMap.get(dateStr)!;
             
             if (t.type === 'ingreso') {
               data.income += Number(t.amount);
             } else {
               data.expense += Number(t.amount);
             }
-            data.count++;
           }
         });
       }
 
       // Convert to array format for chart
-      const weeklyDataArray: DayData[] = Array.from(dayMap.entries()).map(([dayName, data]) => ({
-        day: dayName.substring(0, 3),
-        dayFull: dayName,
+      const monthlyDataArray: DayData[] = Array.from(dayMap.entries()).map(([dateStr, data]) => ({
+        day: data.date.split(' ')[0], // Short day name for small view
+        dayFull: data.date, // Full date for expanded view
+        date: dateStr,
         income: data.income,
         expense: data.expense,
         net: data.income - data.expense
       }));
 
-      console.log('📈 Datos procesados:', weeklyDataArray);
+      console.log('📈 Datos procesados (últimos 30 días):', monthlyDataArray.length);
 
-      setWeeklyData(weeklyDataArray);
+      setWeeklyData(monthlyDataArray);
 
       // Generate insight using AI
       const { data: aiData } = await supabase.functions.invoke('financial-analysis', {
         body: {
-          analysisType: 'weekly-pattern',
-          data: weeklyDataArray,
-          transactions: weekTransactions || [],
-          currentWeek: {
-            start: startOfWeek.toISOString().split('T')[0],
-            end: endOfWeek.toISOString().split('T')[0],
-            currentDay: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][currentDayOfWeek]
+          analysisType: 'monthly-pattern',
+          data: monthlyDataArray,
+          transactions: monthTransactions || [],
+          period: {
+            start: startDate.toISOString().split('T')[0],
+            end: today.toISOString().split('T')[0]
           }
         }
       });
@@ -427,7 +412,7 @@ const Balance = () => {
         setWeeklyInsight(aiData.insight);
       }
     } catch (error) {
-      console.error('Error fetching weekly data:', error);
+      console.error('Error fetching monthly data:', error);
     }
   };
 
