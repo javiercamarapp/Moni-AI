@@ -1016,7 +1016,7 @@ const Dashboard = () => {
         onComplete={() => setGoalMilestone({ show: false, milestone: 'start', goalName: '' })}
       />
       
-      <div className="min-h-screen animated-wave-bg pb-20">
+      <div className="min-h-screen pb-20">
       {/* Header superior con logo y notificaciones */}
       <div className="p-2 flex justify-between items-start">
         {/* Logo banner - esquina superior izquierda */}

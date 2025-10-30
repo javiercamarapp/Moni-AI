@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Fingerprint } from "lucide-react";
 import heroAuth from "@/assets/moni-ai-logo.png";
-import darkTextureBg from "@/assets/dark-texture-bg.png";
 import { useBiometricAuth } from "@/hooks/useBiometricAuth";
 import { SignIn2 } from "@/components/ui/clean-minimal-sign-in";
 
@@ -272,12 +271,6 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
-      {/* Fondo de textura oscura */}
-      <div 
-        className="absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat z-0"
-        style={{ backgroundImage: `url(${darkTextureBg})` }}
-      />
-      
       <div 
         className="flex-1 flex items-center justify-center py-8 md:py-12 px-2 md:px-4 relative z-10"
       >
