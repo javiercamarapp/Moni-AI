@@ -8,8 +8,8 @@ interface AIAnalysisLoaderProps {
 
 export function AIAnalysisLoader({ message = "Analizando...", fullScreen = false }: AIAnalysisLoaderProps) {
   const containerClass = fullScreen 
-    ? "fixed inset-0 animated-wave-bg flex items-center justify-center overflow-hidden z-50"
-    : "w-full bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center overflow-hidden relative rounded-[20px] py-12";
+    ? "fixed inset-0 flex items-center justify-center overflow-hidden z-50"
+    : "w-full flex items-center justify-center overflow-hidden relative rounded-[20px] py-12";
 
   return (
     <div className={containerClass}>
