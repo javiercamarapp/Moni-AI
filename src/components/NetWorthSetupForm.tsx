@@ -426,26 +426,26 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
 
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
           {/* Activos Card */}
-          <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
-            <div className="bg-gradient-primary/30 px-5 py-4 border-b border-border/30">
+          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm rounded-xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-gray-100">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-success/20 border border-success/30">
-                  <TrendingUp className="h-5 w-5 text-success" />
+                <div className="p-2 rounded-lg bg-green-100 border border-green-200">
+                  <TrendingUp className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg text-card-foreground">💰 Activos Esenciales</h3>
-                  <p className="text-xs text-card-foreground/70">Lo que posees</p>
+                  <h3 className="font-bold text-lg text-gray-900">💰 Activos Esenciales</h3>
+                  <p className="text-xs text-gray-600">Lo que posees</p>
                 </div>
               </div>
             </div>
 
-            <div className="p-5 space-y-4">
+            <div className="p-5 space-y-4 bg-white">
               {assetCategories.map((asset, index) => {
                 const entriesForCategory = assetEntries.filter(e => e.categoryType === asset.name);
                 return (
                   <div key={index} className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <Label className="text-card-foreground text-sm font-medium">
+                      <Label className="text-gray-900 text-sm font-medium">
                         {asset.name}
                       </Label>
                       <Button
@@ -467,10 +467,10 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                             placeholder={(entry as any).placeholder || 'Nombre de la cuenta'}
                             value={entry.name}
                             onChange={(e) => updateAssetEntry(entry.id, 'name', e.target.value)}
-                            className="bg-card border-border/30 text-card-foreground text-xs h-7"
+                            className="bg-white border-gray-200 text-gray-900 text-xs h-7"
                           />
                           <div className="relative">
-                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-card-foreground/70 font-semibold text-xs">$</span>
+                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700 font-semibold text-xs">$</span>
                             <Input
                               type="number"
                               step="0.01"
@@ -478,7 +478,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                               placeholder="0.00"
                               value={entry.value}
                               onChange={(e) => updateAssetEntry(entry.id, 'value', e.target.value)}
-                              className="pl-6 bg-card border-border/30 text-card-foreground focus:border-success transition-all text-xs h-7"
+                              className="pl-6 bg-white border-gray-200 text-gray-900 focus:border-green-500 transition-all text-xs h-7"
                             />
                           </div>
                         </div>
@@ -502,10 +502,10 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
           {/* Activos y Pasivos Personalizados - En fila */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Activos Personalizados Card */}
-            <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
-            <div className="bg-gradient-primary/30 px-5 py-3 border-b border-border/30">
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm rounded-xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-gray-100">
               <div className="flex items-center justify-between gap-4">
-                <h3 className="font-bold text-lg text-card-foreground whitespace-nowrap">Activos Personalizados</h3>
+                <h3 className="font-bold text-lg text-gray-900 whitespace-nowrap">Activos Personalizados</h3>
                 <Button
                   type="button"
                   size="sm"
@@ -535,10 +535,10 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               )}
 
               {customAssets.map((customAsset) => (
-                <div key={customAsset.id} className="space-y-2 p-2 rounded-lg bg-accent/5 border border-accent/20 hover:border-accent/30 transition-all">
+                <div key={customAsset.id} className="space-y-2 p-3 rounded-lg bg-white border border-gray-200 hover:border-gray-300 transition-all shadow-sm">
                   <div className="flex gap-2 items-start">
                     <div className="flex-1">
-                      <Label className="text-card-foreground text-xs font-semibold mb-1 block">
+                      <Label className="text-gray-900 text-xs font-semibold mb-1 block">
                         📁 Categoría de Activo
                       </Label>
                       <Input
@@ -546,7 +546,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         placeholder="Ej: Colección de Arte, Negocios, Inversiones Privadas"
                         value={customAsset.name}
                         onChange={(e) => updateCustomAssetName(customAsset.id, e.target.value)}
-                        className="bg-card border-border/30 text-card-foreground font-semibold text-sm h-8"
+                        className="bg-white border-gray-200 text-gray-900 font-semibold text-sm h-8"
                       />
                     </div>
                     <Button
@@ -560,9 +560,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                     </Button>
                   </div>
 
-                  <div className="pl-2 border-l-2 border-accent/30 space-y-2 mt-2">
+                  <div className="pl-2 border-l-2 border-gray-200 space-y-2 mt-2">
                     <div className="flex items-center justify-between mb-1">
-                      <Label className="text-card-foreground text-[10px] font-semibold uppercase tracking-wide">
+                      <Label className="text-gray-900 text-[10px] font-semibold uppercase tracking-wide">
                         Cuentas dentro de esta categoría
                       </Label>
                       <Button
@@ -577,25 +577,25 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                     </div>
 
                     {customAsset.accounts.length === 0 && (
-                      <div className="text-center py-2 px-2 bg-muted/30 rounded-md border border-dashed border-border">
-                        <p className="text-[10px] text-muted-foreground">
+                      <div className="text-center py-2 px-2 bg-gray-50 rounded-md border border-dashed border-gray-300">
+                        <p className="text-[10px] text-gray-600">
                           Agrega cuentas específicas dentro de esta categoría
                         </p>
                       </div>
                     )}
 
                     {customAsset.accounts.map((account) => (
-                      <div key={account.id} className="flex gap-1.5 items-start p-2 rounded-md bg-card/50 border border-border/20">
+                      <div key={account.id} className="flex gap-1.5 items-start p-2 rounded-md bg-white border border-gray-200">
                         <div className="flex-1 space-y-1.5">
                           <Input
                             type="text"
                             placeholder="Nombre específico (ej: Pintura Picasso, Local Centro)"
                             value={account.name}
                             onChange={(e) => updateCustomAssetAccount(customAsset.id, account.id, 'name', e.target.value)}
-                            className="bg-card border-border/30 text-card-foreground text-xs h-7"
+                            className="bg-white border-gray-200 text-gray-900 text-xs h-7"
                           />
                           <div className="relative">
-                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-card-foreground/70 font-semibold text-xs">$</span>
+                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700 font-semibold text-xs">$</span>
                             <Input
                               type="number"
                               step="0.01"
@@ -603,7 +603,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                               placeholder="0.00"
                               value={account.value}
                               onChange={(e) => updateCustomAssetAccount(customAsset.id, account.id, 'value', e.target.value)}
-                              className="pl-6 bg-card border-border/30 text-card-foreground focus:border-success transition-all text-xs h-7"
+                              className="pl-6 bg-white border-gray-200 text-gray-900 focus:border-green-500 transition-all text-xs h-7"
                             />
                           </div>
                         </div>
@@ -626,26 +626,26 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
           </div>
 
           {/* Pasivos Esenciales Card - Debajo del grid */}
-          <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
-            <div className="bg-gradient-primary/30 px-5 py-4 border-b border-border/30">
+          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm rounded-xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-gray-100">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-danger/20 border border-danger/30">
-                  <TrendingDown className="h-5 w-5 text-danger" />
+                <div className="p-2 rounded-lg bg-red-100 border border-red-200">
+                  <TrendingDown className="h-5 w-5 text-red-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg text-card-foreground">💸 Pasivos Esenciales</h3>
-                  <p className="text-xs text-card-foreground/70">Lo que debes</p>
+                  <h3 className="font-bold text-lg text-gray-900">💸 Pasivos Esenciales</h3>
+                  <p className="text-xs text-gray-600">Lo que debes</p>
                 </div>
               </div>
             </div>
 
-            <div className="p-5 space-y-4">
+            <div className="p-5 space-y-4 bg-white">
               {liabilityCategories.map((liability, index) => {
                 const entriesForCategory = liabilityEntries.filter(e => e.categoryType === liability.name);
                 return (
                   <div key={index} className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <Label className="text-card-foreground text-sm font-medium">
+                      <Label className="text-gray-900 text-sm font-medium">
                         {liability.name}
                       </Label>
                       <Button
@@ -667,10 +667,10 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                             placeholder={(entry as any).placeholder || 'Nombre de la deuda'}
                             value={entry.name}
                             onChange={(e) => updateLiabilityEntry(entry.id, 'name', e.target.value)}
-                            className="bg-card border-border/30 text-card-foreground text-xs h-7"
+                            className="bg-white border-gray-200 text-gray-900 text-xs h-7"
                           />
                           <div className="relative">
-                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-card-foreground/70 font-semibold text-xs">$</span>
+                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700 font-semibold text-xs">$</span>
                             <Input
                               type="number"
                               step="0.01"
@@ -678,7 +678,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                               placeholder="0.00"
                               value={entry.value}
                               onChange={(e) => updateLiabilityEntry(entry.id, 'value', e.target.value)}
-                              className="pl-6 bg-card border-border/30 text-card-foreground focus:border-danger transition-all text-xs h-7"
+                              className="pl-6 bg-white border-gray-200 text-gray-900 focus:border-red-500 transition-all text-xs h-7"
                             />
                           </div>
                         </div>
@@ -700,10 +700,10 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
           </Card>
 
           {/* Pasivos Personalizados Card */}
-          <Card className="bg-gradient-card border-border/50 shadow-card hover:shadow-glow transition-all hover-lift overflow-hidden">
-            <div className="bg-gradient-primary/30 px-5 py-3 border-b border-border/30">
+          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm rounded-xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-gray-100">
               <div className="flex items-center justify-between gap-4">
-                <h3 className="font-bold text-lg text-card-foreground whitespace-nowrap">Pasivos Personalizados</h3>
+                <h3 className="font-bold text-lg text-gray-900 whitespace-nowrap">Pasivos Personalizados</h3>
                 <Button
                   type="button"
                   size="sm"
@@ -733,10 +733,10 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               )}
 
               {customLiabilities.map((customLiability) => (
-                <div key={customLiability.id} className="space-y-2 p-2 rounded-lg bg-card/50 border border-border/30 hover:border-border/50 transition-all">
+                <div key={customLiability.id} className="space-y-2 p-3 rounded-lg bg-white border border-gray-200 hover:border-gray-300 transition-all shadow-sm">
                   <div className="flex gap-2 items-start">
                     <div className="flex-1">
-                      <Label className="text-card-foreground text-xs font-semibold mb-1 block">
+                      <Label className="text-gray-900 text-xs font-semibold mb-1 block">
                         📁 Categoría de Pasivo
                       </Label>
                       <Input
@@ -744,7 +744,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         placeholder="Ej: Deudas Familiares, Compromisos Personales, Otros"
                         value={customLiability.name}
                         onChange={(e) => updateCustomLiabilityName(customLiability.id, e.target.value)}
-                        className="bg-card border-border/30 text-card-foreground font-semibold text-sm h-8"
+                        className="bg-white border-gray-200 text-gray-900 font-semibold text-sm h-8"
                       />
                     </div>
                     <Button
@@ -758,9 +758,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                     </Button>
                   </div>
 
-                  <div className="pl-2 border-l-2 border-border/30 space-y-2 mt-2">
+                  <div className="pl-2 border-l-2 border-gray-200 space-y-2 mt-2">
                     <div className="flex items-center justify-between mb-1">
-                      <Label className="text-card-foreground text-[10px] font-semibold uppercase tracking-wide">
+                      <Label className="text-gray-900 text-[10px] font-semibold uppercase tracking-wide">
                         Cuentas dentro de esta categoría
                       </Label>
                       <Button
@@ -775,25 +775,25 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                     </div>
 
                     {customLiability.accounts.length === 0 && (
-                      <div className="text-center py-2 px-2 bg-muted/30 rounded-md border border-dashed border-border">
-                        <p className="text-[10px] text-muted-foreground">
+                      <div className="text-center py-2 px-2 bg-gray-50 rounded-md border border-dashed border-gray-300">
+                        <p className="text-[10px] text-gray-600">
                           Agrega cuentas específicas dentro de esta categoría
                         </p>
                       </div>
                     )}
 
                     {customLiability.accounts.map((account) => (
-                      <div key={account.id} className="flex gap-1.5 items-start p-2 rounded-md bg-card/50 border border-border/20">
+                      <div key={account.id} className="flex gap-1.5 items-start p-2 rounded-md bg-white border border-gray-200">
                         <div className="flex-1 space-y-1.5">
                           <Input
                             type="text"
                             placeholder="Nombre específico (ej: Préstamo Mamá, Deuda Tienda)"
                             value={account.name}
                             onChange={(e) => updateCustomLiabilityAccount(customLiability.id, account.id, 'name', e.target.value)}
-                            className="bg-card border-border/30 text-card-foreground text-xs h-7"
+                            className="bg-white border-gray-200 text-gray-900 text-xs h-7"
                           />
                           <div className="relative">
-                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-card-foreground/70 font-semibold text-xs">$</span>
+                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700 font-semibold text-xs">$</span>
                             <Input
                               type="number"
                               step="0.01"
@@ -801,7 +801,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                               placeholder="0.00"
                               value={account.value}
                               onChange={(e) => updateCustomLiabilityAccount(customLiability.id, account.id, 'value', e.target.value)}
-                              className="pl-6 bg-card border-border/30 text-card-foreground focus:border-danger transition-all text-xs h-7"
+                              className="pl-6 bg-white border-gray-200 text-gray-900 focus:border-red-500 transition-all text-xs h-7"
                             />
                           </div>
                         </div>
