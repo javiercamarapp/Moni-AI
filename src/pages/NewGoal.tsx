@@ -61,7 +61,7 @@ const NewGoal = () => {
   };
 
   return (
-    <div className="min-h-screen animated-wave-bg">
+    <div className="min-h-screen">
       {/* Header */}
       <div className="p-4 flex items-center gap-3">
         <Button

@@ -99,7 +99,7 @@ export default function LevelQuiz() {
   // Verificar estado de net worth antes de mostrar el quiz
   if (checkingNetWorth || isCheckingAspirations) {
     return (
-      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <p className="text-foreground">Cargando...</p>
       </div>
     );
@@ -292,7 +292,7 @@ export default function LevelQuiz() {
   // Si está en la intro, mostrar página de bienvenida
   if (showIntro) {
     return (
-      <div className="min-h-screen animated-wave-bg flex flex-col pb-20">
+      <div className="min-h-screen flex flex-col pb-20">
         {/* Header con flecha de regreso */}
         <div className="p-2">
           <Button
@@ -344,9 +344,9 @@ export default function LevelQuiz() {
 
   // Mostrar cuestionario aspiracional
   return (
-    <div className="min-h-screen animated-wave-bg flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Header fijado */}
-      <div className="sticky top-0 z-20 animated-wave-bg">
+      <div className="sticky top-0 z-20">
         {/* Botón de regreso y barra de progreso */}
         <div className="p-4">
           <div className="flex items-center gap-3 mb-3">

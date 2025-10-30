@@ -34,7 +34,7 @@ export default function Assets() {
 
   if (isLoading || !netWorthData) {
     return (
-      <div className="min-h-screen animated-wave-bg pb-20">
+      <div className="min-h-screen pb-20">
         <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center gap-4">
@@ -72,7 +72,7 @@ export default function Assets() {
   }, {} as Record<AssetCategory, typeof assets>);
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-20">
+    <div className="min-h-screen pb-20">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">

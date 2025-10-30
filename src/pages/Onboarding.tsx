@@ -75,7 +75,7 @@ const Onboarding = () => {
 
   if (showLogo) {
     return (
-      <div className="min-h-screen animated-wave-bg flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="animate-fade-in">
           <img 
             src={moniLogo} 
@@ -88,7 +88,7 @@ const Onboarding = () => {
   }
 
   return (
-    <div className="min-h-screen animated-wave-bg flex flex-col relative">
+    <div className="min-h-screen flex flex-col relative">
       {/* Logo banner at the top */}
       <div className="px-4 pt-4">
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden max-w-md mx-auto">
