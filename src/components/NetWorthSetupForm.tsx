@@ -386,10 +386,10 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
   };
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-24">
+    <div className="min-h-screen pb-24">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+        <div className="sticky top-0 z-40 bg-gradient-to-b from-white/80 to-transparent backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center gap-4">
               <Button
