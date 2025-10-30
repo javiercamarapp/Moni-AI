@@ -82,7 +82,7 @@ export default function NetWorth() {
   if (!checkingData && hasData === false) {
     if (!showForm) {
       return (
-        <div className="min-h-screen bg-background flex flex-col">
+        <div className="min-h-screen flex flex-col">
           {/* Header with back button */}
           <div className="sticky top-0 z-40">
             <div className="max-w-7xl mx-auto px-4 py-4">
