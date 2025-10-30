@@ -316,7 +316,7 @@ export default function NetWorth() {
             </Button>
             
             {showInstitutionFilter && (
-              <div className="absolute right-0 top-full mt-2 bg-white backdrop-blur-md rounded-2xl shadow-sm border-0 py-2 min-w-[200px] z-50">
+              <div className="absolute right-0 top-full mt-2 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border-0 py-2 min-w-[200px] z-50">
                 <button
                   onClick={() => {
                     setSelectedInstitution('All');
@@ -354,7 +354,7 @@ export default function NetWorth() {
         </div>
 
         {/* Total Líquido */}
-        <div className="mb-4 bg-white/80 backdrop-blur-sm rounded-3xl p-4 border-0 shadow-sm">
+        <div className="mb-4 bg-white/80 backdrop-blur-sm rounded-xl p-4 border-0 shadow-sm">
           <p className="text-xs text-gray-500 mb-1 font-medium">Efectivo Disponible</p>
           <p className="text-2xl font-semibold text-blue-900 break-words tracking-tight">
             ${assets
@@ -376,7 +376,7 @@ export default function NetWorth() {
               return (
                 <div
                   key={account.id}
-                  className="p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer border-0 animate-fade-in"
+                  className="p-3 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer border-0 animate-fade-in"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -399,7 +399,7 @@ export default function NetWorth() {
             })}
             
           {assets.filter(a => isLiquidAsset(a.categoria)).filter(a => selectedInstitution === 'All' || a.nombre.startsWith(selectedInstitution)).length === 0 && (
-            <div className="p-8 text-center text-gray-500 bg-white rounded-3xl border-0 shadow-sm">
+            <div className="p-8 text-center text-gray-500 bg-white/80 backdrop-blur-sm rounded-xl border-0 shadow-sm">
               {selectedInstitution === 'All' 
                 ? 'No hay cuentas líquidas registradas'
                 : `No hay cuentas líquidas de ${selectedInstitution}`}
@@ -429,7 +429,7 @@ export default function NetWorth() {
             
             {showSemiLiquidFilter && (
               <div className={cn(
-                "absolute right-0 bg-white backdrop-blur-md rounded-2xl shadow-sm border-0 py-2 min-w-[200px] z-50",
+                "absolute right-0 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border-0 py-2 min-w-[200px] z-50",
                 dropdownPosition === 'bottom' ? "top-full mt-2" : "bottom-full mb-2"
               )}>
                 <button
@@ -470,7 +470,7 @@ export default function NetWorth() {
         </div>
 
         {/* Total Semi Líquido */}
-        <div className="mb-4 bg-white/80 backdrop-blur-sm rounded-3xl p-4 border-0 shadow-sm">
+        <div className="mb-4 bg-white/80 backdrop-blur-sm rounded-xl p-4 border-0 shadow-sm">
           <p className="text-xs text-gray-500 mb-1 font-medium">Inversiones y Por Cobrar</p>
           <p className="text-2xl font-semibold text-emerald-700 break-words tracking-tight">
             ${assets
@@ -492,7 +492,7 @@ export default function NetWorth() {
               return (
                 <div
                   key={account.id}
-                  className="p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer border-0 animate-fade-in"
+                  className="p-3 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer border-0 animate-fade-in"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -522,7 +522,7 @@ export default function NetWorth() {
             })}
             
           {assets.filter(a => isSemiLiquidAsset(a.categoria)).filter(a => selectedSemiLiquidType === 'All' || a.subcategoria === selectedSemiLiquidType).length === 0 && (
-            <div className="p-8 text-center text-gray-500 bg-white rounded-3xl border-0 shadow-sm">
+            <div className="p-8 text-center text-gray-500 bg-white/80 backdrop-blur-sm rounded-xl border-0 shadow-sm">
               {selectedSemiLiquidType === 'All' 
                 ? 'No hay activos semi líquidos registrados'
                 : `No hay activos de tipo ${selectedSemiLiquidType}`}
