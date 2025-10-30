@@ -519,16 +519,16 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               </div>
             </div>
 
-            <div className="p-2 space-y-2">
+            <div className="p-5 bg-white/80 backdrop-blur-sm space-y-2">
               {customAssets.length === 0 && (
                 <div className="text-center py-4 space-y-1">
-                  <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-muted mb-1">
-                    <Plus className="h-4 w-4 text-muted-foreground" />
+                  <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 mb-1">
+                    <Plus className="h-4 w-4 text-gray-600" />
                   </div>
-                  <p className="text-xs font-medium text-card-foreground">
+                  <p className="text-xs font-medium text-gray-900">
                     Crea tus propias categorías de activos
                   </p>
-                  <p className="text-[10px] text-muted-foreground">
+                  <p className="text-[10px] text-gray-600">
                     Agrega categorías como colecciones, inversiones privadas o cualquier otro activo
                   </p>
                 </div>
@@ -717,16 +717,16 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               </div>
             </div>
 
-            <div className="p-2 space-y-2">
+            <div className="p-5 bg-white/80 backdrop-blur-sm space-y-2">
               {customLiabilities.length === 0 && (
                 <div className="text-center py-4 space-y-1">
-                  <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-muted mb-1">
-                    <Plus className="h-4 w-4 text-muted-foreground" />
+                  <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 mb-1">
+                    <Plus className="h-4 w-4 text-gray-600" />
                   </div>
-                  <p className="text-xs font-medium text-card-foreground">
+                  <p className="text-xs font-medium text-gray-900">
                     Crea tus propias categorías de pasivos
                   </p>
-                  <p className="text-[10px] text-muted-foreground">
+                  <p className="text-[10px] text-gray-600">
                     Agrega categorías como compromisos personales, deudas informales o cualquier otro pasivo
                   </p>
                 </div>
