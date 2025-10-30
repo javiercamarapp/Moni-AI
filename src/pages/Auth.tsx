@@ -201,7 +201,7 @@ const Auth = () => {
           return;
         }
 
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -226,6 +226,11 @@ const Auth = () => {
               variant: "destructive",
             });
           }
+        } else if (data.user) {
+          toast({
+            title: "¡Cuenta creada!",
+            description: "Tu cuenta ha sido creada exitosamente. Redirigiendo...",
+          });
         }
       }
     } catch (error) {
@@ -354,7 +359,7 @@ const Auth = () => {
                   return;
                 }
 
-                const { error } = await supabase.auth.signUp({
+                const { data, error } = await supabase.auth.signUp({
                   email,
                   password,
                   options: {
@@ -379,6 +384,11 @@ const Auth = () => {
                       variant: "destructive",
                     });
                   }
+                } else if (data.user) {
+                  toast({
+                    title: "¡Cuenta creada!",
+                    description: "Tu cuenta ha sido creada exitosamente. Redirigiendo...",
+                  });
                 }
               }
             } catch (error) {
