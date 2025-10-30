@@ -389,36 +389,38 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     <div className="min-h-screen animated-wave-bg pb-24">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="sticky top-0 z-10 bg-gradient-card/95 backdrop-blur-md border-b border-border/30 shadow-card">
-          <div className="flex items-center gap-3 px-4 py-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onBack ? onBack() : navigate(-1)}
-              className="text-foreground hover:bg-accent/50 hover-lift"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div className="flex-1">
-              <h1 className="text-2xl font-bold text-foreground">Configura tu Patrimonio</h1>
-              <p className="text-sm text-muted-foreground">Completa la información financiera</p>
-            </div>
-            {saveStatus !== 'idle' && (
-              <div className="flex items-center gap-2 text-sm text-foreground animate-fade-in">
-                {saveStatus === 'saving' && (
-                  <>
-                    <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                    <span className="hidden sm:inline">Guardando...</span>
-                  </>
-                )}
-                {saveStatus === 'saved' && (
-                  <>
-                    <Check className="w-4 h-4 text-success" />
-                    <span className="hidden sm:inline text-success">Guardado</span>
-                  </>
-                )}
+        <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+          <div className="max-w-7xl mx-auto px-4 py-4">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onBack ? onBack() : navigate(-1)}
+                className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
+              >
+                <ArrowLeft className="h-4 w-4 text-gray-700" />
+              </Button>
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Configura tu Patrimonio</h1>
+                <p className="text-xs text-gray-500">Completa la información financiera</p>
               </div>
-            )}
+              {saveStatus !== 'idle' && (
+                <div className="flex items-center gap-2 text-sm animate-fade-in flex-shrink-0">
+                  {saveStatus === 'saving' && (
+                    <>
+                      <div className="w-4 h-4 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
+                      <span className="hidden sm:inline text-gray-900">Guardando...</span>
+                    </>
+                  )}
+                  {saveStatus === 'saved' && (
+                    <>
+                      <Check className="w-4 h-4 text-green-600" />
+                      <span className="hidden sm:inline text-green-600">Guardado</span>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -450,10 +452,10 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         type="button"
                         size="sm"
                         onClick={() => addAssetEntry(asset.name, asset.category, asset.examples)}
-                        className="h-7 text-xs gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all"
+                        className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-8 px-3 text-xs gap-1"
                       >
-                        <Plus className="h-3 w-3" />
-                        Agregar
+                        <Plus className="h-3 w-3 text-gray-700" />
+                        <span className="text-gray-900">Agregar</span>
                       </Button>
                     </div>
                     
@@ -485,9 +487,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                           variant="ghost"
                           size="icon"
                           onClick={() => removeAssetEntry(entry.id)}
-                          className="mt-0.5 h-6 w-6 text-danger hover:bg-danger/10"
+                          className="mt-0.5 h-6 w-6 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-red-50 hover:shadow-md transition-all border-0"
                         >
-                          <X className="h-3 w-3" />
+                          <X className="h-3 w-3 text-red-600" />
                         </Button>
                       </div>
                     ))}
@@ -508,11 +510,11 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                   type="button"
                   size="sm"
                   onClick={addCustomAsset}
-                  className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all hover:scale-105"
+                  className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-8 px-3 text-xs gap-1"
                 >
-                  <Plus className="h-4 w-4" />
-                  <span className="hidden sm:inline">Nueva Categoría</span>
-                  <span className="sm:hidden">Nuevo</span>
+                  <Plus className="h-4 w-4 text-gray-700" />
+                  <span className="hidden sm:inline text-gray-900">Nueva Categoría</span>
+                  <span className="sm:hidden text-gray-900">Nuevo</span>
                 </Button>
               </div>
             </div>
@@ -552,9 +554,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                       variant="ghost"
                       size="icon"
                       onClick={() => removeCustomAsset(customAsset.id)}
-                      className="mt-5 h-7 w-7 text-danger hover:bg-danger/10 hover:scale-110 transition-all"
+                      className="mt-5 h-7 w-7 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-red-50 hover:shadow-md transition-all border-0"
                     >
-                      <X className="h-3.5 w-3.5" />
+                      <X className="h-3.5 w-3.5 text-red-600" />
                     </Button>
                   </div>
 
@@ -567,10 +569,10 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         type="button"
                         size="sm"
                         onClick={() => addCustomAssetAccount(customAsset.id)}
-                        className="h-6 text-[10px] gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all hover:scale-105"
+                        className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-6 px-2 text-[10px] gap-1"
                       >
-                        <Plus className="h-2.5 w-2.5" />
-                        Agregar Cuenta
+                        <Plus className="h-2.5 w-2.5 text-gray-700" />
+                        <span className="text-gray-900">Agregar Cuenta</span>
                       </Button>
                     </div>
 
@@ -610,9 +612,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                           variant="ghost"
                           size="icon"
                           onClick={() => removeCustomAssetAccount(customAsset.id, account.id)}
-                          className="mt-0.5 h-6 w-6 text-danger hover:bg-danger/10 hover:scale-110 transition-all"
+                          className="mt-0.5 h-6 w-6 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-red-50 hover:shadow-md transition-all border-0"
                         >
-                          <X className="h-3 w-3" />
+                          <X className="h-3 w-3 text-red-600" />
                         </Button>
                       </div>
                     ))}
@@ -650,10 +652,10 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         type="button"
                         size="sm"
                         onClick={() => addLiabilityEntry(liability.name, liability.category, liability.examples)}
-                        className="h-7 text-xs gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all"
+                        className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-8 px-3 text-xs gap-1"
                       >
-                        <Plus className="h-3 w-3" />
-                        Agregar
+                        <Plus className="h-3 w-3 text-gray-700" />
+                        <span className="text-gray-900">Agregar</span>
                       </Button>
                     </div>
                     
@@ -685,9 +687,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                           variant="ghost"
                           size="icon"
                           onClick={() => removeLiabilityEntry(entry.id)}
-                          className="mt-0.5 h-6 w-6 text-danger hover:bg-danger/10"
+                          className="mt-0.5 h-6 w-6 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-red-50 hover:shadow-md transition-all border-0"
                         >
-                          <X className="h-3 w-3" />
+                          <X className="h-3 w-3 text-red-600" />
                         </Button>
                       </div>
                     ))}
@@ -706,11 +708,11 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                   type="button"
                   size="sm"
                   onClick={addCustomLiability}
-                  className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all hover:scale-105"
+                  className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-8 px-3 text-xs gap-1"
                 >
-                  <Plus className="h-4 w-4" />
-                  <span className="hidden sm:inline">Nueva Categoría</span>
-                  <span className="sm:hidden">Nuevo</span>
+                  <Plus className="h-4 w-4 text-gray-700" />
+                  <span className="hidden sm:inline text-gray-900">Nueva Categoría</span>
+                  <span className="sm:hidden text-gray-900">Nuevo</span>
                 </Button>
               </div>
             </div>
@@ -750,9 +752,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                       variant="ghost"
                       size="icon"
                       onClick={() => removeCustomLiability(customLiability.id)}
-                      className="mt-5 h-7 w-7 text-danger hover:bg-danger/10 hover:scale-110 transition-all"
+                      className="mt-5 h-7 w-7 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-red-50 hover:shadow-md transition-all border-0"
                     >
-                      <X className="h-3.5 w-3.5" />
+                      <X className="h-3.5 w-3.5 text-red-600" />
                     </Button>
                   </div>
 
@@ -765,10 +767,10 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         type="button"
                         size="sm"
                         onClick={() => addCustomLiabilityAccount(customLiability.id)}
-                        className="h-6 text-[10px] gap-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all hover:scale-105"
+                        className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-6 px-2 text-[10px] gap-1"
                       >
-                        <Plus className="h-2.5 w-2.5" />
-                        Agregar Cuenta
+                        <Plus className="h-2.5 w-2.5 text-gray-700" />
+                        <span className="text-gray-900">Agregar Cuenta</span>
                       </Button>
                     </div>
 
@@ -808,9 +810,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                           variant="ghost"
                           size="icon"
                           onClick={() => removeCustomLiabilityAccount(customLiability.id, account.id)}
-                          className="mt-0.5 h-6 w-6 text-danger hover:bg-danger/10 hover:scale-110 transition-all"
+                          className="mt-0.5 h-6 w-6 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-red-50 hover:shadow-md transition-all border-0"
                         >
-                          <X className="h-3 w-3" />
+                          <X className="h-3 w-3 text-red-600" />
                         </Button>
                       </div>
                     ))}
@@ -823,7 +825,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
           {/* Submit Button */}
           <Button
             type="submit" 
-            className="w-full py-6 text-lg font-semibold shadow-glow hover:scale-105 transition-all"
+            className="w-full bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-14 text-base font-semibold text-gray-900"
             disabled={loading}
           >
             {loading ? 'Guardando tu patrimonio...' : 'Completar Cuestionario'}
