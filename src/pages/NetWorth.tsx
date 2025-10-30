@@ -145,7 +145,7 @@ export default function NetWorth() {
   // Mostrar skeleton/placeholder mientras carga pero solo si ya sabemos que hay datos
   if ((checkingData || loadingData) && hasData !== false) {
     return (
-      <div className="min-h-screen animated-wave-bg pb-20">
+      <div className="min-h-screen pb-20">
         {/* Header */}
         <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 py-4">
@@ -180,7 +180,7 @@ export default function NetWorth() {
 
   if (!netWorthData) {
     return (
-      <div className="min-h-screen animated-wave-bg flex items-center justify-center pb-20">
+      <div className="min-h-screen flex items-center justify-center pb-20">
         <p className="text-foreground font-semibold text-lg">Error cargando datos</p>
         <BottomNav />
       </div>
@@ -213,7 +213,7 @@ export default function NetWorth() {
   const liabilityCategories = ['All', ...Array.from(new Set(liabilities.map(l => l.categoria)))];
 
   return (
-    <div className="min-h-screen animated-wave-bg pb-20">
+    <div className="min-h-screen pb-20">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
