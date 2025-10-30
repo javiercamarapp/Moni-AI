@@ -118,7 +118,7 @@ export default function NetWorth() {
               </p>
               <Button 
                 size="lg"
-                className="w-full mt-8 text-base py-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm hover:shadow-md transition-all font-semibold border-0 text-foreground"
+                className="w-full mt-8 text-base py-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm hover:shadow-md transition-all font-semibold border-0 text-gray-900 animate-fade-in"
                 onClick={() => setShowForm(true)}
               >
                 Responder preguntas
