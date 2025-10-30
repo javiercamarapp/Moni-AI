@@ -3,7 +3,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import WarpShaderHero from "@/components/ui/wrap-shader";
 import Onboarding from "./pages/Onboarding";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -71,10 +70,8 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Toaster />
       <Sonner />
-      <WarpShaderHero />
       <BrowserRouter>
-        <div className="relative z-10">
-          <Routes>
+        <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/auth" element={<Auth />} />
@@ -124,10 +121,9 @@ function App() {
           <Route path="/ant-expenses" element={<AntExpenses />} />
           <Route path="/impulsive-expenses" element={<ImpulsiveExpenses />} />
           
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </BrowserRouter>
     </QueryClientProvider>
   );
