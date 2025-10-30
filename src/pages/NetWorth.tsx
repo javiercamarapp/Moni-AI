@@ -108,7 +108,7 @@ export default function NetWorth() {
           </div>
 
           {/* Hero Image */}
-          <div className="h-[50vh] relative overflow-hidden">
+          <div className="h-[70vh] relative overflow-hidden -mt-20">
             <img 
               src={networthIntro} 
               alt="Net Worth Intro" 
