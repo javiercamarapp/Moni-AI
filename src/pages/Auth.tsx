@@ -286,33 +286,99 @@ const Auth = () => {
         className="flex-1 flex items-center justify-center py-8 md:py-12 px-2 md:px-4 relative z-10"
       >
         <SignIn2 
-          onSignIn={async (email, password) => {
+          onSignIn={async (email, password, fullName) => {
             setLoading(true);
             try {
-              const { error } = await supabase.auth.signInWithPassword({
-                email,
-                password,
-              });
+              if (isLogin) {
+                const { error } = await supabase.auth.signInWithPassword({
+                  email,
+                  password,
+                });
 
-              if (error) {
-                if (error.message.includes("Invalid login credentials")) {
-                  toast({
-                    title: "Error",
-                    description: "Correo o contraseña incorrectos",
-                    variant: "destructive",
-                  });
+                if (error) {
+                  if (error.message.includes("Invalid login credentials")) {
+                    toast({
+                      title: "Error",
+                      description: "Correo o contraseña incorrectos",
+                      variant: "destructive",
+                    });
+                  } else {
+                    toast({
+                      title: "Error",
+                      description: error.message,
+                      variant: "destructive",
+                    });
+                  }
                 } else {
-                  toast({
-                    title: "Error",
-                    description: error.message,
-                    variant: "destructive",
-                  });
+                  // Guardar credenciales para autenticación biométrica si está disponible
+                  if (biometricAvailable) {
+                    localStorage.setItem('biometric_email', email);
+                    localStorage.setItem('biometric_password', password);
+                  }
                 }
               } else {
-                // Guardar credenciales para autenticación biométrica si está disponible
-                if (biometricAvailable) {
-                  localStorage.setItem('biometric_email', email);
-                  localStorage.setItem('biometric_password', password);
+                // Modo signup
+                if (!fullName) {
+                  toast({
+                    title: "Error",
+                    description: "Por favor ingresa tu nombre completo",
+                    variant: "destructive",
+                  });
+                  setLoading(false);
+                  return;
+                }
+
+                // Validación de contraseña
+                if (password.length < 12) {
+                  toast({
+                    title: "Error",
+                    description: "La contraseña debe tener al menos 12 caracteres",
+                    variant: "destructive",
+                  });
+                  setLoading(false);
+                  return;
+                }
+                
+                const hasUpperCase = /[A-Z]/.test(password);
+                const hasLowerCase = /[a-z]/.test(password);
+                const hasNumber = /[0-9]/.test(password);
+                const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+                
+                if (!hasUpperCase || !hasLowerCase || !hasNumber || !hasSpecialChar) {
+                  toast({
+                    title: "Error",
+                    description: "La contraseña debe incluir mayúsculas, minúsculas, números y caracteres especiales",
+                    variant: "destructive",
+                  });
+                  setLoading(false);
+                  return;
+                }
+
+                const { error } = await supabase.auth.signUp({
+                  email,
+                  password,
+                  options: {
+                    emailRedirectTo: `${window.location.origin}/bank-connection`,
+                    data: {
+                      full_name: fullName,
+                    },
+                  },
+                });
+
+                if (error) {
+                  if (error.message.includes("User already registered")) {
+                    toast({
+                      title: "Error",
+                      description: "Este correo ya está registrado. Intenta iniciar sesión.",
+                      variant: "destructive",
+                    });
+                  } else {
+                    toast({
+                      title: "Error",
+                      description: error.message,
+                      variant: "destructive",
+                    });
+                  }
                 }
               }
             } catch (error) {
@@ -327,6 +393,8 @@ const Auth = () => {
           }}
           onSocialLogin={handleSocialLogin}
           loading={loading}
+          isLogin={isLogin}
+          setIsLogin={setIsLogin}
         />
       </div>
 
