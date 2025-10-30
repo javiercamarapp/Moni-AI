@@ -82,18 +82,9 @@ export default function NetWorth() {
   if (!checkingData && hasData === false) {
     if (!showForm) {
       return (
-        <div className="min-h-screen flex flex-col relative">
-          {/* Background Image */}
-          <div className="fixed inset-0 z-0">
-            <img 
-              src={networthIntro} 
-              alt="Net Worth Background" 
-              className="w-full h-full object-cover"
-            />
-          </div>
-
+        <div className="min-h-screen bg-background flex flex-col">
           {/* Header with back button */}
-          <div className="sticky top-0 z-40 relative">
+          <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
             <div className="max-w-7xl mx-auto px-4 py-4">
               <div className="flex items-center gap-4">
                 <Button
@@ -116,8 +107,18 @@ export default function NetWorth() {
             </div>
           </div>
 
+          {/* Hero Image */}
+          <div className="h-[50vh] relative overflow-hidden">
+            <img 
+              src={networthIntro} 
+              alt="Net Worth Intro" 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background"></div>
+          </div>
+
           {/* Content */}
-          <div className="flex-1 flex flex-col items-center justify-center px-6 pb-12 relative z-10">
+          <div className="flex-1 flex flex-col items-center justify-center px-6 pb-12 -mt-20 relative z-10">
             <div className="max-w-md text-center space-y-6">
               <h1 className="text-4xl font-semibold text-gray-900 tracking-tight">
                 Vamos a conocernos mejor
