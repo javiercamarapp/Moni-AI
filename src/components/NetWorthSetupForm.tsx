@@ -403,21 +403,22 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
       const totalLiabilities = validLiabilities.reduce((sum, l) => sum + l.valor, 0);
       const netWorth = totalAssets - totalLiabilities;
 
-      const { error: snapshotError } = await supabase
-        .from('net_worth_snapshots')
-        .upsert({
-          user_id: user.id,
-          snapshot_date: format(new Date(), 'yyyy-MM-dd'),
-          total_assets: totalAssets,
-          total_liabilities: totalLiabilities,
-          net_worth: netWorth
-        }, {
-          onConflict: 'user_id,snapshot_date'
-        });
+      // Call edge function to create/update snapshot
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('No session found');
 
-      if (snapshotError) {
-        console.error('Error creating snapshot:', snapshotError);
-        throw snapshotError;
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-net-worth-snapshot`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error updating snapshot:', errorData);
+        throw new Error(errorData.error || 'Failed to update snapshot');
       }
 
       setSaveStatus('saved');
