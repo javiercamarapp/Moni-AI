@@ -36,7 +36,7 @@ const Auth = () => {
     }
 
     // Solo escuchar cambios de auth, no verificar sesión inicial
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth event:", event, "isResetPassword:", isResetPassword);
       
       // Si estamos en modo reset password, NUNCA redirigir
@@ -54,11 +54,23 @@ const Auth = () => {
       
       // Redirigir según el evento SOLO si no estamos en reset password
       if (session && event === 'SIGNED_IN') {
-        // Usuario que ya existía - ir al dashboard
-        navigate("/dashboard");
+        // Verificar si el usuario ya completó el quiz
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('level_quiz_completed')
+          .eq('id', session.user.id)
+          .single();
+        
+        if (profile && !profile.level_quiz_completed) {
+          // Usuario no ha completado el quiz - ir al quiz
+          navigate("/level-quiz");
+        } else {
+          // Usuario ya completó el quiz - ir al dashboard
+          navigate("/dashboard");
+        }
       } else if (session && event === 'USER_UPDATED') {
-        // Nuevo usuario - ir a configuración bancaria
-        navigate("/bank-connection");
+        // Nuevo usuario - ir al quiz
+        navigate("/level-quiz");
       } else if (session && event === 'INITIAL_SESSION') {
         // Si hay hash de recovery, no redirigir
         const currentHash = window.location.hash;
@@ -67,8 +79,20 @@ const Auth = () => {
           setIsResetPassword(true);
           return;
         }
-        // Sesión existente normal - ir al dashboard
-        navigate("/dashboard");
+        // Verificar si el usuario ya completó el quiz
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('level_quiz_completed')
+          .eq('id', session.user.id)
+          .single();
+        
+        if (profile && !profile.level_quiz_completed) {
+          // Usuario no ha completado el quiz - ir al quiz
+          navigate("/level-quiz");
+        } else {
+          // Sesión existente normal - ir al dashboard
+          navigate("/dashboard");
+        }
       }
     });
 
@@ -241,16 +265,16 @@ const Auth = () => {
           return;
         }
 
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/bank-connection`,
-            data: {
-              full_name: fullName,
-            },
-          },
-        });
+                const { data, error } = await supabase.auth.signUp({
+                  email,
+                  password,
+                  options: {
+                    emailRedirectTo: `${window.location.origin}/level-quiz`,
+                    data: {
+                      full_name: fullName,
+                    },
+                  },
+                });
 
         if (error) {
           if (error.message.includes("User already registered")) {
@@ -530,7 +554,7 @@ const Auth = () => {
                   email,
                   password,
                   options: {
-                    emailRedirectTo: `${window.location.origin}/bank-connection`,
+                    emailRedirectTo: `${window.location.origin}/level-quiz`,
                     data: {
                       full_name: fullName,
                     },
