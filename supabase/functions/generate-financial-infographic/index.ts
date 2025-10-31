@@ -65,9 +65,11 @@ serve(async (req) => {
 
     const prompt = `Crea una infografía financiera MINIMALISTA y ELEGANTE con el siguiente contenido:
 
-TÍTULO PRINCIPAL: "Mi Viaje Financiero con Moni AI"
+LOGO Y TÍTULO:
+- En la parte superior debe aparecer el logo "MONI AI." (tipografía bold, negra) con el subtítulo "coach financiero" debajo (tipografía delgada)
+- Mantener el diseño exacto del logo: MONI AI. en negro bold con punto final
 
-En la parte superior DEBE aparecer visible el logo de Moni AI (un búho minimalista en café oscuro)
+TÍTULO PRINCIPAL: "Mi Viaje Financiero"
 
 SECCIÓN 1 - RESUMEN GENERAL:
 - Net Worth Actual: $${Number(currentNetWorth).toLocaleString('es-MX')}
@@ -90,19 +92,26 @@ MENSAJE MOTIVACIONAL:
   'Comienza tu viaje financiero hoy. El futuro es tuyo'
 }"
 
+PALETA DE COLORES ESTRICTA (SOLO USAR ESTOS):
+- BEIGE: #F5F5DC, #EAE0D5, #D4C5B0
+- CAFÉ: #8B7355, #6F5645, #4A3728
+- NEGRO: #000000, #1A1A1A
+- GRIS: #9E9E9E, #6B6B6B, #D3D3D3
+
 ESTILO VISUAL MINIMALISTA:
-- Paleta de colores: tonos BEIGE (#F5F5DC, #E8D5B7, #D4C5A9), café claro (#A67B5B), café oscuro (#6F4E37), y blanco cremoso (#FFFEF2)
-- Fondo: beige suave uniforme o con textura sutil
-- Logo de Moni AI (búho) en café oscuro en la parte superior central
-- Tipografía: elegante, sans-serif, en café oscuro
-- Iconos: minimalistas de línea fina en café oscuro (sin relleno)
-- NO usar colores vibrantes
+- Fondo: beige claro (#F5F5DC) uniforme o con textura muy sutil
+- Logo "MONI AI." en NEGRO en la parte superior (tipografía bold moderna)
+- Subtítulo "coach financiero" en gris oscuro (#6B6B6B) con tipografía delgada
+- Tipografía principal: sans-serif elegante en negro
+- Números: café oscuro (#4A3728) en negrita
+- Iconos: líneas minimalistas en café (#6F5645) sin relleno
+- Líneas divisorias: gris claro (#D3D3D3) delgadas
+- NO usar colores fuera de la paleta
 - NO usar gradientes coloridos
-- Diseño limpio con mucho espacio en blanco
-- Líneas delgadas en café claro para separar secciones
-- Formato vertical para redes sociales
-- Aspecto sofisticado y profesional tipo revista de finanzas
-- Estética minimalista japonesa (wabi-sabi) aplicada a finanzas`;
+- Diseño ultra limpio con mucho espacio negativo
+- Formato vertical 1080x1920px para Instagram Stories/redes sociales
+- Aspecto sofisticado tipo revista financiera premium
+- Estética minimalista escandinava/japonesa`;
 
     console.log("Calling Lovable AI image generation...");
 
