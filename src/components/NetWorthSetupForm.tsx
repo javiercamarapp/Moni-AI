@@ -405,12 +405,14 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
 
       const { error: snapshotError } = await supabase
         .from('net_worth_snapshots')
-        .insert({
+        .upsert({
           user_id: user.id,
           snapshot_date: format(new Date(), 'yyyy-MM-dd'),
           total_assets: totalAssets,
           total_liabilities: totalLiabilities,
           net_worth: netWorth
+        }, {
+          onConflict: 'user_id,snapshot_date'
         });
 
       if (snapshotError) {
