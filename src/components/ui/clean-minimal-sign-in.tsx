@@ -127,14 +127,14 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
             <img src={moniLogo} alt="Moni AI" className="w-full h-full object-contain" />
           </div>
 
-          <div className="w-full text-center mb-4">
+          <div className="w-full text-center mb-6 mt-2">
             <h2 className="text-xl font-bold text-gray-900 mb-2">¿Olvidaste tu contraseña?</h2>
             <p className="text-sm text-gray-600">
               Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña
             </p>
           </div>
 
-          <form onSubmit={handleForgotPassword} className="w-full flex flex-col gap-3">
+          <form onSubmit={handleForgotPassword} className="w-full flex flex-col gap-3 mb-4">
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                 <Mail className="w-4 h-4" />
