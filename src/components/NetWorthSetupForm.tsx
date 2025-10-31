@@ -850,7 +850,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
             className="w-full bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-14 text-base font-semibold text-gray-900"
             disabled={loading}
           >
-            {loading ? 'Guardando tu patrimonio...' : 'Completar Cuestionario'}
+            {loading ? 'Guardando tu patrimonio...' : 'Enviar patrimonio'}
           </Button>
         </form>
       </div>

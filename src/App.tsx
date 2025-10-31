@@ -36,6 +36,7 @@ import BudgetQuiz from "./pages/BudgetQuiz";
 import Movimientos from "./pages/Movimientos";
 import ProximosMovimientos from "./pages/ProximosMovimientos";
 import EditNetWorth from "./pages/EditNetWorth";
+import InitialNetWorth from "./pages/InitialNetWorth";
 
 import Subscriptions from "./pages/Subscriptions";
 import DailyExpenses from './pages/DailyExpenses';
@@ -111,6 +112,7 @@ function App() {
           <Route path="/movimientos" element={<Movimientos />} />
           <Route path="/proximos-movimientos" element={<ProximosMovimientos />} />
           <Route path="/edit-assets-liabilities" element={<EditNetWorth />} />
+          <Route path="/initial-net-worth" element={<InitialNetWorth />} />
           <Route path="/social" element={<Social />} />
           <Route path="/saving-simulation" element={<SavingSimulation />} />
           <Route path="/goals" element={<Goals />} />
