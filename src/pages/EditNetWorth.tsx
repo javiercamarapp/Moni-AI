@@ -348,9 +348,15 @@ export default function EditNetWorth() {
         }
       }
 
-      toast.success(`${category.name} actualizado`);
+      toast.success(`${category.name} actualizado correctamente`);
       setExpandedCategory(null);
-      await loadData(); // Recargar datos para reflejar cambios
+      
+      // Después de guardar, navegar a conexión bancaria
+      setTimeout(() => {
+        toast.info("¡Perfecto! Ahora conecta tu banco para automatizar todo");
+        navigate("/bank-connection");
+      }, 1500);
+
     } catch (error) {
       console.error('Error saving:', error);
       toast.error("Error al guardar cambios");
@@ -736,18 +742,6 @@ export default function EditNetWorth() {
             </Tabs>
           </div>
         </Card>
-      </div>
-
-      {/* Continue to Bank Connection Button */}
-      <div className="fixed bottom-24 left-0 right-0 px-4 z-30">
-        <div className="mx-auto" style={{ maxWidth: '600px' }}>
-          <Button
-            onClick={() => navigate("/bank-connection")}
-            className="w-full h-14 text-base font-semibold bg-gray-900 hover:bg-gray-800 text-white rounded-3xl shadow-lg hover:shadow-xl transition-all"
-          >
-            Continuar a Conexión Bancaria
-          </Button>
-        </div>
       </div>
 
       <BottomNav />
