@@ -57,27 +57,29 @@ export default function BankConnection() {
   };
 
   return (
-    <div className="min-h-screen p-4 pb-20">
-      <div className="max-w-2xl mx-auto space-y-4">
-        {/* Header mejorado con gradiente y contraste */}
-        <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-lg border border-gray-100 animate-fade-in">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate(-1)}
-              className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl hover:scale-110 transition-all border-0 h-12 w-12 flex-shrink-0 hover:shadow-md"
-            >
-              <ArrowLeft className="h-5 w-5 text-gray-700" />
-            </Button>
-            <div className="flex-1">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                Conexión Bancaria
-              </h1>
-              <p className="text-sm text-gray-600 font-medium">Automatiza tus finanzas</p>
+    <div className="min-h-screen pb-24">
+      <div className="max-w-2xl mx-auto">
+        {/* Header con mismo estilo que patrimonio */}
+        <div className="sticky top-0 z-40 bg-gradient-to-b from-white/80 to-transparent backdrop-blur-sm">
+          <div className="max-w-7xl mx-auto px-4 py-4">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate(-1)}
+                className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
+              >
+                <ArrowLeft className="h-4 w-4 text-gray-700" />
+              </Button>
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Conexión Bancaria</h1>
+                <p className="text-xs text-gray-500">Automatiza tus finanzas</p>
+              </div>
             </div>
           </div>
         </div>
+
+        <div className="p-4 space-y-4">
 
         {/* Hero Card con beneficios - Estilo Apple */}
         <Card className="p-6 bg-white/95 backdrop-blur-md shadow-lg border border-gray-100 rounded-3xl animate-fade-in hover:shadow-xl transition-all duration-300">
@@ -233,6 +235,7 @@ export default function BankConnection() {
             </Button>
           </div>
         </Card>
+        </div>
       </div>
     </div>
   );
