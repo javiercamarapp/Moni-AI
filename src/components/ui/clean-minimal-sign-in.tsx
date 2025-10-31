@@ -4,8 +4,10 @@ import * as React from "react"
  
 import { useState } from "react";
 
-import { Lock, Mail, Loader2 } from "lucide-react";
+import { Lock, Mail, Loader2, ArrowLeft } from "lucide-react";
 import moniLogo from "@/assets/moni-auth-logo.png";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface SignIn2Props {
   onSignIn: (email: string, password: string, fullName?: string) => Promise<void>;
@@ -20,6 +22,10 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [error, setError] = useState("");
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  const { toast } = useToast();
  
   const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -47,7 +53,122 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
       setError(isLogin ? "Error al iniciar sesión. Intenta de nuevo." : "Error al crear cuenta. Intenta de nuevo.");
     }
   };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!resetEmail) {
+      toast({
+        title: "Error",
+        description: "Por favor ingresa tu correo electrónico",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!validateEmail(resetEmail)) {
+      toast({
+        title: "Error",
+        description: "Por favor ingresa un correo válido",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setResetLoading(true);
+    
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "¡Correo enviado!",
+          description: "Revisa tu bandeja de entrada para restablecer tu contraseña",
+        });
+        setShowForgotPassword(false);
+        setResetEmail("");
+      }
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "Ocurrió un error. Intenta de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setResetLoading(false);
+    }
+  };
  
+  // Si está en modo "olvidé mi contraseña"
+  if (showForgotPassword) {
+    return (
+      <div className="min-h-screen w-full flex flex-col items-center justify-end pb-8 rounded-xl z-1">
+        <div className="w-full max-w-[320px] md:max-w-md bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl shadow-opacity-10 pt-2 md:pt-3 px-4 md:px-6 pb-3 md:pb-4 flex flex-col items-center border border-blue-100 text-black">
+          <div className="flex items-center justify-center w-48 md:w-56 h-16 md:h-20 mb-2 md:mb-3">
+            <img src={moniLogo} alt="Moni AI" className="w-full h-full object-contain" />
+          </div>
+          
+          <div className="w-full mb-3">
+            <button
+              type="button"
+              onClick={() => setShowForgotPassword(false)}
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Volver
+            </button>
+          </div>
+
+          <div className="w-full text-center mb-4">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">¿Olvidaste tu contraseña?</h2>
+            <p className="text-sm text-gray-600">
+              Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña
+            </p>
+          </div>
+
+          <form onSubmit={handleForgotPassword} className="w-full flex flex-col gap-3">
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <Mail className="w-4 h-4" />
+              </span>
+              <input
+                placeholder="Correo electrónico"
+                type="email"
+                value={resetEmail}
+                disabled={resetLoading}
+                className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm disabled:opacity-50"
+                onChange={(e) => setResetEmail(e.target.value)}
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={resetLoading}
+              className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 text-sm rounded-xl shadow hover:brightness-105 hover:scale-105 cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            >
+              {resetLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Enviando...
+                </span>
+              ) : (
+                "Enviar enlace de recuperación"
+              )}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-end pb-8 rounded-xl z-1">
       <div className="w-full max-w-[320px] md:max-w-md bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl shadow-opacity-10 pt-2 md:pt-3 px-4 md:px-6 pb-3 md:pb-4 flex flex-col items-center border border-blue-100 text-black">
@@ -103,7 +224,11 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
                 <div className="text-sm text-red-500 text-left">{error}</div>
               )}
               {isLogin && (
-                <button type="button" className="text-xs hover:underline font-medium transition-all hover:text-gray-700 ml-auto">
+                <button 
+                  type="button" 
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-xs hover:underline font-medium transition-all hover:text-gray-700 ml-auto"
+                >
                   ¿Olvidaste tu contraseña?
                 </button>
               )}
