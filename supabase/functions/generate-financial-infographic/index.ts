@@ -84,14 +84,6 @@ ${aspirationsSummary}
 SECCIÓN 3 - COMPARATIVA POR CATEGORÍAS:
 ${comparativeSummary}
 
-MENSAJE MOTIVACIONAL:
-"${
-  Number(progressPercentage) >= 75 ? 'Estás muy cerca de alcanzar tus sueños financieros' :
-  Number(progressPercentage) >= 50 ? 'Gran progreso. Sigue así y alcanzarás tus metas' :
-  Number(progressPercentage) >= 25 ? 'Vas por buen camino. Cada paso cuenta' :
-  'Comienza tu viaje financiero hoy. El futuro es tuyo'
-}"
-
 PALETA DE COLORES ESTRICTA (SOLO USAR ESTOS):
 - BEIGE: #F5F5DC, #EAE0D5, #D4C5B0
 - CAFÉ: #8B7355, #6F5645, #4A3728
