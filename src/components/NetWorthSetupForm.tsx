@@ -9,6 +9,24 @@ import { toast } from "sonner";
 import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X, Banknote } from "lucide-react";
 import { format } from "date-fns";
 
+// Helper functions for number formatting
+const formatNumberWithCommas = (value: string): string => {
+  if (!value) return '';
+  // Remove all non-digit and non-decimal point characters
+  const cleanValue = value.replace(/[^\d.]/g, '');
+  // Split into integer and decimal parts
+  const parts = cleanValue.split('.');
+  // Format integer part with commas
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  // Return formatted value (with max 2 decimals if decimal part exists)
+  return parts.length > 1 ? `${parts[0]}.${parts[1].slice(0, 2)}` : parts[0];
+};
+
+const parseFormattedNumber = (value: string): string => {
+  // Remove commas and return clean number string
+  return value.replace(/,/g, '');
+};
+
 type AssetEntry = {
   id: string;
   categoryType: string;
@@ -472,12 +490,13 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                           <div className="relative">
                             <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700 font-semibold text-xs">$</span>
                             <Input
-                              type="number"
-                              step="0.01"
-                              min="0"
+                              type="text"
                               placeholder="0.00"
-                              value={entry.value}
-                              onChange={(e) => updateAssetEntry(entry.id, 'value', e.target.value)}
+                              value={formatNumberWithCommas(entry.value)}
+                              onChange={(e) => {
+                                const rawValue = parseFormattedNumber(e.target.value);
+                                updateAssetEntry(entry.id, 'value', rawValue);
+                              }}
                               className="pl-6 bg-white border-gray-200 text-gray-900 focus:border-green-500 transition-all text-xs h-7"
                             />
                           </div>
@@ -597,12 +616,13 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                           <div className="relative">
                             <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700 font-semibold text-xs">$</span>
                             <Input
-                              type="number"
-                              step="0.01"
-                              min="0"
+                              type="text"
                               placeholder="0.00"
-                              value={account.value}
-                              onChange={(e) => updateCustomAssetAccount(customAsset.id, account.id, 'value', e.target.value)}
+                              value={formatNumberWithCommas(account.value)}
+                              onChange={(e) => {
+                                const rawValue = parseFormattedNumber(e.target.value);
+                                updateCustomAssetAccount(customAsset.id, account.id, 'value', rawValue);
+                              }}
                               className="pl-6 bg-white border-gray-200 text-gray-900 focus:border-green-500 transition-all text-xs h-7"
                             />
                           </div>
@@ -672,12 +692,13 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                           <div className="relative">
                             <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700 font-semibold text-xs">$</span>
                             <Input
-                              type="number"
-                              step="0.01"
-                              min="0"
+                              type="text"
                               placeholder="0.00"
-                              value={entry.value}
-                              onChange={(e) => updateLiabilityEntry(entry.id, 'value', e.target.value)}
+                              value={formatNumberWithCommas(entry.value)}
+                              onChange={(e) => {
+                                const rawValue = parseFormattedNumber(e.target.value);
+                                updateLiabilityEntry(entry.id, 'value', rawValue);
+                              }}
                               className="pl-6 bg-white border-gray-200 text-gray-900 focus:border-red-500 transition-all text-xs h-7"
                             />
                           </div>
@@ -795,12 +816,13 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                           <div className="relative">
                             <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700 font-semibold text-xs">$</span>
                             <Input
-                              type="number"
-                              step="0.01"
-                              min="0"
+                              type="text"
                               placeholder="0.00"
-                              value={account.value}
-                              onChange={(e) => updateCustomLiabilityAccount(customLiability.id, account.id, 'value', e.target.value)}
+                              value={formatNumberWithCommas(account.value)}
+                              onChange={(e) => {
+                                const rawValue = parseFormattedNumber(e.target.value);
+                                updateCustomLiabilityAccount(customLiability.id, account.id, 'value', rawValue);
+                              }}
                               className="pl-6 bg-white border-gray-200 text-gray-900 focus:border-red-500 transition-all text-xs h-7"
                             />
                           </div>
