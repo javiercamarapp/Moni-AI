@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { useNetWorth, useHasNetWorthData, TimeRange } from "@/hooks/useNetWorth";
 import NetWorthSetupForm from "@/components/NetWorthSetupForm";
 import NetWorthWidget from "@/components/analysis/NetWorthWidget";
-import networthIntro from "@/assets/networth-intro.jpg";
+import networthIntro from "@/assets/networth-coins-bg.png";
 import BottomNav from "@/components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
