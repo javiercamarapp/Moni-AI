@@ -112,11 +112,7 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
     return (
       <div className="min-h-screen w-full flex flex-col items-center justify-end pb-8 rounded-xl z-1">
         <div className="w-full max-w-[320px] md:max-w-md bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl shadow-opacity-10 pt-2 md:pt-3 px-4 md:px-6 pb-3 md:pb-4 flex flex-col items-center border border-blue-100 text-black">
-          <div className="flex items-center justify-center w-48 md:w-56 h-16 md:h-20 mb-2 md:mb-3">
-            <img src={moniLogo} alt="Moni AI" className="w-full h-full object-contain" />
-          </div>
-          
-          <div className="w-full mb-3">
+          <div className="w-full mb-2">
             <button
               type="button"
               onClick={() => setShowForgotPassword(false)}
@@ -125,6 +121,10 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
               <ArrowLeft className="w-4 h-4" />
               Volver
             </button>
+          </div>
+          
+          <div className="flex items-center justify-center w-48 md:w-56 h-16 md:h-20 mb-2 md:mb-3">
+            <img src={moniLogo} alt="Moni AI" className="w-full h-full object-contain" />
           </div>
 
           <div className="w-full text-center mb-4">
