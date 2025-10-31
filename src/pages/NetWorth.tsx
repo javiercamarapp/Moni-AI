@@ -114,7 +114,6 @@ export default function NetWorth() {
               alt="Net Worth Intro" 
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background"></div>
           </div>
 
           {/* Content */}
