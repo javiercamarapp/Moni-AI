@@ -93,15 +93,15 @@ export default function LevelDetails() {
         </div>
 
         {/* Current Level Card */}
-        <Card className="p-8 bg-gradient-to-br from-primary/10 to-secondary/10">
+        <Card className="p-8 bg-white/95 backdrop-blur-md shadow-lg border border-gray-100 rounded-3xl animate-fade-in hover:shadow-xl transition-all duration-300">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
-              <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center">
-                <Trophy className="w-10 h-10 text-primary" />
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg">
+                <Trophy className="w-10 h-10 text-white" />
               </div>
               <div>
-                <h2 className="text-4xl font-bold">Nivel {levelInfo?.level}</h2>
-                <p className="text-muted-foreground">{levelInfo?.xp} puntos totales</p>
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Nivel {levelInfo?.level}</h2>
+                <p className="text-gray-600 font-medium">{levelInfo?.xp} puntos totales</p>
               </div>
             </div>
           </div>
@@ -119,31 +119,31 @@ export default function LevelDetails() {
         </Card>
 
         {/* Ways to Earn XP */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Zap className="w-5 h-5 text-primary" />
+        <Card className="p-6 bg-white/95 backdrop-blur-md shadow-lg border border-gray-100 rounded-3xl animate-fade-in hover:shadow-xl transition-all duration-300">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900">
+            <Zap className="w-5 h-5 text-blue-600" />
             Cómo ganar puntos
           </h3>
-          <div className="space-y-4">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/20">
-              <Target className="w-5 h-5 text-primary mt-0.5" />
+          <div className="space-y-3">
+            <div className="flex items-start gap-3 p-4 rounded-2xl bg-gradient-to-br from-blue-50 to-purple-50 hover:shadow-md transition-all duration-200">
+              <Target className="w-5 h-5 text-blue-600 mt-0.5" />
               <div>
-                <p className="font-medium">Completar desafíos semanales</p>
-                <p className="text-sm text-muted-foreground">+50 XP por desafío</p>
+                <p className="font-medium text-gray-900">Completar desafíos semanales</p>
+                <p className="text-sm text-gray-600">+50 XP por desafío</p>
               </div>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/20">
-              <TrendingUp className="w-5 h-5 text-primary mt-0.5" />
+            <div className="flex items-start gap-3 p-4 rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 hover:shadow-md transition-all duration-200">
+              <TrendingUp className="w-5 h-5 text-purple-600 mt-0.5" />
               <div>
-                <p className="font-medium">Alcanzar tus metas financieras</p>
-                <p className="text-sm text-muted-foreground">+30 XP por meta</p>
+                <p className="font-medium text-gray-900">Alcanzar tus metas financieras</p>
+                <p className="text-sm text-gray-600">+30 XP por meta</p>
               </div>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/20">
-              <Star className="w-5 h-5 text-primary mt-0.5" />
+            <div className="flex items-start gap-3 p-4 rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 hover:shadow-md transition-all duration-200">
+              <Star className="w-5 h-5 text-green-600 mt-0.5" />
               <div>
-                <p className="font-medium">Mantener racha diaria</p>
-                <p className="text-sm text-muted-foreground">+10 XP por día</p>
+                <p className="font-medium text-gray-900">Mantener racha diaria</p>
+                <p className="text-sm text-gray-600">+10 XP por día</p>
               </div>
             </div>
           </div>

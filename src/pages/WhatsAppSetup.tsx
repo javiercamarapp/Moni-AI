@@ -127,9 +127,9 @@ export default function WhatsAppSetup() {
         </Card>
 
         {/* ¿Cómo funciona? */}
-        <Card className="p-4 bg-card/80 backdrop-blur border-border/50">
-          <h3 className="font-bold text-base text-white mb-3 flex items-center gap-2 animate-fade-in">
-            <CheckCircle2 className="h-4 w-4 text-white" />
+        <Card className="p-6 bg-white/95 backdrop-blur-md shadow-lg border border-gray-100 rounded-3xl animate-fade-in hover:shadow-xl transition-all duration-300">
+          <h3 className="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2 animate-fade-in">
+            <CheckCircle2 className="h-5 w-5 text-green-500" />
             ¿Cómo funciona?
           </h3>
           <Carousel
@@ -141,73 +141,73 @@ export default function WhatsAppSetup() {
           >
             <CarouselContent className="-ml-2">
               <CarouselItem className="basis-1/2 pl-2">
-                <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-white font-bold text-xs">
+                <div className="flex gap-3 p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl hover:scale-105 hover:shadow-md transition-all duration-200">
+                  <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
                     1
                   </div>
                   <div>
-                    <p className="font-semibold text-white text-sm">Agrega el número</p>
-                    <p className="text-xs text-white/70">Guarda como "Moni AI"</p>
+                    <p className="font-semibold text-gray-900 text-sm">Agrega el número</p>
+                    <p className="text-xs text-gray-600">Guarda como "Moni AI"</p>
                   </div>
                 </div>
               </CarouselItem>
 
               <CarouselItem className="basis-1/2 pl-2">
-                <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-white font-bold text-xs">
+                <div className="flex gap-3 p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl hover:scale-105 hover:shadow-md transition-all duration-200">
+                  <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
                     2
                   </div>
                   <div>
-                    <p className="font-semibold text-white text-sm">Envía transacciones</p>
-                    <p className="text-xs text-white/70">Escribe natural, como hablas</p>
+                    <p className="font-semibold text-gray-900 text-sm">Envía transacciones</p>
+                    <p className="text-xs text-gray-600">Escribe natural, como hablas</p>
                   </div>
                 </div>
               </CarouselItem>
 
               <CarouselItem className="basis-1/2 pl-2">
-                <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-white font-bold text-xs">
+                <div className="flex gap-3 p-3 bg-gradient-to-br from-pink-50 to-red-50 rounded-2xl hover:scale-105 hover:shadow-md transition-all duration-200">
+                  <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-pink-500 to-red-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
                     3
                   </div>
                   <div>
-                    <p className="font-semibold text-white text-sm">Recibe confirmación</p>
-                    <p className="text-xs text-white/70">Moni categoriza automáticamente</p>
+                    <p className="font-semibold text-gray-900 text-sm">Recibe confirmación</p>
+                    <p className="text-xs text-gray-600">Moni categoriza automáticamente</p>
                   </div>
                 </div>
               </CarouselItem>
 
               <CarouselItem className="basis-1/2 pl-2">
-                <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-white font-bold text-xs">
+                <div className="flex gap-3 p-3 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl hover:scale-105 hover:shadow-md transition-all duration-200">
+                  <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
                     4
                   </div>
                   <div>
-                    <p className="font-semibold text-white text-sm">Consulta tu balance</p>
-                    <p className="text-xs text-white/70">Pregunta: "¿Cuánto he gastado?"</p>
+                    <p className="font-semibold text-gray-900 text-sm">Consulta tu balance</p>
+                    <p className="text-xs text-gray-600">Pregunta: "¿Cuánto he gastado?"</p>
                   </div>
                 </div>
               </CarouselItem>
 
               <CarouselItem className="basis-1/2 pl-2">
-                <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-white font-bold text-xs">
+                <div className="flex gap-3 p-3 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl hover:scale-105 hover:shadow-md transition-all duration-200">
+                  <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-yellow-500 to-orange-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
                     5
                   </div>
                   <div>
-                    <p className="font-semibold text-white text-sm">Recibe análisis</p>
-                    <p className="text-xs text-white/70">Reportes y consejos personalizados</p>
+                    <p className="font-semibold text-gray-900 text-sm">Recibe análisis</p>
+                    <p className="text-xs text-gray-600">Reportes y consejos personalizados</p>
                   </div>
                 </div>
               </CarouselItem>
 
               <CarouselItem className="basis-1/2 pl-2">
-                <div className="flex gap-2 hover:scale-105 transition-transform duration-200">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-white font-bold text-xs">
+                <div className="flex gap-3 p-3 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl hover:scale-105 hover:shadow-md transition-all duration-200">
+                  <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
                     6
                   </div>
                   <div>
-                    <p className="font-semibold text-white text-sm">Mejora tus finanzas</p>
-                    <p className="text-xs text-white/70">Alcanza tus metas con Moni</p>
+                    <p className="font-semibold text-gray-900 text-sm">Mejora tus finanzas</p>
+                    <p className="text-xs text-gray-600">Alcanza tus metas con Moni</p>
                   </div>
                 </div>
               </CarouselItem>
@@ -216,8 +216,8 @@ export default function WhatsAppSetup() {
         </Card>
 
         {/* Ejemplos de mensajes - Carrusel */}
-        <Card className="p-4 bg-card/80 backdrop-blur border-border/50 overflow-hidden">
-          <h3 className="font-bold text-base text-white mb-2">
+        <Card className="p-6 bg-white/95 backdrop-blur-md shadow-lg border border-gray-100 rounded-3xl overflow-hidden animate-fade-in hover:shadow-xl transition-all duration-300">
+          <h3 className="font-bold text-lg text-gray-900 mb-4">
             Ejemplos de mensajes
           </h3>
           <Carousel
@@ -236,9 +236,9 @@ export default function WhatsAppSetup() {
             <CarouselContent>
               {ejemplosMensajes.map((ejemplo, index) => (
                 <CarouselItem key={index} className="basis-1/2">
-                  <div className={`${ejemplo.tipo === 'ingreso' ? 'bg-green-500/10 border-green-500/30' : 'bg-red-500/10 border-red-500/30'} border rounded-lg p-2 hover:scale-105 transition-transform duration-200`}>
-                    <p className="text-white font-medium text-xs">"{ejemplo.mensaje}"</p>
-                    <p className="text-[10px] text-white/60 mt-0.5">→ {ejemplo.categoria}</p>
+                  <div className={`${ejemplo.tipo === 'ingreso' ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200' : 'bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-200'} rounded-2xl p-3 hover:scale-105 hover:shadow-md transition-all duration-200`}>
+                    <p className="text-gray-900 font-semibold text-sm">"{ejemplo.mensaje}"</p>
+                    <p className="text-xs text-gray-600 mt-1">→ {ejemplo.categoria}</p>
                   </div>
                 </CarouselItem>
               ))}
@@ -247,40 +247,40 @@ export default function WhatsAppSetup() {
         </Card>
 
         {/* Beneficios */}
-        <Card className="p-4 bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur border-primary/20">
-          <h3 className="font-bold text-base text-white mb-2 animate-fade-in">
+        <Card className="p-6 bg-white/95 backdrop-blur-md shadow-lg border border-gray-100 rounded-3xl animate-fade-in hover:shadow-xl transition-all duration-300">
+          <h3 className="font-bold text-lg text-gray-900 mb-4 animate-fade-in">
             ¿Por qué usar WhatsApp? 💡
           </h3>
-          <div className="grid grid-cols-2 gap-2">
-            <div className="flex items-start gap-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '0ms' }}>
-              <div className="text-lg">⚡</div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex items-start gap-3 p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl animate-fade-in hover:scale-105 transition-all duration-200 hover:shadow-md" style={{ animationDelay: '0ms' }}>
+              <div className="text-2xl">⚡</div>
               <div>
-                <p className="font-semibold text-white text-xs">Instantáneo</p>
-                <p className="text-[10px] text-white/70">Registra en segundos</p>
+                <p className="font-semibold text-gray-900 text-sm">Instantáneo</p>
+                <p className="text-xs text-gray-600">Registra en segundos</p>
               </div>
             </div>
             
-            <div className="flex items-start gap-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '150ms' }}>
-              <div className="text-lg">🤖</div>
+            <div className="flex items-start gap-3 p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl animate-fade-in hover:scale-105 transition-all duration-200 hover:shadow-md" style={{ animationDelay: '100ms' }}>
+              <div className="text-2xl">🤖</div>
               <div>
-                <p className="font-semibold text-white text-xs">Inteligente</p>
-                <p className="text-[10px] text-white/70">IA que entiende</p>
+                <p className="font-semibold text-gray-900 text-sm">Inteligente</p>
+                <p className="text-xs text-gray-600">IA que entiende</p>
               </div>
             </div>
             
-            <div className="flex items-start gap-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '300ms' }}>
-              <div className="text-lg">🎯</div>
+            <div className="flex items-start gap-3 p-3 bg-gradient-to-br from-pink-50 to-red-50 rounded-2xl animate-fade-in hover:scale-105 transition-all duration-200 hover:shadow-md" style={{ animationDelay: '200ms' }}>
+              <div className="text-2xl">🎯</div>
               <div>
-                <p className="font-semibold text-white text-xs">Preciso</p>
-                <p className="text-[10px] text-white/70">Auto-categoriza</p>
+                <p className="font-semibold text-gray-900 text-sm">Preciso</p>
+                <p className="text-xs text-gray-600">Auto-categoriza</p>
               </div>
             </div>
             
-            <div className="flex items-start gap-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '450ms' }}>
-              <div className="text-lg">🔔</div>
+            <div className="flex items-start gap-3 p-3 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl animate-fade-in hover:scale-105 transition-all duration-200 hover:shadow-md" style={{ animationDelay: '300ms' }}>
+              <div className="text-2xl">🔔</div>
               <div>
-                <p className="font-semibold text-white text-xs">Recordatorios</p>
-                <p className="text-[10px] text-white/70">Alertas útiles</p>
+                <p className="font-semibold text-gray-900 text-sm">Recordatorios</p>
+                <p className="text-xs text-gray-600">Alertas útiles</p>
               </div>
             </div>
           </div>
