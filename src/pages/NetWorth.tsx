@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { cn } from "@/lib/utils";
 import { useNetWorth, useHasNetWorthData, TimeRange } from "@/hooks/useNetWorth";
-import NetWorthSetupForm from "@/components/NetWorthSetupForm";
 import NetWorthWidget from "@/components/analysis/NetWorthWidget";
 import networthIntro from "@/assets/networth-coins-bg.png";
 import BottomNav from "@/components/BottomNav";
@@ -42,7 +41,6 @@ export default function NetWorth() {
   const [liabilitiesExpanded, setLiabilitiesExpanded] = useState(false);
   const [assetFilter, setAssetFilter] = useState<CategoryFilter>('All');
   const [liabilityFilter, setLiabilityFilter] = useState<CategoryFilter>('All');
-  const [showForm, setShowForm] = useState(false);
   const [showInstitutionFilter, setShowInstitutionFilter] = useState(false);
   const [selectedInstitution, setSelectedInstitution] = useState<string>('All');
   const [showSemiLiquidFilter, setShowSemiLiquidFilter] = useState(false);
@@ -80,41 +78,37 @@ export default function NetWorth() {
 
   // Mostrar formulario si definitivamente no hay datos (no mientras está cargando)
   if (!checkingData && hasData === false) {
-    if (!showForm) {
-      return (
-        <div className="min-h-screen flex flex-col relative">
-          {/* Hero Image - Full Screen Background */}
-          <div className="absolute inset-0 w-full h-full">
-            <img 
-              src={networthIntro} 
-              alt="Net Worth Intro" 
-              className="w-full h-full object-cover"
-            />
-          </div>
+    return (
+      <div className="min-h-screen flex flex-col relative">
+        {/* Hero Image - Full Screen Background */}
+        <div className="absolute inset-0 w-full h-full">
+          <img 
+            src={networthIntro} 
+            alt="Net Worth Intro" 
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-          {/* Content */}
-          <div className="flex-1 flex flex-col items-center justify-center px-6 pb-12 relative z-10">
-            <div className="max-w-md text-center space-y-6">
-              <h1 className="text-4xl font-semibold text-gray-900 tracking-tight">
-                Vamos a conocernos mejor
-              </h1>
-              <p className="text-lg text-gray-600">
-                Nutre a tu Moni AI personal con tu información y empieza a ver la diferencia
-              </p>
-              <Button 
-                size="lg"
-                className="w-full mt-8 text-base py-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm hover:scale-105 hover:bg-white/80 active:scale-95 transition-all duration-200 font-semibold border-0 text-gray-900 animate-fade-in"
-                onClick={() => setShowForm(true)}
-              >
-                Responder preguntas
-              </Button>
-            </div>
+        {/* Content */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6 pb-12 relative z-10">
+          <div className="max-w-md text-center space-y-6">
+            <h1 className="text-4xl font-semibold text-gray-900 tracking-tight">
+              Vamos a conocernos mejor
+            </h1>
+            <p className="text-lg text-gray-600">
+              Nutre a tu Moni AI personal con tu información y empieza a ver la diferencia
+            </p>
+            <Button 
+              size="lg"
+              className="w-full mt-8 text-base py-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm hover:scale-105 hover:bg-white/80 active:scale-95 transition-all duration-200 font-semibold border-0 text-gray-900 animate-fade-in"
+              onClick={() => navigate("/edit-assets-liabilities")}
+            >
+              Responder preguntas
+            </Button>
           </div>
         </div>
-      );
-    }
-    
-    return <NetWorthSetupForm onComplete={() => refetchHasData()} onBack={() => setShowForm(false)} />;
+      </div>
+    );
   }
 
   // Mostrar skeleton/placeholder mientras carga pero solo si ya sabemos que hay datos
