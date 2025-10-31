@@ -37,13 +37,22 @@ const Auth = () => {
 
     // Solo escuchar cambios de auth, no verificar sesión inicial
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      // Si es password recovery, no redirigir automáticamente
+      console.log("Auth event:", event, "isResetPassword:", isResetPassword);
+      
+      // Si estamos en modo reset password, NUNCA redirigir
+      if (isResetPassword) {
+        console.log("Modo reset password activo, bloqueando redirección");
+        return;
+      }
+      
+      // Si es password recovery, activar modo reset y no redirigir
       if (event === 'PASSWORD_RECOVERY') {
+        console.log("PASSWORD_RECOVERY detectado");
         setIsResetPassword(true);
         return;
       }
       
-      // Redirigir según el evento
+      // Redirigir según el evento SOLO si no estamos en reset password
       if (session && event === 'SIGNED_IN') {
         // Usuario que ya existía - ir al dashboard
         navigate("/dashboard");
@@ -51,7 +60,14 @@ const Auth = () => {
         // Nuevo usuario - ir a configuración bancaria
         navigate("/bank-connection");
       } else if (session && event === 'INITIAL_SESSION') {
-        // Sesión existente - ir al dashboard
+        // Si hay hash de recovery, no redirigir
+        const currentHash = window.location.hash;
+        if (currentHash && currentHash.includes('type=recovery')) {
+          console.log("Hash de recovery detectado, no redirigir");
+          setIsResetPassword(true);
+          return;
+        }
+        // Sesión existente normal - ir al dashboard
         navigate("/dashboard");
       }
     });
@@ -59,7 +75,7 @@ const Auth = () => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate, toast]);
+  }, [navigate, toast, isResetPassword]);
 
   // Cargar email guardado para autenticación biométrica
   useEffect(() => {
@@ -75,6 +91,11 @@ const Auth = () => {
   // Solicitar Face ID automáticamente al abrir la app
   useEffect(() => {
     const autoAuthenticate = async () => {
+      // NO solicitar biometría si estamos en modo reset password
+      if (isResetPassword) {
+        return;
+      }
+      
       // Solo solicitar si hay credenciales guardadas y biometría disponible
       if (savedEmail && biometricAvailable && isLogin && !loading) {
         await handleBiometricAuth();
@@ -87,7 +108,7 @@ const Auth = () => {
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [savedEmail, biometricAvailable, isLogin]);
+  }, [savedEmail, biometricAvailable, isLogin, isResetPassword]);
 
   const handleBiometricAuth = async () => {
     if (!savedEmail) {
