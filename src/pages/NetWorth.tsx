@@ -82,9 +82,9 @@ export default function NetWorth() {
   if (!checkingData && hasData === false) {
     if (!showForm) {
       return (
-        <div className="min-h-screen flex flex-col">
-          {/* Hero Image */}
-          <div className="h-[70vh] relative overflow-hidden -mt-20">
+        <div className="min-h-screen flex flex-col relative">
+          {/* Hero Image - Full Screen Background */}
+          <div className="absolute inset-0 w-full h-full">
             <img 
               src={networthIntro} 
               alt="Net Worth Intro" 
@@ -93,7 +93,7 @@ export default function NetWorth() {
           </div>
 
           {/* Content */}
-          <div className="flex-1 flex flex-col items-center justify-center px-6 pb-12 -mt-20 relative z-10">
+          <div className="flex-1 flex flex-col items-center justify-center px-6 pb-12 relative z-10">
             <div className="max-w-md text-center space-y-6">
               <h1 className="text-4xl font-semibold text-gray-900 tracking-tight">
                 Vamos a conocernos mejor
