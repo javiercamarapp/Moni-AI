@@ -501,49 +501,6 @@ export default function AspirationsAnalysis() {
 
       <div className="mx-auto px-4 py-6 space-y-4" style={{ maxWidth: '600px' }}>
 
-        {/* Botón Generar Infografía */}
-        <Button
-          onClick={async () => {
-            toast.info("Generando tu infografía financiera...");
-            try {
-              const { data: { user } } = await supabase.auth.getUser();
-              if (!user) return;
-
-              const { data, error } = await supabase.functions.invoke("generate-financial-infographic", {
-                body: {
-                  currentNetWorth,
-                  totalAspiration,
-                  gap,
-                  aspirations,
-                  comparativeData,
-                  userScore
-                }
-              });
-
-              if (error) throw error;
-
-              if (data?.imageUrl) {
-                // Crear un enlace temporal para descargar
-                const link = document.createElement("a");
-                link.href = data.imageUrl;
-                link.download = `moni-infografia-${new Date().toISOString().split("T")[0]}.png`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                toast.success("¡Infografía generada exitosamente!");
-              }
-            } catch (error: any) {
-              console.error("Error:", error);
-              toast.error("Error al generar la infografía");
-            }
-          }}
-          className="w-full bg-white text-gray-900 font-bold py-4 rounded-[20px] shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2 border border-gray-200"
-        >
-          <Sparkles className="h-5 w-5" />
-          Generar Infografía Financiera
-        </Button>
-
         {/* Net Worth Comparison Card */}
         <Card className="p-3 mb-4 bg-white/95 backdrop-blur-sm rounded-[20px] shadow-xl border-0">
           <div className="flex items-center gap-1.5 mb-2">
