@@ -65,24 +65,33 @@ serve(async (req) => {
 
     const prompt = `Crea una infografía financiera MINIMALISTA y ELEGANTE con el siguiente contenido:
 
+IMPORTANTE: Escribe TODAS las palabras correctamente en español de México. Verifica la ortografía de cada palabra.
+
 LOGO Y TÍTULO:
 - En la parte superior debe aparecer el logo "MONI AI." (tipografía bold, negra) con el subtítulo "coach financiero" debajo (tipografía delgada)
 - Mantener el diseño exacto del logo: MONI AI. en negro bold con punto final
 
 TÍTULO PRINCIPAL: "Mi Viaje Financiero"
 
-SECCIÓN 1 - RESUMEN GENERAL:
+SECCIÓN 1 - RESUMEN GENERAL (escribir exactamente como está):
 - Net Worth Actual: $${Number(currentNetWorth).toLocaleString('es-MX')}
 - Meta Aspiracional: $${Number(totalAspiration).toLocaleString('es-MX')}
 - Brecha a Cerrar: $${Number(gap).toLocaleString('es-MX')}
 - Progreso: ${progressPercentage}%
 - Score Moni: ${userScore}/100
 
-SECCIÓN 2 - MIS ASPIRACIONES:
+SECCIÓN 2 - MIS ASPIRACIONES (copiar exactamente los nombres):
 ${aspirationsSummary}
 
-SECCIÓN 3 - COMPARATIVA POR CATEGORÍAS:
+SECCIÓN 3 - COMPARATIVA POR CATEGORÍAS (copiar exactamente):
 ${comparativeSummary}
+
+VERIFICACIÓN DE ORTOGRAFÍA:
+- Todas las palabras deben estar correctamente escritas en español
+- Usar acentos correctamente: Aspiración, Meta, Categorías, etc.
+- NO inventar palabras
+- NO cometer errores de tipeo
+- Revisar cada palabra antes de escribirla
 
 PALETA DE COLORES ESTRICTA (SOLO USAR ESTOS):
 - BEIGE: #F5F5DC, #EAE0D5, #D4C5B0
