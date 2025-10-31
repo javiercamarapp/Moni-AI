@@ -63,9 +63,11 @@ serve(async (req) => {
 
     const progressPercentage = totalAspiration > 0 ? ((currentNetWorth / totalAspiration) * 100).toFixed(1) : '0';
 
-    const prompt = `Crea una infografía financiera moderna y visualmente atractiva con el siguiente contenido:
+    const prompt = `Crea una infografía financiera MINIMALISTA y ELEGANTE con el siguiente contenido:
 
-TÍTULO PRINCIPAL: "Mi Viaje Financiero con Moni AI 🦉"
+TÍTULO PRINCIPAL: "Mi Viaje Financiero con Moni AI"
+
+En la parte superior DEBE aparecer visible el logo de Moni AI (un búho minimalista en café oscuro)
 
 SECCIÓN 1 - RESUMEN GENERAL:
 - Net Worth Actual: $${Number(currentNetWorth).toLocaleString('es-MX')}
@@ -82,21 +84,25 @@ ${comparativeSummary}
 
 MENSAJE MOTIVACIONAL:
 "${
-  Number(progressPercentage) >= 75 ? '¡Estás muy cerca de alcanzar tus sueños financieros! 🌟' :
-  Number(progressPercentage) >= 50 ? '¡Gran progreso! Sigue así y alcanzarás tus metas 🚀' :
-  Number(progressPercentage) >= 25 ? 'Vas por buen camino. Cada paso cuenta 💪' :
-  '¡Comienza tu viaje financiero hoy! El futuro es tuyo 🎯'
+  Number(progressPercentage) >= 75 ? 'Estás muy cerca de alcanzar tus sueños financieros' :
+  Number(progressPercentage) >= 50 ? 'Gran progreso. Sigue así y alcanzarás tus metas' :
+  Number(progressPercentage) >= 25 ? 'Vas por buen camino. Cada paso cuenta' :
+  'Comienza tu viaje financiero hoy. El futuro es tuyo'
 }"
 
-Estilo visual:
-- Usa colores vibrantes: morado, rosa, naranja, azul
-- Incluye iconos financieros (casa, coche, dinero, gráficas)
-- Diseño moderno y minimalista
-- Fondo con gradiente suave
-- Texto legible y profesional
-- Incluye el logo "Moni AI 🦉" en la esquina
-- Formato vertical para compartir en redes sociales
-- Aspecto limpio y profesional tipo infografía de finanzas personales`;
+ESTILO VISUAL MINIMALISTA:
+- Paleta de colores: tonos BEIGE (#F5F5DC, #E8D5B7, #D4C5A9), café claro (#A67B5B), café oscuro (#6F4E37), y blanco cremoso (#FFFEF2)
+- Fondo: beige suave uniforme o con textura sutil
+- Logo de Moni AI (búho) en café oscuro en la parte superior central
+- Tipografía: elegante, sans-serif, en café oscuro
+- Iconos: minimalistas de línea fina en café oscuro (sin relleno)
+- NO usar colores vibrantes
+- NO usar gradientes coloridos
+- Diseño limpio con mucho espacio en blanco
+- Líneas delgadas en café claro para separar secciones
+- Formato vertical para redes sociales
+- Aspecto sofisticado y profesional tipo revista de finanzas
+- Estética minimalista japonesa (wabi-sabi) aplicada a finanzas`;
 
     console.log("Calling Lovable AI image generation...");
 

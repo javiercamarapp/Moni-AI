@@ -524,9 +524,9 @@ export default function AspirationsAnalysis() {
 
               if (data?.imageUrl) {
                 // Crear un enlace temporal para descargar
-                const link = document.createElement('a');
+                const link = document.createElement("a");
                 link.href = data.imageUrl;
-                link.download = `moni-infografia-${new Date().toISOString().split('T')[0]}.png`;
+                link.download = `moni-infografia-${new Date().toISOString().split("T")[0]}.png`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -538,7 +538,7 @@ export default function AspirationsAnalysis() {
               toast.error("Error al generar la infografía");
             }
           }}
-          className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white font-bold py-4 rounded-[20px] shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2"
+          className="w-full bg-white text-gray-900 font-bold py-4 rounded-[20px] shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2 border border-gray-200"
         >
           <Sparkles className="h-5 w-5" />
           Generar Infografía Financiera
