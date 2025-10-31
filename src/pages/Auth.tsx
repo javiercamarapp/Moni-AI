@@ -20,10 +20,29 @@ const Auth = () => {
   const { toast } = useToast();
   const { isAvailable: biometricAvailable, biometryType, authenticate } = useBiometricAuth();
   const [savedEmail, setSavedEmail] = useState<string | null>(null);
+  const [isResetPassword, setIsResetPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
+    // Detectar si venimos de un enlace de recuperación de contraseña
+    const hash = window.location.hash;
+    if (hash && hash.includes('type=recovery')) {
+      setIsResetPassword(true);
+      toast({
+        title: "Recuperación de contraseña",
+        description: "Ingresa tu nueva contraseña",
+      });
+    }
+
     // Solo escuchar cambios de auth, no verificar sesión inicial
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // Si es password recovery, no redirigir automáticamente
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsResetPassword(true);
+        return;
+      }
+      
       // Redirigir según el evento
       if (session && event === 'SIGNED_IN') {
         // Usuario que ya existía - ir al dashboard
@@ -40,7 +59,7 @@ const Auth = () => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate]);
+  }, [navigate, toast]);
 
   // Cargar email guardado para autenticación biométrica
   useEffect(() => {
@@ -244,6 +263,86 @@ const Auth = () => {
     }
   };
 
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!newPassword || !confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Por favor completa todos los campos",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Las contraseñas no coinciden",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validar fortaleza de contraseña
+    if (newPassword.length < 12) {
+      toast({
+        title: "Error",
+        description: "La contraseña debe tener al menos 12 caracteres",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const hasUpperCase = /[A-Z]/.test(newPassword);
+    const hasLowerCase = /[a-z]/.test(newPassword);
+    const hasNumber = /[0-9]/.test(newPassword);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
+
+    if (!hasUpperCase || !hasLowerCase || !hasNumber || !hasSpecialChar) {
+      toast({
+        title: "Error",
+        description: "La contraseña debe incluir mayúsculas, minúsculas, números y caracteres especiales",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "¡Contraseña actualizada!",
+          description: "Tu contraseña ha sido cambiada exitosamente",
+        });
+        
+        // Limpiar el hash y redirigir al dashboard
+        window.location.hash = '';
+        setIsResetPassword(false);
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar la contraseña",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSocialLogin = async (provider: 'google' | 'facebook' | 'apple') => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
@@ -274,7 +373,70 @@ const Auth = () => {
       <div 
         className="flex-1 flex items-center justify-center py-8 md:py-12 px-2 md:px-4 relative z-10"
       >
-        <SignIn2 
+        {isResetPassword ? (
+          <div className="w-full max-w-[320px] md:max-w-md bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl shadow-opacity-10 pt-6 md:pt-8 px-4 md:px-6 pb-6 md:pb-8 flex flex-col items-center border border-blue-100">
+            <div className="flex items-center justify-center w-48 md:w-56 h-16 md:h-20 mb-4 md:mb-6">
+              <img src={heroAuth} alt="Moni AI" className="w-full h-full object-contain" />
+            </div>
+
+            <h2 className="text-xl font-bold text-gray-900 mb-2 text-center">Nueva contraseña</h2>
+            <p className="text-sm text-gray-600 mb-6 text-center">Ingresa tu nueva contraseña</p>
+
+            <form onSubmit={handleResetPassword} className="w-full space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="newPassword" className="text-sm font-medium text-gray-900">Nueva Contraseña</Label>
+                <Input
+                  id="newPassword"
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  disabled={loading}
+                  placeholder="Mínimo 12 caracteres"
+                  className="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black disabled:opacity-50"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-900">Confirmar Contraseña</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={loading}
+                  placeholder="Repite tu contraseña"
+                  className="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black disabled:opacity-50"
+                />
+              </div>
+
+              <div className="bg-blue-50 rounded-xl p-3 text-xs text-gray-600">
+                <p className="font-semibold mb-1">La contraseña debe tener:</p>
+                <ul className="space-y-0.5 list-disc list-inside">
+                  <li>Al menos 12 caracteres</li>
+                  <li>Mayúsculas y minúsculas</li>
+                  <li>Números</li>
+                  <li>Caracteres especiales (!@#$%^&*)</li>
+                </ul>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 rounded-xl shadow hover:brightness-105 hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Actualizando...
+                  </span>
+                ) : (
+                  "Actualizar Contraseña"
+                )}
+              </Button>
+            </form>
+          </div>
+        ) : (
+          <SignIn2
           onSignIn={async (email, password, fullName) => {
             setLoading(true);
             try {
@@ -390,6 +552,7 @@ const Auth = () => {
           isLogin={isLogin}
           setIsLogin={setIsLogin}
         />
+        )}
       </div>
 
       {/* Footer fijo en la parte inferior - oculto en móvil */}
