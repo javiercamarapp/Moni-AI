@@ -296,13 +296,30 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     setSaveStatus('saving');
 
     try {
+      // Mapeo de categorías a nombres en español
+      const categoryMap: Record<string, string> = {
+        'Checking': 'Activos líquidos',
+        'Savings': 'Activos líquidos',
+        'Investments': 'Activos financieros',
+        'Property': 'Activos fijos',
+        'Other': 'Otros activos',
+        'Credit': 'Pasivos corrientes (corto plazo)',
+        'Loans': 'Pasivos no corrientes (largo plazo)',
+        'Mortgage': 'Pasivos no corrientes (largo plazo)'
+      };
+
       // Preparar activos válidos
       const validAssets = assetEntries
         .filter(entry => entry.name.trim() && parseFloat(entry.value) > 0)
         .map(entry => ({
-          name: entry.name.trim(),
-          value: parseFloat(entry.value),
-          category: entry.category
+          user_id: user.id,
+          nombre: entry.name.trim(),
+          valor: parseFloat(entry.value),
+          categoria: categoryMap[entry.category] || 'Otros activos',
+          subcategoria: entry.categoryType,
+          moneda: 'MXN',
+          es_activo_fijo: entry.category === 'Property',
+          liquidez_porcentaje: entry.category === 'Checking' || entry.category === 'Savings' ? 100 : 50
         }));
 
       // Agregar activos personalizados
@@ -311,9 +328,14 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
           customAsset.accounts.forEach(account => {
             if (account.name.trim() && parseFloat(account.value) > 0) {
               validAssets.push({
-                name: `${customAsset.name} - ${account.name}`,
-                value: parseFloat(account.value),
-                category: 'Other'
+                user_id: user.id,
+                nombre: account.name.trim(),
+                valor: parseFloat(account.value),
+                categoria: 'Activo personalizado',
+                subcategoria: customAsset.name.trim(),
+                moneda: 'MXN',
+                es_activo_fijo: false,
+                liquidez_porcentaje: 50
               });
             }
           });
@@ -324,9 +346,13 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
       const validLiabilities = liabilityEntries
         .filter(entry => entry.name.trim() && parseFloat(entry.value) > 0)
         .map(entry => ({
-          name: entry.name.trim(),
-          value: parseFloat(entry.value),
-          category: entry.category
+          user_id: user.id,
+          nombre: entry.name.trim(),
+          valor: parseFloat(entry.value),
+          categoria: categoryMap[entry.category] || 'Otros pasivos',
+          subcategoria: entry.categoryType,
+          moneda: 'MXN',
+          es_corto_plazo: entry.category === 'Credit'
         }));
 
       // Agregar pasivos personalizados
@@ -335,46 +361,46 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
           customLiability.accounts.forEach(account => {
             if (account.name.trim() && parseFloat(account.value) > 0) {
               validLiabilities.push({
-                name: `${customLiability.name} - ${account.name}`,
-                value: parseFloat(account.value),
-                category: 'Other'
+                user_id: user.id,
+                nombre: account.name.trim(),
+                valor: parseFloat(account.value),
+                categoria: 'Pasivo personalizado',
+                subcategoria: customLiability.name.trim(),
+                moneda: 'MXN',
+                es_corto_plazo: true
               });
             }
           });
         }
       });
 
-      // Insert assets
+      // Insert activos
       if (validAssets.length > 0) {
         const { error: assetsError } = await supabase
-          .from('assets')
-          .insert(validAssets.map(a => ({
-            user_id: user.id,
-            name: a.name,
-            value: a.value,
-            category: a.category
-          })));
+          .from('activos')
+          .insert(validAssets);
 
-        if (assetsError) throw assetsError;
+        if (assetsError) {
+          console.error('Error inserting activos:', assetsError);
+          throw assetsError;
+        }
       }
 
-      // Insert liabilities
+      // Insert pasivos
       if (validLiabilities.length > 0) {
         const { error: liabilitiesError } = await supabase
-          .from('liabilities')
-          .insert(validLiabilities.map(l => ({
-            user_id: user.id,
-            name: l.name,
-            value: l.value,
-            category: l.category
-          })));
+          .from('pasivos')
+          .insert(validLiabilities);
 
-        if (liabilitiesError) throw liabilitiesError;
+        if (liabilitiesError) {
+          console.error('Error inserting pasivos:', liabilitiesError);
+          throw liabilitiesError;
+        }
       }
 
       // Create initial snapshot
-      const totalAssets = validAssets.reduce((sum, a) => sum + a.value, 0);
-      const totalLiabilities = validLiabilities.reduce((sum, l) => sum + l.value, 0);
+      const totalAssets = validAssets.reduce((sum, a) => sum + a.valor, 0);
+      const totalLiabilities = validLiabilities.reduce((sum, l) => sum + l.valor, 0);
       const netWorth = totalAssets - totalLiabilities;
 
       const { error: snapshotError } = await supabase
@@ -387,16 +413,19 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
           net_worth: netWorth
         });
 
-      if (snapshotError) throw snapshotError;
+      if (snapshotError) {
+        console.error('Error creating snapshot:', snapshotError);
+        throw snapshotError;
+      }
 
       setSaveStatus('saved');
-      toast.success('Patrimonio configurado exitosamente');
+      toast.success('Patrimonio guardado exitosamente');
       setTimeout(() => {
         onComplete();
       }, 1000);
     } catch (error: any) {
       console.error('Error setting up net worth:', error);
-      toast.error('Error al configurar patrimonio: ' + error.message);
+      toast.error('Error al guardar patrimonio: ' + error.message);
       setSaveStatus('idle');
     } finally {
       setLoading(false);
