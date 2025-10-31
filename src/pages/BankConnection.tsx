@@ -58,70 +58,74 @@ export default function BankConnection() {
 
   return (
     <div className="min-h-screen p-4 pb-20">
-      <div className="max-w-2xl mx-auto space-y-3">
-        <div className="flex items-center gap-3 mb-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate(-1)}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 w-12"
-          >
-            <ArrowLeft className="h-5 w-5 text-foreground" />
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-white">Conexión Bancaria</h1>
-            <p className="text-sm text-white/70">Automatiza tus finanzas</p>
+      <div className="max-w-2xl mx-auto space-y-4">
+        {/* Header mejorado con gradiente y contraste */}
+        <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-lg border border-gray-100 animate-fade-in">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate(-1)}
+              className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl hover:scale-110 transition-all border-0 h-12 w-12 flex-shrink-0 hover:shadow-md"
+            >
+              <ArrowLeft className="h-5 w-5 text-gray-700" />
+            </Button>
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                Conexión Bancaria
+              </h1>
+              <p className="text-sm text-gray-600 font-medium">Automatiza tus finanzas</p>
+            </div>
           </div>
         </div>
 
-        {/* Hero Card con beneficios */}
-        <Card className="p-4 bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur border-primary/20">
-          <div className="text-center space-y-3">
-            <div className="flex items-center justify-center gap-3 mb-2">
-              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                <Building2 className="w-6 h-6 text-white" />
+        {/* Hero Card con beneficios - Estilo Apple */}
+        <Card className="p-6 bg-white/95 backdrop-blur-md shadow-lg border border-gray-100 rounded-3xl animate-fade-in hover:shadow-xl transition-all duration-300">
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-lg">
+                <Building2 className="w-7 h-7 text-white" />
               </div>
-              <div className="text-left flex-1">
-                <h2 className="text-lg font-bold text-white leading-tight">
+              <div className="flex-1">
+                <h2 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent leading-tight">
                   Moni se encarga de todo 🤖
                 </h2>
+                <p className="text-sm text-gray-600 font-medium mt-1">
+                  Conecta tu banco y automatiza todo
+                </p>
               </div>
             </div>
             
-            <p className="text-xs text-white/70">
-              Conecta tu banco y automatiza todo
-            </p>
-            
-            <div className="grid grid-cols-2 gap-2">
-              <div className="flex items-start gap-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '0ms' }}>
-                <div className="text-lg">⚡</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex items-start gap-3 p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl animate-fade-in hover:scale-105 transition-all duration-200 hover:shadow-md" style={{ animationDelay: '0ms' }}>
+                <div className="text-2xl">⚡</div>
                 <div>
-                  <p className="font-semibold text-white text-xs">Instantáneo</p>
-                  <p className="text-[10px] text-white/70">Detección al momento</p>
+                  <p className="font-semibold text-gray-900 text-sm">Instantáneo</p>
+                  <p className="text-xs text-gray-600">Detección al momento</p>
                 </div>
               </div>
               
-              <div className="flex items-start gap-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '150ms' }}>
-                <div className="text-lg">🧠</div>
+              <div className="flex items-start gap-3 p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl animate-fade-in hover:scale-105 transition-all duration-200 hover:shadow-md" style={{ animationDelay: '100ms' }}>
+                <div className="text-2xl">🧠</div>
                 <div>
-                  <p className="font-semibold text-white text-xs">Con IA</p>
-                  <p className="text-[10px] text-white/70">Auto-categoriza</p>
+                  <p className="font-semibold text-gray-900 text-sm">Con IA</p>
+                  <p className="text-xs text-gray-600">Auto-categoriza</p>
                 </div>
               </div>
               
-              <div className="flex items-start gap-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '300ms' }}>
-                <div className="text-lg">🚨</div>
+              <div className="flex items-start gap-3 p-3 bg-gradient-to-br from-pink-50 to-red-50 rounded-2xl animate-fade-in hover:scale-105 transition-all duration-200 hover:shadow-md" style={{ animationDelay: '200ms' }}>
+                <div className="text-2xl">🚨</div>
                 <div>
-                  <p className="font-semibold text-white text-xs">Alertas</p>
-                  <p className="text-[10px] text-white/70">Límites presupuesto</p>
+                  <p className="font-semibold text-gray-900 text-sm">Alertas</p>
+                  <p className="text-xs text-gray-600">Límites presupuesto</p>
                 </div>
               </div>
               
-              <div className="flex items-start gap-2 animate-fade-in hover:scale-105 transition-transform duration-200" style={{ animationDelay: '450ms' }}>
-                <div className="text-lg">📊</div>
+              <div className="flex items-start gap-3 p-3 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl animate-fade-in hover:scale-105 transition-all duration-200 hover:shadow-md" style={{ animationDelay: '300ms' }}>
+                <div className="text-2xl">📊</div>
                 <div>
-                  <p className="font-semibold text-white text-xs">Análisis</p>
-                  <p className="text-[10px] text-white/70">Insights personalizados</p>
+                  <p className="font-semibold text-gray-900 text-sm">Análisis</p>
+                  <p className="text-xs text-gray-600">Insights personalizados</p>
                 </div>
               </div>
             </div>
@@ -130,23 +134,23 @@ export default function BankConnection() {
 
         {/* Cuentas conectadas */}
         {connections.length > 0 && (
-          <div className="space-y-2">
-            <h3 className="text-base font-bold text-white px-2">Cuentas Conectadas</h3>
+          <div className="space-y-3">
+            <h3 className="text-lg font-bold text-gray-900 px-2">Cuentas Conectadas</h3>
             {connections.map((conn) => (
-              <Card key={conn.id} className="p-4 bg-card/80 backdrop-blur border-border/50 animate-fade-in hover:scale-105 transition-transform duration-200">
+              <Card key={conn.id} className="p-5 bg-white/95 backdrop-blur-md shadow-lg border border-gray-100 rounded-3xl animate-fade-in hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
-                      <Building2 className="h-5 w-5 text-white" />
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-md">
+                      <Building2 className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <p className="font-semibold text-white text-sm">{conn.bank_name}</p>
-                      <p className="text-xs text-white/70">
+                      <p className="font-semibold text-gray-900 text-base">{conn.bank_name}</p>
+                      <p className="text-sm text-gray-600">
                         {new Date(conn.last_sync).toLocaleString('es-MX')}
                       </p>
                     </div>
                   </div>
-                  <CheckCircle2 className="h-4 w-4 text-white" />
+                  <CheckCircle2 className="h-5 w-5 text-green-500" />
                 </div>
               </Card>
             ))}
@@ -154,48 +158,48 @@ export default function BankConnection() {
         )}
 
         {/* CTA Principal */}
-        <Card className="p-4 bg-card/80 backdrop-blur border-border/50">
-          <div className="text-center space-y-3">
-            <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center mx-auto">
-              <Building2 className="h-6 w-6 text-white" />
+        <Card className="p-6 bg-white/95 backdrop-blur-md shadow-lg border border-gray-100 rounded-3xl animate-fade-in hover:shadow-xl transition-all duration-300">
+          <div className="text-center space-y-4">
+            <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto shadow-lg">
+              <Building2 className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">
+              <h3 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
                 Conecta tu Banco Ahora
               </h3>
-              <p className="text-xs text-white/70 max-w-md mx-auto">
+              <p className="text-sm text-gray-600 max-w-md mx-auto mt-2 font-medium">
                 100% seguro con Open Banking. Tus credenciales nunca se comparten.
               </p>
             </div>
             <Button
               onClick={handleConnectBank}
               disabled={loading}
-              className="w-full bg-primary hover:bg-primary/90 text-white h-9 text-sm font-semibold"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white h-12 text-base font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
             >
               {loading ? "Conectando..." : "🚀 Conectar Mi Banco"}
             </Button>
             <Button
               variant="outline"
               onClick={() => navigate(-1)}
-              className="w-full border-white/20 text-white hover:bg-white/10 h-9 text-sm"
+              className="w-full border-2 border-gray-200 text-gray-700 hover:bg-gray-50 h-11 text-base font-medium rounded-2xl hover:shadow-md transition-all duration-300"
             >
               Lo haré después
             </Button>
-            <div className="flex items-center justify-center gap-3 text-[10px] text-white/70">
-              <span>🔒 Encriptado</span>
-              <span>✓ Seguro</span>
-              <span>🏦 Open Banking</span>
+            <div className="flex items-center justify-center gap-4 text-xs text-gray-600 font-medium pt-2">
+              <span className="flex items-center gap-1">🔒 Encriptado</span>
+              <span className="flex items-center gap-1">✓ Seguro</span>
+              <span className="flex items-center gap-1">🏦 Open Banking</span>
             </div>
           </div>
         </Card>
 
         {/* Bancos soportados */}
-        <Card className="p-4 bg-card/80 backdrop-blur border-border/50">
-          <h3 className="font-bold text-base text-white mb-2 animate-fade-in flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-white" />
+        <Card className="p-6 bg-white/95 backdrop-blur-md shadow-lg border border-gray-100 rounded-3xl animate-fade-in hover:shadow-xl transition-all duration-300">
+          <h3 className="font-bold text-lg text-gray-900 mb-4 animate-fade-in flex items-center gap-2">
+            <CheckCircle2 className="h-5 w-5 text-green-500" />
             Bancos Soportados
           </h3>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-3">
             {[
               "BBVA", "Santander", "Banorte", 
               "Citibanamex", "HSBC", "Scotiabank",
@@ -203,27 +207,27 @@ export default function BankConnection() {
             ].map((bank, index) => (
               <div 
                 key={bank} 
-                className="text-center p-2 bg-white/5 rounded-lg hover:scale-105 transition-transform duration-200 animate-fade-in"
-                style={{ animationDelay: `${index * 50}ms` }}
+                className="text-center p-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl hover:scale-105 hover:shadow-md transition-all duration-200 animate-fade-in border border-gray-200"
+                style={{ animationDelay: `${index * 30}ms` }}
               >
-                <p className="text-xs text-white">{bank}</p>
+                <p className="text-sm font-medium text-gray-700">{bank}</p>
               </div>
             ))}
           </div>
         </Card>
 
         {/* Mientras tanto, usa WhatsApp */}
-        <Card className="p-4 bg-gradient-to-br from-green-500/20 to-green-600/10 backdrop-blur border-green-500/30">
-          <div className="text-center space-y-2">
-            <h3 className="font-bold text-base text-white">
+        <Card className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-3xl animate-fade-in hover:shadow-xl transition-all duration-300">
+          <div className="text-center space-y-4">
+            <h3 className="font-bold text-xl bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent">
               Mientras tanto, usa WhatsApp 💬
             </h3>
-            <p className="text-xs text-white/70">
+            <p className="text-sm text-gray-700 font-medium">
               Registra tus transacciones por WhatsApp mientras implementamos la integración bancaria
             </p>
             <Button
               onClick={() => navigate("/whatsapp")}
-              className="w-full bg-green-500 hover:bg-green-600 text-white h-9 text-sm font-semibold"
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white h-12 text-base font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
             >
               Conectar WhatsApp
             </Button>
