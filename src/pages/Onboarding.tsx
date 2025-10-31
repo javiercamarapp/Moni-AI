@@ -143,7 +143,7 @@ const Onboarding = () => {
           {/* Skip button left aligned below dots */}
           <button
             onClick={() => navigate('/auth')}
-            className="text-gray-300 text-sm font-normal hover:text-white transition-colors mt-1"
+            className="text-gray-700 text-sm font-normal hover:text-gray-900 transition-colors mt-1"
           >
             Skip
           </button>
