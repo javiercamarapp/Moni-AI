@@ -266,9 +266,9 @@ export default function LevelQuiz() {
         toast.success("¡Aspiraciones guardadas! Ahora veamos tu análisis");
         navigate("/aspirations-analysis");
       } else {
-        // Si no tiene net worth, redirigir al quiz de net worth
+        // Si no tiene net worth, redirigir al cuestionario de patrimonio
         toast.success("¡Aspiraciones guardadas! Ahora completa tu información financiera");
-        navigate("/net-worth");
+        navigate("/edit-assets-liabilities");
       }
     } catch (error: any) {
       console.error("Error saving aspirations:", error);

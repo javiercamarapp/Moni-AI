@@ -738,6 +738,18 @@ export default function EditNetWorth() {
         </Card>
       </div>
 
+      {/* Continue to Bank Connection Button */}
+      <div className="fixed bottom-24 left-0 right-0 px-4 z-30">
+        <div className="mx-auto" style={{ maxWidth: '600px' }}>
+          <Button
+            onClick={() => navigate("/bank-connection")}
+            className="w-full h-14 text-base font-semibold bg-gray-900 hover:bg-gray-800 text-white rounded-3xl shadow-lg hover:shadow-xl transition-all"
+          >
+            Continuar a Conexión Bancaria
+          </Button>
+        </div>
+      </div>
+
       <BottomNav />
     </div>
   );
