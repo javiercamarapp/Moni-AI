@@ -398,52 +398,52 @@ const Auth = () => {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 md:gap-4 text-[10px] md:text-xs">
             {/* Producto */}
             <div>
-              <h4 className="font-semibold text-white mb-2">Producto</h4>
+              <h4 className="font-semibold text-gray-900 mb-2">Producto</h4>
               <ul className="space-y-1">
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Características</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Precios</a></li>
+                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Características</a></li>
+                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Precios</a></li>
               </ul>
             </div>
 
             {/* Recursos */}
             <div>
-              <h4 className="font-semibold text-white mb-2">Recursos</h4>
+              <h4 className="font-semibold text-gray-900 mb-2">Recursos</h4>
               <ul className="space-y-1">
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Ayuda</a></li>
+                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Blog</a></li>
+                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Ayuda</a></li>
               </ul>
             </div>
 
             {/* Empresa */}
             <div>
-              <h4 className="font-semibold text-white mb-2">Empresa</h4>
+              <h4 className="font-semibold text-gray-900 mb-2">Empresa</h4>
               <ul className="space-y-1">
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Nosotros</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Impacto Social</a></li>
+                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Nosotros</a></li>
+                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Impacto Social</a></li>
               </ul>
             </div>
 
             {/* Legal */}
             <div>
-              <h4 className="font-semibold text-white mb-2">Legal</h4>
+              <h4 className="font-semibold text-gray-900 mb-2">Legal</h4>
               <ul className="space-y-1">
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Privacidad</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Términos</a></li>
+                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Privacidad</a></li>
+                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Términos</a></li>
               </ul>
             </div>
 
             {/* Síguenos */}
             <div>
-              <h4 className="font-semibold text-white mb-2">Síguenos</h4>
+              <h4 className="font-semibold text-gray-900 mb-2">Síguenos</h4>
               <ul className="space-y-1">
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Twitter</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Instagram</a></li>
+                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Twitter</a></li>
+                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Instagram</a></li>
               </ul>
             </div>
           </div>
 
-          <div className="mt-2 md:mt-4 pt-2 md:pt-4 border-t border-gray-700 text-center">
-            <p className="text-[10px] md:text-xs text-gray-400">
+          <div className="mt-2 md:mt-4 pt-2 md:pt-4 border-t border-gray-300 text-center">
+            <p className="text-[10px] md:text-xs text-gray-700">
               © 2025 Moni. Todos los derechos reservados.
             </p>
           </div>
