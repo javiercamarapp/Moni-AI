@@ -183,7 +183,7 @@ const Social = () => {
           </div>
         </div>
 
-        <div className="mx-auto px-4 py-6 space-y-4" style={{ maxWidth: '600px' }}>
+        <div className="mx-auto px-4 py-2 space-y-4" style={{ maxWidth: '600px' }}>
           {/* User Profile Card */}
           <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
             <div className="flex items-center gap-3">
@@ -254,9 +254,11 @@ const Social = () => {
                 {profile?.bio || user?.user_metadata?.bio || "Mejorando mis finanzas con Moni AI 🚀"}
               </p>
             </div>
+          </div>
 
-            {/* Action Buttons */}
-            <div className="flex justify-center gap-6 mt-4">
+          {/* Action Buttons Card */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
+            <div className="flex justify-center gap-6">
               <button className="flex flex-col items-center gap-1 group">
                 <div className="bg-gradient-to-br from-primary/20 to-primary/10 rounded-full p-3 group-hover:scale-110 transition-transform">
                   <Users className="h-5 w-5 text-primary" />
