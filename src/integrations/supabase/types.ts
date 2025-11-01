@@ -512,6 +512,7 @@ export type Database = {
           level: number | null
           level_quiz_completed: boolean | null
           updated_at: string
+          username: string | null
           xp: number | null
         }
         Insert: {
@@ -524,6 +525,7 @@ export type Database = {
           level?: number | null
           level_quiz_completed?: boolean | null
           updated_at?: string
+          username?: string | null
           xp?: number | null
         }
         Update: {
@@ -536,6 +538,7 @@ export type Database = {
           level?: number | null
           level_quiz_completed?: boolean | null
           updated_at?: string
+          username?: string | null
           xp?: number | null
         }
         Relationships: []

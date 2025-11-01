@@ -1,18 +1,43 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import BottomNav from "@/components/BottomNav";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
+import { Camera, Users, Award, TrendingUp, UserPlus } from "lucide-react";
+import { toast } from "sonner";
 
 const Social = () => {
   const [user, setUser] = useState<User | null>(null);
   const [scoreMoni, setScoreMoni] = useState<number>(40);
+  const [profile, setProfile] = useState<any>(null);
+  const [showUsernameDialog, setShowUsernameDialog] = useState(false);
+  const [username, setUsername] = useState("");
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUser(user);
+        
+        // Fetch profile data including username and avatar
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+        
+        if (profileData) {
+          setProfile(profileData);
+          // Show username dialog if user doesn't have a username
+          if (!profileData.username) {
+            setShowUsernameDialog(true);
+          }
+        }
         
         // Fetch score from user_scores table
         const { data: scoreData } = await supabase
@@ -29,6 +54,99 @@ const Social = () => {
 
     fetchUserData();
   }, []);
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Por favor selecciona una imagen válida');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('La imagen es muy grande. Máximo 5MB');
+      return;
+    }
+
+    setUploadingAvatar(true);
+
+    try {
+      // Upload to Supabase Storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/avatar.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+
+      // Update profile with new avatar URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+
+      // Update local state
+      setProfile({ ...profile, avatar_url: publicUrl });
+      toast.success('Foto de perfil actualizada');
+    } catch (error: any) {
+      console.error('Error uploading avatar:', error);
+      toast.error('Error al subir la foto');
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const handleUsernameSubmit = async () => {
+    if (!user || !username.trim()) {
+      toast.error('Por favor ingresa un nombre de usuario');
+      return;
+    }
+
+    // Validate username format
+    if (!/^[a-z0-9_]{3,20}$/.test(username.toLowerCase())) {
+      toast.error('El usuario debe tener 3-20 caracteres (solo letras, números y _)');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ username: username.toLowerCase() })
+        .eq('id', user.id);
+
+      if (error) {
+        if (error.code === '23505') {
+          toast.error('Este nombre de usuario ya existe');
+        } else {
+          throw error;
+        }
+        return;
+      }
+
+      setProfile({ ...profile, username: username.toLowerCase() });
+      setShowUsernameDialog(false);
+      toast.success('Usuario creado exitosamente');
+    } catch (error: any) {
+      console.error('Error creating username:', error);
+      toast.error('Error al crear usuario');
+    }
+  };
 
   const getInitials = (email: string) => {
     return email.substring(0, 2).toUpperCase();
@@ -69,19 +187,52 @@ const Social = () => {
           {/* User Profile Card */}
           <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
             <div className="flex items-center gap-3">
-              {/* Avatar */}
-              <Avatar className="h-12 w-12 border-2 border-primary/20">
-                <AvatarImage src={user?.user_metadata?.avatar_url} />
-                <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
-                  {user?.email ? getInitials(user.email) : "US"}
-                </AvatarFallback>
-              </Avatar>
+              {/* Avatar with Upload Button */}
+              <div className="relative">
+                <Avatar className="h-16 w-16 border-2 border-primary/20">
+                  <AvatarImage src={profile?.avatar_url || user?.user_metadata?.avatar_url} />
+                  <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
+                    {user?.email ? getInitials(user.email) : "US"}
+                  </AvatarFallback>
+                </Avatar>
+                <button
+                  onClick={handleAvatarClick}
+                  disabled={uploadingAvatar}
+                  className="absolute -bottom-1 -right-1 bg-primary text-white rounded-full p-1.5 shadow-lg hover:bg-primary/90 transition-all disabled:opacity-50"
+                >
+                  <Camera className="h-3 w-3" />
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                />
+              </div>
 
               {/* User Info */}
               <div className="flex-1">
                 <h2 className="text-lg font-bold text-gray-900">
-                  {user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Usuario"}
+                  {profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Usuario"}
                 </h2>
+                
+                {/* Username or Create Username Button */}
+                {profile?.username ? (
+                  <p className="text-xs text-primary font-medium mt-0.5">
+                    @{profile.username}
+                  </p>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowUsernameDialog(true)}
+                    className="h-5 px-2 text-[10px] text-primary hover:text-primary/80 -ml-2 mt-0.5"
+                  >
+                    Crear usuario
+                  </Button>
+                )}
+                
                 <p className="text-xs text-gray-600 mt-0.5">
                   {user?.email || "usuario@ejemplo.com"}
                 </p>
@@ -100,11 +251,69 @@ const Social = () => {
             {/* Bio/Description */}
             <div className="mt-3 pt-3 border-t border-gray-200">
               <p className="text-xs text-gray-600">
-                {user?.user_metadata?.bio || "Mejorando mis finanzas con Moni AI 🚀"}
+                {profile?.bio || user?.user_metadata?.bio || "Mejorando mis finanzas con Moni AI 🚀"}
               </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-center gap-6 mt-4">
+              <button className="flex flex-col items-center gap-1 group">
+                <div className="bg-gradient-to-br from-primary/20 to-primary/10 rounded-full p-3 group-hover:scale-110 transition-transform">
+                  <Users className="h-5 w-5 text-primary" />
+                </div>
+                <span className="text-[10px] text-gray-600 font-medium">Amigos</span>
+              </button>
+
+              <button className="flex flex-col items-center gap-1 group">
+                <div className="bg-gradient-to-br from-blue-500/20 to-blue-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
+                  <UserPlus className="h-5 w-5 text-blue-600" />
+                </div>
+                <span className="text-[10px] text-gray-600 font-medium">Agregar</span>
+              </button>
+
+              <button className="flex flex-col items-center gap-1 group">
+                <div className="bg-gradient-to-br from-yellow-500/20 to-yellow-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
+                  <Award className="h-5 w-5 text-yellow-600" />
+                </div>
+                <span className="text-[10px] text-gray-600 font-medium">Logros</span>
+              </button>
+
+              <button className="flex flex-col items-center gap-1 group">
+                <div className="bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
+                  <TrendingUp className="h-5 w-5 text-green-600" />
+                </div>
+                <span className="text-[10px] text-gray-600 font-medium">Stats</span>
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Username Creation Dialog */}
+        <Dialog open={showUsernameDialog} onOpenChange={setShowUsernameDialog}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Crear nombre de usuario</DialogTitle>
+              <DialogDescription>
+                Elige un nombre de usuario único. Solo letras minúsculas, números y guiones bajos (3-20 caracteres).
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500">@</span>
+                <Input
+                  placeholder="nombre_usuario"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value.toLowerCase())}
+                  maxLength={20}
+                  className="flex-1"
+                />
+              </div>
+              <Button onClick={handleUsernameSubmit} className="w-full">
+                Crear usuario
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
       <BottomNav />
     </>
