@@ -441,7 +441,7 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [api]);
 
-  // Load future events (recurring payments predictions)
+  // Load future events (recurring payments predictions) with real-time updates
   useEffect(() => {
     const loadFutureEvents = async () => {
       try {
@@ -470,6 +470,29 @@ const Dashboard = () => {
     };
 
     loadFutureEvents();
+
+    // Subscribe to real-time changes in transactions table
+    const channel = supabase
+      .channel('transactions-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
+          schema: 'public',
+          table: 'transactions'
+        },
+        (payload) => {
+          console.log('Transaction change detected:', payload);
+          // Reload future events when transactions change
+          loadFutureEvents();
+        }
+      )
+      .subscribe();
+
+    // Cleanup subscription on unmount
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   // Function to detect recurring payment patterns
