@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowLeft, TrendingUp, TrendingDown, ChevronDown, ChevronUp, Building2, CreditCard, Home, Wallet, Download } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, ChevronDown, ChevronUp, Building2, CreditCard, Home, Wallet, Download, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -319,6 +319,18 @@ export default function NetWorth() {
                 ))}
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Info sobre conexión bancaria */}
+        <div className="mb-4 bg-blue-50/50 backdrop-blur-sm rounded-xl p-3.5 border border-blue-100/50">
+          <div className="flex items-start gap-2.5">
+            <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-xs text-blue-900 font-medium leading-relaxed">
+                Al conectar tus cuentas de banco, la liquidez y el efectivo disponible se actualizarán automáticamente con la información de tus cuentas bancarias y de inversión.
+              </p>
+            </div>
           </div>
         </div>
 
