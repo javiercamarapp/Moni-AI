@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { Camera, Users, Award, TrendingUp, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 
 const Social = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [scoreMoni, setScoreMoni] = useState<number>(40);
   const [profile, setProfile] = useState<any>(null);
@@ -259,28 +261,40 @@ const Social = () => {
           {/* Action Buttons Card */}
           <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
             <div className="flex justify-center gap-6">
-              <button className="flex flex-col items-center gap-1 group">
+              <button 
+                onClick={() => navigate('/friends-list')}
+                className="flex flex-col items-center gap-1 group"
+              >
                 <div className="bg-gradient-to-br from-primary/20 to-primary/10 rounded-full p-3 group-hover:scale-110 transition-transform">
                   <Users className="h-5 w-5 text-primary" />
                 </div>
                 <span className="text-[10px] text-gray-600 font-medium">Amigos</span>
               </button>
 
-              <button className="flex flex-col items-center gap-1 group">
+              <button 
+                onClick={() => navigate('/add-friends')}
+                className="flex flex-col items-center gap-1 group"
+              >
                 <div className="bg-gradient-to-br from-blue-500/20 to-blue-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
                   <UserPlus className="h-5 w-5 text-blue-600" />
                 </div>
                 <span className="text-[10px] text-gray-600 font-medium">Agregar</span>
               </button>
 
-              <button className="flex flex-col items-center gap-1 group">
+              <button 
+                onClick={() => navigate('/social-achievements')}
+                className="flex flex-col items-center gap-1 group"
+              >
                 <div className="bg-gradient-to-br from-yellow-500/20 to-yellow-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
                   <Award className="h-5 w-5 text-yellow-600" />
                 </div>
                 <span className="text-[10px] text-gray-600 font-medium">Logros</span>
               </button>
 
-              <button className="flex flex-col items-center gap-1 group">
+              <button 
+                onClick={() => navigate('/social-stats')}
+                className="flex flex-col items-center gap-1 group"
+              >
                 <div className="bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
                   <TrendingUp className="h-5 w-5 text-green-600" />
                 </div>

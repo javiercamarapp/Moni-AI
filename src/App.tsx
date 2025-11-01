@@ -44,6 +44,10 @@ import DayExpenses from './pages/DayExpenses';
 import Reports from './pages/Reports';
 import CategoryExpenses from './pages/CategoryExpenses';
 import Social from './pages/Social';
+import AddFriends from './pages/AddFriends';
+import FriendsList from './pages/FriendsList';
+import SocialAchievements from './pages/SocialAchievements';
+import SocialStats from './pages/SocialStats';
 import SavingSimulation from './pages/SavingSimulation';
 import Goals from './pages/Goals';
 import AccountsCards from './pages/AccountsCards';
@@ -114,6 +118,10 @@ function App() {
           <Route path="/edit-assets-liabilities" element={<EditNetWorth />} />
           <Route path="/initial-net-worth" element={<InitialNetWorth />} />
           <Route path="/social" element={<Social />} />
+          <Route path="/add-friends" element={<AddFriends />} />
+          <Route path="/friends-list" element={<FriendsList />} />
+          <Route path="/social-achievements" element={<SocialAchievements />} />
+          <Route path="/social-stats" element={<SocialStats />} />
           <Route path="/saving-simulation" element={<SavingSimulation />} />
           <Route path="/goals" element={<Goals />} />
           <Route path="/accounts-cards" element={<AccountsCards />} />
