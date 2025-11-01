@@ -112,27 +112,27 @@ const Auth = () => {
     loadSavedEmail();
   }, [biometricAvailable]);
 
-  // Solicitar Face ID automáticamente al abrir la app
-  useEffect(() => {
-    const autoAuthenticate = async () => {
-      // NO solicitar biometría si estamos en modo reset password
-      if (isResetPassword) {
-        return;
-      }
-      
-      // Solo solicitar si hay credenciales guardadas y biometría disponible
-      if (savedEmail && biometricAvailable && isLogin && !loading) {
-        await handleBiometricAuth();
-      }
-    };
-    
-    // Pequeño delay para asegurar que la UI esté lista
-    const timer = setTimeout(() => {
-      autoAuthenticate();
-    }, 500);
+  // Solicitar Face ID automáticamente al abrir la app (DESACTIVADO - ahora es manual)
+  // useEffect(() => {
+  //   const autoAuthenticate = async () => {
+  //     // NO solicitar biometría si estamos en modo reset password
+  //     if (isResetPassword) {
+  //       return;
+  //     }
+  //     
+  //     // Solo solicitar si hay credenciales guardadas y biometría disponible
+  //     if (savedEmail && biometricAvailable && isLogin && !loading) {
+  //       await handleBiometricAuth();
+  //     }
+  //   };
+  //   
+  //   // Pequeño delay para asegurar que la UI esté lista
+  //   const timer = setTimeout(() => {
+  //     autoAuthenticate();
+  //   }, 500);
 
-    return () => clearTimeout(timer);
-  }, [savedEmail, biometricAvailable, isLogin, isResetPassword]);
+  //   return () => clearTimeout(timer);
+  // }, [savedEmail, biometricAvailable, isLogin, isResetPassword]);
 
   const handleBiometricAuth = async () => {
     if (!savedEmail) {
@@ -481,6 +481,27 @@ const Auth = () => {
             </form>
           </div>
         ) : (
+          <div className="space-y-4">
+            {/* Botón de Face ID si está disponible */}
+            {biometricAvailable && savedEmail && isLogin && (
+              <div className="w-full max-w-[320px] md:max-w-md mx-auto">
+                <Button
+                  onClick={handleBiometricAuth}
+                  disabled={loading}
+                  className="w-full h-16 bg-gradient-to-br from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3"
+                >
+                  <Fingerprint className="w-6 h-6" />
+                  <div className="text-left">
+                    <div className="text-sm">Iniciar sesión con</div>
+                    <div className="text-base font-bold">{biometryType || 'Biometría'}</div>
+                  </div>
+                </Button>
+                <div className="text-center mt-3 mb-2">
+                  <span className="text-xs text-gray-500">o usa tu contraseña</span>
+                </div>
+              </div>
+            )}
+            
           <SignIn2
           onSignIn={async (email, password, fullName) => {
             setLoading(true);
@@ -594,9 +615,10 @@ const Auth = () => {
           }}
           onSocialLogin={handleSocialLogin}
           loading={loading}
-          isLogin={isLogin}
-          setIsLogin={setIsLogin}
-        />
+            isLogin={isLogin}
+            setIsLogin={setIsLogin}
+          />
+          </div>
         )}
       </div>
 
