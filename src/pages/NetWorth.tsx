@@ -323,11 +323,11 @@ export default function NetWorth() {
         </div>
 
         {/* Info sobre conexión bancaria */}
-        <div className="mb-4 bg-blue-50/50 backdrop-blur-sm rounded-xl p-3.5 border border-blue-100/50">
-          <div className="flex items-start gap-2.5">
-            <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+        <div className="mb-2 bg-blue-50/50 backdrop-blur-sm rounded-lg p-2 border border-blue-100/50">
+          <div className="flex items-start gap-1.5">
+            <Info className="h-3 w-3 text-blue-600 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <p className="text-xs text-blue-900 font-medium leading-relaxed">
+              <p className="text-[10px] text-blue-900 font-medium leading-snug">
                 Al conectar tus cuentas de banco, la liquidez y el efectivo disponible se actualizarán automáticamente con la información de tus cuentas bancarias y de inversión.
               </p>
             </div>
