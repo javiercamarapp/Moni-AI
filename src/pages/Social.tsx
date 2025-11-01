@@ -290,7 +290,7 @@ const Social = () => {
 
         {/* Username Creation Dialog */}
         <Dialog open={showUsernameDialog} onOpenChange={setShowUsernameDialog}>
-          <DialogContent className="sm:max-w-[280px] rounded-3xl border-none shadow-2xl p-6">
+          <DialogContent className="max-w-[280px] rounded-3xl border-none shadow-2xl p-6">
             <DialogHeader className="space-y-2">
               <DialogTitle className="text-center text-lg font-bold">Crear usuario</DialogTitle>
               <DialogDescription className="text-center text-xs text-muted-foreground">
