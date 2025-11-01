@@ -25,7 +25,6 @@ const Auth = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
-    // Detectar si venimos de un enlace de recuperación de contraseña
     const hash = window.location.hash;
     if (hash && hash.includes('type=recovery')) {
       setIsResetPassword(true);
@@ -35,26 +34,39 @@ const Auth = () => {
       });
     }
 
-    // Solo escuchar cambios de auth, no verificar sesión inicial
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth event:", event, "isResetPassword:", isResetPassword);
       
-      // Si estamos en modo reset password, NUNCA redirigir
       if (isResetPassword) {
         console.log("Modo reset password activo, bloqueando redirección");
         return;
       }
       
-      // Si es password recovery, activar modo reset y no redirigir
       if (event === 'PASSWORD_RECOVERY') {
         console.log("PASSWORD_RECOVERY detectado");
         setIsResetPassword(true);
         return;
       }
       
-      // Redirigir según el evento SOLO si no estamos en reset password
+      // Para SIGNED_IN, pedir Face ID si está disponible antes de redirigir
       if (session && event === 'SIGNED_IN') {
-        // Verificar si el usuario ya completó el quiz
+        const savedEmail = localStorage.getItem('biometric_email');
+        
+        // Si hay biometría disponible y credenciales guardadas, pedir autenticación
+        if (biometricAvailable && savedEmail) {
+          const success = await authenticate('Autenticarse con Face ID para continuar');
+          if (!success) {
+            // Si falla la autenticación, cerrar sesión
+            await supabase.auth.signOut();
+            toast({
+              title: "Autenticación cancelada",
+              description: "Debes autenticarte con Face ID para acceder",
+              variant: "destructive",
+            });
+            return;
+          }
+        }
+
         const { data: profile } = await supabase
           .from('profiles')
           .select('level_quiz_completed')
@@ -62,24 +74,36 @@ const Auth = () => {
           .single();
         
         if (profile && !profile.level_quiz_completed) {
-          // Usuario no ha completado el quiz - ir al quiz
           navigate("/level-quiz");
         } else {
-          // Usuario ya completó el quiz - ir al dashboard
           navigate("/dashboard");
         }
       } else if (session && event === 'USER_UPDATED') {
-        // Nuevo usuario - ir al quiz
         navigate("/level-quiz");
       } else if (session && event === 'INITIAL_SESSION') {
-        // Si hay hash de recovery, no redirigir
         const currentHash = window.location.hash;
         if (currentHash && currentHash.includes('type=recovery')) {
           console.log("Hash de recovery detectado, no redirigir");
           setIsResetPassword(true);
           return;
         }
-        // Verificar si el usuario ya completó el quiz
+
+        // Para sesión existente, pedir Face ID si está habilitado
+        const savedEmail = localStorage.getItem('biometric_email');
+        
+        if (biometricAvailable && savedEmail) {
+          const success = await authenticate('Autenticarse con Face ID para acceder');
+          if (!success) {
+            // Si falla, mantener en la pantalla de auth pero no cerrar sesión
+            toast({
+              title: "Autenticación requerida",
+              description: "Debes autenticarte con Face ID para acceder",
+              variant: "destructive",
+            });
+            return;
+          }
+        }
+
         const { data: profile } = await supabase
           .from('profiles')
           .select('level_quiz_completed')
@@ -87,10 +111,8 @@ const Auth = () => {
           .single();
         
         if (profile && !profile.level_quiz_completed) {
-          // Usuario no ha completado el quiz - ir al quiz
           navigate("/level-quiz");
         } else {
-          // Sesión existente normal - ir al dashboard
           navigate("/dashboard");
         }
       }
@@ -99,7 +121,7 @@ const Auth = () => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate, toast, isResetPassword]);
+  }, [navigate, toast, isResetPassword, biometricAvailable, authenticate]);
 
   // Cargar email guardado para autenticación biométrica
   useEffect(() => {
@@ -112,27 +134,7 @@ const Auth = () => {
     loadSavedEmail();
   }, [biometricAvailable]);
 
-  // Solicitar Face ID automáticamente al abrir la app
-  useEffect(() => {
-    const autoAuthenticate = async () => {
-      // NO solicitar biometría si estamos en modo reset password
-      if (isResetPassword) {
-        return;
-      }
-      
-      // Solo solicitar si hay credenciales guardadas y biometría disponible
-      if (savedEmail && biometricAvailable && isLogin && !loading) {
-        await handleBiometricAuth();
-      }
-    };
-    
-    // Pequeño delay para asegurar que la UI esté lista
-    const timer = setTimeout(() => {
-      autoAuthenticate();
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [savedEmail, biometricAvailable, isLogin, isResetPassword]);
+  // Eliminar auto-autenticación ya que ahora se maneja en onAuthStateChange
 
   const handleBiometricAuth = async () => {
     if (!savedEmail) {
