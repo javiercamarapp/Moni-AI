@@ -290,25 +290,28 @@ const Social = () => {
 
         {/* Username Creation Dialog */}
         <Dialog open={showUsernameDialog} onOpenChange={setShowUsernameDialog}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Crear nombre de usuario</DialogTitle>
-              <DialogDescription>
-                Elige un nombre de usuario único. Solo letras minúsculas, números y guiones bajos (3-20 caracteres).
+          <DialogContent className="sm:max-w-[280px] rounded-3xl border-none shadow-2xl p-6">
+            <DialogHeader className="space-y-2">
+              <DialogTitle className="text-center text-lg font-bold">Crear usuario</DialogTitle>
+              <DialogDescription className="text-center text-xs text-muted-foreground">
+                3-20 caracteres (a-z, 0-9, _)
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">@</span>
+            <div className="space-y-4 pt-2">
+              <div className="flex items-center gap-2 bg-muted/30 rounded-2xl px-4 py-2.5">
+                <span className="text-sm text-muted-foreground font-medium">@</span>
                 <Input
-                  placeholder="nombre_usuario"
+                  placeholder="usuario"
                   value={username}
                   onChange={(e) => setUsername(e.target.value.toLowerCase())}
                   maxLength={20}
-                  className="flex-1"
+                  className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-sm"
                 />
               </div>
-              <Button onClick={handleUsernameSubmit} className="w-full">
+              <Button 
+                onClick={handleUsernameSubmit} 
+                className="w-full bg-white text-foreground hover:bg-white/90 rounded-2xl shadow-md font-medium"
+              >
                 Crear usuario
               </Button>
             </div>
