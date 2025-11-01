@@ -495,20 +495,50 @@ const Dashboard = () => {
     };
   }, []);
 
-  // Function to detect recurring payment patterns
+  // Function to detect recurring payment patterns - SOLO gastos fijos, suscripciones y servicios recurrentes
   const detectRecurringPayments = (transactions: any[]) => {
     const today = startOfDay(new Date());
     const futurePayments: any[] = [];
     
+    // Categorías permitidas para próximos movimientos
+    const allowedCategories = [
+      'suscripciones', 'subscripciones', 'subscription', 'servicios',
+      'utilidades', 'utilities', 'renta', 'rent', 'alquiler',
+      'internet', 'telefono', 'celular', 'telefonía', 'luz', 'agua',
+      'gas', 'cfe', 'telmex', 'izzi', 'netflix', 'spotify', 'disney',
+      'hbo', 'amazon prime', 'gym', 'gimnasio', 'seguro', 'insurance'
+    ];
+    
+    // Palabras clave que NO deben estar (gastos variables)
+    const excludedKeywords = [
+      'bar', 'antro', 'club', 'restaurante', 'restaurant', 'cafe', 'coffee',
+      'starbucks', 'oxxo', '7-eleven', 'entretenimiento', 'entertainment',
+      'cine', 'cinema', 'uber', 'didi', 'rappi', 'didi food', 'uber eats',
+      'amazon', 'mercado libre', 'liverpool', 'walmart', 'soriana', 'costco',
+      'farmacia', 'gasolina', 'gas station'
+    ];
+    
+    // Filtrar solo transacciones de tipo gasto
+    const expenses = transactions.filter(tx => 
+      tx.type === 'gasto' || tx.type === 'expense'
+    );
+    
     // Group transactions by similar descriptions (normalize text)
     const groupedByDescription: Record<string, any[]> = {};
     
-    transactions.forEach(tx => {
+    expenses.forEach(tx => {
       const normalizedDesc = tx.description
         .toLowerCase()
         .replace(/\d+/g, '') // Remove numbers
         .replace(/[^\w\s]/g, '') // Remove special chars
         .trim();
+      
+      // Verificar si contiene palabras excluidas
+      const isExcluded = excludedKeywords.some(keyword => 
+        normalizedDesc.includes(keyword.toLowerCase())
+      );
+      
+      if (isExcluded) return; // Skip this transaction
       
       if (!groupedByDescription[normalizedDesc]) {
         groupedByDescription[normalizedDesc] = [];
@@ -518,15 +548,35 @@ const Dashboard = () => {
 
     // Analyze each group for patterns
     Object.entries(groupedByDescription).forEach(([desc, txs]) => {
-      if (txs.length < 2) return; // Need at least 2 occurrences
+      if (txs.length < 3) return; // Need at least 3 occurrences to confirm pattern
 
       // Sort by date
       const sortedTxs = txs.sort((a, b) => 
         new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime()
       );
 
+      // Verificar consistencia del monto (no debe variar más del 20%)
+      const amounts = sortedTxs.map(tx => Number(tx.amount));
+      const avgAmount = amounts.reduce((a, b) => a + b, 0) / amounts.length;
+      const maxVariation = Math.max(...amounts.map(amt => Math.abs(amt - avgAmount) / avgAmount));
+      
+      if (maxVariation > 0.2) return; // Skip if amount varies more than 20%
+
+      // Verificar si tiene frequency definida O si es una categoría permitida
+      const hasFrequency = sortedTxs.some(tx => 
+        tx.frequency && tx.frequency !== 'once'
+      );
+      
+      const isAllowedCategory = allowedCategories.some(category => 
+        desc.includes(category.toLowerCase())
+      );
+      
+      if (!hasFrequency && !isAllowedCategory) return; // Skip if not recurring
+
       // Calculate average interval between transactions (in days)
       const intervals: number[] = [];
+      const dayOfMonths: number[] = [];
+      
       for (let i = 1; i < sortedTxs.length; i++) {
         const daysDiff = Math.round(
           (new Date(sortedTxs[i].transaction_date).getTime() - 
@@ -534,37 +584,45 @@ const Dashboard = () => {
           (1000 * 60 * 60 * 24)
         );
         intervals.push(daysDiff);
+        
+        // Track day of month for consistency
+        const dayOfMonth = new Date(sortedTxs[i].transaction_date).getDate();
+        dayOfMonths.push(dayOfMonth);
       }
 
       const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-      const avgAmount = sortedTxs.reduce((sum, tx) => sum + Number(tx.amount), 0) / sortedTxs.length;
+      
+      // Verificar consistencia de fecha (mismo día del mes)
+      const avgDayOfMonth = Math.round(dayOfMonths.reduce((a, b) => a + b, 0) / dayOfMonths.length);
+      const dayVariation = Math.max(...dayOfMonths.map(day => Math.abs(day - avgDayOfMonth)));
+      
+      // Si es mensual, debe ser consistente en el día del mes (±3 días)
+      if (avgInterval >= 25 && avgInterval <= 35 && dayVariation > 3) {
+        return; // Skip if day of month is not consistent
+      }
 
-      // Detect if it's a recurring pattern (weekly: ~7d, biweekly: ~15d, monthly: ~30d)
+      // Detect if it's a recurring pattern (only monthly for now)
       let frequency: string | null = null;
-      let predictInterval = 30; // default monthly
+      let predictInterval = 30;
 
-      if (avgInterval >= 6 && avgInterval <= 8) {
-        frequency = 'Semanal';
-        predictInterval = 7;
-      } else if (avgInterval >= 13 && avgInterval <= 16) {
-        frequency = 'Quincenal';
-        predictInterval = 15;
-      } else if (avgInterval >= 28 && avgInterval <= 32) {
+      if (avgInterval >= 25 && avgInterval <= 35) {
         frequency = 'Mensual';
         predictInterval = 30;
-      } else if (avgInterval >= 88 && avgInterval <= 95) {
-        frequency = 'Trimestral';
-        predictInterval = 90;
       } else if (avgInterval >= 360 && avgInterval <= 370) {
         frequency = 'Anual';
         predictInterval = 365;
       }
 
-      // Only predict if we detected a clear pattern
+      // Only predict if we detected a clear monthly or annual pattern
       if (frequency) {
         const lastTx = sortedTxs[sortedTxs.length - 1];
         const lastDate = new Date(lastTx.transaction_date);
         let nextDate = addDays(lastDate, predictInterval);
+        
+        // Ajustar al día del mes promedio para mensuales
+        if (frequency === 'Mensual') {
+          nextDate.setDate(avgDayOfMonth);
+        }
 
         // Generate next 3 occurrences
         const nextThreeMonths = addMonths(today, 3);
@@ -582,6 +640,9 @@ const Dashboard = () => {
             count++;
           }
           nextDate = addDays(nextDate, predictInterval);
+          if (frequency === 'Mensual') {
+            nextDate.setDate(avgDayOfMonth);
+          }
         }
       }
     });
