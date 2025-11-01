@@ -482,10 +482,6 @@ const Auth = () => {
           </div>
         ) : (
           <SignIn2
-          biometricAvailable={biometricAvailable}
-          biometryType={biometryType}
-          savedEmail={savedEmail}
-          onBiometricAuth={handleBiometricAuth}
           onSignIn={async (email, password, fullName) => {
             setLoading(true);
             try {

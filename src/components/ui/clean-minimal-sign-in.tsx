@@ -4,7 +4,7 @@ import * as React from "react"
  
 import { useState } from "react";
 
-import { Lock, Mail, Loader2, ArrowLeft, Fingerprint } from "lucide-react";
+import { Lock, Mail, Loader2, ArrowLeft } from "lucide-react";
 import moniLogo from "@/assets/moni-auth-logo.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -15,13 +15,9 @@ interface SignIn2Props {
   loading: boolean;
   isLogin: boolean;
   setIsLogin: (value: boolean) => void;
-  biometricAvailable?: boolean;
-  biometryType?: string;
-  savedEmail?: string | null;
-  onBiometricAuth?: () => Promise<void>;
 }
  
-const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin, biometricAvailable, biometryType, savedEmail, onBiometricAuth }: SignIn2Props) => {
+const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: SignIn2Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -254,21 +250,6 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin, biomet
             isLogin ? "Iniciar Sesión" : "Crear Cuenta"
           )}
         </button>
-
-        {/* Botón de Face ID - solo visible en login cuando hay credenciales guardadas */}
-        {isLogin && biometricAvailable && savedEmail && onBiometricAuth && (
-          <button
-            type="button"
-            onClick={onBiometricAuth}
-            disabled={loading}
-            className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-1.5 md:py-2 text-sm rounded-xl shadow hover:brightness-105 hover:scale-105 cursor-pointer transition-all mb-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-          >
-            <span className="flex items-center justify-center gap-2">
-              <Fingerprint className="w-4 h-4" />
-              Iniciar con {biometryType || 'Face ID'}
-            </span>
-          </button>
-        )}
         
         <div className="text-center mt-1.5">
           <button
@@ -285,6 +266,48 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin, biomet
                 ¿Ya tienes cuenta? <span className="font-semibold underline">Iniciar sesión</span>
               </>
             )}
+          </button>
+        </div>
+        <div className="flex items-center w-full my-1">
+          <div className="flex-grow border-t border-dashed border-gray-200"></div>
+          <span className="mx-2 text-[10px] text-gray-400">
+            {isLogin ? "O inicia sesión con" : "O regístrate con"}
+          </span>
+          <div className="flex-grow border-t border-dashed border-gray-200"></div>
+        </div>
+        <div className="flex gap-2 w-full justify-center mt-0.5">
+          <button 
+            onClick={() => onSocialLogin('google')}
+            disabled={loading}
+            className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="Google"
+              className="w-5 h-5 md:w-6 md:h-6"
+            />
+          </button>
+          <button 
+            onClick={() => onSocialLogin('facebook')}
+            disabled={loading}
+            className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <img
+              src="https://www.svgrepo.com/show/448224/facebook.svg"
+              alt="Facebook"
+              className="w-5 h-5 md:w-6 md:h-6"
+            />
+          </button>
+          <button 
+            onClick={() => onSocialLogin('apple')}
+            disabled={loading}
+            className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <img
+              src="https://www.svgrepo.com/show/511330/apple-173.svg"
+              alt="Apple"
+              className="w-5 h-5 md:w-6 md:h-6"
+            />
           </button>
         </div>
       </div>
