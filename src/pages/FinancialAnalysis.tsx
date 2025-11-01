@@ -17,7 +17,6 @@ import NetWorthWidget from "@/components/analysis/NetWorthWidget";
 import ForecastWidget from "@/components/analysis/ForecastWidget";
 import BudgetProgressWidget from "@/components/analysis/BudgetProgressWidget";
 import DebtPaymentPlanWidget from "@/components/analysis/DebtPaymentPlanWidget";
-import SubscriptionsWidget from "@/components/analysis/SubscriptionsWidget";
 import UpcomingTransactionsWidget from "@/components/analysis/UpcomingTransactionsWidget";
 import RiskIndicatorsWidget from "@/components/analysis/RiskIndicatorsWidget";
 import EvolutionChartWidget from "@/components/analysis/EvolutionChartWidget";
@@ -1653,9 +1652,6 @@ export default function FinancialAnalysis() {
 
             {/* 6. DEUDA INTELIGENTE */}
             {analysis?.debtPlan && analysis?.debtPlan.debts && analysis?.debtPlan.debts.length > 0 && <DebtPaymentPlanWidget {...analysis?.debtPlan} />}
-
-            {/* 7. SUSCRIPCIONES */}
-            {analysis?.subscriptions && analysis?.subscriptions.subscriptions && analysis?.subscriptions.subscriptions.length > 0 && <SubscriptionsWidget {...analysis?.subscriptions} />}
 
             {/* Llamados a la Acción */}
             <div className="space-y-2">
