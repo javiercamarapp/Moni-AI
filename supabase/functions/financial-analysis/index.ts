@@ -148,6 +148,9 @@ Ejemplo formato:
       ? new Date(latestTx[0].transaction_date)
       : new Date();
     
+    // Definir 'now' para uso en cálculos posteriores
+    const now = referenceDate;
+    
     console.log('Reference date (latest transaction):', referenceDate.toISOString().split('T')[0]);
     
     // Define period start date based on latest transaction date
