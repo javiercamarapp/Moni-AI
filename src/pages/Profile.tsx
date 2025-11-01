@@ -519,6 +519,35 @@ const Profile = () => {
               <ChevronRight className="h-5 w-5 text-foreground/70" />
             </Button>
 
+            {biometricAvailable && (
+              <div className="flex items-center justify-between py-4 px-4">
+                <div className="flex items-center gap-2">
+                  <Fingerprint className="h-5 w-5 text-foreground/70" />
+                  <span className="text-foreground">Face ID al iniciar sesión</span>
+                </div>
+                <Switch 
+                  checked={faceIdEnabled} 
+                  onCheckedChange={(checked) => {
+                    if (!checked) {
+                      localStorage.removeItem('biometric_email');
+                      localStorage.removeItem('biometric_password');
+                      setFaceIdEnabled(false);
+                      toast({
+                        title: "Desactivado",
+                        description: "Face ID al iniciar sesión ha sido desactivado",
+                      });
+                    } else {
+                      setFaceIdEnabled(true);
+                      toast({
+                        title: "Activado",
+                        description: "Face ID se activará en tu próximo inicio de sesión. Asegúrate de iniciar sesión una vez con tu contraseña.",
+                      });
+                    }
+                  }} 
+                />
+              </div>
+            )}
+
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -599,35 +628,6 @@ const Profile = () => {
               <Switch checked={audioAlerts} onCheckedChange={setAudioAlerts} />
             </div>
 
-            {biometricAvailable && (
-              <div className="flex items-center justify-between py-4 px-4">
-                <div className="flex items-center gap-2">
-                  <Fingerprint className="h-5 w-5 text-foreground/70" />
-                  <span className="text-foreground">{biometryType || 'Autenticación biométrica'}</span>
-                </div>
-                <Switch 
-                  checked={faceIdEnabled} 
-                  onCheckedChange={(checked) => {
-                    if (!checked) {
-                      // Desactivar Face ID - limpiar credenciales guardadas
-                      localStorage.removeItem('biometric_email');
-                      localStorage.removeItem('biometric_password');
-                      setFaceIdEnabled(false);
-                      toast({
-                        title: "Desactivado",
-                        description: "La autenticación biométrica ha sido desactivada",
-                      });
-                    } else {
-                      setFaceIdEnabled(true);
-                      toast({
-                        title: "Activado",
-                        description: "La autenticación biométrica se activará en tu próximo inicio de sesión",
-                      });
-                    }
-                  }} 
-                />
-              </div>
-            )}
           </Card>
         </div>
 
