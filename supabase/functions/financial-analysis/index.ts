@@ -135,15 +135,29 @@ Ejemplo formato:
       });
     }
 
-    // Define current date and period start date
-    const now = new Date();
+    // Primero, obtener la fecha de la última transacción para usar como referencia
+    const { data: latestTx } = await supabase
+      .from('transactions')
+      .select('transaction_date')
+      .eq('user_id', userId)
+      .order('transaction_date', { ascending: false })
+      .limit(1);
+    
+    // Si no hay transacciones, usar fecha actual
+    const referenceDate = latestTx && latestTx.length > 0 
+      ? new Date(latestTx[0].transaction_date)
+      : new Date();
+    
+    console.log('Reference date (latest transaction):', referenceDate.toISOString().split('T')[0]);
+    
+    // Define period start date based on latest transaction date
     const startDate = period === 'year' 
-      ? new Date(now.getFullYear(), 0, 1) 
-      : new Date(now.getFullYear(), now.getMonth(), 1);
+      ? new Date(referenceDate.getFullYear(), 0, 1) 
+      : new Date(referenceDate.getFullYear(), referenceDate.getMonth(), 1);
     
     const endDate = period === 'year'
-      ? new Date(now.getFullYear(), 11, 31)
-      : new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      ? new Date(referenceDate.getFullYear(), 11, 31)
+      : new Date(referenceDate.getFullYear(), referenceDate.getMonth() + 1, 0);
 
     console.log('Period:', period, 'Start date:', startDate.toISOString().split('T')[0], 'End date:', endDate.toISOString().split('T')[0]);
 
