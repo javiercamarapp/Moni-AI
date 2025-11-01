@@ -149,9 +149,9 @@ Ejemplo formato:
       : new Date();
     
     // Definir 'now' para uso en cálculos posteriores
-    const now = referenceDate;
+    const now = new Date(referenceDate.getTime());
     
-    console.log('Reference date (latest transaction):', referenceDate.toISOString().split('T')[0]);
+    console.log('✅ NOW defined:', now.toISOString(), 'Reference date:', referenceDate.toISOString().split('T')[0]);
     
     // Define period start date based on latest transaction date
     const startDate = period === 'year' 
