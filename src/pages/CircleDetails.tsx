@@ -26,7 +26,7 @@ interface MemberWithProfile {
   profiles: Profile | null;
 }
 
-type ActiveView = 'members' | 'challenges' | 'chat' | 'community' | 'news';
+type ActiveView = 'members' | 'challenges' | 'chat' | 'news';
 
 const CircleDetails = () => {
   const { id } = useParams();
@@ -512,7 +512,7 @@ const CircleDetails = () => {
 
         {/* Navigation Icons */}
         <div className="bg-white rounded-2xl shadow-sm p-4">
-          <div className="grid grid-cols-5 gap-2">
+          <div className="grid grid-cols-4 gap-2">
             <button
               onClick={() => setActiveView('members')}
               className={cn(
@@ -553,19 +553,6 @@ const CircleDetails = () => {
             </button>
 
             <button
-              onClick={() => setActiveView('community')}
-              className={cn(
-                "flex flex-col items-center gap-2 p-3 rounded-xl transition-all",
-                activeView === 'community' 
-                  ? "bg-primary/10 text-primary" 
-                  : "hover:bg-gray-50 text-gray-600"
-              )}
-            >
-              <Users className="h-5 w-5" />
-              <span className="text-[10px] font-medium text-center leading-tight">Chat Comunidad</span>
-            </button>
-
-            <button
               onClick={() => setActiveView('news')}
               className={cn(
                 "flex flex-col items-center gap-2 p-3 rounded-xl transition-all",
@@ -575,7 +562,7 @@ const CircleDetails = () => {
               )}
             >
               <Newspaper className="h-5 w-5" />
-              <span className="text-[10px] font-medium text-center leading-tight">Noticias</span>
+              <span className="text-[10px] font-medium text-center leading-tight">Noticias recomendadas</span>
             </button>
           </div>
         </div>
@@ -782,22 +769,6 @@ const CircleDetails = () => {
               >
                 <Send className="h-4 w-4" />
               </Button>
-            </div>
-          </div>
-        )}
-
-        {activeView === 'community' && (
-          <div className="bg-white rounded-2xl shadow-sm p-4">
-            <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
-              <Users className="h-4 w-4 text-primary" />
-              Chat de la Comunidad
-            </h2>
-            <div className="text-center py-12">
-              <Users className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-600 text-sm mb-2">Próximamente</p>
-              <p className="text-gray-500 text-xs">
-                Chat abierto para toda la comunidad de Moni
-              </p>
             </div>
           </div>
         )}
