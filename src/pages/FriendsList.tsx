@@ -134,7 +134,7 @@ const FriendsList = () => {
               onClick={() => navigate('/add-friend')}
               variant="ghost"
               size="sm"
-              className="rounded-full hover:bg-gray-900 hover:text-white transition-colors"
+              className="bg-white hover:bg-white/90 shadow-md rounded-2xl font-medium"
             >
               <UserPlus className="h-4 w-4" />
             </Button>
@@ -160,7 +160,7 @@ const FriendsList = () => {
             </p>
             <Button
               onClick={() => navigate('/add-friend')}
-              className="mt-4 bg-gray-900 hover:bg-gray-800 text-white rounded-2xl"
+              className="mt-4 bg-white hover:bg-white/90 text-foreground shadow-md rounded-2xl font-medium"
             >
               <UserPlus className="h-4 w-4 mr-2" />
               Agregar Amigos
