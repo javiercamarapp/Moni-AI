@@ -1091,47 +1091,6 @@ const Social = () => {
             </div>
           )}
 
-          {/* Achievements Section */}
-          <div className="bg-white rounded-2xl shadow-sm p-4">
-            <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-2">
-              <Trophy className="h-4 w-4 text-yellow-600" />
-              Logros
-            </h2>
-            <p className="text-gray-600 text-xs mb-3">
-              Desbloquea insignias al completar retos y acumular XP.
-            </p>
-            <div className="grid grid-cols-2 gap-3">
-              {achievementsList.map((achievement) => {
-                const unlocked = userPoints >= achievement.xp;
-                return (
-                  <div
-                    key={achievement.id}
-                    className={`p-3 border rounded-xl flex flex-col items-center justify-center text-center transition-all duration-500 ${
-                      unlocked 
-                        ? 'bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200 shadow-md animate-scale-in' 
-                        : 'bg-gray-50 border-gray-200 opacity-60'
-                    }`}
-                  >
-                    <div className={`text-3xl mb-1 transition-transform duration-300 ${unlocked ? 'scale-110' : 'opacity-40'}`}>
-                      {achievement.icon}
-                    </div>
-                    <p className="font-medium text-gray-900 text-xs">{achievement.name}</p>
-                    <p className="text-[10px] text-gray-500">{achievement.desc}</p>
-                    {unlocked ? (
-                      <span className="mt-1 text-green-600 text-[10px] font-semibold flex items-center gap-1">
-                        ✅ Desbloqueado
-                      </span>
-                    ) : (
-                      <span className="mt-1 text-gray-400 text-[10px]">
-                        {achievement.xp - userPoints} XP restantes
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
           {/* Group Goals Section */}
           <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
             <div className="flex items-center justify-between mb-3">
