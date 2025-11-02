@@ -57,7 +57,7 @@ const AddFriend = () => {
             </div>
             <Button
               onClick={handleSearch}
-              className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-2xl"
+              className="w-full bg-white hover:bg-white/90 text-foreground shadow-md rounded-2xl font-medium"
             >
               <UserPlus className="h-4 w-4 mr-2" />
               Buscar Usuario
