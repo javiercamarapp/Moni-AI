@@ -12,13 +12,39 @@ serve(async (req) => {
   }
 
   try {
-    const { userId, period = 'month', type } = await req.json();
-    
-    console.log('Request type:', type, 'for user:', userId);
-
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Obtener userId del token JWT
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error('No authorization header');
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    
+    if (userError || !user) {
+      throw new Error('Unauthorized');
+    }
+
+    const userId = user.id;
+
+    // Parsear body si existe, con valores por defecto
+    let period = 'month';
+    let type = undefined;
+    
+    try {
+      const body = await req.json();
+      period = body.period || 'month';
+      type = body.type;
+    } catch (e) {
+      // No hay body, usar valores por defecto
+      console.log('No JSON body provided, using defaults');
+    }
+    
+    console.log('Request type:', type, 'for user:', userId, 'period:', period);
 
     // Handle suggestions request
     if (type === 'suggestions') {
