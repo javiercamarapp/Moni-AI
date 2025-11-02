@@ -105,12 +105,12 @@ const Onboarding = () => {
           ) : currentSlide === 1 ? (
             /* Second slide - BlurredStagger effect with loop */
             <div className="text-center space-y-4 px-4">
-              <div className="text-6xl md:text-8xl font-bold leading-tight text-white">
+              <div className="font-bold leading-tight text-white">
                 <BlurredStagger
                   text={["Toma el control", "de tus finanzas."]}
                   loop={true}
                   loopDelay={3000}
-                  className="text-6xl md:text-8xl font-bold text-center"
+                  className="text-3xl md:text-8xl font-bold text-center"
                 />
               </div>
               <p className="text-lg md:text-xl text-white leading-relaxed font-medium pt-4">
