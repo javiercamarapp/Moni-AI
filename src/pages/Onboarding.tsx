@@ -81,7 +81,7 @@ const Onboarding = () => {
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex items-center justify-center px-4 py-20 relative z-10">
+      <div className="flex items-start justify-center px-4 pt-20 relative z-10">
         <div className="w-full max-w-md space-y-6">
           {/* Hero Message - Typewriter effect without card */}
           <div className="text-center space-y-4 px-4">
