@@ -279,7 +279,7 @@ const Groups = () => {
 
       {/* Create Circle Dialog */}
       <Dialog open={showCreateCircleDialog} onOpenChange={setShowCreateCircleDialog}>
-        <DialogContent className="max-w-[400px] rounded-3xl border-none shadow-2xl p-0 bg-white">
+        <DialogContent className="max-w-[360px] w-[90%] rounded-3xl border-none shadow-2xl p-0 bg-white">
           <DialogHeader className="p-6 pb-4">
             <DialogTitle className="text-center text-xl font-semibold text-gray-900">Crear Círculo Moni</DialogTitle>
             <DialogDescription className="text-center text-sm text-gray-500 pt-1">
