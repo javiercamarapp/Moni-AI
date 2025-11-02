@@ -5,9 +5,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { Camera, Users, Award, TrendingUp, UserPlus } from "lucide-react";
+import { Camera, Users, Award, TrendingUp, UserPlus, Zap } from "lucide-react";
 import { toast } from "sonner";
 
 const Social = () => {
@@ -39,6 +41,14 @@ const Social = () => {
           if (!profileData.username) {
             setShowUsernameDialog(true);
           }
+        } else {
+          // Create profile if it doesn't exist
+          const { data: newProfile } = await supabase
+            .from('profiles')
+            .insert({ id: user.id, level: 1, xp: 0 })
+            .select()
+            .single();
+          if (newProfile) setProfile(newProfile);
         }
         
         // Fetch score from user_scores table
@@ -168,6 +178,16 @@ const Social = () => {
     return "text-red-600";
   };
 
+  const calculateXPProgress = () => {
+    const level = profile?.level || 1;
+    const currentXP = profile?.xp || 0;
+    const xpForNextLevel = level * 100;
+    const progress = (currentXP / xpForNextLevel) * 100;
+    return { currentXP, xpForNextLevel, progress: Math.min(progress, 100) };
+  };
+
+  const xpData = calculateXPProgress();
+
   return (
     <>
       <div className="min-h-screen pb-24 animate-fade-in">
@@ -188,6 +208,22 @@ const Social = () => {
         <div className="mx-auto px-4 py-2 space-y-4" style={{ maxWidth: '600px' }}>
           {/* User Profile Card */}
           <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
+            {/* Level Badge */}
+            <div className="mb-3 flex items-center justify-between">
+              <Badge variant="secondary" className="flex items-center gap-1.5 px-3 py-1">
+                <Zap className="h-3.5 w-3.5 text-primary" />
+                <span className="text-xs font-bold">Nivel {profile?.level || 1}</span>
+              </Badge>
+              <span className="text-xs text-muted-foreground">
+                {xpData.currentXP} / {xpData.xpForNextLevel} XP
+              </span>
+            </div>
+            
+            {/* XP Progress Bar */}
+            <div className="mb-4">
+              <Progress value={xpData.progress} className="h-2" />
+            </div>
+
             <div className="flex items-center gap-3">
               {/* Avatar with Upload Button */}
               <div className="relative">
