@@ -17,17 +17,29 @@ interface Group {
   created_at: string;
 }
 
+interface Circle {
+  id: string;
+  name: string;
+  description: string | null;
+  member_count: number;
+}
+
 const Groups = () => {
   const navigate = useNavigate();
   const [groups, setGroups] = useState<Group[]>([]);
+  const [circles, setCircles] = useState<Circle[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showCreateCircleDialog, setShowCreateCircleDialog] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
+  const [circleName, setCircleName] = useState("");
+  const [circleDescription, setCircleDescription] = useState("");
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     fetchGroups();
+    fetchCircles();
   }, []);
 
   const fetchGroups = async () => {
@@ -51,6 +63,23 @@ const Groups = () => {
       toast.error('Error al cargar grupos');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCircles = async () => {
+    try {
+      const { data: circlesData, error } = await supabase
+        .from('circles')
+        .select('id, name, description, member_count')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      if (circlesData) {
+        setCircles(circlesData);
+      }
+    } catch (error: any) {
+      console.error('Error fetching circles:', error);
     }
   };
 
@@ -89,6 +118,42 @@ const Groups = () => {
     }
   };
 
+  const handleCreateCircle = async () => {
+    if (!circleName.trim()) {
+      toast.error('Por favor ingresa un nombre para el círculo');
+      return;
+    }
+
+    setCreating(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('circles')
+        .insert({
+          user_id: user.id,
+          name: circleName.trim(),
+          description: circleDescription.trim() || null,
+          category: 'general',
+          member_count: 1
+        });
+
+      if (error) throw error;
+
+      toast.success('Círculo creado exitosamente');
+      setShowCreateCircleDialog(false);
+      setCircleName("");
+      setCircleDescription("");
+      fetchCircles();
+    } catch (error: any) {
+      console.error('Error creating circle:', error);
+      toast.error('Error al crear círculo');
+    } finally {
+      setCreating(false);
+    }
+  };
+
   return (
     <div className="min-h-screen pb-6 animate-fade-in">
       {/* Header */}
@@ -104,10 +169,10 @@ const Groups = () => {
               </button>
               <div>
                 <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
-                  Grupos
+                  Grupos y Círculos Moni
                 </h1>
                 <p className="text-xs text-gray-600">
-                  Crea o únete a grupos financieros
+                  Crea o únete a comunidades financieras
                 </p>
               </div>
             </div>
@@ -225,6 +290,45 @@ const Groups = () => {
               className="w-full bg-white text-foreground hover:bg-white/90 rounded-2xl shadow-md font-medium"
             >
               {creating ? 'Creando...' : 'Crear Grupo'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Circle Dialog */}
+      <Dialog open={showCreateCircleDialog} onOpenChange={setShowCreateCircleDialog}>
+        <DialogContent className="max-w-[320px] rounded-3xl border-none shadow-2xl p-6">
+          <DialogHeader className="space-y-2">
+            <DialogTitle className="text-center text-lg font-bold">Crear Círculo Moni</DialogTitle>
+            <DialogDescription className="text-center text-xs text-muted-foreground">
+              Crea un círculo para compartir metas con la comunidad
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Input
+                placeholder="Nombre del círculo"
+                value={circleName}
+                onChange={(e) => setCircleName(e.target.value)}
+                maxLength={50}
+                className="rounded-2xl"
+              />
+            </div>
+            <div className="space-y-2">
+              <Textarea
+                placeholder="Descripción (opcional)"
+                value={circleDescription}
+                onChange={(e) => setCircleDescription(e.target.value)}
+                maxLength={200}
+                className="rounded-2xl min-h-[80px] resize-none"
+              />
+            </div>
+            <Button 
+              onClick={handleCreateCircle}
+              disabled={creating}
+              className="w-full bg-white text-foreground hover:bg-white/90 rounded-2xl shadow-md font-medium"
+            >
+              {creating ? 'Creando...' : 'Crear Círculo'}
             </Button>
           </div>
         </DialogContent>
