@@ -164,6 +164,17 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
     return details[componentKey];
   };
 
+  // Función para obtener color según porcentaje (mismo que ScoreCard)
+  const getColorFromPercentage = (percentage: number) => {
+    if (percentage >= 90) return { gradient: 'from-emerald-600 to-emerald-700', bg: 'bg-emerald-700' };
+    if (percentage >= 80) return { gradient: 'from-emerald-500 to-emerald-600', bg: 'bg-emerald-600' };
+    if (percentage >= 70) return { gradient: 'from-emerald-400 to-emerald-500', bg: 'bg-emerald-500' };
+    if (percentage >= 60) return { gradient: 'from-yellow-400 to-yellow-500', bg: 'bg-yellow-500' };
+    if (percentage >= 40) return { gradient: 'from-orange-400 to-orange-500', bg: 'bg-orange-500' };
+    if (percentage >= 20) return { gradient: 'from-red-500 to-red-600', bg: 'bg-red-600' };
+    return { gradient: 'from-red-600 to-red-700', bg: 'bg-red-700' };
+  };
+
   const radarData = [
     { 
       dimension: 'Ahorro',
@@ -171,7 +182,8 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
       value: components.savingsAndLiquidity,
       previousValue: previousComponents.savingsAndLiquidity,
       fullMark: 30, 
-      explanation: 'Ahorro y Liquidez (30 pts): Se evalúa tu tasa de ahorro mensual (% de ingreso que ahorras) y tu fondo de emergencia (meses de gastos cubiertos). Para mejorar: aumenta tu ahorro mensual y mantén 3-6 meses de gastos en efectivo.'
+      explanation: 'Ahorro y Liquidez (30 pts): Se evalúa tu tasa de ahorro mensual (% de ingreso que ahorras) y tu fondo de emergencia (meses de gastos cubiertos). Para mejorar: aumenta tu ahorro mensual y mantén 3-6 meses de gastos en efectivo.',
+      colors: getColorFromPercentage(Math.round((components.savingsAndLiquidity / 30) * 100))
     },
     { 
       dimension: 'Deuda',
@@ -179,7 +191,8 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
       value: components.debt,
       previousValue: previousComponents.debt,
       fullMark: 20, 
-      explanation: 'Manejo de Deudas (20 pts): Se mide tu nivel de endeudamiento vs ingresos y si pagas puntualmente. Para mejorar: reduce deudas de alto interés primero y evita nuevas deudas innecesarias.'
+      explanation: 'Manejo de Deudas (20 pts): Se mide tu nivel de endeudamiento vs ingresos y si pagas puntualmente. Para mejorar: reduce deudas de alto interés primero y evita nuevas deudas innecesarias.',
+      colors: getColorFromPercentage(Math.round((components.debt / 20) * 100))
     },
     { 
       dimension: 'Control',
@@ -187,7 +200,8 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
       value: components.control,
       previousValue: previousComponents.control,
       fullMark: 20, 
-      explanation: 'Control de Gastos (20 pts): Evalúa si cumples tu presupuesto mensual y reduces gastos hormiga. Para mejorar: registra todos tus gastos, define presupuestos por categoría y revísalos semanalmente.'
+      explanation: 'Control de Gastos (20 pts): Evalúa si cumples tu presupuesto mensual y reduces gastos hormiga. Para mejorar: registra todos tus gastos, define presupuestos por categoría y revísalos semanalmente.',
+      colors: getColorFromPercentage(Math.round((components.control / 20) * 100))
     },
     { 
       dimension: 'Crecimiento',
@@ -195,7 +209,8 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
       value: components.growth,
       previousValue: previousComponents.growth,
       fullMark: 15, 
-      explanation: 'Crecimiento Patrimonial (15 pts): Considera tus inversiones, activos y estrategias de crecimiento. Para mejorar: destina un % de tus ingresos a inversiones de largo plazo y diversifica tu portafolio.'
+      explanation: 'Crecimiento Patrimonial (15 pts): Considera tus inversiones, activos y estrategias de crecimiento. Para mejorar: destina un % de tus ingresos a inversiones de largo plazo y diversifica tu portafolio.',
+      colors: getColorFromPercentage(Math.round((components.growth / 15) * 100))
     },
     { 
       dimension: 'Hábitos',
@@ -203,7 +218,8 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
       value: components.behavior,
       previousValue: previousComponents.behavior,
       fullMark: 15, 
-      explanation: 'Hábitos Financieros (15 pts): Mide la consistencia de tus buenos hábitos como revisar gastos diariamente, actualizar presupuestos y planear compras grandes. Para mejorar: crea rutinas financieras diarias y mensuales.'
+      explanation: 'Hábitos Financieros (15 pts): Mide la consistencia de tus buenos hábitos como revisar gastos diariamente, actualizar presupuestos y planear compras grandes. Para mejorar: crea rutinas financieras diarias y mensuales.',
+      colors: getColorFromPercentage(Math.round((components.behavior / 15) * 100))
     }
   ];
 
@@ -341,20 +357,20 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
       
       {/* Details Dialog */}
       <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
-        <DialogContent className="max-w-[400px] rounded-3xl border-none shadow-2xl p-6">
+        <DialogContent 
+          className={`max-w-[380px] rounded-3xl border-none shadow-2xl p-6 bg-gradient-to-br ${selectedComponent?.colors?.gradient || 'from-gray-100 to-gray-200'}`}
+        >
           <DialogHeader className="space-y-2">
-            <DialogTitle className="text-center text-xl font-bold flex items-center justify-center gap-2">
+            <DialogTitle className="text-center text-xl font-bold flex items-center justify-center gap-2 text-white">
               {selectedComponent?.icon} {selectedComponent?.title}
             </DialogTitle>
             <DialogDescription className="text-center">
               <div className="flex items-center justify-center gap-2 mt-2">
-                <span className="text-2xl font-bold text-foreground">
+                <span className="text-2xl font-bold text-white">
                   {selectedComponent?.value}/{selectedComponent?.fullMark}
                 </span>
                 {selectedComponent?.change !== 0 && (
-                  <span className={`flex items-center gap-1 text-sm font-semibold ${
-                    selectedComponent?.change > 0 ? 'text-emerald-600' : 'text-red-600'
-                  }`}>
+                  <span className={`flex items-center gap-1 text-sm font-semibold text-white/90`}>
                     {selectedComponent?.change > 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
                     {selectedComponent?.change > 0 ? '+' : ''}{selectedComponent?.change} pts
                   </span>
@@ -365,14 +381,14 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
           
           <div className="space-y-4 pt-4">
             {/* Razones del cambio */}
-            <div>
-              <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+            <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 border border-white/30">
+              <h4 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
                 {selectedComponent?.change < 0 ? '📉 ¿Por qué bajó?' : '📈 ¿Por qué mejoró?'}
               </h4>
               <ul className="space-y-2">
                 {selectedComponent?.reasons?.slice(0, 3).map((reason: string, idx: number) => (
-                  <li key={idx} className="text-xs text-muted-foreground flex items-start gap-2">
-                    <span className="text-purple-600 font-bold mt-0.5">•</span>
+                  <li key={idx} className="text-xs text-white/90 flex items-start gap-2">
+                    <span className="text-white font-bold mt-0.5">•</span>
                     <span>{reason}</span>
                   </li>
                 ))}
@@ -380,13 +396,13 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
             </div>
             
             {/* Tips para mejorar */}
-            <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-2xl p-4">
-              <h4 className="text-sm font-semibold text-purple-900 mb-2 flex items-center gap-2">
+            <div className="bg-white/25 backdrop-blur-sm rounded-2xl p-4 border border-white/40">
+              <h4 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
                 💡 Cómo mejorar este rubro
               </h4>
               <ul className="space-y-2">
                 {selectedComponent?.tips?.slice(0, 3).map((tip: string, idx: number) => (
-                  <li key={idx} className="text-xs text-purple-700 flex items-start gap-2">
+                  <li key={idx} className="text-xs text-white/90 flex items-start gap-2">
                     <span className="font-bold mt-0.5">✓</span>
                     <span>{tip}</span>
                   </li>
