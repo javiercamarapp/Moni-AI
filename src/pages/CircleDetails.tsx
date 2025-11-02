@@ -60,9 +60,15 @@ const CircleDetails = () => {
         .eq('id', id)
         .maybeSingle();
 
-      if (circleError) throw circleError;
+      if (circleError) {
+        console.error('Error fetching circle:', circleError);
+        toast.error('Error al buscar el círculo');
+        navigate('/social');
+        return;
+      }
+      
       if (!circleData) {
-        toast.error('Círculo no encontrado');
+        toast.error('Este círculo no existe');
         navigate('/social');
         return;
       }
