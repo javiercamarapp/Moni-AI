@@ -1052,7 +1052,7 @@ export default function FinancialAnalysis() {
           </div>
 
           <div className="mx-auto px-4 py-6 max-w-7xl">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-3">
 
             {/* Mostrar métricas instantáneas (siempre disponibles del caché) */}
             {(quickMetrics || analysis) ? (
