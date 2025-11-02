@@ -44,13 +44,20 @@ const AnimatedText = React.forwardRef<HTMLDivElement, AnimatedTextProps>(
     const textVariants: Variants = {
       initial: {
         backgroundPosition: "0 0",
+        opacity: 0,
       },
       animate: {
         backgroundPosition: "100% 0",
+        opacity: 1,
         transition: {
-          duration: gradientAnimationDuration,
-          repeat: Infinity,
-          repeatType: "reverse" as const,
+          backgroundPosition: {
+            duration: gradientAnimationDuration,
+            repeat: Infinity,
+            repeatType: "reverse" as const,
+          },
+          opacity: {
+            duration: 0.3,
+          }
         },
       },
     };
@@ -63,12 +70,13 @@ const AnimatedText = React.forwardRef<HTMLDivElement, AnimatedTextProps>(
       >
         <motion.h1
           key={key}
-          className={cn("text-[2.5rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[5rem] xl:text-[6rem] leading-normal", textClassName)}
+          className={cn("text-[2.5rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[5rem] xl:text-[6rem] leading-normal font-bold", textClassName)}
           style={{
             background: gradientColors,
             backgroundSize: "200% auto",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
             textShadow: isHovered ? "0 0 8px rgba(255,255,255,0.3)" : "none",
           }}
           variants={textVariants}
