@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, UserPlus, Plus, Trophy, Target, Users, Share2, Send, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const CircleDetails = () => {
   const { id } = useParams();
@@ -27,6 +28,7 @@ const CircleDetails = () => {
   const [newMessage, setNewMessage] = useState("");
   const [showXPGain, setShowXPGain] = useState(false);
   const [xpGainAmount, setXPGainAmount] = useState(0);
+  const [progressGlow, setProgressGlow] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
   const xpSoundRef = useRef<HTMLAudioElement>(null);
 
@@ -149,6 +151,16 @@ const CircleDetails = () => {
         },
         () => {
           fetchCircleData();
+          // Activar animación glow
+          setProgressGlow(true);
+          setTimeout(() => setProgressGlow(false), 1500);
+          
+          // Sonido de progreso
+          if (xpSoundRef.current) {
+            xpSoundRef.current.currentTime = 0;
+            xpSoundRef.current.volume = 0.35;
+            xpSoundRef.current.play().catch(() => {});
+          }
         }
       )
       .on(
@@ -254,7 +266,19 @@ const CircleDetails = () => {
 
         if (rpcError) throw rpcError;
         
-        toast.success(`¡Aporte de $${amount} registrado! +${Math.max(1, Math.round(amount / 10))} XP`);
+        const xpEarned = Math.max(1, Math.round(amount / 10));
+        
+        // Mostrar animación XP
+        setXPGainAmount(xpEarned);
+        setShowXPGain(true);
+        setProgressGlow(true);
+        
+        setTimeout(() => {
+          setShowXPGain(false);
+          setProgressGlow(false);
+        }, 2500);
+        
+        toast.success(`¡Aporte de $${amount} registrado! +${xpEarned} XP`);
       }
 
       // Insertar el mensaje en el feed
@@ -418,14 +442,28 @@ const CircleDetails = () => {
               <Target className="h-4 w-4 text-primary" />
               Progreso grupal
             </h2>
-            {goals.map((goal) => {
+        {goals.map((goal) => {
               const progress = (Number(goal.current_amount) / Number(goal.target_amount)) * 100;
               return (
                 <div key={goal.id} className="mb-4 last:mb-0">
                   <p className="text-gray-600 text-xs mb-2">
                     Meta: {goal.title}
                   </p>
-                  <Progress value={Math.min(progress, 100)} className="h-3 mb-2" />
+                  <div className="relative">
+                    <Progress 
+                      value={Math.min(progress, 100)} 
+                      className={cn(
+                        "h-3 mb-2 transition-all duration-700",
+                        progressGlow && "animate-pulse"
+                      )}
+                      style={{
+                        filter: progressGlow ? 'drop-shadow(0 0 8px rgba(52, 211, 153, 0.8))' : 'none'
+                      }}
+                    />
+                    {progressGlow && (
+                      <div className="absolute inset-0 bg-emerald-400/20 rounded-full animate-ping pointer-events-none" />
+                    )}
+                  </div>
                   <div className="flex justify-between text-xs">
                     <span className="text-gray-700">{progress.toFixed(0)}% completado</span>
                     <span className="text-gray-500">
@@ -589,7 +627,13 @@ const CircleDetails = () => {
       {/* XP Gain Animation */}
       {showXPGain && (
         <div className="fixed bottom-32 left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-fade-in">
-          <div className="text-emerald-600 text-3xl font-bold drop-shadow-2xl animate-bounce">
+          <div 
+            className="text-emerald-600 text-3xl font-bold drop-shadow-2xl animate-bounce"
+            style={{
+              filter: 'drop-shadow(0 0 12px rgba(52, 211, 153, 0.9))',
+              textShadow: '0 0 20px rgba(52, 211, 153, 0.8)'
+            }}
+          >
             +{xpGainAmount} XP
           </div>
         </div>
