@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ChatBubble, ChatBubbleAvatar, ChatBubbleMessage } from "@/components/ui/chat-bubble";
 import { ChatMessageList } from "@/components/ui/chat-message-list";
 import { ChatInput } from "@/components/ui/chat-input";
-import { ArrowLeft, Camera, Send, MessageCircle } from "lucide-react";
+import { ArrowLeft, Camera, Send, MessageCircle, Paperclip } from "lucide-react";
 import { toast } from "sonner";
 
 interface Profile {
@@ -198,6 +198,10 @@ const CircleChat = () => {
     toast.info("Cámara - próximamente");
   };
 
+  const handleAttachFile = () => {
+    toast.info("Adjuntar archivo - próximamente");
+  };
+
   if (!circle) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -207,9 +211,13 @@ const CircleChat = () => {
   }
 
   return (
-    <div className="min-h-screen animate-fade-in flex flex-col bg-gradient-to-b from-[#E5DEFF] to-[#FFDEE2]">
+    <div className="min-h-screen animate-fade-in flex flex-col relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 bg-gradient-to-b from-[#E5DEFF] to-[#FFDEE2] -z-10" />
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)] animate-pulse -z-10" style={{ animationDuration: '4s' }} />
+      
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF] to-[#FFDEE2] border-b border-white/20">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/95 to-[#FFDEE2]/95 backdrop-blur-md border-b border-white/20">
         <div className="w-full px-4 py-3 sm:py-4">
           <div className="flex items-center gap-3">
             <button
@@ -251,7 +259,7 @@ const CircleChat = () => {
                 <ChatBubble
                   key={msg.id}
                   variant={msg.user_id === user?.id ? "sent" : "received"}
-                  className="gap-1.5"
+                  className="gap-2"
                 >
                   <ChatBubbleAvatar
                     src={msg.profiles?.avatar_url || ''}
@@ -288,11 +296,11 @@ const CircleChat = () => {
         </div>
 
         {/* Input Area - Fixed at bottom */}
-        <div className="fixed bottom-0 left-0 right-0 p-3 bg-gradient-to-b from-[#E5DEFF] to-[#FFDEE2] border-t border-white/30 z-50">
+        <div className="fixed bottom-0 left-0 right-0 p-3 bg-gradient-to-b from-[#E5DEFF]/95 to-[#FFDEE2]/95 backdrop-blur-md border-t border-white/30 z-50">
           <div className="w-full max-w-4xl mx-auto">
             <form
               onSubmit={handleSendMessage}
-              className="flex items-center gap-2 rounded-full bg-white/95 backdrop-blur-sm px-4 py-2 shadow-sm"
+              className="flex items-center gap-2 rounded-full bg-white/95 backdrop-blur-sm px-3 py-2 shadow-sm"
             >
               <Button
                 variant="ghost"
@@ -302,6 +310,16 @@ const CircleChat = () => {
                 className="h-8 w-8 flex-shrink-0 rounded-full hover:bg-gray-100"
               >
                 <Camera className="h-5 w-5 text-gray-600" />
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                type="button"
+                onClick={handleAttachFile}
+                className="h-8 w-8 flex-shrink-0 rounded-full hover:bg-gray-100"
+              >
+                <Paperclip className="h-5 w-5 text-gray-600" />
               </Button>
 
               <ChatInput
