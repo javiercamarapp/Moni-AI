@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, TrendingUp, Trophy, Medal, Users, Target, Zap, Calendar, Award } from "lucide-react";
+import { ArrowLeft, Trophy, Medal, Users, Zap, Calendar, Award } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { User } from "@supabase/supabase-js";
+import heroAuth from '@/assets/moni-ai-logo.png';
 
 const SocialStats = () => {
   const navigate = useNavigate();
@@ -14,8 +14,8 @@ const SocialStats = () => {
   const [generalRankings, setGeneralRankings] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>(null);
   const [totalChallenges, setTotalChallenges] = useState<number>(0);
-  const [monthStreak, setMonthStreak] = useState<number>(0);
-  const [totalFriends, setTotalFriends] = useState<number>(0);
+  const [dayStreak, setDayStreak] = useState<number>(0);
+  const [friendsRank, setFriendsRank] = useState<number>(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,7 +58,6 @@ const SocialStats = () => {
         .eq('status', 'accepted');
 
       if (friendships) {
-        setTotalFriends(friendships.length);
 
         // Get friend IDs for friends ranking
         const friendIds = friendships.map(f => f.friend_id);
@@ -96,6 +95,10 @@ const SocialStats = () => {
             };
           });
           setFriendsRankings(enrichedFriendsRank);
+          
+          // Calculate user's rank among friends
+          const userRankIndex = enrichedFriendsRank.findIndex(r => r.user_id === user.id);
+          setFriendsRank(userRankIndex >= 0 ? userRankIndex + 1 : friendships.length + 1);
         }
       }
 
@@ -132,9 +135,10 @@ const SocialStats = () => {
         setGeneralRankings(enrichedGeneralRank);
       }
 
-      // Calculate streak (simplified - just using level as mock data)
+      // Calculate day streak based on consecutive challenge completions
+      // For now, using level as proxy - in production would track actual consecutive days
       if (profileData?.level) {
-        setMonthStreak(Math.floor(profileData.level / 2));
+        setDayStreak(Math.min(profileData.level * 3, 30)); // Mock: 3 days per level, max 30
       }
     };
 
@@ -143,90 +147,57 @@ const SocialStats = () => {
 
   return (
     <div className="min-h-screen pb-24 animate-fade-in bg-gradient-to-b from-[#E5DEFF]/30 to-white">
-      {/* Header */}
-      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
-        <div className="max-w-2xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate(-1)}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <ArrowLeft className="h-5 w-5 text-gray-900" />
-            </button>
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
-                Estadísticas
-              </h1>
-              <p className="text-xs text-gray-500">
-                Tu progreso y rankings
-              </p>
-            </div>
-          </div>
+      {/* Header superior con logo */}
+      <div className="p-2 flex justify-between items-start">
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm overflow-hidden w-16 h-10">
+          <img src={heroAuth} alt="Moni" className="w-full h-full object-cover" />
         </div>
+        
+        <button
+          onClick={() => navigate(-1)}
+          className="p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white shadow-sm transition-colors"
+        >
+          <ArrowLeft className="h-5 w-5 text-gray-900" />
+        </button>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
-        {/* Stats Overview */}
-        <div className="bg-white rounded-3xl shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Tu resumen este mes
-          </h2>
-          
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Zap className="h-4 w-4 text-primary" />
-                <span className="text-xs text-gray-600">Puntos XP</span>
+      <div className="max-w-2xl mx-auto px-4 py-2 space-y-4">
+        {/* Stats Overview - Compacto */}
+        <div className="bg-white rounded-2xl shadow-sm p-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-white border border-gray-100 rounded-xl p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <Zap className="h-3.5 w-3.5 text-primary" />
+                <span className="text-[10px] text-gray-600">Puntos XP</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{userPoints}</p>
-              <p className="text-xs text-gray-500 mt-1">Acumulados</p>
+              <p className="text-xl font-bold text-gray-900">{userPoints}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 rounded-2xl p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Trophy className="h-4 w-4 text-blue-600" />
-                <span className="text-xs text-gray-600">Retos</span>
+            <div className="bg-white border border-gray-100 rounded-xl p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <Trophy className="h-3.5 w-3.5 text-blue-600" />
+                <span className="text-[10px] text-gray-600">Retos</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{totalChallenges}</p>
-              <p className="text-xs text-gray-500 mt-1">Completados</p>
+              <p className="text-xl font-bold text-gray-900">{totalChallenges}</p>
             </div>
 
-            <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 rounded-2xl p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Calendar className="h-4 w-4 text-green-600" />
-                <span className="text-xs text-gray-600">Racha</span>
+            <div className="bg-white border border-gray-100 rounded-xl p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <Calendar className="h-3.5 w-3.5 text-green-600" />
+                <span className="text-[10px] text-gray-600">Racha</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{monthStreak}</p>
-              <p className="text-xs text-gray-500 mt-1">Meses activo</p>
+              <p className="text-xl font-bold text-gray-900">{dayStreak}</p>
+              <p className="text-[9px] text-gray-500 mt-0.5">días seguidos</p>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-500/10 to-purple-500/5 rounded-2xl p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Users className="h-4 w-4 text-purple-600" />
-                <span className="text-xs text-gray-600">Amigos</span>
+            <div className="bg-white border border-gray-100 rounded-xl p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <Users className="h-3.5 w-3.5 text-purple-600" />
+                <span className="text-[10px] text-gray-600">Ranking</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{totalFriends}</p>
-              <p className="text-xs text-gray-500 mt-1">Conectados</p>
+              <p className="text-xl font-bold text-gray-900">#{friendsRank}</p>
+              <p className="text-[9px] text-gray-500 mt-0.5">entre amigos</p>
             </div>
-          </div>
-
-          {/* Progress Bar */}
-          <div className="space-y-2">
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-gray-600 font-medium">Progreso mensual</span>
-              <span className="text-primary font-semibold">{userPoints} / 1,000 XP</span>
-            </div>
-            <Progress 
-              value={Math.min((userPoints / 1000) * 100, 100)} 
-              className="h-2"
-              indicatorClassName="bg-gradient-to-r from-primary to-primary/80"
-            />
-            <p className="text-[10px] text-gray-500">
-              {userPoints >= 1000 
-                ? '¡Meta mensual alcanzada! 🎉' 
-                : `Faltan ${1000 - userPoints} XP para tu meta mensual`
-              }
-            </p>
           </div>
         </div>
 
@@ -393,17 +364,17 @@ const SocialStats = () => {
               </div>
             )}
             
-            {totalFriends >= 5 && (
+            {dayStreak >= 7 && (
               <div className="flex items-center gap-3 p-3 bg-white/80 rounded-xl">
-                <span className="text-2xl">🤝</span>
+                <span className="text-2xl">🔥</span>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Comunidad Activa</p>
-                  <p className="text-xs text-gray-600">{totalFriends} amigos conectados</p>
+                  <p className="text-sm font-medium text-gray-900">Racha Imparable</p>
+                  <p className="text-xs text-gray-600">{dayStreak} días seguidos</p>
                 </div>
               </div>
             )}
 
-            {(profile?.level < 5 && totalChallenges < 10 && totalFriends < 5) && (
+            {(profile?.level < 5 && totalChallenges < 10 && dayStreak < 7) && (
               <div className="text-center py-4">
                 <p className="text-sm text-gray-600">
                   Completa más retos para desbloquear logros
