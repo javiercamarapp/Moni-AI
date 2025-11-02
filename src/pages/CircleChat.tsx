@@ -326,7 +326,7 @@ const CircleChat = () => {
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Mensaje..."
-                className="flex-1 min-h-[24px] max-h-[24px] resize-none bg-transparent border-0 px-2 py-0.5 shadow-none focus-visible:ring-0 text-sm placeholder:text-gray-400"
+                className="flex-1 min-h-[12px] max-h-[12px] resize-none bg-transparent border-0 px-2 py-0.5 shadow-none focus-visible:ring-0 text-sm placeholder:text-gray-400"
                 rows={1}
               />
 
