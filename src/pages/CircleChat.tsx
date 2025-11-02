@@ -217,7 +217,7 @@ const CircleChat = () => {
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)] animate-pulse -z-10" style={{ animationDuration: '4s' }} />
       
       {/* Header */}
-      <div className="sticky top-0 z-40 border-b border-white/20 animate-pulse" style={{ animationDuration: '4s' }}>
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/95 to-[#FFDEE2]/95 backdrop-blur-md border-b border-white/20 animate-pulse" style={{ animationDuration: '4s' }}>
         <div className="w-full px-4 py-3 sm:py-4">
           <div className="flex items-center gap-3">
             <button
