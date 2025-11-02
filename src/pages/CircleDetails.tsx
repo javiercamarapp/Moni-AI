@@ -460,32 +460,31 @@ const CircleDetails = () => {
       {/* Header */}
       <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <button
-            onClick={() => navigate('/social')}
-            className="flex items-center gap-2 text-gray-700 hover:text-gray-900 mb-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span className="text-sm font-medium">Volver a Social</span>
-          </button>
+          <div className="flex items-center gap-3 mb-2">
+            <button
+              onClick={() => navigate('/social')}
+              className="p-2 hover:bg-white/50 rounded-full transition-colors"
+            >
+              <ArrowLeft className="h-5 w-5 text-gray-900" />
+            </button>
+            <div>
+              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
+                {circle?.name}
+              </h1>
+              <p className="text-xs text-gray-600">
+                {circle?.member_count} miembros · {circle?.category}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
       <div className="mx-auto px-4 py-2 space-y-4" style={{ maxWidth: '600px' }}>
-        {/* Circle Header */}
-        <div className="bg-white rounded-2xl shadow-sm p-4">
-          <div className="flex justify-between items-start mb-3">
-            <div className="flex-1">
-              <h1 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-1">
-                💬 {circle.name}
-              </h1>
-              <p className="text-gray-600 text-sm">
-                {circle.member_count} miembros · Categoría: {circle.category}
-              </p>
-              {circle.description && (
-                <p className="text-gray-600 text-xs mt-2">{circle.description}</p>
-              )}
-            </div>
-          </div>
+        {/* Circle Info Card */}
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
+          {circle.description && (
+            <p className="text-gray-600 text-sm mb-3">{circle.description}</p>
+          )}
           
           <div className="flex gap-2">
             {!isMember ? (
@@ -497,72 +496,78 @@ const CircleDetails = () => {
                 Unirme al círculo
               </Button>
             ) : (
-              <>
-                <Button
-                  onClick={handleShareCircle}
-                  className="flex-1 bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9"
-                >
-                  <UserPlus className="h-4 w-4 mr-1" />
-                  Invitar miembro
-                </Button>
-              </>
+              <Button
+                onClick={handleShareCircle}
+                className="flex-1 bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9"
+              >
+                <UserPlus className="h-4 w-4 mr-1" />
+                Invitar miembro
+              </Button>
             )}
           </div>
         </div>
 
         {/* Navigation Icons */}
-        <div className="bg-white rounded-2xl shadow-sm p-4">
-          <div className="grid grid-cols-4 gap-2">
-            <button
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
+          <div className="flex justify-center gap-4">
+            <button 
               onClick={() => setActiveView('members')}
-              className={cn(
-                "flex flex-col items-center gap-2 p-3 rounded-xl transition-all",
+              className="flex flex-col items-center gap-1.5 group w-16"
+            >
+              <div className={cn(
+                "rounded-full p-3 group-hover:scale-110 transition-transform",
                 activeView === 'members' 
-                  ? "bg-primary/10 text-primary" 
-                  : "hover:bg-gray-50 text-gray-600"
-              )}
-            >
-              <Users className="h-5 w-5" />
-              <span className="text-[10px] font-medium text-center leading-tight">Miembros</span>
+                  ? "bg-gradient-to-br from-primary/30 to-primary/20" 
+                  : "bg-gradient-to-br from-primary/20 to-primary/10"
+              )}>
+                <Users className="h-5 w-5 text-primary" />
+              </div>
+              <span className="text-[10px] text-gray-600 font-medium text-center">Miembros</span>
             </button>
 
-            <button
+            <button 
               onClick={() => setActiveView('challenges')}
-              className={cn(
-                "flex flex-col items-center gap-2 p-3 rounded-xl transition-all",
+              className="flex flex-col items-center gap-1.5 group w-16"
+            >
+              <div className={cn(
+                "rounded-full p-3 group-hover:scale-110 transition-transform",
                 activeView === 'challenges' 
-                  ? "bg-primary/10 text-primary" 
-                  : "hover:bg-gray-50 text-gray-600"
-              )}
-            >
-              <Trophy className="h-5 w-5" />
-              <span className="text-[10px] font-medium text-center leading-tight">Retos activos</span>
+                  ? "bg-gradient-to-br from-yellow-600/30 to-yellow-600/20" 
+                  : "bg-gradient-to-br from-yellow-600/20 to-yellow-600/10"
+              )}>
+                <Trophy className="h-5 w-5 text-yellow-600" />
+              </div>
+              <span className="text-[10px] text-gray-600 font-medium text-center leading-tight">Retos activos</span>
             </button>
 
-            <button
+            <button 
               onClick={() => setActiveView('chat')}
-              className={cn(
-                "flex flex-col items-center gap-2 p-3 rounded-xl transition-all",
-                activeView === 'chat' 
-                  ? "bg-primary/10 text-primary" 
-                  : "hover:bg-gray-50 text-gray-600"
-              )}
+              className="flex flex-col items-center gap-1.5 group w-16"
             >
-              <MessageCircle className="h-5 w-5" />
-              <span className="text-[10px] font-medium text-center leading-tight">Chat grupal</span>
+              <div className={cn(
+                "rounded-full p-3 group-hover:scale-110 transition-transform",
+                activeView === 'chat' 
+                  ? "bg-gradient-to-br from-blue-500/30 to-blue-500/20" 
+                  : "bg-gradient-to-br from-blue-500/20 to-blue-500/10"
+              )}>
+                <MessageCircle className="h-5 w-5 text-blue-600" />
+              </div>
+              <span className="text-[10px] text-gray-600 font-medium text-center leading-tight">Chat grupal</span>
             </button>
 
-            <button
+            <button 
               onClick={() => setActiveView('news')}
-              className={cn(
-                "flex flex-col items-center gap-2 p-3 rounded-xl transition-all",
-                activeView === 'news' 
-                  ? "bg-primary/10 text-primary" 
-                  : "hover:bg-gray-50 text-gray-600"
-              )}
+              className="flex flex-col items-center gap-1.5 group w-16"
             >
-              <Newspaper className="h-5 w-5" />
-              <span className="text-[10px] font-medium text-center leading-tight">Noticias recomendadas</span>
+              <div className={cn(
+                "rounded-full p-3 group-hover:scale-110 transition-transform",
+                activeView === 'news' 
+                  ? "bg-gradient-to-br from-green-500/30 to-green-500/20" 
+                  : "bg-gradient-to-br from-green-500/20 to-green-500/10"
+              )}>
+                <Newspaper className="h-5 w-5 text-green-600" />
+              </div>
+              <span className="text-[8px] text-gray-600 font-medium text-center leading-tight">Noticias recomendadas</span>
             </button>
           </div>
         </div>
