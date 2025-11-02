@@ -293,6 +293,12 @@ const Social = () => {
               </div>
             </div>
 
+            {/* Bio/Description */}
+            <div className="mt-2 pt-2 border-t border-gray-200">
+              <p className="text-[10px] text-gray-600">
+                {profile?.bio || user?.user_metadata?.bio || "Mejorando mis finanzas con Moni AI 🚀"}
+              </p>
+            </div>
 
             {/* Level Badge & Monthly Ranking */}
             <div className="mt-2 pt-2 border-t border-gray-200">
@@ -318,46 +324,46 @@ const Social = () => {
           </div>
 
           {/* Action Buttons Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-3">
-            <div className="flex justify-center gap-3">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
+            <div className="flex justify-center gap-4">
               <button 
                 onClick={() => navigate('/friends-list')}
-                className="flex flex-col items-center gap-1 group flex-1"
+                className="flex flex-col items-center gap-1.5 group w-16"
               >
-                <div className="bg-gradient-to-br from-primary/20 to-primary/10 rounded-full p-3 group-hover:scale-110 transition-transform w-full aspect-square flex items-center justify-center">
-                  <Users className="h-6 w-6 text-primary" />
+                <div className="bg-gradient-to-br from-primary/20 to-primary/10 rounded-full p-3 group-hover:scale-110 transition-transform">
+                  <Users className="h-5 w-5 text-primary" />
                 </div>
-                <span className="text-[9px] text-gray-600 font-medium text-center">Amigos</span>
+                <span className="text-[10px] text-gray-600 font-medium text-center">Amigos</span>
               </button>
 
               <button 
                 onClick={() => navigate('/groups')}
-                className="flex flex-col items-center gap-1 group flex-1"
+                className="flex flex-col items-center gap-1.5 group w-16"
               >
-                <div className="bg-gradient-to-br from-blue-500/20 to-blue-500/10 rounded-full p-3 group-hover:scale-110 transition-transform w-full aspect-square flex items-center justify-center">
-                  <Users className="h-6 w-6 text-blue-600" />
+                <div className="bg-gradient-to-br from-blue-500/20 to-blue-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
+                  <Users className="h-5 w-5 text-blue-600" />
                 </div>
-                <span className="text-[9px] text-gray-600 font-medium text-center">Grupos</span>
+                <span className="text-[10px] text-gray-600 font-medium text-center">Grupos</span>
               </button>
 
               <button 
                 onClick={() => navigate('/social-stats')}
-                className="flex flex-col items-center gap-1 group flex-1"
+                className="flex flex-col items-center gap-1.5 group w-16"
               >
-                <div className="bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-full p-3 group-hover:scale-110 transition-transform w-full aspect-square flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-green-600" />
+                <div className="bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
+                  <TrendingUp className="h-5 w-5 text-green-600" />
                 </div>
-                <span className="text-[9px] text-gray-600 font-medium text-center">Stats</span>
+                <span className="text-[10px] text-gray-600 font-medium text-center">Stats</span>
               </button>
 
               <button 
                 onClick={() => navigate('/financial-events')}
-                className="flex flex-col items-center gap-1 group flex-1"
+                className="flex flex-col items-center gap-1.5 group w-16"
               >
-                <div className="bg-gradient-to-br from-purple-500/20 to-purple-500/10 rounded-full p-3 group-hover:scale-110 transition-transform w-full aspect-square flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-purple-600" />
+                <div className="bg-gradient-to-br from-purple-500/20 to-purple-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
+                  <Calendar className="h-5 w-5 text-purple-600" />
                 </div>
-                <span className="text-[9px] text-gray-600 font-medium text-center leading-tight">Eventos</span>
+                <span className="text-[10px] text-gray-600 font-medium text-center leading-tight">Eventos financieros</span>
               </button>
             </div>
           </div>
