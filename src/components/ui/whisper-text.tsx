@@ -65,7 +65,7 @@ const WhisperText: React.FC<WhisperTextProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative inline-flex flex-wrap gap-x-2 ${className}`}
+      className={`relative inline-flex flex-wrap gap-x-2 justify-center ${className}`}
       style={{ overflow: "visible" }}
     >
       {renderWords()}
