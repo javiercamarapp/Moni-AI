@@ -410,7 +410,7 @@ const CircleDetails = () => {
     <div className="min-h-screen pb-8 animate-fade-in">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="mx-auto px-4 py-4" style={{ maxWidth: '600px' }}>
           <button
             onClick={() => navigate('/social')}
             className="flex items-center gap-2 text-gray-700 hover:text-gray-900 mb-2"
