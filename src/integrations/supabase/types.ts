@@ -336,6 +336,39 @@ export type Database = {
         }
         Relationships: []
       }
+      groups: {
+        Row: {
+          color: string
+          created_at: string
+          description: string | null
+          id: string
+          member_count: number
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          member_count?: number
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          member_count?: number
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       liabilities: {
         Row: {
           category: string
