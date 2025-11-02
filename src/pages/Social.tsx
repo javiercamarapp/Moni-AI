@@ -313,7 +313,7 @@ const Social = () => {
                   </Badge>
                   <Badge variant="outline" className="flex items-center gap-1 px-2 py-0.5 border-yellow-600/30 bg-yellow-50">
                     <Trophy className="h-2.5 w-2.5 text-yellow-600" />
-                    <span className="text-[10px] font-bold text-yellow-700">#{monthlyRanking}</span>
+                    <span className="text-[10px] font-bold text-yellow-700">#{monthlyRanking} entre amigos</span>
                   </Badge>
                 </div>
                 <span className="text-[10px] text-muted-foreground">
