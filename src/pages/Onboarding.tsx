@@ -9,6 +9,7 @@ import onboardingGoals from '@/assets/onboarding-goals.png';
 import aiImage from '@/assets/onboarding-ai.png';
 import { Typewriter } from '@/components/ui/typewriter-text';
 import { BlurredStagger } from '@/components/ui/blurred-stagger-text';
+import WhisperText from '@/components/ui/whisper-text';
 
 const Onboarding = () => {
   const [showLogo, setShowLogo] = useState(true);
@@ -123,10 +124,17 @@ const Onboarding = () => {
               </p>
             </div>
           ) : currentSlide === 2 ? (
-            /* Third slide - Goals */
+            /* Third slide - Goals with WhisperText effect */
             <div className="text-center space-y-4 px-4">
               <h1 className="text-3xl md:text-6xl font-bold leading-tight text-white">
-                Convierte tus metas en logros.
+                <WhisperText
+                  text="Convierte tus metas en logros."
+                  className="text-3xl md:text-6xl font-bold text-white"
+                  delay={100}
+                  duration={0.5}
+                  x={-20}
+                  y={0}
+                />
               </h1>
               <p className="text-lg md:text-xl text-white leading-relaxed font-medium">
                 Crea retos, ahorra con tus amigos y gana puntos cada vez que avanzas.
