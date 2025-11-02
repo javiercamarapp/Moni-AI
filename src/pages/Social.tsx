@@ -514,6 +514,83 @@ const Social = () => {
     }
   };
 
+  const handleCompleteChallenge = async (challengeId: string, points: number) => {
+    if (!user) {
+      toast.error('Debes iniciar sesión para completar retos');
+      return;
+    }
+
+    try {
+      // Mark challenge as completed
+      const { error: progressError } = await supabase
+        .from('user_challenge_progress')
+        .upsert({
+          user_id: user.id,
+          challenge_id: challengeId,
+          completed: true,
+          completed_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id,challenge_id'
+        });
+
+      if (progressError) throw progressError;
+
+      // Update monthly ranking
+      const currentMonth = new Date().getMonth() + 1;
+      const currentYear = new Date().getFullYear();
+
+      // Get current ranking or create new one
+      const { data: existingRanking } = await supabase
+        .from('monthly_rankings')
+        .select('total_points, challenges_completed')
+        .eq('user_id', user.id)
+        .eq('month', currentMonth)
+        .eq('year', currentYear)
+        .maybeSingle();
+
+      const newPoints = (existingRanking?.total_points || 0) + points;
+      const newChallengesCount = (existingRanking?.challenges_completed || 0) + 1;
+
+      const { error: rankingError } = await supabase
+        .from('monthly_rankings')
+        .upsert({
+          user_id: user.id,
+          month: currentMonth,
+          year: currentYear,
+          total_points: newPoints,
+          challenges_completed: newChallengesCount
+        }, {
+          onConflict: 'user_id,month,year'
+        });
+
+      if (rankingError) throw rankingError;
+
+      // Update local state
+      setUserPoints(newPoints);
+
+      // Create friend activity
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+
+      await supabase
+        .from('friend_activity')
+        .insert({
+          user_id: user.id,
+          activity_type: 'challenge_completed',
+          description: `completó un reto y ganó ${points} XP`,
+          xp_earned: points
+        });
+
+      toast.success(`¡Reto completado! +${points} XP 🎉`);
+    } catch (error: any) {
+      console.error('Error completing challenge:', error);
+      toast.error('Error al completar el reto');
+    }
+  };
+
   const handleCreateCircle = async () => {
     if (!user || !circleName.trim() || !circleCategory.trim()) {
       toast.error('Por favor completa todos los campos obligatorios');
@@ -728,10 +805,10 @@ const Social = () => {
                 Haz el reto "{recommendedChallenge.title}" y gana +{recommendedChallenge.points} XP.
               </p>
               <Button
-                onClick={() => handleJoinChallenge(recommendedChallenge.id)}
+                onClick={() => handleCompleteChallenge(recommendedChallenge.id, recommendedChallenge.points)}
                 className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9"
               >
-                Unirme ahora
+                Completar reto
               </Button>
             </div>
           )}
@@ -748,9 +825,21 @@ const Social = () => {
               </p>
               <div className="space-y-2 mb-3">
                 {monthlyChallenges.slice(0, 3).map((challenge) => (
-                  <div key={challenge.id} className="p-3 border rounded-xl flex justify-between items-center">
-                    <span className="text-xs text-gray-900">Reto "{challenge.title}"</span>
-                    <span className="text-xs text-green-600 font-medium">+{challenge.points} XP</span>
+                  <div key={challenge.id} className="p-3 border rounded-xl hover:bg-gray-50 transition">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex-1">
+                        <span className="text-xs text-gray-900 font-medium block">Reto "{challenge.title}"</span>
+                        <span className="text-xs text-gray-600">{challenge.description}</span>
+                      </div>
+                      <span className="text-xs text-green-600 font-medium ml-2">+{challenge.points} XP</span>
+                    </div>
+                    <Button
+                      onClick={() => handleCompleteChallenge(challenge.id, challenge.points)}
+                      size="sm"
+                      className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-lg font-medium h-7 text-xs"
+                    >
+                      Completar
+                    </Button>
                   </div>
                 ))}
               </div>
