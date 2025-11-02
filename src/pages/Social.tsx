@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { Camera, Users, TrendingUp, Zap, Calendar, Trophy, Target, ChevronRight } from "lucide-react";
+import { Camera, Users, TrendingUp, Zap, Calendar, Trophy, Target, ChevronRight, Medal } from "lucide-react";
 import { toast } from "sonner";
 
 const Social = () => {
@@ -22,6 +22,9 @@ const Social = () => {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [monthlyRanking, setMonthlyRanking] = useState<number>(0);
   const [groupGoals, setGroupGoals] = useState<any[]>([]);
+  const [friendsRankings, setFriendsRankings] = useState<any[]>([]);
+  const [generalRankings, setGeneralRankings] = useState<any[]>([]);
+  const [userPoints, setUserPoints] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -99,6 +102,96 @@ const Social = () => {
 
         if (goalsData) {
           setGroupGoals(goalsData);
+        }
+
+        // Fetch monthly rankings
+        const currentMonth = new Date().getMonth() + 1;
+        const currentYear = new Date().getFullYear();
+
+        // Get user's points for current month
+        const { data: userRanking } = await supabase
+          .from('monthly_rankings')
+          .select('total_points, challenges_completed')
+          .eq('user_id', user.id)
+          .eq('month', currentMonth)
+          .eq('year', currentYear)
+          .maybeSingle();
+
+        if (userRanking) {
+          setUserPoints(userRanking.total_points);
+        }
+
+        // Get friend IDs for friends ranking
+        if (friendships && friendships.length > 0) {
+          const friendIds = friendships.map(f => f.friend_id);
+          const allUserIds = [...friendIds, user.id];
+
+          // Get rankings for friends
+          const { data: friendsRankData } = await supabase
+            .from('monthly_rankings')
+            .select(`
+              user_id,
+              total_points,
+              challenges_completed
+            `)
+            .in('user_id', allUserIds)
+            .eq('month', currentMonth)
+            .eq('year', currentYear)
+            .order('total_points', { ascending: false })
+            .limit(10);
+
+          if (friendsRankData) {
+            // Fetch profiles for friends
+            const { data: friendProfiles } = await supabase
+              .from('profiles')
+              .select('id, username, full_name, avatar_url')
+              .in('id', friendsRankData.map(r => r.user_id));
+
+            const enrichedFriendsRank = friendsRankData.map((rank, index) => {
+              const profile = friendProfiles?.find(p => p.id === rank.user_id);
+              return {
+                ...rank,
+                ranking: index + 1,
+                username: profile?.username || 'usuario',
+                full_name: profile?.full_name || 'Usuario',
+                avatar_url: profile?.avatar_url
+              };
+            });
+            setFriendsRankings(enrichedFriendsRank);
+          }
+        }
+
+        // Get general rankings (top 10)
+        const { data: generalRankData } = await supabase
+          .from('monthly_rankings')
+          .select(`
+            user_id,
+            total_points,
+            challenges_completed
+          `)
+          .eq('month', currentMonth)
+          .eq('year', currentYear)
+          .order('total_points', { ascending: false })
+          .limit(10);
+
+        if (generalRankData) {
+          // Fetch profiles for general rankings
+          const { data: generalProfiles } = await supabase
+            .from('profiles')
+            .select('id, username, full_name, avatar_url')
+            .in('id', generalRankData.map(r => r.user_id));
+
+          const enrichedGeneralRank = generalRankData.map((rank, index) => {
+            const profile = generalProfiles?.find(p => p.id === rank.user_id);
+            return {
+              ...rank,
+              ranking: index + 1,
+              username: profile?.username || 'usuario',
+              full_name: profile?.full_name || 'Usuario',
+              avatar_url: profile?.avatar_url
+            };
+          });
+          setGeneralRankings(enrichedGeneralRank);
         }
       }
     };
@@ -468,6 +561,136 @@ const Social = () => {
                         </div>
                       </div>
                     </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Friends Monthly Ranking */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Trophy className="h-4 w-4 text-yellow-600" />
+                <h3 className="text-sm font-semibold text-gray-900">Ranking Mensual entre Amigos</h3>
+              </div>
+            </div>
+
+            {friendsRankings.length === 0 ? (
+              <div className="text-center py-4">
+                <p className="text-xs text-gray-600">
+                  Completa retos para aparecer en el ranking
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {friendsRankings.slice(0, 5).map((ranking) => {
+                  const isCurrentUser = ranking.user_id === user?.id;
+                  return (
+                    <div
+                      key={ranking.user_id}
+                      className={`flex items-center gap-3 p-2 rounded-xl ${
+                        isCurrentUser ? 'bg-primary/5 border border-primary/20' : 'bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 flex-1">
+                        <span className={`text-xs font-bold w-6 text-center ${
+                          ranking.ranking === 1 ? 'text-yellow-600' :
+                          ranking.ranking === 2 ? 'text-gray-500' :
+                          ranking.ranking === 3 ? 'text-amber-700' :
+                          'text-gray-600'
+                        }`}>
+                          {ranking.ranking === 1 ? '🥇' :
+                           ranking.ranking === 2 ? '🥈' :
+                           ranking.ranking === 3 ? '🥉' :
+                           `#${ranking.ranking}`}
+                        </span>
+                        <Avatar className="h-8 w-8 border border-gray-200">
+                          <AvatarImage src={ranking.avatar_url} />
+                          <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
+                            {ranking.full_name.substring(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <p className="text-xs font-semibold text-gray-900">
+                            {isCurrentUser ? 'Tú' : ranking.full_name}
+                          </p>
+                          <p className="text-[10px] text-gray-500">
+                            {ranking.challenges_completed} retos completados
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs font-bold text-primary">
+                          {ranking.total_points} pts
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* General Monthly Ranking */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Medal className="h-4 w-4 text-blue-600" />
+                <h3 className="text-sm font-semibold text-gray-900">Ranking Mensual General</h3>
+              </div>
+            </div>
+
+            {generalRankings.length === 0 ? (
+              <div className="text-center py-4">
+                <p className="text-xs text-gray-600">
+                  Completa retos para aparecer en el ranking
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {generalRankings.slice(0, 5).map((ranking) => {
+                  const isCurrentUser = ranking.user_id === user?.id;
+                  return (
+                    <div
+                      key={ranking.user_id}
+                      className={`flex items-center gap-3 p-2 rounded-xl ${
+                        isCurrentUser ? 'bg-primary/5 border border-primary/20' : 'bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 flex-1">
+                        <span className={`text-xs font-bold w-6 text-center ${
+                          ranking.ranking === 1 ? 'text-yellow-600' :
+                          ranking.ranking === 2 ? 'text-gray-500' :
+                          ranking.ranking === 3 ? 'text-amber-700' :
+                          'text-gray-600'
+                        }`}>
+                          {ranking.ranking === 1 ? '🥇' :
+                           ranking.ranking === 2 ? '🥈' :
+                           ranking.ranking === 3 ? '🥉' :
+                           `#${ranking.ranking}`}
+                        </span>
+                        <Avatar className="h-8 w-8 border border-gray-200">
+                          <AvatarImage src={ranking.avatar_url} />
+                          <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
+                            {ranking.full_name.substring(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <p className="text-xs font-semibold text-gray-900">
+                            {isCurrentUser ? 'Tú' : ranking.full_name}
+                          </p>
+                          <p className="text-[10px] text-gray-500">
+                            {ranking.challenges_completed} retos completados
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs font-bold text-blue-600">
+                          {ranking.total_points} pts
+                        </p>
+                      </div>
+                    </div>
                   );
                 })}
               </div>

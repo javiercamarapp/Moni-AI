@@ -399,6 +399,75 @@ export type Database = {
         }
         Relationships: []
       }
+      monthly_challenges: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          month: number
+          points: number
+          title: string
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          month: number
+          points?: number
+          title: string
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          month?: number
+          points?: number
+          title?: string
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
+      monthly_rankings: {
+        Row: {
+          challenges_completed: number
+          created_at: string
+          id: string
+          month: number
+          total_points: number
+          updated_at: string
+          user_id: string
+          year: number
+        }
+        Insert: {
+          challenges_completed?: number
+          created_at?: string
+          id?: string
+          month: number
+          total_points?: number
+          updated_at?: string
+          user_id: string
+          year: number
+        }
+        Update: {
+          challenges_completed?: number
+          created_at?: string
+          id?: string
+          month?: number
+          total_points?: number
+          updated_at?: string
+          user_id?: string
+          year?: number
+        }
+        Relationships: []
+      }
       net_worth_snapshots: {
         Row: {
           created_at: string
@@ -718,6 +787,44 @@ export type Database = {
           value?: number
         }
         Relationships: []
+      }
+      user_challenge_progress: {
+        Row: {
+          challenge_id: string
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_challenge_progress_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "monthly_challenges"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_scores: {
         Row: {
