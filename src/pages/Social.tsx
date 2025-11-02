@@ -39,6 +39,7 @@ const Social = () => {
   const [xpGainAmount, setXPGainAmount] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const achievementSoundRef = useRef<HTMLAudioElement>(null);
+  const xpSoundRef = useRef<HTMLAudioElement>(null);
 
   const achievementsList = [
     { id: 1, name: "Ahorrista Nivel 1", xp: 100, icon: "💰", desc: "Primeros 100 XP" },
@@ -580,9 +581,17 @@ const Social = () => {
       // Update local state
       setUserPoints(newPoints);
 
-      // Show XP gain animation
+      // Show XP gain animation with sound
       setXPGainAmount(points);
       setShowXPGain(true);
+      
+      // Play XP sound
+      if (xpSoundRef.current) {
+        xpSoundRef.current.currentTime = 0;
+        xpSoundRef.current.volume = 0.35;
+        xpSoundRef.current.play().catch(() => {});
+      }
+      
       setTimeout(() => setShowXPGain(false), 2500);
 
       // Check for newly unlocked achievements
@@ -1086,13 +1095,16 @@ const Social = () => {
               <div className="relative">
                 <Progress 
                   value={Math.min((userPoints / 1000) * 100, 100)} 
-                  className="h-2"
+                  className={`h-2 transition-all duration-700 ${showXPGain ? 'scale-[1.02]' : 'scale-100'}`}
                   indicatorClassName="bg-gradient-to-r from-primary to-primary/80 transition-all duration-700"
+                  style={{
+                    boxShadow: showXPGain ? '0 0 12px 4px rgba(34, 197, 94, 0.5)' : 'none'
+                  }}
                 />
-                {/* Floating XP animation */}
+                {/* Floating XP animation on progress bar */}
                 {showXPGain && (
-                  <div className="absolute right-0 -top-6 animate-fade-in">
-                    <div className={`text-green-600 text-sm font-bold drop-shadow-lg transition-all duration-1000 ${showXPGain ? 'opacity-100 -translate-y-3' : 'opacity-0'}`}>
+                  <div className="absolute -top-7 right-0 animate-fade-in pointer-events-none">
+                    <div className={`text-green-600 text-sm font-bold drop-shadow-lg transition-all duration-1000 ${showXPGain ? 'opacity-100 -translate-y-4' : 'opacity-0'}`}>
                       +{xpGainAmount} XP
                     </div>
                   </div>
@@ -1259,11 +1271,16 @@ const Social = () => {
           </div>
         )}
 
-        {/* Hidden audio element for achievement sound */}
+        {/* Hidden audio elements */}
         <audio 
           ref={achievementSoundRef}
           preload="auto"
           src="https://cdn.pixabay.com/audio/2022/03/15/audio_2b21d3ad9f.mp3"
+        />
+        <audio 
+          ref={xpSoundRef}
+          preload="auto"
+          src="https://cdn.pixabay.com/audio/2022/03/15/audio_3b7f0b1df4.mp3"
         />
 
         {/* Create Circle Dialog */}
