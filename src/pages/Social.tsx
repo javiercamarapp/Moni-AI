@@ -35,6 +35,8 @@ const Social = () => {
   const [circleCategory, setCircleCategory] = useState("");
   const [showAchievementUnlocked, setShowAchievementUnlocked] = useState(false);
   const [unlockedAchievement, setUnlockedAchievement] = useState<any>(null);
+  const [showXPGain, setShowXPGain] = useState(false);
+  const [xpGainAmount, setXPGainAmount] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const achievementSoundRef = useRef<HTMLAudioElement>(null);
 
@@ -577,6 +579,11 @@ const Social = () => {
 
       // Update local state
       setUserPoints(newPoints);
+
+      // Show XP gain animation
+      setXPGainAmount(points);
+      setShowXPGain(true);
+      setTimeout(() => setShowXPGain(false), 2500);
 
       // Check for newly unlocked achievements
       await checkAndUnlockAchievements(newPoints);
@@ -1229,6 +1236,15 @@ const Social = () => {
                 <p className="font-semibold text-gray-900 text-sm">{unlockedAchievement.name}</p>
                 <p className="text-gray-600 text-xs">{unlockedAchievement.desc}</p>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* XP Gain Animation */}
+        {showXPGain && (
+          <div className="fixed bottom-32 left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-fade-in">
+            <div className={`text-green-600 text-2xl font-bold drop-shadow-lg transition-all duration-500 ${showXPGain ? 'opacity-100 -translate-y-4' : 'opacity-0'}`}>
+              +{xpGainAmount} XP
             </div>
           </div>
         )}
