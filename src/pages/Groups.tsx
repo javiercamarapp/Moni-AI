@@ -94,41 +94,36 @@ const Groups = () => {
       {/* Header */}
       <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate(-1)}
-              className="p-2 hover:bg-white/50 rounded-full transition-colors"
-            >
-              <ArrowLeft className="h-5 w-5 text-gray-900" />
-            </button>
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
-                Grupos
-              </h1>
-              <p className="text-xs text-gray-600">
-                Crea o únete a grupos financieros
-              </p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate(-1)}
+                className="p-2 hover:bg-white/50 rounded-full transition-colors"
+              >
+                <ArrowLeft className="h-5 w-5 text-gray-900" />
+              </button>
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
+                  Grupos
+                </h1>
+                <p className="text-xs text-gray-600">
+                  Crea o únete a grupos financieros
+                </p>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mx-auto px-4 py-4 space-y-4" style={{ maxWidth: '600px' }}>
-        {/* Create Group Button */}
-        {groups.length > 0 && (
-          <div className="flex justify-end">
             <Button
               onClick={() => setShowCreateDialog(true)}
               variant="ghost"
               size="sm"
               className="bg-white hover:bg-white/90 shadow-md rounded-2xl font-medium"
             >
-              <Plus className="h-4 w-4 mr-1" />
-              Nuevo Grupo
+              <Plus className="h-4 w-4" />
             </Button>
           </div>
-        )}
+        </div>
+      </div>
 
+      <div className="mx-auto px-4 py-4 space-y-4" style={{ maxWidth: '600px' }}>
         {/* Groups Section */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
           <div className="flex items-center justify-between mb-3">
