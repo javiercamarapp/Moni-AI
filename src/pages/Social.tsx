@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { Camera, Users, TrendingUp, Zap } from "lucide-react";
+import { Camera, Users, TrendingUp, Zap, Calendar } from "lucide-react";
 import { toast } from "sonner";
 
 const Social = () => {
@@ -296,7 +296,7 @@ const Social = () => {
 
           {/* Action Buttons Card */}
           <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
-            <div className="flex justify-center gap-8">
+            <div className="flex justify-center gap-6">
               <button 
                 onClick={() => navigate('/friends-list')}
                 className="flex flex-col items-center gap-1.5 group"
@@ -315,6 +315,16 @@ const Social = () => {
                   <Users className="h-5 w-5 text-blue-600" />
                 </div>
                 <span className="text-[10px] text-gray-600 font-medium">Grupos</span>
+              </button>
+
+              <button 
+                onClick={() => navigate('/financial-events')}
+                className="flex flex-col items-center gap-1.5 group"
+              >
+                <div className="bg-gradient-to-br from-purple-500/20 to-purple-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
+                  <Calendar className="h-5 w-5 text-purple-600" />
+                </div>
+                <span className="text-[10px] text-gray-600 font-medium">Eventos</span>
               </button>
 
               <button 

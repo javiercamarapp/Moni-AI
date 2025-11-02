@@ -47,6 +47,7 @@ import Social from './pages/Social';
 import FriendsList from './pages/FriendsList';
 import SocialStats from './pages/SocialStats';
 import Groups from './pages/Groups';
+import FinancialEvents from './pages/FinancialEvents';
 import SavingSimulation from './pages/SavingSimulation';
 import Goals from './pages/Goals';
 import AccountsCards from './pages/AccountsCards';
@@ -119,6 +120,7 @@ function App() {
           <Route path="/social" element={<Social />} />
           <Route path="/friends-list" element={<FriendsList />} />
           <Route path="/groups" element={<Groups />} />
+          <Route path="/financial-events" element={<FinancialEvents />} />
           <Route path="/social-stats" element={<SocialStats />} />
           <Route path="/saving-simulation" element={<SavingSimulation />} />
           <Route path="/goals" element={<Goals />} />
