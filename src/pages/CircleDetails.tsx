@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowLeft, UserPlus, Plus, Trophy, Target, Users, Share2, Send, MessageCircle } from "lucide-react";
+import { ArrowLeft, UserPlus, Plus, Trophy, Target, Users, Share2, Send, MessageCircle, Newspaper } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +25,8 @@ interface MemberWithProfile {
   xp: number;
   profiles: Profile | null;
 }
+
+type ActiveView = 'members' | 'challenges' | 'chat' | 'community' | 'news';
 
 const CircleDetails = () => {
   const { id } = useParams();
@@ -46,6 +48,7 @@ const CircleDetails = () => {
   const [xpGainAmount, setXPGainAmount] = useState(0);
   const [progressGlow, setProgressGlow] = useState(false);
   const [completedChallenges, setCompletedChallenges] = useState<Set<string>>(new Set());
+  const [activeView, setActiveView] = useState<ActiveView>('members');
   const chatRef = useRef<HTMLDivElement>(null);
   const xpSoundRef = useRef<HTMLAudioElement>(null);
 
@@ -507,174 +510,249 @@ const CircleDetails = () => {
           </div>
         </div>
 
-        {/* Group Progress */}
-        {goals.length > 0 && (
+        {/* Navigation Icons */}
+        <div className="bg-white rounded-2xl shadow-sm p-4">
+          <div className="grid grid-cols-5 gap-2">
+            <button
+              onClick={() => setActiveView('members')}
+              className={cn(
+                "flex flex-col items-center gap-2 p-3 rounded-xl transition-all",
+                activeView === 'members' 
+                  ? "bg-primary/10 text-primary" 
+                  : "hover:bg-gray-50 text-gray-600"
+              )}
+            >
+              <Users className="h-5 w-5" />
+              <span className="text-[10px] font-medium text-center leading-tight">Miembros</span>
+            </button>
+
+            <button
+              onClick={() => setActiveView('challenges')}
+              className={cn(
+                "flex flex-col items-center gap-2 p-3 rounded-xl transition-all",
+                activeView === 'challenges' 
+                  ? "bg-primary/10 text-primary" 
+                  : "hover:bg-gray-50 text-gray-600"
+              )}
+            >
+              <Trophy className="h-5 w-5" />
+              <span className="text-[10px] font-medium text-center leading-tight">Retos activos</span>
+            </button>
+
+            <button
+              onClick={() => setActiveView('chat')}
+              className={cn(
+                "flex flex-col items-center gap-2 p-3 rounded-xl transition-all",
+                activeView === 'chat' 
+                  ? "bg-primary/10 text-primary" 
+                  : "hover:bg-gray-50 text-gray-600"
+              )}
+            >
+              <MessageCircle className="h-5 w-5" />
+              <span className="text-[10px] font-medium text-center leading-tight">Chat grupal</span>
+            </button>
+
+            <button
+              onClick={() => setActiveView('community')}
+              className={cn(
+                "flex flex-col items-center gap-2 p-3 rounded-xl transition-all",
+                activeView === 'community' 
+                  ? "bg-primary/10 text-primary" 
+                  : "hover:bg-gray-50 text-gray-600"
+              )}
+            >
+              <Users className="h-5 w-5" />
+              <span className="text-[10px] font-medium text-center leading-tight">Chat Comunidad</span>
+            </button>
+
+            <button
+              onClick={() => setActiveView('news')}
+              className={cn(
+                "flex flex-col items-center gap-2 p-3 rounded-xl transition-all",
+                activeView === 'news' 
+                  ? "bg-primary/10 text-primary" 
+                  : "hover:bg-gray-50 text-gray-600"
+              )}
+            >
+              <Newspaper className="h-5 w-5" />
+              <span className="text-[10px] font-medium text-center leading-tight">Noticias</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Content based on active view */}
+        {activeView === 'members' && (
           <div className="bg-white rounded-2xl shadow-sm p-4">
             <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
-              <Target className="h-4 w-4 text-primary" />
-              Progreso grupal
+              <Users className="h-4 w-4 text-primary" />
+              Miembros del círculo
             </h2>
-        {goals.map((goal) => {
-              const progress = (Number(goal.current_amount) / Number(goal.target_amount)) * 100;
-              return (
-                <div key={goal.id} className="mb-4 last:mb-0">
-                  <p className="text-gray-600 text-xs mb-2">
-                    Meta: {goal.title}
-                  </p>
-                  <div className="relative">
-                    <Progress 
-                      value={Math.min(progress, 100)} 
-                      className={cn(
-                        "h-3 mb-2 transition-all duration-700",
-                        progressGlow && "animate-pulse"
+            {members.length === 0 ? (
+              <p className="text-gray-600 text-xs text-center py-4">
+                No hay miembros en este círculo aún
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {members.map((member, index) => (
+                  <div key={member.id} className="flex items-center gap-3 p-2 rounded-xl bg-gray-50">
+                    <span className="text-xs font-bold w-6 text-center text-gray-600">
+                      {index === 0 ? '🏆' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
+                    </span>
+                    <Avatar className="h-8 w-8 border border-gray-200">
+                      <AvatarImage src={member.profiles?.avatar_url || ''} />
+                      <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
+                        {(member.profiles?.full_name || 'U').substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold text-gray-900">
+                        {member.profiles?.full_name || 'Usuario'}
+                      </p>
+                      {member.profiles?.username && (
+                        <p className="text-[10px] text-gray-500">@{member.profiles.username}</p>
                       )}
-                      style={{
-                        filter: progressGlow ? 'drop-shadow(0 0 8px rgba(52, 211, 153, 0.8))' : 'none'
-                      }}
-                    />
-                    {progressGlow && (
-                      <div className="absolute inset-0 bg-emerald-400/20 rounded-full animate-ping pointer-events-none" />
-                    )}
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-gray-700">{progress.toFixed(0)}% completado</span>
-                    <span className="text-gray-500">
-                      ${Number(goal.current_amount).toLocaleString()} / ${Number(goal.target_amount).toLocaleString()}
+                    </div>
+                    <span className="text-xs font-bold text-primary">
+                      {member.xp} XP
                     </span>
                   </div>
-                </div>
-              );
-            })}
+                ))}
+              </div>
+            )}
           </div>
         )}
 
-        {/* Active Challenges */}
-        <div className="bg-white rounded-2xl shadow-sm p-4">
-          <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
-            <Trophy className="h-4 w-4 text-yellow-600" />
-            🏆 Retos activos del grupo
-          </h2>
-            {challenges.length === 0 ? (
-            <p className="text-gray-600 text-xs text-center py-4">
-              No hay retos activos. {isMember && '¡Crea el primero!'}
-            </p>
-          ) : (
-            <div className="space-y-3 mb-3">
-              {challenges.map((challenge) => {
-                const isCompleted = completedChallenges.has(challenge.id);
-                return (
-                  <div 
-                    key={challenge.id} 
-                    className={cn(
-                      "p-3 border rounded-xl transition-all",
-                      isCompleted 
-                        ? "border-emerald-200 bg-emerald-50/50 opacity-75" 
-                        : "border-gray-100 bg-white"
-                    )}
-                  >
-                    <div className="flex-1 mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className={cn(
-                          "text-sm font-medium block",
-                          isCompleted ? "text-emerald-700 line-through" : "text-gray-900"
-                        )}>
-                          Reto: "{challenge.title}"
-                        </span>
-                        {isCompleted && (
-                          <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
-                            ✓ Completado
-                          </span>
+        {activeView === 'challenges' && (
+          <>
+            {/* Group Progress */}
+            {goals.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-sm p-4">
+                <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
+                  <Target className="h-4 w-4 text-primary" />
+                  Progreso grupal
+                </h2>
+                {goals.map((goal) => {
+                  const progress = (Number(goal.current_amount) / Number(goal.target_amount)) * 100;
+                  return (
+                    <div key={goal.id} className="mb-4 last:mb-0">
+                      <p className="text-gray-600 text-xs mb-2">
+                        Meta: {goal.title}
+                      </p>
+                      <div className="relative">
+                        <Progress 
+                          value={Math.min(progress, 100)} 
+                          className={cn(
+                            "h-3 mb-2 transition-all duration-700",
+                            progressGlow && "animate-pulse"
+                          )}
+                          style={{
+                            filter: progressGlow ? 'drop-shadow(0 0 8px rgba(52, 211, 153, 0.8))' : 'none'
+                          }}
+                        />
+                        {progressGlow && (
+                          <div className="absolute inset-0 bg-emerald-400/20 rounded-full animate-ping pointer-events-none" />
                         )}
                       </div>
-                      {challenge.description && (
-                        <span className="text-xs text-gray-500 block mt-1">
-                          {challenge.description} · +{challenge.xp_reward} XP
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-700">{progress.toFixed(0)}% completado</span>
+                        <span className="text-gray-500">
+                          ${Number(goal.current_amount).toLocaleString()} / ${Number(goal.target_amount).toLocaleString()}
                         </span>
-                      )}
+                      </div>
                     </div>
-                    {isMember && !isCompleted && (
-                      <Button
-                        onClick={() => handleCompleteChallenge(challenge.id, challenge.xp_reward)}
-                        size="sm"
-                        className="w-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-0 rounded-xl font-medium h-8 text-xs"
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Active Challenges */}
+            <div className="bg-white rounded-2xl shadow-sm p-4">
+              <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
+                <Trophy className="h-4 w-4 text-yellow-600" />
+                🏆 Retos activos del grupo
+              </h2>
+              {challenges.length === 0 ? (
+                <p className="text-gray-600 text-xs text-center py-4">
+                  No hay retos activos. {isMember && '¡Crea el primero!'}
+                </p>
+              ) : (
+                <div className="space-y-3 mb-3">
+                  {challenges.map((challenge) => {
+                    const isCompleted = completedChallenges.has(challenge.id);
+                    return (
+                      <div 
+                        key={challenge.id} 
+                        className={cn(
+                          "p-3 border rounded-xl transition-all",
+                          isCompleted 
+                            ? "border-emerald-200 bg-emerald-50/50 opacity-75" 
+                            : "border-gray-100 bg-white"
+                        )}
                       >
-                        Marcar como completado
-                      </Button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-          {isMember && (
-            <Button
-              onClick={() => setShowCreateChallengeDialog(true)}
-              className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9"
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              Crear nuevo reto
-            </Button>
-          )}
-        </div>
-
-        {/* Members */}
-        <div className="bg-white rounded-2xl shadow-sm p-4">
-          <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
-            <Users className="h-4 w-4 text-primary" />
-            Miembros del círculo
-          </h2>
-          {members.length === 0 ? (
-            <p className="text-gray-600 text-xs text-center py-4">
-              No hay miembros en este círculo aún
-            </p>
-          ) : (
-            <div className="space-y-2">
-              {members.map((member, index) => (
-                <div key={member.id} className="flex items-center gap-3 p-2 rounded-xl bg-gray-50">
-                  <span className="text-xs font-bold w-6 text-center text-gray-600">
-                    {index === 0 ? '🏆' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
-                  </span>
-                  <Avatar className="h-8 w-8 border border-gray-200">
-                    <AvatarImage src={member.profiles?.avatar_url} />
-                    <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
-                      {(member.profiles?.full_name || 'U').substring(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <p className="text-xs font-semibold text-gray-900">
-                      {member.profiles?.full_name || 'Usuario'}
-                    </p>
-                    {member.profiles?.username && (
-                      <p className="text-[10px] text-gray-500">@{member.profiles.username}</p>
-                    )}
-                  </div>
-                  <span className="text-xs font-bold text-primary">
-                    {member.xp} XP
-                  </span>
+                        <div className="flex-1 mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className={cn(
+                              "text-sm font-medium block",
+                              isCompleted ? "text-emerald-700 line-through" : "text-gray-900"
+                            )}>
+                              Reto: &quot;{challenge.title}&quot;
+                            </span>
+                            {isCompleted && (
+                              <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
+                                ✓ Completado
+                              </span>
+                            )}
+                          </div>
+                          {challenge.description && (
+                            <span className="text-xs text-gray-500 block mt-1">
+                              {challenge.description} · +{challenge.xp_reward} XP
+                            </span>
+                          )}
+                        </div>
+                        {isMember && !isCompleted && (
+                          <Button
+                            onClick={() => handleCompleteChallenge(challenge.id, challenge.xp_reward)}
+                            size="sm"
+                            className="w-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-0 rounded-xl font-medium h-8 text-xs"
+                          >
+                            Marcar como completado
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
+              )}
+              {isMember && (
+                <Button
+                  onClick={() => setShowCreateChallengeDialog(true)}
+                  className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Crear nuevo reto
+                </Button>
+              )}
             </div>
-          )}
-        </div>
+          </>
+        )}
 
-        {/* Activity Feed / Chat */}
-        {isMember && (
+        {activeView === 'chat' && isMember && (
           <div className="bg-white rounded-2xl shadow-sm p-4">
             <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
               <MessageCircle className="h-4 w-4 text-primary" />
-              💬 Actividad del grupo
+              💬 Chat del grupo
             </h2>
             <div 
               ref={chatRef}
-              className="space-y-2 text-sm text-gray-700 max-h-48 overflow-y-auto mb-3"
+              className="space-y-2 text-sm text-gray-700 max-h-96 overflow-y-auto mb-3 border rounded-xl p-3 bg-gray-50"
             >
               {messages.length === 0 ? (
                 <p className="text-gray-500 text-xs text-center py-4">
-                  No hay actividad aún. ¡Sé el primero en escribir!
+                  No hay mensajes aún. ¡Sé el primero en escribir!
                 </p>
               ) : (
                 messages.map((msg) => (
-                  <div key={msg.id} className="text-xs">
+                  <div key={msg.id} className="text-xs bg-white rounded-lg p-2">
                     <strong className="text-gray-900">
                       {msg.profiles?.full_name || msg.profiles?.username || 'Usuario'}:
                     </strong>{' '}
@@ -704,6 +782,38 @@ const CircleDetails = () => {
               >
                 <Send className="h-4 w-4" />
               </Button>
+            </div>
+          </div>
+        )}
+
+        {activeView === 'community' && (
+          <div className="bg-white rounded-2xl shadow-sm p-4">
+            <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
+              <Users className="h-4 w-4 text-primary" />
+              Chat de la Comunidad
+            </h2>
+            <div className="text-center py-12">
+              <Users className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-600 text-sm mb-2">Próximamente</p>
+              <p className="text-gray-500 text-xs">
+                Chat abierto para toda la comunidad de Moni
+              </p>
+            </div>
+          </div>
+        )}
+
+        {activeView === 'news' && (
+          <div className="bg-white rounded-2xl shadow-sm p-4">
+            <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
+              <Newspaper className="h-4 w-4 text-primary" />
+              Noticias y Recomendaciones
+            </h2>
+            <div className="text-center py-12">
+              <Newspaper className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-600 text-sm mb-2">Próximamente</p>
+              <p className="text-gray-500 text-xs">
+                Noticias financieras y recomendaciones personalizadas
+              </p>
             </div>
           </div>
         )}
