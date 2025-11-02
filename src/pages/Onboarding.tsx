@@ -11,6 +11,7 @@ import aiImage from '@/assets/onboarding-ai.png';
 import { Typewriter } from '@/components/ui/typewriter-text';
 import { BlurredStagger } from '@/components/ui/blurred-stagger-text';
 import WhisperText from '@/components/ui/whisper-text';
+import { AnimatedText } from '@/components/ui/animated-shiny-text';
 
 const Onboarding = () => {
   const [showLogo, setShowLogo] = useState(true);
@@ -143,11 +144,17 @@ const Onboarding = () => {
               </p>
             </div>
           ) : currentSlide === 3 ? (
-            /* Fourth slide - Coach */
+            /* Fourth slide - Coach with AnimatedText */
             <div className="text-center space-y-4 px-4">
-              <h1 className="text-3xl md:text-5xl font-bold leading-tight text-white">
-                Tu coach financiero inteligente.
-              </h1>
+              <AnimatedText
+                text="Tu coach financiero inteligente."
+                textClassName="text-3xl md:text-5xl font-bold text-white"
+                gradientColors="linear-gradient(90deg, #ffffff, #cccccc, #ffffff)"
+                gradientAnimationDuration={1.5}
+                loop={true}
+                loopDelay={3000}
+                className="py-0"
+              />
               <p className="text-lg md:text-xl text-white leading-relaxed font-medium">
                 Moni te guía, te motiva y celebra tus logros.
                 <br />
