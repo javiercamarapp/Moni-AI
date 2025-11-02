@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ChatBubble, ChatBubbleAvatar, ChatBubbleMessage } from "@/components/ui/chat-bubble";
 import { ChatMessageList } from "@/components/ui/chat-message-list";
 import { ChatInput } from "@/components/ui/chat-input";
-import { ArrowLeft, Paperclip, Mic, CornerDownLeft, MessageCircle } from "lucide-react";
+import { ArrowLeft, Camera, Send, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 interface Profile {
@@ -194,12 +194,8 @@ const CircleChat = () => {
     }
   };
 
-  const handleAttachFile = () => {
-    toast.info("Adjuntar archivo - próximamente");
-  };
-
-  const handleMicrophoneClick = () => {
-    toast.info("Grabación de voz - próximamente");
+  const handleCameraClick = () => {
+    toast.info("Cámara - próximamente");
   };
 
   if (!circle) {
@@ -235,8 +231,8 @@ const CircleChat = () => {
       </div>
 
       {/* Chat Content */}
-      <div className="flex-1 w-full">
-        <div className="h-[calc(100vh-140px)] sm:h-[calc(100vh-160px)]">
+      <div className="flex-1 w-full overflow-hidden pb-20">
+        <div className="h-full">
           <ChatMessageList smooth>
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full py-12 px-4">
@@ -273,7 +269,10 @@ const CircleChat = () => {
                         })}
                       </span>
                     </div>
-                    <ChatBubbleMessage variant={msg.user_id === user?.id ? "sent" : "received"}>
+                    <ChatBubbleMessage 
+                      variant={msg.user_id === user?.id ? "sent" : "received"}
+                      className={msg.user_id === user?.id ? "bg-[#D4C5B9] text-gray-900" : "bg-white/80 text-gray-900"}
+                    >
                       {msg.description}
                     </ChatBubbleMessage>
                     {msg.xp_earned > 0 && (
@@ -288,48 +287,38 @@ const CircleChat = () => {
           </ChatMessageList>
         </div>
 
-        {/* Input Area */}
-        <div className="p-2 sm:p-4 bg-gradient-to-b from-[#E5DEFF] to-[#FFDEE2] border-t border-white/20">
+        {/* Input Area - Fixed at bottom */}
+        <div className="fixed bottom-0 left-0 right-0 p-3 bg-gradient-to-b from-[#E5DEFF] to-[#FFDEE2] border-t border-white/30 z-50">
           <div className="w-full max-w-4xl mx-auto">
             <form
               onSubmit={handleSendMessage}
-              className="flex items-center gap-2 rounded-2xl border border-white/40 bg-white/90 backdrop-blur-sm p-2"
+              className="flex items-center gap-2 rounded-full bg-white/95 backdrop-blur-sm px-4 py-2 shadow-sm"
             >
               <Button
                 variant="ghost"
                 size="icon"
                 type="button"
-                onClick={handleAttachFile}
-                className="h-9 w-9 flex-shrink-0 hover:bg-primary/10"
+                onClick={handleCameraClick}
+                className="h-8 w-8 flex-shrink-0 rounded-full hover:bg-gray-100"
               >
-                <Paperclip className="h-4 w-4 text-gray-600" />
+                <Camera className="h-5 w-5 text-gray-600" />
               </Button>
 
               <ChatInput
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Escribe un mensaje..."
-                className="flex-1 min-h-[36px] max-h-[36px] resize-none rounded-xl bg-transparent border-0 px-2 py-2 shadow-none focus-visible:ring-0 text-sm"
+                placeholder="Mensaje..."
+                className="flex-1 min-h-[32px] max-h-[32px] resize-none bg-transparent border-0 px-2 py-1 shadow-none focus-visible:ring-0 text-sm placeholder:text-gray-400"
                 rows={1}
               />
 
-              <Button
-                variant="ghost"
-                size="icon"
-                type="button"
-                onClick={handleMicrophoneClick}
-                className="h-9 w-9 flex-shrink-0 hover:bg-primary/10"
-              >
-                <Mic className="h-4 w-4 text-gray-600" />
-              </Button>
-
               <Button 
                 type="submit" 
-                size="sm" 
-                className="flex-shrink-0 bg-primary hover:bg-primary/90 rounded-xl h-9 px-4"
+                size="icon"
+                className="flex-shrink-0 bg-primary hover:bg-primary/90 rounded-full h-8 w-8 p-0"
                 disabled={!newMessage.trim()}
               >
-                <CornerDownLeft className="h-4 w-4" />
+                <Send className="h-4 w-4" />
               </Button>
             </form>
           </div>
