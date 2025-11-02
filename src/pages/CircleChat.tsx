@@ -217,20 +217,20 @@ const CircleChat = () => {
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)] animate-pulse -z-10" style={{ animationDuration: '4s' }} />
       
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/95 to-[#FFDEE2]/95 backdrop-blur-md border-b border-white/20">
-        <div className="w-full px-4 py-3 sm:py-4">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/95 to-[#FFDEE2]/95 backdrop-blur-md border-b border-white/20 animate-pulse" style={{ animationDuration: '4s' }}>
+        <div className="w-full px-4 py-2 sm:py-3">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate(`/circle/${id}`)}
-              className="p-2 hover:bg-white/50 rounded-full transition-colors"
+              className="p-1.5 hover:bg-white/50 rounded-full transition-colors"
             >
               <ArrowLeft className="h-5 w-5 text-gray-900" />
             </button>
             <div className="flex-1 min-w-0">
-              <h1 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
+              <h1 className="text-sm sm:text-base font-semibold text-gray-900 truncate">
                 {circle.name}
               </h1>
-              <p className="text-xs text-gray-600">
+              <p className="text-[10px] text-gray-600">
                 {members.length} miembros
               </p>
             </div>
@@ -279,7 +279,7 @@ const CircleChat = () => {
                     </div>
                     <ChatBubbleMessage 
                       variant={msg.user_id === user?.id ? "sent" : "received"}
-                      className={msg.user_id === user?.id ? "bg-[#D4C5B9] text-gray-900" : "bg-white/80 text-gray-900"}
+                      className="bg-white/90 text-gray-900"
                     >
                       {msg.description}
                     </ChatBubbleMessage>
@@ -296,20 +296,20 @@ const CircleChat = () => {
         </div>
 
         {/* Input Area - Fixed at bottom */}
-        <div className="fixed bottom-0 left-0 right-0 p-3 bg-gradient-to-b from-[#E5DEFF]/95 to-[#FFDEE2]/95 backdrop-blur-md border-t border-white/30 z-50">
+        <div className="fixed bottom-0 left-0 right-0 p-2 bg-gradient-to-b from-[#E5DEFF]/95 to-[#FFDEE2]/95 backdrop-blur-md border-t border-white/30 z-50">
           <div className="w-full max-w-4xl mx-auto">
             <form
               onSubmit={handleSendMessage}
-              className="flex items-center gap-2 rounded-full bg-white/95 backdrop-blur-sm px-3 py-2 shadow-sm"
+              className="flex items-center gap-1.5 rounded-full bg-white/95 backdrop-blur-sm px-2 py-1.5 shadow-sm"
             >
               <Button
                 variant="ghost"
                 size="icon"
                 type="button"
                 onClick={handleCameraClick}
-                className="h-8 w-8 flex-shrink-0 rounded-full hover:bg-gray-100"
+                className="h-7 w-7 flex-shrink-0 rounded-full hover:bg-gray-100"
               >
-                <Camera className="h-5 w-5 text-gray-600" />
+                <Camera className="h-4 w-4 text-gray-600" />
               </Button>
 
               <Button
@@ -317,26 +317,26 @@ const CircleChat = () => {
                 size="icon"
                 type="button"
                 onClick={handleAttachFile}
-                className="h-8 w-8 flex-shrink-0 rounded-full hover:bg-gray-100"
+                className="h-7 w-7 flex-shrink-0 rounded-full hover:bg-gray-100"
               >
-                <Paperclip className="h-5 w-5 text-gray-600" />
+                <Paperclip className="h-4 w-4 text-gray-600" />
               </Button>
 
               <ChatInput
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Mensaje..."
-                className="flex-1 min-h-[32px] max-h-[32px] resize-none bg-transparent border-0 px-2 py-1 shadow-none focus-visible:ring-0 text-sm placeholder:text-gray-400"
+                className="flex-1 min-h-[28px] max-h-[28px] resize-none bg-transparent border-0 px-2 py-0.5 shadow-none focus-visible:ring-0 text-xs placeholder:text-gray-400"
                 rows={1}
               />
 
               <Button 
                 type="submit" 
                 size="icon"
-                className="flex-shrink-0 bg-primary hover:bg-primary/90 rounded-full h-8 w-8 p-0"
+                className="flex-shrink-0 bg-primary hover:bg-primary/90 rounded-full h-7 w-7 p-0"
                 disabled={!newMessage.trim()}
               >
-                <Send className="h-4 w-4" />
+                <Send className="h-3.5 w-3.5" />
               </Button>
             </form>
           </div>
