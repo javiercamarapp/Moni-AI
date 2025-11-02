@@ -213,7 +213,7 @@ const CircleChat = () => {
   return (
     <div className="min-h-screen animate-fade-in flex flex-col bg-gradient-to-b from-[#E5DEFF] to-[#FFDEE2]">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/95 to-[#E5DEFF]/80 backdrop-blur-sm border-b border-white/20">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF] to-[#FFDEE2] border-b border-white/20">
         <div className="w-full px-4 py-3 sm:py-4">
           <div className="flex items-center gap-3">
             <button
@@ -255,13 +255,14 @@ const CircleChat = () => {
                 <ChatBubble
                   key={msg.id}
                   variant={msg.user_id === user?.id ? "sent" : "received"}
+                  className="gap-1.5"
                 >
                   <ChatBubbleAvatar
                     src={msg.profiles?.avatar_url || ''}
                     fallback={(msg.profiles?.full_name || 'U').substring(0, 2).toUpperCase()}
                   />
-                  <div className="flex flex-col gap-1 max-w-[75%] sm:max-w-[70%]">
-                    <div className="flex items-center gap-2">
+                  <div className="flex flex-col gap-0.5 max-w-[75%] sm:max-w-[70%]">
+                    <div className="flex items-center gap-2 px-1">
                       <span className="text-xs font-medium text-gray-600 truncate">
                         {msg.profiles?.full_name || msg.profiles?.username || 'Usuario'}
                       </span>
@@ -276,7 +277,7 @@ const CircleChat = () => {
                       {msg.description}
                     </ChatBubbleMessage>
                     {msg.xp_earned > 0 && (
-                      <span className="text-xs text-emerald-600 font-semibold">
+                      <span className="text-xs text-emerald-600 font-semibold px-1">
                         +{msg.xp_earned} XP
                       </span>
                     )}
@@ -288,50 +289,48 @@ const CircleChat = () => {
         </div>
 
         {/* Input Area */}
-        <div className="p-3 sm:p-4 bg-gradient-to-b from-[#E5DEFF]/80 to-[#E5DEFF]/95 backdrop-blur-sm border-t border-white/20">
+        <div className="p-2 sm:p-4 bg-gradient-to-b from-[#E5DEFF] to-[#FFDEE2] border-t border-white/20">
           <div className="w-full max-w-4xl mx-auto">
             <form
               onSubmit={handleSendMessage}
-              className="relative rounded-2xl border border-white/40 bg-white/90 backdrop-blur-sm focus-within:ring-2 focus-within:ring-primary/30 p-1"
+              className="flex items-center gap-2 rounded-2xl border border-white/40 bg-white/90 backdrop-blur-sm p-2"
             >
+              <Button
+                variant="ghost"
+                size="icon"
+                type="button"
+                onClick={handleAttachFile}
+                className="h-9 w-9 flex-shrink-0 hover:bg-primary/10"
+              >
+                <Paperclip className="h-4 w-4 text-gray-600" />
+              </Button>
+
               <ChatInput
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Escribe un mensaje..."
-                className="min-h-12 resize-none rounded-xl bg-transparent border-0 p-3 shadow-none focus-visible:ring-0 text-sm"
+                className="flex-1 min-h-[36px] max-h-[36px] resize-none rounded-xl bg-transparent border-0 px-2 py-2 shadow-none focus-visible:ring-0 text-sm"
+                rows={1}
               />
-              <div className="flex items-center p-2 sm:p-3 pt-0 justify-between gap-2">
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    type="button"
-                    onClick={handleAttachFile}
-                    className="h-8 w-8 hover:bg-primary/10"
-                  >
-                    <Paperclip className="h-4 w-4 text-gray-600" />
-                  </Button>
 
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    type="button"
-                    onClick={handleMicrophoneClick}
-                    className="h-8 w-8 hover:bg-primary/10"
-                  >
-                    <Mic className="h-4 w-4 text-gray-600" />
-                  </Button>
-                </div>
-                <Button 
-                  type="submit" 
-                  size="sm" 
-                  className="ml-auto gap-1.5 bg-primary hover:bg-primary/90 rounded-xl h-8 px-3 text-xs sm:text-sm"
-                  disabled={!newMessage.trim()}
-                >
-                  <span className="hidden sm:inline">Enviar</span>
-                  <CornerDownLeft className="h-3.5 w-3.5" />
-                </Button>
-              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                type="button"
+                onClick={handleMicrophoneClick}
+                className="h-9 w-9 flex-shrink-0 hover:bg-primary/10"
+              >
+                <Mic className="h-4 w-4 text-gray-600" />
+              </Button>
+
+              <Button 
+                type="submit" 
+                size="sm" 
+                className="flex-shrink-0 bg-primary hover:bg-primary/90 rounded-xl h-9 px-4"
+                disabled={!newMessage.trim()}
+              >
+                <CornerDownLeft className="h-4 w-4" />
+              </Button>
             </form>
           </div>
         </div>
