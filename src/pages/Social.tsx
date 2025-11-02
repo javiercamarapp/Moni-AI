@@ -1222,14 +1222,12 @@ const Social = () => {
 
         {/* Achievement Unlocked Toast */}
         {showAchievementUnlocked && unlockedAchievement && (
-          <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 animate-scale-in">
-            <div className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-white px-6 py-4 rounded-2xl shadow-2xl border-2 border-yellow-300">
-              <div className="flex items-center gap-3">
-                <div className="text-4xl animate-bounce">{unlockedAchievement.icon}</div>
-                <div>
-                  <p className="font-bold text-sm">¡Logro Desbloqueado!</p>
-                  <p className="text-xs opacity-90">{unlockedAchievement.name}</p>
-                </div>
+          <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
+            <div className="bg-white/90 backdrop-blur-md border border-gray-200 rounded-2xl shadow-2xl px-5 py-3 flex items-center gap-3">
+              <div className="text-3xl animate-bounce">{unlockedAchievement.icon}</div>
+              <div>
+                <p className="font-semibold text-gray-900 text-sm">{unlockedAchievement.name}</p>
+                <p className="text-gray-600 text-xs">{unlockedAchievement.desc}</p>
               </div>
             </div>
           </div>
