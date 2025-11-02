@@ -79,31 +79,6 @@ const Onboarding = () => {
         <div className="absolute inset-0 bg-black/20" />
       </div>
 
-      {/* Content */}
-      <div className="flex-1 flex items-center justify-center px-4 py-12 relative z-10">
-        <div className="w-full max-w-md">
-          <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-white/20">
-            {/* Image */}
-            <div className="w-full mb-6">
-              <img 
-                src={slides[currentSlide].image} 
-                alt={slides[currentSlide].title}
-                className="w-full max-w-xs mx-auto h-auto object-contain rounded-xl"
-              />
-            </div>
-            
-            {/* Text content */}
-            <div className="text-center space-y-4">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
-                {slides[currentSlide].title}
-              </h2>
-              <p className="text-base md:text-lg text-gray-700 leading-relaxed">
-                {slides[currentSlide].description}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Bottom navigation - Fixed at bottom */}
       <div className="fixed bottom-0 left-0 right-0 pb-8 px-8 z-20">
