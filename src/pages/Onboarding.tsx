@@ -81,11 +81,11 @@ const Onboarding = () => {
 
 
       {/* Bottom navigation - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 pb-24 px-8 z-20">
+      <div className="fixed bottom-0 left-0 right-0 pb-32 px-8 z-20">
         <div className="max-w-md mx-auto">
           <div className="flex items-end justify-between">
             {/* Left side: Dots and Skip button */}
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-6">
               {/* Dot indicators */}
               <div className="flex items-center gap-2">
                 {slides.map((_, index) => (
@@ -100,10 +100,10 @@ const Onboarding = () => {
                 ))}
               </div>
               
-              {/* Skip button */}
+              {/* Skip button - text only */}
               <button
                 onClick={() => navigate('/auth')}
-                className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-xs font-medium hover:bg-white/30 transition-all"
+                className="text-white text-sm font-medium hover:text-white/80 transition-colors text-left"
               >
                 Saltar
               </button>
