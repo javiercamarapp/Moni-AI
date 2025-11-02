@@ -205,6 +205,7 @@ const Dashboard = () => {
   const [loadingProyecciones, setLoadingProyecciones] = useState(false);
   const [isUpdatingProjections, setIsUpdatingProjections] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [showWhatsAppBanner, setShowWhatsAppBanner] = useState(false);
   const {
     toast
   } = useToast();
@@ -455,6 +456,43 @@ const Dashboard = () => {
     const interval = setInterval(loadUnreadNotifications, 60000);
     return () => clearInterval(interval);
   }, []);
+
+  // Verificar si debe mostrar el banner de WhatsApp
+  useEffect(() => {
+    const checkWhatsAppStatus = async () => {
+      if (!user?.id) return;
+      
+      try {
+        // Verificar si tiene conexión activa de WhatsApp
+        const { data: whatsappUser, error: userError } = await supabase
+          .from('whatsapp_users')
+          .select('is_active')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (userError && userError.code !== 'PGRST116') throw userError;
+        
+        // Verificar si tiene mensajes enviados
+        const { data: messages, error: messagesError } = await supabase
+          .from('whatsapp_messages')
+          .select('id')
+          .eq('user_id', user.id)
+          .limit(1);
+        
+        if (messagesError) throw messagesError;
+        
+        // Mostrar banner solo si NO tiene WhatsApp activo Y NO ha enviado mensajes
+        const hasActiveWhatsApp = whatsappUser?.is_active === true;
+        const hasMessages = messages && messages.length > 0;
+        
+        setShowWhatsAppBanner(!hasActiveWhatsApp && !hasMessages);
+      } catch (error) {
+        console.error('Error checking WhatsApp status:', error);
+      }
+    };
+
+    checkWhatsAppStatus();
+  }, [user?.id]);
 
   // Auto-scroll carousel
   useEffect(() => {
@@ -1649,32 +1687,34 @@ const Dashboard = () => {
         </div>
 
         {/* WhatsApp Banner */}
-        <Card className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden animate-fade-in hover:shadow-md transition-all cursor-pointer" style={{
-        animationDelay: '500ms'
-      }}>
-          <GlowingEffect
-            spread={40}
-            glow={true}
-            disabled={false}
-            proximity={64}
-            inactiveZone={0.01}
-            borderWidth={2}
-          />
-            <div className="flex items-center gap-2 sm:gap-3 relative z-10">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 rounded-full bg-green-100 backdrop-blur-sm flex items-center justify-center p-2">
-                <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
+        {showWhatsAppBanner && (
+          <Card className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden animate-fade-in hover:shadow-md transition-all cursor-pointer" style={{
+          animationDelay: '500ms'
+        }}>
+            <GlowingEffect
+              spread={40}
+              glow={true}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+              borderWidth={2}
+            />
+              <div className="flex items-center gap-2 sm:gap-3 relative z-10">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 rounded-full bg-green-100 backdrop-blur-sm flex items-center justify-center p-2">
+                  <img src={whatsappLogo} alt="WhatsApp" className="w-full h-full object-contain" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-foreground mb-2 leading-relaxed">
+                    Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
+                  </p>
+                  <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white border-0 text-xs h-8 font-semibold" onClick={() => navigate('/whatsapp')}>
+                    <MessageCircle className="w-3 h-3 mr-1" />
+                    Conectar WhatsApp
+                  </Button>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-foreground mb-2 leading-relaxed">
-                  Registra tus ingresos y gastos enviando mensajes a WhatsApp. ¡La IA los interpreta automáticamente!
-                </p>
-                <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white border-0 text-xs h-8 font-semibold" onClick={() => navigate('/whatsapp')}>
-                  <MessageCircle className="w-3 h-3 mr-1" />
-                  Conectar WhatsApp
-                </Button>
-              </div>
-            </div>
-          </Card>
+            </Card>
+        )}
 
 
         <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
