@@ -279,21 +279,21 @@ const Groups = () => {
 
       {/* Create Circle Dialog */}
       <Dialog open={showCreateCircleDialog} onOpenChange={setShowCreateCircleDialog}>
-        <DialogContent className="max-w-[320px] rounded-3xl border-none shadow-2xl p-6">
-          <DialogHeader className="space-y-2">
-            <DialogTitle className="text-center text-lg font-bold">Crear Círculo Moni</DialogTitle>
-            <DialogDescription className="text-center text-xs text-muted-foreground">
+        <DialogContent className="max-w-[400px] rounded-3xl border-none shadow-2xl p-0 bg-white">
+          <DialogHeader className="p-6 pb-4">
+            <DialogTitle className="text-center text-xl font-semibold text-gray-900">Crear Círculo Moni</DialogTitle>
+            <DialogDescription className="text-center text-sm text-gray-500 pt-1">
               Crea un círculo para compartir metas con la comunidad
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 pt-2">
+          <div className="px-6 pb-6 space-y-4">
             <div className="space-y-2">
               <Input
                 placeholder="Nombre del círculo"
                 value={circleName}
                 onChange={(e) => setCircleName(e.target.value)}
                 maxLength={50}
-                className="rounded-2xl"
+                className="h-11 rounded-xl border-gray-200 bg-gray-50 focus:bg-white text-gray-900 placeholder:text-gray-400"
               />
             </div>
             <div className="space-y-2">
@@ -302,13 +302,13 @@ const Groups = () => {
                 value={circleDescription}
                 onChange={(e) => setCircleDescription(e.target.value)}
                 maxLength={200}
-                className="rounded-2xl min-h-[80px] resize-none"
+                className="rounded-xl min-h-[100px] resize-none border-gray-200 bg-gray-50 focus:bg-white text-gray-900 placeholder:text-gray-400"
               />
             </div>
             <Button 
               onClick={handleCreateCircle}
               disabled={creating}
-              className="w-full bg-white text-foreground hover:bg-white/90 rounded-2xl shadow-md font-medium"
+              className="w-full h-11 bg-primary hover:bg-primary/90 text-white rounded-xl shadow-sm font-medium text-base disabled:opacity-50"
             >
               {creating ? 'Creando...' : 'Crear Círculo'}
             </Button>
