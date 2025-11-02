@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { Camera, Users, TrendingUp, Zap, Calendar } from "lucide-react";
+import { Camera, Users, TrendingUp, Zap, Calendar, Trophy } from "lucide-react";
 import { toast } from "sonner";
 
 const Social = () => {
@@ -20,6 +20,7 @@ const Social = () => {
   const [showUsernameDialog, setShowUsernameDialog] = useState(false);
   const [username, setUsername] = useState("");
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [monthlyRanking, setMonthlyRanking] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -60,6 +61,31 @@ const Social = () => {
         
         if (scoreData) {
           setScoreMoni(scoreData.score_moni);
+        }
+
+        // Calculate monthly ranking among friends
+        const { data: friendships } = await supabase
+          .from('friendships')
+          .select('friend_id')
+          .eq('user_id', user.id)
+          .eq('status', 'accepted');
+
+        if (friendships && friendships.length > 0) {
+          const friendIds = friendships.map(f => f.friend_id);
+          const allUserIds = [...friendIds, user.id];
+
+          const { data: allScores } = await supabase
+            .from('user_scores')
+            .select('user_id, score_moni')
+            .in('user_id', allUserIds)
+            .order('score_moni', { ascending: false });
+
+          if (allScores) {
+            const ranking = allScores.findIndex(s => s.user_id === user.id) + 1;
+            setMonthlyRanking(ranking);
+          }
+        } else {
+          setMonthlyRanking(1);
         }
       }
     };
@@ -207,22 +233,22 @@ const Social = () => {
 
         <div className="mx-auto px-4 py-2 space-y-4" style={{ maxWidth: '600px' }}>
           {/* User Profile Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
-            <div className="flex items-center gap-3">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-3">
+            <div className="flex items-center gap-2">
               {/* Avatar with Upload Button */}
               <div className="relative">
-                <Avatar className="h-16 w-16 border-2 border-primary/20">
+                <Avatar className="h-12 w-12 border-2 border-primary/20">
                   <AvatarImage src={profile?.avatar_url || user?.user_metadata?.avatar_url} />
-                  <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
+                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
                     {user?.email ? getInitials(user.email) : "US"}
                   </AvatarFallback>
                 </Avatar>
                 <button
                   onClick={handleAvatarClick}
                   disabled={uploadingAvatar}
-                  className="absolute -bottom-1 -right-1 bg-primary text-white rounded-full p-1.5 shadow-lg hover:bg-primary/90 transition-all disabled:opacity-50"
+                  className="absolute -bottom-0.5 -right-0.5 bg-primary text-white rounded-full p-1 shadow-lg hover:bg-primary/90 transition-all disabled:opacity-50"
                 >
-                  <Camera className="h-3 w-3" />
+                  <Camera className="h-2.5 w-2.5" />
                 </button>
                 <input
                   ref={fileInputRef}
@@ -235,13 +261,13 @@ const Social = () => {
 
               {/* User Info */}
               <div className="flex-1">
-                <h2 className="text-lg font-bold text-gray-900">
+                <h2 className="text-sm font-bold text-gray-900">
                   {profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Usuario"}
                 </h2>
                 
                 {/* Username or Create Username Button */}
                 {profile?.username ? (
-                  <p className="text-xs text-primary font-medium mt-0.5">
+                  <p className="text-[10px] text-primary font-medium mt-0.5">
                     @{profile.username}
                   </p>
                 ) : (
@@ -249,21 +275,21 @@ const Social = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => setShowUsernameDialog(true)}
-                    className="h-5 px-2 text-[10px] text-primary hover:text-primary/80 -ml-2 mt-0.5"
+                    className="h-4 px-1.5 text-[9px] text-primary hover:text-primary/80 -ml-1.5 mt-0.5"
                   >
                     Crear usuario
                   </Button>
                 )}
                 
-                <p className="text-xs text-gray-600 mt-0.5">
+                <p className="text-[10px] text-gray-600 mt-0.5">
                   {user?.email || "usuario@ejemplo.com"}
                 </p>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <span className="text-[10px] text-gray-500">Score Moni:</span>
-                  <span className={`text-xs font-semibold ${getScoreColor(scoreMoni)}`}>
+                <div className="flex items-center gap-1 mt-0.5">
+                  <span className="text-[9px] text-gray-500">Score Moni:</span>
+                  <span className={`text-[10px] font-semibold ${getScoreColor(scoreMoni)}`}>
                     {scoreMoni}/100
                   </span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 ${getScoreColor(scoreMoni)}`}>
+                  <span className={`text-[8px] px-1 py-0.5 rounded-full bg-primary/10 ${getScoreColor(scoreMoni)}`}>
                     {getScoreLabel(scoreMoni)}
                   </span>
                 </div>
@@ -271,26 +297,32 @@ const Social = () => {
             </div>
 
             {/* Bio/Description */}
-            <div className="mt-3 pt-3 border-t border-gray-200">
-              <p className="text-xs text-gray-600">
+            <div className="mt-2 pt-2 border-t border-gray-200">
+              <p className="text-[10px] text-gray-600">
                 {profile?.bio || user?.user_metadata?.bio || "Mejorando mis finanzas con Moni AI 🚀"}
               </p>
             </div>
 
-            {/* Level Badge */}
-            <div className="mt-3 pt-3 border-t border-gray-200">
-              <div className="flex items-center justify-between mb-2">
-                <Badge variant="secondary" className="flex items-center gap-1.5 px-3 py-1">
-                  <Zap className="h-3.5 w-3.5 text-primary" />
-                  <span className="text-xs font-bold">Nivel {profile?.level || 1}</span>
-                </Badge>
-                <span className="text-xs text-muted-foreground">
+            {/* Level Badge & Monthly Ranking */}
+            <div className="mt-2 pt-2 border-t border-gray-200">
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="flex items-center gap-1 px-2 py-0.5">
+                    <Zap className="h-2.5 w-2.5 text-primary" />
+                    <span className="text-[10px] font-bold">Nivel {profile?.level || 1}</span>
+                  </Badge>
+                  <Badge variant="outline" className="flex items-center gap-1 px-2 py-0.5 border-yellow-600/30 bg-yellow-50">
+                    <Trophy className="h-2.5 w-2.5 text-yellow-600" />
+                    <span className="text-[10px] font-bold text-yellow-700">#{monthlyRanking}</span>
+                  </Badge>
+                </div>
+                <span className="text-[10px] text-muted-foreground">
                   {xpData.currentXP} / {xpData.xpForNextLevel} XP
                 </span>
               </div>
               
               {/* XP Progress Bar */}
-              <Progress value={xpData.progress} className="h-2" />
+              <Progress value={xpData.progress} className="h-1.5" />
             </div>
           </div>
 
