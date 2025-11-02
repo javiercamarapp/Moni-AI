@@ -1052,7 +1052,7 @@ export default function FinancialAnalysis() {
           </div>
 
           <div className="mx-auto px-4 py-6 max-w-7xl">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-3">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-2">
 
             {/* Mostrar métricas instantáneas (siempre disponibles del caché) */}
             {(quickMetrics || analysis) ? (
@@ -1326,7 +1326,7 @@ export default function FinancialAnalysis() {
             </Dialog>
 
             {/* Liquidez - Grid Compacto Mejorado */}
-            <div className="space-y-2">
+            <div className="space-y-2 lg:space-y-1">
               <p className="text-xs font-bold text-foreground flex items-center gap-1">
                 <Droplets className="h-3 w-3" /> Liquidez y Estabilidad
               </p>
@@ -1657,7 +1657,7 @@ export default function FinancialAnalysis() {
             {analysis?.debtPlan && analysis?.debtPlan.debts && analysis?.debtPlan.debts.length > 0 && <DebtPaymentPlanWidget {...analysis?.debtPlan} />}
 
             {/* Llamados a la Acción */}
-            <div className="space-y-2">
+            <div className="space-y-2 lg:space-y-1">
               <p className="text-xs font-bold text-foreground">🎯 Acciones Recomendadas</p>
               <div className="grid grid-cols-2 gap-2">
                 <Button 
@@ -1696,7 +1696,7 @@ export default function FinancialAnalysis() {
             </div>
 
             {/* Control de Gastos - Compacto */}
-            <div className="space-y-2">
+            <div className="space-y-2 lg:space-y-1">
               <p className="text-xs font-bold text-foreground flex items-center gap-1">
                 <TrendingDown className="h-3 w-3" /> Control de Gastos
               </p>
@@ -1770,7 +1770,7 @@ export default function FinancialAnalysis() {
             </div>
 
             {/* Endeudamiento Mejorado */}
-            <div className="space-y-2">
+            <div className="space-y-2 lg:space-y-1">
               <p className="text-xs font-bold text-foreground flex items-center gap-1">
                 <Shield className="h-3 w-3" /> Endeudamiento
               </p>
@@ -1806,7 +1806,7 @@ export default function FinancialAnalysis() {
             </div>
 
             {/* Estabilidad y Metas Mejorado */}
-            <div className="space-y-2">
+            <div className="space-y-2 lg:space-y-1">
               <p className="text-xs font-bold text-foreground flex items-center gap-1">
                 <Target className="h-3 w-3" /> Estabilidad & Metas
               </p>
