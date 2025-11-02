@@ -4,8 +4,10 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
 import onboardingHero from '@/assets/onboarding-hero.png';
+import onboardingControl from '@/assets/onboarding-control.png';
 import aiImage from '@/assets/onboarding-ai.png';
 import { Typewriter } from '@/components/ui/typewriter-text';
+import { TextScramble } from '@/components/ui/text-scramble';
 
 const Onboarding = () => {
   const [showLogo, setShowLogo] = useState(true);
@@ -66,39 +68,58 @@ const Onboarding = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
-      {/* Background image */}
+      {/* Background image - changes based on currentSlide */}
       <div 
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-0 transition-opacity duration-500"
         style={{
-          backgroundImage: `url(${onboardingHero})`,
+          backgroundImage: `url(${currentSlide === 1 ? onboardingControl : onboardingHero})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
         }}
       >
-      {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/20" />
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/30" />
       </div>
 
-      {/* Content */}
+      {/* Content - changes based on currentSlide */}
       <div className="flex items-start justify-center px-4 pt-20 relative z-10">
         <div className="w-full max-w-md space-y-6">
-          {/* Hero Message - Typewriter effect without card */}
-          <div className="text-center space-y-4 px-4">
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-              <Typewriter
-                text="Tu dinero, más inteligente."
-                speed={80}
-                loop={true}
-                deleteSpeed={50}
-                delay={3000}
-                className="text-gray-900"
-              />
-            </h1>
-            <p className="text-lg md:text-xl text-gray-900 leading-relaxed font-medium">
-              Con Moni AI, aprende a manejar tus finanzas como un experto, sin complicaciones.
-            </p>
-          </div>
+          {currentSlide === 0 ? (
+            /* First slide - Typewriter effect */
+            <div className="text-center space-y-4 px-4">
+              <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+                <Typewriter
+                  text="Tu dinero, más inteligente."
+                  speed={80}
+                  loop={true}
+                  deleteSpeed={50}
+                  delay={3000}
+                  className="text-gray-900"
+                />
+              </h1>
+              <p className="text-lg md:text-xl text-gray-900 leading-relaxed font-medium">
+                Con Moni AI, aprende a manejar tus finanzas como un experto, sin complicaciones.
+              </p>
+            </div>
+          ) : currentSlide === 1 ? (
+            /* Second slide - TextScramble effect */
+            <div className="text-center space-y-4 px-4">
+              <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+                <TextScramble
+                  className="text-white"
+                  duration={1.2}
+                  speed={0.03}
+                  trigger={currentSlide === 1}
+                >
+                  Toma el control de tus finanzas.
+                </TextScramble>
+              </h1>
+              <p className="text-lg md:text-xl text-white leading-relaxed font-medium">
+                Moni analiza tus hábitos, clasifica tus gastos y te enseña a mejorar cada día.
+              </p>
+            </div>
+          ) : null}
         </div>
       </div>
 
