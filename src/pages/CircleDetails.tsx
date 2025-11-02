@@ -10,11 +10,27 @@ import { ArrowLeft, UserPlus, Plus, Trophy, Target, Users, Share2, Send, Message
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
+interface Profile {
+  id: string;
+  full_name: string | null;
+  username: string | null;
+  avatar_url: string | null;
+}
+
+interface MemberWithProfile {
+  id: string;
+  circle_id: string;
+  user_id: string;
+  joined_at: string;
+  xp: number;
+  profiles: Profile | null;
+}
+
 const CircleDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [circle, setCircle] = useState<any>(null);
-  const [members, setMembers] = useState<any[]>([]);
+  const [members, setMembers] = useState<MemberWithProfile[]>([]);
   const [challenges, setChallenges] = useState<any[]>([]);
   const [goals, setGoals] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
@@ -74,21 +90,43 @@ const CircleDetails = () => {
       }
       setCircle(circleData);
 
-      // Fetch members with profiles
+      // Fetch members
       const { data: membersData, error: membersError } = await supabase
         .from('circle_members')
-        .select(`
-          *,
-          profiles:user_id (full_name, username, avatar_url)
-        `)
+        .select('*')
         .eq('circle_id', id)
         .order('xp', { ascending: false });
 
       if (membersError) throw membersError;
-      setMembers(membersData || []);
+
+      // Fetch profiles for members
+      let enrichedMembers: MemberWithProfile[] = [];
+      if (membersData && membersData.length > 0) {
+        const memberIds = membersData.map(m => m.user_id);
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('id, full_name, username, avatar_url')
+          .in('id', memberIds);
+
+        // Enrich members with profile data
+        enrichedMembers = membersData.map(member => {
+          const profile = profilesData?.find(p => p.id === member.user_id);
+          return {
+            ...member,
+            profiles: profile ? {
+              id: profile.id,
+              full_name: profile.full_name,
+              username: profile.username,
+              avatar_url: profile.avatar_url
+            } : null
+          };
+        });
+      }
+
+      setMembers(enrichedMembers);
 
       // Check if current user is a member
-      const isMemberCheck = membersData?.some(m => m.user_id === currentUser.id);
+      const isMemberCheck = enrichedMembers?.some(m => m.user_id === currentUser.id);
       setIsMember(isMemberCheck || false);
 
       // Fetch challenges
@@ -112,19 +150,27 @@ const CircleDetails = () => {
       if (goalsError) throw goalsError;
       setGoals(goalsData || []);
 
-      // Fetch activity/messages (from friend_activity for now)
-      const { data: activityData } = await supabase
-        .from('friend_activity')
-        .select(`
-          *,
-          profiles:user_id (full_name, username)
-        `)
-        .in('user_id', membersData?.map(m => m.user_id) || [])
-        .order('created_at', { ascending: false })
-        .limit(20);
+      // Fetch activity/messages
+      if (enrichedMembers && enrichedMembers.length > 0) {
+        const memberIds = enrichedMembers.map(m => m.user_id);
+        const { data: activityData } = await supabase
+          .from('friend_activity')
+          .select('*')
+          .in('user_id', memberIds)
+          .order('created_at', { ascending: false })
+          .limit(20);
 
-      if (activityData) {
-        setMessages(activityData.reverse());
+        if (activityData && activityData.length > 0) {
+          // Enrich activity with profiles
+          const enrichedActivity = activityData.map(activity => {
+            const member = enrichedMembers.find(m => m.user_id === activity.user_id);
+            return {
+              ...activity,
+              profiles: member?.profiles || null
+            };
+          });
+          setMessages(enrichedActivity.reverse());
+        }
       }
     } catch (error: any) {
       console.error('Error fetching circle data:', error);
