@@ -197,40 +197,40 @@ const SocialStats = () => {
 
       <div className="max-w-2xl mx-auto px-4 py-2 space-y-4">
         {/* Stats Overview - Compacto */}
-        <div className="bg-white rounded-2xl shadow-sm p-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white border border-gray-100 rounded-xl p-3">
-              <div className="flex items-center gap-2 mb-1">
-                <Zap className="h-3.5 w-3.5 text-primary" />
-                <span className="text-[10px] text-gray-600">Puntos XP</span>
+        <div className="bg-white rounded-2xl shadow-sm p-3">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-white border border-gray-100 rounded-lg p-2">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <Zap className="h-3 w-3 text-primary" />
+                <span className="text-[9px] text-gray-600">Puntos XP</span>
               </div>
-              <p className="text-xl font-bold text-gray-900">{userPoints}</p>
+              <p className="text-base font-bold text-gray-900">{userPoints}</p>
             </div>
 
-            <div className="bg-white border border-gray-100 rounded-xl p-3">
-              <div className="flex items-center gap-2 mb-1">
-                <Trophy className="h-3.5 w-3.5 text-blue-600" />
-                <span className="text-[10px] text-gray-600">Retos</span>
+            <div className="bg-white border border-gray-100 rounded-lg p-2">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <Trophy className="h-3 w-3 text-blue-600" />
+                <span className="text-[9px] text-gray-600">Retos</span>
               </div>
-              <p className="text-xl font-bold text-gray-900">{totalChallenges}</p>
+              <p className="text-base font-bold text-gray-900">{totalChallenges}</p>
             </div>
 
-            <div className="bg-white border border-gray-100 rounded-xl p-3">
-              <div className="flex items-center gap-2 mb-1">
-                <Calendar className="h-3.5 w-3.5 text-green-600" />
-                <span className="text-[10px] text-gray-600">Racha</span>
+            <div className="bg-white border border-gray-100 rounded-lg p-2">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <Calendar className="h-3 w-3 text-green-600" />
+                <span className="text-[9px] text-gray-600">Racha</span>
               </div>
-              <p className="text-xl font-bold text-gray-900">{dayStreak}</p>
-              <p className="text-[9px] text-gray-500 mt-0.5">días seguidos</p>
+              <p className="text-base font-bold text-gray-900">{dayStreak}</p>
+              <p className="text-[8px] text-gray-500">días seguidos</p>
             </div>
 
-            <div className="bg-white border border-gray-100 rounded-xl p-3">
-              <div className="flex items-center gap-2 mb-1">
-                <Users className="h-3.5 w-3.5 text-purple-600" />
-                <span className="text-[10px] text-gray-600">Ranking</span>
+            <div className="bg-white border border-gray-100 rounded-lg p-2">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <Users className="h-3 w-3 text-purple-600" />
+                <span className="text-[9px] text-gray-600">Ranking</span>
               </div>
-              <p className="text-xl font-bold text-gray-900">#{friendsRank}</p>
-              <p className="text-[9px] text-gray-500 mt-0.5">entre amigos</p>
+              <p className="text-base font-bold text-gray-900">#{friendsRank}</p>
+              <p className="text-[8px] text-gray-500">entre amigos</p>
             </div>
           </div>
         </div>
