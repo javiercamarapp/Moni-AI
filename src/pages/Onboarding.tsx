@@ -7,7 +7,7 @@ import onboardingHero from '@/assets/onboarding-hero.png';
 import onboardingControl from '@/assets/onboarding-control.png';
 import aiImage from '@/assets/onboarding-ai.png';
 import { Typewriter } from '@/components/ui/typewriter-text';
-import { TextScramble } from '@/components/ui/text-scramble';
+import { BlurredStagger } from '@/components/ui/blurred-stagger-text';
 
 const Onboarding = () => {
   const [showLogo, setShowLogo] = useState(true);
@@ -103,17 +103,14 @@ const Onboarding = () => {
               </p>
             </div>
           ) : currentSlide === 1 ? (
-            /* Second slide - TextScramble effect */
+            /* Second slide - BlurredStagger effect with loop */
             <div className="text-center space-y-4 px-4">
-              <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-                <TextScramble
-                  className="text-white"
-                  duration={1.2}
-                  speed={0.03}
-                  trigger={currentSlide === 1}
-                >
-                  Toma el control de tus finanzas.
-                </TextScramble>
+              <h1 className="text-4xl md:text-5xl font-bold leading-tight text-white">
+                <BlurredStagger
+                  text="Toma el control de tus finanzas."
+                  loop={true}
+                  loopDelay={3000}
+                />
               </h1>
               <p className="text-lg md:text-xl text-white leading-relaxed font-medium">
                 Moni analiza tus hábitos, clasifica tus gastos y te enseña a mejorar cada día.
