@@ -208,22 +208,6 @@ const Social = () => {
         <div className="mx-auto px-4 py-2 space-y-4" style={{ maxWidth: '600px' }}>
           {/* User Profile Card */}
           <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
-            {/* Level Badge */}
-            <div className="mb-3 flex items-center justify-between">
-              <Badge variant="secondary" className="flex items-center gap-1.5 px-3 py-1">
-                <Zap className="h-3.5 w-3.5 text-primary" />
-                <span className="text-xs font-bold">Nivel {profile?.level || 1}</span>
-              </Badge>
-              <span className="text-xs text-muted-foreground">
-                {xpData.currentXP} / {xpData.xpForNextLevel} XP
-              </span>
-            </div>
-            
-            {/* XP Progress Bar */}
-            <div className="mb-4">
-              <Progress value={xpData.progress} className="h-2" />
-            </div>
-
             <div className="flex items-center gap-3">
               {/* Avatar with Upload Button */}
               <div className="relative">
@@ -291,6 +275,22 @@ const Social = () => {
               <p className="text-xs text-gray-600">
                 {profile?.bio || user?.user_metadata?.bio || "Mejorando mis finanzas con Moni AI 🚀"}
               </p>
+            </div>
+
+            {/* Level Badge */}
+            <div className="mt-3 pt-3 border-t border-gray-200">
+              <div className="flex items-center justify-between mb-2">
+                <Badge variant="secondary" className="flex items-center gap-1.5 px-3 py-1">
+                  <Zap className="h-3.5 w-3.5 text-primary" />
+                  <span className="text-xs font-bold">Nivel {profile?.level || 1}</span>
+                </Badge>
+                <span className="text-xs text-muted-foreground">
+                  {xpData.currentXP} / {xpData.xpForNextLevel} XP
+                </span>
+              </div>
+              
+              {/* XP Progress Bar */}
+              <Progress value={xpData.progress} className="h-2" />
             </div>
           </div>
 
