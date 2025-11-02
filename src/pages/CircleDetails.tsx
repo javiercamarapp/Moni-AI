@@ -29,6 +29,7 @@ const CircleDetails = () => {
   const [showXPGain, setShowXPGain] = useState(false);
   const [xpGainAmount, setXPGainAmount] = useState(0);
   const [progressGlow, setProgressGlow] = useState(false);
+  const [completedChallenges, setCompletedChallenges] = useState<Set<string>>(new Set());
   const chatRef = useRef<HTMLDivElement>(null);
   const xpSoundRef = useRef<HTMLAudioElement>(null);
 
@@ -200,6 +201,12 @@ const CircleDetails = () => {
       return;
     }
 
+    // Verificar si ya completó este reto
+    if (completedChallenges.has(challengeId)) {
+      toast.info('Ya completaste este reto');
+      return;
+    }
+
     try {
       // Add XP to user in circle
       const memberData = members.find(m => m.user_id === user.id);
@@ -217,18 +224,28 @@ const CircleDetails = () => {
       });
 
       // Create activity log
+      const { data: challengeData } = await supabase
+        .from('circle_challenges')
+        .select('title')
+        .eq('id', challengeId)
+        .single();
+
       await supabase
         .from('friend_activity')
         .insert({
           user_id: user.id,
           activity_type: 'challenge_completed',
-          description: 'completó un reto del círculo',
+          description: `completó el reto "${challengeData?.title || 'del círculo'}"`,
           xp_earned: xpReward
         });
+
+      // Marcar como completado localmente
+      setCompletedChallenges(prev => new Set([...prev, challengeId]));
 
       // Show XP animation
       setXPGainAmount(xpReward);
       setShowXPGain(true);
+      setProgressGlow(true);
 
       // Play sound
       if (xpSoundRef.current) {
@@ -237,7 +254,10 @@ const CircleDetails = () => {
         xpSoundRef.current.play().catch(() => {});
       }
 
-      setTimeout(() => setShowXPGain(false), 2500);
+      setTimeout(() => {
+        setShowXPGain(false);
+        setProgressGlow(false);
+      }, 2500);
 
       toast.success(`¡Reto completado! +${xpReward} XP`);
       fetchCircleData();
@@ -482,33 +502,56 @@ const CircleDetails = () => {
             <Trophy className="h-4 w-4 text-yellow-600" />
             🏆 Retos activos del grupo
           </h2>
-          {challenges.length === 0 ? (
+            {challenges.length === 0 ? (
             <p className="text-gray-600 text-xs text-center py-4">
               No hay retos activos. {isMember && '¡Crea el primero!'}
             </p>
           ) : (
             <div className="space-y-3 mb-3">
-              {challenges.map((challenge) => (
-                <div key={challenge.id} className="p-3 border border-gray-100 rounded-xl">
-                  <div className="flex-1 mb-2">
-                    <span className="text-sm text-gray-900 font-medium block">
-                      Reto: "{challenge.title}"
-                    </span>
-                    {challenge.description && (
-                      <span className="text-xs text-gray-500 block mt-1">{challenge.description} · +{challenge.xp_reward} XP</span>
+              {challenges.map((challenge) => {
+                const isCompleted = completedChallenges.has(challenge.id);
+                return (
+                  <div 
+                    key={challenge.id} 
+                    className={cn(
+                      "p-3 border rounded-xl transition-all",
+                      isCompleted 
+                        ? "border-emerald-200 bg-emerald-50/50 opacity-75" 
+                        : "border-gray-100 bg-white"
+                    )}
+                  >
+                    <div className="flex-1 mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className={cn(
+                          "text-sm font-medium block",
+                          isCompleted ? "text-emerald-700 line-through" : "text-gray-900"
+                        )}>
+                          Reto: "{challenge.title}"
+                        </span>
+                        {isCompleted && (
+                          <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
+                            ✓ Completado
+                          </span>
+                        )}
+                      </div>
+                      {challenge.description && (
+                        <span className="text-xs text-gray-500 block mt-1">
+                          {challenge.description} · +{challenge.xp_reward} XP
+                        </span>
+                      )}
+                    </div>
+                    {isMember && !isCompleted && (
+                      <Button
+                        onClick={() => handleCompleteChallenge(challenge.id, challenge.xp_reward)}
+                        size="sm"
+                        className="w-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-0 rounded-xl font-medium h-8 text-xs"
+                      >
+                        Marcar como completado
+                      </Button>
                     )}
                   </div>
-                  {isMember && (
-                    <Button
-                      onClick={() => handleCompleteChallenge(challenge.id, challenge.xp_reward)}
-                      size="sm"
-                      className="w-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-0 rounded-xl font-medium h-8 text-xs"
-                    >
-                      Marcar como completado
-                    </Button>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
           {isMember && (
@@ -650,16 +693,16 @@ const CircleDetails = () => {
       <Dialog open={showCreateChallengeDialog} onOpenChange={setShowCreateChallengeDialog}>
         <DialogContent className="max-w-[320px] rounded-3xl border-none shadow-2xl p-6">
           <DialogHeader className="space-y-2">
-            <DialogTitle className="text-center text-lg font-bold">Crear Reto</DialogTitle>
+            <DialogTitle className="text-center text-lg font-bold">Crear Reto del Círculo</DialogTitle>
             <DialogDescription className="text-center text-xs text-muted-foreground">
-              Define un nuevo desafío para el círculo
+              Define un reto personalizado para que los miembros del círculo puedan completar y ganar XP
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 pt-2">
             <div>
-              <label className="text-xs font-medium text-gray-700 mb-1 block">Título *</label>
+              <label className="text-xs font-medium text-gray-700 mb-1 block">Título del reto *</label>
               <Input
-                placeholder="Ej: Ahorra $100 diarios"
+                placeholder="Ej: Ahorra $100 esta semana"
                 value={challengeTitle}
                 onChange={(e) => setChallengeTitle(e.target.value)}
                 maxLength={100}
@@ -667,9 +710,9 @@ const CircleDetails = () => {
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-700 mb-1 block">Descripción</label>
+              <label className="text-xs font-medium text-gray-700 mb-1 block">Descripción del reto</label>
               <Input
-                placeholder="Describe el reto (opcional)"
+                placeholder="Explica en qué consiste el reto (opcional)"
                 value={challengeDescription}
                 onChange={(e) => setChallengeDescription(e.target.value)}
                 maxLength={200}
@@ -677,7 +720,7 @@ const CircleDetails = () => {
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-700 mb-1 block">XP a ganar *</label>
+              <label className="text-xs font-medium text-gray-700 mb-1 block">Recompensa en XP *</label>
               <Input
                 type="number"
                 placeholder="20"
@@ -687,13 +730,16 @@ const CircleDetails = () => {
                 max="1000"
                 className="rounded-xl text-sm"
               />
+              <p className="text-[10px] text-gray-500 mt-1">
+                💡 Recomendado: 10-50 XP para retos diarios, 50-200 XP para retos semanales
+              </p>
             </div>
             <Button 
               onClick={handleCreateChallenge}
-              disabled={!challengeTitle.trim()}
-              className="w-full bg-white text-foreground hover:bg-white/90 rounded-2xl shadow-md font-medium disabled:opacity-50"
+              disabled={!challengeTitle.trim() || !challengeXP}
+              className="w-full bg-emerald-500 text-white hover:bg-emerald-600 rounded-2xl shadow-md font-medium disabled:opacity-50"
             >
-              Crear reto
+              ✨ Crear reto personalizado
             </Button>
           </div>
         </DialogContent>
