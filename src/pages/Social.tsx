@@ -318,16 +318,6 @@ const Social = () => {
               </button>
 
               <button 
-                onClick={() => navigate('/financial-events')}
-                className="flex flex-col items-center gap-1.5 group"
-              >
-                <div className="bg-gradient-to-br from-purple-500/20 to-purple-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
-                  <Calendar className="h-5 w-5 text-purple-600" />
-                </div>
-                <span className="text-[10px] text-gray-600 font-medium">Eventos</span>
-              </button>
-
-              <button 
                 onClick={() => navigate('/social-stats')}
                 className="flex flex-col items-center gap-1.5 group"
               >
@@ -335,6 +325,16 @@ const Social = () => {
                   <TrendingUp className="h-5 w-5 text-green-600" />
                 </div>
                 <span className="text-[10px] text-gray-600 font-medium">Stats</span>
+              </button>
+
+              <button 
+                onClick={() => navigate('/financial-events')}
+                className="flex flex-col items-center gap-1.5 group"
+              >
+                <div className="bg-gradient-to-br from-purple-500/20 to-purple-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
+                  <Calendar className="h-5 w-5 text-purple-600" />
+                </div>
+                <span className="text-[10px] text-gray-600 font-medium whitespace-nowrap">Eventos financieros</span>
               </button>
             </div>
           </div>
