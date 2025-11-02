@@ -30,6 +30,10 @@ import WeeklySpendingPatternWidget from "@/components/analysis/WeeklySpendingPat
 import AICoachInsightsWidget from "@/components/analysis/AICoachInsightsWidget";
 import FinancialHealthPieWidget from "@/components/analysis/FinancialHealthPieWidget";
 import LiquidityGaugeWidget from "@/components/analysis/LiquidityGaugeWidget";
+import CategoryBreakdownWidget from "@/components/analysis/CategoryBreakdownWidget";
+import IncomeExpensePieWidget from "@/components/analysis/IncomeExpensePieWidget";
+import ScoreBreakdownWidget from "@/components/analysis/ScoreBreakdownWidget";
+import RecentMovementsWidget from "@/components/analysis/RecentMovementsWidget";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { AIAnalysisLoader } from "@/components/AIAnalysisLoader";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -1653,8 +1657,24 @@ export default function FinancialAnalysis() {
             {/* 5. PRESUPUESTO VIVO */}
             <BudgetProgressWidget {...(analysis?.budgetProgress || {})} isLoading={loading} />
 
+            {/* Desktop Only: Recent Movements */}
+            <div className="hidden lg:block">
+              <RecentMovementsWidget />
+            </div>
+
             {/* 6. DEUDA INTELIGENTE */}
             {analysis?.debtPlan && analysis?.debtPlan.debts && analysis?.debtPlan.debts.length > 0 && <DebtPaymentPlanWidget {...analysis?.debtPlan} />}
+
+            {/* Desktop Only: Score Breakdown */}
+            <div className="hidden lg:block">
+              <ScoreBreakdownWidget 
+                components={analysis?.scoreComponents || {}}
+                scoreMoni={analysis?.metrics?.score || dashboardData.scoreMoni || 0}
+                changeReason=""
+                previousScore={0}
+                loadingReason={false}
+              />
+            </div>
 
             {/* Llamados a la Acción */}
             <div className="space-y-2 lg:space-y-1">
@@ -1805,6 +1825,15 @@ export default function FinancialAnalysis() {
                 </Card>}
             </div>
 
+            {/* Desktop Only: Category Breakdown */}
+            <div className="hidden lg:block">
+              <CategoryBreakdownWidget 
+                categories={categoryBreakdownData}
+                period={chartsPeriod}
+                onPeriodChange={(value) => setChartsPeriod(value as 'month' | 'year')}
+              />
+            </div>
+
             {/* Estabilidad y Metas Mejorado */}
             <div className="space-y-2 lg:space-y-1">
               <p className="text-xs font-bold text-foreground flex items-center gap-1">
@@ -1841,6 +1870,16 @@ export default function FinancialAnalysis() {
                   <p className="text-[9px] text-muted-foreground">Califícalo 1-10 →</p>
                 </Card>
               </div>
+            </div>
+
+            {/* Desktop Only: Income vs Expense Pie */}
+            <div className="hidden lg:block">
+              <IncomeExpensePieWidget 
+                monthlyIncome={dashboardData.monthlyIncome}
+                monthlyExpenses={dashboardData.monthlyExpenses}
+                yearlyIncome={quickMetrics?.totalIncome || 0}
+                yearlyExpenses={quickMetrics?.totalExpenses || 0}
+              />
             </div>
 
             {/* Microcopy Empático */}
