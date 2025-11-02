@@ -5,6 +5,7 @@ import { ArrowRight } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
 import onboardingHero from '@/assets/onboarding-hero.png';
 import onboardingControl from '@/assets/onboarding-control.png';
+import onboardingGoals from '@/assets/onboarding-goals.png';
 import aiImage from '@/assets/onboarding-ai.png';
 import { Typewriter } from '@/components/ui/typewriter-text';
 import { BlurredStagger } from '@/components/ui/blurred-stagger-text';
@@ -72,7 +73,11 @@ const Onboarding = () => {
       <div 
         className="absolute inset-0 z-0 transition-opacity duration-500"
         style={{
-          backgroundImage: `url(${currentSlide === 1 ? onboardingControl : onboardingHero})`,
+          backgroundImage: `url(${
+            currentSlide === 0 ? onboardingHero : 
+            currentSlide === 1 ? onboardingControl : 
+            onboardingGoals
+          })`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
@@ -115,6 +120,16 @@ const Onboarding = () => {
               </div>
               <p className="text-lg md:text-xl text-white leading-relaxed font-medium pt-4">
                 Moni analiza tus hábitos, clasifica tus gastos y te enseña a mejorar cada día.
+              </p>
+            </div>
+          ) : currentSlide === 2 ? (
+            /* Third slide - Goals */
+            <div className="text-center space-y-4 px-4">
+              <h1 className="text-3xl md:text-6xl font-bold leading-tight text-white">
+                Convierte tus metas en logros.
+              </h1>
+              <p className="text-lg md:text-xl text-white leading-relaxed font-medium">
+                Crea retos, ahorra con tus amigos y gana puntos cada vez que avanzas.
               </p>
             </div>
           ) : null}
