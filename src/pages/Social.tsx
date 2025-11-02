@@ -1078,16 +1078,26 @@ const Social = () => {
             </p>
 
             {/* Personal Progress Bar */}
-            <div className="mb-4 p-3 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl border border-primary/20">
+            <div className="mb-4 p-3 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl border border-primary/20 relative">
               <div className="flex justify-between items-center text-xs text-gray-700 mb-2">
                 <span className="font-semibold">Tu progreso este mes</span>
                 <span className="font-bold text-primary">{userPoints} XP</span>
               </div>
-              <Progress 
-                value={Math.min((userPoints / 1000) * 100, 100)} 
-                className="h-2"
-                indicatorClassName="bg-gradient-to-r from-primary to-primary/80 transition-all duration-700"
-              />
+              <div className="relative">
+                <Progress 
+                  value={Math.min((userPoints / 1000) * 100, 100)} 
+                  className="h-2"
+                  indicatorClassName="bg-gradient-to-r from-primary to-primary/80 transition-all duration-700"
+                />
+                {/* Floating XP animation */}
+                {showXPGain && (
+                  <div className="absolute right-0 -top-6 animate-fade-in">
+                    <div className={`text-green-600 text-sm font-bold drop-shadow-lg transition-all duration-1000 ${showXPGain ? 'opacity-100 -translate-y-3' : 'opacity-0'}`}>
+                      +{xpGainAmount} XP
+                    </div>
+                  </div>
+                )}
+              </div>
               <p className="text-[10px] text-gray-500 mt-1">
                 Meta mensual: 1,000 XP
               </p>
@@ -1240,10 +1250,10 @@ const Social = () => {
           </div>
         )}
 
-        {/* XP Gain Animation */}
+        {/* XP Gain Animation (center bottom - secondary) */}
         {showXPGain && (
           <div className="fixed bottom-32 left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-fade-in">
-            <div className={`text-green-600 text-2xl font-bold drop-shadow-lg transition-all duration-500 ${showXPGain ? 'opacity-100 -translate-y-4' : 'opacity-0'}`}>
+            <div className={`text-green-600 text-3xl font-bold drop-shadow-2xl transition-all duration-700 ${showXPGain ? 'opacity-100 -translate-y-8 scale-110' : 'opacity-0'}`}>
               +{xpGainAmount} XP
             </div>
           </div>
