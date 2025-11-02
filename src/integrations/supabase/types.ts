@@ -210,24 +210,106 @@ export type Database = {
           },
         ]
       }
+      circle_challenges: {
+        Row: {
+          circle_id: string
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          is_active: boolean
+          title: string
+          xp_reward: number
+        }
+        Insert: {
+          circle_id: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          title: string
+          xp_reward?: number
+        }
+        Update: {
+          circle_id?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          title?: string
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "circle_challenges_circle_id_fkey"
+            columns: ["circle_id"]
+            isOneToOne: false
+            referencedRelation: "circles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      circle_goals: {
+        Row: {
+          circle_id: string
+          created_at: string
+          current_amount: number
+          deadline: string | null
+          id: string
+          target_amount: number
+          title: string
+        }
+        Insert: {
+          circle_id: string
+          created_at?: string
+          current_amount?: number
+          deadline?: string | null
+          id?: string
+          target_amount?: number
+          title: string
+        }
+        Update: {
+          circle_id?: string
+          created_at?: string
+          current_amount?: number
+          deadline?: string | null
+          id?: string
+          target_amount?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "circle_goals_circle_id_fkey"
+            columns: ["circle_id"]
+            isOneToOne: false
+            referencedRelation: "circles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       circle_members: {
         Row: {
           circle_id: string
           id: string
           joined_at: string
           user_id: string
+          xp: number | null
         }
         Insert: {
           circle_id: string
           id?: string
           joined_at?: string
           user_id: string
+          xp?: number | null
         }
         Update: {
           circle_id?: string
           id?: string
           joined_at?: string
           user_id?: string
+          xp?: number | null
         }
         Relationships: [
           {

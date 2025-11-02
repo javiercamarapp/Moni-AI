@@ -1,0 +1,409 @@
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ArrowLeft, UserPlus, Plus, Trophy, Target, Users, Share2 } from "lucide-react";
+import { toast } from "sonner";
+
+const CircleDetails = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [circle, setCircle] = useState<any>(null);
+  const [members, setMembers] = useState<any[]>([]);
+  const [challenges, setChallenges] = useState<any[]>([]);
+  const [goals, setGoals] = useState<any[]>([]);
+  const [user, setUser] = useState<any>(null);
+  const [isMember, setIsMember] = useState(false);
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [showCreateChallengeDialog, setShowCreateChallengeDialog] = useState(false);
+  const [challengeTitle, setChallengeTitle] = useState("");
+  const [challengeDescription, setChallengeDescription] = useState("");
+  const [challengeXP, setChallengeXP] = useState("20");
+
+  useEffect(() => {
+    fetchCircleData();
+  }, [id]);
+
+  const fetchCircleData = async () => {
+    try {
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (!currentUser) {
+        navigate('/auth');
+        return;
+      }
+      setUser(currentUser);
+
+      // Fetch circle details
+      const { data: circleData, error: circleError } = await supabase
+        .from('circles')
+        .select('*')
+        .eq('id', id)
+        .maybeSingle();
+
+      if (circleError) throw circleError;
+      if (!circleData) {
+        toast.error('Círculo no encontrado');
+        navigate('/social');
+        return;
+      }
+      setCircle(circleData);
+
+      // Fetch members
+      const { data: membersData, error: membersError } = await supabase
+        .from('circle_members')
+        .select(`
+          *,
+          profiles:user_id (full_name, username, avatar_url)
+        `)
+        .eq('circle_id', id)
+        .order('xp', { ascending: false });
+
+      if (membersError) throw membersError;
+      setMembers(membersData || []);
+
+      // Check if current user is a member
+      const isMemberCheck = membersData?.some(m => m.user_id === currentUser.id);
+      setIsMember(isMemberCheck || false);
+
+      // Fetch challenges
+      const { data: challengesData, error: challengesError } = await supabase
+        .from('circle_challenges')
+        .select('*')
+        .eq('circle_id', id)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+      if (challengesError) throw challengesError;
+      setChallenges(challengesData || []);
+
+      // Fetch goals
+      const { data: goalsData, error: goalsError } = await supabase
+        .from('circle_goals')
+        .select('*')
+        .eq('circle_id', id)
+        .order('created_at', { ascending: false });
+
+      if (goalsError) throw goalsError;
+      setGoals(goalsData || []);
+    } catch (error: any) {
+      console.error('Error fetching circle data:', error);
+      toast.error('Error al cargar el círculo');
+    }
+  };
+
+  const handleJoinCircle = async () => {
+    if (!user || !id) return;
+
+    try {
+      const { error } = await supabase
+        .from('circle_members')
+        .insert({
+          circle_id: id,
+          user_id: user.id,
+          xp: 0
+        });
+
+      if (error) throw error;
+
+      // Update member count
+      await supabase
+        .from('circles')
+        .update({ member_count: (circle?.member_count || 0) + 1 })
+        .eq('id', id);
+
+      toast.success('¡Te has unido al círculo!');
+      fetchCircleData();
+    } catch (error: any) {
+      console.error('Error joining circle:', error);
+      toast.error('Error al unirse al círculo');
+    }
+  };
+
+  const handleCreateChallenge = async () => {
+    if (!user || !id || !challengeTitle.trim()) {
+      toast.error('Por favor completa el título del reto');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('circle_challenges')
+        .insert({
+          circle_id: id,
+          title: challengeTitle,
+          description: challengeDescription,
+          xp_reward: parseInt(challengeXP) || 20,
+          created_by: user.id,
+          is_active: true
+        });
+
+      if (error) throw error;
+
+      toast.success('Reto creado exitosamente');
+      setShowCreateChallengeDialog(false);
+      setChallengeTitle("");
+      setChallengeDescription("");
+      setChallengeXP("20");
+      fetchCircleData();
+    } catch (error: any) {
+      console.error('Error creating challenge:', error);
+      toast.error('Error al crear el reto');
+    }
+  };
+
+  const handleShareCircle = () => {
+    const inviteUrl = `${window.location.origin}/circle/${id}`;
+    if (navigator.share) {
+      navigator.share({
+        title: `Únete al círculo ${circle?.name}`,
+        text: `¡Únete a nuestro círculo "${circle?.name}" en Moni AI! 🚀`,
+        url: inviteUrl
+      });
+    } else {
+      navigator.clipboard.writeText(inviteUrl);
+      toast.success('Enlace copiado al portapapeles');
+    }
+  };
+
+  if (!circle) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600">Cargando...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen pb-8 animate-fade-in">
+      {/* Header */}
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <button
+            onClick={() => navigate('/social')}
+            className="flex items-center gap-2 text-gray-700 hover:text-gray-900 mb-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="text-sm font-medium">Volver a Social</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="mx-auto px-4 py-2 space-y-4" style={{ maxWidth: '600px' }}>
+        {/* Circle Header */}
+        <div className="bg-white rounded-2xl shadow-sm p-4">
+          <div className="flex justify-between items-start mb-3">
+            <div className="flex-1">
+              <h1 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-1">
+                💬 {circle.name}
+              </h1>
+              <p className="text-gray-600 text-sm">
+                {circle.member_count} miembros · Categoría: {circle.category}
+              </p>
+              {circle.description && (
+                <p className="text-gray-600 text-xs mt-2">{circle.description}</p>
+              )}
+            </div>
+          </div>
+          
+          <div className="flex gap-2">
+            {!isMember ? (
+              <Button
+                onClick={handleJoinCircle}
+                className="flex-1 bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Unirme al círculo
+              </Button>
+            ) : (
+              <>
+                <Button
+                  onClick={handleShareCircle}
+                  className="flex-1 bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9"
+                >
+                  <UserPlus className="h-4 w-4 mr-1" />
+                  Invitar miembro
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Group Progress */}
+        {goals.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-sm p-4">
+            <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
+              <Target className="h-4 w-4 text-primary" />
+              Progreso grupal
+            </h2>
+            {goals.map((goal) => {
+              const progress = (Number(goal.current_amount) / Number(goal.target_amount)) * 100;
+              return (
+                <div key={goal.id} className="mb-4 last:mb-0">
+                  <p className="text-gray-600 text-xs mb-2">
+                    Meta: {goal.title}
+                  </p>
+                  <Progress value={Math.min(progress, 100)} className="h-3 mb-2" />
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-700">{progress.toFixed(0)}% completado</span>
+                    <span className="text-gray-500">
+                      ${Number(goal.current_amount).toLocaleString()} / ${Number(goal.target_amount).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Active Challenges */}
+        <div className="bg-white rounded-2xl shadow-sm p-4">
+          <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
+            <Trophy className="h-4 w-4 text-yellow-600" />
+            Retos activos
+          </h2>
+          {challenges.length === 0 ? (
+            <p className="text-gray-600 text-xs text-center py-4">
+              No hay retos activos. {isMember && '¡Crea el primero!'}
+            </p>
+          ) : (
+            <div className="space-y-2 mb-3">
+              {challenges.map((challenge) => (
+                <div key={challenge.id} className="p-3 border rounded-xl flex justify-between items-center">
+                  <div className="flex-1">
+                    <span className="text-xs text-gray-900 font-medium block">
+                      Reto "{challenge.title}"
+                    </span>
+                    {challenge.description && (
+                      <span className="text-xs text-gray-500">{challenge.description}</span>
+                    )}
+                  </div>
+                  <span className="text-xs text-green-600 font-medium ml-2">
+                    +{challenge.xp_reward} XP
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+          {isMember && (
+            <Button
+              onClick={() => setShowCreateChallengeDialog(true)}
+              className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9"
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              Crear nuevo reto
+            </Button>
+          )}
+        </div>
+
+        {/* Members */}
+        <div className="bg-white rounded-2xl shadow-sm p-4">
+          <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
+            <Users className="h-4 w-4 text-primary" />
+            Miembros del círculo
+          </h2>
+          {members.length === 0 ? (
+            <p className="text-gray-600 text-xs text-center py-4">
+              No hay miembros en este círculo aún
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {members.map((member, index) => (
+                <div key={member.id} className="flex items-center gap-3 p-2 rounded-xl bg-gray-50">
+                  <span className="text-xs font-bold w-6 text-center text-gray-600">
+                    {index === 0 ? '🏆' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
+                  </span>
+                  <Avatar className="h-8 w-8 border border-gray-200">
+                    <AvatarImage src={member.profiles?.avatar_url} />
+                    <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
+                      {(member.profiles?.full_name || 'U').substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-gray-900">
+                      {member.profiles?.full_name || 'Usuario'}
+                    </p>
+                    {member.profiles?.username && (
+                      <p className="text-[10px] text-gray-500">@{member.profiles.username}</p>
+                    )}
+                  </div>
+                  <span className="text-xs font-bold text-primary">
+                    {member.xp} XP
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Back Button */}
+        <Button
+          onClick={() => navigate('/social')}
+          variant="outline"
+          className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-10"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Volver a Círculos
+        </Button>
+      </div>
+
+      {/* Create Challenge Dialog */}
+      <Dialog open={showCreateChallengeDialog} onOpenChange={setShowCreateChallengeDialog}>
+        <DialogContent className="max-w-[320px] rounded-3xl border-none shadow-2xl p-6">
+          <DialogHeader className="space-y-2">
+            <DialogTitle className="text-center text-lg font-bold">Crear Reto</DialogTitle>
+            <DialogDescription className="text-center text-xs text-muted-foreground">
+              Define un nuevo desafío para el círculo
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 pt-2">
+            <div>
+              <label className="text-xs font-medium text-gray-700 mb-1 block">Título *</label>
+              <Input
+                placeholder="Ej: Ahorra $100 diarios"
+                value={challengeTitle}
+                onChange={(e) => setChallengeTitle(e.target.value)}
+                maxLength={100}
+                className="rounded-xl text-sm"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-700 mb-1 block">Descripción</label>
+              <Input
+                placeholder="Describe el reto (opcional)"
+                value={challengeDescription}
+                onChange={(e) => setChallengeDescription(e.target.value)}
+                maxLength={200}
+                className="rounded-xl text-sm"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-700 mb-1 block">XP a ganar *</label>
+              <Input
+                type="number"
+                placeholder="20"
+                value={challengeXP}
+                onChange={(e) => setChallengeXP(e.target.value)}
+                min="1"
+                max="1000"
+                className="rounded-xl text-sm"
+              />
+            </div>
+            <Button 
+              onClick={handleCreateChallenge}
+              disabled={!challengeTitle.trim()}
+              className="w-full bg-white text-foreground hover:bg-white/90 rounded-2xl shadow-md font-medium disabled:opacity-50"
+            >
+              Crear reto
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default CircleDetails;

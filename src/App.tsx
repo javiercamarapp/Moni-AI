@@ -56,6 +56,7 @@ import FixedExpenses from './pages/FixedExpenses';
 import VariableExpenses from './pages/VariableExpenses';
 import AntExpenses from './pages/AntExpenses';
 import ImpulsiveExpenses from './pages/ImpulsiveExpenses';
+import CircleDetails from './pages/CircleDetails';
 
 import NotFound from "./pages/NotFound";
 
@@ -131,6 +132,7 @@ function App() {
           <Route path="/variable-expenses" element={<VariableExpenses />} />
           <Route path="/ant-expenses" element={<AntExpenses />} />
           <Route path="/impulsive-expenses" element={<ImpulsiveExpenses />} />
+          <Route path="/circle/:id" element={<CircleDetails />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

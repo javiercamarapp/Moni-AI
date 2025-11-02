@@ -849,10 +849,14 @@ const Social = () => {
             {circles.length > 0 && (
               <div className="space-y-2 mb-3">
                 {circles.map((circle) => (
-                  <div key={circle.id} className="p-3 border rounded-xl flex justify-between items-center">
+                  <button
+                    key={circle.id}
+                    onClick={() => navigate(`/circle/${circle.id}`)}
+                    className="w-full p-3 border rounded-xl flex justify-between items-center hover:border-primary/30 hover:bg-primary/5 transition-all"
+                  >
                     <span className="text-xs text-gray-900">💬 Círculo "{circle.name}"</span>
                     <span className="text-xs text-gray-500">{circle.member_count} miembros</span>
-                  </div>
+                  </button>
                 ))}
               </div>
             )}
