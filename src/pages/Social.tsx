@@ -281,9 +281,6 @@ const Social = () => {
                   </Button>
                 )}
                 
-                <p className="text-[10px] text-gray-600 mt-0.5">
-                  {user?.email || "usuario@ejemplo.com"}
-                </p>
                 <div className="flex items-center gap-1 mt-0.5">
                   <span className="text-[9px] text-gray-500">Score Moni:</span>
                   <span className={`text-[10px] font-semibold ${getScoreColor(scoreMoni)}`}>
