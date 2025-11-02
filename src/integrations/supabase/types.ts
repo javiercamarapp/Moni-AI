@@ -932,6 +932,33 @@ export type Database = {
           },
         ]
       }
+      user_achievements: {
+        Row: {
+          achievement_id: number
+          achievement_name: string
+          id: string
+          unlocked: boolean
+          unlocked_at: string | null
+          user_id: string
+        }
+        Insert: {
+          achievement_id: number
+          achievement_name: string
+          id?: string
+          unlocked?: boolean
+          unlocked_at?: string | null
+          user_id: string
+        }
+        Update: {
+          achievement_id?: number
+          achievement_name?: string
+          id?: string
+          unlocked?: boolean
+          unlocked_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_aspirations: {
         Row: {
           created_at: string

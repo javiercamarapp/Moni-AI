@@ -33,7 +33,16 @@ const Social = () => {
   const [circleName, setCircleName] = useState("");
   const [circleDescription, setCircleDescription] = useState("");
   const [circleCategory, setCircleCategory] = useState("");
+  const [showAchievementUnlocked, setShowAchievementUnlocked] = useState(false);
+  const [unlockedAchievement, setUnlockedAchievement] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const achievementsList = [
+    { id: 1, name: "Ahorrista Nivel 1", xp: 100, icon: "💰", desc: "Primeros 100 XP" },
+    { id: 2, name: "Finanzas al Día", xp: 300, icon: "📊", desc: "Alcanza 300 XP" },
+    { id: 3, name: "Estratega", xp: 600, icon: "🧠", desc: "Suma 600 XP" },
+    { id: 4, name: "Maestro del Dinero", xp: 1000, icon: "👑", desc: "Alcanza 1000 XP totales" }
+  ];
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -568,6 +577,9 @@ const Social = () => {
       // Update local state
       setUserPoints(newPoints);
 
+      // Check for newly unlocked achievements
+      await checkAndUnlockAchievements(newPoints);
+
       // Create friend activity
       const { data: profileData } = await supabase
         .from('profiles')
@@ -588,6 +600,52 @@ const Social = () => {
     } catch (error: any) {
       console.error('Error completing challenge:', error);
       toast.error('Error al completar el reto');
+    }
+  };
+
+  const checkAndUnlockAchievements = async (currentXP: number) => {
+    if (!user) return;
+
+    for (const achievement of achievementsList) {
+      if (currentXP >= achievement.xp) {
+        // Check if already unlocked
+        const { data: existing } = await supabase
+          .from('user_achievements')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('achievement_id', achievement.id)
+          .maybeSingle();
+
+        if (!existing) {
+          // Unlock new achievement
+          const { error } = await supabase
+            .from('user_achievements')
+            .insert({
+              user_id: user.id,
+              achievement_id: achievement.id,
+              achievement_name: achievement.name,
+              unlocked: true,
+              unlocked_at: new Date().toISOString()
+            });
+
+          if (!error) {
+            // Show achievement unlocked animation
+            setUnlockedAchievement(achievement);
+            setShowAchievementUnlocked(true);
+            setTimeout(() => setShowAchievementUnlocked(false), 3000);
+
+            // Create friend activity
+            await supabase
+              .from('friend_activity')
+              .insert({
+                user_id: user.id,
+                activity_type: 'achievement_unlocked',
+                description: `desbloqueó el logro "${achievement.name}"`,
+                xp_earned: 0
+              });
+          }
+        }
+      }
     }
   };
 
@@ -852,6 +910,47 @@ const Social = () => {
             </div>
           )}
 
+          {/* Achievements Section */}
+          <div className="bg-white rounded-2xl shadow-sm p-4">
+            <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-2">
+              <Trophy className="h-4 w-4 text-yellow-600" />
+              Logros
+            </h2>
+            <p className="text-gray-600 text-xs mb-3">
+              Desbloquea insignias al completar retos y acumular XP.
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              {achievementsList.map((achievement) => {
+                const unlocked = userPoints >= achievement.xp;
+                return (
+                  <div
+                    key={achievement.id}
+                    className={`p-3 border rounded-xl flex flex-col items-center justify-center text-center transition-all duration-500 ${
+                      unlocked 
+                        ? 'bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200 shadow-md animate-scale-in' 
+                        : 'bg-gray-50 border-gray-200 opacity-60'
+                    }`}
+                  >
+                    <div className={`text-3xl mb-1 transition-transform duration-300 ${unlocked ? 'scale-110' : 'opacity-40'}`}>
+                      {achievement.icon}
+                    </div>
+                    <p className="font-medium text-gray-900 text-xs">{achievement.name}</p>
+                    <p className="text-[10px] text-gray-500">{achievement.desc}</p>
+                    {unlocked ? (
+                      <span className="mt-1 text-green-600 text-[10px] font-semibold flex items-center gap-1">
+                        ✅ Desbloqueado
+                      </span>
+                    ) : (
+                      <span className="mt-1 text-gray-400 text-[10px]">
+                        {achievement.xp - userPoints} XP restantes
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Group Goals Section */}
           <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
             <div className="flex items-center justify-between mb-3">
@@ -1110,6 +1209,21 @@ const Social = () => {
             </Button>
           </div>
         </div>
+
+        {/* Achievement Unlocked Toast */}
+        {showAchievementUnlocked && unlockedAchievement && (
+          <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 animate-scale-in">
+            <div className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-white px-6 py-4 rounded-2xl shadow-2xl border-2 border-yellow-300">
+              <div className="flex items-center gap-3">
+                <div className="text-4xl animate-bounce">{unlockedAchievement.icon}</div>
+                <div>
+                  <p className="font-bold text-sm">¡Logro Desbloqueado!</p>
+                  <p className="text-xs opacity-90">{unlockedAchievement.name}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Create Circle Dialog */}
         <Dialog open={showCreateCircleDialog} onOpenChange={setShowCreateCircleDialog}>
