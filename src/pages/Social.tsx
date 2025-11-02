@@ -293,12 +293,6 @@ const Social = () => {
               </div>
             </div>
 
-            {/* Bio/Description */}
-            <div className="mt-2 pt-2 border-t border-gray-200">
-              <p className="text-[10px] text-gray-600">
-                {profile?.bio || user?.user_metadata?.bio || "Mejorando mis finanzas con Moni AI 🚀"}
-              </p>
-            </div>
 
             {/* Level Badge & Monthly Ranking */}
             <div className="mt-2 pt-2 border-t border-gray-200">
