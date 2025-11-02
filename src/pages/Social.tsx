@@ -37,9 +37,11 @@ const Social = () => {
   const [unlockedAchievement, setUnlockedAchievement] = useState<any>(null);
   const [showXPGain, setShowXPGain] = useState(false);
   const [xpGainAmount, setXPGainAmount] = useState(0);
+  const [socialToast, setSocialToast] = useState<{ show: boolean; userName: string; type: string; xp: number; challenge?: string }>({ show: false, userName: '', type: '', xp: 0 });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const achievementSoundRef = useRef<HTMLAudioElement>(null);
   const xpSoundRef = useRef<HTMLAudioElement>(null);
+  const socialToastSoundRef = useRef<HTMLAudioElement>(null);
 
   const achievementsList = [
     { id: 1, name: "Ahorrista Nivel 1", xp: 100, icon: "💰", desc: "Primeros 100 XP" },
@@ -730,6 +732,43 @@ const Social = () => {
     }
   };
 
+  const handleReaction = async (activityId: string, reactionType: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // Play social XP sound
+    if (socialToastSoundRef.current) {
+      socialToastSoundRef.current.currentTime = 0;
+      socialToastSoundRef.current.volume = 0.25;
+      socialToastSoundRef.current.play().catch(() => {});
+    }
+
+    // Haptic feedback
+    if (navigator.vibrate) {
+      navigator.vibrate(20);
+    }
+
+    toast.success(`Reacción enviada ${reactionType}`);
+  };
+
+  const showSocialToast = (userName: string, type: string, xp: number, challenge?: string) => {
+    setSocialToast({ show: true, userName, type, xp, challenge });
+    
+    if (socialToastSoundRef.current) {
+      socialToastSoundRef.current.currentTime = 0;
+      socialToastSoundRef.current.volume = 0.25;
+      socialToastSoundRef.current.play().catch(() => {});
+    }
+
+    if (navigator.vibrate) {
+      navigator.vibrate(20);
+    }
+
+    setTimeout(() => {
+      setSocialToast({ show: false, userName: '', type: '', xp: 0 });
+    }, 3000);
+  };
+
   return (
     <>
       <div className="min-h-screen pb-24 animate-fade-in">
@@ -1173,30 +1212,74 @@ const Social = () => {
             )}
           </div>
 
-          {/* Friend Activity */}
-          {friendActivity.length > 0 && (
-            <div className="bg-white rounded-2xl shadow-sm p-4">
-              <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
-                <MessageCircle className="h-4 w-4 text-primary" />
-                Actividad de tus amigos
+          {/* Friend Activity - Interactive */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <MessageCircle className="h-5 w-5 text-primary" />
+                👥 Actividad de amigos
               </h2>
-              <ul className="space-y-2">
-                {friendActivity.slice(0, 5).map((activity: any) => (
-                  <li key={activity.id} className="text-xs text-gray-700 flex items-start gap-2">
-                    <span>
-                      {activity.activity_type === 'challenge_completed' && '🏁'}
-                      {activity.activity_type === 'debt_paid' && '💳'}
-                      {activity.activity_type === 'achievement_unlocked' && '🧠'}
-                    </span>
-                    <span>
-                      {activity.profiles?.full_name || 'Usuario'} {activity.description}
-                      {activity.xp_earned > 0 && ` (+${activity.xp_earned} XP)`}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 text-xs">
+                Ver todo
+              </Button>
             </div>
-          )}
+
+            {friendActivity.length > 0 ? (
+              <div className="space-y-4">
+                {friendActivity.map((activity) => (
+                  <div key={activity.id} className="border-b border-gray-100 pb-4 last:border-0">
+                    <p className="text-sm text-gray-800 mb-1">
+                      <strong className="font-medium">{activity.profiles?.username || activity.profiles?.full_name || 'Usuario'}</strong>{' '}
+                      <span className="text-gray-600">{activity.description}</span>
+                    </p>
+                    <p className="text-xs text-gray-500 mb-2">
+                      {activity.xp_earned > 0 && `+${activity.xp_earned} XP • `}
+                      {new Date(activity.created_at).toLocaleDateString('es-MX', { 
+                        month: 'short', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </p>
+
+                    {/* Reactions */}
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={() => handleReaction(activity.id, '👏')}
+                        className="hover:scale-110 transition-transform text-lg"
+                      >
+                        👏
+                      </button>
+                      <button 
+                        onClick={() => handleReaction(activity.id, '🔥')}
+                        className="hover:scale-110 transition-transform text-lg"
+                      >
+                        🔥
+                      </button>
+                      <button 
+                        onClick={() => handleReaction(activity.id, '💬')}
+                        className="hover:scale-110 transition-transform text-lg"
+                      >
+                        💬
+                      </button>
+                      <span className="text-xs text-gray-500 ml-2">0 reacciones</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500 text-sm">
+                  Aún no hay actividad de amigos. Agrega amigos para ver su progreso.
+                </p>
+              </div>
+            )}
+
+            <p className="text-xs text-gray-500 pt-2 border-t">
+              Las actualizaciones se generan automáticamente cuando tus amigos completan retos o desbloquean logros.
+            </p>
+          </div>
 
           {/* Círculos Moni */}
           <div className="bg-white rounded-2xl shadow-sm p-4">
@@ -1271,6 +1354,28 @@ const Social = () => {
           </div>
         )}
 
+        {/* Social Toast Notification */}
+        {socialToast.show && (
+          <div 
+            className="fixed right-4 bottom-8 bg-white/90 backdrop-blur-md border border-gray-100 rounded-2xl p-4 shadow-xl z-50 flex items-center gap-2 animate-in slide-in-from-right duration-500"
+            style={{ maxWidth: '320px' }}
+          >
+            <span className="text-xl">
+              {socialToast.type === 'reaction' && '👏'}
+              {socialToast.type === 'comment' && '💬'}
+              {socialToast.type === 'achievement' && '🏅'}
+              {socialToast.type === 'join_circle' && '💬'}
+            </span>
+            <p className="text-sm font-medium text-gray-900">
+              <strong>{socialToast.userName}</strong>{' '}
+              {socialToast.type === 'reaction' && 'reaccionó a tu progreso'}
+              {socialToast.type === 'comment' && `comentó tu reto${socialToast.challenge ? ` "${socialToast.challenge}"` : ''}`}
+              {socialToast.type === 'achievement' && `felicitó tu logro${socialToast.challenge ? ` "${socialToast.challenge}"` : ''}`}
+              {socialToast.type === 'join_circle' && `se unió a tu círculo${socialToast.challenge ? ` "${socialToast.challenge}"` : ''}`}
+            </p>
+          </div>
+        )}
+
         {/* Hidden audio elements */}
         <audio 
           ref={achievementSoundRef}
@@ -1279,6 +1384,11 @@ const Social = () => {
         />
         <audio 
           ref={xpSoundRef}
+          preload="auto"
+          src="https://cdn.pixabay.com/audio/2022/03/15/audio_3b7f0b1df4.mp3"
+        />
+        <audio 
+          ref={socialToastSoundRef}
           preload="auto"
           src="https://cdn.pixabay.com/audio/2022/03/15/audio_3b7f0b1df4.mp3"
         />
