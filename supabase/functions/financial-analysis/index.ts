@@ -411,8 +411,17 @@ Ejemplo formato:
     const debtComponent = totalDebt > 0 ? Math.max(0, Math.min(20, 20 - (financialBurden / 5))) : 20;
     scoreMoni += debtComponent;
     
-    // Gasto y control (20%)
-    const controlComponent = Math.min(20, (100 - fixedExpensesPercentage) / 5);
+    // Gasto y control (20 pts)
+    // Calcular % de gastos fijos sobre INGRESOS (no sobre gastos totales)
+    const fixedExpensesOnIncome = monthlyIncome > 0 ? (fixedExpenses / monthlyIncome) * 100 : 0;
+    
+    // Control se basa en:
+    // 1. Tener gastos fijos categorizados = bueno (organización)
+    // 2. Que esos gastos no excedan 60% de ingresos = ideal
+    // Fórmula: 20 pts base - penalización por exceder 60% de ingresos
+    const controlComponent = fixedExpenses > 0 
+      ? Math.max(0, Math.min(20, 20 - Math.max(0, (fixedExpensesOnIncome - 60) / 3)))
+      : 10; // 10 pts si no hay gastos categorizados (neutro, no penaliza organización inicial)
     scoreMoni += controlComponent;
     
     // Crecimiento (15%)
@@ -432,6 +441,8 @@ Ejemplo formato:
       liquidityComponent: liquidityComponent.toFixed(2) + '/15',
       avgSavingsLiquidity: avgSavingsLiquidity.toFixed(2) + '/30',
       debtComponent: debtComponent.toFixed(2) + '/20',
+      fixedExpenses: fixedExpenses.toFixed(2),
+      fixedExpensesOnIncome: fixedExpensesOnIncome.toFixed(2) + '% (ideal < 60%)',
       controlComponent: controlComponent.toFixed(2) + '/20',
       growthComponent: growthComponent.toFixed(2) + '/15',
       behaviorComponent: behaviorComponent.toFixed(2) + '/15',
