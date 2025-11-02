@@ -358,7 +358,7 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
       {/* Details Dialog */}
       <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
         <DialogContent 
-          className={`max-w-[380px] rounded-3xl border-none shadow-2xl p-6 bg-gradient-to-br ${selectedComponent?.colors?.gradient || 'from-gray-100 to-gray-200'}`}
+          className={`w-[calc(100vw-2rem)] max-w-[380px] mx-4 rounded-3xl border-none shadow-2xl p-6 bg-gradient-to-br ${selectedComponent?.colors?.gradient || 'from-gray-100 to-gray-200'}`}
         >
           <DialogHeader className="space-y-2">
             <DialogTitle className="text-center text-xl font-bold flex items-center justify-center gap-2 text-white">
