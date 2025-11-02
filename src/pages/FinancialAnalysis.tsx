@@ -1630,6 +1630,7 @@ export default function FinancialAnalysis() {
             </div>
 
             {/* 3. PROYECCIONES CON ESCENARIOS - Siempre mostrar con datos en caché */}
+            <div className="lg:col-span-2">
             {(() => {
               console.log('🔍 RENDERIZANDO FORECAST:', {
                 hasForecast: !!analysis?.forecast,
@@ -1647,6 +1648,7 @@ export default function FinancialAnalysis() {
               
               return <ForecastWidget {...forecastProps} />;
             })()}
+            </div>
 
             {/* 5. PRESUPUESTO VIVO */}
             <BudgetProgressWidget {...(analysis?.budgetProgress || {})} isLoading={loading} />
