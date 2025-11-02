@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { Camera, Users, TrendingUp, Zap, Calendar, Trophy, Target, ChevronRight, Medal } from "lucide-react";
+import { Camera, Users, TrendingUp, Zap, Calendar, Trophy, Target, ChevronRight, Medal, Sparkles, MessageCircle, Plus, Share2, Gift } from "lucide-react";
 import { toast } from "sonner";
 
 const Social = () => {
@@ -25,6 +25,14 @@ const Social = () => {
   const [friendsRankings, setFriendsRankings] = useState<any[]>([]);
   const [generalRankings, setGeneralRankings] = useState<any[]>([]);
   const [userPoints, setUserPoints] = useState<number>(0);
+  const [monthlyChallenges, setMonthlyChallenges] = useState<any[]>([]);
+  const [recommendedChallenge, setRecommendedChallenge] = useState<any>(null);
+  const [friendActivity, setFriendActivity] = useState<any[]>([]);
+  const [circles, setCircles] = useState<any[]>([]);
+  const [showCreateCircleDialog, setShowCreateCircleDialog] = useState(false);
+  const [circleName, setCircleName] = useState("");
+  const [circleDescription, setCircleDescription] = useState("");
+  const [circleCategory, setCircleCategory] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -193,6 +201,54 @@ const Social = () => {
           });
           setGeneralRankings(enrichedGeneralRank);
         }
+
+        // Fetch monthly challenges
+        const { data: challengesData } = await supabase
+          .from('monthly_challenges')
+          .select('*')
+          .eq('month', currentMonth)
+          .eq('year', currentYear)
+          .order('points', { ascending: false });
+
+        if (challengesData) {
+          setMonthlyChallenges(challengesData);
+          // Set recommended challenge (first one)
+          if (challengesData.length > 0) {
+            setRecommendedChallenge(challengesData[0]);
+          }
+        }
+
+        // Fetch friend activity
+        if (friendships && friendships.length > 0) {
+          const friendIds = friendships.map(f => f.friend_id);
+          const { data: activityData } = await supabase
+            .from('friend_activity')
+            .select(`
+              *,
+              profiles:user_id (full_name, username)
+            `)
+            .in('user_id', friendIds)
+            .order('created_at', { ascending: false })
+            .limit(10);
+
+          if (activityData) {
+            setFriendActivity(activityData);
+          }
+        }
+
+        // Fetch circles
+        const { data: circlesData } = await supabase
+          .from('circles')
+          .select(`
+            *,
+            circle_members (count)
+          `)
+          .order('member_count', { ascending: false })
+          .limit(5);
+
+        if (circlesData) {
+          setCircles(circlesData);
+        }
       }
     };
 
@@ -319,6 +375,81 @@ const Social = () => {
   };
 
   const xpData = calculateXPProgress();
+
+  const handleJoinChallenge = async (challengeId: string) => {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase
+        .from('user_challenge_progress')
+        .insert({
+          user_id: user.id,
+          challenge_id: challengeId,
+          completed: false
+        });
+
+      if (error) throw error;
+      toast.success('¡Te has unido al reto!');
+    } catch (error: any) {
+      console.error('Error joining challenge:', error);
+      toast.error('Error al unirse al reto');
+    }
+  };
+
+  const handleCreateCircle = async () => {
+    if (!user || !circleName.trim() || !circleCategory.trim()) {
+      toast.error('Por favor completa todos los campos obligatorios');
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('circles')
+        .insert({
+          user_id: user.id,
+          name: circleName,
+          description: circleDescription,
+          category: circleCategory,
+          member_count: 1
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Add creator as member
+      await supabase
+        .from('circle_members')
+        .insert({
+          circle_id: data.id,
+          user_id: user.id
+        });
+
+      setCircles([data, ...circles]);
+      setShowCreateCircleDialog(false);
+      setCircleName("");
+      setCircleDescription("");
+      setCircleCategory("");
+      toast.success('Círculo creado exitosamente');
+    } catch (error: any) {
+      console.error('Error creating circle:', error);
+      toast.error('Error al crear círculo');
+    }
+  };
+
+  const handleShareInvite = () => {
+    const inviteUrl = window.location.origin + '/auth';
+    if (navigator.share) {
+      navigator.share({
+        title: 'Únete a Moni AI',
+        text: '¡Únete a Moni AI y mejora tus finanzas! 🚀',
+        url: inviteUrl
+      });
+    } else {
+      navigator.clipboard.writeText(inviteUrl);
+      toast.success('Enlace copiado al portapapeles');
+    }
+  };
 
   return (
     <>
@@ -468,6 +599,52 @@ const Social = () => {
             </div>
           </div>
 
+          {/* Recommended by Moni AI */}
+          {recommendedChallenge && (
+            <div className="bg-white rounded-2xl shadow-sm p-4">
+              <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                Recomendado por Moni AI
+              </h2>
+              <p className="text-gray-600 text-xs mb-3">
+                Haz el reto "{recommendedChallenge.title}" y gana +{recommendedChallenge.points} XP.
+              </p>
+              <Button
+                onClick={() => handleJoinChallenge(recommendedChallenge.id)}
+                className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9"
+              >
+                Unirme ahora
+              </Button>
+            </div>
+          )}
+
+          {/* Monthly Challenges */}
+          {monthlyChallenges.length > 0 && (
+            <div className="bg-white rounded-2xl shadow-sm p-4">
+              <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-2">
+                <Trophy className="h-4 w-4 text-yellow-600" />
+                Retos del Mes
+              </h2>
+              <p className="text-gray-600 text-xs mb-3">
+                Participa en los desafíos activos y gana XP para subir en el ranking.
+              </p>
+              <div className="space-y-2 mb-3">
+                {monthlyChallenges.slice(0, 3).map((challenge) => (
+                  <div key={challenge.id} className="p-3 border rounded-xl flex justify-between items-center">
+                    <span className="text-xs text-gray-900">Reto "{challenge.title}"</span>
+                    <span className="text-xs text-green-600 font-medium">+{challenge.points} XP</span>
+                  </div>
+                ))}
+              </div>
+              <Button
+                onClick={() => navigate('/logros')}
+                className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9"
+              >
+                Ver todos los retos activos
+              </Button>
+            </div>
+          )}
+
           {/* Group Goals Section */}
           <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
             <div className="flex items-center justify-between mb-3">
@@ -568,135 +745,195 @@ const Social = () => {
           </div>
 
           {/* Friends Monthly Ranking */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Trophy className="h-4 w-4 text-yellow-600" />
-                <h3 className="text-sm font-semibold text-gray-900">Ranking Mensual entre Amigos</h3>
-              </div>
-            </div>
+          <div className="bg-white rounded-2xl shadow-sm p-4">
+            <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-2">
+              <Trophy className="h-4 w-4 text-yellow-600" />
+              Ranking Mensual entre Amigos
+            </h2>
+            <p className="text-gray-600 text-xs mb-3">
+              Top 5 de tus amigos según los puntos obtenidos este mes.
+            </p>
 
             {friendsRankings.length === 0 ? (
-              <div className="text-center py-4">
+              <div className="text-center py-2">
                 <p className="text-xs text-gray-600">
                   Completa retos para aparecer en el ranking
                 </p>
               </div>
             ) : (
-              <div className="space-y-2">
+              <ul className="space-y-2">
                 {friendsRankings.slice(0, 5).map((ranking) => {
                   const isCurrentUser = ranking.user_id === user?.id;
+                  const icon = ranking.ranking === 1 ? '🥇' :
+                              ranking.ranking === 2 ? '🥈' :
+                              ranking.ranking === 3 ? '🥉' :
+                              `${ranking.ranking}️⃣`;
                   return (
-                    <div
-                      key={ranking.user_id}
-                      className={`flex items-center gap-3 p-2 rounded-xl ${
-                        isCurrentUser ? 'bg-primary/5 border border-primary/20' : 'bg-gray-50'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 flex-1">
-                        <span className={`text-xs font-bold w-6 text-center ${
-                          ranking.ranking === 1 ? 'text-yellow-600' :
-                          ranking.ranking === 2 ? 'text-gray-500' :
-                          ranking.ranking === 3 ? 'text-amber-700' :
-                          'text-gray-600'
-                        }`}>
-                          {ranking.ranking === 1 ? '🥇' :
-                           ranking.ranking === 2 ? '🥈' :
-                           ranking.ranking === 3 ? '🥉' :
-                           `#${ranking.ranking}`}
-                        </span>
-                        <Avatar className="h-8 w-8 border border-gray-200">
-                          <AvatarImage src={ranking.avatar_url} />
-                          <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
-                            {ranking.full_name.substring(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <p className="text-xs font-semibold text-gray-900">
-                            {isCurrentUser ? 'Tú' : ranking.full_name}
-                          </p>
-                          <p className="text-[10px] text-gray-500">
-                            {ranking.challenges_completed} retos completados
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs font-bold text-primary">
-                          {ranking.total_points} pts
-                        </p>
-                      </div>
-                    </div>
+                    <li key={ranking.user_id} className="text-xs text-gray-700">
+                      {icon} {isCurrentUser ? 'Tú' : ranking.full_name} – {ranking.total_points} XP
+                    </li>
                   );
                 })}
-              </div>
+              </ul>
             )}
           </div>
 
           {/* General Monthly Ranking */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Medal className="h-4 w-4 text-blue-600" />
-                <h3 className="text-sm font-semibold text-gray-900">Ranking Mensual General</h3>
-              </div>
-            </div>
+          <div className="bg-white rounded-2xl shadow-sm p-4">
+            <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-2">
+              <Medal className="h-4 w-4 text-blue-600" />
+              Ranking Mensual General
+            </h2>
+            <p className="text-gray-600 text-xs mb-3">
+              Clasificación general de todos los usuarios de Moni AI.
+            </p>
 
             {generalRankings.length === 0 ? (
-              <div className="text-center py-4">
+              <div className="text-center py-2">
                 <p className="text-xs text-gray-600">
                   Completa retos para aparecer en el ranking
                 </p>
               </div>
             ) : (
-              <div className="space-y-2">
+              <ul className="space-y-2">
                 {generalRankings.slice(0, 5).map((ranking) => {
                   const isCurrentUser = ranking.user_id === user?.id;
+                  const icon = ranking.ranking === 1 ? '🥇' :
+                              ranking.ranking === 2 ? '🥈' :
+                              ranking.ranking === 3 ? '🥉' :
+                              `${ranking.ranking}️⃣`;
                   return (
-                    <div
-                      key={ranking.user_id}
-                      className={`flex items-center gap-3 p-2 rounded-xl ${
-                        isCurrentUser ? 'bg-primary/5 border border-primary/20' : 'bg-gray-50'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 flex-1">
-                        <span className={`text-xs font-bold w-6 text-center ${
-                          ranking.ranking === 1 ? 'text-yellow-600' :
-                          ranking.ranking === 2 ? 'text-gray-500' :
-                          ranking.ranking === 3 ? 'text-amber-700' :
-                          'text-gray-600'
-                        }`}>
-                          {ranking.ranking === 1 ? '🥇' :
-                           ranking.ranking === 2 ? '🥈' :
-                           ranking.ranking === 3 ? '🥉' :
-                           `#${ranking.ranking}`}
-                        </span>
-                        <Avatar className="h-8 w-8 border border-gray-200">
-                          <AvatarImage src={ranking.avatar_url} />
-                          <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
-                            {ranking.full_name.substring(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <p className="text-xs font-semibold text-gray-900">
-                            {isCurrentUser ? 'Tú' : ranking.full_name}
-                          </p>
-                          <p className="text-[10px] text-gray-500">
-                            {ranking.challenges_completed} retos completados
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs font-bold text-blue-600">
-                          {ranking.total_points} pts
-                        </p>
-                      </div>
-                    </div>
+                    <li key={ranking.user_id} className="text-xs text-gray-700">
+                      {icon} {isCurrentUser ? 'Tú' : ranking.full_name} – {ranking.total_points} XP
+                    </li>
                   );
                 })}
-              </div>
+              </ul>
             )}
           </div>
+
+          {/* Friend Activity */}
+          {friendActivity.length > 0 && (
+            <div className="bg-white rounded-2xl shadow-sm p-4">
+              <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
+                <MessageCircle className="h-4 w-4 text-primary" />
+                Actividad de tus amigos
+              </h2>
+              <ul className="space-y-2">
+                {friendActivity.slice(0, 5).map((activity: any) => (
+                  <li key={activity.id} className="text-xs text-gray-700 flex items-start gap-2">
+                    <span>
+                      {activity.activity_type === 'challenge_completed' && '🏁'}
+                      {activity.activity_type === 'debt_paid' && '💳'}
+                      {activity.activity_type === 'achievement_unlocked' && '🧠'}
+                    </span>
+                    <span>
+                      {activity.profiles?.full_name || 'Usuario'} {activity.description}
+                      {activity.xp_earned > 0 && ` (+${activity.xp_earned} XP)`}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Círculos Moni */}
+          <div className="bg-white rounded-2xl shadow-sm p-4">
+            <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-2">
+              <Users className="h-4 w-4 text-primary" />
+              Círculos Moni
+            </h2>
+            <p className="text-gray-600 text-xs mb-3">
+              Únete o crea comunidades donde otros usuarios comparten metas similares.
+            </p>
+            {circles.length > 0 && (
+              <div className="space-y-2 mb-3">
+                {circles.map((circle) => (
+                  <div key={circle.id} className="p-3 border rounded-xl flex justify-between items-center">
+                    <span className="text-xs text-gray-900">💬 Círculo "{circle.name}"</span>
+                    <span className="text-xs text-gray-500">{circle.member_count} miembros</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            <Button
+              onClick={() => setShowCreateCircleDialog(true)}
+              className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9 flex items-center justify-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Crear un Círculo Moni
+            </Button>
+          </div>
+
+          {/* Invite and Earn XP */}
+          <div className="bg-white rounded-2xl shadow-sm p-4 text-center">
+            <h2 className="font-semibold text-gray-900 flex items-center justify-center gap-2 text-sm mb-2">
+              <Gift className="h-4 w-4 text-primary" />
+              Invita y gana XP
+            </h2>
+            <p className="text-gray-600 text-xs mb-3">
+              Invita a tus amigos a Moni AI y gana +50 XP cuando completen su primer reto.
+            </p>
+            <Button
+              onClick={handleShareInvite}
+              className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9 flex items-center justify-center gap-2"
+            >
+              <Share2 className="h-4 w-4" />
+              Compartir enlace
+            </Button>
+          </div>
         </div>
+
+        {/* Create Circle Dialog */}
+        <Dialog open={showCreateCircleDialog} onOpenChange={setShowCreateCircleDialog}>
+          <DialogContent className="max-w-[320px] rounded-3xl border-none shadow-2xl p-6">
+            <DialogHeader className="space-y-2">
+              <DialogTitle className="text-center text-lg font-bold">Crear Círculo Moni</DialogTitle>
+              <DialogDescription className="text-center text-xs text-muted-foreground">
+                Crea una comunidad para compartir metas
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3 pt-2">
+              <div>
+                <label className="text-xs font-medium text-gray-700 mb-1 block">Nombre *</label>
+                <Input
+                  placeholder="Ej: Ahorro para viajar"
+                  value={circleName}
+                  onChange={(e) => setCircleName(e.target.value)}
+                  maxLength={50}
+                  className="rounded-xl text-sm"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-700 mb-1 block">Categoría *</label>
+                <Input
+                  placeholder="Ej: Ahorro, Inversión, etc."
+                  value={circleCategory}
+                  onChange={(e) => setCircleCategory(e.target.value)}
+                  maxLength={30}
+                  className="rounded-xl text-sm"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-700 mb-1 block">Descripción</label>
+                <Input
+                  placeholder="Describe tu círculo (opcional)"
+                  value={circleDescription}
+                  onChange={(e) => setCircleDescription(e.target.value)}
+                  maxLength={200}
+                  className="rounded-xl text-sm"
+                />
+              </div>
+              <Button 
+                onClick={handleCreateCircle}
+                disabled={!circleName.trim() || !circleCategory.trim()}
+                className="w-full bg-white text-foreground hover:bg-white/90 rounded-2xl shadow-md font-medium disabled:opacity-50"
+              >
+                Guardar círculo
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Username Creation Dialog */}
         <Dialog open={showUsernameDialog} onOpenChange={setShowUsernameDialog}>
