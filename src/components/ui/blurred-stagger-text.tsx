@@ -8,12 +8,14 @@ export const BlurredStagger = ({
   text = "we love hextaui.com ❤️",
   loop = false,
   loopDelay = 3000,
+  className = "text-base",
 }: {
-  text: string;
+  text: string | string[];
   loop?: boolean;
   loopDelay?: number;
+  className?: string;
 }) => {
-  const headingText = text;
+  const textLines = Array.isArray(text) ? text : [text];
   const [key, setKey] = useState(0);
  
   useEffect(() => {
@@ -50,23 +52,27 @@ export const BlurredStagger = ({
   return (
     <>
       <div>
-        <motion.h1
+        <motion.div
           key={key}
           variants={container}
           initial="hidden"
           animate="show"
-          className="text-base"
+          className={className}
         >
-          {headingText.split("").map((char, index) => (
-            <motion.span
-              key={index}
-              variants={letterAnimation}
-              transition={{ duration: 0.3 }}
-            >
-              {char === " " ? "\u00A0" : char}
-            </motion.span>
+          {textLines.map((line, lineIndex) => (
+            <div key={lineIndex}>
+              {line.split("").map((char, index) => (
+                <motion.span
+                  key={`${lineIndex}-${index}`}
+                  variants={letterAnimation}
+                  transition={{ duration: 0.3 }}
+                >
+                  {char === " " ? "\u00A0" : char}
+                </motion.span>
+              ))}
+            </div>
           ))}
-        </motion.h1>
+        </motion.div>
       </div>
     </>
   );

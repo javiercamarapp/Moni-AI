@@ -105,14 +105,15 @@ const Onboarding = () => {
           ) : currentSlide === 1 ? (
             /* Second slide - BlurredStagger effect with loop */
             <div className="text-center space-y-4 px-4">
-              <h1 className="text-4xl md:text-5xl font-bold leading-tight text-white">
+              <div className="text-6xl md:text-8xl font-bold leading-tight text-white">
                 <BlurredStagger
-                  text="Toma el control de tus finanzas."
+                  text={["Toma el control", "de tus finanzas."]}
                   loop={true}
                   loopDelay={3000}
+                  className="text-6xl md:text-8xl font-bold text-center"
                 />
-              </h1>
-              <p className="text-lg md:text-xl text-white leading-relaxed font-medium">
+              </div>
+              <p className="text-lg md:text-xl text-white leading-relaxed font-medium pt-4">
                 Moni analiza tus hábitos, clasifica tus gastos y te enseña a mejorar cada día.
               </p>
             </div>
