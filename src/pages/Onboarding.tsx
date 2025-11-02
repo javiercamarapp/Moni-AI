@@ -81,7 +81,7 @@ const Onboarding = () => {
 
 
       {/* Bottom navigation - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 pb-16 px-8 z-20">
+      <div className="fixed bottom-0 left-0 right-0 pb-20 px-8 z-20">
         <div className="max-w-md mx-auto">
           <div className="flex items-center justify-between">
             {/* Dot indicators */}
@@ -98,22 +98,22 @@ const Onboarding = () => {
               ))}
             </div>
 
-            {/* Skip and Next buttons together */}
-            <div className="flex items-center gap-4">
-              {/* Skip button */}
-              <button
-                onClick={() => navigate('/auth')}
-                className="text-white text-sm font-medium hover:text-white/80 transition-colors"
-              >
-                Saltar
-              </button>
-              
+            {/* Next button with Skip below */}
+            <div className="flex flex-col items-center gap-1">
               {/* Next button */}
               <button
                 onClick={handleNext}
                 className="w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:scale-105 transition-all shadow-xl"
               >
                 <ArrowRight className="w-6 h-6 text-gray-900" />
+              </button>
+              
+              {/* Skip button */}
+              <button
+                onClick={() => navigate('/auth')}
+                className="text-white text-xs font-medium hover:text-white/80 transition-colors"
+              >
+                Saltar
               </button>
             </div>
           </div>
