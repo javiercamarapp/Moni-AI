@@ -81,9 +81,9 @@ const Onboarding = () => {
 
 
       {/* Bottom navigation - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 pb-8 px-8 z-20">
+      <div className="fixed bottom-0 left-0 right-0 pb-12 px-8 z-20">
         <div className="max-w-md mx-auto">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-4">
             {/* Dot indicators */}
             <div className="flex items-center gap-2">
               {slides.map((_, index) => (
