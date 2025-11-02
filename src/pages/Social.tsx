@@ -387,7 +387,7 @@ const Social = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => navigate('/new-goal')}
-                  className="h-7 text-xs text-primary hover:text-primary/80"
+                  className="h-7 text-xs rounded-full hover:bg-gray-900 hover:text-white transition-colors"
                 >
                   + Nueva
                 </Button>
@@ -404,7 +404,7 @@ const Social = () => {
                 </p>
                 <Button
                   onClick={() => navigate('/new-goal')}
-                  className="h-9 px-4 text-xs rounded-2xl bg-white text-foreground hover:bg-white/90 shadow-md font-medium"
+                  className="h-9 px-4 text-xs bg-gray-900 hover:bg-gray-800 text-white rounded-2xl"
                 >
                   Invita a tus amigos a una meta
                 </Button>
