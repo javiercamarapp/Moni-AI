@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Award } from "lucide-react";
+import { ArrowLeft, Users } from "lucide-react";
 
-const SocialAchievements = () => {
+const Groups = () => {
   const navigate = useNavigate();
 
   return (
@@ -18,10 +18,10 @@ const SocialAchievements = () => {
             </button>
             <div>
               <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
-                Logros Sociales
+                Grupos
               </h1>
               <p className="text-xs text-gray-600">
-                Tus logros y comparaciones con amigos
+                Crea o únete a grupos financieros
               </p>
             </div>
           </div>
@@ -30,14 +30,14 @@ const SocialAchievements = () => {
 
       <div className="mx-auto px-4 py-4" style={{ maxWidth: '600px' }}>
         <div className="text-center py-16 space-y-3">
-          <div className="mx-auto w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center">
-            <Award className="h-10 w-10 text-yellow-600" />
+          <div className="mx-auto w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center">
+            <Users className="h-10 w-10 text-blue-600" />
           </div>
           <h2 className="text-lg font-semibold text-gray-900">
             Próximamente
           </h2>
           <p className="text-sm text-gray-600 max-w-xs mx-auto">
-            Aquí podrás ver tus logros y compararlos con tus amigos
+            Aquí podrás crear grupos y compartir objetivos financieros
           </p>
         </div>
       </div>
@@ -45,4 +45,4 @@ const SocialAchievements = () => {
   );
 };
 
-export default SocialAchievements;
+export default Groups;
