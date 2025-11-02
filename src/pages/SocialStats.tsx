@@ -147,18 +147,26 @@ const SocialStats = () => {
 
   return (
     <div className="min-h-screen pb-24 animate-fade-in bg-gradient-to-b from-[#E5DEFF]/30 to-white">
-      {/* Header superior con logo */}
-      <div className="p-2 flex justify-between items-start">
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm overflow-hidden w-16 h-10">
-          <img src={heroAuth} alt="Moni" className="w-full h-full object-cover" />
+      {/* Header */}
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-white/50 rounded-full transition-colors"
+            >
+              <ArrowLeft className="h-5 w-5 text-gray-900" />
+            </button>
+            <div>
+              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
+                Estadísticas
+              </h1>
+              <p className="text-xs text-gray-600">
+                Tu progreso y rankings
+              </p>
+            </div>
+          </div>
         </div>
-        
-        <button
-          onClick={() => navigate(-1)}
-          className="p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white shadow-sm transition-colors"
-        >
-          <ArrowLeft className="h-5 w-5 text-gray-900" />
-        </button>
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-2 space-y-4">
