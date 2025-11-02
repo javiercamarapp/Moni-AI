@@ -217,7 +217,7 @@ const CircleChat = () => {
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)] animate-pulse -z-10" style={{ animationDuration: '4s' }} />
       
       {/* Header */}
-      <div className="sticky top-0 z-40 border-b border-white/20 animate-pulse" style={{ animationDuration: '4s' }}>
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/95 to-[#FFDEE2]/95 backdrop-blur-md border-b border-white/20 animate-pulse" style={{ animationDuration: '4s' }}>
         <div className="w-full px-4 py-3 sm:py-4">
           <div className="flex items-center gap-3">
             <button
@@ -296,20 +296,20 @@ const CircleChat = () => {
         </div>
 
         {/* Input Area - Fixed at bottom */}
-        <div className="fixed bottom-0 left-0 right-0 p-3 border-t border-white/30 z-50">
+        <div className="fixed bottom-0 left-0 right-0 p-1.5 bg-gradient-to-b from-[#E5DEFF]/95 to-[#FFDEE2]/95 backdrop-blur-md border-t border-white/30 z-50">
           <div className="w-full max-w-4xl mx-auto">
             <form
               onSubmit={handleSendMessage}
-              className="flex items-center gap-2 rounded-full bg-white/95 backdrop-blur-sm px-3 py-2 shadow-lg"
+              className="flex items-center gap-1 rounded-full bg-white/95 backdrop-blur-sm px-2 py-1 shadow-lg"
             >
               <Button
                 variant="ghost"
                 size="icon"
                 type="button"
                 onClick={handleCameraClick}
-                className="h-9 w-9 flex-shrink-0 rounded-full hover:bg-gray-100"
+                className="h-6 w-6 flex-shrink-0 rounded-full hover:bg-gray-100"
               >
-                <Camera className="h-5 w-5 text-gray-600" />
+                <Camera className="h-3.5 w-3.5 text-gray-600" />
               </Button>
 
               <Button
@@ -317,26 +317,26 @@ const CircleChat = () => {
                 size="icon"
                 type="button"
                 onClick={handleAttachFile}
-                className="h-9 w-9 flex-shrink-0 rounded-full hover:bg-gray-100"
+                className="h-6 w-6 flex-shrink-0 rounded-full hover:bg-gray-100"
               >
-                <Paperclip className="h-5 w-5 text-gray-600" />
+                <Paperclip className="h-3.5 w-3.5 text-gray-600" />
               </Button>
 
               <ChatInput
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Mensaje..."
-                className="flex-1 min-h-[36px] max-h-[36px] resize-none bg-transparent border-0 px-3 py-2 shadow-none focus-visible:ring-0 text-sm placeholder:text-gray-400"
+                className="flex-1 min-h-[18px] max-h-[18px] resize-none bg-transparent border-0 px-2 py-0 shadow-none focus-visible:ring-0 text-xs placeholder:text-gray-400"
                 rows={1}
               />
 
               <Button 
                 type="submit" 
                 size="icon"
-                className="flex-shrink-0 bg-primary hover:bg-primary/90 rounded-full h-9 w-9 p-0"
+                className="flex-shrink-0 bg-primary hover:bg-primary/90 rounded-full h-6 w-6 p-0"
                 disabled={!newMessage.trim()}
               >
-                <Send className="h-4 w-4" />
+                <Send className="h-3 w-3" />
               </Button>
             </form>
           </div>
