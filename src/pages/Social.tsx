@@ -249,11 +249,129 @@ const Social = () => {
         if (circlesData) {
           setCircles(circlesData);
         }
+
+        // Setup realtime subscription for rankings
+        const rankingsChannel = supabase
+          .channel('realtime-rankings')
+          .on(
+            'postgres_changes',
+            { 
+              event: '*', 
+              schema: 'public', 
+              table: 'monthly_rankings' 
+            },
+            () => {
+              // Reload rankings when any change occurs
+              fetchRankingsData(user.id, currentMonth, currentYear, friendships);
+            }
+          )
+          .subscribe();
+
+        // Return cleanup function
+        return () => {
+          supabase.removeChannel(rankingsChannel);
+        };
       }
     };
 
-    fetchUserData();
+    let cleanup: (() => void) | undefined;
+    
+    fetchUserData().then((cleanupFn) => {
+      cleanup = cleanupFn;
+    });
+
+    return () => {
+      if (cleanup) cleanup();
+    };
   }, []);
+
+  const fetchRankingsData = async (userId: string, month: number, year: number, friendships: any) => {
+    // Get user's points for current month
+    const { data: userRanking } = await supabase
+      .from('monthly_rankings')
+      .select('total_points, challenges_completed')
+      .eq('user_id', userId)
+      .eq('month', month)
+      .eq('year', year)
+      .maybeSingle();
+
+    if (userRanking) {
+      setUserPoints(userRanking.total_points);
+    }
+
+    // Get friend IDs for friends ranking
+    if (friendships && friendships.length > 0) {
+      const friendIds = friendships.map((f: any) => f.friend_id);
+      const allUserIds = [...friendIds, userId];
+
+      // Get rankings for friends
+      const { data: friendsRankData } = await supabase
+        .from('monthly_rankings')
+        .select(`
+          user_id,
+          total_points,
+          challenges_completed
+        `)
+        .in('user_id', allUserIds)
+        .eq('month', month)
+        .eq('year', year)
+        .order('total_points', { ascending: false })
+        .limit(10);
+
+      if (friendsRankData) {
+        // Fetch profiles for friends
+        const { data: friendProfiles } = await supabase
+          .from('profiles')
+          .select('id, username, full_name, avatar_url')
+          .in('id', friendsRankData.map(r => r.user_id));
+
+        const enrichedFriendsRank = friendsRankData.map((rank, index) => {
+          const profile = friendProfiles?.find(p => p.id === rank.user_id);
+          return {
+            ...rank,
+            ranking: index + 1,
+            username: profile?.username || 'usuario',
+            full_name: profile?.full_name || 'Usuario',
+            avatar_url: profile?.avatar_url
+          };
+        });
+        setFriendsRankings(enrichedFriendsRank);
+      }
+    }
+
+    // Get general rankings (top 10)
+    const { data: generalRankData } = await supabase
+      .from('monthly_rankings')
+      .select(`
+        user_id,
+        total_points,
+        challenges_completed
+      `)
+      .eq('month', month)
+      .eq('year', year)
+      .order('total_points', { ascending: false })
+      .limit(10);
+
+    if (generalRankData) {
+      // Fetch profiles for general rankings
+      const { data: generalProfiles } = await supabase
+        .from('profiles')
+        .select('id, username, full_name, avatar_url')
+        .in('id', generalRankData.map(r => r.user_id));
+
+      const enrichedGeneralRank = generalRankData.map((rank, index) => {
+        const profile = generalProfiles?.find(p => p.id === rank.user_id);
+        return {
+          ...rank,
+          ranking: index + 1,
+          username: profile?.username || 'usuario',
+          full_name: profile?.full_name || 'Usuario',
+          avatar_url: profile?.avatar_url
+        };
+      });
+      setGeneralRankings(enrichedGeneralRank);
+    }
+  };
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -753,6 +871,22 @@ const Social = () => {
             <p className="text-gray-600 text-xs mb-3">
               Top 5 de tus amigos según los puntos obtenidos este mes.
             </p>
+
+            {/* Personal Progress Bar */}
+            <div className="mb-4 p-3 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl border border-primary/20">
+              <div className="flex justify-between items-center text-xs text-gray-700 mb-2">
+                <span className="font-semibold">Tu progreso este mes</span>
+                <span className="font-bold text-primary">{userPoints} XP</span>
+              </div>
+              <Progress 
+                value={Math.min((userPoints / 1000) * 100, 100)} 
+                className="h-2"
+                indicatorClassName="bg-gradient-to-r from-primary to-primary/80 transition-all duration-700"
+              />
+              <p className="text-[10px] text-gray-500 mt-1">
+                Meta mensual: 1,000 XP
+              </p>
+            </div>
 
             {friendsRankings.length === 0 ? (
               <div className="text-center py-2">
