@@ -25,6 +25,15 @@ const Onboarding = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Preload background images
+  useEffect(() => {
+    const images = [onboardingHero, onboardingControl, onboardingGoals, onboardingCoach];
+    images.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
+
   const slides = [
     {
       image: aiImage,
