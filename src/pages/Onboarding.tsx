@@ -3,32 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
-import heroAuth from '@/assets/moni-ai-logo.png';
+import onboardingHero from '@/assets/onboarding-hero.png';
 import aiImage from '@/assets/onboarding-ai.png';
-
-const OnboardingSlide = ({ image, title, description }: { image: string, title: string, description: string }) => (
-  <div className="px-4 mt-8">
-    <div className="bg-white/95 backdrop-blur-sm rounded-2xl border border-border shadow-xl p-6 md:p-8">
-      <div className="flex flex-col items-center space-y-6">
-        <div className="w-full">
-          <img 
-            src={image} 
-            alt={title}
-            className="w-full max-w-sm mx-auto h-auto object-contain rounded-lg"
-          />
-        </div>
-        <div className="text-center space-y-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
-            {title}
-          </h2>
-          <p className="text-base md:text-lg text-gray-700 leading-relaxed max-w-md mx-auto">
-            {description}
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
 
 const Onboarding = () => {
   const [showLogo, setShowLogo] = useState(true);
@@ -88,21 +64,60 @@ const Onboarding = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col relative">
+    <div className="min-h-screen flex flex-col relative overflow-hidden">
+      {/* Background image */}
+      <div 
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: `url(${onboardingHero})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/20" />
+      </div>
 
-      {/* Bottom navigation */}
-      <div className="pb-12 px-8 mt-8">
+      {/* Content */}
+      <div className="flex-1 flex items-center justify-center px-4 py-12 relative z-10">
+        <div className="w-full max-w-md">
+          <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-white/20">
+            {/* Image */}
+            <div className="w-full mb-6">
+              <img 
+                src={slides[currentSlide].image} 
+                alt={slides[currentSlide].title}
+                className="w-full max-w-xs mx-auto h-auto object-contain rounded-xl"
+              />
+            </div>
+            
+            {/* Text content */}
+            <div className="text-center space-y-4">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
+                {slides[currentSlide].title}
+              </h2>
+              <p className="text-base md:text-lg text-gray-700 leading-relaxed">
+                {slides[currentSlide].description}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom navigation - Fixed at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 pb-8 px-8 z-20">
         <div className="max-w-md mx-auto">
-          <div className="flex items-center justify-between">
-            {/* Dot indicators - left aligned */}
+          <div className="flex items-center justify-between mb-3">
+            {/* Dot indicators */}
             <div className="flex items-center gap-2">
               {slides.map((_, index) => (
                 <div
                   key={index}
                   className={`rounded-full transition-all ${
                     index === currentSlide 
-                      ? 'w-8 h-2 bg-white' 
-                      : 'w-2 h-2 bg-gray-600'
+                      ? 'w-8 h-2 bg-white shadow-lg' 
+                      : 'w-2 h-2 bg-white/50'
                   }`}
                 />
               ))}
@@ -111,18 +126,18 @@ const Onboarding = () => {
             {/* Next button */}
             <button
               onClick={handleNext}
-              className="w-14 h-14 rounded-full border-2 border-white flex items-center justify-center hover:bg-white/10 transition-colors"
+              className="w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:bg-white hover:scale-105 transition-all shadow-xl"
             >
-              <ArrowRight className="w-6 h-6 text-white" />
+              <ArrowRight className="w-6 h-6 text-gray-900" />
             </button>
           </div>
           
-          {/* Skip button left aligned below dots */}
+          {/* Skip button */}
           <button
             onClick={() => navigate('/auth')}
-            className="text-gray-700 text-sm font-normal hover:text-gray-900 transition-colors mt-1"
+            className="text-white text-sm font-medium hover:text-white/80 transition-colors backdrop-blur-sm"
           >
-            Skip
+            Saltar
           </button>
         </div>
       </div>
