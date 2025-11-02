@@ -6,6 +6,7 @@ import moniLogo from '/moni-logo.png';
 import onboardingHero from '@/assets/onboarding-hero.png';
 import onboardingControl from '@/assets/onboarding-control.png';
 import onboardingGoals from '@/assets/onboarding-goals.png';
+import onboardingCoach from '@/assets/onboarding-coach.png';
 import aiImage from '@/assets/onboarding-ai.png';
 import { Typewriter } from '@/components/ui/typewriter-text';
 import { BlurredStagger } from '@/components/ui/blurred-stagger-text';
@@ -77,7 +78,8 @@ const Onboarding = () => {
           backgroundImage: `url(${
             currentSlide === 0 ? onboardingHero : 
             currentSlide === 1 ? onboardingControl : 
-            onboardingGoals
+            currentSlide === 2 ? onboardingGoals :
+            onboardingCoach
           })`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -89,7 +91,7 @@ const Onboarding = () => {
       </div>
 
       {/* Content - changes based on currentSlide */}
-      <div className="flex items-start justify-center px-4 pt-20 relative z-10">
+      <div className={`flex ${currentSlide === 3 ? 'items-end pb-40' : 'items-start pt-20'} justify-center px-4 relative z-10 min-h-screen`}>
         <div className="w-full max-w-md space-y-6">
           {currentSlide === 0 ? (
             /* First slide - Typewriter effect */
@@ -138,6 +140,18 @@ const Onboarding = () => {
               </h1>
               <p className="text-lg md:text-xl text-white leading-relaxed font-medium">
                 Crea retos, ahorra con tus amigos y gana puntos cada vez que avanzas.
+              </p>
+            </div>
+          ) : currentSlide === 3 ? (
+            /* Fourth slide - Coach */
+            <div className="text-center space-y-4 px-4">
+              <h1 className="text-3xl md:text-5xl font-bold leading-tight text-white">
+                Tu coach financiero inteligente.
+              </h1>
+              <p className="text-lg md:text-xl text-white leading-relaxed font-medium">
+                Moni te guía, te motiva y celebra tus logros.
+                <br />
+                ¡Comienza hoy tu camino hacia la libertad financiera!
               </p>
             </div>
           ) : null}
