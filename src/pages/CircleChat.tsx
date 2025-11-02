@@ -239,7 +239,7 @@ const CircleChat = () => {
       </div>
 
       {/* Chat Content */}
-      <div className="flex-1 w-full overflow-hidden pb-20 bg-gradient-to-b from-[#E5DEFF]/95 to-[#FFDEE2]/95 backdrop-blur-md">
+      <div className="flex-1 w-full overflow-hidden pb-20">
         <div className="h-full">
           <ChatMessageList smooth>
             {messages.length === 0 ? (
