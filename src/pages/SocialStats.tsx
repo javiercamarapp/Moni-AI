@@ -135,10 +135,36 @@ const SocialStats = () => {
         setGeneralRankings(enrichedGeneralRank);
       }
 
-      // Calculate day streak based on consecutive challenge completions
-      // For now, using level as proxy - in production would track actual consecutive days
-      if (profileData?.level) {
-        setDayStreak(Math.min(profileData.level * 3, 30)); // Mock: 3 days per level, max 30
+      // Calculate day streak based on consecutive completed daily challenges
+      const { data: challengeHistory } = await supabase
+        .from('user_daily_challenges')
+        .select('challenge_date, completed')
+        .eq('user_id', user.id)
+        .order('challenge_date', { ascending: false })
+        .limit(30);
+
+      if (challengeHistory && challengeHistory.length > 0) {
+        let streak = 0;
+        const today = new Date();
+        
+        // Contar días consecutivos desde hoy hacia atrás
+        for (let i = 0; i < challengeHistory.length; i++) {
+          const challengeDate = new Date(challengeHistory[i].challenge_date);
+          const expectedDate = new Date(today);
+          expectedDate.setDate(today.getDate() - i);
+          
+          // Verificar si es el día esperado y si está completado
+          if (
+            challengeDate.toISOString().split('T')[0] === expectedDate.toISOString().split('T')[0] &&
+            challengeHistory[i].completed
+          ) {
+            streak++;
+          } else {
+            break; // Romper la racha
+          }
+        }
+        
+        setDayStreak(streak);
       }
     };
 

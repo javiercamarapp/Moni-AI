@@ -241,6 +241,59 @@ serve(async (req) => {
       });
     }
 
+    // Verificar si es una respuesta de aceptación de reto
+    const acceptKeywords = ['acepto', 'aceptar', 'si', 'sí', 'ok', 'vale', 'dale', 'claro'];
+    const isAcceptingChallenge = acceptKeywords.some(keyword => 
+      sanitizedMessage.toLowerCase().includes(keyword)
+    );
+
+    if (isAcceptingChallenge) {
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Buscar reto pendiente del día
+      const { data: pendingChallenge } = await supabase
+        .from('user_daily_challenges')
+        .select(`
+          *,
+          daily_challenges (*)
+        `)
+        .eq('user_id', whatsappUser.user_id)
+        .eq('challenge_date', today)
+        .eq('status', 'pending_verification')
+        .maybeSingle();
+
+      if (pendingChallenge) {
+        // Activar el reto
+        const { error: updateError } = await supabase
+          .from('user_daily_challenges')
+          .update({
+            status: 'active',
+            accepted_at: new Date().toISOString()
+          })
+          .eq('id', pendingChallenge.id);
+
+        if (!updateError) {
+          await sendWhatsAppMessage(sanitizedPhone, 
+            `✅ ¡Perfecto! Reto activado: *${pendingChallenge.daily_challenges.title}*\n\n${pendingChallenge.daily_challenges.description}\n\n🤖 La IA verificará automáticamente si lo cumples al final del día. ¡Mucha suerte! 💪`
+          );
+
+          return new Response(JSON.stringify({ status: 'challenge_accepted' }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200
+          });
+        }
+      } else {
+        await sendWhatsAppMessage(sanitizedPhone, 
+          `ℹ️ No tienes retos pendientes por aceptar hoy. El próximo reto llegará mañana.`
+        );
+
+        return new Response(JSON.stringify({ status: 'no_pending_challenge' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200
+        });
+      }
+    }
+
     // Guardar mensaje para procesamiento
     const { error: messageError } = await supabase
       .from('whatsapp_messages')

@@ -101,3 +101,9 @@ verify_jwt = true
 
 [functions.generate-financial-infographic]
 verify_jwt = true
+
+[functions.send-daily-challenge]
+verify_jwt = false
+
+[functions.verify-daily-challenge]
+verify_jwt = false

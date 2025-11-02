@@ -384,6 +384,42 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_challenges: {
+        Row: {
+          category: string | null
+          challenge_type: string
+          created_at: string
+          description: string
+          difficulty: string
+          id: string
+          target_amount: number | null
+          title: string
+          xp_reward: number
+        }
+        Insert: {
+          category?: string | null
+          challenge_type: string
+          created_at?: string
+          description: string
+          difficulty?: string
+          id?: string
+          target_amount?: number | null
+          title: string
+          xp_reward?: number
+        }
+        Update: {
+          category?: string | null
+          challenge_type?: string
+          created_at?: string
+          description?: string
+          difficulty?: string
+          id?: string
+          target_amount?: number | null
+          title?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
       fixed_expenses_config: {
         Row: {
           category_name: string
@@ -1055,6 +1091,56 @@ export type Database = {
             columns: ["challenge_id"]
             isOneToOne: false
             referencedRelation: "monthly_challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_daily_challenges: {
+        Row: {
+          accepted_at: string | null
+          ai_verification_result: Json | null
+          challenge_date: string
+          challenge_id: string
+          completed: boolean
+          created_at: string
+          id: string
+          status: string
+          updated_at: string
+          user_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          ai_verification_result?: Json | null
+          challenge_date?: string
+          challenge_id: string
+          completed?: boolean
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          ai_verification_result?: Json | null
+          challenge_date?: string
+          challenge_id?: string
+          completed?: boolean
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_daily_challenges_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "daily_challenges"
             referencedColumns: ["id"]
           },
         ]
