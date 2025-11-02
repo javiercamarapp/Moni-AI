@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Users, ChevronRight, Plus, Target } from "lucide-react";
+import { ArrowLeft, Users, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -16,20 +15,9 @@ interface Circle {
   member_count: number;
 }
 
-interface GroupGoal {
-  id: string;
-  title: string;
-  target: number;
-  current: number;
-  deadline: string | null;
-  members: number | null;
-  color: string | null;
-}
-
 const Groups = () => {
   const navigate = useNavigate();
   const [circles, setCircles] = useState<Circle[]>([]);
-  const [groupGoals, setGroupGoals] = useState<GroupGoal[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateCircleDialog, setShowCreateCircleDialog] = useState(false);
   const [circleName, setCircleName] = useState("");
@@ -43,22 +31,6 @@ const Groups = () => {
 
   const fetchData = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Fetch group goals
-      const { data: goalsData, error: goalsError } = await supabase
-        .from('goals')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('type', 'group')
-        .order('created_at', { ascending: false });
-
-      if (goalsError) throw goalsError;
-      if (goalsData) {
-        setGroupGoals(goalsData);
-      }
-
       // Fetch circles
       const { data: circlesData, error: circlesError } = await supabase
         .from('circles')
@@ -129,10 +101,10 @@ const Groups = () => {
               </button>
               <div>
                 <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
-                  Grupos y Círculos Moni
+                  Círculos Moni
                 </h1>
                 <p className="text-xs text-gray-600">
-                  Crea o únete a comunidades financieras
+                  Únete o crea comunidades financieras
                 </p>
               </div>
             </div>
@@ -141,139 +113,59 @@ const Groups = () => {
       </div>
 
       <div className="mx-auto px-4 py-4 space-y-4" style={{ maxWidth: '600px' }}>
-        {/* Main Section: Grupos y Círculos Moni */}
+        {/* Círculos Moni Section */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Target className="h-4 w-4 text-primary" />
-              <h3 className="text-sm font-semibold text-gray-900">Grupos y Círculos Moni</h3>
-            </div>
-            {groupGoals.length > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/new-goal')}
-                className="h-7 text-xs bg-white hover:bg-white/90 shadow-md rounded-2xl font-medium"
-              >
-                + Nueva
-              </Button>
-            )}
+          <div className="flex items-center gap-2 mb-3">
+            <Users className="h-5 w-5 text-primary" />
+            <h3 className="text-base font-semibold text-gray-900">Círculos Moni</h3>
           </div>
+          <p className="text-gray-600 text-xs mb-4">
+            Únete o crea comunidades donde otros usuarios comparten metas similares.
+          </p>
 
           {loading ? (
             <div className="text-center py-8">
               <p className="text-xs text-gray-600">Cargando...</p>
             </div>
-          ) : groupGoals.length === 0 ? (
+          ) : circles.length === 0 ? (
             <div className="text-center py-6">
               <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
                 <Users className="h-6 w-6 text-primary" />
               </div>
-              <p className="text-xs text-gray-600 mb-3">
-                Aún no tienes metas grupales creadas
+              <p className="text-xs text-gray-600 mb-4">
+                No hay círculos disponibles aún
               </p>
               <Button
-                onClick={() => navigate('/new-goal')}
+                onClick={() => setShowCreateCircleDialog(true)}
                 className="h-9 px-4 text-xs bg-white text-foreground hover:bg-white/90 shadow-md rounded-2xl font-medium"
               >
-                Invita a tus amigos a una meta
+                <Plus className="h-4 w-4 mr-1" />
+                Crear el primer círculo
               </Button>
             </div>
           ) : (
-            <div className="space-y-2">
-              {groupGoals.map((goal) => {
-                const progress = (Number(goal.current) / Number(goal.target)) * 100;
-                return (
-                  <button
-                    key={goal.id}
-                    onClick={() => navigate(`/goals`)}
-                    className="w-full text-left bg-gradient-to-br from-gray-50 to-white rounded-xl p-3 border border-gray-100 hover:border-primary/20 hover:shadow-md transition-all group"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2 flex-1">
-                        <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${goal.color || 'from-primary/20 to-primary/10'} flex items-center justify-center`}>
-                          <Target className="h-4 w-4 text-primary" />
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="text-xs font-semibold text-gray-900 line-clamp-1">
-                            {goal.title}
-                          </h4>
-                          {goal.members && (
-                            <p className="text-[10px] text-gray-500 flex items-center gap-1">
-                              <Users className="h-3 w-3" />
-                              {goal.members} miembros
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-primary transition-colors" />
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between text-[10px]">
-                        <span className="text-gray-600">
-                          ${Number(goal.current).toLocaleString()}
-                        </span>
-                        <span className="text-gray-500">
-                          ${Number(goal.target).toLocaleString()}
-                        </span>
-                      </div>
-                      <Progress 
-                        value={Math.min(progress, 100)} 
-                        className="h-1.5"
-                        indicatorClassName="bg-gradient-to-r from-primary to-primary/80"
-                      />
-                      <div className="flex items-center justify-between text-[10px]">
-                        <span className="text-primary font-medium">
-                          {progress.toFixed(0)}% completado
-                        </span>
-                        {goal.deadline && (
-                          <span className="text-gray-500">
-                            {new Date(goal.deadline).toLocaleDateString('es-MX', { 
-                              day: 'numeric', 
-                              month: 'short' 
-                            })}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Círculos Moni inside the same section */}
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2 mb-2">
-              <Users className="h-4 w-4 text-primary" />
-              Círculos Moni
-            </h3>
-            <p className="text-gray-600 text-xs mb-3">
-              Únete o crea comunidades donde otros usuarios comparten metas similares.
-            </p>
-            {circles.length > 0 && (
-              <div className="space-y-2 mb-3">
+            <>
+              <div className="space-y-2 mb-4">
                 {circles.map((circle) => (
                   <button
                     key={circle.id}
                     onClick={() => navigate(`/circle/${circle.id}`)}
                     className="w-full p-3 border rounded-xl flex justify-between items-center hover:border-primary/30 hover:bg-primary/5 transition-all"
                   >
-                    <span className="text-xs text-gray-900">💬 Círculo &quot;{circle.name}&quot;</span>
+                    <span className="text-xs text-gray-900">💬 {circle.name}</span>
                     <span className="text-xs text-gray-500">{circle.member_count} miembros</span>
                   </button>
                 ))}
               </div>
-            )}
-            <Button
-              onClick={() => setShowCreateCircleDialog(true)}
-              className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9 flex items-center justify-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              Crear un Círculo Moni
-            </Button>
-          </div>
+              <Button
+                onClick={() => setShowCreateCircleDialog(true)}
+                className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9 flex items-center justify-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Crear un Círculo Moni
+              </Button>
+            </>
+          )}
         </div>
       </div>
 
