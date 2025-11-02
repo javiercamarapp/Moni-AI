@@ -89,29 +89,6 @@ const Onboarding = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative">
-      {/* Logo banner at the top */}
-      <div className="px-4 pt-4">
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden max-w-md mx-auto">
-          <div className="h-24 md:h-32 w-full">
-            <img 
-              src={heroAuth} 
-              alt="Moni" 
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Slide content */}
-      <div className="flex-1 flex items-center justify-center">
-        <div className="w-full max-w-md h-full">
-          <OnboardingSlide 
-            image={slides[currentSlide].image}
-            title={slides[currentSlide].title}
-            description={slides[currentSlide].description}
-          />
-        </div>
-      </div>
 
       {/* Bottom navigation */}
       <div className="pb-12 px-8 mt-8">
