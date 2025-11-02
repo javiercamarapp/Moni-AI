@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -22,8 +21,6 @@ serve(async (req) => {
     console.log('=== PREDICT SAVINGS DEBUG ===');
     console.log('Period:', viewMode, periodLabel);
     console.log('Period data - Ingresos:', totalIngresos, 'Gastos:', totalGastos, 'Balance:', balance);
-    console.log('Period transactions:', transactions?.length || 0);
-    console.log('All historical transactions:', allTransactions?.length || 0);
     
     // Input validation
     if (!userId || typeof userId !== 'string' || !isValidUUID(userId)) {
@@ -53,30 +50,12 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Prepare data summary for AI - período específico para insights
-    const transactionSummary = transactions?.map((t: any) => ({
-      type: t.type,
-      amount: t.amount,
-      date: t.transaction_date,
-      category: t.categories?.name
-    })) || [];
-
-    // Preparar resumen de datos históricos completo
-    const allTransactionsSummary = allTransactions?.map((t: any) => ({
-      type: t.type,
-      amount: t.amount,
-      date: t.transaction_date,
-      category: t.categories?.name
-    })) || [];
-
     // Calcular métricas históricas
     const historicalIngresos = allTransactions?.filter((t: any) => t.type === 'ingreso')
       .reduce((sum: number, t: any) => sum + Number(t.amount), 0) || 0;
     const historicalGastos = allTransactions?.filter((t: any) => t.type === 'gasto')
       .reduce((sum: number, t: any) => sum + Number(t.amount), 0) || 0;
     const historicalBalance = historicalIngresos - historicalGastos;
-
-    console.log('Historical data - Ingresos:', historicalIngresos, 'Gastos:', historicalGastos, 'Balance:', historicalBalance);
 
     // Calcular promedio mensual de ahorro basado en todo el historial
     const oldestDate = allTransactions?.length > 0 
@@ -85,82 +64,26 @@ serve(async (req) => {
     const monthsOfHistory = Math.max(1, Math.ceil((Date.now() - oldestDate.getTime()) / (1000 * 60 * 60 * 24 * 30)));
     const averageMonthlySavings = historicalBalance / monthsOfHistory;
 
-    console.log('Months of history:', monthsOfHistory);
-    console.log('Average monthly savings:', averageMonthlySavings);
-
     // Calcular proyecciones base
     const baseAnualProjection = averageMonthlySavings * 12;
     const baseSemestralProjection = averageMonthlySavings * 6;
 
     console.log('Base projections - Anual:', baseAnualProjection, 'Semestral:', baseSemestralProjection);
 
-    const periodoAnalisis = viewMode === 'mensual' 
-      ? `mes específico (${periodLabel || 'mes actual'})`
-      : `año específico (${periodLabel || 'año actual'})`;
+    // Simplified prompt with tool calling for structured output
+    const prompt = `Analiza estos datos financieros y genera proyecciones de ahorro:
 
-    const prompt = `Eres un analista financiero experto. Genera proyecciones y análisis financieros.
-
-=== CÁLCULOS BASE (YA REALIZADOS) ===
-Promedio mensual de ahorro histórico: $${averageMonthlySavings.toFixed(2)}
-Proyección Anual Base: $${baseAnualProjection.toFixed(2)}
-Proyección Semestral Base: $${baseSemestralProjection.toFixed(2)}
-
-=== DATOS HISTÓRICOS COMPLETOS ===
-- Total transacciones: ${allTransactions?.length || 0}
-- Meses de historial: ${monthsOfHistory}
-- Ingresos históricos totales: $${historicalIngresos.toFixed(2)}
-- Gastos históricos totales: $${historicalGastos.toFixed(2)}
-- Balance/ahorro histórico: $${historicalBalance.toFixed(2)}
-
-=== DATOS DEL PERÍODO ACTUAL (${periodoAnalisis}) ===
+Datos del período actual (${periodLabel}):
 - Ingresos: $${totalIngresos.toFixed(2)}
 - Gastos: $${totalGastos.toFixed(2)}
 - Balance: $${balance.toFixed(2)}
 
-=== INSTRUCCIONES ===
+Datos históricos (${monthsOfHistory} meses):
+- Promedio mensual de ahorro: $${averageMonthlySavings.toFixed(2)}
+- Proyección base anual: $${baseAnualProjection.toFixed(2)}
+- Proyección base semestral: $${baseSemestralProjection.toFixed(2)}
 
-1. PROYECCIONES:
-   - Usa las proyecciones base calculadas: Anual=$${baseAnualProjection.toFixed(2)}, Semestral=$${baseSemestralProjection.toFixed(2)}
-   - Ajusta según tendencia reciente:
-     * Si el balance del período actual es mucho mayor que el promedio histórico → aumenta 10-20%
-     * Si es similar → usa las proyecciones base
-     * Si es menor → reduce 10-20%
-   - IMPORTANTE: Si el usuario ahorró mucho en un mes reciente, la proyección anual debe reflejarlo
-
-2. CONFIANZA:
-   - "alta": Si hay ${monthsOfHistory} meses o más de datos consistentes
-   - "media": Si hay datos pero con variabilidad
-   - "baja": Si hay pocos datos (menos de 3 meses)
-
-3. INSIGHTS (específicos de ${periodLabel}):
-${viewMode === 'mensual' 
-  ? `   - Analiza el comportamiento de ESTE MES
-   - Compara este mes ($${balance.toFixed(2)}) con el promedio mensual histórico ($${averageMonthlySavings.toFixed(2)})
-   - Menciona si fue un mes mejor o peor que el promedio`
-  : `   - Analiza el comportamiento de ESTE AÑO
-   - Compara con el promedio histórico
-   - Identifica tendencias del año`}
-
-Devuelve SOLO este JSON:
-{
-  "proyeccionAnual": [número ajustado de ${baseAnualProjection.toFixed(2)}],
-  "proyeccionSemestral": [número ajustado de ${baseSemestralProjection.toFixed(2)}],
-  "confianza": "alta" | "media" | "baja",
-  "insights": [
-    {
-      "titulo": "string",
-      "metrica": "string",
-      "descripcion": "Análisis del período ${periodLabel}",
-      "tipo": "positivo" | "negativo" | "neutral" | "consejo"
-    }
-  ]
-}
-
-REGLAS:
-- Las proyecciones deben tener sentido matemático
-- Si el usuario ahorra $400k/mes, la proyección anual debe ser cercana a $4.8M
-- Confianza en minúsculas
-- 3-5 insights`;
+Ajusta las proyecciones según la tendencia reciente y genera 3-4 insights específicos.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -173,10 +96,56 @@ REGLAS:
         messages: [
           { 
             role: "system", 
-            content: "Eres un analista financiero experto. Analiza patrones financieros y haz proyecciones realistas de ahorro." 
+            content: "Eres un analista financiero experto. Genera proyecciones realistas y consejos prácticos." 
           },
           { role: "user", content: prompt }
         ],
+        tools: [{
+          type: "function",
+          function: {
+            name: "generate_savings_prediction",
+            description: "Genera proyecciones de ahorro y análisis financiero",
+            parameters: {
+              type: "object",
+              properties: {
+                proyeccionAnual: {
+                  type: "number",
+                  description: "Proyección de ahorro anual en pesos"
+                },
+                proyeccionSemestral: {
+                  type: "number",
+                  description: "Proyección de ahorro semestral en pesos"
+                },
+                confianza: {
+                  type: "string",
+                  enum: ["alta", "media", "baja"],
+                  description: "Nivel de confianza en las proyecciones"
+                },
+                insights: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      titulo: { type: "string", description: "Título del insight" },
+                      metrica: { type: "string", description: "Métrica o dato relevante" },
+                      descripcion: { type: "string", description: "Descripción detallada" },
+                      tipo: { 
+                        type: "string", 
+                        enum: ["positivo", "negativo", "neutral", "consejo"],
+                        description: "Tipo de insight"
+                      }
+                    },
+                    required: ["titulo", "metrica", "descripcion", "tipo"]
+                  },
+                  minItems: 3,
+                  maxItems: 5
+                }
+              },
+              required: ["proyeccionAnual", "proyeccionSemestral", "confianza", "insights"]
+            }
+          }
+        }],
+        tool_choice: { type: "function", function: { name: "generate_savings_prediction" } }
       }),
     });
 
@@ -198,26 +167,50 @@ REGLAS:
         );
       }
 
-      throw new Error(`AI gateway error: ${response.status}`);
+      // En caso de error 500 del gateway, usar fallback
+      console.log("Using fallback predictions due to gateway error");
+      const fallbackPredictions = {
+        proyeccionAnual: baseAnualProjection,
+        proyeccionSemestral: baseSemestralProjection,
+        confianza: monthsOfHistory >= 6 ? "media" : "baja",
+        insights: [
+          {
+            titulo: "Proyección Calculada",
+            metrica: `${monthsOfHistory} meses de datos`,
+            descripcion: `Basado en tu promedio mensual de ahorro de $${averageMonthlySavings.toFixed(2)}`,
+            tipo: "neutral"
+          },
+          {
+            titulo: balance > averageMonthlySavings ? "Buen mes de ahorro" : "Ahorro por debajo del promedio",
+            metrica: `$${balance.toFixed(2)} vs $${averageMonthlySavings.toFixed(2)}`,
+            descripcion: balance > averageMonthlySavings 
+              ? "Este período ahorraste más que tu promedio mensual histórico"
+              : "Este período tu ahorro estuvo por debajo de tu promedio histórico",
+            tipo: balance > averageMonthlySavings ? "positivo" : "negativo"
+          }
+        ]
+      };
+
+      return new Response(
+        JSON.stringify(fallbackPredictions),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const data = await response.json();
-    const aiResponse = data.choices[0].message.content;
-    
-    console.log('AI Response:', aiResponse);
+    console.log('AI Response:', data);
 
-    // Parse AI response
+    // Extract structured output from tool call
     let predictions;
     try {
-      // Extract JSON from response (in case AI adds extra text)
-      const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        predictions = JSON.parse(jsonMatch[0]);
+      const toolCall = data.choices[0].message.tool_calls?.[0];
+      if (toolCall?.function?.arguments) {
+        predictions = JSON.parse(toolCall.function.arguments);
       } else {
-        throw new Error("No JSON found in response");
+        throw new Error("No tool call in response");
       }
     } catch (e) {
-      console.error("Error parsing AI response:", e, "Response:", aiResponse);
+      console.error("Error parsing AI response:", e);
       // Fallback to calculated projections
       predictions = {
         proyeccionAnual: baseAnualProjection,
@@ -227,7 +220,7 @@ REGLAS:
           {
             titulo: "Proyección Calculada",
             metrica: `${monthsOfHistory} meses de datos`,
-            descripcion: `Proyección basada en promedio mensual de ahorro ($${averageMonthlySavings.toFixed(2)}) calculado de ${monthsOfHistory} meses de historial`,
+            descripcion: `Basado en promedio mensual de $${averageMonthlySavings.toFixed(2)}`,
             tipo: "neutral"
           }
         ]
