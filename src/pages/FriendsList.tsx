@@ -28,9 +28,10 @@ const FriendsList = () => {
               </div>
             </div>
             <Button
+              onClick={() => navigate('/add-friend')}
               variant="ghost"
               size="sm"
-              className="rounded-full"
+              className="rounded-full hover:bg-gray-900 hover:text-white transition-colors"
             >
               <UserPlus className="h-4 w-4" />
             </Button>
