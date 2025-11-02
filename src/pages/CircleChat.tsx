@@ -296,20 +296,20 @@ const CircleChat = () => {
         </div>
 
         {/* Input Area - Fixed at bottom */}
-        <div className="fixed bottom-0 left-0 right-0 p-2 bg-gradient-to-b from-[#E5DEFF]/95 to-[#FFDEE2]/95 backdrop-blur-md border-t border-white/30 z-50">
+        <div className="fixed bottom-0 left-0 right-0 p-1 bg-gradient-to-b from-[#E5DEFF]/95 to-[#FFDEE2]/95 backdrop-blur-md border-t border-white/30 z-50">
           <div className="w-full max-w-4xl mx-auto">
             <form
               onSubmit={handleSendMessage}
-              className="flex items-center gap-1.5 rounded-full bg-white/95 backdrop-blur-sm px-2 py-1.5 shadow-sm"
+              className="flex items-center gap-0.5 rounded-full bg-white/95 backdrop-blur-sm px-1 py-0.5 shadow-sm"
             >
               <Button
                 variant="ghost"
                 size="icon"
                 type="button"
                 onClick={handleCameraClick}
-                className="h-7 w-7 flex-shrink-0 rounded-full hover:bg-gray-100"
+                className="h-5 w-5 flex-shrink-0 rounded-full hover:bg-gray-100"
               >
-                <Camera className="h-4 w-4 text-gray-600" />
+                <Camera className="h-3 w-3 text-gray-600" />
               </Button>
 
               <Button
@@ -317,26 +317,26 @@ const CircleChat = () => {
                 size="icon"
                 type="button"
                 onClick={handleAttachFile}
-                className="h-7 w-7 flex-shrink-0 rounded-full hover:bg-gray-100"
+                className="h-5 w-5 flex-shrink-0 rounded-full hover:bg-gray-100"
               >
-                <Paperclip className="h-4 w-4 text-gray-600" />
+                <Paperclip className="h-3 w-3 text-gray-600" />
               </Button>
 
               <ChatInput
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Mensaje..."
-                className="flex-1 min-h-[28px] max-h-[28px] resize-none bg-transparent border-0 px-2 py-0.5 shadow-none focus-visible:ring-0 text-xs placeholder:text-gray-400"
+                className="flex-1 min-h-[18px] max-h-[18px] resize-none bg-transparent border-0 px-1.5 py-0 shadow-none focus-visible:ring-0 text-[10px] placeholder:text-gray-400"
                 rows={1}
               />
 
               <Button 
                 type="submit" 
                 size="icon"
-                className="flex-shrink-0 bg-primary hover:bg-primary/90 rounded-full h-7 w-7 p-0"
+                className="flex-shrink-0 bg-primary hover:bg-primary/90 rounded-full h-5 w-5 p-0"
                 disabled={!newMessage.trim()}
               >
-                <Send className="h-3.5 w-3.5" />
+                <Send className="h-2.5 w-2.5" />
               </Button>
             </form>
           </div>
