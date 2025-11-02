@@ -330,6 +330,9 @@ const Dashboard = () => {
           .limit(1);
         
         setHasNetWorthData((assetsData?.length || 0) > 0 || (liabilitiesData?.length || 0) > 0);
+
+        // Recalcular score automáticamente
+        recalculateScore();
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -337,6 +340,27 @@ const Dashboard = () => {
 
     getUserData();
   }, [navigate]);
+
+  // Recalcular score automáticamente
+  const recalculateScore = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      await supabase.functions.invoke('financial-analysis', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
+
+      // Esperar un momento y recargar la página para mostrar el nuevo score
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.error('Error recalculando score:', error);
+    }
+  };
 
   // Load budget data from category_budgets
   useEffect(() => {
