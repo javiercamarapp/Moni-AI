@@ -1096,7 +1096,7 @@ const Social = () => {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Target className="h-4 w-4 text-primary" />
-                <h3 className="text-sm font-semibold text-gray-900">Metas Grupales</h3>
+                <h3 className="text-sm font-semibold text-gray-900">Grupos y Círculos Moni</h3>
               </div>
               {groupGoals.length > 0 && (
                 <Button
@@ -1188,6 +1188,38 @@ const Social = () => {
                 })}
               </div>
             )}
+
+            {/* Círculos Moni inside the same section */}
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2 mb-2">
+                <Users className="h-4 w-4 text-primary" />
+                Círculos Moni
+              </h3>
+              <p className="text-gray-600 text-xs mb-3">
+                Únete o crea comunidades donde otros usuarios comparten metas similares.
+              </p>
+              {circles.length > 0 && (
+                <div className="space-y-2 mb-3">
+                  {circles.map((circle) => (
+                    <button
+                      key={circle.id}
+                      onClick={() => navigate(`/circle/${circle.id}`)}
+                      className="w-full p-3 border rounded-xl flex justify-between items-center hover:border-primary/30 hover:bg-primary/5 transition-all"
+                    >
+                      <span className="text-xs text-gray-900">💬 Círculo "{circle.name}"</span>
+                      <span className="text-xs text-gray-500">{circle.member_count} miembros</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              <Button
+                onClick={() => setShowCreateCircleDialog(true)}
+                className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9 flex items-center justify-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Crear un Círculo Moni
+              </Button>
+            </div>
           </div>
 
 
@@ -1259,38 +1291,6 @@ const Social = () => {
             <p className="text-xs text-gray-500 pt-2 border-t">
               Las actualizaciones se generan automáticamente cuando tus amigos completan retos o desbloquean logros.
             </p>
-          </div>
-
-          {/* Círculos Moni */}
-          <div className="bg-white rounded-2xl shadow-sm p-4">
-            <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-2">
-              <Users className="h-4 w-4 text-primary" />
-              Círculos Moni
-            </h2>
-            <p className="text-gray-600 text-xs mb-3">
-              Únete o crea comunidades donde otros usuarios comparten metas similares.
-            </p>
-            {circles.length > 0 && (
-              <div className="space-y-2 mb-3">
-                {circles.map((circle) => (
-                  <button
-                    key={circle.id}
-                    onClick={() => navigate(`/circle/${circle.id}`)}
-                    className="w-full p-3 border rounded-xl flex justify-between items-center hover:border-primary/30 hover:bg-primary/5 transition-all"
-                  >
-                    <span className="text-xs text-gray-900">💬 Círculo "{circle.name}"</span>
-                    <span className="text-xs text-gray-500">{circle.member_count} miembros</span>
-                  </button>
-                ))}
-              </div>
-            )}
-            <Button
-              onClick={() => setShowCreateCircleDialog(true)}
-              className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9 flex items-center justify-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              Crear un Círculo Moni
-            </Button>
           </div>
 
           {/* Invite and Earn XP */}
