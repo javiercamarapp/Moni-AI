@@ -438,6 +438,41 @@ export type Database = {
         }
         Relationships: []
       }
+      friend_activity_reactions: {
+        Row: {
+          activity_id: string | null
+          created_at: string | null
+          emoji: string
+          from_user_id: string
+          id: string
+          to_user_id: string
+        }
+        Insert: {
+          activity_id?: string | null
+          created_at?: string | null
+          emoji: string
+          from_user_id: string
+          id?: string
+          to_user_id: string
+        }
+        Update: {
+          activity_id?: string | null
+          created_at?: string | null
+          emoji?: string
+          from_user_id?: string
+          id?: string
+          to_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "friend_activity_reactions_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "friend_activity"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       friendships: {
         Row: {
           created_at: string
@@ -1139,6 +1174,10 @@ export type Database = {
       }
       create_default_income_categories: {
         Args: { p_user_id: string }
+        Returns: undefined
+      }
+      increment_social_xp: {
+        Args: { target_user_id: string; xp_amount?: number }
         Returns: undefined
       }
       insert_bank_connection_secure: {

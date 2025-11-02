@@ -282,9 +282,60 @@ const Social = () => {
           )
           .subscribe();
 
+        // Setup realtime subscription for friend activity
+        const activityChannel = supabase
+          .channel('realtime-friend-activity')
+          .on(
+            'postgres_changes',
+            {
+              event: 'INSERT',
+              schema: 'public',
+              table: 'friend_activity'
+            },
+            () => {
+              // Reload friend activity when new activity is added
+              fetchUserData();
+            }
+          )
+          .subscribe();
+
+        // Setup realtime subscription for reactions
+        const reactionsChannel = supabase
+          .channel('realtime-reactions')
+          .on(
+            'postgres_changes',
+            {
+              event: 'INSERT',
+              schema: 'public',
+              table: 'friend_activity_reactions'
+            },
+            async (payload: any) => {
+              // Show toast notification if the reaction is for current user
+              if (payload.new.to_user_id === user.id) {
+                // Get the user who reacted
+                const { data: fromUser } = await supabase
+                  .from('profiles')
+                  .select('username, full_name')
+                  .eq('id', payload.new.from_user_id)
+                  .single();
+
+                if (fromUser) {
+                  showSocialToast(
+                    fromUser.username || fromUser.full_name || 'Un amigo',
+                    'reaction',
+                    1
+                  );
+                }
+              }
+            }
+          )
+          .subscribe();
+
         // Return cleanup function
         return () => {
           supabase.removeChannel(rankingsChannel);
+          supabase.removeChannel(activityChannel);
+          supabase.removeChannel(reactionsChannel);
         };
       }
     };
@@ -732,23 +783,88 @@ const Social = () => {
     }
   };
 
-  const handleReaction = async (activityId: string, reactionType: string) => {
+  const handleReaction = async (activityId: string, activityAuthorId: string, reactionType: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error('Debes iniciar sesión para reaccionar');
+      return;
+    }
+
+    try {
+      // Insert reaction
+      const { error: reactionError } = await supabase
+        .from('friend_activity_reactions')
+        .insert({
+          activity_id: activityId,
+          from_user_id: user.id,
+          to_user_id: activityAuthorId,
+          emoji: reactionType
+        });
+
+      if (reactionError) {
+        if (reactionError.code === '23505') {
+          toast.info('Ya reaccionaste con este emoji');
+          return;
+        }
+        throw reactionError;
+      }
+
+      // Increment social XP for the activity author
+      const { error: xpError } = await supabase.rpc('increment_social_xp', {
+        target_user_id: activityAuthorId,
+        xp_amount: 1
+      });
+
+      if (xpError) {
+        console.error('Error incrementing XP:', xpError);
+      }
+
+      // Play social XP sound
+      if (socialToastSoundRef.current) {
+        socialToastSoundRef.current.currentTime = 0;
+        socialToastSoundRef.current.volume = 0.25;
+        socialToastSoundRef.current.play().catch(() => {});
+      }
+
+      // Haptic feedback
+      if (navigator.vibrate) {
+        navigator.vibrate(20);
+      }
+
+      toast.success(`Reacción enviada ${reactionType}`);
+    } catch (error: any) {
+      console.error('Error handling reaction:', error);
+      toast.error('Error al enviar reacción');
+    }
+  };
+
+  const fetchFriendActivity = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    // Play social XP sound
-    if (socialToastSoundRef.current) {
-      socialToastSoundRef.current.currentTime = 0;
-      socialToastSoundRef.current.volume = 0.25;
-      socialToastSoundRef.current.play().catch(() => {});
-    }
+    // Get friendships
+    const { data: friendships } = await supabase
+      .from('friendships')
+      .select('friend_id')
+      .eq('user_id', user.id)
+      .eq('status', 'accepted');
 
-    // Haptic feedback
-    if (navigator.vibrate) {
-      navigator.vibrate(20);
-    }
+    if (friendships && friendships.length > 0) {
+      const friendIds = friendships.map(f => f.friend_id);
+      const { data: activityData } = await supabase
+        .from('friend_activity')
+        .select(`
+          *,
+          profiles:user_id (full_name, username)
+        `)
+        .in('user_id', friendIds)
+        .order('created_at', { ascending: false })
+        .limit(10);
 
-    toast.success(`Reacción enviada ${reactionType}`);
+      if (activityData) {
+        setFriendActivity(activityData);
+      }
+    }
   };
 
   const showSocialToast = (userName: string, type: string, xp: number, challenge?: string) => {
@@ -1245,19 +1361,19 @@ const Social = () => {
                     {/* Reactions */}
                     <div className="flex items-center gap-2">
                       <button 
-                        onClick={() => handleReaction(activity.id, '👏')}
+                        onClick={() => handleReaction(activity.id, activity.user_id, '👏')}
                         className="hover:scale-110 transition-transform text-lg"
                       >
                         👏
                       </button>
                       <button 
-                        onClick={() => handleReaction(activity.id, '🔥')}
+                        onClick={() => handleReaction(activity.id, activity.user_id, '🔥')}
                         className="hover:scale-110 transition-transform text-lg"
                       >
                         🔥
                       </button>
                       <button 
-                        onClick={() => handleReaction(activity.id, '💬')}
+                        onClick={() => handleReaction(activity.id, activity.user_id, '💬')}
                         className="hover:scale-110 transition-transform text-lg"
                       >
                         💬
