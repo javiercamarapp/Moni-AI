@@ -5,6 +5,7 @@ import { ArrowRight } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
 import onboardingHero from '@/assets/onboarding-hero.png';
 import aiImage from '@/assets/onboarding-ai.png';
+import { Typewriter } from '@/components/ui/typewriter-text';
 
 const Onboarding = () => {
   const [showLogo, setShowLogo] = useState(true);
@@ -81,13 +82,20 @@ const Onboarding = () => {
 
       {/* Content */}
       <div className="flex-1 flex items-center justify-center px-4 py-20 relative z-10">
-        <div className="w-full max-w-md space-y-6 animate-fade-in">
-          {/* Hero Message Card */}
-          <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-white/30 animate-scale-in hover-lift">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
-              Tu dinero, más inteligente.
+        <div className="w-full max-w-md space-y-6">
+          {/* Hero Message - Typewriter effect without card */}
+          <div className="text-center space-y-4 px-4">
+            <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+              <Typewriter
+                text="Tu dinero, más inteligente."
+                speed={80}
+                loop={true}
+                deleteSpeed={50}
+                delay={3000}
+                className="text-gray-900"
+              />
             </h1>
-            <p className="text-lg md:text-xl text-gray-700 leading-relaxed">
+            <p className="text-lg md:text-xl text-gray-900 leading-relaxed font-medium">
               Con Moni AI, aprende a manejar tus finanzas como un experto, sin complicaciones.
             </p>
           </div>
