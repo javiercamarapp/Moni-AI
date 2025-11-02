@@ -1190,6 +1190,10 @@ export type Database = {
         }
         Returns: string
       }
+      update_circle_goal: {
+        Args: { p_amount: number; p_circle_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

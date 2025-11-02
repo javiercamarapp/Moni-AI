@@ -65,7 +65,7 @@ const CircleDetails = () => {
       }
       setCircle(circleData);
 
-      // Fetch members
+      // Fetch members with profiles
       const { data: membersData, error: membersError } = await supabase
         .from('circle_members')
         .select(`
@@ -139,6 +139,42 @@ const CircleDetails = () => {
           setMessages((prev) => [...prev, payload.new]);
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'circle_goals',
+          filter: `circle_id=eq.${id}`
+        },
+        () => {
+          fetchCircleData();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'circle_members',
+          filter: `circle_id=eq.${id}`
+        },
+        () => {
+          fetchCircleData();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'circle_challenges',
+          filter: `circle_id=eq.${id}`
+        },
+        () => {
+          fetchCircleData();
+        }
+      )
       .subscribe();
 
     return () => {
@@ -203,17 +239,35 @@ const CircleDetails = () => {
     if (!newMessage.trim() || !user || !id) return;
 
     try {
+      const message = newMessage.trim();
+      
+      // Detectar si el mensaje incluye un aporte de dinero
+      const moneyMatch = message.match(/\$?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)/);
+      if (moneyMatch && (message.toLowerCase().includes('aporté') || message.toLowerCase().includes('aporte'))) {
+        const amount = parseFloat(moneyMatch[1].replace(/,/g, ''));
+        
+        // Actualizar la meta del círculo usando la función RPC
+        const { error: rpcError } = await supabase.rpc('update_circle_goal', {
+          p_circle_id: id,
+          p_amount: amount
+        });
+
+        if (rpcError) throw rpcError;
+        
+        toast.success(`¡Aporte de $${amount} registrado! +${Math.max(1, Math.round(amount / 10))} XP`);
+      }
+
+      // Insertar el mensaje en el feed
       await supabase
         .from('friend_activity')
         .insert({
           user_id: user.id,
           activity_type: 'circle_message',
-          description: newMessage.trim(),
+          description: message,
           xp_earned: 0
         });
 
       setNewMessage("");
-      toast.success('Mensaje enviado');
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error('Error al enviar mensaje');
