@@ -91,26 +91,6 @@ const Onboarding = () => {
               Con Moni AI, aprende a manejar tus finanzas como un experto, sin complicaciones.
             </p>
           </div>
-
-          {/* Slide Content Card */}
-          <div className="bg-white/90 backdrop-blur-md rounded-3xl shadow-xl p-6 border border-white/20 hover-lift transition-all">
-            <div className="w-full mb-4">
-              <img 
-                src={slides[currentSlide].image} 
-                alt={slides[currentSlide].title}
-                className="w-full max-w-xs mx-auto h-auto object-contain rounded-xl"
-              />
-            </div>
-            
-            <div className="text-center space-y-3">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
-                {slides[currentSlide].title}
-              </h2>
-              <p className="text-base md:text-lg text-gray-700 leading-relaxed">
-                {slides[currentSlide].description}
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 
