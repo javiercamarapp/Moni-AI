@@ -1,21 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Users, ChevronRight, Plus } from "lucide-react";
+import { ArrowLeft, Users, ChevronRight, Plus, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-
-interface Group {
-  id: string;
-  name: string;
-  description: string;
-  color: string;
-  member_count: number;
-  created_at: string;
-}
 
 interface Circle {
   id: string;
@@ -24,97 +16,64 @@ interface Circle {
   member_count: number;
 }
 
+interface GroupGoal {
+  id: string;
+  title: string;
+  target: number;
+  current: number;
+  deadline: string | null;
+  members: number | null;
+  color: string | null;
+}
+
 const Groups = () => {
   const navigate = useNavigate();
-  const [groups, setGroups] = useState<Group[]>([]);
   const [circles, setCircles] = useState<Circle[]>([]);
+  const [groupGoals, setGroupGoals] = useState<GroupGoal[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showCreateCircleDialog, setShowCreateCircleDialog] = useState(false);
-  const [groupName, setGroupName] = useState("");
-  const [groupDescription, setGroupDescription] = useState("");
   const [circleName, setCircleName] = useState("");
   const [circleDescription, setCircleDescription] = useState("");
+  const [circleCategory, setCircleCategory] = useState("general");
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
-    fetchGroups();
-    fetchCircles();
+    fetchData();
   }, []);
 
-  const fetchGroups = async () => {
+  const fetchData = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data: groupsData, error } = await supabase
-        .from('groups')
+      // Fetch group goals
+      const { data: goalsData, error: goalsError } = await supabase
+        .from('goals')
         .select('*')
         .eq('user_id', user.id)
+        .eq('type', 'group')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-
-      if (groupsData) {
-        setGroups(groupsData);
+      if (goalsError) throw goalsError;
+      if (goalsData) {
+        setGroupGoals(goalsData);
       }
-    } catch (error: any) {
-      console.error('Error fetching groups:', error);
-      toast.error('Error al cargar grupos');
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const fetchCircles = async () => {
-    try {
-      const { data: circlesData, error } = await supabase
+      // Fetch circles
+      const { data: circlesData, error: circlesError } = await supabase
         .from('circles')
         .select('id, name, description, member_count')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-
+      if (circlesError) throw circlesError;
       if (circlesData) {
         setCircles(circlesData);
       }
     } catch (error: any) {
-      console.error('Error fetching circles:', error);
-    }
-  };
-
-  const handleCreateGroup = async () => {
-    if (!groupName.trim()) {
-      toast.error('Por favor ingresa un nombre para el grupo');
-      return;
-    }
-
-    setCreating(true);
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { error } = await supabase
-        .from('groups')
-        .insert({
-          user_id: user.id,
-          name: groupName.trim(),
-          description: groupDescription.trim(),
-          color: 'from-blue-500/20 to-blue-500/10'
-        });
-
-      if (error) throw error;
-
-      toast.success('Grupo creado exitosamente');
-      setShowCreateDialog(false);
-      setGroupName("");
-      setGroupDescription("");
-      fetchGroups();
-    } catch (error: any) {
-      console.error('Error creating group:', error);
-      toast.error('Error al crear grupo');
+      console.error('Error fetching data:', error);
+      toast.error('Error al cargar datos');
     } finally {
-      setCreating(false);
+      setLoading(false);
     }
   };
 
@@ -135,7 +94,7 @@ const Groups = () => {
           user_id: user.id,
           name: circleName.trim(),
           description: circleDescription.trim() || null,
-          category: 'general',
+          category: circleCategory || 'general',
           member_count: 1
         });
 
@@ -145,7 +104,8 @@ const Groups = () => {
       setShowCreateCircleDialog(false);
       setCircleName("");
       setCircleDescription("");
-      fetchCircles();
+      setCircleCategory("general");
+      fetchData();
     } catch (error: any) {
       console.error('Error creating circle:', error);
       toast.error('Error al crear círculo');
@@ -176,124 +136,146 @@ const Groups = () => {
                 </p>
               </div>
             </div>
-            <Button
-              onClick={() => setShowCreateDialog(true)}
-              variant="ghost"
-              size="sm"
-              className="bg-white hover:bg-white/90 shadow-md rounded-2xl font-medium flex items-center gap-1"
-            >
-              <Users className="h-3.5 w-3.5" />
-              <Plus className="h-3.5 w-3.5" />
-            </Button>
           </div>
         </div>
       </div>
 
       <div className="mx-auto px-4 py-4 space-y-4" style={{ maxWidth: '600px' }}>
-        {/* Groups Section */}
+        {/* Main Section: Grupos y Círculos Moni */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-blue-600" />
-              <h3 className="text-sm font-semibold text-gray-900">Mis Grupos</h3>
+              <Target className="h-4 w-4 text-primary" />
+              <h3 className="text-sm font-semibold text-gray-900">Grupos y Círculos Moni</h3>
             </div>
-            <span className="text-xs text-gray-500">{groups.length} grupos</span>
+            {groupGoals.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/new-goal')}
+                className="h-7 text-xs bg-white hover:bg-white/90 shadow-md rounded-2xl font-medium"
+              >
+                + Nueva
+              </Button>
+            )}
           </div>
 
           {loading ? (
             <div className="text-center py-8">
               <p className="text-xs text-gray-600">Cargando...</p>
             </div>
-          ) : groups.length === 0 ? (
+          ) : groupGoals.length === 0 ? (
             <div className="text-center py-6">
-              <div className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
-                <Users className="h-6 w-6 text-blue-600" />
+              <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                <Users className="h-6 w-6 text-primary" />
               </div>
               <p className="text-xs text-gray-600 mb-3">
-                Aún no tienes grupos creados
+                Aún no tienes metas grupales creadas
               </p>
               <Button
-                onClick={() => setShowCreateDialog(true)}
+                onClick={() => navigate('/new-goal')}
                 className="h-9 px-4 text-xs bg-white text-foreground hover:bg-white/90 shadow-md rounded-2xl font-medium"
               >
-                Crear tu primer grupo
+                Invita a tus amigos a una meta
               </Button>
             </div>
           ) : (
             <div className="space-y-2">
-              {groups.map((group) => (
-                <button
-                  key={group.id}
-                  onClick={() => {/* Navigate to group details */}}
-                  className="w-full text-left bg-gradient-to-br from-gray-50 to-white rounded-xl p-3 border border-gray-100 hover:border-blue-500/20 hover:shadow-md transition-all group"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 flex-1">
-                      <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${group.color} flex items-center justify-center`}>
-                        <Users className="h-4 w-4 text-blue-600" />
+              {groupGoals.map((goal) => {
+                const progress = (Number(goal.current) / Number(goal.target)) * 100;
+                return (
+                  <button
+                    key={goal.id}
+                    onClick={() => navigate(`/goals`)}
+                    className="w-full text-left bg-gradient-to-br from-gray-50 to-white rounded-xl p-3 border border-gray-100 hover:border-primary/20 hover:shadow-md transition-all group"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2 flex-1">
+                        <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${goal.color || 'from-primary/20 to-primary/10'} flex items-center justify-center`}>
+                          <Target className="h-4 w-4 text-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="text-xs font-semibold text-gray-900 line-clamp-1">
+                            {goal.title}
+                          </h4>
+                          {goal.members && (
+                            <p className="text-[10px] text-gray-500 flex items-center gap-1">
+                              <Users className="h-3 w-3" />
+                              {goal.members} miembros
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <h4 className="text-xs font-semibold text-gray-900 line-clamp-1">
-                          {group.name}
-                        </h4>
-                        {group.description && (
-                          <p className="text-[10px] text-gray-500 line-clamp-1">
-                            {group.description}
-                          </p>
+                      <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-primary transition-colors" />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-[10px]">
+                        <span className="text-gray-600">
+                          ${Number(goal.current).toLocaleString()}
+                        </span>
+                        <span className="text-gray-500">
+                          ${Number(goal.target).toLocaleString()}
+                        </span>
+                      </div>
+                      <Progress 
+                        value={Math.min(progress, 100)} 
+                        className="h-1.5"
+                        indicatorClassName="bg-gradient-to-r from-primary to-primary/80"
+                      />
+                      <div className="flex items-center justify-between text-[10px]">
+                        <span className="text-primary font-medium">
+                          {progress.toFixed(0)}% completado
+                        </span>
+                        {goal.deadline && (
+                          <span className="text-gray-500">
+                            {new Date(goal.deadline).toLocaleDateString('es-MX', { 
+                              day: 'numeric', 
+                              month: 'short' 
+                            })}
+                          </span>
                         )}
-                        <p className="text-[10px] text-gray-500 flex items-center gap-1 mt-0.5">
-                          <Users className="h-3 w-3" />
-                          {group.member_count} {group.member_count === 1 ? 'miembro' : 'miembros'}
-                        </p>
                       </div>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors" />
-                  </div>
-                </button>
-              ))}
+                  </button>
+                );
+              })}
             </div>
           )}
-        </div>
-      </div>
 
-      {/* Create Group Dialog */}
-      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="max-w-[320px] rounded-3xl border-none shadow-2xl p-6">
-          <DialogHeader className="space-y-2">
-            <DialogTitle className="text-center text-lg font-bold">Crear Grupo</DialogTitle>
-            <DialogDescription className="text-center text-xs text-muted-foreground">
-              Crea un grupo para compartir objetivos financieros
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 pt-2">
-            <div className="space-y-2">
-              <Input
-                placeholder="Nombre del grupo"
-                value={groupName}
-                onChange={(e) => setGroupName(e.target.value)}
-                maxLength={50}
-                className="rounded-2xl"
-              />
-            </div>
-            <div className="space-y-2">
-              <Textarea
-                placeholder="Descripción (opcional)"
-                value={groupDescription}
-                onChange={(e) => setGroupDescription(e.target.value)}
-                maxLength={200}
-                className="rounded-2xl min-h-[80px] resize-none"
-              />
-            </div>
-            <Button 
-              onClick={handleCreateGroup}
-              disabled={creating}
-              className="w-full bg-white text-foreground hover:bg-white/90 rounded-2xl shadow-md font-medium"
+          {/* Círculos Moni inside the same section */}
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2 mb-2">
+              <Users className="h-4 w-4 text-primary" />
+              Círculos Moni
+            </h3>
+            <p className="text-gray-600 text-xs mb-3">
+              Únete o crea comunidades donde otros usuarios comparten metas similares.
+            </p>
+            {circles.length > 0 && (
+              <div className="space-y-2 mb-3">
+                {circles.map((circle) => (
+                  <button
+                    key={circle.id}
+                    onClick={() => navigate(`/circle/${circle.id}`)}
+                    className="w-full p-3 border rounded-xl flex justify-between items-center hover:border-primary/30 hover:bg-primary/5 transition-all"
+                  >
+                    <span className="text-xs text-gray-900">💬 Círculo &quot;{circle.name}&quot;</span>
+                    <span className="text-xs text-gray-500">{circle.member_count} miembros</span>
+                  </button>
+                ))}
+              </div>
+            )}
+            <Button
+              onClick={() => setShowCreateCircleDialog(true)}
+              className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9 flex items-center justify-center gap-2"
             >
-              {creating ? 'Creando...' : 'Crear Grupo'}
+              <Plus className="h-4 w-4" />
+              Crear un Círculo Moni
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      </div>
 
       {/* Create Circle Dialog */}
       <Dialog open={showCreateCircleDialog} onOpenChange={setShowCreateCircleDialog}>

@@ -21,18 +21,12 @@ const Social = () => {
   const [username, setUsername] = useState("");
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [monthlyRanking, setMonthlyRanking] = useState<number>(0);
-  const [groupGoals, setGroupGoals] = useState<any[]>([]);
   const [friendsRankings, setFriendsRankings] = useState<any[]>([]);
   const [generalRankings, setGeneralRankings] = useState<any[]>([]);
   const [userPoints, setUserPoints] = useState<number>(0);
   const [monthlyChallenges, setMonthlyChallenges] = useState<any[]>([]);
   const [recommendedChallenge, setRecommendedChallenge] = useState<any>(null);
   const [friendActivity, setFriendActivity] = useState<any[]>([]);
-  const [circles, setCircles] = useState<any[]>([]);
-  const [showCreateCircleDialog, setShowCreateCircleDialog] = useState(false);
-  const [circleName, setCircleName] = useState("");
-  const [circleDescription, setCircleDescription] = useState("");
-  const [circleCategory, setCircleCategory] = useState("");
   const [showAchievementUnlocked, setShowAchievementUnlocked] = useState(false);
   const [unlockedAchievement, setUnlockedAchievement] = useState<any>(null);
   const [showXPGain, setShowXPGain] = useState(false);
@@ -113,18 +107,6 @@ const Social = () => {
           }
         } else {
           setMonthlyRanking(1);
-        }
-
-        // Fetch group goals
-        const { data: goalsData } = await supabase
-          .from('goals')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('type', 'group')
-          .order('created_at', { ascending: false });
-
-        if (goalsData) {
-          setGroupGoals(goalsData);
         }
 
         // Fetch monthly rankings
@@ -249,20 +231,6 @@ const Social = () => {
           if (activityData) {
             setFriendActivity(activityData);
           }
-        }
-
-        // Fetch circles
-        const { data: circlesData } = await supabase
-          .from('circles')
-          .select(`
-            *,
-            circle_members (count)
-          `)
-          .order('member_count', { ascending: false })
-          .limit(5);
-
-        if (circlesData) {
-          setCircles(circlesData);
         }
 
         // Setup realtime subscription for rankings
@@ -728,47 +696,6 @@ const Social = () => {
     }
   };
 
-  const handleCreateCircle = async () => {
-    if (!user || !circleName.trim() || !circleCategory.trim()) {
-      toast.error('Por favor completa todos los campos obligatorios');
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('circles')
-        .insert({
-          user_id: user.id,
-          name: circleName,
-          description: circleDescription,
-          category: circleCategory,
-          member_count: 1
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      // Add creator as member
-      await supabase
-        .from('circle_members')
-        .insert({
-          circle_id: data.id,
-          user_id: user.id
-        });
-
-      setCircles([data, ...circles]);
-      setShowCreateCircleDialog(false);
-      setCircleName("");
-      setCircleDescription("");
-      setCircleCategory("");
-      toast.success('Círculo creado exitosamente');
-    } catch (error: any) {
-      console.error('Error creating circle:', error);
-      toast.error('Error al crear círculo');
-    }
-  };
-
   const handleShareInvite = () => {
     const inviteUrl = window.location.origin + '/auth';
     if (navigator.share) {
@@ -1091,139 +1018,6 @@ const Social = () => {
             </div>
           )}
 
-          {/* Group Goals Section */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Target className="h-4 w-4 text-primary" />
-                <h3 className="text-sm font-semibold text-gray-900">Grupos y Círculos Moni</h3>
-              </div>
-              {groupGoals.length > 0 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate('/new-goal')}
-                  className="h-7 text-xs bg-white hover:bg-white/90 shadow-md rounded-2xl font-medium"
-                >
-                  + Nueva
-                </Button>
-              )}
-            </div>
-
-            {groupGoals.length === 0 ? (
-              <div className="text-center py-6">
-                <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
-                  <Users className="h-6 w-6 text-primary" />
-                </div>
-                <p className="text-xs text-gray-600 mb-3">
-                  Aún no tienes metas grupales creadas
-                </p>
-                <Button
-                  onClick={() => navigate('/new-goal')}
-                  className="h-9 px-4 text-xs bg-white text-foreground hover:bg-white/90 shadow-md rounded-2xl font-medium"
-                >
-                  Invita a tus amigos a una meta
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {groupGoals.map((goal) => {
-                  const progress = (Number(goal.current) / Number(goal.target)) * 100;
-                  return (
-                    <button
-                      key={goal.id}
-                      onClick={() => navigate(`/goals`)}
-                      className="w-full text-left bg-gradient-to-br from-gray-50 to-white rounded-xl p-3 border border-gray-100 hover:border-primary/20 hover:shadow-md transition-all group"
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2 flex-1">
-                          <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${goal.color || 'from-primary/20 to-primary/10'} flex items-center justify-center`}>
-                            <Target className="h-4 w-4 text-primary" />
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="text-xs font-semibold text-gray-900 line-clamp-1">
-                              {goal.title}
-                            </h4>
-                            {goal.members && (
-                              <p className="text-[10px] text-gray-500 flex items-center gap-1">
-                                <Users className="h-3 w-3" />
-                                {goal.members} miembros
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-primary transition-colors" />
-                      </div>
-                      
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-between text-[10px]">
-                          <span className="text-gray-600">
-                            ${Number(goal.current).toLocaleString()}
-                          </span>
-                          <span className="text-gray-500">
-                            ${Number(goal.target).toLocaleString()}
-                          </span>
-                        </div>
-                        <Progress 
-                          value={Math.min(progress, 100)} 
-                          className="h-1.5"
-                          indicatorClassName="bg-gradient-to-r from-primary to-primary/80"
-                        />
-                        <div className="flex items-center justify-between text-[10px]">
-                          <span className="text-primary font-medium">
-                            {progress.toFixed(0)}% completado
-                          </span>
-                          {goal.deadline && (
-                            <span className="text-gray-500">
-                              {new Date(goal.deadline).toLocaleDateString('es-MX', { 
-                                day: 'numeric', 
-                                month: 'short' 
-                              })}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Círculos Moni inside the same section */}
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2 mb-2">
-                <Users className="h-4 w-4 text-primary" />
-                Círculos Moni
-              </h3>
-              <p className="text-gray-600 text-xs mb-3">
-                Únete o crea comunidades donde otros usuarios comparten metas similares.
-              </p>
-              {circles.length > 0 && (
-                <div className="space-y-2 mb-3">
-                  {circles.map((circle) => (
-                    <button
-                      key={circle.id}
-                      onClick={() => navigate(`/circle/${circle.id}`)}
-                      className="w-full p-3 border rounded-xl flex justify-between items-center hover:border-primary/30 hover:bg-primary/5 transition-all"
-                    >
-                      <span className="text-xs text-gray-900">💬 Círculo "{circle.name}"</span>
-                      <span className="text-xs text-gray-500">{circle.member_count} miembros</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-              <Button
-                onClick={() => setShowCreateCircleDialog(true)}
-                className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9 flex items-center justify-center gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                Crear un Círculo Moni
-              </Button>
-            </div>
-          </div>
-
-
-
           {/* Friend Activity - Interactive */}
           <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
             <div className="flex items-center justify-between">
@@ -1372,57 +1166,6 @@ const Social = () => {
           preload="auto"
           src="https://cdn.pixabay.com/audio/2022/03/15/audio_3b7f0b1df4.mp3"
         />
-
-        {/* Create Circle Dialog */}
-        <Dialog open={showCreateCircleDialog} onOpenChange={setShowCreateCircleDialog}>
-          <DialogContent className="max-w-[320px] rounded-3xl border-none shadow-2xl p-6">
-            <DialogHeader className="space-y-2">
-              <DialogTitle className="text-center text-lg font-bold">Crear Círculo Moni</DialogTitle>
-              <DialogDescription className="text-center text-xs text-muted-foreground">
-                Crea una comunidad para compartir metas
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-3 pt-2">
-              <div>
-                <label className="text-xs font-medium text-gray-700 mb-1 block">Nombre *</label>
-                <Input
-                  placeholder="Ej: Ahorro para viajar"
-                  value={circleName}
-                  onChange={(e) => setCircleName(e.target.value)}
-                  maxLength={50}
-                  className="rounded-xl text-sm"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-gray-700 mb-1 block">Categoría *</label>
-                <Input
-                  placeholder="Ej: Ahorro, Inversión, etc."
-                  value={circleCategory}
-                  onChange={(e) => setCircleCategory(e.target.value)}
-                  maxLength={30}
-                  className="rounded-xl text-sm"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-gray-700 mb-1 block">Descripción</label>
-                <Input
-                  placeholder="Describe tu círculo (opcional)"
-                  value={circleDescription}
-                  onChange={(e) => setCircleDescription(e.target.value)}
-                  maxLength={200}
-                  className="rounded-xl text-sm"
-                />
-              </div>
-              <Button 
-                onClick={handleCreateCircle}
-                disabled={!circleName.trim() || !circleCategory.trim()}
-                className="w-full bg-white text-foreground hover:bg-white/90 rounded-2xl shadow-md font-medium disabled:opacity-50"
-              >
-                Guardar círculo
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
 
         {/* Username Creation Dialog */}
         <Dialog open={showUsernameDialog} onOpenChange={setShowUsernameDialog}>
