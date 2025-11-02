@@ -26,7 +26,7 @@ interface MemberWithProfile {
   profiles: Profile | null;
 }
 
-type ActiveView = 'members' | 'challenges' | 'chat' | 'news';
+type ActiveView = 'members' | 'challenges' | 'news';
 
 const CircleDetails = () => {
   const { id } = useParams();
@@ -541,15 +541,10 @@ const CircleDetails = () => {
             </button>
 
             <button 
-              onClick={() => setActiveView('chat')}
+              onClick={() => navigate(`/circle/${id}/chat`)}
               className="flex flex-col items-center gap-1.5 group w-16"
             >
-              <div className={cn(
-                "rounded-full p-3 group-hover:scale-110 transition-transform",
-                activeView === 'chat' 
-                  ? "bg-gradient-to-br from-blue-500/30 to-blue-500/20" 
-                  : "bg-gradient-to-br from-blue-500/20 to-blue-500/10"
-              )}>
+              <div className="bg-gradient-to-br from-blue-500/20 to-blue-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
                 <MessageCircle className="h-5 w-5 text-blue-600" />
               </div>
               <span className="text-[10px] text-gray-600 font-medium text-center leading-tight">Chat grupal</span>
@@ -726,56 +721,6 @@ const CircleDetails = () => {
               )}
             </div>
           </>
-        )}
-
-        {activeView === 'chat' && isMember && (
-          <div className="bg-white rounded-2xl shadow-sm p-4">
-            <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
-              <MessageCircle className="h-4 w-4 text-primary" />
-              💬 Chat del grupo
-            </h2>
-            <div 
-              ref={chatRef}
-              className="space-y-2 text-sm text-gray-700 max-h-96 overflow-y-auto mb-3 border rounded-xl p-3 bg-gray-50"
-            >
-              {messages.length === 0 ? (
-                <p className="text-gray-500 text-xs text-center py-4">
-                  No hay mensajes aún. ¡Sé el primero en escribir!
-                </p>
-              ) : (
-                messages.map((msg) => (
-                  <div key={msg.id} className="text-xs bg-white rounded-lg p-2">
-                    <strong className="text-gray-900">
-                      {msg.profiles?.full_name || msg.profiles?.username || 'Usuario'}:
-                    </strong>{' '}
-                    <span className="text-gray-700">{msg.description}</span>
-                    {msg.xp_earned > 0 && (
-                      <span className="text-emerald-600 font-semibold ml-1">
-                        +{msg.xp_earned} XP
-                      </span>
-                    )}
-                  </div>
-                ))
-              )}
-            </div>
-            <div className="flex gap-2">
-              <Input
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                placeholder="Escribe un mensaje..."
-                className="flex-1 rounded-xl text-sm"
-              />
-              <Button
-                onClick={handleSendMessage}
-                disabled={!newMessage.trim()}
-                className="bg-emerald-500 text-white hover:bg-emerald-600 rounded-xl px-4"
-                size="sm"
-              >
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
         )}
 
         {activeView === 'news' && (

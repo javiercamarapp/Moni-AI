@@ -57,6 +57,7 @@ import VariableExpenses from './pages/VariableExpenses';
 import AntExpenses from './pages/AntExpenses';
 import ImpulsiveExpenses from './pages/ImpulsiveExpenses';
 import CircleDetails from './pages/CircleDetails';
+import CircleChat from './pages/CircleChat';
 
 import NotFound from "./pages/NotFound";
 
@@ -133,6 +134,7 @@ function App() {
           <Route path="/ant-expenses" element={<AntExpenses />} />
           <Route path="/impulsive-expenses" element={<ImpulsiveExpenses />} />
           <Route path="/circle/:id" element={<CircleDetails />} />
+          <Route path="/circle/:id/chat" element={<CircleChat />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
