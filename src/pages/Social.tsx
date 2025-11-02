@@ -36,6 +36,7 @@ const Social = () => {
   const [showAchievementUnlocked, setShowAchievementUnlocked] = useState(false);
   const [unlockedAchievement, setUnlockedAchievement] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const achievementSoundRef = useRef<HTMLAudioElement>(null);
 
   const achievementsList = [
     { id: 1, name: "Ahorrista Nivel 1", xp: 100, icon: "💰", desc: "Primeros 100 XP" },
@@ -629,6 +630,15 @@ const Social = () => {
             });
 
           if (!error) {
+            // Play achievement sound
+            if (achievementSoundRef.current) {
+              achievementSoundRef.current.currentTime = 0;
+              achievementSoundRef.current.volume = 0.35;
+              achievementSoundRef.current.play().catch(() => {
+                // Ignore autoplay errors
+              });
+            }
+
             // Show achievement unlocked animation
             setUnlockedAchievement(achievement);
             setShowAchievementUnlocked(true);
@@ -1224,6 +1234,13 @@ const Social = () => {
             </div>
           </div>
         )}
+
+        {/* Hidden audio element for achievement sound */}
+        <audio 
+          ref={achievementSoundRef}
+          preload="auto"
+          src="https://cdn.pixabay.com/audio/2022/03/15/audio_2b21d3ad9f.mp3"
+        />
 
         {/* Create Circle Dialog */}
         <Dialog open={showCreateCircleDialog} onOpenChange={setShowCreateCircleDialog}>
