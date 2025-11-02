@@ -115,9 +115,10 @@ const Groups = () => {
               onClick={() => setShowCreateDialog(true)}
               variant="ghost"
               size="sm"
-              className="bg-white hover:bg-white/90 shadow-md rounded-2xl font-medium"
+              className="bg-white hover:bg-white/90 shadow-md rounded-2xl font-medium flex items-center gap-1"
             >
-              <Plus className="h-4 w-4" />
+              <Users className="h-3.5 w-3.5" />
+              <Plus className="h-3.5 w-3.5" />
             </Button>
           </div>
         </div>
