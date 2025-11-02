@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowLeft, UserPlus, Plus, Trophy, Target, Users, Share2 } from "lucide-react";
+import { ArrowLeft, UserPlus, Plus, Trophy, Target, Users, Share2, Send, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 const CircleDetails = () => {
@@ -23,10 +23,23 @@ const CircleDetails = () => {
   const [challengeTitle, setChallengeTitle] = useState("");
   const [challengeDescription, setChallengeDescription] = useState("");
   const [challengeXP, setChallengeXP] = useState("20");
+  const [messages, setMessages] = useState<any[]>([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [showXPGain, setShowXPGain] = useState(false);
+  const [xpGainAmount, setXPGainAmount] = useState(0);
+  const chatRef = useRef<HTMLDivElement>(null);
+  const xpSoundRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     fetchCircleData();
+    setupRealtimeSubscription();
   }, [id]);
+
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   const fetchCircleData = async () => {
     try {
@@ -89,9 +102,121 @@ const CircleDetails = () => {
 
       if (goalsError) throw goalsError;
       setGoals(goalsData || []);
+
+      // Fetch activity/messages (from friend_activity for now)
+      const { data: activityData } = await supabase
+        .from('friend_activity')
+        .select(`
+          *,
+          profiles:user_id (full_name, username)
+        `)
+        .in('user_id', membersData?.map(m => m.user_id) || [])
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (activityData) {
+        setMessages(activityData.reverse());
+      }
     } catch (error: any) {
       console.error('Error fetching circle data:', error);
       toast.error('Error al cargar el círculo');
+    }
+  };
+
+  const setupRealtimeSubscription = () => {
+    if (!id) return;
+
+    const channel = supabase
+      .channel(`circle-${id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'friend_activity'
+        },
+        (payload) => {
+          setMessages((prev) => [...prev, payload.new]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
+
+  const handleCompleteChallenge = async (challengeId: string, xpReward: number) => {
+    if (!user) {
+      toast.error('Debes iniciar sesión');
+      return;
+    }
+
+    try {
+      // Add XP to user in circle
+      const memberData = members.find(m => m.user_id === user.id);
+      if (memberData) {
+        await supabase
+          .from('circle_members')
+          .update({ xp: (memberData.xp || 0) + xpReward })
+          .eq('id', memberData.id);
+      }
+
+      // Add global XP
+      await supabase.rpc('increment_social_xp', {
+        target_user_id: user.id,
+        xp_amount: xpReward
+      });
+
+      // Create activity log
+      await supabase
+        .from('friend_activity')
+        .insert({
+          user_id: user.id,
+          activity_type: 'challenge_completed',
+          description: 'completó un reto del círculo',
+          xp_earned: xpReward
+        });
+
+      // Show XP animation
+      setXPGainAmount(xpReward);
+      setShowXPGain(true);
+
+      // Play sound
+      if (xpSoundRef.current) {
+        xpSoundRef.current.currentTime = 0;
+        xpSoundRef.current.volume = 0.35;
+        xpSoundRef.current.play().catch(() => {});
+      }
+
+      setTimeout(() => setShowXPGain(false), 2500);
+
+      toast.success(`¡Reto completado! +${xpReward} XP`);
+      fetchCircleData();
+    } catch (error) {
+      console.error('Error completing challenge:', error);
+      toast.error('Error al completar el reto');
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !user || !id) return;
+
+    try {
+      await supabase
+        .from('friend_activity')
+        .insert({
+          user_id: user.id,
+          activity_type: 'circle_message',
+          description: newMessage.trim(),
+          xp_earned: 0
+        });
+
+      setNewMessage("");
+      toast.success('Mensaje enviado');
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast.error('Error al enviar mensaje');
     }
   };
 
@@ -263,27 +388,33 @@ const CircleDetails = () => {
         <div className="bg-white rounded-2xl shadow-sm p-4">
           <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
             <Trophy className="h-4 w-4 text-yellow-600" />
-            Retos activos
+            🏆 Retos activos del grupo
           </h2>
           {challenges.length === 0 ? (
             <p className="text-gray-600 text-xs text-center py-4">
               No hay retos activos. {isMember && '¡Crea el primero!'}
             </p>
           ) : (
-            <div className="space-y-2 mb-3">
+            <div className="space-y-3 mb-3">
               {challenges.map((challenge) => (
-                <div key={challenge.id} className="p-3 border rounded-xl flex justify-between items-center">
-                  <div className="flex-1">
-                    <span className="text-xs text-gray-900 font-medium block">
-                      Reto "{challenge.title}"
+                <div key={challenge.id} className="p-3 border border-gray-100 rounded-xl">
+                  <div className="flex-1 mb-2">
+                    <span className="text-sm text-gray-900 font-medium block">
+                      Reto: "{challenge.title}"
                     </span>
                     {challenge.description && (
-                      <span className="text-xs text-gray-500">{challenge.description}</span>
+                      <span className="text-xs text-gray-500 block mt-1">{challenge.description} · +{challenge.xp_reward} XP</span>
                     )}
                   </div>
-                  <span className="text-xs text-green-600 font-medium ml-2">
-                    +{challenge.xp_reward} XP
-                  </span>
+                  {isMember && (
+                    <Button
+                      onClick={() => handleCompleteChallenge(challenge.id, challenge.xp_reward)}
+                      size="sm"
+                      className="w-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-0 rounded-xl font-medium h-8 text-xs"
+                    >
+                      Marcar como completado
+                    </Button>
+                  )}
                 </div>
               ))}
             </div>
@@ -339,6 +470,57 @@ const CircleDetails = () => {
           )}
         </div>
 
+        {/* Activity Feed / Chat */}
+        {isMember && (
+          <div className="bg-white rounded-2xl shadow-sm p-4">
+            <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
+              <MessageCircle className="h-4 w-4 text-primary" />
+              💬 Actividad del grupo
+            </h2>
+            <div 
+              ref={chatRef}
+              className="space-y-2 text-sm text-gray-700 max-h-48 overflow-y-auto mb-3"
+            >
+              {messages.length === 0 ? (
+                <p className="text-gray-500 text-xs text-center py-4">
+                  No hay actividad aún. ¡Sé el primero en escribir!
+                </p>
+              ) : (
+                messages.map((msg) => (
+                  <div key={msg.id} className="text-xs">
+                    <strong className="text-gray-900">
+                      {msg.profiles?.full_name || msg.profiles?.username || 'Usuario'}:
+                    </strong>{' '}
+                    <span className="text-gray-700">{msg.description}</span>
+                    {msg.xp_earned > 0 && (
+                      <span className="text-emerald-600 font-semibold ml-1">
+                        +{msg.xp_earned} XP
+                      </span>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+            <div className="flex gap-2">
+              <Input
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                placeholder="Escribe un mensaje..."
+                className="flex-1 rounded-xl text-sm"
+              />
+              <Button
+                onClick={handleSendMessage}
+                disabled={!newMessage.trim()}
+                className="bg-emerald-500 text-white hover:bg-emerald-600 rounded-xl px-4"
+                size="sm"
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Back Button */}
         <Button
           onClick={() => navigate('/social')}
@@ -349,6 +531,22 @@ const CircleDetails = () => {
           Volver a Círculos
         </Button>
       </div>
+
+      {/* XP Gain Animation */}
+      {showXPGain && (
+        <div className="fixed bottom-32 left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-fade-in">
+          <div className="text-emerald-600 text-3xl font-bold drop-shadow-2xl animate-bounce">
+            +{xpGainAmount} XP
+          </div>
+        </div>
+      )}
+
+      {/* Hidden audio element */}
+      <audio 
+        ref={xpSoundRef}
+        preload="auto"
+        src="https://cdn.pixabay.com/audio/2022/03/15/audio_3b7f0b1df4.mp3"
+      />
 
       {/* Create Challenge Dialog */}
       <Dialog open={showCreateChallengeDialog} onOpenChange={setShowCreateChallengeDialog}>
