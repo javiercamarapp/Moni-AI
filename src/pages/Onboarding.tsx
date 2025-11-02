@@ -81,7 +81,7 @@ const Onboarding = () => {
 
 
       {/* Bottom navigation - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 pb-44 px-8 z-20">
+      <div className="fixed bottom-0 left-0 right-0 pb-6 px-8 z-20">
         <div className="max-w-md mx-auto">
           <div className="flex items-end justify-between">
             {/* Left side: Dots and Skip button */}
