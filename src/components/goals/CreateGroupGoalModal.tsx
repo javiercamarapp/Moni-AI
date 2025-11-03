@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { X, Users, Target, Calendar, DollarSign, Bell } from "lucide-react";
+import { X, Users, Target, Calendar, DollarSign, Bell, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,6 +37,7 @@ const INSPIRATIONAL_PHRASES = [
 ];
 
 export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: CreateGroupGoalModalProps) => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [reminderEnabled, setReminderEnabled] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("Otro");
@@ -197,6 +199,18 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
                 ))}
               </SelectContent>
             </Select>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                onClose();
+                navigate('/groups');
+              }}
+              className="w-full h-10 rounded-xl border-gray-300 text-gray-700 hover:bg-gray-50 flex items-center justify-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Crear nuevo círculo
+            </Button>
           </div>
 
           {/* Goal Title */}
