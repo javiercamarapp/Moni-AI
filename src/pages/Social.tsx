@@ -960,63 +960,159 @@ const Social = () => {
             </div>
           </div>
 
-          {/* Recommended by Moni AI */}
-          {recommendedChallenge && (
-            <div className="bg-white rounded-2xl shadow-sm p-4">
-              <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-2">
-                <Sparkles className="h-4 w-4 text-primary" />
-                Recomendado por Moni AI
-              </h2>
-              <p className="text-gray-600 text-xs mb-3">
-                Haz el reto "{recommendedChallenge.title}" y gana +{recommendedChallenge.points} XP.
-              </p>
-              <Button
-                onClick={() => handleCompleteChallenge(recommendedChallenge.id, recommendedChallenge.points)}
-                className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9"
-              >
-                Completar reto
-              </Button>
-            </div>
-          )}
-
-          {/* Monthly Challenges */}
-          {monthlyChallenges.length > 0 && (
-            <div className="bg-white rounded-2xl shadow-sm p-4">
-              <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-2">
-                <Trophy className="h-4 w-4 text-yellow-600" />
-                Retos del Mes
-              </h2>
-              <p className="text-gray-600 text-xs mb-3">
-                Participa en los desafíos activos y gana XP para subir en el ranking.
-              </p>
-              <div className="space-y-2 mb-3">
-                {monthlyChallenges.slice(0, 3).map((challenge) => (
-                  <div key={challenge.id} className="p-3 border rounded-xl hover:bg-gray-50 transition">
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex-1">
-                        <span className="text-xs text-gray-900 font-medium block">Reto "{challenge.title}"</span>
-                        <span className="text-xs text-gray-600">{challenge.description}</span>
+          {/* Challenges Section */}
+          <div className="bg-[#f5efea] rounded-3xl shadow-sm p-5 -mx-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* AI Suggested Challenges */}
+              <div className="bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.06)] p-4 hover:shadow-[0_4px_10px_rgba(0,0,0,0.08)] transition-all duration-300 hover:scale-[1.03]">
+                <h3 className="font-semibold text-black flex items-center gap-2 text-sm mb-1">
+                  <Sparkles className="h-4 w-4 text-black" />
+                  🔮 Retos Sugeridos por Moni AI
+                </h3>
+                <p className="text-xs text-gray-600 mb-4">
+                  Desafíos creados según tus hábitos financieros
+                </p>
+                
+                {/* Carousel of suggested challenges */}
+                <div className="space-y-3 overflow-x-auto pb-2 scrollbar-hide">
+                  {monthlyChallenges.length > 0 ? (
+                    monthlyChallenges.slice(0, 3).map((challenge) => (
+                      <div key={challenge.id} className="min-w-full bg-gray-50 rounded-xl p-3 border border-gray-100">
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <h4 className="text-sm font-semibold text-black">{challenge.title}</h4>
+                            <p className="text-xs text-gray-600 mt-1">{challenge.description}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between mt-3">
+                          <div className="flex items-center gap-2 text-xs text-gray-500">
+                            <Calendar className="h-3 w-3" />
+                            <span>7 días</span>
+                          </div>
+                          <span className="text-xs font-semibold text-black">+{challenge.points} XP</span>
+                        </div>
+                        <Button
+                          onClick={() => handleCompleteChallenge(challenge.id, challenge.points)}
+                          className="w-full mt-3 bg-black text-white hover:bg-gray-800 rounded-lg h-8 text-xs font-medium"
+                        >
+                          Aceptar reto
+                        </Button>
                       </div>
-                      <span className="text-xs text-green-600 font-medium ml-2">+{challenge.points} XP</span>
+                    ))
+                  ) : (
+                    <div className="text-center py-6">
+                      <p className="text-sm text-gray-500">No hay retos sugeridos disponibles</p>
                     </div>
+                  )}
+                </div>
+                
+                {monthlyChallenges.length > 3 && (
+                  <Button
+                    onClick={() => navigate('/challenges')}
+                    variant="ghost"
+                    className="w-full mt-3 text-xs text-black hover:bg-gray-100"
+                  >
+                    Ver más retos
+                  </Button>
+                )}
+              </div>
+
+              {/* My Challenges */}
+              <div className="bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.06)] p-4 hover:shadow-[0_3px_8px_rgba(0,0,0,0.08)] transition-all duration-300 hover:scale-[1.02]">
+                <h3 className="font-semibold text-black flex items-center gap-2 text-sm mb-1">
+                  <Trophy className="h-4 w-4 text-black" />
+                  🔥 Mis Retos
+                </h3>
+                <p className="text-xs text-gray-600 mb-4">
+                  Da seguimiento a tus hábitos y gana XP
+                </p>
+
+                {/* No challenges state */}
+                {(!recommendedChallenge && monthlyChallenges.length === 0) ? (
+                  <div className="text-center py-8">
+                    <div className="text-4xl mb-3">🌱</div>
+                    <p className="text-sm font-medium text-gray-700 mb-2">
+                      Aún no tienes retos activos
+                    </p>
                     <Button
-                      onClick={() => handleCompleteChallenge(challenge.id, challenge.points)}
-                      size="sm"
-                      className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-lg font-medium h-7 text-xs"
+                      onClick={() => navigate('/challenges')}
+                      className="mt-3 bg-black text-white hover:bg-gray-800 rounded-lg h-8 text-xs font-medium px-4"
                     >
-                      Completar
+                      Explorar retos
                     </Button>
                   </div>
-                ))}
+                ) : (
+                  <div className="space-y-3">
+                    {/* Active challenge */}
+                    {recommendedChallenge && (
+                      <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1">
+                            <h4 className="text-sm font-semibold text-black">{recommendedChallenge.title}</h4>
+                            <p className="text-xs text-gray-600 mt-1">{recommendedChallenge.description}</p>
+                          </div>
+                          <Badge className="bg-black text-white text-xs">+{recommendedChallenge.points} XP</Badge>
+                        </div>
+                        
+                        {/* Weekly calendar */}
+                        <div className="flex items-center gap-1 mt-3 mb-3">
+                          {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, idx) => (
+                            <div
+                              key={idx}
+                              className={`flex-1 aspect-square rounded-md flex items-center justify-center text-xs font-medium transition-all ${
+                                idx < 3 
+                                  ? 'bg-black text-white' 
+                                  : 'bg-gray-200 text-gray-600'
+                              }`}
+                            >
+                              {idx < 3 && <span className="text-xs">✓</span>}
+                              {idx >= 3 && day}
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Button
+                            onClick={() => handleCompleteChallenge(recommendedChallenge.id, recommendedChallenge.points)}
+                            variant="outline"
+                            className="flex-1 border-gray-300 text-black hover:bg-gray-100 rounded-lg h-8 text-xs font-medium"
+                          >
+                            Marcar día
+                          </Button>
+                          <Button
+                            onClick={() => navigate('/challenges')}
+                            className="flex-1 bg-black text-white hover:bg-gray-800 rounded-lg h-8 text-xs font-medium"
+                          >
+                            Ver progreso
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Additional challenges */}
+                    {monthlyChallenges.slice(0, 2).map((challenge) => (
+                      <div key={challenge.id} className="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1">
+                            <h4 className="text-sm font-semibold text-black">{challenge.title}</h4>
+                            <p className="text-xs text-gray-600 mt-1 line-clamp-1">{challenge.description}</p>
+                          </div>
+                          <Badge className="bg-black text-white text-xs ml-2">+{challenge.points} XP</Badge>
+                        </div>
+                        <Button
+                          onClick={() => handleCompleteChallenge(challenge.id, challenge.points)}
+                          variant="outline"
+                          className="w-full mt-2 border-gray-300 text-black hover:bg-gray-100 rounded-lg h-7 text-xs font-medium"
+                        >
+                          Ver detalles
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-              <Button
-                onClick={() => navigate('/logros')}
-                className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9"
-              >
-                Ver todos los retos activos
-              </Button>
             </div>
-          )}
+          </div>
 
           {/* Friend Activity - Interactive - Only show when user has friends */}
           {friendActivity.length > 0 && (
