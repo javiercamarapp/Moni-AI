@@ -80,7 +80,7 @@ const Goals = () => {
 
   return (
     <>
-      <div className="min-h-screen pb-24 bg-gradient-to-b from-gray-50 to-white animate-fade-in">
+      <div className="min-h-screen pb-24 bg-gradient-to-b from-amber-50/30 to-orange-50/20 animate-fade-in">
         {/* Header */}
         <div className="sticky top-0 z-40 bg-gradient-to-b from-purple-50/80 via-cyan-50/60 to-transparent backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 py-3">
@@ -124,7 +124,7 @@ const Goals = () => {
               </p>
               <Button
                 onClick={() => setCreateModalOpen(true)}
-                className="h-12 px-8 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-xl shadow-lg"
+                className="h-12 px-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md transition-all border-0 text-gray-900 font-semibold"
               >
                 <Plus className="h-5 w-5 mr-2" />
                 Crear mi primera meta
