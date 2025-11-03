@@ -12,6 +12,7 @@ import BottomNav from "@/components/BottomNav";
 import { AddFundsModal } from "@/components/goals/AddFundsModal";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import MoniAIPrediction from "@/components/goals/MoniAIPrediction";
 
 interface GroupGoal {
   id: string;
@@ -283,29 +284,12 @@ const GroupGoalDetails = () => {
           </div>
 
           {/* AI Recommendation */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-[#c8a57b]/20">
-            <div className="flex items-start gap-3">
-              <div className="h-10 w-10 bg-[#c8a57b]/10 rounded-full flex items-center justify-center animate-pulse">
-                🤖
-              </div>
-              <div className="flex-1">
-                <h3 className="text-sm font-semibold text-gray-900 mb-2">Moni AI recomienda:</h3>
-                <p className="text-sm text-gray-700 mb-3">
-                  {goal.required_weekly_saving 
-                    ? `"Si cada miembro ahorra ${formatCurrency(goal.required_weekly_saving / members.length)}/semana, lograrán su meta ${daysRemaining && daysRemaining > 0 ? 'antes del plazo' : 'pronto'}."`
-                    : `"Mantén el ritmo de ahorro. Cada aporte cuenta para alcanzar juntos la meta de ${formatCurrency(goal.target_amount)}."`
-                  }
-                </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-[#c8a57b] text-gray-900 hover:bg-[#e3c890] hover:border-[#e3c890] transition-all duration-300"
-                >
-                  Ajustar plan automáticamente
-                </Button>
-              </div>
-            </div>
-          </div>
+          <MoniAIPrediction
+            target={goal.target_amount}
+            deadline={goal.deadline || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()}
+            memberCount={members.length || 1}
+            saved={goal.current_amount}
+          />
 
           {/* Members Progress - Leaderboard Style */}
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-[#c8a57b]/20">
