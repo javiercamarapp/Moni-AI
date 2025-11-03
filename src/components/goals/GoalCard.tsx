@@ -1,7 +1,9 @@
-import { Target, Calendar, TrendingUp, Plus } from "lucide-react";
+import { Target, Calendar, TrendingUp, Plus, Sparkles, Bell, Lightbulb } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { formatCurrency } from "@/lib/utils";
+import { useState } from "react";
 
 interface GoalCardProps {
   goal: {
@@ -15,17 +17,22 @@ interface GoalCardProps {
     icon?: string;
     predicted_completion_date?: string;
     required_weekly_saving?: number;
+    ai_confidence?: number;
   };
   onAddFunds: () => void;
   onViewDetails: () => void;
 }
 
 export const GoalCard = ({ goal, onAddFunds, onViewDetails }: GoalCardProps) => {
+  const [reminderEnabled, setReminderEnabled] = useState(true);
   const progress = (goal.current / goal.target) * 100;
   const remaining = goal.target - goal.current;
   const daysRemaining = goal.deadline
     ? Math.ceil((new Date(goal.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
     : null;
+  
+  const weeksRemaining = daysRemaining ? Math.ceil(daysRemaining / 7) : 0;
+  const suggestedIncrease = goal.required_weekly_saving ? Math.round(goal.required_weekly_saving * 0.1) : 0;
 
   const getCategoryIcon = () => {
     switch (goal.category) {
@@ -56,6 +63,13 @@ export const GoalCard = ({ goal, onAddFunds, onViewDetails }: GoalCardProps) => 
         <div className="text-right">
           <div className="text-2xl font-bold text-gray-900">{progress.toFixed(0)}%</div>
           <div className="text-xs text-gray-600">completado</div>
+          {goal.ai_confidence && (
+            <div className="bg-amber-100 rounded-lg px-2 py-1 mt-2 inline-block">
+              <p className="text-[10px] font-semibold text-amber-700">
+                {Math.round(goal.ai_confidence * 100)}% IA
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -95,25 +109,52 @@ export const GoalCard = ({ goal, onAddFunds, onViewDetails }: GoalCardProps) => 
           )}
         </div>
 
-        {/* AI Recommendation */}
-        {goal.required_weekly_saving && (
-          <div className="bg-gradient-to-r from-cyan-50 to-purple-50 rounded-xl p-3 border border-cyan-100">
+        {/* AI Prediction */}
+        {goal.predicted_completion_date && (
+          <div className="bg-gradient-to-r from-cyan-50 to-purple-50 rounded-xl p-3 border border-purple-100">
             <div className="flex items-start gap-2">
-              <TrendingUp className="h-4 w-4 text-cyan-600 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-xs font-medium text-gray-900 mb-1">Recomendación AI</p>
+              <Sparkles className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-xs font-medium text-gray-900 mb-1">Predicción IA</p>
                 <p className="text-[11px] text-gray-700">
-                  Ahorra <span className="font-semibold text-cyan-700">{formatCurrency(goal.required_weekly_saving)}</span> por semana
+                  Podrías lograrlo el <strong>{new Date(goal.predicted_completion_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })}</strong>
                 </p>
-                {goal.predicted_completion_date && (
+                {goal.required_weekly_saving && (
                   <p className="text-[10px] text-gray-600 mt-1">
-                    Completarás tu meta el {new Date(goal.predicted_completion_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    💰 Ahorra {formatCurrency(goal.required_weekly_saving)}/semana
                   </p>
                 )}
               </div>
             </div>
           </div>
         )}
+
+        {/* AI Suggestion */}
+        {progress < 70 && suggestedIncrease > 0 && (
+          <div className="bg-amber-50 rounded-xl p-3 border border-amber-200">
+            <div className="flex items-start gap-2">
+              <Lightbulb className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-[10px] font-semibold text-gray-900 mb-1">Sugerencia dinámica</p>
+                <p className="text-[10px] text-gray-700">
+                  Si aumentas tu ahorro semanal en {formatCurrency(suggestedIncrease)}, podrías cumplirla {Math.ceil(weeksRemaining * 0.1)} semanas antes.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Reminder Toggle */}
+        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+          <div className="flex items-center gap-2">
+            <Bell className="h-4 w-4 text-amber-600" />
+            <p className="text-xs text-gray-700">Recordatorio semanal</p>
+          </div>
+          <Switch
+            checked={reminderEnabled}
+            onCheckedChange={setReminderEnabled}
+          />
+        </div>
 
         {/* Actions */}
         <div className="flex gap-2">

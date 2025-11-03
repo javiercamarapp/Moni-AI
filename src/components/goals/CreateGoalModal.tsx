@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { X, Target, Calendar, DollarSign, Users, Lock, Globe } from "lucide-react";
+import { X, Target, Calendar, DollarSign, Users, Lock, Globe, Sparkles, Bell, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import confetti from "canvas-confetti";
 
 interface CreateGoalModalProps {
   isOpen: boolean;
@@ -17,18 +18,28 @@ interface CreateGoalModalProps {
 }
 
 const GOAL_CATEGORIES = [
-  { value: "Travel", label: "Viajes", icon: "✈️" },
-  { value: "Tech", label: "Tecnología", icon: "💻" },
+  { value: "Travel", label: "Viaje", icon: "✈️" },
+  { value: "House", label: "Casa", icon: "🏡" },
+  { value: "Car", label: "Auto", icon: "🚗" },
   { value: "Education", label: "Educación", icon: "🎓" },
-  { value: "Emergency Fund", label: "Fondo de emergencia", icon: "🛡️" },
-  { value: "Investment", label: "Inversión", icon: "📈" },
-  { value: "Lifestyle", label: "Estilo de vida", icon: "🌟" },
-  { value: "Custom", label: "Personalizado", icon: "🎯" }
+  { value: "Custom", label: "Fondo libre", icon: "💰" },
+  { value: "Event", label: "Evento", icon: "💍" }
+];
+
+const INSPIRATIONAL_PHRASES = [
+  "Tu constancia vale más que cualquier inversión.",
+  "Cada peso ahorrado es libertad futura.",
+  "Hoy decides el mañana que quieres vivir.",
+  "Las metas se logran un paso a la vez.",
+  "Tu futuro financiero comienza hoy.",
+  "La disciplina de hoy es la libertad de mañana."
 ];
 
 export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalProps) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [prediction, setPrediction] = useState<any>(null);
+  const [inspirationalPhrase, setInspirationalPhrase] = useState("");
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -37,8 +48,56 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
     category: "Custom",
     type: "personal" as "personal" | "group",
     isPublic: false,
-    aiEnabled: true
+    aiEnabled: true,
+    motivation: "",
+    reminderEnabled: true
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      const randomPhrase = INSPIRATIONAL_PHRASES[Math.floor(Math.random() * INSPIRATIONAL_PHRASES.length)];
+      setInspirationalPhrase(randomPhrase);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const calculatePrediction = async () => {
+      if (!formData.target || !formData.deadline) {
+        setPrediction(null);
+        return;
+      }
+
+      const targetAmount = parseFloat(formData.target);
+      if (isNaN(targetAmount) || targetAmount <= 0) return;
+
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Calcular ahorro semanal requerido
+        const deadlineDate = new Date(formData.deadline);
+        const today = new Date();
+        const daysRemaining = Math.ceil((deadlineDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        const weeksRemaining = Math.ceil(daysRemaining / 7);
+        
+        if (weeksRemaining <= 0) return;
+
+        const requiredWeeklySaving = Math.ceil(targetAmount / weeksRemaining);
+        
+        setPrediction({
+          predicted_completion_date: formData.deadline,
+          required_weekly_saving: requiredWeeklySaving,
+          ai_confidence: 0.82,
+          weeks_remaining: weeksRemaining
+        });
+      } catch (error) {
+        console.error('Error calculating prediction:', error);
+      }
+    };
+
+    const debounce = setTimeout(calculatePrediction, 500);
+    return () => clearTimeout(debounce);
+  }, [formData.target, formData.deadline]);
 
   if (!isOpen) return null;
 
@@ -63,7 +122,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
         .insert({
           user_id: user.id,
           title: formData.title,
-          description: formData.description,
+          description: formData.motivation || formData.description,
           target: targetAmount,
           current: 0,
           deadline: formData.deadline || null,
@@ -101,7 +160,18 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
         }
       }
 
-      toast.success("Meta creada exitosamente");
+      // Confetti effect
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#D4AF37', '#F4A460', '#DEB887']
+      });
+
+      toast.success("🎯 Meta creada con éxito", {
+        description: "Moni AI te acompañará paso a paso."
+      });
+      
       onSuccess();
       onClose();
       
@@ -114,8 +184,11 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
         category: "Custom",
         type: "personal",
         isPublic: false,
-        aiEnabled: true
+        aiEnabled: true,
+        motivation: "",
+        reminderEnabled: true
       });
+      setPrediction(null);
     } catch (error: any) {
       console.error('Error creating goal:', error);
       toast.error('Error al crear la meta');
@@ -161,36 +234,46 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
             />
           </div>
 
-          {/* Description */}
-          <div className="space-y-2">
-            <Label htmlFor="description" className="text-gray-900">Descripción (opcional)</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Describe tu meta..."
-              className="rounded-xl min-h-[80px] bg-white text-gray-900 border-gray-300"
-            />
+          {/* Category - Visual Grid */}
+          <div className="space-y-3">
+            <Label className="text-gray-900 flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-amber-600" />
+              Categoría
+            </Label>
+            <div className="grid grid-cols-3 gap-3">
+              {GOAL_CATEGORIES.map((cat) => (
+                <button
+                  key={cat.value}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, category: cat.value })}
+                  className={`p-4 rounded-xl border-2 transition-all hover:scale-105 ${
+                    formData.category === cat.value
+                      ? "border-amber-600 bg-amber-50 shadow-sm"
+                      : "border-gray-200 hover:border-amber-300"
+                  }`}
+                >
+                  <div className="text-3xl mb-2">{cat.icon}</div>
+                  <p className="text-xs font-medium text-gray-900">{cat.label}</p>
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Category */}
+          {/* Motivation Purpose */}
           <div className="space-y-2">
-            <Label htmlFor="category" className="text-gray-900">Categoría</Label>
-            <Select
-              value={formData.category}
-              onValueChange={(value) => setFormData({ ...formData, category: value })}
-            >
-              <SelectTrigger className="h-12 rounded-xl bg-white text-gray-900 border-gray-300">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {GOAL_CATEGORIES.map((cat) => (
-                  <SelectItem key={cat.value} value={cat.value}>
-                    {cat.icon} {cat.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="motivation" className="text-gray-900">
+              ¿Por qué quieres lograr esta meta?
+            </Label>
+            <Textarea
+              id="motivation"
+              value={formData.motivation}
+              onChange={(e) => setFormData({ ...formData, motivation: e.target.value })}
+              placeholder="Ej. Ahorrar para mi viaje a Europa con mi familia."
+              className="rounded-xl min-h-[80px] bg-white text-gray-900 border-gray-300"
+            />
+            <p className="text-xs text-gray-500">
+              💬 Moni usa esta información para recordatorios personalizados
+            </p>
           </div>
 
           {/* Target Amount & Deadline */}
@@ -214,17 +297,54 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
             <div className="space-y-2">
               <Label htmlFor="deadline" className="flex items-center gap-2 text-gray-900">
                 <Calendar className="h-4 w-4 text-amber-600" />
-                Fecha límite (opcional)
+                Fecha límite
               </Label>
               <Input
                 id="deadline"
                 type="date"
                 value={formData.deadline}
                 onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+                required
                 className="h-12 rounded-xl bg-white text-gray-900 border-gray-300"
               />
             </div>
           </div>
+
+          {/* AI Prediction */}
+          {prediction && (
+            <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl p-5 border-2 border-amber-200 animate-fade-in">
+              <div className="flex items-start gap-3">
+                <div className="bg-amber-100 rounded-full p-2">
+                  <Sparkles className="h-5 w-5 text-amber-600 animate-pulse" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                    🔮 Predicción de Moni AI
+                  </h3>
+                  <p className="text-sm text-gray-700 mb-2">
+                    Según tus ingresos y hábitos, podrías lograr esta meta el{" "}
+                    <strong>{new Date(prediction.predicted_completion_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })}</strong>.
+                  </p>
+                  <div className="bg-white/80 rounded-lg p-3 border border-amber-200">
+                    <p className="text-sm font-medium text-amber-700">
+                      💰 Ahorra ${prediction.required_weekly_saving.toLocaleString()} por semana para cumplirla a tiempo.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 mt-3">
+                    <div className="flex-1 bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-amber-500 to-green-500 h-2 rounded-full transition-all duration-500"
+                        style={{ width: `${prediction.ai_confidence * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-xs font-medium text-gray-600">
+                      {Math.round(prediction.ai_confidence * 100)}% precisión
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Goal Type */}
           <div className="space-y-2">
@@ -257,12 +377,29 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
             </div>
           </div>
 
-          {/* Privacy & AI */}
+          {/* Privacy & Options */}
           <div className="space-y-4 bg-amber-50/30 rounded-xl p-4 border border-amber-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                {formData.isPublic ? (
-                  <Globe className="h-4 w-4 text-amber-600" />
+                <Bell className="h-4 w-4 text-amber-600" />
+                <div>
+                  <Label htmlFor="reminderEnabled" className="text-sm font-medium text-gray-900">
+                    🔔 Recordarme semanalmente sobre esta meta
+                  </Label>
+                  <p className="text-xs text-gray-600">Moni te enviará recordatorios de progreso</p>
+                </div>
+              </div>
+              <Switch
+                id="reminderEnabled"
+                checked={formData.reminderEnabled}
+                onCheckedChange={(checked) => setFormData({ ...formData, reminderEnabled: checked })}
+              />
+            </div>
+
+            <div className="flex items-center justify-between pt-4 border-t border-amber-100">
+              <div className="flex items-center gap-2">
+                {formData.type === "group" ? (
+                  <Users className="h-4 w-4 text-amber-600" />
                 ) : (
                   <Lock className="h-4 w-4 text-amber-600" />
                 )}
@@ -279,24 +416,17 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
                 onCheckedChange={(checked) => setFormData({ ...formData, isPublic: checked })}
               />
             </div>
+          </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-amber-100">
-              <div>
-                <Label htmlFor="aiEnabled" className="text-sm font-medium text-gray-900">
-                  Predicciones con AI
-                </Label>
-                <p className="text-xs text-gray-600">Moni AI calculará cuánto ahorrar</p>
-              </div>
-              <Switch
-                id="aiEnabled"
-                checked={formData.aiEnabled}
-                onCheckedChange={(checked) => setFormData({ ...formData, aiEnabled: checked })}
-              />
-            </div>
+          {/* Inspirational Quote */}
+          <div className="text-center py-4 border-t border-gray-100">
+            <p className="text-sm italic text-gray-600">
+              "{inspirationalPhrase}"
+            </p>
           </div>
 
           {/* Submit */}
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-3">
             <Button
               type="button"
               onClick={onClose}

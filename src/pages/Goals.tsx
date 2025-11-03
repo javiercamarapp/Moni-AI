@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Target, Plus, TrendingUp, Sparkles, ArrowLeft } from "lucide-react";
+import { Target, Plus, TrendingUp, Sparkles, ArrowLeft, Lightbulb } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -169,6 +169,33 @@ const Goals = () => {
                         {stats.goalsOnTrack} de {goals.length} metas en buen ritmo
                       </p>
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* AI Recommendations Section */}
+              <div className="bg-gradient-to-br from-purple-50 to-cyan-50 rounded-2xl shadow-md p-6 border border-purple-100">
+                <div className="flex items-start gap-4">
+                  <div className="bg-white rounded-full p-3 shadow-sm">
+                    <Lightbulb className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      🤖 Moni AI recomienda
+                    </h3>
+                    <p className="text-sm text-gray-700 mb-4">
+                      {goals.length > 0 && goals[0].required_weekly_saving
+                        ? `Si ahorras $${Math.round(goals[0].required_weekly_saving * 1.1).toLocaleString()}/semana, podrás lograr tu meta 2 semanas antes.`
+                        : "Crea una meta para recibir recomendaciones personalizadas de ahorro."}
+                    </p>
+                    {goals.length > 0 && goals[0].required_weekly_saving && (
+                      <button
+                        onClick={() => toast.info("Ajuste automático próximamente")}
+                        className="px-4 py-2 bg-white border-2 border-purple-600 text-purple-700 rounded-xl font-semibold hover:bg-purple-50 transition-all text-sm"
+                      >
+                        Ajustar plan automáticamente
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
