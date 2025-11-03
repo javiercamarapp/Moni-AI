@@ -242,7 +242,7 @@ const SocialStats = () => {
               <Trophy className="h-5 w-5 text-yellow-600" />
               Ranking entre Amigos
             </h2>
-            <Badge variant="secondary" className="text-xs">
+            <Badge variant="secondary" className="text-[10px] px-2 py-0.5">
               Este mes
             </Badge>
           </div>
@@ -311,7 +311,7 @@ const SocialStats = () => {
               <Medal className="h-5 w-5 text-blue-600" />
               Ranking General
             </h2>
-            <Badge variant="secondary" className="text-xs">
+            <Badge variant="secondary" className="text-[10px] px-2 py-0.5">
               Top 10
             </Badge>
           </div>
