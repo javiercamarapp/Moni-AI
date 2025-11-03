@@ -30,10 +30,6 @@ import WeeklySpendingPatternWidget from "@/components/analysis/WeeklySpendingPat
 import AICoachInsightsWidget from "@/components/analysis/AICoachInsightsWidget";
 import FinancialHealthPieWidget from "@/components/analysis/FinancialHealthPieWidget";
 import LiquidityGaugeWidget from "@/components/analysis/LiquidityGaugeWidget";
-import RecentMovementsWidget from "@/components/analysis/RecentMovementsWidget";
-import ScoreBreakdownWidget from "@/components/analysis/ScoreBreakdownWidget";
-import CategoryBreakdownWidget from "@/components/analysis/CategoryBreakdownWidget";
-import IncomeExpensePieWidget from "@/components/analysis/IncomeExpensePieWidget";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { AIAnalysisLoader } from "@/components/AIAnalysisLoader";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -1656,30 +1652,9 @@ export default function FinancialAnalysis() {
 
             {/* 5. PRESUPUESTO VIVO */}
             <BudgetProgressWidget {...(analysis?.budgetProgress || {})} isLoading={loading} />
-            
-            {/* Recent Movements - Solo Desktop */}
-            <div className="hidden lg:block">
-              <RecentMovementsWidget />
-            </div>
 
             {/* 6. DEUDA INTELIGENTE */}
             {analysis?.debtPlan && analysis?.debtPlan.debts && analysis?.debtPlan.debts.length > 0 && <DebtPaymentPlanWidget {...analysis?.debtPlan} />}
-            
-            {/* Score Breakdown - Solo Desktop */}
-            <div className="hidden lg:block">
-              <ScoreBreakdownWidget
-                scoreMoni={analysis?.scoreMoni || 0}
-                components={analysis?.components || {
-                  savingsAndLiquidity: 0,
-                  debt: 0,
-                  control: 0,
-                  growth: 0,
-                  behavior: 0
-                }}
-                changeReason=""
-                previousScore={analysis?.scoreMoni || 0}
-              />
-            </div>
 
             {/* Llamados a la Acción */}
             <div className="space-y-2">
@@ -1793,15 +1768,6 @@ export default function FinancialAnalysis() {
                 </Card>
               </div>
             </div>
-            
-            {/* Category Breakdown - Solo Desktop */}
-            <div className="hidden lg:block">
-              <CategoryBreakdownWidget
-                categories={categoryBreakdownData}
-                period={chartsPeriod}
-                onPeriodChange={(value) => setChartsPeriod(value)}
-              />
-            </div>
 
             {/* Endeudamiento Mejorado */}
             <div className="space-y-2">
@@ -1875,16 +1841,6 @@ export default function FinancialAnalysis() {
                   <p className="text-[9px] text-muted-foreground">Califícalo 1-10 →</p>
                 </Card>
               </div>
-            </div>
-            
-            {/* Income vs Expense Pie - Solo Desktop */}
-            <div className="hidden lg:block">
-              <IncomeExpensePieWidget
-                monthlyIncome={dashboardData.monthlyIncome}
-                monthlyExpenses={dashboardData.monthlyExpenses}
-                yearlyIncome={quickMetrics.totalIncome}
-                yearlyExpenses={quickMetrics.totalExpenses}
-              />
             </div>
 
             {/* Microcopy Empático */}
