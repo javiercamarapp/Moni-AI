@@ -171,9 +171,10 @@ const GroupGoals = () => {
               </p>
               <Button
                 onClick={() => navigate('/groups')}
-                className="h-10 px-6 bg-purple-600 hover:bg-purple-700 text-white rounded-xl"
+                className="h-10 px-6 bg-white hover:bg-gray-50 text-gray-900 rounded-xl shadow-md border border-gray-200"
               >
-                Ir a Mis Círculos
+                <Plus className="h-4 w-4 mr-2 text-amber-700" />
+                Mejor crea una meta grupal
               </Button>
             </div>
           ) : (
