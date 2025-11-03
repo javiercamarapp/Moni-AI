@@ -212,7 +212,7 @@ const CircleChat = () => {
   }
 
   return (
-    <div className="min-h-screen animate-fade-in flex flex-col relative overflow-hidden">
+    <div className="min-h-screen flex flex-col relative overflow-hidden">
       {/* Animated Background */}
       <div className="fixed inset-0 bg-gradient-to-b from-[#E5DEFF] to-[#FFDEE2] -z-10" />
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)] animate-pulse -z-10" style={{ animationDuration: '4s' }} />
