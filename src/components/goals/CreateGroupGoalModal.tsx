@@ -84,19 +84,31 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
 
   useEffect(() => {
     if (formData.targetAmount && formData.deadline && formData.circleId) {
-      calculateAIPrediction();
+      // Small delay to ensure state is updated
+      const timer = setTimeout(() => {
+        calculateAIPrediction();
+      }, 100);
+      return () => clearTimeout(timer);
+    } else {
+      setAiPrediction(null);
     }
   }, [formData.targetAmount, formData.deadline, formData.circleId]);
 
   const calculateAIPrediction = () => {
-    // Remove formatting to get clean number
-    const cleanAmount = formData.targetAmount.replace(/[^\d.]/g, '');
+    // Remove formatting to get clean number (remove commas and .00)
+    const cleanAmount = formData.targetAmount.replace(/[^\d]/g, '');
     const amount = parseFloat(cleanAmount);
+    
+    if (!formData.deadline || !amount || amount <= 0) {
+      setAiPrediction(null);
+      return;
+    }
+    
     const deadlineDate = new Date(formData.deadline);
     const today = new Date();
     const daysRemaining = Math.ceil((deadlineDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
     
-    if (daysRemaining > 0 && amount > 0) {
+    if (daysRemaining > 0) {
       const weeklySaving = Math.round((amount / daysRemaining) * 7);
       const confidence = Math.min(0.84 + Math.random() * 0.1, 0.95);
       
@@ -105,6 +117,8 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
         weeklySaving,
         confidence,
       });
+    } else {
+      setAiPrediction(null);
     }
   };
 
@@ -115,11 +129,13 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
     setLoading(true);
 
     try {
-      // Remove formatting to get clean number
-      const cleanAmount = formData.targetAmount.replace(/[^\d.]/g, '');
+      // Remove all formatting to get clean number
+      const cleanAmount = formData.targetAmount.replace(/[^\d]/g, '');
       const targetAmount = parseFloat(cleanAmount);
+      
       if (isNaN(targetAmount) || targetAmount <= 0) {
         toast.error("Ingresa un monto válido");
+        setLoading(false);
         return;
       }
 
@@ -344,7 +360,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
                 <div className="flex-1">
                   <p className="text-xs font-semibold text-gray-900 mb-1">🔮 Predicción de Moni AI</p>
                   <p className="text-[11px] text-gray-700 mb-2">
-                    "Si cada miembro ahorra ${aiPrediction.weeklySaving}/semana, lograrán esta meta el{' '}
+                    "Si cada miembro ahorra ${aiPrediction.weeklySaving.toLocaleString('es-MX')}/semana, lograrán esta meta el{' '}
                     {new Date(aiPrediction.date).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })}."
                   </p>
                   <div className="flex items-center gap-2 mb-2">
