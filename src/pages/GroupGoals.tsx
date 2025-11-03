@@ -121,9 +121,9 @@ const GroupGoals = () => {
 
   return (
     <>
-      <div className="min-h-screen pb-24 bg-gradient-to-b from-purple-50/50 to-white animate-fade-in">
+      <div className="min-h-screen pb-24 bg-gradient-to-b from-gray-50 to-white animate-fade-in">
         {/* Header */}
-        <div className="sticky top-0 z-40 bg-gradient-to-b from-white/95 to-white/80 backdrop-blur-md border-b border-purple-100">
+        <div className="sticky top-0 z-40 bg-gradient-to-b from-white/95 to-white/80 backdrop-blur-md border-b border-gray-100">
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -145,10 +145,10 @@ const GroupGoals = () => {
               {circles.length > 0 && (
                 <Button
                   onClick={() => setCreateModalOpen(true)}
-                  className="h-10 px-5 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white rounded-xl shadow-lg"
+                  className="h-11 px-6 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-xl shadow-lg"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nueva
+                  <Plus className="h-5 w-5 mr-2" />
+                  Nueva meta
                 </Button>
               )}
             </div>
@@ -174,7 +174,7 @@ const GroupGoals = () => {
               </p>
               <Button
                 onClick={() => navigate('/groups')}
-                className="h-12 px-8 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white rounded-xl shadow-lg"
+                className="h-12 px-8 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-xl shadow-lg"
               >
                 Ver Círculos
               </Button>
@@ -193,7 +193,7 @@ const GroupGoals = () => {
               </p>
               <Button
                 onClick={() => setCreateModalOpen(true)}
-                className="h-12 px-8 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white rounded-xl shadow-lg"
+                className="h-12 px-8 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-xl shadow-lg"
               >
                 <Plus className="h-5 w-5 mr-2" />
                 Crear meta grupal
@@ -203,7 +203,7 @@ const GroupGoals = () => {
             <>
               {/* Stats Summary */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white rounded-2xl shadow-md p-6 border border-purple-100">
+                <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-emerald-100 rounded-full p-3">
                       <TrendingUp className="h-5 w-5 text-emerald-600" />
@@ -215,7 +215,7 @@ const GroupGoals = () => {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl shadow-md p-6 border border-cyan-100">
+                <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="bg-cyan-100 rounded-full p-3">
                       <Target className="h-5 w-5 text-cyan-600" />
