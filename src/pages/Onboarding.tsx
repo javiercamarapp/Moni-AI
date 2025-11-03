@@ -16,20 +16,46 @@ import { AnimatedText } from '@/components/ui/animated-shiny-text';
 const Onboarding = () => {
   const [showLogo, setShowLogo] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
   const navigate = useNavigate();
 
+  // Preload ALL images (backgrounds + slide images)
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowLogo(false);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
+    const allImages = [
+      onboardingHero, 
+      onboardingControl, 
+      onboardingGoals, 
+      onboardingCoach,
+      aiImage,
+      'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=600&fit=crop'
+    ];
 
-  // Preload background images
-  useEffect(() => {
-    const images = [onboardingHero, onboardingControl, onboardingGoals, onboardingCoach];
-    images.forEach((src) => {
+    let loadedCount = 0;
+    const totalImages = allImages.length;
+
+    allImages.forEach((src) => {
       const img = new Image();
+      img.onload = () => {
+        loadedCount++;
+        if (loadedCount === totalImages) {
+          setImagesLoaded(true);
+          // Show logo for at least 2 seconds, then hide
+          setTimeout(() => {
+            setShowLogo(false);
+          }, 2000);
+        }
+      };
+      img.onerror = () => {
+        loadedCount++;
+        if (loadedCount === totalImages) {
+          setImagesLoaded(true);
+          setTimeout(() => {
+            setShowLogo(false);
+          }, 2000);
+        }
+      };
       img.src = src;
     });
   }, []);
