@@ -16,10 +16,9 @@ import { AnimatedText } from '@/components/ui/animated-shiny-text';
 const Onboarding = () => {
   const [showLogo, setShowLogo] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
   const navigate = useNavigate();
 
-  // Preload ALL images (backgrounds + slide images)
+  // Preload ALL images and ensure they're ready before showing slides
   useEffect(() => {
     const allImages = [
       onboardingHero, 
@@ -40,8 +39,7 @@ const Onboarding = () => {
       img.onload = () => {
         loadedCount++;
         if (loadedCount === totalImages) {
-          setImagesLoaded(true);
-          // Show logo for at least 2 seconds, then hide
+          // Wait 2 seconds minimum before hiding logo
           setTimeout(() => {
             setShowLogo(false);
           }, 2000);
@@ -50,7 +48,7 @@ const Onboarding = () => {
       img.onerror = () => {
         loadedCount++;
         if (loadedCount === totalImages) {
-          setImagesLoaded(true);
+          // Even with errors, proceed after 2 seconds
           setTimeout(() => {
             setShowLogo(false);
           }, 2000);
@@ -119,10 +117,10 @@ const Onboarding = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden">
-      {/* Background image - changes based on currentSlide */}
+    <div className="min-h-screen flex flex-col relative overflow-hidden bg-black">
+      {/* Background image - changes based on currentSlide - with fallback */}
       <div 
-        className="absolute inset-0 z-0 transition-opacity duration-500"
+        className="absolute inset-0 z-0"
         style={{
           backgroundImage: `url(${
             currentSlide === 0 ? onboardingHero : 
@@ -132,7 +130,8 @@ const Onboarding = () => {
           })`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: '#000'
         }}
       >
         {/* Dark overlay for better text readability */}
