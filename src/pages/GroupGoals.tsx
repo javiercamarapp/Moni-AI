@@ -123,7 +123,7 @@ const GroupGoals = () => {
     <>
       <div className="min-h-screen pb-24 animate-fade-in">
         {/* Header */}
-        <div className="sticky top-0 z-40 bg-gradient-to-b from-white/80 to-transparent backdrop-blur-sm">
+        <div className="sticky top-0 z-40 bg-gradient-to-b from-purple-50/80 via-cyan-50/60 to-transparent backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 py-3">
             <div className="flex items-center gap-3">
               <Button
@@ -135,7 +135,7 @@ const GroupGoals = () => {
                 <ArrowLeft className="h-4 w-4 text-gray-700" />
               </Button>
               <div>
-                <h1 className="text-lg font-semibold bg-gradient-to-r from-purple-600 via-cyan-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
+                <h1 className="text-lg font-semibold text-gray-900 tracking-tight">
                   Metas Grupales
                 </h1>
                 <p className="text-xs text-gray-600">
