@@ -55,6 +55,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
     targetAmount: "",
     deadline: "",
   });
+  const [displayAmount, setDisplayAmount] = useState("");
 
   const formatCurrency = (value: string) => {
     // Remove all non-numeric characters
@@ -70,8 +71,24 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
   };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatCurrency(e.target.value);
-    setFormData({ ...formData, targetAmount: formatted });
+    const inputValue = e.target.value;
+    // Allow only numbers while typing
+    const numericOnly = inputValue.replace(/[^\d]/g, '');
+    
+    setFormData({ ...formData, targetAmount: numericOnly });
+    setDisplayAmount(numericOnly);
+  };
+
+  const handleAmountBlur = () => {
+    if (formData.targetAmount) {
+      const formatted = formatCurrency(formData.targetAmount);
+      setDisplayAmount(formatted);
+    }
+  };
+
+  const handleAmountFocus = () => {
+    // Show raw number when focused
+    setDisplayAmount(formData.targetAmount);
   };
 
   useEffect(() => {
@@ -322,8 +339,10 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
                 <Input
                   id="targetAmount"
                   type="text"
-                  value={formData.targetAmount}
+                  value={displayAmount}
                   onChange={handleAmountChange}
+                  onBlur={handleAmountBlur}
+                  onFocus={handleAmountFocus}
                   placeholder="10,000.00"
                   required
                   className="h-12 rounded-xl bg-white border-gray-300 text-gray-900 pl-7"
