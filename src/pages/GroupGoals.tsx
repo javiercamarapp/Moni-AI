@@ -184,7 +184,8 @@ const GroupGoals = () => {
               </p>
               <Button
                 onClick={() => setCreateModalOpen(true)}
-                className="h-12 px-8 mb-3 bg-white border-2 border-[#c8a57b] text-gray-900 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 rounded-2xl font-semibold"
+                size="lg"
+                className="mb-3"
               >
                 <Plus className="h-5 w-5 mr-2" />
                 Crear meta grupal
