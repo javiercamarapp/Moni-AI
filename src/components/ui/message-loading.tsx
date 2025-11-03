@@ -1,45 +1,23 @@
+import { motion } from "motion/react";
+import moniLogo from "@/assets/moni-ai-logo-black.png";
+
 function MessageLoading() {
   return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-      className="text-foreground"
-    >
-      <circle cx="4" cy="12" r="2" fill="currentColor">
-        <animate
-          id="spinner_qFRN"
-          begin="0;spinner_OcgL.end+0.25s"
-          attributeName="cy"
-          calcMode="spline"
-          dur="0.6s"
-          values="12;6;12"
-          keySplines=".33,.66,.66,1;.33,0,.66,.33"
-        />
-      </circle>
-      <circle cx="12" cy="12" r="2" fill="currentColor">
-        <animate
-          begin="spinner_qFRN.begin+0.1s"
-          attributeName="cy"
-          calcMode="spline"
-          dur="0.6s"
-          values="12;6;12"
-          keySplines=".33,.66,.66,1;.33,0,.66,.33"
-        />
-      </circle>
-      <circle cx="20" cy="12" r="2" fill="currentColor">
-        <animate
-          id="spinner_OcgL"
-          begin="spinner_qFRN.begin+0.2s"
-          attributeName="cy"
-          calcMode="spline"
-          dur="0.6s"
-          values="12;6;12"
-          keySplines=".33,.66,.66,1;.33,0,.66,.33"
-        />
-      </circle>
-    </svg>
+    <motion.img
+      src={moniLogo}
+      alt="MONI AI"
+      className="w-16 h-auto"
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{
+        opacity: [0.7, 1, 0.7],
+        scale: [0.95, 1, 0.95],
+      }}
+      transition={{
+        duration: 1.5,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    />
   );
 }
 

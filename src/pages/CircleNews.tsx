@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Newspaper } from "lucide-react";
 import { toast } from "sonner";
+import { MoniLoader } from "@/components/MoniLoader";
 
 const CircleNews = () => {
   const { id } = useParams();
@@ -43,7 +44,7 @@ const CircleNews = () => {
   if (!circle) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">Cargando...</p>
+        <MoniLoader size="lg" />
       </div>
     );
   }

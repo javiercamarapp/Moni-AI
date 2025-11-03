@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Trophy, Target, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { MoniLoader } from "@/components/MoniLoader";
 
 const CircleChallenges = () => {
   const { id } = useParams();
@@ -245,7 +246,7 @@ const CircleChallenges = () => {
   if (!circle) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">Cargando...</p>
+        <MoniLoader size="lg" />
       </div>
     );
   }

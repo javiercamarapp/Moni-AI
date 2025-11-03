@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Users, Trophy, MessageCircle, Newspaper, Plus, UserPlus } from "lucide-react";
 import { toast } from "sonner";
+import { MoniLoader } from "@/components/MoniLoader";
 
 const CircleDetails = () => {
   const { id } = useParams();
@@ -106,7 +107,7 @@ const CircleDetails = () => {
   if (!circle) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">Cargando...</p>
+        <MoniLoader size="lg" />
       </div>
     );
   }
