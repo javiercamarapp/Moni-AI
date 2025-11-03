@@ -11,6 +11,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Camera, Users, TrendingUp, Zap, Calendar, Trophy, Target, ChevronRight, Medal, Sparkles, MessageCircle, Plus, Share2, Gift } from "lucide-react";
 import { toast } from "sonner";
+import MoniLevelUp from "@/components/social/MoniLevelUp";
+import UserBadges from "@/components/social/UserBadges";
+import XPProgressCard from "@/components/social/XPProgressCard";
 
 const Social = () => {
   const navigate = useNavigate();
@@ -33,6 +36,8 @@ const Social = () => {
   const [showXPGain, setShowXPGain] = useState(false);
   const [xpGainAmount, setXPGainAmount] = useState(0);
   const [socialToast, setSocialToast] = useState<{ show: boolean; userName: string; type: string; xp: number; challenge?: string }>({ show: false, userName: '', type: '', xp: 0 });
+  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [previousLevel, setPreviousLevel] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const achievementSoundRef = useRef<HTMLAudioElement>(null);
   const xpSoundRef = useRef<HTMLAudioElement>(null);
@@ -318,7 +323,16 @@ const Social = () => {
             },
             (payload: any) => {
               if (payload.new) {
-                setTotalXP(payload.new.total_xp || 0);
+                const newXP = payload.new.total_xp || 0;
+                const newLevel = Math.floor(newXP / 100) + 1;
+                
+                // Detectar subida de nivel
+                if (newLevel > previousLevel) {
+                  setShowLevelUp(true);
+                  setPreviousLevel(newLevel);
+                }
+                
+                setTotalXP(newXP);
                 setScoreMoni(payload.new.score_moni || 40);
                 setProfile(payload.new);
               }
@@ -988,6 +1002,18 @@ const Social = () => {
             </div>
           </div>
 
+          {/* XP Progress Card */}
+          <XPProgressCard 
+            totalXP={totalXP} 
+            scoreMoni={scoreMoni}
+            className="animate-fade-in"
+          />
+
+          {/* User Badges */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
+            <UserBadges totalXP={totalXP} />
+          </div>
+
           {/* Challenges Section */}
           <div className="bg-[#f5efea] rounded-3xl shadow-sm p-5 -mx-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1316,6 +1342,13 @@ const Social = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Level Up Animation */}
+        <MoniLevelUp 
+          level={Math.floor(totalXP / 100) + 1}
+          show={showLevelUp}
+          onComplete={() => setShowLevelUp(false)}
+        />
       </div>
       <BottomNav />
     </>
