@@ -949,7 +949,7 @@ const Social = () => {
               </button>
 
               <button 
-                onClick={() => navigate('/goals')}
+                onClick={() => navigate('/group-goals')}
                 className="flex flex-col items-center gap-1.5 group w-16"
               >
                 <div className="bg-gradient-to-br from-purple-500/20 to-purple-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">

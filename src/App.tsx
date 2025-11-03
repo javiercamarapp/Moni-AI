@@ -51,6 +51,7 @@ import Groups from './pages/Groups';
 import FinancialEvents from './pages/FinancialEvents';
 import SavingSimulation from './pages/SavingSimulation';
 import Goals from './pages/Goals';
+import GroupGoals from './pages/GroupGoals';
 import AccountsCards from './pages/AccountsCards';
 import FixedExpenses from './pages/FixedExpenses';
 import VariableExpenses from './pages/VariableExpenses';
@@ -131,6 +132,7 @@ function App() {
           <Route path="/social-stats" element={<SocialStats />} />
           <Route path="/saving-simulation" element={<SavingSimulation />} />
           <Route path="/goals" element={<Goals />} />
+          <Route path="/group-goals" element={<GroupGoals />} />
           <Route path="/accounts-cards" element={<AccountsCards />} />
           <Route path="/fixed-expenses" element={<FixedExpenses />} />
           <Route path="/variable-expenses" element={<VariableExpenses />} />
