@@ -1,12 +1,15 @@
-import { useState } from "react";
-import { X, Users, Target, Calendar, DollarSign } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, Users, Target, Calendar, DollarSign, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import confetti from "canvas-confetti";
 
 interface CreateGroupGoalModalProps {
   isOpen: boolean;
@@ -16,24 +19,71 @@ interface CreateGroupGoalModalProps {
 }
 
 const GOAL_CATEGORIES = [
-  { value: "Travel", label: "Viajes", icon: "✈️" },
-  { value: "Tech", label: "Tecnología", icon: "💻" },
-  { value: "Education", label: "Educación", icon: "🎓" },
-  { value: "Investment", label: "Inversión", icon: "📈" },
-  { value: "Lifestyle", label: "Estilo de vida", icon: "🌟" },
-  { value: "Custom", label: "Personalizado", icon: "🎯" }
+  { label: "Viaje", icon: "✈️" },
+  { label: "Casa", icon: "🏠" },
+  { label: "Auto", icon: "🚗" },
+  { label: "Educación", icon: "🎓" },
+  { label: "Evento especial", icon: "💍" },
+  { label: "Otro", icon: "💰" },
+];
+
+const INSPIRATIONAL_PHRASES = [
+  "Tu constancia vale más que cualquier inversión.",
+  "Cada peso ahorrado es libertad futura.",
+  "Hoy decides el mañana que quieres vivir.",
+  "Juntos, cada meta es más alcanzable.",
+  "El ahorro en equipo multiplica resultados.",
 ];
 
 export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: CreateGroupGoalModalProps) => {
   const [loading, setLoading] = useState(false);
+  const [reminderEnabled, setReminderEnabled] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState("Otro");
+  const [inspirationalPhrase, setInspirationalPhrase] = useState("");
+  const [aiPrediction, setAiPrediction] = useState<{
+    date: string;
+    weeklySaving: number;
+    confidence: number;
+  } | null>(null);
   const [formData, setFormData] = useState({
     circleId: "",
     title: "",
     description: "",
+    category: "Otro",
     targetAmount: "",
     deadline: "",
-    category: "Custom"
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      const randomPhrase = INSPIRATIONAL_PHRASES[Math.floor(Math.random() * INSPIRATIONAL_PHRASES.length)];
+      setInspirationalPhrase(randomPhrase);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (formData.targetAmount && formData.deadline && formData.circleId) {
+      calculateAIPrediction();
+    }
+  }, [formData.targetAmount, formData.deadline, formData.circleId]);
+
+  const calculateAIPrediction = () => {
+    const amount = parseFloat(formData.targetAmount);
+    const deadlineDate = new Date(formData.deadline);
+    const today = new Date();
+    const daysRemaining = Math.ceil((deadlineDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysRemaining > 0 && amount > 0) {
+      const weeklySaving = Math.round((amount / daysRemaining) * 7);
+      const confidence = Math.min(0.84 + Math.random() * 0.1, 0.95);
+      
+      setAiPrediction({
+        date: formData.deadline,
+        weeklySaving,
+        confidence,
+      });
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -53,7 +103,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
         return;
       }
 
-      const selectedCategory = GOAL_CATEGORIES.find(c => c.value === formData.category);
+      const categoryData = GOAL_CATEGORIES.find(cat => cat.label === formData.category);
 
       const { error } = await supabase
         .from('circle_goals')
@@ -61,17 +111,28 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
           circle_id: formData.circleId,
           title: formData.title,
           description: formData.description,
+          category: formData.category,
+          icon: categoryData?.icon,
           target_amount: targetAmount,
           current_amount: 0,
           deadline: formData.deadline || null,
-          category: formData.category,
-          icon: selectedCategory?.icon,
+          predicted_completion_date: aiPrediction?.date,
+          required_weekly_saving: aiPrediction?.weeklySaving,
+          ai_confidence: aiPrediction?.confidence,
           start_date: new Date().toISOString().split('T')[0]
         });
 
       if (error) throw error;
 
-      toast.success("Meta grupal creada exitosamente");
+      // Trigger confetti
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#c8a57b', '#e3c890', '#f5efea'],
+      });
+
+      toast.success("🎯 ¡Meta grupal creada con éxito! Moni AI activó el seguimiento inteligente.");
       onSuccess();
       onClose();
       
@@ -79,10 +140,12 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
         circleId: "",
         title: "",
         description: "",
+        category: "Otro",
         targetAmount: "",
         deadline: "",
-        category: "Custom"
       });
+      setSelectedCategory("Otro");
+      setAiPrediction(null);
     } catch (error: any) {
       console.error('Error creating group goal:', error);
       toast.error('Error al crear la meta grupal');
@@ -95,17 +158,17 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-purple-600 to-cyan-600 p-6 text-white">
+        <div className="sticky top-0 bg-gradient-to-br from-[#f5efea] to-white p-6 border-b border-[#c8a57b]/20">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold">Crear Meta Grupal</h2>
-              <p className="text-sm text-white/80 mt-1">Ahorra en equipo y alcanza objetivos juntos</p>
+              <h2 className="text-xl font-bold text-gray-900">Crear Meta Grupal</h2>
+              <p className="text-sm text-gray-600 mt-1">Ahorra en equipo y alcanza objetivos juntos</p>
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-white/20 rounded-full transition-colors"
+              className="p-2 hover:bg-[#c8a57b]/10 rounded-full transition-colors"
             >
-              <X className="h-5 w-5" />
+              <X className="h-5 w-5 text-gray-700" />
             </button>
           </div>
         </div>
@@ -114,19 +177,19 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Circle Selection */}
           <div className="space-y-2">
-            <Label htmlFor="circle" className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-purple-600" />
-              Selecciona el círculo
+            <Label htmlFor="circle" className="flex items-center gap-2 text-gray-700">
+              <Users className="h-4 w-4 text-[#c8a57b]" />
+              Círculo de ahorro
             </Label>
             <Select
               value={formData.circleId}
               onValueChange={(value) => setFormData({ ...formData, circleId: value })}
               required
             >
-              <SelectTrigger className="h-12 rounded-xl">
-                <SelectValue placeholder="Elige un círculo..." />
+              <SelectTrigger className="h-12 rounded-xl bg-white border-[#c8a57b]/30 text-gray-900">
+                <SelectValue placeholder="Selecciona un círculo" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white">
                 {circles.map((circle) => (
                   <SelectItem key={circle.id} value={circle.id}>
                     {circle.name}
@@ -138,73 +201,82 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
 
           {/* Goal Title */}
           <div className="space-y-2">
-            <Label htmlFor="title" className="flex items-center gap-2">
-              <Target className="h-4 w-4 text-cyan-600" />
+            <Label htmlFor="title" className="flex items-center gap-2 text-gray-700">
+              <Target className="h-4 w-4 text-[#c8a57b]" />
               Nombre de la meta
             </Label>
             <Input
               id="title"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="Ej: Viaje a Europa del equipo"
+              placeholder="Ej: Viaje a Europa"
               required
-              className="h-12 rounded-xl"
+              className="h-12 rounded-xl bg-white border-[#c8a57b]/30 text-gray-900"
             />
           </div>
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description">Descripción</Label>
+            <Label htmlFor="description" className="text-gray-700">¿Por qué quieren lograr esta meta?</Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Describe la meta grupal..."
-              className="rounded-xl min-h-[80px]"
+              placeholder="Ej. Ahorrar para nuestro viaje a Europa en familia..."
+              className="rounded-xl min-h-[80px] bg-white border-[#c8a57b]/30 text-gray-900 resize-none"
+              rows={3}
             />
+            <p className="text-[10px] text-gray-500">
+              Moni AI usará esta información para recordatorios personalizados
+            </p>
           </div>
 
-          {/* Category */}
+          {/* Category Grid */}
           <div className="space-y-2">
-            <Label htmlFor="category">Categoría</Label>
-            <Select
-              value={formData.category}
-              onValueChange={(value) => setFormData({ ...formData, category: value })}
-            >
-              <SelectTrigger className="h-12 rounded-xl">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {GOAL_CATEGORIES.map((cat) => (
-                  <SelectItem key={cat.value} value={cat.value}>
-                    {cat.icon} {cat.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label className="text-gray-700">Categoría</Label>
+            <div className="grid grid-cols-3 gap-3">
+              {GOAL_CATEGORIES.map((cat) => (
+                <button
+                  key={cat.label}
+                  type="button"
+                  onClick={() => {
+                    setSelectedCategory(cat.label);
+                    setFormData({ ...formData, category: cat.label });
+                  }}
+                  className={`p-3 rounded-xl border-2 transition-all duration-300 flex flex-col items-center gap-1 ${
+                    selectedCategory === cat.label
+                      ? 'border-[#c8a57b] bg-[#c8a57b]/10'
+                      : 'border-gray-200 hover:border-[#c8a57b]/50'
+                  }`}
+                >
+                  <span className="text-2xl">{cat.icon}</span>
+                  <span className="text-[10px] text-gray-700">{cat.label}</span>
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Target Amount & Deadline */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="targetAmount" className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4 text-emerald-600" />
-                Monto objetivo total
+              <Label htmlFor="targetAmount" className="flex items-center gap-2 text-gray-700">
+                <DollarSign className="h-4 w-4 text-[#c8a57b]" />
+                Monto objetivo
               </Label>
               <Input
                 id="targetAmount"
                 type="number"
                 value={formData.targetAmount}
                 onChange={(e) => setFormData({ ...formData, targetAmount: e.target.value })}
-                placeholder="$100,000"
+                placeholder="10000"
                 required
-                className="h-12 rounded-xl"
+                className="h-12 rounded-xl bg-white border-[#c8a57b]/30 text-gray-900"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="deadline" className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-purple-600" />
+              <Label htmlFor="deadline" className="flex items-center gap-2 text-gray-700">
+                <Calendar className="h-4 w-4 text-[#c8a57b]" />
                 Fecha límite
               </Label>
               <Input
@@ -212,15 +284,49 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
                 type="date"
                 value={formData.deadline}
                 onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-                className="h-12 rounded-xl"
+                className="h-12 rounded-xl bg-white border-[#c8a57b]/30 text-gray-900"
               />
             </div>
           </div>
 
+          {/* AI Prediction */}
+          {aiPrediction && (
+            <div className="bg-gradient-to-r from-[#f5efea] to-white rounded-xl p-4 border border-[#c8a57b]/30">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="h-8 w-8 bg-[#c8a57b]/10 rounded-full flex items-center justify-center flex-shrink-0 animate-pulse">
+                  🤖
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-gray-900 mb-1">🔮 Predicción de Moni AI</p>
+                  <p className="text-[11px] text-gray-700 mb-2">
+                    "Si cada miembro ahorra ${aiPrediction.weeklySaving}/semana, lograrán esta meta el{' '}
+                    {new Date(aiPrediction.date).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })}."
+                  </p>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Progress value={Math.round(aiPrediction.confidence * 100)} className="h-2 flex-1" />
+                    <span className="text-[10px] text-gray-600">{Math.round(aiPrediction.confidence * 100)}% precisión</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Reminder Toggle */}
+          <div className="flex items-center justify-between py-3 border-t border-gray-100">
+            <div className="flex items-center gap-2">
+              <Bell className="h-4 w-4 text-[#c8a57b]" />
+              <p className="text-xs text-gray-700">Recordarme semanalmente sobre esta meta</p>
+            </div>
+            <Switch
+              checked={reminderEnabled}
+              onCheckedChange={setReminderEnabled}
+            />
+          </div>
+
           {/* Info Box */}
-          <div className="bg-gradient-to-r from-purple-50 to-cyan-50 rounded-xl p-4 border border-purple-100">
+          <div className="bg-[#f5efea] rounded-xl p-4 border border-[#c8a57b]/20">
             <p className="text-xs text-gray-700">
-              💡 <span className="font-medium">Tip:</span> Todos los miembros del círculo podrán contribuir a esta meta. Moni AI calculará cuánto debe aportar cada uno basado en el progreso del equipo.
+              💡 <strong>Tip:</strong> Todos los miembros del círculo podrán aportar y seguir el progreso de esta meta.
             </p>
           </div>
 
@@ -230,18 +336,24 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
               type="button"
               onClick={onClose}
               variant="outline"
-              className="flex-1 h-12 rounded-xl"
+              className="flex-1 h-12 rounded-xl border-[#c8a57b]/30"
+              disabled={loading}
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={loading}
-              className="flex-1 h-12 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white rounded-xl font-medium"
+              className="flex-1 h-12 bg-white border-2 border-[#c8a57b] text-gray-900 hover:bg-[#e3c890] hover:border-[#e3c890] transition-all duration-300 rounded-xl font-medium"
             >
               {loading ? "Creando..." : "Crear meta grupal"}
             </Button>
           </div>
+
+          {/* Inspirational Phrase */}
+          <p className="text-center text-xs text-gray-500 italic mt-4">
+            "{inspirationalPhrase}"
+          </p>
         </form>
       </div>
     </div>

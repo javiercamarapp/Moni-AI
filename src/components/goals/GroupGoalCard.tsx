@@ -1,4 +1,4 @@
-import { Users, Target, TrendingUp, Calendar, MessageCircle } from "lucide-react";
+import { Users, Target, TrendingUp, Calendar, MessageCircle, Sparkles } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -40,25 +40,20 @@ export const GroupGoalCard = ({ goal, members = [], onViewDetails, onAddContribu
     : null;
 
   return (
-    <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-purple-100">
+    <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-[#c8a57b]/20">
       {/* Header */}
-      <div className="relative bg-gradient-to-br from-purple-500/10 to-cyan-500/10 p-5">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <div className="bg-white rounded-full p-2 shadow-sm">
-              <Users className="h-5 w-5 text-purple-600" />
-            </div>
-            <div>
-              <p className="text-xs font-medium text-gray-600">{goal.circle_name}</p>
-              <p className="text-[10px] text-gray-500">{goal.member_count} miembros</p>
-            </div>
+      <div className="relative bg-gradient-to-br from-[#f5efea] to-white p-4">
+        <div className="flex items-start justify-between mb-2">
+          <div className="bg-white border border-[#c8a57b]/20 rounded-lg px-3 py-1">
+            <p className="text-xs font-medium text-gray-700">👥 {goal.circle_name}</p>
+            <p className="text-[10px] text-gray-500">{goal.member_count} miembros</p>
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold text-gray-900">{progress.toFixed(0)}%</div>
           </div>
         </div>
         
-        <h3 className="text-lg font-bold text-gray-900 mb-1">{goal.title}</h3>
+        <h3 className="text-base font-bold text-gray-900 mb-1">{goal.title}</h3>
         {goal.description && (
           <p className="text-xs text-gray-600 line-clamp-2">{goal.description}</p>
         )}
@@ -81,9 +76,9 @@ export const GroupGoalCard = ({ goal, members = [], onViewDetails, onAddContribu
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-purple-50 rounded-xl p-3">
+          <div className="bg-[#f5efea] rounded-xl p-3 border border-[#c8a57b]/10">
             <div className="flex items-center gap-2 mb-1">
-              <Target className="h-3 w-3 text-purple-600" />
+              <Target className="h-3 w-3 text-[#c8a57b]" />
               <span className="text-[10px] font-medium text-gray-600">Por persona</span>
             </div>
             <p className="text-xs font-semibold text-gray-900">{formatCurrency(perPersonCurrent)}</p>
@@ -91,9 +86,9 @@ export const GroupGoalCard = ({ goal, members = [], onViewDetails, onAddContribu
           </div>
           
           {daysRemaining !== null && (
-            <div className="bg-cyan-50 rounded-xl p-3">
+            <div className="bg-[#f5efea] rounded-xl p-3 border border-[#c8a57b]/10">
               <div className="flex items-center gap-2 mb-1">
-                <Calendar className="h-3 w-3 text-cyan-600" />
+                <Calendar className="h-3 w-3 text-[#c8a57b]" />
                 <span className="text-[10px] font-medium text-gray-600">Tiempo restante</span>
               </div>
               <p className="text-xs font-semibold text-gray-900">{daysRemaining} días</p>
@@ -122,19 +117,21 @@ export const GroupGoalCard = ({ goal, members = [], onViewDetails, onAddContribu
           </div>
         )}
 
-        {/* AI Recommendation */}
-        {goal.required_weekly_saving && (
-          <div className="bg-gradient-to-r from-purple-50 to-cyan-50 rounded-xl p-3 border border-purple-100">
+        {/* AI Prediction */}
+        {(goal.predicted_completion_date || goal.required_weekly_saving) && (
+          <div className="bg-gradient-to-r from-[#f5efea] to-white rounded-xl p-3 border border-[#c8a57b]/20">
             <div className="flex items-start gap-2">
-              <TrendingUp className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-xs font-medium text-gray-900 mb-1">Recomendación AI grupal</p>
-                <p className="text-[11px] text-gray-700">
-                  Cada miembro ahorre <span className="font-semibold text-purple-700">{formatCurrency(goal.required_weekly_saving / goal.member_count)}</span> semanal
-                </p>
+              <Sparkles className="h-4 w-4 text-[#c8a57b] mt-0.5 flex-shrink-0 animate-pulse" />
+              <div className="flex-1">
+                <p className="text-xs font-medium text-gray-900 mb-1">🤖 Predicción Moni AI</p>
                 {goal.predicted_completion_date && (
-                  <p className="text-[10px] text-gray-600 mt-1">
-                    Completarán la meta el {new Date(goal.predicted_completion_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  <p className="text-[11px] text-gray-700 mb-1">
+                    Cumplirán el <strong>{new Date(goal.predicted_completion_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })}</strong>
+                  </p>
+                )}
+                {goal.required_weekly_saving && (
+                  <p className="text-[10px] text-gray-600">
+                    💰 Cada miembro: {formatCurrency(goal.required_weekly_saving / goal.member_count)}/semana
                   </p>
                 )}
               </div>
@@ -146,7 +143,7 @@ export const GroupGoalCard = ({ goal, members = [], onViewDetails, onAddContribu
         <div className="flex gap-2">
           <Button
             onClick={onAddContribution}
-            className="flex-1 h-10 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white rounded-xl font-medium"
+            className="flex-1 h-10 bg-white border-2 border-[#c8a57b] text-gray-900 hover:bg-[#e3c890] hover:border-[#e3c890] rounded-xl font-medium transition-all duration-300"
           >
             <Target className="h-4 w-4 mr-1" />
             Contribuir
@@ -154,9 +151,9 @@ export const GroupGoalCard = ({ goal, members = [], onViewDetails, onAddContribu
           <Button
             onClick={onViewDetails}
             variant="outline"
-            className="h-10 px-4 rounded-xl border-purple-200"
+            className="h-10 px-4 rounded-xl border-[#c8a57b]/30 hover:bg-[#c8a57b]/5"
           >
-            <MessageCircle className="h-4 w-4" />
+            💬
           </Button>
         </div>
       </div>
