@@ -93,8 +93,21 @@ const Onboarding = () => {
 
   if (showLogo) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-fade-in">
+      <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+        {/* Background image during loading */}
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: `url(${onboardingHero})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        >
+          <div className="absolute inset-0 bg-black/30" />
+        </div>
+        
+        <div className="animate-fade-in relative z-10">
           <img 
             src={moniLogo} 
             alt="Moni Logo" 
