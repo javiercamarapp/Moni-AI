@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { MoniLoader } from "@/components/MoniLoader";
+import { SectionLoader } from "@/components/SectionLoader";
 
 interface Circle {
   id: string;
@@ -125,8 +126,8 @@ const Groups = () => {
           </p>
 
           {loading ? (
-            <div className="text-center py-8">
-              <MoniLoader size="sm" />
+            <div className="text-center py-12">
+              <SectionLoader size="lg" />
             </div>
           ) : circles.length === 0 ? (
             <div className="text-center py-6">

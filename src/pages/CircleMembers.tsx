@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, Users } from "lucide-react";
 import { toast } from "sonner";
 import { MoniLoader } from "@/components/MoniLoader";
+import { SectionLoader } from "@/components/SectionLoader";
 
 interface Profile {
   id: string;
@@ -135,8 +136,8 @@ const CircleMembers = () => {
             Miembros del círculo
           </h2>
           {loading ? (
-            <div className="text-center py-8">
-              <MoniLoader size="sm" />
+            <div className="text-center py-12">
+              <SectionLoader size="lg" />
             </div>
           ) : members.length === 0 ? (
             <p className="text-gray-600 text-xs text-center py-4">

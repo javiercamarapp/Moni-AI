@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { MoniLoader } from "@/components/MoniLoader";
+import { SectionLoader } from "@/components/SectionLoader";
 
 interface Friend {
   id: string;
@@ -145,8 +145,8 @@ const FriendsList = () => {
 
       <div className="mx-auto px-4 py-4 space-y-3" style={{ maxWidth: '600px' }}>
         {loading ? (
-          <div className="text-center py-8">
-            <MoniLoader size="sm" />
+          <div className="text-center py-12">
+            <SectionLoader size="lg" />
           </div>
         ) : friends.length === 0 ? (
           <div className="text-center py-16 space-y-3">
