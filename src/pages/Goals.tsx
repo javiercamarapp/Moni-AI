@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Target, Plus, TrendingUp, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Target, Plus, TrendingUp, Sparkles, ArrowLeft } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,6 +26,7 @@ interface Goal {
 }
 
 const Goals = () => {
+  const navigate = useNavigate();
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(true);
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -80,24 +82,25 @@ const Goals = () => {
     <>
       <div className="min-h-screen pb-24 bg-gradient-to-b from-gray-50 to-white animate-fade-in">
         {/* Header */}
-        <div className="sticky top-0 z-40 bg-gradient-to-b from-white/95 to-white/80 backdrop-blur-md border-b border-gray-100">
-          <div className="max-w-7xl mx-auto px-4 py-6">
-            <div className="flex items-center justify-between">
+        <div className="sticky top-0 z-40 bg-gradient-to-b from-purple-50/80 via-cyan-50/60 to-transparent backdrop-blur-sm">
+          <div className="max-w-7xl mx-auto px-4 py-3">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate(-1)}
+                className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
+              >
+                <ArrowLeft className="h-4 w-4 text-gray-700" />
+              </Button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+                <h1 className="text-lg font-semibold text-gray-900 tracking-tight">
                   Mis Metas
                 </h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-xs text-gray-600">
                   Alcanza tus objetivos con predicciones AI
                 </p>
               </div>
-              <Button
-                onClick={() => setCreateModalOpen(true)}
-                className="h-11 px-6 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-xl shadow-lg"
-              >
-                <Plus className="h-5 w-5 mr-2" />
-                Nueva meta
-              </Button>
             </div>
           </div>
         </div>
