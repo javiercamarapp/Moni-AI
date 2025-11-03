@@ -132,6 +132,28 @@ Ejemplo formato:
         })
       });
 
+      // Handle payment/rate limit errors for suggestions
+      if (!suggestionsResponse.ok) {
+        if (suggestionsResponse.status === 402) {
+          return new Response(JSON.stringify({ 
+            error: 'PAYMENT_REQUIRED',
+            message: 'No hay créditos suficientes en Lovable AI. Por favor, recarga tus créditos en Settings → Workspace → Usage.'
+          }), {
+            status: 402,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        if (suggestionsResponse.status === 429) {
+          return new Response(JSON.stringify({ 
+            error: 'RATE_LIMIT',
+            message: 'Se alcanzó el límite de solicitudes. Por favor, intenta nuevamente en unos momentos.'
+          }), {
+            status: 429,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
       if (suggestionsResponse.ok) {
         try {
           const suggestionsData = await suggestionsResponse.json();
@@ -1079,6 +1101,29 @@ Sé profesional pero cercano. Usa las razones financieras como un médico usa an
     if (!aiResponse.ok) {
       const errorText = await aiResponse.text();
       console.error('AI API error:', aiResponse.status, errorText);
+      
+      // Handle payment required error specifically
+      if (aiResponse.status === 402) {
+        return new Response(JSON.stringify({ 
+          error: 'PAYMENT_REQUIRED',
+          message: 'No hay créditos suficientes en Lovable AI. Por favor, recarga tus créditos en Settings → Workspace → Usage.'
+        }), {
+          status: 402,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      // Handle rate limit error
+      if (aiResponse.status === 429) {
+        return new Response(JSON.stringify({ 
+          error: 'RATE_LIMIT',
+          message: 'Se alcanzó el límite de solicitudes. Por favor, intenta nuevamente en unos momentos.'
+        }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
       throw new Error(`AI API error: ${aiResponse.status}`);
     }
 
@@ -1130,6 +1175,28 @@ Responde SOLO con el JSON array, sin texto adicional.`;
         ]
       })
     });
+
+    // Handle payment/rate limit errors for risk analysis
+    if (!riskResponse.ok) {
+      if (riskResponse.status === 402) {
+        return new Response(JSON.stringify({ 
+          error: 'PAYMENT_REQUIRED',
+          message: 'No hay créditos suficientes en Lovable AI. Por favor, recarga tus créditos en Settings → Workspace → Usage.'
+        }), {
+          status: 402,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      if (riskResponse.status === 429) {
+        return new Response(JSON.stringify({ 
+          error: 'RATE_LIMIT',
+          message: 'Se alcanzó el límite de solicitudes. Por favor, intenta nuevamente en unos momentos.'
+        }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
 
     let riskIndicators = [];
     if (riskResponse.ok) {

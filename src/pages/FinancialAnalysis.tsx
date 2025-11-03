@@ -785,6 +785,27 @@ export default function FinancialAnalysis() {
       
       if (error) {
         console.error('Financial analysis error:', error);
+        
+        // Handle payment required error
+        if (error.message?.includes('402') || data?.error === 'PAYMENT_REQUIRED') {
+          toast.error('No hay créditos suficientes en Lovable AI', {
+            description: 'Ve a Settings → Workspace → Usage para recargar créditos.',
+            duration: 8000,
+          });
+          setLoading(false);
+          return;
+        }
+        
+        // Handle rate limit error  
+        if (error.message?.includes('429') || data?.error === 'RATE_LIMIT') {
+          toast.error('Demasiadas solicitudes', {
+            description: 'Por favor, espera unos momentos antes de intentar nuevamente.',
+            duration: 5000,
+          });
+          setLoading(false);
+          return;
+        }
+        
         throw error;
       }
       
