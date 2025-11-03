@@ -940,7 +940,7 @@ const Social = () => {
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary" className="flex items-center gap-1 px-2 py-0.5">
                     <Zap className="h-2.5 w-2.5 text-primary" />
-                    <span className="text-[10px] font-bold">Nivel {profile?.level || 1}</span>
+                    <span className="text-[10px] font-bold">Nivel {Math.floor(totalXP / 100) + 1}</span>
                   </Badge>
                   <Badge variant="outline" className="flex items-center gap-1 px-2 py-0.5 border-yellow-600/30 bg-yellow-50">
                     <Trophy className="h-2.5 w-2.5 text-yellow-600" />
@@ -948,12 +948,74 @@ const Social = () => {
                   </Badge>
                 </div>
                 <span className="text-[10px] text-muted-foreground">
-                  {xpData.currentXP} / {xpData.xpForNextLevel} XP
+                  {totalXP % 100} / 100 XP
                 </span>
               </div>
               
               {/* XP Progress Bar */}
-              <Progress value={xpData.progress} className="h-1.5" />
+              <Progress value={((totalXP % 100) / 100) * 100} className="h-1.5" />
+              
+              {/* Score Moni Card */}
+              <div className="mt-3 p-3 bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl border border-primary/20">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                      <span className="text-lg">🦉</span>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-muted-foreground">Score Moni</p>
+                      <p className="text-sm font-bold text-primary">{scoreMoni}/100</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] text-muted-foreground">Total XP</p>
+                    <p className="text-sm font-bold">{totalXP}</p>
+                  </div>
+                </div>
+                <Progress value={scoreMoni} className="h-2 mb-2" />
+                <p className="text-[9px] text-muted-foreground text-center">
+                  {scoreMoni >= 80 ? "🏆 Excelente salud financiera" : scoreMoni >= 60 ? "✨ Buen progreso" : "💪 Sigue mejorando"}
+                </p>
+              </div>
+
+              {/* Badges Section */}
+              <div className="mt-3">
+                <h3 className="text-[10px] font-semibold text-gray-700 mb-2 flex items-center gap-1">
+                  <Medal className="h-3 w-3" />
+                  Insignias Desbloqueadas
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {totalXP >= 100 && (
+                    <div className="bg-white border border-primary/20 rounded-lg px-2 py-1 flex items-center gap-1">
+                      <span className="text-lg">💰</span>
+                      <span className="text-[9px] font-medium">Ahorrista Nivel 1</span>
+                    </div>
+                  )}
+                  {totalXP >= 300 && (
+                    <div className="bg-white border border-blue-500/20 rounded-lg px-2 py-1 flex items-center gap-1">
+                      <span className="text-lg">📊</span>
+                      <span className="text-[9px] font-medium">Finanzas al Día</span>
+                    </div>
+                  )}
+                  {totalXP >= 600 && (
+                    <div className="bg-white border border-purple-500/20 rounded-lg px-2 py-1 flex items-center gap-1">
+                      <span className="text-lg">🧠</span>
+                      <span className="text-[9px] font-medium">Estratega</span>
+                    </div>
+                  )}
+                  {totalXP >= 1000 && (
+                    <div className="bg-white border border-yellow-500/20 rounded-lg px-2 py-1 flex items-center gap-1">
+                      <span className="text-lg">👑</span>
+                      <span className="text-[9px] font-medium">Maestro del Dinero</span>
+                    </div>
+                  )}
+                  {totalXP < 100 && (
+                    <p className="text-[9px] text-muted-foreground italic">
+                      Completa retos para desbloquear insignias
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1002,17 +1064,6 @@ const Social = () => {
             </div>
           </div>
 
-          {/* XP Progress Card */}
-          <XPProgressCard 
-            totalXP={totalXP} 
-            scoreMoni={scoreMoni}
-            className="animate-fade-in"
-          />
-
-          {/* User Badges */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
-            <UserBadges totalXP={totalXP} />
-          </div>
 
           {/* Challenges Section */}
           <div className="bg-[#f5efea] rounded-3xl shadow-sm p-5 -mx-4">
