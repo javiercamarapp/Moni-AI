@@ -1051,14 +1051,13 @@ export default function FinancialAnalysis() {
             </div>
           </div>
 
-          <div className="mx-auto px-4 py-6 max-w-7xl">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-3">
+          <div className="mx-auto px-4 py-6 space-y-4" style={{ maxWidth: '600px' }}>
 
             {/* Mostrar métricas instantáneas (siempre disponibles del caché) */}
             {(quickMetrics || analysis) ? (
           <>
             {/* Animated Income & Expense Card with Carousel */}
-            <div className="relative lg:col-span-2">
+            <div className="relative">
               <div 
                 ref={scrollContainerRef}
                 className="overflow-x-scroll snap-x snap-mandatory flex gap-4 pb-2 -mx-4 px-4 scroll-smooth" 
@@ -1630,7 +1629,6 @@ export default function FinancialAnalysis() {
             </div>
 
             {/* 3. PROYECCIONES CON ESCENARIOS - Siempre mostrar con datos en caché */}
-            <div className="lg:col-span-2">
             {(() => {
               console.log('🔍 RENDERIZANDO FORECAST:', {
                 hasForecast: !!analysis?.forecast,
@@ -1648,7 +1646,6 @@ export default function FinancialAnalysis() {
               
               return <ForecastWidget {...forecastProps} />;
             })()}
-            </div>
 
             {/* 5. PRESUPUESTO VIVO */}
             <BudgetProgressWidget {...(analysis?.budgetProgress || {})} isLoading={loading} />
@@ -1846,7 +1843,6 @@ export default function FinancialAnalysis() {
             {/* Microcopy Empático */}
 
             {/* Historical Comparison */}
-            <div className="lg:col-span-2">
             <HistoricalComparisonWidget
               data={historicalMonthlyData.length > 0 ? historicalMonthlyData : [
                 { month: 'Sin datos', income: 0, expenses: 0, savings: 0 }
@@ -1876,11 +1872,9 @@ export default function FinancialAnalysis() {
                 }
               })()}
             />
-            </div>
 
             {/* Evolution Chart */}
-            <div className="lg:col-span-2">
-            <EvolutionChartWidget
+            <EvolutionChartWidget 
               data={evolutionData.length > 0 ? evolutionData : [
                 { month: 'Sin datos', score: 40, savings: 0, balance: 0, income: 0, expenses: 0 }
               ]}
@@ -1918,10 +1912,9 @@ export default function FinancialAnalysis() {
                 };
               })()}
             />
-            </div>
 
             {/* Additional Financial Health Charts */}
-            <div className="space-y-3 lg:col-span-2">
+            <div className="space-y-3">
               <div className="grid grid-cols-1 gap-3">
                 <FinancialHealthPieWidget 
                   savings={chartsData.income - chartsData.expenses > 0 ? chartsData.income - chartsData.expenses : 0}
@@ -1935,8 +1928,7 @@ export default function FinancialAnalysis() {
 
             {/* New Historical Comparison Widgets */}
             {yearOverYearData.length > 0 && (
-              <div className="lg:col-span-2">
-              <YearOverYearWidget
+              <YearOverYearWidget 
                 data={yearOverYearData}
                 insight={(() => {
                   const years = yearOverYearData.length > 0 
@@ -1956,12 +1948,10 @@ export default function FinancialAnalysis() {
                     : `Tus gastos aumentaron ${change.toFixed(1)}% vs ${previousYear}. Revisa gastos variables.`;
                 })()}
               />
-              </div>
             )}
 
             {seasonalData.length > 0 && (
-              <div className="lg:col-span-2">
-              <SeasonalTrendsWidget
+              <SeasonalTrendsWidget 
                 data={seasonalData}
                 insight={(() => {
                   const bestQuarter = seasonalData.reduce((max, q) => q.savings > max.savings ? q : max, seasonalData[0]);
@@ -1970,12 +1960,10 @@ export default function FinancialAnalysis() {
                   return `Tu mejor trimestre fue ${bestQuarter.quarter} con $${(bestQuarter.savings / 1000).toFixed(1)}k ahorrados. ${worstQuarter.quarter} fue el más desafiante con $${(worstQuarter.savings / 1000).toFixed(1)}k.`;
                 })()}
               />
-              </div>
             )}
 
             {burnRateData.length > 0 && (
-              <div className="lg:col-span-2">
-              <BurnRateWidget
+              <BurnRateWidget 
                 data={burnRateData}
                 currentSavings={burnRateData[burnRateData.length - 1]?.ahorroAcumulado || 0}
                 insight={(() => {
@@ -1994,12 +1982,10 @@ export default function FinancialAnalysis() {
                   }
                 })()}
               />
-              </div>
             )}
 
             {netWorthEvolutionData.length > 0 && (
-              <div className="lg:col-span-2">
-              <NetWorthEvolutionWidget
+              <NetWorthEvolutionWidget 
                 data={netWorthEvolutionData}
                 insight={(() => {
                   if (netWorthEvolutionData.length < 2) return undefined;
@@ -2018,12 +2004,10 @@ export default function FinancialAnalysis() {
                   }
                 })()}
               />
-              </div>
             )}
 
             {weeklySpendingData.length > 0 && (
-              <div className="lg:col-span-2">
-              <WeeklySpendingPatternWidget
+              <WeeklySpendingPatternWidget 
                 data={weeklySpendingData}
                 insight={(() => {
                   const maxDay = weeklySpendingData.reduce((max, d) => d.amount > max.amount ? d : max, weeklySpendingData[0]);
@@ -2044,7 +2028,6 @@ export default function FinancialAnalysis() {
                   }
                 })()}
               />
-              </div>
             )}
           </>
         ) : (
@@ -2052,7 +2035,6 @@ export default function FinancialAnalysis() {
             <p className="text-muted-foreground">No hay datos disponibles para mostrar</p>
           </Card>
         )}
-            </div>
           </div>
         </div>
       )}
