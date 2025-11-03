@@ -151,7 +151,7 @@ const Groups = () => {
                   <button
                     key={circle.id}
                     onClick={() => navigate(`/circle/${circle.id}`)}
-                    className="w-full p-3 border rounded-xl flex justify-between items-center hover:border-primary/30 hover:bg-primary/5 transition-all"
+                    className="w-full p-3 border rounded-xl flex justify-between items-center hover:border-primary/30 hover:bg-primary/5"
                   >
                     <span className="text-xs text-gray-900">💬 {circle.name}</span>
                     <span className="text-xs text-gray-500">{circle.member_count} miembros</span>
