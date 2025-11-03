@@ -9,6 +9,14 @@ import BottomNav from "@/components/BottomNav";
 import { GroupGoalCard } from "@/components/goals/GroupGoalCard";
 import { CreateGroupGoalModal } from "@/components/goals/CreateGroupGoalModal";
 import { formatCurrency } from "@/lib/utils";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 interface GroupGoal {
   id: string;
@@ -36,6 +44,7 @@ const GroupGoals = () => {
   const [circles, setCircles] = useState<Circle[]>([]);
   const [loading, setLoading] = useState(true);
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [goalsSheetOpen, setGoalsSheetOpen] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -202,56 +211,24 @@ const GroupGoals = () => {
             </div>
           ) : (
             <>
-              {/* Stats Summary */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white rounded-2xl shadow-sm p-4 text-center border border-[#c8a57b]/10">
-                  <p className="text-xs text-gray-600 mb-1">Total Ahorrado</p>
-                  <p className="text-lg font-bold text-gray-900">{formatCurrency(stats.totalSaved)}</p>
+              {/* Main Button to Open Goals Sheet */}
+              <div className="text-center py-16">
+                <div className="w-20 h-20 bg-[#c8a57b]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Target className="h-10 w-10 text-[#c8a57b]" />
                 </div>
-                
-                <div className="bg-white rounded-2xl shadow-sm p-4 text-center border border-[#c8a57b]/10">
-                  <p className="text-xs text-gray-600 mb-1">Progreso Promedio</p>
-                  <p className="text-lg font-bold text-gray-900">{stats.avgProgress.toFixed(0)}%</p>
-                </div>
-                
-                <div className="bg-white rounded-2xl shadow-sm p-4 text-center border border-[#c8a57b]/10">
-                  <p className="text-xs text-gray-600 mb-1">Metas Activas</p>
-                  <p className="text-lg font-bold text-gray-900">{stats.activeGoals}</p>
-                </div>
-              </div>
-
-              {/* AI Recommendation Card */}
-              <div className="bg-white rounded-2xl shadow-lg p-6 border border-[#c8a57b]/20">
-                <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 bg-[#c8a57b]/10 rounded-full flex items-center justify-center flex-shrink-0 animate-pulse">
-                    🤖
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-1">Moni AI recomienda:</h3>
-                    <p className="text-xs text-gray-700 mb-3">
-                      "Si cada miembro ahorra $230/semana, lograrán sus metas 2 semanas antes del plazo."
-                    </p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-[#c8a57b] text-gray-900 hover:bg-[#e3c890] hover:border-[#e3c890] transition-all duration-300"
-                    >
-                      Ajustar plan automáticamente
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Goals Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {groupGoals.map((goal) => (
-                  <GroupGoalCard
-                    key={goal.id}
-                    goal={goal}
-                    onViewDetails={() => navigate(`/group-goals/${goal.id}`)}
-                    onAddContribution={() => toast.info("Contribución próximamente")}
-                  />
-                ))}
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Metas Grupales
+                </h3>
+                <p className="text-sm text-gray-600 mb-6 max-w-md mx-auto">
+                  Tienes {groupGoals.length} {groupGoals.length === 1 ? 'meta activa' : 'metas activas'}
+                </p>
+                <Button
+                  onClick={() => setGoalsSheetOpen(true)}
+                  className="h-12 px-8 mb-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md transition-all border-0 text-gray-900 font-semibold"
+                >
+                  <Users className="h-5 w-5 mr-2" />
+                  Ver metas grupales
+                </Button>
               </div>
             </>
           )}
@@ -259,6 +236,108 @@ const GroupGoals = () => {
       </div>
 
       <BottomNav />
+
+      {/* Goals List Sheet */}
+      <Sheet open={goalsSheetOpen} onOpenChange={setGoalsSheetOpen}>
+        <SheetContent side="bottom" className="h-[85vh] rounded-t-3xl">
+          <SheetHeader className="mb-6">
+            <SheetTitle className="text-2xl font-bold text-gray-900">
+              Metas Grupales
+            </SheetTitle>
+            <SheetDescription className="text-sm text-gray-600">
+              Selecciona una meta para ver sus detalles
+            </SheetDescription>
+          </SheetHeader>
+
+          {/* Stats Summary */}
+          <div className="grid grid-cols-3 gap-3 mb-6">
+            <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-xl p-3 text-center">
+              <p className="text-xs text-gray-600 mb-1">Total Ahorrado</p>
+              <p className="text-sm font-bold text-gray-900">{formatCurrency(stats.totalSaved)}</p>
+            </div>
+            
+            <div className="bg-gradient-to-br from-cyan-50 to-cyan-100/50 rounded-xl p-3 text-center">
+              <p className="text-xs text-gray-600 mb-1">Progreso</p>
+              <p className="text-sm font-bold text-gray-900">{stats.avgProgress.toFixed(0)}%</p>
+            </div>
+            
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-xl p-3 text-center">
+              <p className="text-xs text-gray-600 mb-1">Activas</p>
+              <p className="text-sm font-bold text-gray-900">{stats.activeGoals}</p>
+            </div>
+          </div>
+
+          {/* Goals List */}
+          <div className="space-y-3 overflow-y-auto max-h-[calc(85vh-280px)]">
+            {groupGoals.map((goal) => {
+              const progress = (goal.current_amount / goal.target_amount) * 100;
+              return (
+                <div
+                  key={goal.id}
+                  onClick={() => {
+                    setGoalsSheetOpen(false);
+                    navigate(`/group-goals/${goal.id}`);
+                  }}
+                  className="bg-white rounded-2xl p-4 shadow-sm border border-[#c8a57b]/10 hover:shadow-md transition-all cursor-pointer"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900 text-base mb-1">
+                        {goal.title}
+                      </h3>
+                      <p className="text-xs text-gray-600 flex items-center gap-1">
+                        <Users className="h-3 w-3" />
+                        {goal.circle_name} • {goal.member_count} miembros
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-600 mb-1">Progreso</p>
+                      <p className="text-sm font-bold text-gray-900">{progress.toFixed(0)}%</p>
+                    </div>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="w-full bg-gray-100 rounded-full h-2 mb-3">
+                    <div
+                      className="bg-gradient-to-r from-[#c8a57b] to-[#e3c890] h-2 rounded-full transition-all"
+                      style={{ width: `${Math.min(progress, 100)}%` }}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-gray-600">
+                      {formatCurrency(goal.current_amount)} de {formatCurrency(goal.target_amount)}
+                    </span>
+                    {goal.deadline && (
+                      <span className="text-gray-500">
+                        {new Date(goal.deadline).toLocaleDateString('es-MX', { 
+                          day: 'numeric', 
+                          month: 'short',
+                          year: 'numeric' 
+                        })}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Create New Goal Button */}
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <Button
+              onClick={() => {
+                setGoalsSheetOpen(false);
+                setCreateModalOpen(true);
+              }}
+              className="w-full h-12 bg-gradient-to-r from-[#c8a57b] to-[#e3c890] text-white hover:from-[#b8956b] hover:to-[#d3b880] rounded-xl font-semibold"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Crear nueva meta grupal
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Create Modal */}
       <CreateGroupGoalModal
