@@ -1018,19 +1018,22 @@ const Social = () => {
             </div>
           )}
 
-          {/* Friend Activity - Interactive */}
-          <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <MessageCircle className="h-5 w-5 text-primary" />
-                👥 Actividad de amigos
-              </h2>
-              <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 text-xs">
-                Ver todo
-              </Button>
-            </div>
+          {/* Friend Activity - Interactive - Only show when user has friends */}
+          {friendActivity.length > 0 && (
+            <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <MessageCircle className="h-5 w-5 text-primary" />
+                  👥 Actividad de amigos
+                </h2>
+                <Button 
+                  onClick={() => navigate('/friends-list')}
+                  className="bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-8 px-3 text-xs"
+                >
+                  Ver todo
+                </Button>
+              </div>
 
-            {friendActivity.length > 0 ? (
               <div className="space-y-4">
                 {friendActivity.map((activity) => (
                   <div key={activity.id} className="border-b border-gray-100 pb-4 last:border-0">
@@ -1073,19 +1076,12 @@ const Social = () => {
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className="text-center py-8">
-                <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500 text-sm">
-                  Aún no hay actividad de amigos. Agrega amigos para ver su progreso.
-                </p>
-              </div>
-            )}
 
-            <p className="text-xs text-gray-500 pt-2 border-t">
-              Las actualizaciones se generan automáticamente cuando tus amigos completan retos o desbloquean logros.
-            </p>
-          </div>
+              <p className="text-xs text-gray-500 pt-2 border-t">
+                Las actualizaciones se generan automáticamente cuando tus amigos completan retos o desbloquean logros.
+              </p>
+            </div>
+          )}
 
           {/* Invite and Earn XP */}
           <div className="bg-white rounded-2xl shadow-sm p-4 text-center">
