@@ -121,18 +121,20 @@ const GroupGoals = () => {
 
   return (
     <>
-      <div className="min-h-screen pb-24 bg-gradient-to-b from-gray-50 to-white animate-fade-in">
+      <div className="min-h-screen pb-24 animate-fade-in">
         {/* Header */}
-        <div className="sticky top-0 z-40 bg-gradient-to-b from-white/95 to-white/80 backdrop-blur-md border-b border-gray-100">
+        <div className="sticky top-0 z-40 bg-gradient-to-b from-white/80 to-transparent backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <button
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => navigate(-1)}
-                  className="p-2 hover:bg-purple-100 rounded-full transition-colors"
+                  className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
                 >
-                  <ArrowLeft className="h-5 w-5 text-gray-900" />
-                </button>
+                  <ArrowLeft className="h-4 w-4 text-gray-700" />
+                </Button>
                 <div>
                   <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
                     Metas Grupales
@@ -145,7 +147,7 @@ const GroupGoals = () => {
               {circles.length > 0 && (
                 <Button
                   onClick={() => setCreateModalOpen(true)}
-                  className="h-11 px-6 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-xl shadow-lg"
+                  className="h-11 px-6 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md transition-all border-0 text-gray-900 font-semibold"
                 >
                   <Plus className="h-5 w-5 mr-2" />
                   Nueva meta
@@ -174,7 +176,7 @@ const GroupGoals = () => {
               </p>
               <Button
                 onClick={() => navigate('/groups')}
-                className="h-12 px-8 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-xl shadow-lg"
+                className="h-12 px-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md transition-all border-0 text-gray-900 font-semibold"
               >
                 Ver Círculos
               </Button>
@@ -193,7 +195,7 @@ const GroupGoals = () => {
               </p>
               <Button
                 onClick={() => setCreateModalOpen(true)}
-                className="h-12 px-8 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-xl shadow-lg"
+                className="h-12 px-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md transition-all border-0 text-gray-900 font-semibold"
               >
                 <Plus className="h-5 w-5 mr-2" />
                 Crear meta grupal
