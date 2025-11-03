@@ -129,7 +129,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#c8a57b', '#e3c890', '#f5efea'],
+        colors: ['#1f2937', '#374151', '#6b7280'],
       });
 
       toast.success("🎯 ¡Meta grupal creada con éxito! Moni AI activó el seguimiento inteligente.");
@@ -158,7 +158,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-br from-[#f5efea] to-white p-6 border-b border-[#c8a57b]/20">
+        <div className="sticky top-0 bg-white p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold text-gray-900">Crear Meta Grupal</h2>
@@ -166,7 +166,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-[#c8a57b]/10 rounded-full transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             >
               <X className="h-5 w-5 text-gray-700" />
             </button>
@@ -178,7 +178,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
           {/* Circle Selection */}
           <div className="space-y-2">
             <Label htmlFor="circle" className="flex items-center gap-2 text-gray-700">
-              <Users className="h-4 w-4 text-[#c8a57b]" />
+              <Users className="h-4 w-4 text-gray-900" />
               Círculo de ahorro
             </Label>
             <Select
@@ -186,7 +186,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
               onValueChange={(value) => setFormData({ ...formData, circleId: value })}
               required
             >
-              <SelectTrigger className="h-12 rounded-xl bg-white border-[#c8a57b]/30 text-gray-900">
+              <SelectTrigger className="h-12 rounded-xl bg-white border-gray-300 text-gray-900">
                 <SelectValue placeholder="Selecciona un círculo" />
               </SelectTrigger>
               <SelectContent className="bg-white">
@@ -202,7 +202,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
           {/* Goal Title */}
           <div className="space-y-2">
             <Label htmlFor="title" className="flex items-center gap-2 text-gray-700">
-              <Target className="h-4 w-4 text-[#c8a57b]" />
+              <Target className="h-4 w-4 text-gray-900" />
               Nombre de la meta
             </Label>
             <Input
@@ -211,7 +211,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               placeholder="Ej: Viaje a Europa"
               required
-              className="h-12 rounded-xl bg-white border-[#c8a57b]/30 text-gray-900"
+              className="h-12 rounded-xl bg-white border-gray-300 text-gray-900"
             />
           </div>
 
@@ -223,7 +223,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Ej. Ahorrar para nuestro viaje a Europa en familia..."
-              className="rounded-xl min-h-[80px] bg-white border-[#c8a57b]/30 text-gray-900 resize-none"
+              className="rounded-xl min-h-[80px] bg-white border-gray-300 text-gray-900 resize-none"
               rows={3}
             />
             <p className="text-[10px] text-gray-500">
@@ -245,8 +245,8 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
                   }}
                   className={`p-3 rounded-xl border-2 transition-all duration-300 flex flex-col items-center gap-1 ${
                     selectedCategory === cat.label
-                      ? 'border-[#c8a57b] bg-[#c8a57b]/10'
-                      : 'border-gray-200 hover:border-[#c8a57b]/50'
+                      ? 'border-gray-900 bg-gray-100'
+                      : 'border-gray-200 hover:border-gray-400'
                   }`}
                 >
                   <span className="text-2xl">{cat.icon}</span>
@@ -260,7 +260,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="targetAmount" className="flex items-center gap-2 text-gray-700">
-                <DollarSign className="h-4 w-4 text-[#c8a57b]" />
+                <DollarSign className="h-4 w-4 text-gray-900" />
                 Monto objetivo
               </Label>
               <Input
@@ -270,13 +270,13 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
                 onChange={(e) => setFormData({ ...formData, targetAmount: e.target.value })}
                 placeholder="10000"
                 required
-                className="h-12 rounded-xl bg-white border-[#c8a57b]/30 text-gray-900"
+                className="h-12 rounded-xl bg-white border-gray-300 text-gray-900"
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="deadline" className="flex items-center gap-2 text-gray-700">
-                <Calendar className="h-4 w-4 text-[#c8a57b]" />
+                <Calendar className="h-4 w-4 text-gray-900" />
                 Fecha límite
               </Label>
               <Input
@@ -284,16 +284,16 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
                 type="date"
                 value={formData.deadline}
                 onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-                className="h-12 rounded-xl bg-white border-[#c8a57b]/30 text-gray-900"
+                className="h-12 rounded-xl bg-white border-gray-300 text-gray-900"
               />
             </div>
           </div>
 
           {/* AI Prediction */}
           {aiPrediction && (
-            <div className="bg-gradient-to-r from-[#f5efea] to-white rounded-xl p-4 border border-[#c8a57b]/30">
+            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
               <div className="flex items-start gap-3 mb-3">
-                <div className="h-8 w-8 bg-[#c8a57b]/10 rounded-full flex items-center justify-center flex-shrink-0 animate-pulse">
+                <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0 animate-pulse">
                   🤖
                 </div>
                 <div className="flex-1">
@@ -314,7 +314,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
           {/* Reminder Toggle */}
           <div className="flex items-center justify-between py-3 border-t border-gray-100">
             <div className="flex items-center gap-2">
-              <Bell className="h-4 w-4 text-[#c8a57b]" />
+              <Bell className="h-4 w-4 text-gray-900" />
               <p className="text-xs text-gray-700">Recordarme semanalmente sobre esta meta</p>
             </div>
             <Switch
@@ -324,7 +324,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
           </div>
 
           {/* Info Box */}
-          <div className="bg-[#f5efea] rounded-xl p-4 border border-[#c8a57b]/20">
+          <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
             <p className="text-xs text-gray-700">
               💡 <strong>Tip:</strong> Todos los miembros del círculo podrán aportar y seguir el progreso de esta meta.
             </p>
@@ -336,7 +336,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
               type="button"
               onClick={onClose}
               variant="outline"
-              className="flex-1 h-12 rounded-xl border-[#c8a57b]/30"
+              className="flex-1 h-12 rounded-xl border-gray-300"
               disabled={loading}
             >
               Cancelar
@@ -344,7 +344,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
             <Button
               type="submit"
               disabled={loading}
-              className="flex-1 h-12 bg-white border-2 border-[#c8a57b] text-gray-900 hover:bg-[#e3c890] hover:border-[#e3c890] transition-all duration-300 rounded-xl font-medium"
+              className="flex-1 h-12 bg-gray-900 text-white hover:bg-gray-800 transition-all duration-300 rounded-xl font-medium"
             >
               {loading ? "Creando..." : "Crear meta grupal"}
             </Button>
