@@ -157,7 +157,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               placeholder="Ej: Viaje a Europa"
               required
-              className="h-12 rounded-xl"
+              className="h-12 rounded-xl bg-white text-gray-900 border-gray-300"
             />
           </div>
 
@@ -169,7 +169,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Describe tu meta..."
-              className="rounded-xl min-h-[80px]"
+              className="rounded-xl min-h-[80px] bg-white text-gray-900 border-gray-300"
             />
           </div>
 
@@ -180,7 +180,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
               value={formData.category}
               onValueChange={(value) => setFormData({ ...formData, category: value })}
             >
-              <SelectTrigger className="h-12 rounded-xl">
+              <SelectTrigger className="h-12 rounded-xl bg-white text-gray-900 border-gray-300">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -207,7 +207,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
                 onChange={(e) => setFormData({ ...formData, target: e.target.value })}
                 placeholder="$50,000"
                 required
-                className="h-12 rounded-xl"
+                className="h-12 rounded-xl bg-white text-gray-900 border-gray-300"
               />
             </div>
 
@@ -221,7 +221,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
                 type="date"
                 value={formData.deadline}
                 onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-                className="h-12 rounded-xl"
+                className="h-12 rounded-xl bg-white text-gray-900 border-gray-300"
               />
             </div>
           </div>
