@@ -57,21 +57,17 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
   });
 
   const formatCurrency = (value: string) => {
-    // Remove all non-numeric characters except decimal point
-    const numericValue = value.replace(/[^\d.]/g, '');
+    // Remove all non-numeric characters
+    const numericValue = value.replace(/[^\d]/g, '');
     
-    // Split by decimal point
-    const parts = numericValue.split('.');
+    if (!numericValue) return '';
     
-    // Format integer part with commas
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    // Convert to number and format with thousands separator
+    const number = parseInt(numericValue);
+    const formatted = number.toLocaleString('es-MX');
     
-    // Limit to 2 decimal places
-    if (parts[1]) {
-      parts[1] = parts[1].substring(0, 2);
-    }
-    
-    return parts.join('.');
+    // Always add .00 for decimals
+    return `${formatted}.00`;
   };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
