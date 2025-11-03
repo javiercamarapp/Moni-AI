@@ -248,7 +248,7 @@ const GroupGoals = () => {
                   <GroupGoalCard
                     key={goal.id}
                     goal={goal}
-                    onViewDetails={() => toast.info("Detalles próximamente")}
+                    onViewDetails={() => navigate(`/group-goals/${goal.id}`)}
                     onAddContribution={() => toast.info("Contribución próximamente")}
                   />
                 ))}
