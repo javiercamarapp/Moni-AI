@@ -16,6 +16,7 @@ const Social = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [scoreMoni, setScoreMoni] = useState<number>(40);
+  const [totalXP, setTotalXP] = useState<number>(0);
   const [profile, setProfile] = useState<any>(null);
   const [showUsernameDialog, setShowUsernameDialog] = useState(false);
   const [username, setUsername] = useState("");
@@ -59,6 +60,11 @@ const Social = () => {
         
         if (profileData) {
           setProfile(profileData);
+          // Set initial XP and Score from profile
+          setTotalXP(profileData.total_xp || 0);
+          if (profileData.score_moni) {
+            setScoreMoni(profileData.score_moni);
+          }
           // Show username dialog if user doesn't have a username
           if (!profileData.username) {
             setShowUsernameDialog(true);
@@ -298,12 +304,34 @@ const Social = () => {
             }
           )
           .subscribe();
+        
+        // Setup realtime subscription for profile updates (XP and Score Moni)
+        const profileChannel = supabase
+          .channel('realtime-profile-updates')
+          .on(
+            'postgres_changes',
+            {
+              event: 'UPDATE',
+              schema: 'public',
+              table: 'profiles',
+              filter: `id=eq.${user.id}`
+            },
+            (payload: any) => {
+              if (payload.new) {
+                setTotalXP(payload.new.total_xp || 0);
+                setScoreMoni(payload.new.score_moni || 40);
+                setProfile(payload.new);
+              }
+            }
+          )
+          .subscribe();
 
         // Return cleanup function
         return () => {
           supabase.removeChannel(rankingsChannel);
           supabase.removeChannel(activityChannel);
           supabase.removeChannel(reactionsChannel);
+          supabase.removeChannel(profileChannel);
         };
       }
     };

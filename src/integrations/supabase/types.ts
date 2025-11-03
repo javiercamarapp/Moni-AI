@@ -1036,6 +1036,8 @@ export type Database = {
           id: string
           level: number | null
           level_quiz_completed: boolean | null
+          score_moni: number | null
+          total_xp: number | null
           updated_at: string
           username: string | null
           xp: number | null
@@ -1049,6 +1051,8 @@ export type Database = {
           id: string
           level?: number | null
           level_quiz_completed?: boolean | null
+          score_moni?: number | null
+          total_xp?: number | null
           updated_at?: string
           username?: string | null
           xp?: number | null
@@ -1062,6 +1066,8 @@ export type Database = {
           id?: string
           level?: number | null
           level_quiz_completed?: boolean | null
+          score_moni?: number | null
+          total_xp?: number | null
           updated_at?: string
           username?: string | null
           xp?: number | null
@@ -1210,6 +1216,41 @@ export type Database = {
           value?: number
         }
         Relationships: []
+      }
+      user_badges: {
+        Row: {
+          badge_description: string | null
+          badge_name: string
+          created_at: string | null
+          earned_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          badge_description?: string | null
+          badge_name: string
+          created_at?: string | null
+          earned_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          badge_description?: string | null
+          badge_name?: string
+          created_at?: string | null
+          earned_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_challenge_progress: {
         Row: {
@@ -1404,6 +1445,10 @@ export type Database = {
       }
     }
     Functions: {
+      add_user_xp: {
+        Args: { p_user_id: string; xp_to_add: number }
+        Returns: undefined
+      }
       apply_default_categories_to_existing_users: {
         Args: never
         Returns: undefined
