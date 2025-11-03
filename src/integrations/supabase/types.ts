@@ -253,29 +253,53 @@ export type Database = {
       }
       circle_goals: {
         Row: {
+          ai_confidence: number | null
+          category: string | null
           circle_id: string
           created_at: string
           current_amount: number
           deadline: string | null
+          description: string | null
+          icon: string | null
           id: string
+          is_public: boolean | null
+          predicted_completion_date: string | null
+          required_weekly_saving: number | null
+          start_date: string | null
           target_amount: number
           title: string
         }
         Insert: {
+          ai_confidence?: number | null
+          category?: string | null
           circle_id: string
           created_at?: string
           current_amount?: number
           deadline?: string | null
+          description?: string | null
+          icon?: string | null
           id?: string
+          is_public?: boolean | null
+          predicted_completion_date?: string | null
+          required_weekly_saving?: number | null
+          start_date?: string | null
           target_amount?: number
           title: string
         }
         Update: {
+          ai_confidence?: number | null
+          category?: string | null
           circle_id?: string
           created_at?: string
           current_amount?: number
           deadline?: string | null
+          description?: string | null
+          icon?: string | null
           id?: string
+          is_public?: boolean | null
+          predicted_completion_date?: string | null
+          required_weekly_saving?: number | null
+          start_date?: string | null
           target_amount?: number
           title?: string
         }
@@ -536,14 +560,124 @@ export type Database = {
         }
         Relationships: []
       }
+      goal_activities: {
+        Row: {
+          activity_type: string
+          amount: number | null
+          created_at: string | null
+          goal_id: string
+          id: string
+          message: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_type: string
+          amount?: number | null
+          created_at?: string | null
+          goal_id: string
+          id?: string
+          message?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_type?: string
+          amount?: number | null
+          created_at?: string | null
+          goal_id?: string
+          id?: string
+          message?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goal_activities_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      goal_comments: {
+        Row: {
+          comment: string
+          created_at: string | null
+          goal_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          comment: string
+          created_at?: string | null
+          goal_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string
+          created_at?: string | null
+          goal_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      goal_invitations: {
+        Row: {
+          created_at: string | null
+          from_user_id: string
+          goal_id: string
+          id: string
+          responded_at: string | null
+          status: string
+          to_user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          from_user_id: string
+          goal_id: string
+          id?: string
+          responded_at?: string | null
+          status?: string
+          to_user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          from_user_id?: string
+          goal_id?: string
+          id?: string
+          responded_at?: string | null
+          status?: string
+          to_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goal_invitations_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       goals: {
         Row: {
+          ai_confidence: number | null
+          category: string | null
           color: string
           created_at: string
           current: number
           deadline: string | null
+          description: string | null
+          icon: string | null
           id: string
+          is_public: boolean | null
+          last_contribution_date: string | null
           members: number | null
+          predicted_completion_date: string | null
+          required_daily_saving: number | null
+          required_weekly_saving: number | null
+          start_date: string | null
           target: number
           title: string
           type: string
@@ -551,12 +685,22 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          ai_confidence?: number | null
+          category?: string | null
           color?: string
           created_at?: string
           current?: number
           deadline?: string | null
+          description?: string | null
+          icon?: string | null
           id?: string
+          is_public?: boolean | null
+          last_contribution_date?: string | null
           members?: number | null
+          predicted_completion_date?: string | null
+          required_daily_saving?: number | null
+          required_weekly_saving?: number | null
+          start_date?: string | null
           target: number
           title: string
           type?: string
@@ -564,12 +708,22 @@ export type Database = {
           user_id: string
         }
         Update: {
+          ai_confidence?: number | null
+          category?: string | null
           color?: string
           created_at?: string
           current?: number
           deadline?: string | null
+          description?: string | null
+          icon?: string | null
           id?: string
+          is_public?: boolean | null
+          last_contribution_date?: string | null
           members?: number | null
+          predicted_completion_date?: string | null
+          required_daily_saving?: number | null
+          required_weekly_saving?: number | null
+          start_date?: string | null
           target?: number
           title?: string
           type?: string
@@ -1253,6 +1407,15 @@ export type Database = {
       apply_default_categories_to_existing_users: {
         Args: never
         Returns: undefined
+      }
+      calculate_goal_prediction: {
+        Args: {
+          p_current_savings: number
+          p_deadline: string
+          p_goal_id: string
+          p_target_amount: number
+        }
+        Returns: Json
       }
       create_default_expense_categories: {
         Args: { p_user_id: string }
