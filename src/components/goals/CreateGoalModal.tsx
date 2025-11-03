@@ -126,19 +126,19 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-100">
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-cyan-600 to-purple-600 p-6 text-white">
+        <div className="sticky top-0 bg-white border-b border-gray-100 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold">Crear Nueva Meta</h2>
-              <p className="text-sm text-white/80 mt-1">Define tu objetivo y deja que Moni AI te guíe</p>
+              <h2 className="text-2xl font-bold text-gray-900">Crear Nueva Meta</h2>
+              <p className="text-sm text-gray-600 mt-1">Define tu objetivo y deja que Moni AI te guíe</p>
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-white/20 rounded-full transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             >
-              <X className="h-5 w-5" />
+              <X className="h-5 w-5 text-gray-600" />
             </button>
           </div>
         </div>
@@ -147,8 +147,8 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Goal Title */}
           <div className="space-y-2">
-            <Label htmlFor="title" className="flex items-center gap-2">
-              <Target className="h-4 w-4 text-purple-600" />
+            <Label htmlFor="title" className="flex items-center gap-2 text-gray-900">
+              <Target className="h-4 w-4 text-amber-600" />
               Nombre de la meta
             </Label>
             <Input
@@ -163,7 +163,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description">Descripción (opcional)</Label>
+            <Label htmlFor="description" className="text-gray-900">Descripción (opcional)</Label>
             <Textarea
               id="description"
               value={formData.description}
@@ -175,7 +175,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
 
           {/* Category */}
           <div className="space-y-2">
-            <Label htmlFor="category">Categoría</Label>
+            <Label htmlFor="category" className="text-gray-900">Categoría</Label>
             <Select
               value={formData.category}
               onValueChange={(value) => setFormData({ ...formData, category: value })}
@@ -196,8 +196,8 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
           {/* Target Amount & Deadline */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="target" className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4 text-emerald-600" />
+              <Label htmlFor="target" className="flex items-center gap-2 text-gray-900">
+                <DollarSign className="h-4 w-4 text-amber-600" />
                 Monto objetivo
               </Label>
               <Input
@@ -212,8 +212,8 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="deadline" className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-cyan-600" />
+              <Label htmlFor="deadline" className="flex items-center gap-2 text-gray-900">
+                <Calendar className="h-4 w-4 text-amber-600" />
                 Fecha límite (opcional)
               </Label>
               <Input
@@ -228,46 +228,46 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
 
           {/* Goal Type */}
           <div className="space-y-2">
-            <Label>Tipo de meta</Label>
+            <Label className="text-gray-900">Tipo de meta</Label>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, type: "personal" })}
                 className={`p-4 rounded-xl border-2 transition-all ${
                   formData.type === "personal"
-                    ? "border-purple-600 bg-purple-50"
+                    ? "border-amber-600 bg-amber-50"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
               >
-                <Target className="h-6 w-6 mx-auto mb-2 text-purple-600" />
-                <p className="font-medium text-sm">Individual</p>
+                <Target className="h-6 w-6 mx-auto mb-2 text-amber-600" />
+                <p className="font-medium text-sm text-gray-900">Individual</p>
               </button>
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, type: "group" })}
                 className={`p-4 rounded-xl border-2 transition-all ${
                   formData.type === "group"
-                    ? "border-purple-600 bg-purple-50"
+                    ? "border-amber-600 bg-amber-50"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
               >
-                <Users className="h-6 w-6 mx-auto mb-2 text-purple-600" />
-                <p className="font-medium text-sm">Grupal</p>
+                <Users className="h-6 w-6 mx-auto mb-2 text-amber-600" />
+                <p className="font-medium text-sm text-gray-900">Grupal</p>
               </button>
             </div>
           </div>
 
           {/* Privacy & AI */}
-          <div className="space-y-4 bg-gray-50 rounded-xl p-4">
+          <div className="space-y-4 bg-amber-50/30 rounded-xl p-4 border border-amber-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {formData.isPublic ? (
-                  <Globe className="h-4 w-4 text-cyan-600" />
+                  <Globe className="h-4 w-4 text-amber-600" />
                 ) : (
-                  <Lock className="h-4 w-4 text-gray-600" />
+                  <Lock className="h-4 w-4 text-amber-600" />
                 )}
                 <div>
-                  <Label htmlFor="isPublic" className="text-sm font-medium">
+                  <Label htmlFor="isPublic" className="text-sm font-medium text-gray-900">
                     Visible para amigos
                   </Label>
                   <p className="text-xs text-gray-600">Tus amigos podrán ver tu progreso</p>
@@ -280,9 +280,9 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
               />
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+            <div className="flex items-center justify-between pt-4 border-t border-amber-100">
               <div>
-                <Label htmlFor="aiEnabled" className="text-sm font-medium">
+                <Label htmlFor="aiEnabled" className="text-sm font-medium text-gray-900">
                   Predicciones con AI
                 </Label>
                 <p className="text-xs text-gray-600">Moni AI calculará cuánto ahorrar</p>
@@ -301,14 +301,14 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
               type="button"
               onClick={onClose}
               variant="outline"
-              className="flex-1 h-12 rounded-xl"
+              className="flex-1 h-12 rounded-xl border-gray-300 text-gray-700 hover:bg-gray-50"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={loading}
-              className="flex-1 h-12 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-xl font-medium"
+              className="flex-1 h-12 bg-white border-2 border-amber-600 text-amber-700 hover:bg-amber-50 rounded-xl font-semibold shadow-sm"
             >
               {loading ? "Creando..." : "Crear meta"}
             </Button>
