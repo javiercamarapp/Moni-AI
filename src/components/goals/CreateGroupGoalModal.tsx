@@ -62,9 +62,8 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
     
     if (!numericValue) return '';
     
-    // Convert to number and format with thousands separator
-    const number = parseInt(numericValue);
-    const formatted = number.toLocaleString('es-MX');
+    // Add commas every 3 digits from the right
+    const formatted = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     
     // Always add .00 for decimals
     return `${formatted}.00`;
