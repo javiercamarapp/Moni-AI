@@ -56,6 +56,29 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
     deadline: "",
   });
 
+  const formatCurrency = (value: string) => {
+    // Remove all non-numeric characters except decimal point
+    const numericValue = value.replace(/[^\d.]/g, '');
+    
+    // Split by decimal point
+    const parts = numericValue.split('.');
+    
+    // Format integer part with commas
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    
+    // Limit to 2 decimal places
+    if (parts[1]) {
+      parts[1] = parts[1].substring(0, 2);
+    }
+    
+    return parts.join('.');
+  };
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCurrency(e.target.value);
+    setFormData({ ...formData, targetAmount: formatted });
+  };
+
   useEffect(() => {
     if (isOpen) {
       const randomPhrase = INSPIRATIONAL_PHRASES[Math.floor(Math.random() * INSPIRATIONAL_PHRASES.length)];
@@ -70,7 +93,9 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
   }, [formData.targetAmount, formData.deadline, formData.circleId]);
 
   const calculateAIPrediction = () => {
-    const amount = parseFloat(formData.targetAmount);
+    // Remove formatting to get clean number
+    const cleanAmount = formData.targetAmount.replace(/[^\d.]/g, '');
+    const amount = parseFloat(cleanAmount);
     const deadlineDate = new Date(formData.deadline);
     const today = new Date();
     const daysRemaining = Math.ceil((deadlineDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
@@ -94,7 +119,9 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
     setLoading(true);
 
     try {
-      const targetAmount = parseFloat(formData.targetAmount);
+      // Remove formatting to get clean number
+      const cleanAmount = formData.targetAmount.replace(/[^\d.]/g, '');
+      const targetAmount = parseFloat(cleanAmount);
       if (isNaN(targetAmount) || targetAmount <= 0) {
         toast.error("Ingresa un monto válido");
         return;
@@ -277,15 +304,23 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
                 <DollarSign className="h-4 w-4 text-gray-900" />
                 Monto objetivo
               </Label>
-              <Input
-                id="targetAmount"
-                type="number"
-                value={formData.targetAmount}
-                onChange={(e) => setFormData({ ...formData, targetAmount: e.target.value })}
-                placeholder="10000"
-                required
-                className="h-12 rounded-xl bg-white border-gray-300 text-gray-900"
-              />
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
+                  $
+                </span>
+                <Input
+                  id="targetAmount"
+                  type="text"
+                  value={formData.targetAmount}
+                  onChange={handleAmountChange}
+                  placeholder="10,000.00"
+                  required
+                  className="h-12 rounded-xl bg-white border-gray-300 text-gray-900 pl-7"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
+                  MXN
+                </span>
+              </div>
             </div>
 
             <div className="space-y-2">
