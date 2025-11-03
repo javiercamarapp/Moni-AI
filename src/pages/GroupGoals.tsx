@@ -121,31 +121,26 @@ const GroupGoals = () => {
 
   return (
     <>
-      <div className="min-h-screen pb-24 animate-fade-in">
+      <div className="min-h-screen pb-24 bg-gradient-to-b from-amber-50/30 to-orange-50/20 animate-fade-in">
         {/* Header */}
-        <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5efea] to-white backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="sticky top-0 z-40 bg-gradient-to-b from-purple-50/80 via-cyan-50/60 to-transparent backdrop-blur-sm">
+          <div className="max-w-7xl mx-auto px-4 py-3">
             <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => navigate(-1)}
-                className="bg-white rounded-full shadow-sm hover:bg-[#e3c890] transition-all border-0 h-10 w-10 flex-shrink-0"
+                className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
               >
-                <ArrowLeft className="h-4 w-4 text-[#c8a57b]" />
+                <ArrowLeft className="h-4 w-4 text-gray-700" />
               </Button>
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-[#c8a57b]/20 flex items-center justify-center text-xl animate-pulse">
-                  🎯
-                </div>
-                <div>
-                  <h1 className="text-lg font-bold text-gray-900">
-                    Metas Grupales
-                  </h1>
-                  <p className="text-xs text-gray-600">
-                    Ahorra en equipo y alcanza objetivos juntos
-                  </p>
-                </div>
+              <div>
+                <h1 className="text-lg font-semibold text-gray-900 tracking-tight">
+                  Metas Grupales
+                </h1>
+                <p className="text-xs text-gray-600">
+                  Ahorra en equipo y alcanza objetivos juntos
+                </p>
               </div>
             </div>
           </div>
