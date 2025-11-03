@@ -124,35 +124,24 @@ const GroupGoals = () => {
       <div className="min-h-screen pb-24 animate-fade-in">
         {/* Header */}
         <div className="sticky top-0 z-40 bg-gradient-to-b from-white/80 to-transparent backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-4 py-4">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-4">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => navigate(-1)}
-                  className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
-                >
-                  <ArrowLeft className="h-4 w-4 text-gray-700" />
-                </Button>
-                <div>
-                  <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
-                    Metas Grupales
-                  </h1>
-                  <p className="text-xs text-gray-600">
-                    Ahorra en equipo y alcanza objetivos juntos
-                  </p>
-                </div>
+          <div className="max-w-7xl mx-auto px-4 py-3">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate(-1)}
+                className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
+              >
+                <ArrowLeft className="h-4 w-4 text-gray-700" />
+              </Button>
+              <div>
+                <h1 className="text-lg font-semibold bg-gradient-to-r from-purple-600 via-cyan-600 to-purple-600 bg-clip-text text-transparent tracking-tight">
+                  Metas Grupales
+                </h1>
+                <p className="text-xs text-gray-600">
+                  Ahorra en equipo y alcanza objetivos juntos
+                </p>
               </div>
-              {circles.length > 0 && (
-                <Button
-                  onClick={() => setCreateModalOpen(true)}
-                  className="h-11 px-6 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md transition-all border-0 text-gray-900 font-semibold"
-                >
-                  <Plus className="h-5 w-5 mr-2" />
-                  Nueva meta
-                </Button>
-              )}
             </div>
           </div>
         </div>
