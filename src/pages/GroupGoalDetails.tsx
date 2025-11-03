@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Users, Target, TrendingUp, MessageCircle, Plus, Sparkles } from "lucide-react";
+import { ArrowLeft, Users, Target, TrendingUp, MessageCircle, Plus, Sparkles, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -10,6 +10,8 @@ import { SectionLoader } from "@/components/SectionLoader";
 import { formatCurrency } from "@/lib/utils";
 import BottomNav from "@/components/BottomNav";
 import { AddFundsModal } from "@/components/goals/AddFundsModal";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface GroupGoal {
   id: string;
@@ -30,6 +32,8 @@ interface Member {
   id: string;
   user_id: string;
   xp: number;
+  contributed: number;
+  status: 'adelantado' | 'al_dia' | 'atrasado' | 'muy_atrasado';
 }
 
 interface Activity {
@@ -38,6 +42,15 @@ interface Activity {
   amount: number;
   created_at: string;
   activity_type: string;
+  message?: string;
+}
+
+interface ChatMessage {
+  id: string;
+  user_id: string;
+  message: string;
+  created_at: string;
+  is_system: boolean;
 }
 
 const GroupGoalDetails = () => {
@@ -46,8 +59,12 @@ const GroupGoalDetails = () => {
   const [goal, setGoal] = useState<GroupGoal | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [addFundsModal, setAddFundsModal] = useState(false);
+  const [showChat, setShowChat] = useState(false);
+  const [notifyGroup, setNotifyGroup] = useState(true);
 
   useEffect(() => {
     fetchGoalDetails();
@@ -65,14 +82,35 @@ const GroupGoalDetails = () => {
       if (goalError) throw goalError;
       setGoal(goalData);
 
-      // Fetch members
+      // Fetch members with their contributions
       const { data: membersData, error: membersError } = await supabase
         .from('circle_members')
         .select('*')
         .eq('circle_id', goalData.circle_id);
 
       if (membersError) throw membersError;
-      setMembers(membersData || []);
+
+      // Calculate individual contributions and status
+      const perPersonTarget = goalData.target_amount / (membersData?.length || 1);
+      const enrichedMembers = (membersData || []).map(member => {
+        // For demo, use XP as proxy for contribution
+        const contributed = member.xp * 100; 
+        const progressPercent = (contributed / perPersonTarget) * 100;
+        
+        let status: 'adelantado' | 'al_dia' | 'atrasado' | 'muy_atrasado';
+        if (progressPercent >= 110) status = 'adelantado';
+        else if (progressPercent >= 90) status = 'al_dia';
+        else if (progressPercent >= 70) status = 'atrasado';
+        else status = 'muy_atrasado';
+
+        return {
+          ...member,
+          contributed,
+          status
+        };
+      });
+
+      setMembers(enrichedMembers);
 
       // Fetch activities
       const { data: activitiesData, error: activitiesError } = await supabase
@@ -84,11 +122,74 @@ const GroupGoalDetails = () => {
 
       if (activitiesError) throw activitiesError;
       setActivities(activitiesData || []);
+
+      // Fetch chat messages (using goal_comments table)
+      const { data: chatData, error: chatError } = await supabase
+        .from('goal_comments')
+        .select('*')
+        .eq('goal_id', id)
+        .order('created_at', { ascending: true });
+
+      if (!chatError && chatData) {
+        setChatMessages(chatData.map(c => ({
+          id: c.id,
+          user_id: c.user_id,
+          message: c.comment,
+          created_at: c.created_at,
+          is_system: false
+        })));
+      }
     } catch (error: any) {
       console.error('Error fetching goal details:', error);
       toast.error('Error al cargar los detalles');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!newMessage.trim()) return;
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const { error } = await supabase
+        .from('goal_comments')
+        .insert({
+          goal_id: id!,
+          user_id: user.id,
+          comment: newMessage
+        });
+
+      if (error) throw error;
+
+      setNewMessage("");
+      fetchGoalDetails();
+      toast.success("Mensaje enviado");
+    } catch (error: any) {
+      console.error('Error sending message:', error);
+      toast.error('Error al enviar mensaje');
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'adelantado': return 'bg-green-500';
+      case 'al_dia': return 'bg-blue-500';
+      case 'atrasado': return 'bg-yellow-500';
+      case 'muy_atrasado': return 'bg-red-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'adelantado': return '🟢 Adelantado';
+      case 'al_dia': return '🔵 Al día';
+      case 'atrasado': return '🟡 Atrasado';
+      case 'muy_atrasado': return '🔴 Muy atrasado';
+      default: return '⚪ Sin datos';
     }
   };
 
@@ -102,6 +203,10 @@ const GroupGoalDetails = () => {
 
   const progress = (goal.current_amount / goal.target_amount) * 100;
   const remaining = goal.target_amount - goal.current_amount;
+  const perPersonTarget = goal.target_amount / (members.length || 1);
+  const daysRemaining = goal.deadline 
+    ? Math.ceil((new Date(goal.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+    : null;
 
   return (
     <>
@@ -155,71 +260,101 @@ const GroupGoalDetails = () => {
             </div>
           </div>
 
+          {/* Resumen de Meta */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-white rounded-xl p-4 shadow-sm border border-[#c8a57b]/10">
+              <p className="text-xs text-gray-600 mb-1">Meta Total</p>
+              <p className="text-sm font-bold text-gray-900">{formatCurrency(goal.target_amount)}</p>
+            </div>
+            <div className="bg-white rounded-xl p-4 shadow-sm border border-[#c8a57b]/10">
+              <p className="text-xs text-gray-600 mb-1">Por Persona</p>
+              <p className="text-sm font-bold text-gray-900">{formatCurrency(perPersonTarget)}</p>
+            </div>
+            {goal.deadline && (
+              <div className="bg-white rounded-xl p-4 shadow-sm border border-[#c8a57b]/10">
+                <p className="text-xs text-gray-600 mb-1">Días Restantes</p>
+                <p className="text-sm font-bold text-gray-900">{daysRemaining}</p>
+              </div>
+            )}
+            <div className="bg-white rounded-xl p-4 shadow-sm border border-[#c8a57b]/10">
+              <p className="text-xs text-gray-600 mb-1">Miembros</p>
+              <p className="text-sm font-bold text-gray-900">{members.length}</p>
+            </div>
+          </div>
+
           {/* AI Recommendation */}
-          {(goal.predicted_completion_date || goal.required_weekly_saving) && (
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-[#c8a57b]/20">
-              <div className="flex items-start gap-3">
-                <div className="h-10 w-10 bg-[#c8a57b]/10 rounded-full flex items-center justify-center animate-pulse">
-                  🤖
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-2">Predicción Moni AI</h3>
-                  {goal.predicted_completion_date && (
-                    <p className="text-sm text-gray-700 mb-2">
-                      Cumplirán esta meta el{' '}
-                      <strong>
-                        {new Date(goal.predicted_completion_date).toLocaleDateString('es-MX', {
-                          day: 'numeric',
-                          month: 'long',
-                          year: 'numeric'
-                        })}
-                      </strong>
-                    </p>
-                  )}
-                  {goal.required_weekly_saving && (
-                    <p className="text-sm text-gray-600">
-                      💰 Cada miembro debe ahorrar {formatCurrency(goal.required_weekly_saving / members.length)}/semana
-                    </p>
-                  )}
-                  {goal.ai_confidence && (
-                    <div className="mt-3">
-                      <Progress value={goal.ai_confidence * 100} className="h-2 mb-1" />
-                      <p className="text-xs text-gray-500">Confianza: {Math.round(goal.ai_confidence * 100)}%</p>
-                    </div>
-                  )}
-                </div>
+          <div className="bg-white rounded-2xl shadow-lg p-6 border border-[#c8a57b]/20">
+            <div className="flex items-start gap-3">
+              <div className="h-10 w-10 bg-[#c8a57b]/10 rounded-full flex items-center justify-center animate-pulse">
+                🤖
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-gray-900 mb-2">Moni AI recomienda:</h3>
+                <p className="text-sm text-gray-700 mb-3">
+                  {goal.required_weekly_saving 
+                    ? `"Si cada miembro ahorra ${formatCurrency(goal.required_weekly_saving / members.length)}/semana, lograrán su meta ${daysRemaining && daysRemaining > 0 ? 'antes del plazo' : 'pronto'}."`
+                    : `"Mantén el ritmo de ahorro. Cada aporte cuenta para alcanzar juntos la meta de ${formatCurrency(goal.target_amount)}."`
+                  }
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-[#c8a57b] text-gray-900 hover:bg-[#e3c890] hover:border-[#e3c890] transition-all duration-300"
+                >
+                  Ajustar plan automáticamente
+                </Button>
               </div>
             </div>
-          )}
+          </div>
 
-          {/* Members Progress */}
+          {/* Members Progress - Leaderboard Style */}
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-[#c8a57b]/20">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <Users className="h-5 w-5 text-[#c8a57b]" />
-              Miembros ({members.length})
+              Progreso Individual
             </h3>
-            <div className="space-y-3">
-              {members.map((member, idx) => (
-                <div key={member.id} className="flex items-center justify-between p-3 bg-[#f5efea] rounded-xl">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback className="bg-gradient-to-br from-[#c8a57b] to-[#e3c890] text-white">
-                        {idx + 1}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">Miembro {idx + 1}</p>
-                      <p className="text-xs text-gray-600">{member.xp} XP</p>
+            <div className="space-y-4">
+              {members
+                .sort((a, b) => b.contributed - a.contributed)
+                .map((member, idx) => {
+                  const memberProgress = (member.contributed / perPersonTarget) * 100;
+                  return (
+                    <div key={member.id} className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 flex-1">
+                          <Avatar className="h-10 w-10">
+                            <AvatarFallback className="bg-gradient-to-br from-[#c8a57b] to-[#e3c890] text-white">
+                              {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}`}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-gray-900">Miembro {idx + 1}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <div className="flex-1 bg-gray-100 rounded-full h-2">
+                                <div
+                                  className={`h-2 rounded-full transition-all ${getStatusColor(member.status)}`}
+                                  style={{ width: `${Math.min(memberProgress, 100)}%` }}
+                                />
+                              </div>
+                              <span className="text-xs font-medium text-gray-900 min-w-[40px]">
+                                {memberProgress.toFixed(0)}%
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right ml-4">
+                          <p className="text-xs text-gray-600 mb-1">{getStatusText(member.status)}</p>
+                          <p className="text-sm font-semibold text-gray-900">
+                            {formatCurrency(member.contributed)}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            de {formatCurrency(perPersonTarget)}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-gray-900">
-                      {formatCurrency(goal.current_amount / members.length)}
-                    </p>
-                    <p className="text-xs text-gray-600">aportado</p>
-                  </div>
-                </div>
-              ))}
+                  );
+                })}
             </div>
           </div>
 
@@ -250,41 +385,179 @@ const GroupGoalDetails = () => {
             </div>
           )}
 
-          {/* Actions */}
-          <div className="flex gap-3">
+          {/* Chat Grupal */}
+          {showChat ? (
+            <div className="bg-white rounded-2xl shadow-lg border border-[#c8a57b]/20 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <MessageCircle className="h-5 w-5 text-[#c8a57b]" />
+                  Chat Grupal
+                </h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowChat(false)}
+                  className="text-gray-600"
+                >
+                  Cerrar
+                </Button>
+              </div>
+              
+              <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
+                {chatMessages.length === 0 ? (
+                  <p className="text-sm text-gray-500 text-center py-4">
+                    No hay mensajes aún. ¡Sé el primero en escribir!
+                  </p>
+                ) : (
+                  chatMessages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={`p-3 rounded-xl ${
+                        msg.is_system ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'
+                      }`}
+                    >
+                      {msg.is_system && (
+                        <p className="text-xs text-blue-600 mb-1">🤖 Moni AI</p>
+                      )}
+                      <p className="text-sm text-gray-900">{msg.message}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {new Date(msg.created_at).toLocaleString('es-MX', {
+                          day: 'numeric',
+                          month: 'short',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="flex gap-2">
+                <Input
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+                  placeholder="Escribe un mensaje..."
+                  className="flex-1"
+                />
+                <Button
+                  onClick={sendMessage}
+                  disabled={!newMessage.trim()}
+                  className="bg-gradient-to-r from-[#c8a57b] to-[#e3c890] text-white"
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          ) : (
             <Button
-              onClick={() => setAddFundsModal(true)}
-              className="flex-1 h-12 bg-white border-2 border-[#c8a57b] text-gray-900 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 rounded-2xl font-semibold"
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Agregar aporte
-            </Button>
-            <Button
-              onClick={() => navigate(`/group-goals/${id}/chat`)}
-              className="flex-1 h-12 bg-white border-2 border-[#c8a57b] text-gray-900 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 rounded-2xl font-semibold"
+              onClick={() => setShowChat(true)}
+              className="w-full h-12 bg-white border-2 border-[#c8a57b] text-gray-900 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 rounded-2xl font-semibold"
             >
               <MessageCircle className="h-5 w-5 mr-2" />
-              Chat grupal
+              Abrir chat grupal ({chatMessages.length} mensajes)
             </Button>
-          </div>
+          )}
+
+          {/* Actions */}
+          <Button
+            onClick={() => setAddFundsModal(true)}
+            className="w-full h-14 bg-gradient-to-r from-[#c8a57b] to-[#e3c890] text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 rounded-2xl font-semibold text-base"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            Contribuir 💸
+          </Button>
         </div>
       </div>
 
       <BottomNav />
 
-      {/* Add Funds Modal */}
+      {/* Add Funds Modal - Adapted for Group Goals */}
       {addFundsModal && goal && (
-        <AddFundsModal
-          isOpen={addFundsModal}
-          onClose={() => setAddFundsModal(false)}
-          onSuccess={fetchGoalDetails}
-          goal={{
-            id: goal.id,
-            title: goal.title,
-            target: goal.target_amount,
-            current: goal.current_amount,
-          }}
-        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+            <div className="bg-gradient-to-r from-[#c8a57b] to-[#e3c890] p-6 text-white rounded-t-2xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold">Contribuir a la meta</h2>
+                  <p className="text-sm text-white/80 mt-1">{goal.title}</p>
+                </div>
+                <button
+                  onClick={() => setAddFundsModal(false)}
+                  className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Tu meta personal</span>
+                  <span className="font-semibold text-gray-900">{formatCurrency(perPersonTarget)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Aporte sugerido quincenal</span>
+                  <span className="font-bold text-[#c8a57b]">
+                    {goal.required_weekly_saving 
+                      ? formatCurrency((goal.required_weekly_saving / members.length) * 2)
+                      : formatCurrency(1250)
+                    }
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="auto"
+                    checked={notifyGroup}
+                    onCheckedChange={(checked) => setNotifyGroup(!!checked)}
+                  />
+                  <label htmlFor="auto" className="text-sm text-gray-700">
+                    Aportar automáticamente cada 15 días
+                  </label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="notify" defaultChecked />
+                  <label htmlFor="notify" className="text-sm text-gray-700">
+                    Mostrar mi aporte al grupo ✅
+                  </label>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl p-4 border border-cyan-100">
+                <p className="text-xs font-medium text-gray-900 mb-1">💡 Tip Moni AI</p>
+                <p className="text-xs text-gray-700">
+                  Si aportas constantemente, ayudarás al grupo a cumplir la meta {daysRemaining && daysRemaining > 30 ? 'antes de tiempo' : 'a tiempo'}
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => setAddFundsModal(false)}
+                  variant="outline"
+                  className="flex-1 h-12 rounded-xl"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={async () => {
+                    toast.success("¡Aporte registrado! 🎉 El grupo ahora lleva " + (progress + 5).toFixed(0) + "% del objetivo.");
+                    setAddFundsModal(false);
+                    fetchGoalDetails();
+                  }}
+                  className="flex-1 h-12 bg-gradient-to-r from-[#c8a57b] to-[#e3c890] hover:from-[#b8956b] hover:to-[#d3b880] text-white rounded-xl font-medium"
+                >
+                  Confirmar aporte
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );
