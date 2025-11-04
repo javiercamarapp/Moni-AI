@@ -1785,11 +1785,6 @@ const Dashboard = () => {
 
           {/* Sidebar */}
           <div className="space-y-6 w-full min-w-0">
-            
-            {/* Actividad Reciente - Últimos 7 días */}
-            {last7DaysData.length > 0 && (
-              <WeeklyIncomeExpenseWidget data={last7DaysData} />
-            )}
 
             {/* Recent Transactions */}
             <Card className="w-full p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden h-[220px] flex flex-col cursor-pointer min-w-0">

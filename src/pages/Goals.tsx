@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Target, Plus, TrendingUp, Sparkles, ArrowLeft, Lightbulb } from "lucide-react";
+import { Target, Plus, TrendingUp, Sparkles, ArrowLeft, Lightbulb, Users } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,9 +27,24 @@ interface Goal {
   ai_confidence?: number;
 }
 
+interface GroupGoal {
+  id: string;
+  title: string;
+  description?: string;
+  target_amount: number;
+  current_amount: number;
+  deadline?: string;
+  category?: string;
+  circle_name: string;
+  user_progress: number;
+  predicted_completion_date?: string;
+  required_weekly_saving?: number;
+}
+
 const Goals = () => {
   const navigate = useNavigate();
   const [goals, setGoals] = useState<Goal[]>([]);
+  const [groupGoals, setGroupGoals] = useState<GroupGoal[]>([]);
   const [loading, setLoading] = useState(true);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [addFundsModal, setAddFundsModal] = useState<{ open: boolean; goal: Goal | null }>({
@@ -43,6 +58,7 @@ const Goals = () => {
 
   useEffect(() => {
     fetchGoals();
+    fetchGroupGoals();
   }, []);
 
   const fetchGoals = async () => {
@@ -66,6 +82,71 @@ const Goals = () => {
       toast.error('Error al cargar las metas');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchGroupGoals = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Get user's circles
+      const { data: circleMembers } = await supabase
+        .from('circle_members')
+        .select('circle_id')
+        .eq('user_id', user.id);
+
+      if (!circleMembers || circleMembers.length === 0) {
+        setGroupGoals([]);
+        return;
+      }
+
+      const circleIds = circleMembers.map(cm => cm.circle_id);
+
+      // Get goals for those circles
+      const { data: goalsData } = await supabase
+        .from('circle_goals')
+        .select(`
+          *,
+          circles:circle_id(name)
+        `)
+        .in('circle_id', circleIds)
+        .order('created_at', { ascending: false });
+
+      if (!goalsData) {
+        setGroupGoals([]);
+        return;
+      }
+
+      // Get user's progress for each goal
+      const goalIds = goalsData.map(g => g.id);
+      const { data: progressData } = await supabase
+        .from('circle_goal_members')
+        .select('*')
+        .eq('user_id', user.id)
+        .in('goal_id', goalIds);
+
+      // Map goals with user progress
+      const enrichedGoals = goalsData.map(goal => {
+        const userProgress = progressData?.find(p => p.goal_id === goal.id);
+        return {
+          id: goal.id,
+          title: goal.title,
+          description: goal.description,
+          target_amount: goal.target_amount,
+          current_amount: userProgress?.current_amount || 0,
+          deadline: goal.deadline,
+          category: goal.category,
+          circle_name: (goal.circles as any)?.name || 'Círculo',
+          user_progress: userProgress?.current_amount || 0,
+          predicted_completion_date: goal.predicted_completion_date,
+          required_weekly_saving: goal.required_weekly_saving
+        };
+      });
+
+      setGroupGoals(enrichedGoals);
+    } catch (error: any) {
+      console.error('Error fetching group goals:', error);
     }
   };
 
@@ -241,6 +322,85 @@ const Goals = () => {
                   Crear nueva meta
                 </Button>
               </div>
+
+              {/* Group Goals Section - Identical to Personal Goals */}
+              {groupGoals.length > 0 && (
+                <div className="mt-12">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4 px-2">
+                    Tus Metas Grupales
+                  </h2>
+
+                  {/* Group Goals Stats Summary */}
+                  <div className="grid grid-cols-3 gap-2 mb-6">
+                    <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-1.5 text-center shadow-sm">
+                      <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Ahorrado</p>
+                      <p className="text-[11px] font-bold text-white">
+                        {formatCurrency(groupGoals.reduce((sum, g) => sum + g.user_progress, 0))}
+                      </p>
+                    </div>
+                    
+                    <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-1.5 text-center shadow-sm">
+                      <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Progreso</p>
+                      <p className="text-[11px] font-bold text-white">
+                        {groupGoals.length > 0
+                          ? (groupGoals.reduce((sum, g) => sum + (g.user_progress / g.target_amount) * 100, 0) / groupGoals.length).toFixed(0)
+                          : 0}%
+                      </p>
+                    </div>
+                    
+                    <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-1.5 text-center shadow-sm">
+                      <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Activas</p>
+                      <p className="text-[11px] font-bold text-white">{groupGoals.length}</p>
+                    </div>
+                  </div>
+
+                  {/* Group Goals Carousel */}
+                  <Carousel 
+                    className="w-full"
+                    opts={{
+                      align: "start",
+                      loop: true,
+                    }}
+                    plugins={[autoplayPlugin.current]}
+                  >
+                    <CarouselContent className="-ml-4">
+                      {groupGoals.map((goal) => (
+                        <CarouselItem key={goal.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                          <GoalCard
+                            goal={{
+                              id: goal.id,
+                              title: goal.title,
+                              description: `${goal.circle_name} • ${goal.description || ''}`,
+                              target: goal.target_amount,
+                              current: goal.user_progress,
+                              deadline: goal.deadline,
+                              category: goal.category || 'Custom',
+                              icon: '🫶',
+                              predicted_completion_date: goal.predicted_completion_date,
+                              required_weekly_saving: goal.required_weekly_saving,
+                              ai_confidence: 0
+                            }}
+                            onAddFunds={() => navigate(`/group-goals/${goal.id}`)}
+                            onViewDetails={() => navigate(`/group-goals/${goal.id}`)}
+                            onComplete={() => navigate(`/group-goals/${goal.id}`)}
+                          />
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                  </Carousel>
+
+                  {/* Create Group Goal Button */}
+                  <div className="mt-6 flex justify-center">
+                    <Button
+                      onClick={() => navigate('/group-goals')}
+                      className="h-11 px-8 bg-white hover:bg-white/90 text-gray-900 rounded-xl font-semibold shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all border-0"
+                    >
+                      <Users className="h-5 w-5 mr-2" />
+                      Ver todas las metas grupales
+                    </Button>
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>
