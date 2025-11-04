@@ -1,15 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Crown, Check, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import moniLogo from "@/assets/moni-ai-logo.png";
 
 export default function Subscribe() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [currentFactIndex, setCurrentFactIndex] = useState(0);
+
+  const financialFacts = [
+    "💡 Solo el 32% de mexicanos tiene educación financiera básica",
+    "📊 68% de mexicanos no lleva un control de sus gastos mensuales",
+    "💸 48% de los adultos en México no tiene ningún tipo de ahorro",
+    "📉 7 de cada 10 mexicanos no tiene un presupuesto definido",
+    "🏦 Solo 1 de cada 4 mexicanos planifica su retiro financiero"
+  ];
+
+  // Carrusel automático cada 5 segundos
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentFactIndex((prev) => (prev + 1) % financialFacts.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSubscribe = async () => {
     setLoading(true);
@@ -41,14 +59,25 @@ export default function Subscribe() {
   return (
     <div className="min-h-screen p-3 pb-20">
       <div className="w-full max-w-sm mx-auto space-y-4">
-        {/* Header con logo e insight */}
+        {/* Header con logo e insight carrusel */}
         <div className="p-2 flex items-center gap-3">
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm overflow-hidden w-16 h-10 flex-shrink-0">
             <img src={moniLogo} alt="Moni AI" className="w-full h-full object-cover" />
           </div>
-          <p className="text-[10px] text-black font-medium leading-tight italic flex-1">
-            💡 Solo el 32% de mexicanos tiene educación financiera básica
-          </p>
+          <div className="flex-1 h-10 flex items-center overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={currentFactIndex}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+                className="text-[10px] text-black font-medium leading-tight italic"
+              >
+                {financialFacts[currentFactIndex]}
+              </motion.p>
+            </AnimatePresence>
+          </div>
         </div>
 
         {/* Main Card */}
@@ -72,7 +101,7 @@ export default function Subscribe() {
             {/* Price */}
             <div className="text-center space-y-1">
               <div className="flex items-baseline justify-center gap-2">
-                <span className="text-3xl font-bold text-black">$99</span>
+                <span className="text-3xl font-bold text-black">$69</span>
                 <span className="text-sm text-gray-600">MXN / mes</span>
               </div>
               <p className="text-[10px] text-gray-500 flex items-center justify-center gap-1">
