@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Crown, Check, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 import moniLogo from "@/assets/moni-ai-logo.png";
 
 export default function Subscribe() {
@@ -83,15 +84,22 @@ export default function Subscribe() {
             {/* Features */}
             <div className="space-y-1.5">
               {features.map((feature, index) => (
-                <div
+                <motion.div
                   key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ 
+                    duration: 0.5, 
+                    delay: index * 0.1,
+                    ease: "easeOut"
+                  }}
                   className="flex items-center gap-2 p-1.5 rounded-2xl bg-gradient-to-r from-primary/5 to-transparent"
                 >
                   <div className="flex-shrink-0 w-4 h-4 bg-primary/10 rounded-full flex items-center justify-center">
                     <Check className="w-2.5 h-2.5 text-primary" />
                   </div>
                   <span className="text-[11px] font-medium text-black">{feature}</span>
-                </div>
+                </motion.div>
               ))}
             </div>
 
