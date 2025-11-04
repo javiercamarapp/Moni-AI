@@ -9,6 +9,7 @@ import Dashboard from "./components/Dashboard";
 import ChatInterface from "./components/ChatInterface";
 import NewGoal from "./pages/NewGoal";
 import FinancialChat from "./pages/FinancialChat";
+import PremiumFeature from "./components/PremiumFeature";
 import Ingresos from "./pages/Ingresos";
 import Gastos from "./pages/Gastos";
 import GestionarCategorias from "./pages/GestionarCategorias";
@@ -98,15 +99,27 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/chat" element={<ChatInterface />} />
           <Route path="/new-goal" element={<NewGoal />} />
-          <Route path="/financial-chat" element={<FinancialChat />} />
+          <Route path="/financial-chat" element={
+            <PremiumFeature featureName="Chat con Moni AI" description="Conversa con tu asistente financiero inteligente">
+              <FinancialChat />
+            </PremiumFeature>
+          } />
+          <Route path="/analysis" element={
+            <PremiumFeature featureName="Análisis Financiero con IA" description="Obtén insights avanzados sobre tus finanzas">
+              <FinancialAnalysis />
+            </PremiumFeature>
+          } />
+          <Route path="/bank-connection" element={
+            <PremiumFeature featureName="Conexión Bancaria" description="Sincroniza automáticamente tus cuentas bancarias">
+              <BankConnection />
+            </PremiumFeature>
+          } />
           <Route path="/ingresos" element={<Ingresos />} />
           <Route path="/gastos" element={<Gastos />} />
           <Route path="/categorias" element={<GestionarCategorias />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/balance" element={<Balance />} />
           <Route path="/whatsapp" element={<WhatsAppSetup />} />
-          <Route path="/analysis" element={<FinancialAnalysis />} />
-          <Route path="/bank-connection" element={<BankConnection />} />
           <Route path="/notifications" element={<NotificationHistory />} />
           <Route path="/notification-settings" element={<NotificationSettings />} />
           <Route path="/net-worth" element={<NetWorth />} />
