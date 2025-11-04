@@ -40,10 +40,15 @@ export default function Subscribe() {
   return (
     <div className="min-h-screen bg-[hsl(48,25%,92%)] p-3 pb-20">
       <div className="w-full max-w-md mx-auto space-y-4">
-        {/* Header con logo - igual que el dashboard */}
-        <div className="p-2">
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm overflow-hidden w-16 h-10">
+        {/* Header con logo e insight */}
+        <div className="p-2 flex items-center gap-3">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm overflow-hidden w-16 h-10 flex-shrink-0">
             <img src={moniLogo} alt="Moni AI" className="w-full h-full object-cover" />
+          </div>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm px-3 py-2 flex-1">
+            <p className="text-[10px] text-black font-medium leading-tight">
+              💡 Solo el 32% de mexicanos tiene educación financiera básica
+            </p>
           </div>
         </div>
 
