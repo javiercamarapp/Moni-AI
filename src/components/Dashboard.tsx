@@ -311,8 +311,8 @@ const Dashboard = () => {
         
         setHasNetWorthData((assetsData?.length || 0) > 0 || (liabilitiesData?.length || 0) > 0);
 
-        // Recalcular score automáticamente
-        recalculateScore();
+        // Removed automatic score recalculation - it was causing infinite reload loop
+        // Score is recalculated when needed (e.g., after adding transactions)
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
