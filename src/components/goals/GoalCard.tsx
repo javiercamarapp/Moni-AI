@@ -130,7 +130,7 @@ export const GoalCard = ({ goal, onAddFunds, onViewDetails }: GoalCardProps) => 
               e.stopPropagation();
               onAddFunds();
             }}
-            className="flex-1 h-9 bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-medium text-xs transition-all flex items-center justify-center gap-1.5"
+            className="flex-1 h-9 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-white/80 text-gray-900 font-medium text-xs transition-all flex items-center justify-center gap-1.5 border-0"
           >
             <Plus className="h-3.5 w-3.5" />
             Agregar fondos
@@ -140,7 +140,7 @@ export const GoalCard = ({ goal, onAddFunds, onViewDetails }: GoalCardProps) => 
               e.stopPropagation();
               onViewDetails();
             }}
-            className="h-9 px-4 bg-white hover:bg-gray-50 border border-gray-200 text-gray-900 rounded-lg font-medium text-xs transition-all"
+            className="h-9 px-4 bg-gray-50 hover:bg-gray-50 rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 text-gray-600 font-medium text-xs transition-all border-0"
           >
             Ver más
           </button>

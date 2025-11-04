@@ -168,7 +168,7 @@ const Goals = () => {
                     {goals.length > 0 && goals[0].required_weekly_saving && (
                       <button
                         onClick={() => toast.info("Ajuste automático próximamente")}
-                        className="px-3 py-1.5 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-all text-xs"
+                        className="px-3 py-1.5 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-white/80 text-gray-900 font-medium transition-all text-xs border-0"
                       >
                         Ajustar plan automáticamente
                       </button>
