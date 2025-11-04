@@ -185,7 +185,7 @@ export default function Subscribe() {
           <Button
             variant="ghost"
             onClick={() => navigate(isAuthenticated ? "/dashboard" : "/auth")}
-            className="text-gray-600 hover:text-black text-xs"
+            className="text-gray-600 text-xs transition-all hover:-translate-y-1"
           >
             Continuar sin Premium
           </Button>
