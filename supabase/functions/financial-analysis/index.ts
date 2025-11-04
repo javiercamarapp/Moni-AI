@@ -790,6 +790,8 @@ Ejemplo formato:
     let monthsToGoal = 0;
     
     if (mainGoal && avgMonthlySavings12M > 0 && remainingAmount > 0) {
+      console.log('🎯 Iniciando cálculo de probabilidad de meta - last12Months length:', last12Months.length);
+      
       // Calcular meses necesarios para alcanzar la meta
       monthsToGoal = Math.ceil(remainingAmount / avgMonthlySavings12M);
       
