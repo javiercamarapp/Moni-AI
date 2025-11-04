@@ -132,21 +132,21 @@ const Goals = () => {
             </div>
           ) : (
             <>
-              {/* Stats Summary - Minimalist Style */}
+              {/* Stats Summary - Same as Group Goals */}
               <div className="grid grid-cols-3 gap-2 mb-6">
-                <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-1.5 text-center shadow-sm">
+                <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-1.5 text-center shadow-sm">
                   <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Ahorrado</p>
                   <p className="text-[11px] font-bold text-white">{formatCurrency(stats.totalSaved)}</p>
                 </div>
                 
-                <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl p-1.5 text-center shadow-sm">
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-1.5 text-center shadow-sm">
                   <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Progreso</p>
                   <p className="text-[11px] font-bold text-white">{stats.avgCompletion.toFixed(0)}%</p>
                 </div>
                 
-                <div className="bg-gradient-to-br from-gray-600 to-gray-700 rounded-xl p-1.5 text-center shadow-sm">
-                  <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">En Ritmo</p>
-                  <p className="text-[11px] font-bold text-white">{stats.goalsOnTrack} de {goals.length}</p>
+                <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-1.5 text-center shadow-sm">
+                  <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Activas</p>
+                  <p className="text-[11px] font-bold text-white">{goals.length}</p>
                 </div>
               </div>
 
