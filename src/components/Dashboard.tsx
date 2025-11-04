@@ -1327,15 +1327,27 @@ const Dashboard = () => {
           budgetedExpenses={0} 
           savingsGoals={goals.reduce((sum, g) => sum + (Number(g.required_weekly_saving || 0) * 4), 0)}
           groupGoalsSavings={groupGoals.reduce((sum: number, g: any) => {
-            if (!g.required_weekly_saving || !g.circle_goal_members?.[0]) return sum;
+            if (!g.circle_goal_members?.[0] || !g.deadline) return sum;
+            
             const currentAmount = Number(g.circle_goal_members[0].current_amount || 0);
             const targetAmount = Number(g.target_amount || 0);
             const remaining = targetAmount - currentAmount;
+            
             if (remaining <= 0) return sum;
             
-            // Calculate monthly savings needed
-            const weeklySaving = Number(g.required_weekly_saving || 0);
-            return sum + (weeklySaving * 4);
+            // Calculate weeks remaining until deadline
+            const deadlineDate = new Date(g.deadline);
+            const today = new Date();
+            const daysRemaining = Math.ceil((deadlineDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+            const weeksRemaining = Math.ceil(daysRemaining / 7);
+            
+            if (weeksRemaining <= 0) return sum;
+            
+            // Calculate required weekly and monthly savings
+            const requiredWeeklySaving = Math.ceil(remaining / weeksRemaining);
+            const requiredMonthlySaving = requiredWeeklySaving * 4;
+            
+            return sum + requiredMonthlySaving;
           }, 0)}
           actualExpenses={monthlyExpenses}
           budgetExcesses={0}
