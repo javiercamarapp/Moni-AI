@@ -46,7 +46,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
     target: "",
     deadline: "",
     category: "Custom",
-    type: "personal" as "personal" | "group",
+    type: "personal" as const,
     isPublic: false,
     aiEnabled: true,
     motivation: "",
@@ -344,37 +344,6 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
             </div>
           )}
 
-          {/* Goal Type */}
-          <div className="space-y-2">
-            <Label className="text-gray-900">Tipo de meta</Label>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => setFormData({ ...formData, type: "personal" })}
-                className={`p-2 rounded-lg border-2 transition-all ${
-                  formData.type === "personal"
-                    ? "border-amber-600 bg-amber-50"
-                    : "border-gray-200 hover:border-gray-300"
-                }`}
-              >
-                <Target className="h-4 w-4 mx-auto mb-1 text-amber-600" />
-                <p className="font-medium text-xs text-gray-900">Individual</p>
-              </button>
-              <button
-                type="button"
-                onClick={() => setFormData({ ...formData, type: "group" })}
-                className={`p-2 rounded-lg border-2 transition-all ${
-                  formData.type === "group"
-                    ? "border-amber-600 bg-amber-50"
-                    : "border-gray-200 hover:border-gray-300"
-                }`}
-              >
-                <Users className="h-4 w-4 mx-auto mb-1 text-amber-600" />
-                <p className="font-medium text-xs text-gray-900">Grupal</p>
-              </button>
-            </div>
-          </div>
-
           {/* Privacy & Options */}
           <div className="space-y-2 bg-amber-50/30 rounded-lg p-2 border border-amber-100">
             <div className="flex items-center justify-between group cursor-pointer">
@@ -396,11 +365,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
 
             <div className="flex items-center justify-between pt-2 border-t border-amber-100 group cursor-pointer">
               <div className="flex items-center gap-2">
-                {formData.type === "group" ? (
-                  <Users className="h-3 w-3 text-indigo-600 group-hover:text-black transition-colors" />
-                ) : (
-                  <Lock className="h-3 w-3 text-indigo-600 group-hover:text-black transition-colors" />
-                )}
+                <Lock className="h-3 w-3 text-indigo-600 group-hover:text-black transition-colors" />
                 <div>
                   <Label htmlFor="isPublic" className="text-xs font-medium text-gray-900">
                     Visible para amigos
