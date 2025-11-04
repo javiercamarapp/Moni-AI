@@ -1400,7 +1400,7 @@ const Dashboard = () => {
                 <p className="text-[10px] break-words leading-tight">
                   {totalBudget > 0 ? (
                     <>
-                      <span className="text-red-600 font-bold">Gastado: ${currentMonthExpenses.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                      <span className="text-green-600 font-bold">Gastado: ${currentMonthExpenses.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                       {' de '}
                       <span className="text-blue-600 font-bold">${totalBudget.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </>
@@ -1418,26 +1418,16 @@ const Dashboard = () => {
             </div>
             
             <div className="relative">
-              <div className="h-4 rounded-full bg-gradient-to-r from-[hsl(220,60%,10%)] to-[hsl(240,55%,8%)] border border-white/10 overflow-hidden shadow-inner">
+              <div className="h-4 rounded-full bg-gray-100 border border-white/10 overflow-hidden shadow-inner">
                 <div 
-                  className={`h-full rounded-full relative overflow-hidden transition-all duration-1000 ease-out ${
-                    totalBudget > 0 && (currentMonthExpenses / totalBudget) * 100 > 90 
-                      ? 'bg-gradient-to-r from-[hsl(0,55%,35%)] via-[hsl(0,60%,40%)] to-[hsl(0,55%,35%)]' 
-                      : totalBudget > 0 && (currentMonthExpenses / totalBudget) * 100 > 75 
-                      ? 'bg-gradient-to-r from-[hsl(0,50%,40%)] via-[hsl(0,55%,45%)] to-[hsl(0,50%,40%)]' 
-                      : 'bg-gradient-to-r from-[hsl(0,45%,45%)] via-[hsl(0,50%,50%)] to-[hsl(0,45%,45%)]'
-                  }`}
+                  className="h-full rounded-full relative overflow-hidden transition-all duration-1000 ease-out bg-gradient-to-r from-green-400 to-green-500"
                   style={{ 
                     width: `${totalBudget > 0 ? Math.min((currentMonthExpenses / totalBudget) * 100, 100) : 0}%`,
-                    boxShadow: totalBudget > 0 && (currentMonthExpenses / totalBudget) * 100 > 90 
-                      ? '0 2px 12px hsla(0, 55%, 35%, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
-                      : totalBudget > 0 && (currentMonthExpenses / totalBudget) * 100 > 75 
-                      ? '0 2px 12px hsla(0, 50%, 40%, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
-                      : '0 2px 12px hsla(0, 45%, 45%, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                    boxShadow: '0 2px 12px rgba(74, 222, 128, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
                   }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-transparent" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-[slideIn_2s_ease-in-out_infinite]" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-[slideIn_2s_ease-in-out_infinite]" />
                 </div>
               </div>
             </div>
