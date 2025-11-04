@@ -285,19 +285,18 @@ const Goals = () => {
                 </div>
               </div>
 
-              {/* AI Recommendations Section - Minimal */}
-              <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
-                    <span className="text-sm">🤖</span>
+              {/* AI Recommendations Section - Compact */}
+              <div className="bg-white rounded-xl p-2.5 shadow-sm border border-gray-100 mb-6 inline-block">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                    <span className="text-[10px]">🤖</span>
                   </div>
-                  <p className="text-xs font-semibold text-gray-700">Moni AI</p>
+                  <p className="text-[10px] text-gray-600 leading-snug">
+                    {goals.length > 0 && goals[0].required_weekly_saving
+                      ? `Ahorra $${Math.round(goals[0].required_weekly_saving * 1.1).toLocaleString()}/sem para completar 2 sem antes`
+                      : "Optimización automática activa"}
+                  </p>
                 </div>
-                <p className="text-sm text-gray-600 leading-relaxed">
-                  {goals.length > 0 && goals[0].required_weekly_saving
-                    ? `Ahorra $${Math.round(goals[0].required_weekly_saving * 1.1).toLocaleString()}/sem para completar 2 sem antes`
-                    : "Optimización automática activa"}
-                </p>
               </div>
 
               {/* Goals Carousel */}
