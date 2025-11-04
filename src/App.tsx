@@ -127,19 +127,63 @@ function App() {
           <Route path="/assets" element={<Assets />} />
           <Route path="/liabilities" element={<Liabilities />} />
           <Route path="/level-quiz" element={<LevelQuiz />} />
+          <Route path="/financial-journey" element={
+            <PremiumFeature featureName="Financial Journey">
+              <FinancialJourney />
+            </PremiumFeature>
+          } />
+          <Route path="/accounts-cards" element={
+            <PremiumFeature featureName="Mis Cuentas y Tarjetas">
+              <AccountsCards />
+            </PremiumFeature>
+          } />
+          <Route path="/goals" element={
+            <PremiumFeature featureName="Metas">
+              <Goals />
+            </PremiumFeature>
+          } />
+          <Route path="/budgets" element={
+            <PremiumFeature featureName="Presupuesto Mensual">
+              <Budgets />
+            </PremiumFeature>
+          } />
+          <Route path="/aspirations-analysis" element={
+            <PremiumFeature featureName="Análisis de Aspiraciones con IA">
+              <AspirationsAnalysis />
+            </PremiumFeature>
+          } />
+          <Route path="/score-moni" element={
+            <PremiumFeature featureName="Score Moni con IA">
+              <ScoreMoni />
+            </PremiumFeature>
+          } />
+          <Route path="/whatsapp" element={
+            <PremiumFeature featureName="WhatsApp Bot con IA">
+              <WhatsAppSetup />
+            </PremiumFeature>
+          } />
           <Route path="/level-details" element={<LevelDetails />} />
-          <Route path="/aspirations-analysis" element={<AspirationsAnalysis />} />
-          <Route path="/financial-journey" element={<FinancialJourney />} />
           <Route path="/logros" element={<Logros />} />
           
           <Route path="/edit-aspirations" element={<EditAspirations />} />
-          <Route path="/subscriptions" element={<Subscriptions />} />
+          <Route path="/subscriptions" element={
+            <PremiumFeature featureName="Análisis de Suscripciones con IA">
+              <Subscriptions />
+            </PremiumFeature>
+          } />
           <Route path="/daily-expenses" element={<DailyExpenses />} />
           <Route path="/day-expenses" element={<DayExpenses />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/budgets" element={<Budgets />} />
+          <Route path="/reports" element={
+            <PremiumFeature featureName="Reportes con IA">
+              <Reports />
+            </PremiumFeature>
+          } />
           <Route path="/edit-budgets" element={<EditBudgets />} />
-          <Route path="/budget-quiz" element={<BudgetQuiz />} />
+          <Route path="/budget-quiz" element={
+            <PremiumFeature featureName="Quiz de Presupuesto con IA">
+              <BudgetQuiz />
+            </PremiumFeature>
+          } />
           <Route path="/category-expenses" element={<CategoryExpenses />} />
           <Route path="/gestionar-categorias" element={<GestionarCategorias />} />
           <Route path="/movimientos" element={<Movimientos />} />
@@ -152,12 +196,36 @@ function App() {
           <Route path="/groups" element={<Groups />} />
           <Route path="/financial-events" element={<FinancialEvents />} />
           <Route path="/social-stats" element={<SocialStats />} />
-          <Route path="/saving-simulation" element={<SavingSimulation />} />
-          <Route path="/goals" element={<Goals />} />
-          <Route path="/group-goals" element={<GroupGoals />} />
-          <Route path="/group-goals/:id" element={<GroupGoalDetails />} />
-          <Route path="/group-goals/:id/chat" element={<GroupGoalChat />} />
-          <Route path="/accounts-cards" element={<AccountsCards />} />
+          <Route path="/saving-simulation" element={
+            <PremiumFeature featureName="Simulación de Ahorro con IA">
+              <SavingSimulation />
+            </PremiumFeature>
+          } />
+          <Route path="/goals" element={
+            <PremiumFeature featureName="Metas">
+              <Goals />
+            </PremiumFeature>
+          } />
+          <Route path="/accounts-cards" element={
+            <PremiumFeature featureName="Mis Cuentas y Tarjetas">
+              <AccountsCards />
+            </PremiumFeature>
+          } />
+          <Route path="/group-goals" element={
+            <PremiumFeature featureName="Metas Grupales">
+              <GroupGoals />
+            </PremiumFeature>
+          } />
+          <Route path="/group-goals/:id" element={
+            <PremiumFeature featureName="Metas Grupales">
+              <GroupGoalDetails />
+            </PremiumFeature>
+          } />
+          <Route path="/group-goals/:id/chat" element={
+            <PremiumFeature featureName="Chat de Metas Grupales">
+              <GroupGoalChat />
+            </PremiumFeature>
+          } />
           <Route path="/fixed-expenses" element={<FixedExpenses />} />
           <Route path="/variable-expenses" element={<VariableExpenses />} />
           <Route path="/ant-expenses" element={<AntExpenses />} />
