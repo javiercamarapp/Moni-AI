@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Target, Plus, TrendingUp, Sparkles, ArrowLeft, Lightbulb } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
@@ -11,6 +11,7 @@ import { CreateGoalModal } from "@/components/goals/CreateGoalModal";
 import { AddFundsModal } from "@/components/goals/AddFundsModal";
 import { formatCurrency } from "@/lib/utils";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 
 interface Goal {
   id: string;
@@ -35,6 +36,10 @@ const Goals = () => {
     open: false,
     goal: null
   });
+  
+  const autoplayPlugin = useRef(
+    Autoplay({ delay: 4000, stopOnInteraction: true })
+  );
 
   useEffect(() => {
     fetchGoals();
@@ -204,7 +209,14 @@ const Goals = () => {
               </div>
 
               {/* Goals Carousel */}
-              <Carousel className="w-full">
+              <Carousel 
+                className="w-full"
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                plugins={[autoplayPlugin.current]}
+              >
                 <CarouselContent className="-ml-4">
                   {goals.map((goal) => (
                     <CarouselItem key={goal.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
@@ -217,8 +229,6 @@ const Goals = () => {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="left-2" />
-                <CarouselNext className="right-2" />
               </Carousel>
 
               {/* Create Goal Button */}
