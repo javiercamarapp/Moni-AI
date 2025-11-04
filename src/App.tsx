@@ -97,7 +97,11 @@ function App() {
           <Route path="/expired" element={<Expired />} />
           <Route path="/" element={<Dashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/chat" element={<ChatInterface />} />
+          <Route path="/chat" element={
+            <PremiumFeature featureName="Chat con IA">
+              <ChatInterface />
+            </PremiumFeature>
+          } />
           <Route path="/new-goal" element={<NewGoal />} />
           <Route path="/financial-chat" element={
             <PremiumFeature featureName="Chat con Moni AI" description="Conversa con tu asistente financiero inteligente">
@@ -190,7 +194,11 @@ function App() {
           <Route path="/proximos-movimientos" element={<ProximosMovimientos />} />
           <Route path="/edit-assets-liabilities" element={<EditNetWorth />} />
           <Route path="/initial-net-worth" element={<InitialNetWorth />} />
-          <Route path="/social" element={<Social />} />
+          <Route path="/social" element={
+            <PremiumFeature featureName="Social">
+              <Social />
+            </PremiumFeature>
+          } />
           <Route path="/friends-list" element={<FriendsList />} />
           <Route path="/add-friend" element={<AddFriend />} />
           <Route path="/groups" element={<Groups />} />
