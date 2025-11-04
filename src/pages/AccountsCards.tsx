@@ -8,7 +8,21 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 
-const BankCard = ({ bank, balance, index }: { bank: string; balance: number; index: number }) => {
+const BankCard = ({ 
+  bank, 
+  balance, 
+  index, 
+  isActive, 
+  total, 
+  onClick 
+}: { 
+  bank: string; 
+  balance: number; 
+  index: number; 
+  isActive: boolean;
+  total: number;
+  onClick: () => void;
+}) => {
   const gradients = [
     "from-slate-700 to-slate-900",
     "from-blue-400 to-blue-600",
@@ -16,14 +30,32 @@ const BankCard = ({ bank, balance, index }: { bank: string; balance: number; ind
     "from-green-500 to-green-700",
   ];
 
+  // Calculate position in the stack
+  const offset = isActive ? 0 : (index * 8);
+  const scale = isActive ? 1 : 0.95 - (index * 0.02);
+  const zIndex = total - index;
+
   return (
     <motion.div
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.1 }}
-      className="min-w-[300px] snap-center"
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ 
+        opacity: 1, 
+        y: offset,
+        scale: scale,
+        zIndex: zIndex
+      }}
+      transition={{ 
+        type: "spring",
+        stiffness: 300,
+        damping: 30
+      }}
+      onClick={onClick}
+      className="absolute top-0 left-0 right-0 cursor-pointer"
+      style={{ 
+        transformOrigin: "top center"
+      }}
     >
-      <Card className={`bg-gradient-to-br ${gradients[index % gradients.length]} p-6 border-0 shadow-xl rounded-3xl`}>
+      <Card className={`bg-gradient-to-br ${gradients[index % gradients.length]} p-6 border-0 shadow-xl rounded-3xl w-full mx-auto max-w-[340px]`}>
         <div className="flex items-center justify-between mb-12">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
@@ -127,29 +159,34 @@ export default function AccountsCards() {
           <p className="text-sm text-gray-500 capitalize">{getFormattedDate()}</p>
         </motion.div>
 
-        {/* Cards Carousel */}
-        <div className="relative">
-          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 -mx-4 px-4">
+        {/* Cards Stack */}
+        <div className="relative h-[220px] mb-8">
+          <div className="relative w-full max-w-[340px] mx-auto h-full">
             {bankConnections.length > 0 ? (
-              bankConnections.map((connection, index) => {
-                // Balance simulado para cada tarjeta
-                const simulatedBalance = 5000 + (index * 2500);
-                return (
-                  <BankCard
-                    key={connection.id}
-                    bank={connection.bank_name}
-                    balance={simulatedBalance}
-                    index={index}
-                  />
-                );
-              })
+              <>
+                {bankConnections.map((connection, index) => {
+                  // Balance simulado para cada tarjeta
+                  const simulatedBalance = 5000 + (index * 2500);
+                  return (
+                    <BankCard
+                      key={connection.id}
+                      bank={connection.bank_name}
+                      balance={simulatedBalance}
+                      index={index}
+                      isActive={index === selectedCard}
+                      total={bankConnections.length}
+                      onClick={() => setSelectedCard(index)}
+                    />
+                  );
+                })}
+              </>
             ) : (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="min-w-[300px]"
+                className="w-full"
               >
-                <Card className="bg-gradient-to-br from-slate-200 to-slate-300 p-6 border-0 shadow-xl rounded-3xl">
+                <Card className="bg-gradient-to-br from-slate-200 to-slate-300 p-6 border-0 shadow-xl rounded-3xl max-w-[340px] mx-auto">
                   <div className="flex flex-col items-center justify-center h-40 text-center">
                     <p className="text-gray-600 mb-2">No tienes tarjetas agregadas</p>
                     <p className="text-sm text-gray-500">Presiona + para agregar una</p>
@@ -157,26 +194,43 @@ export default function AccountsCards() {
                 </Card>
               </motion.div>
             )}
-
-            {/* Add Card Button */}
-            <motion.button
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: bankConnections.length * 0.1 }}
-              onClick={() => navigate("/bank-connection")}
-              className="min-w-[300px] snap-center"
-            >
-              <Card className="bg-gradient-to-br from-[#E5DEFF] to-[#D0BCFF] p-6 border-0 shadow-xl rounded-3xl hover:scale-105 transition-transform cursor-pointer h-full">
-                <div className="flex flex-col items-center justify-center h-40">
-                  <div className="w-16 h-16 bg-white/50 rounded-full flex items-center justify-center mb-3 backdrop-blur-sm">
-                    <Plus className="h-8 w-8 text-primary" />
-                  </div>
-                  <p className="text-gray-700 font-semibold">Agregar Cuenta</p>
-                </div>
-              </Card>
-            </motion.button>
           </div>
+
+          {/* Card indicator dots */}
+          {bankConnections.length > 1 && (
+            <div className="flex justify-center gap-2 mt-4">
+              {bankConnections.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedCard(index)}
+                  className={`h-2 rounded-full transition-all ${
+                    index === selectedCard 
+                      ? 'w-8 bg-primary' 
+                      : 'w-2 bg-gray-300'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
+
+        {/* Add Card Button */}
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          onClick={() => navigate("/bank-connection")}
+          className="w-full max-w-[340px] mx-auto block mb-6"
+        >
+          <Card className="bg-gradient-to-br from-[#E5DEFF] to-[#D0BCFF] p-4 border-0 shadow-lg rounded-2xl hover:scale-105 transition-transform cursor-pointer">
+            <div className="flex items-center justify-center gap-3">
+              <div className="w-12 h-12 bg-white/50 rounded-full flex items-center justify-center backdrop-blur-sm">
+                <Plus className="h-6 w-6 text-primary" />
+              </div>
+              <p className="text-gray-700 font-semibold">Agregar Nueva Cuenta</p>
+            </div>
+          </Card>
+        </motion.button>
 
         {/* Total Balance Card */}
         {bankConnections.length > 0 && (
