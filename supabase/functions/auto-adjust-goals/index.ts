@@ -100,20 +100,27 @@ async function adjustIndividualGoal(supabaseClient: any, goal: any) {
     const weeksRemaining = Math.max(1, Math.ceil(daysRemaining / 7));
     const remainingAmount = targetAmount - currentAmount;
 
-    // Calcular promedio de ahorro de las últimas 4 semanas
+    // Calcular promedio de ahorro de las últimas 4 semanas desde transacciones
     const fourWeeksAgo = new Date();
     fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28);
 
-    const { data: recentTransactions } = await supabaseClient
-      .from('transactions')
-      .select('amount, transaction_date')
-      .eq('user_id', goal.user_id)
-      .eq('type', 'ingreso')
-      .gte('transaction_date', fourWeeksAgo.toISOString().split('T')[0]);
+    let avgWeeklySavings = 0;
+    
+    try {
+      const { data: recentTransactions } = await supabaseClient
+        .from('transactions')
+        .select('amount, transaction_date')
+        .eq('user_id', goal.user_id)
+        .eq('type', 'ingreso')
+        .gte('transaction_date', fourWeeksAgo.toISOString().split('T')[0]);
 
-    const avgWeeklySavings = recentTransactions && recentTransactions.length > 0
-      ? recentTransactions.reduce((sum: number, t: any) => sum + Number(t.amount), 0) / 4
-      : 0;
+      avgWeeklySavings = recentTransactions && recentTransactions.length > 0
+        ? recentTransactions.reduce((sum: number, t: any) => sum + Number(t.amount), 0) / 4
+        : 0;
+    } catch (error) {
+      console.log('No transactions data available, using default calculation');
+      avgWeeklySavings = 0;
+    }
 
     // Calcular nuevo monto semanal requerido
     const newWeeklySaving = Math.ceil(remainingAmount / weeksRemaining);
