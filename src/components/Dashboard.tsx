@@ -1754,31 +1754,31 @@ const Dashboard = () => {
                     transition={{ delay: index * 0.1 }}
                   >
                     <Card 
-                      className="w-full p-3 sm:p-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden hover:shadow-md transition-all duration-300 min-w-0"
+                      className="w-full p-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-100 relative overflow-hidden hover:shadow-md transition-all duration-300 min-w-0"
                     >
-                      <div className="flex flex-col sm:flex-row justify-between items-start gap-2 sm:gap-0 mb-3">
+                      <div className="flex justify-between items-start gap-2 mb-2">
                         <div className="flex-1">
-                          <div className="flex items-center flex-wrap space-x-2 mb-1 gap-1">
-                            <h4 className="text-sm sm:text-base font-semibold text-gray-900">{goal.title}</h4>
-                            {goal.type === 'group' && <Badge variant="outline" className="text-xs text-gray-700 border-gray-300">
-                                <Users className="w-3 h-3 mr-1" />
+                          <div className="flex items-center flex-wrap space-x-1 mb-0.5 gap-0.5">
+                            <h4 className="text-xs font-semibold text-gray-900">{goal.title}</h4>
+                            {goal.type === 'group' && <Badge variant="outline" className="text-[10px] text-gray-700 border-gray-300 px-1 py-0">
+                                <Users className="w-2.5 h-2.5 mr-0.5" />
                                 {goal.members}
                               </Badge>}
                           </div>
-                          <p className="text-xs text-gray-500">{goal.deadline}</p>
+                          <p className="text-[10px] text-gray-500">{goal.deadline}</p>
                         </div>
-                        <div className="text-left sm:text-right">
-                          <p className="text-sm sm:text-base font-semibold text-gray-900">
+                        <div className="text-right">
+                          <p className="text-xs font-semibold text-gray-900">
                             ${Number(goal.current).toLocaleString()}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-[10px] text-gray-500">
                             de ${Number(goal.target).toLocaleString()}
                           </p>
                         </div>
                       </div>
                       
                       <div>
-                        <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="relative h-1.5 bg-gray-100 rounded-full overflow-hidden">
                           <motion.div 
                             className="h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full relative"
                             initial={{ width: 0 }}
@@ -1793,7 +1793,7 @@ const Dashboard = () => {
                           </motion.div>
                         </div>
                         
-                        <div className="flex justify-between items-center text-xs mt-2">
+                        <div className="flex justify-between items-center text-[10px] mt-1.5">
                           <span className="text-gray-600">
                             ${(Number(goal.target) - Number(goal.current)).toLocaleString()} restante
                           </span>
