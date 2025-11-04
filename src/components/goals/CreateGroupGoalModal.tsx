@@ -261,7 +261,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
                 onClose();
                 navigate('/groups');
               }}
-              className="w-full h-10 rounded-xl border-gray-300 text-gray-700 hover:bg-gray-50 flex items-center justify-center gap-2"
+              className="w-full h-10 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-white/80 transition-all duration-300 border-0 text-gray-900 font-medium flex items-center justify-center gap-2"
             >
               <Plus className="h-4 w-4" />
               Crear nuevo círculo
