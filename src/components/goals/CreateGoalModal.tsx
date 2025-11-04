@@ -18,12 +18,12 @@ interface CreateGoalModalProps {
 }
 
 const GOAL_CATEGORIES = [
-  { value: "Travel", label: "Viaje", icon: "✈️" },
-  { value: "House", label: "Casa", icon: "🏡" },
-  { value: "Car", label: "Auto", icon: "🚗" },
-  { value: "Education", label: "Educación", icon: "🎓" },
-  { value: "Custom", label: "Fondo libre", icon: "💰" },
-  { value: "Event", label: "Evento", icon: "💍" }
+  { value: "Travel", label: "Viaje", icon: "✈️", color: "bg-blue-100 border-blue-300 hover:border-black" },
+  { value: "House", label: "Casa", icon: "🏡", color: "bg-green-100 border-green-300 hover:border-black" },
+  { value: "Car", label: "Auto", icon: "🚗", color: "bg-red-100 border-red-300 hover:border-black" },
+  { value: "Education", label: "Educación", icon: "🎓", color: "bg-purple-100 border-purple-300 hover:border-black" },
+  { value: "Custom", label: "Fondo libre", icon: "💰", color: "bg-yellow-100 border-yellow-300 hover:border-black" },
+  { value: "Event", label: "Evento", icon: "💍", color: "bg-pink-100 border-pink-300 hover:border-black" }
 ];
 
 const INSPIRATIONAL_PHRASES = [
@@ -248,8 +248,8 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
                   onClick={() => setFormData({ ...formData, category: cat.value })}
                   className={`p-4 rounded-xl border-2 transition-all hover:scale-105 ${
                     formData.category === cat.value
-                      ? "border-amber-600 bg-amber-50 shadow-sm"
-                      : "border-gray-200 hover:border-amber-300"
+                      ? "border-black bg-gray-50 shadow-sm"
+                      : cat.color
                   }`}
                 >
                   <div className="text-3xl mb-2">{cat.icon}</div>
@@ -324,14 +324,22 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
                   <h3 className="text-xs font-semibold text-gray-900 mb-1">
                     Predicción de Moni AI
                   </h3>
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-gray-600 mb-2">
                     Ahorra <strong className="text-gray-900">${prediction.required_weekly_saving.toLocaleString()}/semana</strong> para completarla el{" "}
                     <strong className="text-gray-900">{new Date(prediction.predicted_completion_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}</strong>
                   </p>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 bg-gray-200 rounded-full h-1.5">
+                      <div 
+                        className="bg-gray-900 h-1.5 rounded-full transition-all duration-500"
+                        style={{ width: `${prediction.ai_confidence * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-xs font-medium text-gray-500">
+                      {Math.round(prediction.ai_confidence * 100)}%
+                    </span>
+                  </div>
                 </div>
-                <span className="text-xs font-medium text-gray-500">
-                  {Math.round(prediction.ai_confidence * 100)}%
-                </span>
               </div>
             </div>
           )}
