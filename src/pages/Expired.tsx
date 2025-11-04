@@ -33,11 +33,13 @@ export default function Expired() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted flex items-center justify-center p-4">
-      <div className="w-full max-w-lg space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <img src={moniLogo} alt="Moni AI" className="h-20 w-20 object-contain" />
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted p-4">
+      <div className="w-full max-w-lg mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        {/* Header con logo - igual que el dashboard */}
+        <div className="p-2 mb-4">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm overflow-hidden w-16 h-10">
+            <img src={moniLogo} alt="Moni AI" className="w-full h-full object-cover" />
+          </div>
         </div>
 
         {/* Main Card */}
