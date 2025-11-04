@@ -38,7 +38,7 @@ export default function Subscribe() {
   ];
 
   return (
-    <div className="min-h-screen bg-background p-3 pb-20">
+    <div className="min-h-screen bg-[hsl(48,25%,92%)] p-3 pb-20">
       <div className="w-full max-w-md mx-auto space-y-4">
         {/* Header con logo - igual que el dashboard */}
         <div className="p-2">
@@ -49,14 +49,17 @@ export default function Subscribe() {
 
         {/* Main Card */}
         <Card className="border-0 shadow-lg bg-white rounded-3xl">
-          <CardHeader className="text-center space-y-3 pb-4 pt-6">
-            <div className="mx-auto w-14 h-14 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl flex items-center justify-center">
-              <Crown className="w-7 h-7 text-primary" />
+          <CardHeader className="pb-4 pt-6 px-6">
+            {/* Título e icono en la misma línea */}
+            <div className="flex items-center gap-3">
+              <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl flex items-center justify-center">
+                <Crown className="w-6 h-6 text-primary" />
+              </div>
+              <CardTitle className="text-xl font-bold text-black text-left">
+                Desbloquea Moni AI Premium
+              </CardTitle>
             </div>
-            <CardTitle className="text-2xl font-bold text-black">
-              Desbloquea Moni AI Premium
-            </CardTitle>
-            <CardDescription className="text-sm text-gray-600">
+            <CardDescription className="text-sm text-gray-600 mt-3">
               Accede a todas las funcionalidades y lleva tu salud financiera al siguiente nivel
             </CardDescription>
           </CardHeader>
