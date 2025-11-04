@@ -211,20 +211,40 @@ const GroupGoals = () => {
             </div>
           ) : (
             <>
-              {/* Main Button to Open Goals Sheet */}
-              <div className="text-center py-16">
-                <div className="w-20 h-20 bg-[#c8a57b]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Target className="h-10 w-10 text-[#c8a57b]" />
+              {/* Stats Summary Card */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg border border-gray-100 p-6 mb-6 max-w-2xl mx-auto">
+                <div className="flex items-center gap-2 mb-4">
+                  <Target className="h-5 w-5 text-[#c8a57b]" />
+                  <h3 className="text-lg font-bold text-gray-900">
+                    Resumen de Metas Grupales
+                  </h3>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  Metas Grupales
-                </h3>
-                <p className="text-sm text-gray-600 mb-6 max-w-md mx-auto">
+                
+                {/* Stats Grid */}
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg p-2 text-center shadow-sm">
+                    <p className="text-[9px] text-white/80 mb-0.5 font-medium">Total Ahorrado</p>
+                    <p className="text-xs font-bold text-white">{formatCurrency(stats.totalSaved)}</p>
+                  </div>
+                  
+                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-2 text-center shadow-sm">
+                    <p className="text-[9px] text-white/80 mb-0.5 font-medium">Progreso</p>
+                    <p className="text-xs font-bold text-white">{stats.avgProgress.toFixed(0)}%</p>
+                  </div>
+                  
+                  <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-2 text-center shadow-sm">
+                    <p className="text-[9px] text-white/80 mb-0.5 font-medium">Activas</p>
+                    <p className="text-xs font-bold text-white">{stats.activeGoals}</p>
+                  </div>
+                </div>
+
+                <p className="text-sm text-gray-600 text-center mb-4">
                   Tienes {groupGoals.length} {groupGoals.length === 1 ? 'meta activa' : 'metas activas'}
                 </p>
+                
                 <Button
                   onClick={() => setGoalsSheetOpen(true)}
-                  className="h-12 px-8 mb-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md transition-all border-0 text-gray-900 font-semibold"
+                  className="w-full h-12 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] border border-gray-200 text-gray-900 font-semibold"
                 >
                   <Users className="h-5 w-5 mr-2" />
                   Ver metas grupales
@@ -248,24 +268,6 @@ const GroupGoals = () => {
               Selecciona una meta para ver sus detalles
             </SheetDescription>
           </SheetHeader>
-
-          {/* Stats Summary */}
-          <div className="grid grid-cols-3 gap-2 mb-6">
-            <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg p-2 text-center shadow-sm">
-              <p className="text-[9px] text-white/80 mb-0.5 font-medium">Total Ahorrado</p>
-              <p className="text-xs font-bold text-white">{formatCurrency(stats.totalSaved)}</p>
-            </div>
-            
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-2 text-center shadow-sm">
-              <p className="text-[9px] text-white/80 mb-0.5 font-medium">Progreso</p>
-              <p className="text-xs font-bold text-white">{stats.avgProgress.toFixed(0)}%</p>
-            </div>
-            
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-2 text-center shadow-sm">
-              <p className="text-[9px] text-white/80 mb-0.5 font-medium">Activas</p>
-              <p className="text-xs font-bold text-white">{stats.activeGoals}</p>
-            </div>
-          </div>
 
           {/* Goals List */}
           <div className="space-y-3 overflow-y-auto max-h-[calc(85vh-280px)]">
