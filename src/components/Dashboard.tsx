@@ -73,6 +73,9 @@ const Dashboard = () => {
   const autoplayPlugin = useRef(
     Autoplay({ delay: 4000, stopOnInteraction: true })
   );
+  const autoplayPluginGroup = useRef(
+    Autoplay({ delay: 4000, stopOnInteraction: true })
+  );
   
   // Sync recentTransactions when dashboardData updates - use ref to avoid infinite loop
   useEffect(() => {
@@ -1746,9 +1749,11 @@ const Dashboard = () => {
                   className="w-full"
                   opts={{
                     align: "start",
-                    loop: goals.length > 1,
+                    loop: true,
                   }}
                   plugins={[autoplayPlugin.current]}
+                  onMouseEnter={autoplayPlugin.current?.stop}
+                  onMouseLeave={autoplayPlugin.current?.reset}
                 >
                   <CarouselContent className="-ml-3">
                     {goals.map((goal, index) => {
@@ -1845,9 +1850,11 @@ const Dashboard = () => {
                   className="w-full"
                   opts={{
                     align: "start",
-                    loop: groupGoals.length > 1,
+                    loop: true,
                   }}
-                  plugins={[autoplayPlugin.current]}
+                  plugins={[autoplayPluginGroup.current]}
+                  onMouseEnter={autoplayPluginGroup.current?.stop}
+                  onMouseLeave={autoplayPluginGroup.current?.reset}
                 >
                   <CarouselContent className="-ml-3">
                     {groupGoals.map((goal, index) => {
