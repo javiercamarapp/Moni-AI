@@ -1926,8 +1926,6 @@ const Dashboard = () => {
         onClose={() => setIsCreateGoalModalOpen(false)}
         onSuccess={() => {
           setIsCreateGoalModalOpen(false);
-          // Refresh dashboard data
-          window.location.reload();
         }}
       />
     </div>
