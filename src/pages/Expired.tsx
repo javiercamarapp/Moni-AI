@@ -33,37 +33,37 @@ export default function Expired() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted p-4">
-      <div className="w-full max-w-lg mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="min-h-screen bg-background p-3 pb-20">
+      <div className="w-full max-w-md mx-auto space-y-4">
         {/* Header con logo - igual que el dashboard */}
-        <div className="p-2 mb-4">
+        <div className="p-2">
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm overflow-hidden w-16 h-10">
             <img src={moniLogo} alt="Moni AI" className="w-full h-full object-cover" />
           </div>
         </div>
 
         {/* Main Card */}
-        <Card className="border-2 shadow-2xl bg-white/95 backdrop-blur">
-          <CardHeader className="text-center space-y-4 pb-6">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-orange-500/20 to-orange-500/10 rounded-2xl flex items-center justify-center">
-              <AlertCircle className="w-8 h-8 text-orange-500" />
+        <Card className="border-0 shadow-lg bg-white rounded-3xl">
+          <CardHeader className="text-center space-y-3 pb-4 pt-6">
+            <div className="mx-auto w-14 h-14 bg-gradient-to-br from-orange-500/20 to-orange-500/10 rounded-2xl flex items-center justify-center">
+              <AlertCircle className="w-7 h-7 text-orange-500" />
             </div>
-            <CardTitle className="text-2xl font-bold">
+            <CardTitle className="text-xl font-bold text-black">
               Tu suscripción ha expirado
             </CardTitle>
-            <CardDescription className="text-base">
+            <CardDescription className="text-sm text-gray-600">
               Renueva tu plan para continuar usando todas las funcionalidades de Moni AI
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="space-y-6 pb-8">
+          <CardContent className="space-y-4 pb-6 px-6">
             {/* Benefits reminder */}
-            <div className="bg-gradient-to-r from-primary/5 to-transparent rounded-xl p-4 space-y-2">
-              <p className="text-sm font-medium flex items-center gap-2">
-                <Crown className="w-4 h-4 text-primary" />
+            <div className="bg-gradient-to-r from-primary/5 to-transparent rounded-2xl p-3 space-y-2">
+              <p className="text-xs font-medium flex items-center gap-2 text-black">
+                <Crown className="w-3 h-3 text-primary" />
                 Con tu suscripción activa tendrás:
               </p>
-              <ul className="text-sm text-muted-foreground space-y-1 ml-6 list-disc">
+              <ul className="text-[11px] text-gray-600 space-y-1 ml-5 list-disc">
                 <li>Análisis financiero ilimitado con IA</li>
                 <li>Metas y seguimiento personalizado</li>
                 <li>Acceso completo a tu Score Moni</li>
@@ -74,8 +74,8 @@ export default function Expired() {
             {/* Price */}
             <div className="text-center space-y-1">
               <div className="flex items-baseline justify-center gap-2">
-                <span className="text-4xl font-bold">$99</span>
-                <span className="text-lg text-muted-foreground">MXN / mes</span>
+                <span className="text-3xl font-bold text-black">$99</span>
+                <span className="text-base text-gray-600">MXN / mes</span>
               </div>
             </div>
 
@@ -83,14 +83,13 @@ export default function Expired() {
             <Button
               onClick={handleRenew}
               disabled={loading}
-              size="lg"
-              className="w-full text-lg h-14 rounded-2xl shadow-lg hover:shadow-xl transition-all"
+              className="w-full h-12 rounded-2xl bg-white hover:bg-white/90 text-black border border-gray-200 shadow-md hover:shadow-lg transition-all font-semibold"
             >
               {loading ? (
                 "Procesando..."
               ) : (
                 <>
-                  <RefreshCw className="w-5 h-5 mr-2" />
+                  <RefreshCw className="w-4 h-4 mr-2" />
                   Renovar Suscripción
                 </>
               )}
@@ -100,13 +99,12 @@ export default function Expired() {
             <Button
               onClick={handleCheckStatus}
               variant="outline"
-              size="lg"
-              className="w-full rounded-2xl"
+              className="w-full h-11 rounded-2xl border-gray-200 text-black hover:bg-gray-50"
             >
               Ya renové, verificar estado
             </Button>
 
-            <p className="text-xs text-center text-muted-foreground">
+            <p className="text-[10px] text-center text-gray-500">
               Si acabas de realizar el pago, espera 1-2 minutos y verifica tu estado
             </p>
           </CardContent>
@@ -117,7 +115,7 @@ export default function Expired() {
           <Button
             variant="ghost"
             onClick={() => navigate("/auth")}
-            className="text-muted-foreground hover:text-foreground"
+            className="text-gray-600 hover:text-black text-sm"
           >
             Cerrar sesión
           </Button>
