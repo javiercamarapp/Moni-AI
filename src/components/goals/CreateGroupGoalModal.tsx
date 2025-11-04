@@ -402,7 +402,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
           {/* Info Box */}
           <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
             <p className="text-xs text-gray-700 leading-relaxed">
-              💡 <strong>Funcionamiento de metas grupales:</strong> Esta modalidad establece un objetivo financiero individual e idéntico para cada participante del círculo. El monto definido representa la meta personal que cada miembro deberá alcanzar de manera independiente, no una suma acumulativa entre todos los participantes. Cada integrante progresa y completa su meta de forma autónoma.
+              💡 <strong>Funcionamiento:</strong> Cada participante del círculo tiene una meta individual por el monto completo. No es una suma colectiva: cada miembro debe alcanzar el objetivo de forma independiente y progresa por su cuenta.
             </p>
           </div>
 
