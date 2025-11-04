@@ -65,6 +65,14 @@ serve(async (req) => {
     let productId = null;
     let subscriptionEnd = null;
 
+    // Check if user has ever used a trial (check all subscriptions, not just active)
+    const allSubscriptions = await stripe.subscriptions.list({
+      customer: customerId,
+      limit: 100,
+    });
+    const hasUsedTrial = allSubscriptions.data.some(sub => sub.trial_end !== null);
+    logStep("Trial status checked", { hasUsedTrial });
+
     if (hasActiveSub) {
       const subscription = subscriptions.data[0];
       subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
@@ -78,7 +86,8 @@ serve(async (req) => {
     return new Response(JSON.stringify({
       subscribed: hasActiveSub,
       product_id: productId,
-      subscription_end: subscriptionEnd
+      subscription_end: subscriptionEnd,
+      has_used_trial: hasUsedTrial
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

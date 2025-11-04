@@ -13,12 +13,35 @@ export default function Subscribe() {
   const [loading, setLoading] = useState(false);
   const [currentFactIndex, setCurrentFactIndex] = useState(0);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [hasUsedTrial, setHasUsedTrial] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsAuthenticated(!!session);
+      if (session) {
+        checkTrialStatus();
+      }
     });
   }, []);
+
+  const checkTrialStatus = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data, error } = await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (!error && data) {
+        setHasUsedTrial(data.has_used_trial || false);
+      }
+    } catch (error) {
+      console.error("Error checking trial status:", error);
+    }
+  };
 
   const financialFacts = [
     "💡 Solo el 32% de mexicanos tiene educación financiera básica",
@@ -168,7 +191,7 @@ export default function Subscribe() {
               ) : (
                 <>
                   <Crown className="w-4 h-4 mr-2" />
-                  Activar Suscripción Premium
+                  {hasUsedTrial ? "Activar Suscripción Premium" : "Activar 7 Días Gratis de Prueba"}
                 </>
               )}
             </Button>
