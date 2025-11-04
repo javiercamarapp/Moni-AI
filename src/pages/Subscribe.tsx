@@ -39,7 +39,7 @@ export default function Subscribe() {
 
   return (
     <div className="min-h-screen bg-[hsl(48,25%,92%)] p-3 pb-20">
-      <div className="w-full max-w-md mx-auto space-y-4">
+      <div className="w-full max-w-sm mx-auto space-y-4">
         {/* Header con logo e insight */}
         <div className="p-2 flex items-center gap-3">
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm overflow-hidden w-16 h-10 flex-shrink-0">
@@ -67,30 +67,30 @@ export default function Subscribe() {
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="space-y-4 pb-6 px-6">
+          <CardContent className="space-y-3 pb-5 px-5">
             {/* Price */}
             <div className="text-center space-y-1">
               <div className="flex items-baseline justify-center gap-2">
-                <span className="text-4xl font-bold text-black">$99</span>
-                <span className="text-base text-gray-600">MXN / mes</span>
+                <span className="text-3xl font-bold text-black">$99</span>
+                <span className="text-sm text-gray-600">MXN / mes</span>
               </div>
-              <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
+              <p className="text-[10px] text-gray-500 flex items-center justify-center gap-1">
                 <Sparkles className="w-3 h-3 text-primary" />
                 Cancela cuando quieras
               </p>
             </div>
 
             {/* Features */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {features.map((feature, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-2 p-2 rounded-2xl bg-gradient-to-r from-primary/5 to-transparent"
+                  className="flex items-center gap-2 p-1.5 rounded-2xl bg-gradient-to-r from-primary/5 to-transparent"
                 >
-                  <div className="flex-shrink-0 w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Check className="w-3 h-3 text-primary" />
+                  <div className="flex-shrink-0 w-4 h-4 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5 text-primary" />
                   </div>
-                  <span className="text-xs font-medium text-black">{feature}</span>
+                  <span className="text-[11px] font-medium text-black">{feature}</span>
                 </div>
               ))}
             </div>
@@ -99,7 +99,7 @@ export default function Subscribe() {
             <Button
               onClick={handleSubscribe}
               disabled={loading}
-              className="w-full h-12 rounded-2xl bg-white hover:bg-white/90 text-black border border-gray-200 shadow-md hover:shadow-lg transition-all font-semibold"
+              className="w-full h-11 rounded-2xl bg-white hover:bg-white/90 text-black border border-gray-200 shadow-md hover:shadow-lg transition-all font-semibold text-sm"
             >
               {loading ? (
                 "Procesando..."
@@ -112,7 +112,7 @@ export default function Subscribe() {
             </Button>
 
             {/* Footer */}
-            <p className="text-[10px] text-center text-gray-500">
+            <p className="text-[9px] text-center text-gray-500">
               Al suscribirte aceptas nuestros{" "}
               <button className="underline hover:text-primary transition-colors">
                 términos y condiciones
@@ -126,7 +126,7 @@ export default function Subscribe() {
           <Button
             variant="ghost"
             onClick={() => navigate("/auth")}
-            className="text-gray-600 hover:text-black text-sm"
+            className="text-gray-600 hover:text-black text-xs"
           >
             Volver al inicio
           </Button>
