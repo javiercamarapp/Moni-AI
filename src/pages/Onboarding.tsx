@@ -21,40 +21,37 @@ const Onboarding = () => {
   // Preload ALL images and ensure they're ready before showing slides
   useEffect(() => {
     const allImages = [
+      moniLogo,
       onboardingHero, 
       onboardingControl, 
       onboardingGoals, 
       onboardingCoach,
-      aiImage,
-      'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=600&fit=crop'
+      aiImage
     ];
 
     let loadedCount = 0;
     const totalImages = allImages.length;
 
-    allImages.forEach((src) => {
-      const img = new Image();
-      img.onload = () => {
-        loadedCount++;
-        if (loadedCount === totalImages) {
-          // Wait 2 seconds minimum before hiding logo
-          setTimeout(() => {
-            setShowLogo(false);
-          }, 2000);
-        }
-      };
-      img.onerror = () => {
-        loadedCount++;
-        if (loadedCount === totalImages) {
-          // Even with errors, proceed after 2 seconds
-          setTimeout(() => {
-            setShowLogo(false);
-          }, 2000);
-        }
-      };
-      img.src = src;
+    const imagePromises = allImages.map((src) => {
+      return new Promise<void>((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          loadedCount++;
+          resolve();
+        };
+        img.onerror = () => {
+          loadedCount++;
+          resolve(); // Resolve even on error to not block loading
+        };
+        img.src = src;
+      });
+    });
+
+    Promise.all(imagePromises).then(() => {
+      // Wait minimum 1.5 seconds for smooth transition
+      setTimeout(() => {
+        setShowLogo(false);
+      }, 1500);
     });
   }, []);
 
