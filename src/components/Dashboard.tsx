@@ -1208,10 +1208,10 @@ const Dashboard = () => {
 
       {/* Score Moni - Compacto */}
       {scoreMoni !== null && (
-        <div className="mx-4 mb-4">
+        <div className="mx-4 mb-3">
           <BlurFade delay={0.25} inView>
             <Card 
-              className="p-4 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm hover:shadow-md transition-all cursor-pointer border-0"
+              className="p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm hover:shadow-md transition-all cursor-pointer border-0"
               onClick={() => {
                 navigate('/score-moni');
                 window.scrollTo(0, 0);
@@ -1220,8 +1220,8 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-foreground/80 mb-1 font-medium">Score Moni</p>
-                  <p className="text-3xl font-bold text-foreground">{scoreMoni}<span className="text-sm text-foreground/60">/100</span></p>
-                  <p className="text-xs text-foreground/80 mt-1">
+                  <p className="text-2xl font-bold text-foreground">{scoreMoni}<span className="text-xs text-foreground/60">/100</span></p>
+                  <p className="text-[10px] text-foreground/80 mt-0.5">
                     {scoreMoni >= 90 ? '✅ Excelente' : 
                      scoreMoni >= 80 ? '✅ Muy Bueno' :
                      scoreMoni >= 70 ? '✅ Bueno' :
@@ -1232,28 +1232,28 @@ const Dashboard = () => {
                   </p>
                 </div>
                 <div className="relative">
-                  <svg className="w-20 h-20 transform -rotate-90">
+                  <svg className="w-16 h-16 transform -rotate-90">
                     {/* Círculo de fondo */}
                     <circle 
-                      cx="40" 
-                      cy="40" 
-                      r="34" 
+                      cx="32" 
+                      cy="32" 
+                      r="28" 
                       stroke="currentColor" 
-                      strokeWidth="6" 
+                      strokeWidth="5" 
                       fill="none" 
                       className="text-muted/30" 
                     />
                     {/* Círculo de progreso que se llena en 0.8s */}
                     <motion.circle 
-                      cx="40" 
-                      cy="40" 
-                      r="34" 
+                      cx="32" 
+                      cy="32" 
+                      r="28" 
                       stroke="currentColor" 
-                      strokeWidth="6" 
+                      strokeWidth="5" 
                       fill="none" 
-                      strokeDasharray={213.628}
-                      initial={{ strokeDashoffset: 213.628 }}
-                      animate={{ strokeDashoffset: 213.628 - (213.628 * scoreMoni) / 100 }}
+                      strokeDasharray={175.929}
+                      initial={{ strokeDashoffset: 175.929 }}
+                      animate={{ strokeDashoffset: 175.929 - (175.929 * scoreMoni) / 100 }}
                       transition={{ duration: 0.8, ease: "easeOut" }}
                       className={`${
                         scoreMoni >= 90 ? 'text-emerald-700' :
@@ -1275,7 +1275,7 @@ const Dashboard = () => {
       )}
 
       {/* AI Coach Insights - Carousel de recomendaciones */}
-      <div className="mx-4 mb-4">
+      <div className="mx-4 mb-3">
         <AICoachInsightsWidget monthlyIncome={monthlyIncome} monthlyExpenses={monthlyExpenses} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} balance={monthlyIncome - monthlyExpenses} />
       </div>
 
