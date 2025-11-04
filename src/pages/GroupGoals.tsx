@@ -251,19 +251,19 @@ const GroupGoals = () => {
 
           {/* Stats Summary */}
           <div className="grid grid-cols-3 gap-2 mb-6">
-            <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-3 text-center shadow-sm">
-              <p className="text-[10px] text-white/80 mb-1 font-medium">Total Ahorrado</p>
-              <p className="text-sm font-bold text-white">{formatCurrency(stats.totalSaved)}</p>
+            <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg p-2 text-center shadow-sm">
+              <p className="text-[9px] text-white/80 mb-0.5 font-medium">Total Ahorrado</p>
+              <p className="text-xs font-bold text-white">{formatCurrency(stats.totalSaved)}</p>
             </div>
             
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-3 text-center shadow-sm">
-              <p className="text-[10px] text-white/80 mb-1 font-medium">Progreso</p>
-              <p className="text-sm font-bold text-white">{stats.avgProgress.toFixed(0)}%</p>
+            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-2 text-center shadow-sm">
+              <p className="text-[9px] text-white/80 mb-0.5 font-medium">Progreso</p>
+              <p className="text-xs font-bold text-white">{stats.avgProgress.toFixed(0)}%</p>
             </div>
             
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-3 text-center shadow-sm">
-              <p className="text-[10px] text-white/80 mb-1 font-medium">Activas</p>
-              <p className="text-sm font-bold text-white">{stats.activeGoals}</p>
+            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-2 text-center shadow-sm">
+              <p className="text-[9px] text-white/80 mb-0.5 font-medium">Activas</p>
+              <p className="text-xs font-bold text-white">{stats.activeGoals}</p>
             </div>
           </div>
 
