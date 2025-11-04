@@ -37,6 +37,27 @@ export function MoniLoader({ size = "md", fullScreen = false, message }: MoniLoa
             ease: "easeInOut",
           }}
         />
+        
+        {/* Barra de progreso animada con el mismo estilo que las metas */}
+        <div className="w-48 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <motion.div 
+            className="h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full relative"
+            initial={{ width: "0%" }}
+            animate={{ width: ["0%", "100%"] }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            <motion.div 
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+              animate={{ x: ['-100%', '200%'] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+            />
+          </motion.div>
+        </div>
+        
         {message && (
           <motion.p
             className="text-sm text-muted-foreground"
