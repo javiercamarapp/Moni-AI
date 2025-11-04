@@ -126,6 +126,9 @@ export default function Subscribe() {
                 <span className="text-3xl font-bold text-black">$69</span>
                 <span className="text-sm text-gray-600">MXN / mes</span>
               </div>
+              <p className="text-xs font-semibold text-primary mb-1">
+                🎁 7 días gratis de prueba
+              </p>
               <p className="text-[10px] text-gray-500 flex items-center justify-center gap-1">
                 <Sparkles className="w-3 h-3 text-primary" />
                 Cancela cuando quieras
