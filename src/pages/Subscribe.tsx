@@ -38,7 +38,7 @@ export default function Subscribe() {
   ];
 
   return (
-    <div className="min-h-screen bg-[hsl(48,25%,92%)] p-3 pb-20">
+    <div className="min-h-screen animated-wave-bg p-3 pb-20">
       <div className="w-full max-w-sm mx-auto space-y-4">
         {/* Header con logo e insight */}
         <div className="p-2 flex items-center gap-3">
