@@ -21,9 +21,10 @@ interface GoalCardProps {
   };
   onAddFunds: () => void;
   onViewDetails: () => void;
+  onComplete: () => void;
 }
 
-export const GoalCard = ({ goal, onAddFunds, onViewDetails }: GoalCardProps) => {
+export const GoalCard = ({ goal, onAddFunds, onViewDetails, onComplete }: GoalCardProps) => {
   const [reminderEnabled, setReminderEnabled] = useState(true);
   const progress = (goal.current / goal.target) * 100;
   const remaining = goal.target - goal.current;
@@ -125,16 +126,29 @@ export const GoalCard = ({ goal, onAddFunds, onViewDetails }: GoalCardProps) => 
 
         {/* Actions - Minimalista */}
         <div className="flex gap-2">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddFunds();
-            }}
-            className="flex-1 h-9 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-white/80 text-gray-900 font-medium text-xs transition-all flex items-center justify-center gap-1.5 border-0"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Agregar fondos
-          </button>
+          {progress >= 100 ? (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onComplete();
+              }}
+              className="flex-1 h-9 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 text-white font-medium text-xs transition-all flex items-center justify-center gap-1.5 border-0"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              Terminar Meta
+            </button>
+          ) : (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddFunds();
+              }}
+              className="flex-1 h-9 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-white/80 text-gray-900 font-medium text-xs transition-all flex items-center justify-center gap-1.5 border-0"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Agregar fondos
+            </button>
+          )}
           <button
             onClick={(e) => {
               e.stopPropagation();

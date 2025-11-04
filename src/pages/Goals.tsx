@@ -63,6 +63,31 @@ const Goals = () => {
     }
   };
 
+  const handleCompleteGoal = async (goalId: string) => {
+    try {
+      const { error } = await supabase
+        .from('goals')
+        .delete()
+        .eq('id', goalId);
+
+      if (error) throw error;
+
+      // Show confetti
+      const confetti = (await import('canvas-confetti')).default;
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+
+      toast.success('¡Felicitaciones! Meta completada y eliminada 🎉');
+      fetchGoals();
+    } catch (error: any) {
+      console.error('Error completing goal:', error);
+      toast.error('Error al completar la meta');
+    }
+  };
+
   const calculateStats = () => {
     if (goals.length === 0) return { totalSaved: 0, avgCompletion: 0, goalsOnTrack: 0 };
 
@@ -185,6 +210,7 @@ const Goals = () => {
                     goal={goal}
                     onAddFunds={() => setAddFundsModal({ open: true, goal })}
                     onViewDetails={() => toast.info("Detalles próximamente")}
+                    onComplete={() => handleCompleteGoal(goal.id)}
                   />
                 ))}
               </div>
