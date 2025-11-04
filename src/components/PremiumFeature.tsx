@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSubscription } from "@/hooks/useSubscription";
-import moniLogo from "@/assets/moni-ai-logo.png";
+import moniLoadingLogo from "@/assets/moni-loading-logo.png";
 
 interface PremiumFeatureProps {
   children: React.ReactNode;
@@ -23,7 +23,7 @@ export default function PremiumFeature({ children }: PremiumFeatureProps) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-pulse">
-          <img src={moniLogo} alt="Moni AI" className="w-64 h-64 object-contain" />
+          <img src={moniLoadingLogo} alt="Moni AI" className="w-64 h-auto object-contain" />
         </div>
       </div>
     );
