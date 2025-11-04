@@ -180,7 +180,7 @@ export default function Subscribe() {
             onClick={() => navigate("/auth")}
             className="text-gray-600 hover:text-black text-xs"
           >
-            Volver al inicio
+            Continuar sin Premium
           </Button>
         </div>
       </div>

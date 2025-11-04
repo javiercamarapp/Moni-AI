@@ -82,7 +82,7 @@ const Onboarding = () => {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      navigate('/auth');
+      navigate('/subscribe');
     }
   };
 
