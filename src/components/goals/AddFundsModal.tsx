@@ -157,13 +157,14 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
             </Label>
             <Input
               id="amount"
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="1000.00"
+              type="text"
+              value={amount ? parseFloat(amount).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''}
+              onChange={(e) => {
+                const rawValue = e.target.value.replace(/[^0-9.]/g, '');
+                setAmount(rawValue);
+              }}
+              placeholder="1,000.00"
               required
-              step="0.01"
-              min="0"
               className="h-14 rounded-xl text-lg bg-gray-50 border-gray-200 font-semibold text-gray-900"
             />
           </div>
