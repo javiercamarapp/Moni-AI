@@ -12,6 +12,7 @@ import Autoplay from 'embla-carousel-autoplay';
 import { useToast } from "@/hooks/use-toast";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { motion } from "framer-motion";
+import { useRef } from 'react';
 import { addDays, addMonths, isBefore, startOfDay } from "date-fns";
 import bannerInvestment from '@/assets/banner-investment.jpg';
 import bannerGoals from '@/assets/banner-goals.jpg';
@@ -64,6 +65,9 @@ const Dashboard = () => {
   const [futureEvents, setFutureEvents] = useState<any[]>([]);
   const [last7DaysData, setLast7DaysData] = useState<any[]>([]);
   const [isCreateGoalModalOpen, setIsCreateGoalModalOpen] = useState(false);
+  const autoplayPlugin = useRef(
+    Autoplay({ delay: 4000, stopOnInteraction: true })
+  );
   
   // Sync recentTransactions when dashboardData updates - use ref to avoid infinite loop
   useEffect(() => {
@@ -1717,6 +1721,7 @@ const Dashboard = () => {
                     align: "start",
                     loop: goals.length > 1,
                   }}
+                  plugins={[autoplayPlugin.current]}
                 >
                   <CarouselContent className="-ml-3">
                     {goals.map((goal, index) => {
@@ -1815,6 +1820,7 @@ const Dashboard = () => {
                     align: "start",
                     loop: groupGoals.length > 1,
                   }}
+                  plugins={[autoplayPlugin.current]}
                 >
                   <CarouselContent className="-ml-3">
                     {groupGoals.map((goal, index) => {
