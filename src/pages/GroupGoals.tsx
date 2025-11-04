@@ -211,43 +211,105 @@ const GroupGoals = () => {
             </div>
           ) : (
             <>
-              {/* Stats Summary Card */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg border border-gray-100 p-6 mb-6 max-w-2xl mx-auto">
-                <div className="flex items-center gap-2 mb-4">
-                  <Target className="h-5 w-5 text-[#c8a57b]" />
-                  <h3 className="text-lg font-bold text-gray-900">
-                    Resumen de Metas Grupales
-                  </h3>
-                </div>
-                
-                {/* Stats Grid */}
-                <div className="grid grid-cols-3 gap-3 mb-4">
-                  <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg p-2 text-center shadow-sm">
-                    <p className="text-[9px] text-white/80 mb-0.5 font-medium">Total Ahorrado</p>
-                    <p className="text-xs font-bold text-white">{formatCurrency(stats.totalSaved)}</p>
+              {/* Stats - Minimalist Apple Style */}
+              <div className="max-w-4xl mx-auto mb-8">
+                <div className="grid grid-cols-3 gap-2 mb-8">
+                  <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-1.5 text-center shadow-sm">
+                    <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Total Ahorrado</p>
+                    <p className="text-[11px] font-bold text-white">{formatCurrency(stats.totalSaved)}</p>
                   </div>
                   
-                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-2 text-center shadow-sm">
-                    <p className="text-[9px] text-white/80 mb-0.5 font-medium">Progreso</p>
-                    <p className="text-xs font-bold text-white">{stats.avgProgress.toFixed(0)}%</p>
+                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-1.5 text-center shadow-sm">
+                    <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Progreso</p>
+                    <p className="text-[11px] font-bold text-white">{stats.avgProgress.toFixed(0)}%</p>
                   </div>
                   
-                  <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-2 text-center shadow-sm">
-                    <p className="text-[9px] text-white/80 mb-0.5 font-medium">Activas</p>
-                    <p className="text-xs font-bold text-white">{stats.activeGoals}</p>
+                  <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-1.5 text-center shadow-sm">
+                    <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Activas</p>
+                    <p className="text-[11px] font-bold text-white">{stats.activeGoals}</p>
                   </div>
                 </div>
 
-                <p className="text-sm text-gray-600 text-center mb-4">
-                  Tienes {groupGoals.length} {groupGoals.length === 1 ? 'meta activa' : 'metas activas'}
-                </p>
-                
+                {/* Goals List - Apple Minimalist Design */}
+                <div className="space-y-4">
+                  {groupGoals.map((goal) => {
+                    const progress = (goal.current_amount / goal.target_amount) * 100;
+                    const remaining = goal.target_amount - goal.current_amount;
+                    
+                    return (
+                      <div
+                        key={goal.id}
+                        onClick={() => navigate(`/group-goals/${goal.id}`)}
+                        className="bg-white/90 backdrop-blur-sm rounded-2xl p-5 shadow-sm hover:shadow-md transition-all cursor-pointer border border-gray-100/50 hover:border-gray-200"
+                      >
+                        {/* Header */}
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-gray-900 text-base mb-1 tracking-tight">
+                              {goal.title}
+                            </h3>
+                            {goal.description && (
+                              <p className="text-xs text-gray-500 mb-2 line-clamp-1">
+                                {goal.description}
+                              </p>
+                            )}
+                            <p className="text-[10px] text-gray-400 flex items-center gap-1">
+                              <Users className="h-3 w-3" />
+                              {goal.circle_name} • {goal.member_count} miembros
+                            </p>
+                          </div>
+                          <div className="text-right ml-4">
+                            <p className="text-2xl font-bold text-gray-900 tracking-tight">
+                              {progress.toFixed(0)}%
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Progress Bar - Apple Style */}
+                        <div className="w-full bg-gray-100 rounded-full h-1.5 mb-3 overflow-hidden">
+                          <div
+                            className="bg-gradient-to-r from-[#c8a57b] to-[#e3c890] h-1.5 rounded-full transition-all duration-500 ease-out"
+                            style={{ width: `${Math.min(progress, 100)}%` }}
+                          />
+                        </div>
+
+                        {/* Amount Details */}
+                        <div className="flex items-center justify-between text-xs">
+                          <div className="flex items-center gap-4">
+                            <div>
+                              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Ahorrado</p>
+                              <p className="font-semibold text-gray-900">{formatCurrency(goal.current_amount)}</p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Falta</p>
+                              <p className="font-semibold text-gray-600">{formatCurrency(remaining)}</p>
+                            </div>
+                          </div>
+                          {goal.deadline && (
+                            <div className="text-right">
+                              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Fecha Límite</p>
+                              <p className="font-medium text-gray-600">
+                                {new Date(goal.deadline).toLocaleDateString('es-MX', { 
+                                  day: 'numeric', 
+                                  month: 'short',
+                                  year: 'numeric' 
+                                })}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Create New Goal Button - Minimalist */}
                 <Button
-                  onClick={() => setGoalsSheetOpen(true)}
-                  className="w-full h-12 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] border border-gray-200 text-gray-900 font-semibold"
+                  onClick={() => setCreateModalOpen(true)}
+                  className="w-full mt-6 h-11 bg-white/80 backdrop-blur-sm text-gray-900 hover:bg-white rounded-xl font-medium shadow-sm border border-gray-200/50 hover:border-gray-300 transition-all"
                 >
-                  <Users className="h-5 w-5 mr-2" />
-                  Ver metas grupales
+                  <Plus className="h-4 w-4 mr-2" />
+                  Crear nueva meta
                 </Button>
               </div>
             </>
