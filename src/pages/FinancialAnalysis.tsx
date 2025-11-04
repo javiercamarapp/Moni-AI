@@ -1823,43 +1823,6 @@ export default function FinancialAnalysis() {
                 </Card>}
             </div>
 
-            {/* Estabilidad y Metas Mejorado */}
-            <div className="space-y-2">
-              <p className="text-xs font-bold text-foreground flex items-center gap-1">
-                <Target className="h-3 w-3" /> Estabilidad & Metas
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-muted-foreground">Metas</span>
-                    <Trophy className="h-3 w-3 text-yellow-500" />
-                  </div>
-                  <p className="text-sm font-bold text-indigo-600">{analysis?.metrics?.avgGoalCompletion ?? 0}%</p>
-                </Card>
-                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-muted-foreground">Consist.</span>
-                    <Activity className="h-3 w-3 text-lime-500" />
-                  </div>
-                  <p className="text-sm font-bold text-lime-600">{analysis?.metrics?.consistencyScore ?? 0}</p>
-                </Card>
-                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-muted-foreground">Proy.</span>
-                    <TrendingUp className="h-3 w-3 text-amber-500" />
-                  </div>
-                  <p className="text-sm font-bold text-amber-600">${formatK(analysis?.metrics?.projectedAnnualSavings)}k</p>
-                </Card>
-                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] text-muted-foreground">Bienestar</span>
-                    <Heart className="h-3 w-3 text-pink-500" />
-                  </div>
-                  <p className="text-sm font-bold text-green-600">{analysis?.metrics?.mindfulSpendingIndex}</p>
-                  <p className="text-[9px] text-muted-foreground">Califícalo 1-10 →</p>
-                </Card>
-              </div>
-            </div>
 
             {/* Microcopy Empático */}
 
