@@ -120,24 +120,25 @@ const Dashboard = () => {
     }
   }, [dashboardData.recentTransactions]);
 
-  // Calcular últimos 7 días con ingresos y gastos
+  // Calcular últimos 7 días con ingresos y gastos - OPTIMIZADO
   useEffect(() => {
     const fetchLast7Days = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        // Obtener transacciones de los últimos 7 días
+        // Obtener transacciones de los últimos 7 días - SOLO LOS CAMPOS NECESARIOS
         const todayDate = new Date();
         const sevenDaysAgo = new Date(todayDate);
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
 
         const { data: transactions, error } = await supabase
           .from('transactions')
-          .select('*')
+          .select('amount, type, transaction_date')
           .eq('user_id', user.id)
           .gte('transaction_date', sevenDaysAgo.toISOString().split('T')[0])
-          .lte('transaction_date', todayDate.toISOString().split('T')[0]);
+          .lte('transaction_date', todayDate.toISOString().split('T')[0])
+          .limit(500);
 
         if (error) throw error;
 
@@ -363,60 +364,70 @@ const Dashboard = () => {
     }
   };
 
-  // Load budget data from category_budgets
+  // Load budget data from category_budgets - OPTIMIZADO CON CACHE
   useEffect(() => {
+    let isMounted = true;
+    
     const loadBudgetData = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        if (!user || !isMounted) return;
 
-        console.log('🔍 Cargando presupuestos para usuario:', user.id);
-
-        // Get total monthly budget from category_budgets
-        const { data: budgetData, error: budgetError } = await supabase
-          .from('category_budgets')
-          .select('monthly_budget')
-          .eq('user_id', user.id);
-
-        console.log('📊 Presupuestos encontrados:', budgetData);
-        if (budgetError) console.error('❌ Error al cargar presupuestos:', budgetError);
-
-        if (budgetData && budgetData.length > 0) {
-          const total = budgetData.reduce((sum, b) => sum + Number(b.monthly_budget), 0);
-          console.log('💰 Total presupuesto:', total);
-          setTotalBudget(total);
-        } else {
-          console.log('⚠️ No se encontraron presupuestos configurados');
-          setTotalBudget(0);
+        // Cache check
+        const cached = sessionStorage.getItem(`budget_data_${user.id}`);
+        if (cached) {
+          const { data, timestamp } = JSON.parse(cached);
+          // Use cache if less than 2 minutes old
+          if (Date.now() - timestamp < 120000) {
+            setTotalBudget(data.totalBudget);
+            setCurrentMonthExpenses(data.currentMonthExpenses);
+            return;
+          }
         }
 
-        // Get current month expenses
+        // Hacer ambas queries en paralelo
         const now = new Date();
         const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
         const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-        const { data: expenseData, error: expenseError } = await supabase
-          .from('transactions')
-          .select('amount')
-          .eq('user_id', user.id)
-          .eq('type', 'gasto')
-          .gte('transaction_date', firstDay.toISOString().split('T')[0])
-          .lte('transaction_date', lastDay.toISOString().split('T')[0]);
+        const [budgetResult, expenseResult] = await Promise.all([
+          supabase
+            .from('category_budgets')
+            .select('monthly_budget')
+            .eq('user_id', user.id),
+          supabase
+            .from('transactions')
+            .select('amount')
+            .eq('user_id', user.id)
+            .eq('type', 'gasto')
+            .gte('transaction_date', firstDay.toISOString().split('T')[0])
+            .lte('transaction_date', lastDay.toISOString().split('T')[0])
+            .limit(1000)
+        ]);
 
-        console.log('💸 Gastos del mes encontrados:', expenseData?.length || 0);
-        if (expenseError) console.error('❌ Error al cargar gastos:', expenseError);
+        if (!isMounted) return;
 
-        if (expenseData) {
-          const total = expenseData.reduce((sum, t) => sum + Number(t.amount), 0);
-          console.log('📈 Total gastos del mes:', total);
-          setCurrentMonthExpenses(total);
-        }
+        const totalBudget = budgetResult.data?.reduce((sum, b) => sum + Number(b.monthly_budget), 0) || 0;
+        const totalExpenses = expenseResult.data?.reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+
+        setTotalBudget(totalBudget);
+        setCurrentMonthExpenses(totalExpenses);
+
+        // Cache results
+        sessionStorage.setItem(`budget_data_${user.id}`, JSON.stringify({
+          data: { totalBudget, currentMonthExpenses: totalExpenses },
+          timestamp: Date.now()
+        }));
       } catch (error) {
-        console.error('❌ Error general cargando datos de presupuesto:', error);
+        console.error('Error cargando datos de presupuesto:', error);
       }
     };
 
     loadBudgetData();
+    
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Load unread notifications count
@@ -503,29 +514,50 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [api]);
 
-  // Load future events (recurring payments predictions) with real-time updates
+  // Load future events (recurring payments predictions) with real-time updates - OPTIMIZADO
   useEffect(() => {
+    let isMounted = true;
+    
     const loadFutureEvents = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        if (!user || !isMounted) return;
 
-        // Get last 6 months of transactions for pattern detection
+        // Cache check
+        const cached = sessionStorage.getItem(`future_events_${user.id}`);
+        if (cached) {
+          const { data, timestamp } = JSON.parse(cached);
+          // Use cache if less than 5 minutes old
+          if (Date.now() - timestamp < 300000) {
+            setFutureEvents(data);
+            return;
+          }
+        }
+
+        // Get last 6 months of transactions for pattern detection - LIMIT 500
         const sixMonthsAgo = new Date();
         sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
         const { data: allTx, error: allError } = await supabase
           .from('transactions')
-          .select('*')
+          .select('id, amount, description, type, transaction_date, frequency')
           .eq('user_id', user.id)
           .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
-          .order('transaction_date', { ascending: false });
+          .order('transaction_date', { ascending: false })
+          .limit(500);
 
         if (allError) throw allError;
+        if (!isMounted) return;
 
         // Detect recurring payments and predict future events
         const predicted = detectRecurringPayments(allTx || []);
         setFutureEvents(predicted);
+
+        // Cache results
+        sessionStorage.setItem(`future_events_${user.id}`, JSON.stringify({
+          data: predicted,
+          timestamp: Date.now()
+        }));
       } catch (error) {
         console.error('Error loading future events:', error);
       }
@@ -533,27 +565,10 @@ const Dashboard = () => {
 
     loadFutureEvents();
 
-    // Subscribe to real-time changes in transactions table
-    const channel = supabase
-      .channel('transactions-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
-          schema: 'public',
-          table: 'transactions'
-        },
-        (payload) => {
-          console.log('Transaction change detected:', payload);
-          // Reload future events when transactions change
-          loadFutureEvents();
-        }
-      )
-      .subscribe();
-
-    // Cleanup subscription on unmount
+    // No realtime subscription for now - too heavy
+    
     return () => {
-      supabase.removeChannel(channel);
+      isMounted = false;
     };
   }, []);
 
@@ -791,92 +806,108 @@ const Dashboard = () => {
           setUpcomingSubscriptions(JSON.parse(cachedSubs));
         }
 
-        // Detectar suscripciones siempre
+        // Detectar suscripciones con CACHE y LÍMITES - OPTIMIZADO
         console.log('[Subscriptions] Starting detection...');
         
-        // Fetch all expense transactions for AI analysis
-        const { data: allExpenses } = await supabase
-          .from('transactions')
-          .select('*, categories(name)')
-          .eq('user_id', user.id)
-          .eq('type', 'gasto')
-          .order('transaction_date', { ascending: false });
-
-        console.log('[Subscriptions] Found transactions:', allExpenses?.length || 0);
-
-        if (allExpenses && allExpenses.length > 0) {
-          try {
-            // Use AI to detect subscriptions
-            console.log('[Subscriptions] Calling detect-subscriptions function...');
-            const { data: aiResult, error: aiError } = await supabase.functions.invoke('detect-subscriptions', {
-              body: { transactions: allExpenses }
-            });
-
-            if (aiError) {
-              console.error('[Subscriptions] Error from function:', aiError);
-            } else {
-              console.log('[Subscriptions] AI Result:', aiResult);
-              
-              // Check for price increases and create notifications in database
-              const subscriptionsWithIncrease = aiResult?.subscriptions?.filter((sub: any) => sub.priceIncrease) || [];
-              if (subscriptionsWithIncrease.length > 0) {
-                // Insert notifications into database
-                for (const sub of subscriptionsWithIncrease) {
-                  await supabase
-                    .from('notification_history')
-                    .insert({
-                      user_id: user.id,
-                      notification_type: 'price_increase',
-                      message: `${sub.description}: aumentó de $${sub.oldAmount?.toFixed(2)} a $${sub.newAmount?.toFixed(2)}. ¿Es el nuevo precio de tu suscripción?`,
-                      status: 'sent',
-                      metadata: {
-                        subscription: sub.description,
-                        oldAmount: sub.oldAmount,
-                        newAmount: sub.newAmount,
-                      }
-                    });
-                }
-              }
-            }
-
-            // Agrupar por nombre de concepto para mostrar solo UNO por tipo
-            const uniqueSubs = new Map();
-            (aiResult?.subscriptions || []).forEach((sub: any) => {
-              const normalizedName = sub.description.toLowerCase()
-                .replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '')
-                .replace(/\s*\d{4}$/g, '')
-                .trim();
-              
-              if (!uniqueSubs.has(normalizedName)) {
-                uniqueSubs.set(normalizedName, {
-                  name: sub.description.replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '').trim(),
-                  amount: Number(sub.amount),
-                  icon: getSubscriptionIcon(sub.description),
-                  frequency: sub.frequency || 'mensual',
-                });
-              }
-            });
-
-            const detectedSubs = Array.from(uniqueSubs.values()).map((sub: any, index: number) => ({
-              id: `ai-sub-${index}`,
-              name: sub.name,
-              amount: sub.amount,
-              icon: sub.icon,
-              frequency: sub.frequency,
-              dueDate: calculateNextDueDate(sub.frequency),
-            }));
-
-            console.log('[Subscriptions] Detected subscriptions:', detectedSubs.length);
-            setUpcomingSubscriptions(detectedSubs);
-            
-            // Cache the results
-            localStorage.setItem('cachedSubscriptions', JSON.stringify(detectedSubs));
-            localStorage.setItem('subscriptionsLastUpdate', Date.now().toString());
-          } catch (aiError) {
-            console.error('[Subscriptions] Error calling AI:', aiError);
-          }
+        // Check cache first
+        const cachedSubsData = localStorage.getItem('cachedSubscriptions');
+        const lastSubsUpdate = localStorage.getItem('subscriptionsLastUpdate');
+        const cacheValid = lastSubsUpdate && (Date.now() - parseInt(lastSubsUpdate) < 600000); // 10 min cache
+        
+        if (cachedSubsData && cacheValid) {
+          console.log('[Subscriptions] Using cached data');
+          setUpcomingSubscriptions(JSON.parse(cachedSubsData));
         } else {
-          console.log('[Subscriptions] No transactions found for detection');
+          // Fetch LIMITED expense transactions for AI analysis - SOLO ULTIMOS 6 MESES Y MAX 300
+          const sixMonthsAgo = new Date();
+          sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+          
+          const { data: allExpenses } = await supabase
+            .from('transactions')
+            .select('id, amount, description, type, transaction_date, frequency')
+            .eq('user_id', user.id)
+            .eq('type', 'gasto')
+            .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
+            .order('transaction_date', { ascending: false })
+            .limit(300);
+
+          console.log('[Subscriptions] Found transactions:', allExpenses?.length || 0);
+
+          if (allExpenses && allExpenses.length > 0) {
+            try {
+              // Use AI to detect subscriptions
+              console.log('[Subscriptions] Calling detect-subscriptions function...');
+              const { data: aiResult, error: aiError } = await supabase.functions.invoke('detect-subscriptions', {
+                body: { transactions: allExpenses }
+              });
+
+              if (aiError) {
+                console.error('[Subscriptions] Error from function:', aiError);
+              } else {
+                console.log('[Subscriptions] AI Result:', aiResult);
+              
+                // Check for price increases and create notifications in database
+                const subscriptionsWithIncrease = aiResult?.subscriptions?.filter((sub: any) => sub.priceIncrease) || [];
+                if (subscriptionsWithIncrease.length > 0) {
+                  // Insert notifications into database
+                  for (const sub of subscriptionsWithIncrease) {
+                    await supabase
+                      .from('notification_history')
+                      .insert({
+                        user_id: user.id,
+                        notification_type: 'price_increase',
+                        message: `${sub.description}: aumentó de $${sub.oldAmount?.toFixed(2)} a $${sub.newAmount?.toFixed(2)}. ¿Es el nuevo precio de tu suscripción?`,
+                        status: 'sent',
+                        metadata: {
+                          subscription: sub.description,
+                          oldAmount: sub.oldAmount,
+                          newAmount: sub.newAmount,
+                        }
+                      });
+                  }
+                }
+              
+
+                // Agrupar por nombre de concepto para mostrar solo UNO por tipo
+                const uniqueSubs = new Map();
+                (aiResult?.subscriptions || []).forEach((sub: any) => {
+                  const normalizedName = sub.description.toLowerCase()
+                    .replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '')
+                    .replace(/\s*\d{4}$/g, '')
+                    .trim();
+                  
+                  if (!uniqueSubs.has(normalizedName)) {
+                    uniqueSubs.set(normalizedName, {
+                      name: sub.description.replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '').trim(),
+                      amount: Number(sub.amount),
+                      icon: getSubscriptionIcon(sub.description),
+                      frequency: sub.frequency || 'mensual',
+                    });
+                  }
+                });
+
+                const detectedSubs = Array.from(uniqueSubs.values()).map((sub: any, index: number) => ({
+                  id: `ai-sub-${index}`,
+                  name: sub.name,
+                  amount: sub.amount,
+                  icon: sub.icon,
+                  frequency: sub.frequency,
+                  dueDate: calculateNextDueDate(sub.frequency),
+                }));
+
+                console.log('[Subscriptions] Detected subscriptions:', detectedSubs.length);
+                setUpcomingSubscriptions(detectedSubs);
+                
+                // Cache the results
+                localStorage.setItem('cachedSubscriptions', JSON.stringify(detectedSubs));
+                localStorage.setItem('subscriptionsLastUpdate', Date.now().toString());
+              }
+            } catch (aiError) {
+              console.error('[Subscriptions] Error calling AI:', aiError);
+            }
+          } else {
+            console.log('[Subscriptions] No transactions found for detection');
+          }
         }
 
         // Mock credit card debts (esto se obtendría de la conexión bancaria real)

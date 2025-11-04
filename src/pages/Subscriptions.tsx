@@ -127,12 +127,18 @@ export default function Subscriptions() {
         return [];
       }
 
+      // Solo cargar últimos 6 meses para optimizar
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
       const { data: allExpenses, error: expensesError } = await supabase
         .from('transactions')
-        .select('*, categories(name)')
+        .select('id, amount, description, type, transaction_date, frequency')
         .eq('user_id', user.id)
         .eq('type', 'gasto')
-        .order('transaction_date', { ascending: false });
+        .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false })
+        .limit(300);
 
       if (expensesError) throw expensesError;
 
