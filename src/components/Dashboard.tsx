@@ -12,7 +12,6 @@ import Autoplay from 'embla-carousel-autoplay';
 import { useToast } from "@/hooks/use-toast";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { motion } from "framer-motion";
-import { GoalMilestone } from "@/components/ui/celebration-confetti";
 import { addDays, addMonths, isBefore, startOfDay } from "date-fns";
 import bannerInvestment from '@/assets/banner-investment.jpg';
 import bannerGoals from '@/assets/banner-goals.jpg';
@@ -64,56 +63,6 @@ const Dashboard = () => {
   const [futureEvents, setFutureEvents] = useState<any[]>([]);
   const [last7DaysData, setLast7DaysData] = useState<any[]>([]);
   const [isCreateGoalModalOpen, setIsCreateGoalModalOpen] = useState(false);
-  
-  // Goal milestone celebration state
-  const [goalMilestone, setGoalMilestone] = useState<{
-    show: boolean;
-    milestone: 'start' | '25' | '50' | '75' | '100';
-    goalName: string;
-  }>({ show: false, milestone: 'start', goalName: '' });
-  const [previousGoalProgress, setPreviousGoalProgress] = useState<Record<string, number>>({});
-  
-  // Check for goal milestone achievements (every 0.5% = new badge)
-  useEffect(() => {
-    goals.forEach(goal => {
-      const currentProgress = (goal.current / goal.target) * 100;
-      const prevProgress = previousGoalProgress[goal.id] || 0;
-      
-      // Calculate which 0.5% milestone was crossed
-      const prevMilestone = Math.floor(prevProgress / 0.5) * 0.5;
-      const currentMilestone = Math.floor(currentProgress / 0.5) * 0.5;
-      
-      // Check if we crossed a new 0.5% milestone
-      if (currentMilestone > prevMilestone && currentProgress > 0) {
-        // Determine which type of celebration to show
-        let celebrationMilestone: 'start' | '25' | '50' | '75' | '100' = 'start';
-        
-        if (currentProgress >= 100) {
-          celebrationMilestone = '100';
-        } else if (currentProgress >= 75) {
-          celebrationMilestone = '75';
-        } else if (currentProgress >= 50) {
-          celebrationMilestone = '50';
-        } else if (currentProgress >= 25) {
-          celebrationMilestone = '25';
-        }
-        
-        setGoalMilestone({
-          show: true,
-          milestone: celebrationMilestone,
-          goalName: `${goal.title} - ${currentMilestone.toFixed(1)}%`
-        });
-      }
-      
-      // Update previous progress
-      if (currentProgress !== prevProgress) {
-        setPreviousGoalProgress(prev => ({
-          ...prev,
-          [goal.id]: currentProgress
-        }));
-      }
-    });
-  }, [goals]);
   
   // Sync recentTransactions when dashboardData updates - use ref to avoid infinite loop
   useEffect(() => {
@@ -1157,13 +1106,6 @@ const Dashboard = () => {
   
   return (
     <>
-      <GoalMilestone 
-        show={goalMilestone.show}
-        milestone={goalMilestone.milestone}
-        goalName={goalMilestone.goalName}
-        onComplete={() => setGoalMilestone({ show: false, milestone: 'start', goalName: '' })}
-      />
-      
       <div className="min-h-screen pb-20">
       {/* Header superior con logo y notificaciones */}
       <div className="p-2 flex justify-between items-start">
