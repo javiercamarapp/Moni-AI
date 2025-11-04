@@ -24,7 +24,7 @@ interface GroupGoal {
   title: string;
   description?: string;
   target_amount: number;
-  current_amount: number;
+  completed_members: number;
   deadline: string | null;
   circle_name: string;
   member_count: number;
@@ -98,7 +98,7 @@ const GroupGoals = () => {
         title: goal.title,
         description: goal.description,
         target_amount: goal.target_amount,
-        current_amount: goal.current_amount,
+        completed_members: goal.completed_members || 0,
         deadline: goal.deadline,
         category: goal.category,
         predicted_completion_date: goal.predicted_completion_date,
@@ -117,13 +117,20 @@ const GroupGoals = () => {
   };
 
   const calculateStats = () => {
-    if (groupGoals.length === 0) return { totalSaved: 0, avgProgress: 0, activeGoals: 0 };
+    if (groupGoals.length === 0) return { totalCompleted: 0, avgProgress: 0, activeGoals: 0 };
 
-    const totalSaved = groupGoals.reduce((sum, g) => sum + g.current_amount, 0);
-    const avgProgress = groupGoals.reduce((sum, g) => sum + (g.current_amount / g.target_amount) * 100, 0) / groupGoals.length;
+    // Total members who have completed their individual goals across all goals
+    const totalCompleted = groupGoals.reduce((sum, g) => sum + (g.completed_members || 0), 0);
+    
+    // Average progress based on completion rate (members completed / total members)
+    const avgProgress = groupGoals.reduce((sum, g) => {
+      const completionRate = g.member_count > 0 ? (g.completed_members / g.member_count) * 100 : 0;
+      return sum + completionRate;
+    }, 0) / groupGoals.length;
+    
     const activeGoals = groupGoals.length;
 
-    return { totalSaved, avgProgress, activeGoals };
+    return { totalCompleted, avgProgress, activeGoals };
   };
 
   const stats = calculateStats();
@@ -215,8 +222,8 @@ const GroupGoals = () => {
               <div className="max-w-4xl mx-auto mb-8">
                 <div className="grid grid-cols-3 gap-2 mb-8">
                   <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-1.5 text-center shadow-sm">
-                    <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Total Ahorrado</p>
-                    <p className="text-[11px] font-bold text-white">{formatCurrency(stats.totalSaved)}</p>
+                    <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Completadas</p>
+                    <p className="text-[11px] font-bold text-white">{stats.totalCompleted}</p>
                   </div>
                   
                   <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-1.5 text-center shadow-sm">
@@ -233,8 +240,8 @@ const GroupGoals = () => {
                 {/* Goals List - Apple Minimalist Design */}
                 <div className="space-y-4">
                   {groupGoals.map((goal) => {
-                    const progress = (goal.current_amount / goal.target_amount) * 100;
-                    const remaining = goal.target_amount - goal.current_amount;
+                    // Progress is based on how many members have completed
+                    const progress = goal.member_count > 0 ? (goal.completed_members / goal.member_count) * 100 : 0;
                     
                     return (
                       <div
@@ -273,16 +280,16 @@ const GroupGoals = () => {
                           />
                         </div>
 
-                        {/* Amount Details */}
+                        {/* Member Progress Details */}
                         <div className="flex items-center justify-between text-xs">
                           <div className="flex items-center gap-4">
                             <div>
-                              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Ahorrado</p>
-                              <p className="font-semibold text-gray-900">{formatCurrency(goal.current_amount)}</p>
+                              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Meta Individual</p>
+                              <p className="font-semibold text-gray-900">{formatCurrency(goal.target_amount)}</p>
                             </div>
                             <div>
-                              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Falta</p>
-                              <p className="font-semibold text-gray-600">{formatCurrency(remaining)}</p>
+                              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Completaron</p>
+                              <p className="font-semibold text-emerald-600">{goal.completed_members} de {goal.member_count}</p>
                             </div>
                           </div>
                           {goal.deadline && (
@@ -334,7 +341,7 @@ const GroupGoals = () => {
           {/* Goals List */}
           <div className="space-y-3 overflow-y-auto max-h-[calc(85vh-280px)]">
             {groupGoals.map((goal) => {
-              const progress = (goal.current_amount / goal.target_amount) * 100;
+              const progress = goal.member_count > 0 ? (goal.completed_members / goal.member_count) * 100 : 0;
               return (
                 <div
                   key={goal.id}
@@ -370,7 +377,7 @@ const GroupGoals = () => {
 
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-gray-600">
-                      {formatCurrency(goal.current_amount)} de {formatCurrency(goal.target_amount)}
+                      {goal.completed_members} de {goal.member_count} completaron
                     </span>
                     {goal.deadline && (
                       <span className="text-gray-500">

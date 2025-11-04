@@ -308,13 +308,54 @@ export type Database = {
           },
         ]
       }
+      circle_goal_members: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          current_amount: number
+          goal_id: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          current_amount?: number
+          goal_id: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          current_amount?: number
+          goal_id?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "circle_goal_members_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "circle_goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       circle_goals: {
         Row: {
           ai_confidence: number | null
           category: string | null
           circle_id: string
+          completed_members: number
           created_at: string
-          current_amount: number
           deadline: string | null
           description: string | null
           icon: string | null
@@ -330,8 +371,8 @@ export type Database = {
           ai_confidence?: number | null
           category?: string | null
           circle_id: string
+          completed_members?: number
           created_at?: string
-          current_amount?: number
           deadline?: string | null
           description?: string | null
           icon?: string | null
@@ -347,8 +388,8 @@ export type Database = {
           ai_confidence?: number | null
           category?: string | null
           circle_id?: string
+          completed_members?: number
           created_at?: string
-          current_amount?: number
           deadline?: string | null
           description?: string | null
           icon?: string | null

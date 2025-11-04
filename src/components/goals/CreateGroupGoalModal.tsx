@@ -171,7 +171,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
           category: formData.category,
           icon: categoryData?.icon,
           target_amount: targetAmount,
-          current_amount: 0,
+          completed_members: 0,
           deadline: formData.deadline || null,
           predicted_completion_date: aiPrediction?.date,
           required_weekly_saving: aiPrediction?.weeklySaving,
@@ -402,7 +402,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
           {/* Info Box */}
           <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
             <p className="text-xs text-gray-700">
-              💡 <strong>Tip:</strong> Todos los miembros del círculo podrán aportar y seguir el progreso de esta meta.
+              💡 <strong>Cómo funciona:</strong> Cada miembro del círculo tiene su propia meta individual del monto completo. No es una suma colectiva, sino que cada persona debe alcanzar el objetivo por su cuenta.
             </p>
           </div>
 

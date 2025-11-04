@@ -20,7 +20,7 @@ interface GroupGoal {
   title: string;
   description?: string;
   target_amount: number;
-  current_amount: number;
+  completed_members: number;
   deadline: string | null;
   predicted_completion_date?: string;
   required_weekly_saving?: number;
@@ -202,9 +202,10 @@ const GroupGoalDetails = () => {
     );
   }
 
-  const progress = (goal.current_amount / goal.target_amount) * 100;
-  const remaining = goal.target_amount - goal.current_amount;
-  const perPersonTarget = goal.target_amount / (members.length || 1);
+  // Progress based on members who completed
+  const progress = members.length > 0 ? (goal.completed_members / members.length) * 100 : 0;
+  // Each person has the same individual target
+  const perPersonTarget = goal.target_amount;
   const daysRemaining = goal.deadline 
     ? Math.ceil((new Date(goal.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
     : null;
@@ -256,20 +257,20 @@ const GroupGoalDetails = () => {
             <Progress value={progress} className="h-4 mb-4" />
 
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">{formatCurrency(goal.current_amount)}</span>
-              <span className="font-bold text-gray-900">{formatCurrency(goal.target_amount)}</span>
+              <span className="text-gray-600">{goal.completed_members} completaron</span>
+              <span className="font-bold text-gray-900">{members.length} miembros</span>
             </div>
           </div>
 
           {/* Resumen de Meta */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="bg-white rounded-xl p-4 shadow-sm border border-[#c8a57b]/10">
-              <p className="text-xs text-gray-600 mb-1">Meta Total</p>
+              <p className="text-xs text-gray-600 mb-1">Meta Individual</p>
               <p className="text-sm font-bold text-gray-900">{formatCurrency(goal.target_amount)}</p>
             </div>
             <div className="bg-white rounded-xl p-4 shadow-sm border border-[#c8a57b]/10">
-              <p className="text-xs text-gray-600 mb-1">Por Persona</p>
-              <p className="text-sm font-bold text-gray-900">{formatCurrency(perPersonTarget)}</p>
+              <p className="text-xs text-gray-600 mb-1">Completaron</p>
+              <p className="text-sm font-bold text-emerald-600">{goal.completed_members} de {members.length}</p>
             </div>
             {goal.deadline && (
               <div className="bg-white rounded-xl p-4 shadow-sm border border-[#c8a57b]/10">
@@ -287,8 +288,8 @@ const GroupGoalDetails = () => {
           <MoniAIPrediction
             target={goal.target_amount}
             deadline={goal.deadline || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()}
-            memberCount={members.length || 1}
-            saved={goal.current_amount}
+            memberCount={1}
+            saved={0}
           />
 
           {/* Members Progress - Leaderboard Style */}
