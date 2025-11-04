@@ -123,11 +123,19 @@ function App() {
           <Route path="/categorias" element={<GestionarCategorias />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/balance" element={<Balance />} />
-          <Route path="/whatsapp" element={<WhatsAppSetup />} />
+          <Route path="/whatsapp" element={
+            <PremiumFeature featureName="WhatsApp Bot con IA">
+              <WhatsAppSetup />
+            </PremiumFeature>
+          } />
           <Route path="/notifications" element={<NotificationHistory />} />
           <Route path="/notification-settings" element={<NotificationSettings />} />
           <Route path="/net-worth" element={<NetWorth />} />
-          <Route path="/score-moni" element={<ScoreMoni />} />
+          <Route path="/score-moni" element={
+            <PremiumFeature featureName="Score Moni con IA">
+              <ScoreMoni />
+            </PremiumFeature>
+          } />
           <Route path="/assets" element={<Assets />} />
           <Route path="/liabilities" element={<Liabilities />} />
           <Route path="/level-quiz" element={<LevelQuiz />} />
