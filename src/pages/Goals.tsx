@@ -46,6 +46,7 @@ const Goals = () => {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [groupGoals, setGroupGoals] = useState<GroupGoal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [aiInsights, setAiInsights] = useState<string[]>([]);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [addFundsModal, setAddFundsModal] = useState<{ open: boolean; goal: Goal | null }>({
     open: false,
@@ -56,6 +57,10 @@ const Goals = () => {
     Autoplay({ delay: 4000, stopOnInteraction: true })
   );
 
+  const insightsAutoplayPlugin = useRef(
+    Autoplay({ delay: 5000, stopOnInteraction: false })
+  );
+
   useEffect(() => {
     fetchGoals();
     fetchGroupGoals();
@@ -63,6 +68,12 @@ const Goals = () => {
     // Trigger auto-adjustment on mount
     triggerAutoAdjustment();
   }, []);
+
+  useEffect(() => {
+    if (goals.length > 0) {
+      generateInsights();
+    }
+  }, [goals]);
 
   const triggerAutoAdjustment = async () => {
     try {
@@ -105,6 +116,28 @@ const Goals = () => {
       toast.error('Error al cargar las metas');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const generateInsights = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-goal-insights', {
+        body: { goals }
+      });
+
+      if (error) throw error;
+      if (data?.insights) {
+        setAiInsights(data.insights);
+      }
+    } catch (error: any) {
+      console.error('Error generating insights:', error);
+      // Set default insights if API fails
+      setAiInsights([
+        "💡 Mantén el ritmo, vas por buen camino",
+        "🎯 Cada ahorro te acerca más a tu meta",
+        "⚡ Pequeños pasos, grandes logros",
+        "🌟 Tu esfuerzo vale la pena"
+      ]);
     }
   };
 
@@ -285,19 +318,34 @@ const Goals = () => {
                 </div>
               </div>
 
-              {/* AI Recommendations Section - Compact */}
-              <div className="bg-white rounded-xl p-2.5 shadow-sm border border-gray-100 mb-6 inline-block">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center flex-shrink-0">
-                    <span className="text-[10px]">🤖</span>
-                  </div>
-                  <p className="text-[10px] text-gray-600 leading-snug">
-                    {goals.length > 0 && goals[0].required_weekly_saving
-                      ? `Ahorra $${Math.round(goals[0].required_weekly_saving * 1.1).toLocaleString()}/sem para completar 2 sem antes`
-                      : "Optimización automática activa"}
-                  </p>
+              {/* AI Insights Carousel - Full Width */}
+              {aiInsights.length > 0 && (
+                <div className="mb-6">
+                  <Carousel 
+                    className="w-full"
+                    opts={{
+                      align: "center",
+                      loop: true,
+                    }}
+                    plugins={[insightsAutoplayPlugin.current]}
+                  >
+                    <CarouselContent>
+                      {aiInsights.map((insight, index) => (
+                        <CarouselItem key={index}>
+                          <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100">
+                            <div className="flex items-center gap-2 justify-center">
+                              <span className="text-base">🤖</span>
+                              <p className="text-sm text-gray-700 font-medium text-center">
+                                {insight}
+                              </p>
+                            </div>
+                          </div>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                  </Carousel>
                 </div>
-              </div>
+              )}
 
               {/* Goals Carousel */}
               <Carousel 
