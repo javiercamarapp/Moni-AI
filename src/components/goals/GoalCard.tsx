@@ -52,76 +52,70 @@ export const GoalCard = ({ goal, onAddFunds, onViewDetails }: GoalCardProps) => 
   };
 
   return (
-    <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
-      {/* Header */}
-      <div className="relative h-32 bg-gradient-to-br from-purple-500/10 to-cyan-500/10 p-4 flex items-center justify-between">
-        <div>
-          <div className="text-4xl mb-2">{getCategoryIcon()}</div>
-          <h3 className="text-base font-semibold text-gray-900">{goal.title}</h3>
-          <p className="text-xs text-gray-600">{goal.category}</p>
-        </div>
-        <div className="text-right">
-          <div className="text-2xl font-bold text-gray-900">{progress.toFixed(0)}%</div>
-          <div className="text-xs text-gray-600">completado</div>
-          {goal.ai_confidence && (
-            <div className="bg-amber-100 rounded-lg px-2 py-1 mt-2 inline-block">
-              <p className="text-[10px] font-semibold text-amber-700">
-                {Math.round(goal.ai_confidence * 100)}% IA
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Body */}
-      <div className="p-4 space-y-4">
-        {/* Progress Bar */}
-        <div>
-          <Progress 
-            value={progress} 
-            className="h-3"
-            indicatorClassName={getProgressColor()}
-          />
-          <div className="flex justify-between mt-2 text-xs text-gray-600">
-            <span>{formatCurrency(goal.current)}</span>
-            <span className="font-medium text-gray-900">{formatCurrency(goal.target)}</span>
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-gray-50 rounded-xl p-3">
+    <div 
+      className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer border border-gray-200/50 overflow-hidden"
+      onClick={onViewDetails}
+    >
+      {/* Header - Minimalista */}
+      <div className="p-4">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <Target className="h-3 w-3 text-purple-600" />
-              <span className="text-[10px] font-medium text-gray-600">Restante</span>
+              <span className="text-2xl">{getCategoryIcon()}</span>
+              <h3 className="font-semibold text-gray-900 text-sm tracking-tight">
+                {goal.title}
+              </h3>
             </div>
-            <p className="text-sm font-semibold text-gray-900">{formatCurrency(remaining)}</p>
+            <p className="text-[10px] text-gray-400 uppercase tracking-wide">{goal.category}</p>
           </div>
-          
-          {daysRemaining !== null && (
-            <div className="bg-gray-50 rounded-xl p-3">
-              <div className="flex items-center gap-2 mb-1">
-                <Calendar className="h-3 w-3 text-cyan-600" />
-                <span className="text-[10px] font-medium text-gray-600">Días restantes</span>
-              </div>
-              <p className="text-sm font-semibold text-gray-900">{daysRemaining} días</p>
-            </div>
-          )}
+          <div className="text-right ml-4">
+            <p className="text-2xl font-bold text-gray-900 tracking-tight">
+              {progress.toFixed(0)}%
+            </p>
+          </div>
         </div>
 
-        {/* AI Prediction */}
+        {/* Progress Bar - Apple Style */}
+        <div className="w-full bg-gray-100 rounded-full h-1.5 mb-3 overflow-hidden">
+          <div
+            className={`h-1.5 rounded-full transition-all duration-500 ease-out ${
+              progress >= 75 ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' :
+              progress >= 50 ? 'bg-gradient-to-r from-blue-500 to-blue-600' :
+              progress >= 25 ? 'bg-gradient-to-r from-amber-500 to-amber-600' :
+              'bg-gradient-to-r from-gray-400 to-gray-500'
+            }`}
+            style={{ width: `${Math.min(progress, 100)}%` }}
+          />
+        </div>
+
+        {/* Stats Grid - Minimalista */}
+        <div className="flex items-center justify-between text-xs mb-3">
+          <div>
+            <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Ahorro Actual</p>
+            <p className="font-semibold text-gray-900">{formatCurrency(goal.current)}</p>
+          </div>
+          <div className="text-center">
+            <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Falta</p>
+            <p className="font-semibold text-gray-900">{formatCurrency(remaining)}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Meta</p>
+            <p className="font-semibold text-gray-900">{formatCurrency(goal.target)}</p>
+          </div>
+        </div>
+
+        {/* AI Prediction - Compacto */}
         {goal.predicted_completion_date && (
-          <div className="bg-gradient-to-r from-cyan-50 to-purple-50 rounded-xl p-3 border border-purple-100">
+          <div className="bg-gray-50 rounded-lg p-2.5 mb-3">
             <div className="flex items-start gap-2">
-              <Sparkles className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+              <Sparkles className="h-3.5 w-3.5 text-gray-600 mt-0.5 flex-shrink-0" />
               <div className="flex-1">
-                <p className="text-xs font-medium text-gray-900 mb-1">Predicción IA</p>
-                <p className="text-[11px] text-gray-700">
-                  Podrías lograrlo el <strong>{new Date(goal.predicted_completion_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })}</strong>
+                <p className="text-[10px] text-gray-900 font-medium mb-0.5">
+                  Podrías lograrlo el {new Date(goal.predicted_completion_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
                 </p>
                 {goal.required_weekly_saving && (
-                  <p className="text-[10px] text-gray-600 mt-1">
-                    💰 Ahorra {formatCurrency(goal.required_weekly_saving)}/semana
+                  <p className="text-[9px] text-gray-600">
+                    💰 {formatCurrency(goal.required_weekly_saving)}/semana
                   </p>
                 )}
               </div>
@@ -129,49 +123,27 @@ export const GoalCard = ({ goal, onAddFunds, onViewDetails }: GoalCardProps) => 
           </div>
         )}
 
-        {/* AI Suggestion */}
-        {progress < 70 && suggestedIncrease > 0 && (
-          <div className="bg-amber-50 rounded-xl p-3 border border-amber-200">
-            <div className="flex items-start gap-2">
-              <Lightbulb className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-[10px] font-semibold text-gray-900 mb-1">Sugerencia dinámica</p>
-                <p className="text-[10px] text-gray-700">
-                  Si aumentas tu ahorro semanal en {formatCurrency(suggestedIncrease)}, podrías cumplirla {Math.ceil(weeksRemaining * 0.1)} semanas antes.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Reminder Toggle */}
-        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-          <div className="flex items-center gap-2">
-            <Bell className="h-4 w-4 text-amber-600" />
-            <p className="text-xs text-gray-700">Recordatorio semanal</p>
-          </div>
-          <Switch
-            checked={reminderEnabled}
-            onCheckedChange={setReminderEnabled}
-          />
-        </div>
-
-        {/* Actions */}
+        {/* Actions - Minimalista */}
         <div className="flex gap-2">
-          <Button
-            onClick={onAddFunds}
-            className="flex-1 h-10 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-xl font-medium"
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddFunds();
+            }}
+            className="flex-1 h-9 bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-medium text-xs transition-all flex items-center justify-center gap-1.5"
           >
-            <Plus className="h-4 w-4 mr-1" />
+            <Plus className="h-3.5 w-3.5" />
             Agregar fondos
-          </Button>
-          <Button
-            onClick={onViewDetails}
-            variant="outline"
-            className="h-10 px-4 rounded-xl border-gray-200"
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onViewDetails();
+            }}
+            className="h-9 px-4 bg-white hover:bg-gray-50 border border-gray-200 text-gray-900 rounded-lg font-medium text-xs transition-all"
           >
             Ver más
-          </Button>
+          </button>
         </div>
       </div>
     </div>
