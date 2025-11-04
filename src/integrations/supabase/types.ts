@@ -737,6 +737,53 @@ export type Database = {
           },
         ]
       }
+      goal_adjustments: {
+        Row: {
+          adjustment_type: string | null
+          created_at: string | null
+          goal_id: string
+          id: string
+          new_predicted_date: string | null
+          new_weekly_amount: number | null
+          old_predicted_date: string | null
+          old_weekly_amount: number | null
+          reason: string | null
+          user_id: string
+        }
+        Insert: {
+          adjustment_type?: string | null
+          created_at?: string | null
+          goal_id: string
+          id?: string
+          new_predicted_date?: string | null
+          new_weekly_amount?: number | null
+          old_predicted_date?: string | null
+          old_weekly_amount?: number | null
+          reason?: string | null
+          user_id: string
+        }
+        Update: {
+          adjustment_type?: string | null
+          created_at?: string | null
+          goal_id?: string
+          id?: string
+          new_predicted_date?: string | null
+          new_weekly_amount?: number | null
+          old_predicted_date?: string | null
+          old_weekly_amount?: number | null
+          reason?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goal_adjustments_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       goal_comments: {
         Row: {
           comment: string
@@ -760,6 +807,56 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      goal_group_adjustments: {
+        Row: {
+          adjustment_type: string | null
+          created_at: string | null
+          goal_id: string
+          id: string
+          members_affected: number | null
+          new_predicted_date: string | null
+          new_weekly_amount: number | null
+          old_predicted_date: string | null
+          old_weekly_amount: number | null
+          reason: string | null
+          user_id: string | null
+        }
+        Insert: {
+          adjustment_type?: string | null
+          created_at?: string | null
+          goal_id: string
+          id?: string
+          members_affected?: number | null
+          new_predicted_date?: string | null
+          new_weekly_amount?: number | null
+          old_predicted_date?: string | null
+          old_weekly_amount?: number | null
+          reason?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          adjustment_type?: string | null
+          created_at?: string | null
+          goal_id?: string
+          id?: string
+          members_affected?: number | null
+          new_predicted_date?: string | null
+          new_weekly_amount?: number | null
+          old_predicted_date?: string | null
+          old_weekly_amount?: number | null
+          reason?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goal_group_adjustments_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "circle_goals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       goal_invitations: {
         Row: {

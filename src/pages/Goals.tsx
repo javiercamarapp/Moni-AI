@@ -263,27 +263,32 @@ const Goals = () => {
               </div>
 
               {/* AI Recommendations Section - Minimalist */}
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm p-4 border border-gray-200/50 mb-6">
+              <div className="bg-gradient-to-br from-purple-50 to-cyan-50 backdrop-blur-sm rounded-xl shadow-sm p-4 border border-purple-200/50 mb-6">
                 <div className="flex items-start gap-3">
-                  <div className="bg-gray-100 rounded-full p-2">
-                    <Lightbulb className="h-4 w-4 text-gray-700" />
+                  <div className="bg-gradient-to-br from-purple-500 to-cyan-500 rounded-full p-2">
+                    <Sparkles className="h-4 w-4 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-1.5 flex items-center gap-1.5">
-                      🤖 Moni AI recomienda
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1 flex items-center gap-1.5">
+                      🤖 Moni AI — Ajuste Automático Activo
                     </h3>
-                    <p className="text-xs text-gray-600 mb-3 leading-relaxed">
+                    <p className="text-xs text-gray-600 mb-2 leading-relaxed">
                       {goals.length > 0 && goals[0].required_weekly_saving
-                        ? `Si ahorras $${Math.round(goals[0].required_weekly_saving * 1.1).toLocaleString()}/semana, podrás lograr tu meta 2 semanas antes.`
-                        : "Crea una meta para recibir recomendaciones personalizadas de ahorro."}
+                        ? `Tu plan se ajusta automáticamente cada semana. Si ahorras $${Math.round(goals[0].required_weekly_saving * 1.1).toLocaleString()}/semana, podrás lograr tu meta 2 semanas antes.`
+                        : "Crea una meta y Moni AI la optimizará automáticamente según tu progreso."}
                     </p>
+                    <div className="flex items-center gap-2 text-[10px] text-gray-500 mb-3">
+                      <div className="flex items-center gap-1">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                        <span>Ajuste semanal automático</span>
+                      </div>
+                      <span>•</span>
+                      <span>Próxima revisión: domingo</span>
+                    </div>
                     {goals.length > 0 && goals[0].required_weekly_saving && (
-                      <button
-                        onClick={() => toast.info("Ajuste automático próximamente")}
-                        className="px-3 py-1.5 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-white/80 text-gray-900 font-medium transition-all text-xs border-0"
-                      >
-                        Ajustar plan automáticamente
-                      </button>
+                      <div className="text-[10px] text-purple-600 font-medium bg-white/60 rounded-lg px-2 py-1 inline-block">
+                        ✅ Sistema inteligente activado
+                      </div>
                     )}
                   </div>
                 </div>
