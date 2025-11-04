@@ -22,7 +22,7 @@ serve(async (req) => {
     // Obtener todas las metas activas (individuales)
     const { data: goals, error: goalsError } = await supabaseClient
       .from('goals')
-      .select('*, transactions!inner(amount, type, transaction_date)')
+      .select('*')
       .order('created_at', { ascending: false });
 
     if (goalsError) {
