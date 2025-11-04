@@ -433,7 +433,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
             <Button
               type="submit"
               disabled={loading}
-              className="flex-1 h-11 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-semibold shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all border-0"
+              className="flex-1 h-11 bg-white hover:bg-white/90 text-gray-900 rounded-xl font-semibold shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all border-0"
             >
               {loading ? "Creando..." : "Crear meta"}
             </Button>
