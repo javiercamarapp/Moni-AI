@@ -40,6 +40,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
   const [loading, setLoading] = useState(false);
   const [prediction, setPrediction] = useState<any>(null);
   const [inspirationalPhrase, setInspirationalPhrase] = useState("");
+  const [displayAmount, setDisplayAmount] = useState("");
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -52,6 +53,31 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
     motivation: "",
     reminderEnabled: true
   });
+
+  const formatCurrency = (value: string) => {
+    const numericValue = value.replace(/[^\d]/g, '');
+    if (!numericValue) return '';
+    const formatted = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return `${formatted}.00`;
+  };
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    const numericOnly = inputValue.replace(/[^\d]/g, '');
+    setFormData({ ...formData, target: numericOnly });
+    setDisplayAmount(numericOnly);
+  };
+
+  const handleAmountBlur = () => {
+    if (formData.target) {
+      const formatted = formatCurrency(formData.target);
+      setDisplayAmount(formatted);
+    }
+  };
+
+  const handleAmountFocus = () => {
+    setDisplayAmount(formData.target);
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -290,11 +316,10 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
                 <Input
                   id="target"
                   type="text"
-                  value={formData.target ? parseFloat(formData.target).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/[^0-9.]/g, '');
-                    setFormData({ ...formData, target: value });
-                  }}
+                  value={displayAmount}
+                  onChange={handleAmountChange}
+                  onBlur={handleAmountBlur}
+                  onFocus={handleAmountFocus}
                   placeholder="50,000.00"
                   required
                   className="h-12 rounded-xl bg-white text-gray-900 border-gray-300 pl-7"
