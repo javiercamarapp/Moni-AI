@@ -250,20 +250,20 @@ const GroupGoals = () => {
           </SheetHeader>
 
           {/* Stats Summary */}
-          <div className="grid grid-cols-3 gap-3 mb-6">
-            <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-gray-100">
-              <p className="text-xs text-gray-500 mb-2 font-medium">Total Ahorrado</p>
-              <p className="text-base font-semibold text-gray-900">{formatCurrency(stats.totalSaved)}</p>
+          <div className="grid grid-cols-3 gap-2 mb-6">
+            <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-3 text-center shadow-sm">
+              <p className="text-[10px] text-white/80 mb-1 font-medium">Total Ahorrado</p>
+              <p className="text-sm font-bold text-white">{formatCurrency(stats.totalSaved)}</p>
             </div>
             
-            <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-gray-100">
-              <p className="text-xs text-gray-500 mb-2 font-medium">Progreso</p>
-              <p className="text-base font-semibold text-gray-900">{stats.avgProgress.toFixed(0)}%</p>
+            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-3 text-center shadow-sm">
+              <p className="text-[10px] text-white/80 mb-1 font-medium">Progreso</p>
+              <p className="text-sm font-bold text-white">{stats.avgProgress.toFixed(0)}%</p>
             </div>
             
-            <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-gray-100">
-              <p className="text-xs text-gray-500 mb-2 font-medium">Activas</p>
-              <p className="text-base font-semibold text-gray-900">{stats.activeGoals}</p>
+            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-3 text-center shadow-sm">
+              <p className="text-[10px] text-white/80 mb-1 font-medium">Activas</p>
+              <p className="text-sm font-bold text-white">{stats.activeGoals}</p>
             </div>
           </div>
 
