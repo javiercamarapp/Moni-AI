@@ -425,15 +425,15 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
             <Button
               type="button"
               onClick={onClose}
-              variant="outline"
-              className="flex-1 h-12 rounded-xl border-gray-300 text-gray-700 hover:bg-gray-50"
+              variant="ghost"
+              className="flex-1 h-11 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-white/80 text-gray-900 font-medium transition-all border-0"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={loading}
-              className="flex-1 h-12 bg-black hover:bg-gray-800 text-white rounded-xl font-semibold shadow-sm"
+              className="flex-1 h-11 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-semibold shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all border-0"
             >
               {loading ? "Creando..." : "Crear meta"}
             </Button>
