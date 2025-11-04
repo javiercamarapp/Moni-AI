@@ -1728,7 +1728,7 @@ const Dashboard = () => {
                   <Button 
                     size="sm" 
                     onClick={() => setIsCreateGoalModalOpen(true)} 
-                    className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md hover:scale-[1.03] text-gray-900 text-xs sm:text-sm transition-all duration-200 font-semibold border-0"
+                    className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:scale-[1.03] text-gray-900 text-xs sm:text-sm transition-all duration-200 font-semibold border-0"
                   >
                     <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                     Nueva Meta
@@ -1834,7 +1834,7 @@ const Dashboard = () => {
                   <Button 
                     size="sm" 
                     onClick={() => setIsCreateGroupGoalModalOpen(true)} 
-                    className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md hover:scale-[1.03] text-gray-900 text-xs sm:text-sm transition-all duration-200 font-semibold border-0"
+                    className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:scale-[1.03] text-gray-900 text-xs sm:text-sm transition-all duration-200 font-semibold border-0"
                   >
                     <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                     Nueva Meta Grupal
