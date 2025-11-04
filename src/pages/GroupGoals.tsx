@@ -193,7 +193,7 @@ const GroupGoals = () => {
               </p>
               <Button
                 onClick={() => setCreateModalOpen(true)}
-                className="h-12 px-8 mb-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md transition-all border-0 text-gray-900 font-semibold"
+                className="h-12 px-8 mb-3 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] border border-gray-200 text-gray-900 font-semibold"
               >
                 <Plus className="h-5 w-5 mr-2" />
                 Crear meta grupal
@@ -251,19 +251,19 @@ const GroupGoals = () => {
 
           {/* Stats Summary */}
           <div className="grid grid-cols-3 gap-3 mb-6">
-            <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-xl p-3 text-center">
-              <p className="text-xs text-gray-600 mb-1">Total Ahorrado</p>
-              <p className="text-sm font-bold text-gray-900">{formatCurrency(stats.totalSaved)}</p>
+            <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-gray-100">
+              <p className="text-xs text-gray-500 mb-2 font-medium">Total Ahorrado</p>
+              <p className="text-base font-semibold text-gray-900">{formatCurrency(stats.totalSaved)}</p>
             </div>
             
-            <div className="bg-gradient-to-br from-cyan-50 to-cyan-100/50 rounded-xl p-3 text-center">
-              <p className="text-xs text-gray-600 mb-1">Progreso</p>
-              <p className="text-sm font-bold text-gray-900">{stats.avgProgress.toFixed(0)}%</p>
+            <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-gray-100">
+              <p className="text-xs text-gray-500 mb-2 font-medium">Progreso</p>
+              <p className="text-base font-semibold text-gray-900">{stats.avgProgress.toFixed(0)}%</p>
             </div>
             
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-xl p-3 text-center">
-              <p className="text-xs text-gray-600 mb-1">Activas</p>
-              <p className="text-sm font-bold text-gray-900">{stats.activeGoals}</p>
+            <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-gray-100">
+              <p className="text-xs text-gray-500 mb-2 font-medium">Activas</p>
+              <p className="text-base font-semibold text-gray-900">{stats.activeGoals}</p>
             </div>
           </div>
 
@@ -278,7 +278,7 @@ const GroupGoals = () => {
                     setGoalsSheetOpen(false);
                     navigate(`/group-goals/${goal.id}`);
                   }}
-                  className="bg-white rounded-2xl p-4 shadow-sm border border-[#c8a57b]/10 hover:shadow-md transition-all cursor-pointer"
+                  className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all cursor-pointer hover:scale-[1.01]"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
@@ -324,13 +324,13 @@ const GroupGoals = () => {
           </div>
 
           {/* Create New Goal Button */}
-          <div className="mt-4 pt-4 border-t border-gray-200">
+          <div className="mt-4 pt-4 border-t border-gray-100">
             <Button
               onClick={() => {
                 setGoalsSheetOpen(false);
                 setCreateModalOpen(true);
               }}
-              className="w-full h-12 bg-gradient-to-r from-[#c8a57b] to-[#e3c890] text-white hover:from-[#b8956b] hover:to-[#d3b880] rounded-xl font-semibold"
+              className="w-full h-12 bg-white text-gray-900 hover:bg-gray-50 rounded-2xl font-semibold shadow-sm border border-gray-200 transition-all hover:shadow-md active:scale-[0.98]"
             >
               <Plus className="h-5 w-5 mr-2" />
               Crear nueva meta grupal
