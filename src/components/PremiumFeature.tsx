@@ -21,7 +21,7 @@ export default function PremiumFeature({ children }: PremiumFeatureProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center animated-wave-bg">
         <div className="animate-pulse">
           <img src={moniLoadingLogo} alt="Moni AI" className="w-64 h-auto object-contain" />
         </div>
