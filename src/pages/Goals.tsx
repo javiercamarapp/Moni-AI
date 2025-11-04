@@ -318,6 +318,35 @@ const Goals = () => {
                 </div>
               </div>
 
+              {/* AI Insights Carousel - Compact */}
+              {aiInsights.length > 0 && (
+                <div className="mb-6">
+                  <Carousel 
+                    className="w-full"
+                    opts={{
+                      align: "center",
+                      loop: true,
+                    }}
+                    plugins={[insightsAutoplayPlugin.current]}
+                  >
+                    <CarouselContent>
+                      {aiInsights.map((insight, index) => (
+                        <CarouselItem key={index}>
+                          <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-100">
+                            <div className="flex items-center gap-1.5 justify-center">
+                              <span className="text-xs">🤖</span>
+                              <p className="text-xs text-gray-700 font-medium text-center">
+                                {insight}
+                              </p>
+                            </div>
+                          </div>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                  </Carousel>
+                </div>
+              )}
+
 
               {/* Goals Carousel */}
               <Carousel 
@@ -353,84 +382,6 @@ const Goals = () => {
                 </Button>
               </div>
 
-              {/* Group Goals Section - Identical to Personal Goals */}
-              {groupGoals.length > 0 && (
-                <div className="mt-12">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-4 px-2">
-                    Tus Metas Grupales
-                  </h2>
-
-                  {/* Group Goals Stats Summary */}
-                  <div className="grid grid-cols-3 gap-2 mb-6">
-                    <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-1.5 text-center shadow-sm">
-                      <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Ahorrado</p>
-                      <p className="text-[11px] font-bold text-white">
-                        {formatCurrency(groupGoals.reduce((sum, g) => sum + g.user_progress, 0))}
-                      </p>
-                    </div>
-                    
-                    <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-1.5 text-center shadow-sm">
-                      <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Progreso</p>
-                      <p className="text-[11px] font-bold text-white">
-                        {groupGoals.length > 0
-                          ? (groupGoals.reduce((sum, g) => sum + (g.user_progress / g.target_amount) * 100, 0) / groupGoals.length).toFixed(0)
-                          : 0}%
-                      </p>
-                    </div>
-                    
-                    <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-1.5 text-center shadow-sm">
-                      <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Activas</p>
-                      <p className="text-[11px] font-bold text-white">{groupGoals.length}</p>
-                    </div>
-                  </div>
-
-                  {/* Group Goals Carousel */}
-                  <Carousel 
-                    className="w-full"
-                    opts={{
-                      align: "start",
-                      loop: true,
-                    }}
-                    plugins={[autoplayPlugin.current]}
-                  >
-                    <CarouselContent className="-ml-4">
-                      {groupGoals.map((goal) => (
-                        <CarouselItem key={goal.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
-                          <GoalCard
-                            goal={{
-                              id: goal.id,
-                              title: goal.title,
-                              description: `${goal.circle_name} • ${goal.description || ''}`,
-                              target: goal.target_amount,
-                              current: goal.user_progress,
-                              deadline: goal.deadline,
-                              category: goal.category || 'Custom',
-                              icon: '🫶',
-                              predicted_completion_date: goal.predicted_completion_date,
-                              required_weekly_saving: goal.required_weekly_saving,
-                              ai_confidence: 0
-                            }}
-                            onAddFunds={() => navigate(`/group-goals/${goal.id}`)}
-                            onViewDetails={() => navigate(`/group-goals/${goal.id}`)}
-                            onComplete={() => navigate(`/group-goals/${goal.id}`)}
-                          />
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                  </Carousel>
-
-                  {/* Create Group Goal Button */}
-                  <div className="mt-6 flex justify-center">
-                    <Button
-                      onClick={() => navigate('/group-goals')}
-                      className="h-11 px-8 bg-white hover:bg-white/90 text-gray-900 rounded-xl font-semibold shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all border-0"
-                    >
-                      <Users className="h-5 w-5 mr-2" />
-                      Ver todas las metas grupales
-                    </Button>
-                  </div>
-                </div>
-              )}
             </>
           )}
         </div>
