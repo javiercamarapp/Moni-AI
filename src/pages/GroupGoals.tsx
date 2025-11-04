@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Users, Target, Plus, TrendingUp, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,8 @@ import BottomNav from "@/components/BottomNav";
 import { GroupGoalCard } from "@/components/goals/GroupGoalCard";
 import { CreateGroupGoalModal } from "@/components/goals/CreateGroupGoalModal";
 import { formatCurrency } from "@/lib/utils";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 import {
   Sheet,
   SheetContent,
@@ -24,6 +26,7 @@ interface GroupGoal {
   title: string;
   description?: string;
   target_amount: number;
+  current_amount: number;
   completed_members: number;
   deadline: string | null;
   circle_name: string;
@@ -44,7 +47,10 @@ const GroupGoals = () => {
   const [circles, setCircles] = useState<Circle[]>([]);
   const [loading, setLoading] = useState(true);
   const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [goalsSheetOpen, setGoalsSheetOpen] = useState(false);
+  
+  const autoplayPlugin = useRef(
+    Autoplay({ delay: 4000, stopOnInteraction: true })
+  );
 
   useEffect(() => {
     fetchData();
@@ -92,20 +98,28 @@ const GroupGoals = () => {
 
       if (goalsError) throw goalsError;
 
-      const enrichedGoals = goalsData?.map(goal => ({
-        id: goal.id,
-        circle_id: goal.circle_id,
-        title: goal.title,
-        description: goal.description,
-        target_amount: goal.target_amount,
-        completed_members: goal.completed_members || 0,
-        deadline: goal.deadline,
-        category: goal.category,
-        predicted_completion_date: goal.predicted_completion_date,
-        required_weekly_saving: goal.required_weekly_saving,
-        circle_name: (goal.circles as any)?.name || 'Círculo',
-        member_count: (goal.circles as any)?.member_count || 0
-      })) || [];
+      const enrichedGoals = goalsData?.map(goal => {
+        const memberCount = (goal.circles as any)?.member_count || 0;
+        const completedMembers = goal.completed_members || 0;
+        // Calculate virtual current_amount based on completed members
+        const currentAmount = memberCount > 0 ? (completedMembers / memberCount) * goal.target_amount : 0;
+        
+        return {
+          id: goal.id,
+          circle_id: goal.circle_id,
+          title: goal.title,
+          description: goal.description,
+          target_amount: goal.target_amount,
+          current_amount: currentAmount,
+          completed_members: completedMembers,
+          deadline: goal.deadline,
+          category: goal.category,
+          predicted_completion_date: goal.predicted_completion_date,
+          required_weekly_saving: goal.required_weekly_saving,
+          circle_name: (goal.circles as any)?.name || 'Círculo',
+          member_count: memberCount
+        };
+      }) || [];
 
       setGroupGoals(enrichedGoals);
     } catch (error: any) {
@@ -218,104 +232,53 @@ const GroupGoals = () => {
             </div>
           ) : (
             <>
-              {/* Stats - Minimalist Apple Style */}
-              <div className="max-w-4xl mx-auto mb-8">
-                <div className="grid grid-cols-3 gap-2 mb-8">
-                  <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-1.5 text-center shadow-sm">
-                    <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Completadas</p>
-                    <p className="text-[11px] font-bold text-white">{stats.totalCompleted}</p>
-                  </div>
-                  
-                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-1.5 text-center shadow-sm">
-                    <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Progreso</p>
-                    <p className="text-[11px] font-bold text-white">{stats.avgProgress.toFixed(0)}%</p>
-                  </div>
-                  
-                  <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-1.5 text-center shadow-sm">
-                    <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Activas</p>
-                    <p className="text-[11px] font-bold text-white">{stats.activeGoals}</p>
-                  </div>
+              {/* Stats Summary */}
+              <div className="grid grid-cols-3 gap-2 mb-6">
+                <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-1.5 text-center shadow-sm">
+                  <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Completadas</p>
+                  <p className="text-[11px] font-bold text-white">{stats.totalCompleted}</p>
                 </div>
-
-                {/* Goals List - Apple Minimalist Design */}
-                <div className="space-y-4">
-                  {groupGoals.map((goal) => {
-                    // Progress is based on how many members have completed
-                    const progress = goal.member_count > 0 ? (goal.completed_members / goal.member_count) * 100 : 0;
-                    
-                    return (
-                      <div
-                        key={goal.id}
-                        onClick={() => navigate(`/group-goals/${goal.id}`)}
-                        className="bg-white/90 backdrop-blur-sm rounded-2xl p-5 shadow-sm hover:shadow-md transition-all cursor-pointer border border-gray-100/50 hover:border-gray-200"
-                      >
-                        {/* Header */}
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900 text-base mb-1 tracking-tight">
-                              {goal.title}
-                            </h3>
-                            {goal.description && (
-                              <p className="text-xs text-gray-500 mb-2 line-clamp-1">
-                                {goal.description}
-                              </p>
-                            )}
-                            <p className="text-[10px] text-gray-400 flex items-center gap-1">
-                              <Users className="h-3 w-3" />
-                              {goal.circle_name} • {goal.member_count} miembros
-                            </p>
-                          </div>
-                          <div className="text-right ml-4">
-                            <p className="text-2xl font-bold text-gray-900 tracking-tight">
-                              {progress.toFixed(0)}%
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Progress Bar - Apple Style */}
-                        <div className="w-full bg-gray-100 rounded-full h-1.5 mb-3 overflow-hidden">
-                          <div
-                            className="bg-gradient-to-r from-[#c8a57b] to-[#e3c890] h-1.5 rounded-full transition-all duration-500 ease-out"
-                            style={{ width: `${Math.min(progress, 100)}%` }}
-                          />
-                        </div>
-
-                        {/* Member Progress Details */}
-                        <div className="flex items-center justify-between text-xs">
-                          <div className="flex items-center gap-4">
-                            <div>
-                              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Meta Individual</p>
-                              <p className="font-semibold text-gray-900">{formatCurrency(goal.target_amount)}</p>
-                            </div>
-                            <div>
-                              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Completaron</p>
-                              <p className="font-semibold text-emerald-600">{goal.completed_members} de {goal.member_count}</p>
-                            </div>
-                          </div>
-                          {goal.deadline && (
-                            <div className="text-right">
-                              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Fecha Límite</p>
-                              <p className="font-medium text-gray-600">
-                                {new Date(goal.deadline).toLocaleDateString('es-MX', { 
-                                  day: 'numeric', 
-                                  month: 'short',
-                                  year: 'numeric' 
-                                })}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
+                
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-1.5 text-center shadow-sm">
+                  <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Progreso</p>
+                  <p className="text-[11px] font-bold text-white">{stats.avgProgress.toFixed(0)}%</p>
                 </div>
+                
+                <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-1.5 text-center shadow-sm">
+                  <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Activas</p>
+                  <p className="text-[11px] font-bold text-white">{stats.activeGoals}</p>
+                </div>
+              </div>
 
-                {/* Create New Goal Button - Minimalist */}
+              {/* Goals Carousel */}
+              <Carousel 
+                className="w-full"
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                plugins={[autoplayPlugin.current]}
+              >
+                <CarouselContent className="-ml-4">
+                  {groupGoals.map((goal) => (
+                    <CarouselItem key={goal.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                      <GroupGoalCard
+                        goal={goal}
+                        onViewDetails={() => navigate(`/group-goals/${goal.id}`)}
+                        onAddContribution={() => navigate(`/group-goals/${goal.id}`)}
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+
+              {/* Create Goal Button */}
+              <div className="mt-6 flex justify-center">
                 <Button
                   onClick={() => setCreateModalOpen(true)}
-                  className="w-full mt-6 h-11 bg-white/80 backdrop-blur-sm text-gray-900 hover:bg-white rounded-xl font-medium shadow-sm border border-gray-200/50 hover:border-gray-300 transition-all"
+                  className="h-11 px-8 bg-white hover:bg-white/90 text-gray-900 rounded-xl font-semibold shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all border-0"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Plus className="h-5 w-5 mr-2" />
                   Crear nueva meta
                 </Button>
               </div>
@@ -325,90 +288,6 @@ const GroupGoals = () => {
       </div>
 
       <BottomNav />
-
-      {/* Goals List Sheet */}
-      <Sheet open={goalsSheetOpen} onOpenChange={setGoalsSheetOpen}>
-        <SheetContent side="bottom" className="h-[85vh] rounded-t-3xl">
-          <SheetHeader className="mb-6">
-            <SheetTitle className="text-2xl font-bold text-gray-900">
-              Metas Grupales
-            </SheetTitle>
-            <SheetDescription className="text-sm text-gray-600">
-              Selecciona una meta para ver sus detalles
-            </SheetDescription>
-          </SheetHeader>
-
-          {/* Goals List */}
-          <div className="space-y-3 overflow-y-auto max-h-[calc(85vh-280px)]">
-            {groupGoals.map((goal) => {
-              const progress = goal.member_count > 0 ? (goal.completed_members / goal.member_count) * 100 : 0;
-              return (
-                <div
-                  key={goal.id}
-                  onClick={() => {
-                    setGoalsSheetOpen(false);
-                    navigate(`/group-goals/${goal.id}`);
-                  }}
-                  className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all cursor-pointer hover:scale-[1.01]"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 text-base mb-1">
-                        {goal.title}
-                      </h3>
-                      <p className="text-xs text-gray-600 flex items-center gap-1">
-                        <Users className="h-3 w-3" />
-                        {goal.circle_name} • {goal.member_count} miembros
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-gray-600 mb-1">Progreso</p>
-                      <p className="text-sm font-bold text-gray-900">{progress.toFixed(0)}%</p>
-                    </div>
-                  </div>
-
-                  {/* Progress Bar */}
-                  <div className="w-full bg-gray-100 rounded-full h-2 mb-3">
-                    <div
-                      className="bg-gradient-to-r from-[#c8a57b] to-[#e3c890] h-2 rounded-full transition-all"
-                      style={{ width: `${Math.min(progress, 100)}%` }}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-gray-600">
-                      {goal.completed_members} de {goal.member_count} completaron
-                    </span>
-                    {goal.deadline && (
-                      <span className="text-gray-500">
-                        {new Date(goal.deadline).toLocaleDateString('es-MX', { 
-                          day: 'numeric', 
-                          month: 'short',
-                          year: 'numeric' 
-                        })}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Create New Goal Button */}
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <Button
-              onClick={() => {
-                setGoalsSheetOpen(false);
-                setCreateModalOpen(true);
-              }}
-              className="w-full h-12 bg-white text-gray-900 hover:bg-gray-50 rounded-2xl font-semibold shadow-sm border border-gray-200 transition-all hover:shadow-md active:scale-[0.98]"
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Crear nueva meta grupal
-            </Button>
-          </div>
-        </SheetContent>
-      </Sheet>
 
       {/* Create Modal */}
       <CreateGroupGoalModal
