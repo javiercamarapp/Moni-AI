@@ -140,8 +140,8 @@ export default function NetWorthWidget() {
             className={cn(
               "h-7 px-2.5 text-[10px] transition-all rounded-[20px] shadow-lg font-semibold border border-blue-100",
               timeRange === range 
-                ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105" 
-                : "bg-white text-foreground hover:bg-primary/10 hover:scale-105"
+                ? "bg-primary text-primary-foreground hover:bg-primary/90" 
+                : "bg-white text-foreground hover:bg-primary/10"
             )}
           >
             {range}
@@ -153,7 +153,7 @@ export default function NetWorthWidget() {
       <div className="grid grid-cols-2 gap-3 mt-1">
         <button 
           onClick={() => navigate('/assets')}
-          className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer border border-blue-100 animate-fade-in"
+          className="p-3 bg-white rounded-[20px] shadow-xl cursor-pointer border border-blue-100 animate-fade-in"
         >
           <div className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-lg bg-emerald-500/30 flex items-center justify-center flex-shrink-0">
@@ -173,7 +173,7 @@ export default function NetWorthWidget() {
         </button>
         <button 
           onClick={() => navigate('/liabilities')}
-          className="p-3 bg-white rounded-[20px] shadow-xl hover:scale-105 transition-all cursor-pointer border border-blue-100 animate-fade-in"
+          className="p-3 bg-white rounded-[20px] shadow-xl cursor-pointer border border-blue-100 animate-fade-in"
         >
           <div className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-lg bg-red-500/30 flex items-center justify-center flex-shrink-0">

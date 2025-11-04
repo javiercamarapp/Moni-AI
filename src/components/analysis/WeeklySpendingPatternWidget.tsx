@@ -73,12 +73,12 @@ export default function WeeklySpendingPatternWidget({ data, insight }: WeeklySpe
               <div 
                 key={dayData.day}
                 onClick={() => handleDayClick(dayData.day)}
-                className="space-y-1.5 p-2 rounded-xl bg-white/60 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 border border-gray-100/50 hover:shadow-md group cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                className="space-y-1.5 p-2 rounded-xl bg-white/60 backdrop-blur-sm hover:bg-white/80 border border-gray-100/50 group cursor-pointer"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                    <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center shadow-sm">
                       <span className="text-base">{getDayEmoji(dayData.day)}</span>
                     </div>
                     <div>

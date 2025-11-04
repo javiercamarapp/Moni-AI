@@ -37,7 +37,7 @@ export default function SubscriptionsWidget({ subscriptions, totalMonthly }: Sub
   }, 0);
 
   return (
-    <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 transition-all">
+    <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100">
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div>

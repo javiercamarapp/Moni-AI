@@ -243,7 +243,7 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
       
       <div className="space-y-4">
         <motion.div 
-          className="bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0 p-5 hover:shadow-xl transition-all duration-300"
+          className="bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0 p-5"
           initial={{ scale: 1 }}
           animate={scoreChange > 0 ? { 
             scale: [1, 1.02, 1],
@@ -275,7 +275,7 @@ export default function ScoreBreakdownWidget({ components, scoreMoni, changeReas
           </div>
         </motion.div>
 
-      <div className="bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0 p-5 hover:shadow-xl transition-all duration-300">
+      <div className="bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0 p-5">
         <div className="h-[320px]">
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart data={radarData} margin={{ top: 5, right: 30, bottom: 5, left: 30 }}>

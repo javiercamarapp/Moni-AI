@@ -78,7 +78,7 @@ export default function FutureCalendarWidget({ events }: FutureCalendarProps) {
           <Button 
             variant="ghost" 
             size="sm" 
-            className="text-[10px] sm:text-[9px] text-foreground hover:bg-gray-100 hover:scale-105 transition-transform duration-200 h-6 px-2"
+            className="text-[10px] sm:text-[9px] text-foreground hover:bg-gray-100 h-6 px-2"
             onClick={() => navigate('/proximos-movimientos')}
           >
             Ver todos

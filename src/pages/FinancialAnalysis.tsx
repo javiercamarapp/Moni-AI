@@ -1091,7 +1091,7 @@ export default function FinancialAnalysis() {
               >
               {/* Card Mensual */}
               <Card
-                className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer transition-all hover:scale-105 active:scale-95 flex-shrink-0"
+                className="min-w-full snap-center p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 space-y-2 animate-fade-in cursor-pointer flex-shrink-0"
                 style={{ animationDelay: '0ms' }}
                 onClick={(e) => {
                   e.preventDefault();
@@ -1322,7 +1322,7 @@ export default function FinancialAnalysis() {
             {/* Análisis AI */}
             <Dialog>
               <DialogTrigger asChild>
-                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 active:scale-95 transition-all">
+                <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer">
                   <p className="text-xs font-bold text-foreground mb-2 flex items-center gap-1">
                     <BarChart3 className="h-3 w-3" /> Análisis Moni AI
                   </p>
@@ -1353,7 +1353,7 @@ export default function FinancialAnalysis() {
               <div className="grid grid-cols-2 gap-2">
                 <Dialog open={showBalanceDialog} onOpenChange={setShowBalanceDialog}>
                   <DialogTrigger asChild>
-                    <Card className={`p-3 rounded-[20px] shadow-xl border cursor-pointer hover:scale-105 transition-all duration-200 ${
+                    <Card className={`p-3 rounded-[20px] shadow-xl border cursor-pointer ${
                       (analysis?.metrics?.balance ?? 0) >= 0 
                         ? 'border-green-200 bg-green-50/50 hover:bg-green-100/50' 
                         : 'border-red-200 bg-red-50/50 hover:bg-red-100/50'
@@ -1419,7 +1419,7 @@ export default function FinancialAnalysis() {
 
                 <Dialog open={showSavingsDialog} onOpenChange={setShowSavingsDialog}>
                   <DialogTrigger asChild>
-                    <Card className={`p-3 rounded-[20px] shadow-xl border cursor-pointer hover:scale-105 transition-all duration-200 ${
+                    <Card className={`p-3 rounded-[20px] shadow-xl border cursor-pointer ${
                       (analysis?.metrics?.savingsRate ?? 0) >= 20 
                         ? 'border-purple-200 bg-purple-50/50 hover:bg-purple-100/50' 
                         : (analysis?.metrics?.savingsRate ?? 0) >= 10 
@@ -1503,7 +1503,7 @@ export default function FinancialAnalysis() {
                 <Dialog open={showLiquidityDialog} onOpenChange={setShowLiquidityDialog}>
                   <DialogTrigger asChild>
                     <Card 
-                      className={`p-3 rounded-[20px] shadow-xl border cursor-pointer hover:scale-105 transition-all duration-200 ${
+                      className={`p-3 rounded-[20px] shadow-xl border cursor-pointer ${
                         (analysis?.metrics?.liquidityMonths || 0) >= 3 
                           ? 'border-emerald-200 bg-emerald-50/50 hover:bg-emerald-100/50' 
                           : (analysis?.metrics?.liquidityMonths || 0) >= 1.5 
@@ -1574,7 +1574,7 @@ export default function FinancialAnalysis() {
 
                 <Dialog open={showCashFlowDialog} onOpenChange={setShowCashFlowDialog}>
                   <DialogTrigger asChild>
-                    <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-teal-100 cursor-pointer hover:scale-105 transition-transform duration-200 hover:bg-teal-50/30">
+                    <Card className="p-3 bg-white rounded-[20px] shadow-xl border border-teal-100 cursor-pointer hover:bg-teal-50/30">
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-xs text-muted-foreground">Liquidez y Estabilidad</span>
                         <TrendingUp className="h-3 w-3 text-teal-500" />
@@ -1681,7 +1681,7 @@ export default function FinancialAnalysis() {
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 hover:scale-105 active:scale-95 transition-all text-xs h-auto py-2"
+                  className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 text-xs h-auto py-2"
                   onClick={() => navigate('/subscriptions')}
                 >
                   Administrar suscripciones
@@ -1689,7 +1689,7 @@ export default function FinancialAnalysis() {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 hover:scale-105 active:scale-95 transition-all text-xs h-auto py-2"
+                  className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 text-xs h-auto py-2"
                   onClick={() => navigate('/edit-budgets')}
                 >
                   Ajustar presupuesto
@@ -1697,7 +1697,7 @@ export default function FinancialAnalysis() {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 hover:scale-105 active:scale-95 transition-all text-xs h-auto py-2"
+                  className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 text-xs h-auto py-2"
                   onClick={() => navigate('/networth')}
                 >
                   Plan de deudas
@@ -1705,7 +1705,7 @@ export default function FinancialAnalysis() {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 hover:scale-105 active:scale-95 transition-all text-xs h-auto py-2"
+                  className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 text-xs h-auto py-2"
                   onClick={() => navigate('/saving-simulation')}
                 >
                   Simulación de ahorro por IA
@@ -1720,7 +1720,7 @@ export default function FinancialAnalysis() {
               </p>
               <div className="grid grid-cols-2 gap-2">
                 <Card 
-                  className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200"
+                  className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer"
                   onClick={() => navigate('/fixed-expenses')}
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -1737,7 +1737,7 @@ export default function FinancialAnalysis() {
                 </Card>
 
                 <Card 
-                  className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200"
+                  className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer"
                   onClick={() => navigate('/variable-expenses')}
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -1754,7 +1754,7 @@ export default function FinancialAnalysis() {
                 </Card>
 
                 <Card 
-                  className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200"
+                  className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer"
                   onClick={() => navigate('/ant-expenses')}
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -1771,7 +1771,7 @@ export default function FinancialAnalysis() {
                 </Card>
 
                 <Card 
-                  className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200"
+                  className="p-3 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer"
                   onClick={() => navigate('/impulsive-expenses')}
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -1794,19 +1794,19 @@ export default function FinancialAnalysis() {
               </p>
               {(analysis?.metrics?.totalDebt ?? 0) > 0 ? <>
                   <div className="grid grid-cols-4 gap-2">
-                    <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                    <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer">
                       <span className="text-[10px] text-muted-foreground">Razón</span>
                       <p className="text-sm font-bold text-red-600">{(analysis?.metrics?.debtRatio || 0).toFixed(1)}%</p>
                     </Card>
-                    <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                    <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer">
                       <span className="text-[10px] text-muted-foreground">Carga</span>
                       <p className="text-sm font-bold text-orange-600">{(analysis?.metrics?.financialBurden || 0).toFixed(1)}%</p>
                     </Card>
-                    <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                    <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer">
                       <span className="text-[10px] text-muted-foreground">D/I</span>
                       <p className="text-sm font-bold text-yellow-600">{(analysis?.metrics?.debtToIncomeRatio || 0).toFixed(2)}</p>
                     </Card>
-                    <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                    <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer">
                       <span className="text-[10px] text-muted-foreground">Int.</span>
                       <p className="text-sm font-bold text-rose-600">{(analysis?.metrics?.interestOnIncome || 0).toFixed(1)}%</p>
                     </Card>
@@ -1829,28 +1829,28 @@ export default function FinancialAnalysis() {
                 <Target className="h-3 w-3" /> Estabilidad & Metas
               </p>
               <div className="grid grid-cols-2 gap-2">
-                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] text-muted-foreground">Metas</span>
                     <Trophy className="h-3 w-3 text-yellow-500" />
                   </div>
                   <p className="text-sm font-bold text-indigo-600">{analysis?.metrics?.avgGoalCompletion ?? 0}%</p>
                 </Card>
-                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] text-muted-foreground">Consist.</span>
                     <Activity className="h-3 w-3 text-lime-500" />
                   </div>
                   <p className="text-sm font-bold text-lime-600">{analysis?.metrics?.consistencyScore ?? 0}</p>
                 </Card>
-                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] text-muted-foreground">Proy.</span>
                     <TrendingUp className="h-3 w-3 text-amber-500" />
                   </div>
                   <p className="text-sm font-bold text-amber-600">${formatK(analysis?.metrics?.projectedAnnualSavings)}k</p>
                 </Card>
-                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Card className="p-2 bg-white rounded-[20px] shadow-xl border border-blue-100 cursor-pointer">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-[10px] text-muted-foreground">Bienestar</span>
                     <Heart className="h-3 w-3 text-pink-500" />

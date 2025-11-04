@@ -64,7 +64,7 @@ export default function BudgetProgressWidget({ categories = [], hasBudgets = fal
   // Si no tiene presupuestos configurados, mostrar invitación
   if (!hasBudgets || categories.length === 0) {
     return (
-      <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 transition-all">
+      <Card className="p-6 bg-white rounded-[20px] shadow-xl border border-blue-100">
         <div className="text-center space-y-4">
           <div className="text-5xl">📊</div>
           <div>
@@ -79,7 +79,7 @@ export default function BudgetProgressWidget({ categories = [], hasBudgets = fal
           <Button
             variant="ghost"
             onClick={() => navigate('/budgets')}
-            className="w-full bg-primary/10 rounded-[20px] shadow-lg border border-primary/20 hover:bg-primary/20 hover:scale-105 active:scale-95 transition-all text-sm h-auto py-3 text-primary font-semibold"
+            className="w-full bg-primary/10 rounded-[20px] shadow-lg border border-primary/20 hover:bg-primary/20 text-sm h-auto py-3 text-primary font-semibold"
           >
             📊 Configurar Presupuestos
           </Button>

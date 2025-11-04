@@ -186,7 +186,7 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
   return (
     <>
       <Card 
-        className="w-full p-3 bg-card backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden animate-fade-in cursor-pointer hover:shadow-md transition-shadow"
+        className="w-full p-3 bg-card backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden animate-fade-in cursor-pointer"
         onClick={() => setIsDialogOpen(true)}
       >
         <GlowingEffect
