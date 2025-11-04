@@ -283,18 +283,23 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
                 <DollarSign className="h-4 w-4 text-green-600 group-hover:text-black transition-colors" />
                 Monto objetivo
               </Label>
-              <Input
-                id="target"
-                type="text"
-                value={formData.target ? `$${parseFloat(formData.target).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ''}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/[^0-9.]/g, '');
-                  setFormData({ ...formData, target: value });
-                }}
-                placeholder="$50,000.00"
-                required
-                className="h-12 rounded-xl bg-white text-gray-900 border-gray-300"
-              />
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
+                  $
+                </span>
+                <Input
+                  id="target"
+                  type="text"
+                  value={formData.target}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9]/g, '');
+                    setFormData({ ...formData, target: value });
+                  }}
+                  placeholder="50,000"
+                  required
+                  className="h-12 rounded-xl bg-white text-gray-900 border-gray-300 pl-7"
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
