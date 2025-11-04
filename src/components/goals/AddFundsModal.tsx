@@ -116,7 +116,7 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-600 to-cyan-600 p-6 text-white rounded-t-2xl">
+        <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-6 text-white rounded-t-2xl">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold">Agregar fondos</h2>
@@ -145,14 +145,14 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
             </div>
             <div className="flex justify-between text-sm pt-2 border-t border-gray-200">
               <span className="text-gray-600">Restante</span>
-              <span className="font-bold text-emerald-600">{formatCurrency(remaining)}</span>
+              <span className="font-bold text-gray-900">{formatCurrency(remaining)}</span>
             </div>
           </div>
 
           {/* Amount Input */}
           <div className="space-y-2">
             <Label htmlFor="amount" className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-emerald-600" />
+              <DollarSign className="h-4 w-4 text-gray-700" />
               Cantidad a agregar
             </Label>
             <Input
@@ -175,7 +175,7 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
                   key={suggested.label}
                   type="button"
                   onClick={() => setAmount(suggested.value.toFixed(2))}
-                  className="p-3 rounded-xl bg-gray-50 hover:bg-emerald-50 border border-gray-200 hover:border-emerald-300 transition-colors"
+                  className="p-3 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 transition-colors"
                 >
                   <p className="text-xs font-medium text-gray-900">{suggested.label}</p>
                   <p className="text-[10px] text-gray-600 mt-1">
@@ -188,13 +188,13 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
 
           {/* AI Insight */}
           {amount && parseFloat(amount) > 0 && (
-            <div className="bg-gradient-to-r from-cyan-50 to-emerald-50 rounded-xl p-4 border border-cyan-100">
+            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
               <div className="flex items-start gap-2">
-                <TrendingUp className="h-4 w-4 text-cyan-600 mt-0.5 flex-shrink-0" />
+                <TrendingUp className="h-4 w-4 text-gray-700 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-xs font-medium text-gray-900 mb-1">Progreso actualizado</p>
                   <p className="text-[11px] text-gray-700">
-                    Llegarás al <span className="font-semibold text-emerald-700">
+                    Llegarás al <span className="font-semibold text-gray-900">
                       {((goal.current + parseFloat(amount)) / goal.target * 100).toFixed(1)}%
                     </span> de tu meta
                   </p>
@@ -209,14 +209,14 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
               type="button"
               onClick={onClose}
               variant="outline"
-              className="flex-1 h-12 rounded-xl"
+              className="flex-1 h-12 bg-gray-50 hover:bg-gray-50 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all border-0 text-gray-600 font-medium"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={loading}
-              className="flex-1 h-12 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 text-white rounded-xl font-medium"
+              className="flex-1 h-12 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-white/80 transition-all border-0 text-gray-900 font-semibold"
             >
               {loading ? "Procesando..." : "Confirmar"}
             </Button>
