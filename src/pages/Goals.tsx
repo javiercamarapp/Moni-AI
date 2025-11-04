@@ -10,6 +10,7 @@ import { GoalCard } from "@/components/goals/GoalCard";
 import { CreateGoalModal } from "@/components/goals/CreateGoalModal";
 import { AddFundsModal } from "@/components/goals/AddFundsModal";
 import { formatCurrency } from "@/lib/utils";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 interface Goal {
   id: string;
@@ -176,7 +177,7 @@ const Goals = () => {
               </div>
 
               {/* AI Recommendations Section - Minimalist */}
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm p-4 border border-gray-200/50">
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm p-4 border border-gray-200/50 mb-6">
                 <div className="flex items-start gap-3">
                   <div className="bg-gray-100 rounded-full p-2">
                     <Lightbulb className="h-4 w-4 text-gray-700" />
@@ -202,17 +203,33 @@ const Goals = () => {
                 </div>
               </div>
 
-              {/* Goals Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {goals.map((goal) => (
-                  <GoalCard
-                    key={goal.id}
-                    goal={goal}
-                    onAddFunds={() => setAddFundsModal({ open: true, goal })}
-                    onViewDetails={() => toast.info("Detalles próximamente")}
-                    onComplete={() => handleCompleteGoal(goal.id)}
-                  />
-                ))}
+              {/* Goals Carousel */}
+              <Carousel className="w-full">
+                <CarouselContent className="-ml-4">
+                  {goals.map((goal) => (
+                    <CarouselItem key={goal.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                      <GoalCard
+                        goal={goal}
+                        onAddFunds={() => setAddFundsModal({ open: true, goal })}
+                        onViewDetails={() => toast.info("Detalles próximamente")}
+                        onComplete={() => handleCompleteGoal(goal.id)}
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="left-2" />
+                <CarouselNext className="right-2" />
+              </Carousel>
+
+              {/* Create Goal Button */}
+              <div className="mt-6 flex justify-center">
+                <Button
+                  onClick={() => setCreateModalOpen(true)}
+                  className="h-11 px-8 bg-white hover:bg-white/90 text-gray-900 rounded-xl font-semibold shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all border-0"
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  Crear nueva meta
+                </Button>
               </div>
             </>
           )}
