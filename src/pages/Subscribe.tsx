@@ -184,7 +184,7 @@ export default function Subscribe() {
         <div className="flex justify-center">
           <Button
             variant="ghost"
-            onClick={() => navigate(isAuthenticated ? "/" : "/auth")}
+            onClick={() => navigate(isAuthenticated ? "/dashboard" : "/auth")}
             className="text-gray-600 hover:text-black text-xs"
           >
             Continuar sin Premium
