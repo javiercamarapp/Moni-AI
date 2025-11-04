@@ -68,6 +68,9 @@ import JoinCircle from './pages/JoinCircle';
 import Challenges from './pages/Challenges';
 
 import NotFound from "./pages/NotFound";
+import Subscribe from './pages/Subscribe';
+import Expired from './pages/Expired';
+import SubscriptionGuard from './components/SubscriptionGuard';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -90,7 +93,13 @@ function App() {
           <Route path="/" element={<Onboarding />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/subscribe" element={<Subscribe />} />
+          <Route path="/expired" element={<Expired />} />
+          <Route path="/dashboard" element={
+            <SubscriptionGuard>
+              <Dashboard />
+            </SubscriptionGuard>
+          } />
           <Route path="/chat" element={<ChatInterface />} />
           <Route path="/new-goal" element={<NewGoal />} />
           <Route path="/financial-chat" element={<FinancialChat />} />
