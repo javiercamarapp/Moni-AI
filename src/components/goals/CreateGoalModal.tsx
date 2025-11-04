@@ -347,44 +347,44 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
           {/* Goal Type */}
           <div className="space-y-2">
             <Label className="text-gray-900">Tipo de meta</Label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, type: "personal" })}
-                className={`p-4 rounded-xl border-2 transition-all ${
+                className={`p-2 rounded-lg border-2 transition-all ${
                   formData.type === "personal"
                     ? "border-amber-600 bg-amber-50"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
               >
-                <Target className="h-6 w-6 mx-auto mb-2 text-amber-600" />
-                <p className="font-medium text-sm text-gray-900">Individual</p>
+                <Target className="h-4 w-4 mx-auto mb-1 text-amber-600" />
+                <p className="font-medium text-xs text-gray-900">Individual</p>
               </button>
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, type: "group" })}
-                className={`p-4 rounded-xl border-2 transition-all ${
+                className={`p-2 rounded-lg border-2 transition-all ${
                   formData.type === "group"
                     ? "border-amber-600 bg-amber-50"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
               >
-                <Users className="h-6 w-6 mx-auto mb-2 text-amber-600" />
-                <p className="font-medium text-sm text-gray-900">Grupal</p>
+                <Users className="h-4 w-4 mx-auto mb-1 text-amber-600" />
+                <p className="font-medium text-xs text-gray-900">Grupal</p>
               </button>
             </div>
           </div>
 
           {/* Privacy & Options */}
-          <div className="space-y-4 bg-amber-50/30 rounded-xl p-4 border border-amber-100">
+          <div className="space-y-2 bg-amber-50/30 rounded-lg p-2 border border-amber-100">
             <div className="flex items-center justify-between group cursor-pointer">
               <div className="flex items-center gap-2">
-                <Bell className="h-4 w-4 text-orange-600 group-hover:text-black transition-colors" />
+                <Bell className="h-3 w-3 text-orange-600 group-hover:text-black transition-colors" />
                 <div>
-                  <Label htmlFor="reminderEnabled" className="text-sm font-medium text-gray-900">
+                  <Label htmlFor="reminderEnabled" className="text-xs font-medium text-gray-900">
                     🔔 Recordarme semanalmente sobre esta meta
                   </Label>
-                  <p className="text-xs text-gray-600">Moni te enviará recordatorios de progreso</p>
+                  <p className="text-[10px] text-gray-600">Moni te enviará recordatorios de progreso</p>
                 </div>
               </div>
               <Switch
@@ -394,18 +394,18 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
               />
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-amber-100 group cursor-pointer">
+            <div className="flex items-center justify-between pt-2 border-t border-amber-100 group cursor-pointer">
               <div className="flex items-center gap-2">
                 {formData.type === "group" ? (
-                  <Users className="h-4 w-4 text-indigo-600 group-hover:text-black transition-colors" />
+                  <Users className="h-3 w-3 text-indigo-600 group-hover:text-black transition-colors" />
                 ) : (
-                  <Lock className="h-4 w-4 text-indigo-600 group-hover:text-black transition-colors" />
+                  <Lock className="h-3 w-3 text-indigo-600 group-hover:text-black transition-colors" />
                 )}
                 <div>
-                  <Label htmlFor="isPublic" className="text-sm font-medium text-gray-900">
+                  <Label htmlFor="isPublic" className="text-xs font-medium text-gray-900">
                     Visible para amigos
                   </Label>
-                  <p className="text-xs text-gray-600">Tus amigos podrán ver tu progreso</p>
+                  <p className="text-[10px] text-gray-600">Tus amigos podrán ver tu progreso</p>
                 </div>
               </div>
               <Switch
@@ -436,7 +436,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
             <Button
               type="submit"
               disabled={loading}
-              className="flex-1 h-12 bg-white border-2 border-amber-600 text-amber-700 hover:bg-amber-50 rounded-xl font-semibold shadow-sm"
+              className="flex-1 h-12 bg-black hover:bg-gray-800 text-white rounded-xl font-semibold shadow-sm"
             >
               {loading ? "Creando..." : "Crear meta"}
             </Button>
