@@ -794,17 +794,17 @@ Ejemplo formato:
       monthsToGoal = Math.ceil(remainingAmount / avgMonthlySavings12M);
       
       // Calcular consistencia del ahorro (menor varianza = mayor consistencia)
-      const savingsVariance = monthlyBalances.map(m => m.balance).reduce((acc, bal, i, arr) => {
+      const savingsVariance = last12Months.map(m => m.balance).reduce((acc, bal, i, arr) => {
         if (i === 0) return 0;
         return acc + Math.pow(bal - arr[i-1], 2);
-      }, 0) / (monthlyBalances.length - 1);
+      }, 0) / (last12Months.length - 1);
       const consistencyScore = Math.max(0, 100 - (savingsVariance / avgMonthlySavings12M));
       
       // Evaluar tendencia (últimos 6 meses vs primeros 6 meses)
-      const recentSavings = monthlyBalances.slice(0, Math.min(6, monthlyBalances.length))
-        .reduce((sum, m) => sum + m.balance, 0) / Math.min(6, monthlyBalances.length);
-      const olderSavings = monthlyBalances.slice(-6)
-        .reduce((sum, m) => sum + m.balance, 0) / Math.min(6, monthlyBalances.length);
+      const recentSavings = last12Months.slice(0, Math.min(6, last12Months.length))
+        .reduce((sum, m) => sum + m.balance, 0) / Math.min(6, last12Months.length);
+      const olderSavings = last12Months.slice(-6)
+        .reduce((sum, m) => sum + m.balance, 0) / Math.min(6, last12Months.length);
       const trendMultiplier = recentSavings >= olderSavings ? 1.1 : 0.9;
       
       // Evaluar si el ritmo es razonable (meta alcanzable en menos de 5 años = 60 meses)
