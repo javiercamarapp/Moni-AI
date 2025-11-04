@@ -1394,7 +1394,10 @@ const Dashboard = () => {
         />
 
         {/* Presupuesto Mensual */}
-        <Card className="p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden">
+        <Card 
+          className="p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden cursor-pointer hover:shadow-md transition-all"
+          onClick={() => navigate('/budgets')}
+        >
           <div className="space-y-1.5 relative z-10">
             <div className="flex items-center justify-between">
               <div>

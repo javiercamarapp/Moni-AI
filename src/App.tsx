@@ -183,7 +183,11 @@ function App() {
               <Subscriptions />
             </PremiumFeature>
           } />
-          <Route path="/daily-expenses" element={<DailyExpenses />} />
+          <Route path="/daily-expenses" element={
+            <PremiumFeature featureName="Gastos Cotidianos">
+              <DailyExpenses />
+            </PremiumFeature>
+          } />
           <Route path="/day-expenses" element={<DayExpenses />} />
           <Route path="/reports" element={
             <PremiumFeature featureName="Reportes con IA">
@@ -198,7 +202,11 @@ function App() {
           } />
           <Route path="/category-expenses" element={<CategoryExpenses />} />
           <Route path="/gestionar-categorias" element={<GestionarCategorias />} />
-          <Route path="/movimientos" element={<Movimientos />} />
+          <Route path="/movimientos" element={
+            <PremiumFeature featureName="Movimientos Recientes">
+              <Movimientos />
+            </PremiumFeature>
+          } />
           <Route path="/proximos-movimientos" element={<ProximosMovimientos />} />
           <Route path="/edit-assets-liabilities" element={<EditNetWorth />} />
           <Route path="/initial-net-worth" element={<InitialNetWorth />} />
