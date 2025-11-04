@@ -193,10 +193,6 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
         origin: { y: 0.6 },
         colors: ['#D4AF37', '#F4A460', '#DEB887']
       });
-
-      toast.success("🎯 Meta creada con éxito", {
-        description: "Moni AI te acompañará paso a paso."
-      });
       
       onSuccess();
       onClose();
