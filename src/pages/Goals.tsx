@@ -318,34 +318,6 @@ const Goals = () => {
                 </div>
               </div>
 
-              {/* AI Insights Carousel - Full Width */}
-              {aiInsights.length > 0 && (
-                <div className="mb-6">
-                  <Carousel 
-                    className="w-full"
-                    opts={{
-                      align: "center",
-                      loop: true,
-                    }}
-                    plugins={[insightsAutoplayPlugin.current]}
-                  >
-                    <CarouselContent>
-                      {aiInsights.map((insight, index) => (
-                        <CarouselItem key={index}>
-                          <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100">
-                            <div className="flex items-center gap-2 justify-center">
-                              <span className="text-base">🤖</span>
-                              <p className="text-sm text-gray-700 font-medium text-center">
-                                {insight}
-                              </p>
-                            </div>
-                          </div>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                  </Carousel>
-                </div>
-              )}
 
               {/* Goals Carousel */}
               <Carousel 
