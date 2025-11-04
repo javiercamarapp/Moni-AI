@@ -1327,9 +1327,9 @@ const Dashboard = () => {
           budgetedExpenses={0} 
           savingsGoals={goals.reduce((sum, g) => sum + (Number(g.required_weekly_saving || 0) * 4), 0)}
           groupGoalsSavings={groupGoals.reduce((sum: number, g: any) => {
-            if (!g.circle_goal_members?.[0] || !g.deadline) return sum;
+            if (!g.deadline || !g.user_progress) return sum;
             
-            const currentAmount = Number(g.circle_goal_members[0].current_amount || 0);
+            const currentAmount = Number(g.user_progress.current_amount || 0);
             const targetAmount = Number(g.target_amount || 0);
             const remaining = targetAmount - currentAmount;
             

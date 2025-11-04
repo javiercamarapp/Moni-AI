@@ -70,21 +70,30 @@ export const useGroupGoals = () => {
 
       const circleIds = memberships.map(m => m.circle_id);
 
-      // Get circle goals with user's progress
+      // Get circle goals
       const { data: goals, error: goalsError } = await supabase
         .from('circle_goals')
-        .select(`
-          *,
-          circle_goal_members!inner(
-            current_amount,
-            completed
-          )
-        `)
-        .in('circle_id', circleIds)
-        .eq('circle_goal_members.user_id', user.id);
+        .select('*')
+        .in('circle_id', circleIds);
 
       if (goalsError) throw goalsError;
-      return goals || [];
+      if (!goals || goals.length === 0) return [];
+
+      // Get user's progress for these goals
+      const goalIds = goals.map(g => g.id);
+      const { data: progress, error: progressError } = await supabase
+        .from('circle_goal_members')
+        .select('*')
+        .in('goal_id', goalIds)
+        .eq('user_id', user.id);
+
+      if (progressError) throw progressError;
+
+      // Combine goals with user's progress
+      return goals.map(goal => ({
+        ...goal,
+        user_progress: progress?.find(p => p.goal_id === goal.id) || null
+      }));
     },
     staleTime: STALE_TIME,
   });
