@@ -1324,7 +1324,7 @@ const Dashboard = () => {
           monthlyIncome={monthlyIncome} 
           fixedExpenses={fixedExpenses} 
           budgetedExpenses={0} 
-          savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12}
+          savingsGoals={goals.reduce((sum, g) => sum + (Number(g.required_weekly_saving || 0) * 4), 0)}
           actualExpenses={monthlyExpenses}
           budgetExcesses={0}
           unbudgetedExpenses={0}

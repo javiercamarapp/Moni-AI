@@ -26,10 +26,8 @@ export default function SafeToSpendWidget({
 }: SafeToSpendProps) {
   
   // Calcular el disponible para gastar
-  // Por ahora: Ingresos - Gastos Totales - Metas de Ahorro
-  // En el futuro: Se restará también los excesos de presupuesto y gastos no presupuestados
-  const totalSpent = actualExpenses;
-  const safeToSpend = monthlyIncome - totalSpent - savingsGoals;
+  // Fórmula: Ingreso mensual - Presupuesto mensual - Ahorro necesario para metas
+  const safeToSpend = monthlyIncome - totalBudget - savingsGoals;
   
   const percentageOfIncome = monthlyIncome > 0 ? (safeToSpend / monthlyIncome * 100) : 0;
   
