@@ -8,6 +8,7 @@ import { SectionLoader } from "@/components/SectionLoader";
 import BottomNav from "@/components/BottomNav";
 import { GroupGoalCard } from "@/components/goals/GroupGoalCard";
 import { CreateGroupGoalModal } from "@/components/goals/CreateGroupGoalModal";
+import { AddGroupContributionModal } from "@/components/goals/AddGroupContributionModal";
 import { formatCurrency } from "@/lib/utils";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
@@ -47,6 +48,10 @@ const GroupGoals = () => {
   const [circles, setCircles] = useState<Circle[]>([]);
   const [loading, setLoading] = useState(true);
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [contributeModal, setContributeModal] = useState<{ open: boolean; goal: GroupGoal | null }>({
+    open: false,
+    goal: null
+  });
   
   const autoplayPlugin = useRef(
     Autoplay({ delay: 4000, stopOnInteraction: true })
@@ -265,7 +270,7 @@ const GroupGoals = () => {
                       <GroupGoalCard
                         goal={goal}
                         onViewDetails={() => navigate(`/group-goals/${goal.id}`)}
-                        onAddContribution={() => navigate(`/group-goals/${goal.id}`)}
+                        onAddContribution={() => setContributeModal({ open: true, goal })}
                       />
                     </CarouselItem>
                   ))}
@@ -296,6 +301,16 @@ const GroupGoals = () => {
         onSuccess={fetchData}
         circles={circles}
       />
+
+      {/* Contribute Modal */}
+      {contributeModal.goal && (
+        <AddGroupContributionModal
+          isOpen={contributeModal.open}
+          onClose={() => setContributeModal({ open: false, goal: null })}
+          onSuccess={fetchData}
+          goal={contributeModal.goal}
+        />
+      )}
     </>
   );
 };
