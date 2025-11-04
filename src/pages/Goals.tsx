@@ -59,7 +59,30 @@ const Goals = () => {
   useEffect(() => {
     fetchGoals();
     fetchGroupGoals();
+    
+    // Trigger auto-adjustment on mount
+    triggerAutoAdjustment();
   }, []);
+
+  const triggerAutoAdjustment = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Call the auto-adjust edge function
+      await supabase.functions.invoke('auto-adjust-goals', {
+        body: { userId: user.id }
+      });
+      
+      // Refresh goals after adjustment
+      setTimeout(() => {
+        fetchGoals();
+        fetchGroupGoals();
+      }, 2000);
+    } catch (error) {
+      console.error('Error triggering auto-adjustment:', error);
+    }
+  };
 
   const fetchGoals = async () => {
     try {
@@ -262,36 +285,14 @@ const Goals = () => {
                 </div>
               </div>
 
-              {/* AI Recommendations Section - Minimalist */}
-              <div className="bg-gradient-to-br from-purple-50 to-cyan-50 backdrop-blur-sm rounded-xl shadow-sm p-4 border border-purple-200/50 mb-6">
-                <div className="flex items-start gap-3">
-                  <div className="bg-gradient-to-br from-purple-500 to-cyan-500 rounded-full p-2">
-                    <Sparkles className="h-4 w-4 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-1 flex items-center gap-1.5">
-                      🤖 Moni AI — Ajuste Automático Activo
-                    </h3>
-                    <p className="text-xs text-gray-600 mb-2 leading-relaxed">
-                      {goals.length > 0 && goals[0].required_weekly_saving
-                        ? `Tu plan se ajusta automáticamente cada semana. Si ahorras $${Math.round(goals[0].required_weekly_saving * 1.1).toLocaleString()}/semana, podrás lograr tu meta 2 semanas antes.`
-                        : "Crea una meta y Moni AI la optimizará automáticamente según tu progreso."}
-                    </p>
-                    <div className="flex items-center gap-2 text-[10px] text-gray-500 mb-3">
-                      <div className="flex items-center gap-1">
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                        <span>Ajuste semanal automático</span>
-                      </div>
-                      <span>•</span>
-                      <span>Próxima revisión: domingo</span>
-                    </div>
-                    {goals.length > 0 && goals[0].required_weekly_saving && (
-                      <div className="text-[10px] text-purple-600 font-medium bg-white/60 rounded-lg px-2 py-1 inline-block">
-                        ✅ Sistema inteligente activado
-                      </div>
-                    )}
-                  </div>
-                </div>
+              {/* AI Recommendations Section - Compact */}
+              <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-1.5 text-center shadow-sm mb-6">
+                <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">🤖 Moni AI</p>
+                <p className="text-[11px] font-bold text-white">
+                  {goals.length > 0 && goals[0].required_weekly_saving
+                    ? `Ahorra $${Math.round(goals[0].required_weekly_saving * 1.1).toLocaleString()}/sem para completar 2 sem antes`
+                    : "Optimización automática activa"}
+                </p>
               </div>
 
               {/* Goals Carousel */}
