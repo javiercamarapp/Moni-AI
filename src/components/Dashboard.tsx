@@ -28,6 +28,8 @@ import FutureCalendarWidget from '@/components/analysis/FutureCalendarWidget';
 import WeeklyIncomeExpenseWidget from '@/components/analysis/WeeklyIncomeExpenseWidget';
 import BottomNav from '@/components/BottomNav';
 import { CreateGoalModal } from '@/components/goals/CreateGoalModal';
+import { CreateGroupGoalModal } from '@/components/goals/CreateGroupGoalModal';
+import confetti from 'canvas-confetti';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -65,6 +67,8 @@ const Dashboard = () => {
   const [futureEvents, setFutureEvents] = useState<any[]>([]);
   const [last7DaysData, setLast7DaysData] = useState<any[]>([]);
   const [isCreateGoalModalOpen, setIsCreateGoalModalOpen] = useState(false);
+  const [isCreateGroupGoalModalOpen, setIsCreateGroupGoalModalOpen] = useState(false);
+  const [userCircles, setUserCircles] = useState<Array<{ id: string; name: string }>>([]);
   const autoplayPlugin = useRef(
     Autoplay({ delay: 4000, stopOnInteraction: true })
   );
@@ -76,13 +80,12 @@ const Dashboard = () => {
     }
   }, [dashboardData.recentTransactions]);
 
-  // Calcular últimos 7 días con ingresos y gastos
+  // Calcular últimos 7 días con ingresos y gastos - MOVIDO A useEffect CON DEPENDENCIAS
   useEffect(() => {
+    if (!user?.id) return;
+    
     const fetchLast7Days = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
         // Obtener transacciones de los últimos 7 días
         const todayDate = new Date();
         const sevenDaysAgo = new Date(todayDate);
@@ -136,7 +139,7 @@ const Dashboard = () => {
     };
 
     fetchLast7Days();
-  }, []);
+  }, [user?.id]); // Solo ejecutar cuando cambie el usuario
   
   const [loading, setLoading] = useState(false);
   const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
@@ -246,6 +249,22 @@ const Dashboard = () => {
         }
         
         setUser(user);
+
+        // Fetch user's circles for group goal modal
+        const { data: circleMembers } = await supabase
+          .from('circle_members')
+          .select('circle_id, circles:circle_id(id, name)')
+          .eq('user_id', user.id);
+
+        if (circleMembers) {
+          const circles = circleMembers
+            .map(cm => ({
+              id: (cm.circles as any)?.id || '',
+              name: (cm.circles as any)?.name || 'Círculo'
+            }))
+            .filter(c => c.id);
+          setUserCircles(circles);
+        }
         
         // Get profile data including xp, level, and quiz completion
         const { data: profile } = await supabase
@@ -319,30 +338,27 @@ const Dashboard = () => {
     }
   };
 
-  // Load budget data from category_budgets
+  // Load budget data from category_budgets - OPTIMIZADO
   useEffect(() => {
+    if (!user?.id) return;
+    
     const loadBudgetData = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        console.log('🔍 Cargando presupuestos para usuario:', user.id);
-
         // Get total monthly budget from category_budgets
         const { data: budgetData, error: budgetError } = await supabase
           .from('category_budgets')
           .select('monthly_budget')
           .eq('user_id', user.id);
 
-        console.log('📊 Presupuestos encontrados:', budgetData);
-        if (budgetError) console.error('❌ Error al cargar presupuestos:', budgetError);
+        if (budgetError) {
+          console.error('❌ Error al cargar presupuestos:', budgetError);
+          return;
+        }
 
         if (budgetData && budgetData.length > 0) {
           const total = budgetData.reduce((sum, b) => sum + Number(b.monthly_budget), 0);
-          console.log('💰 Total presupuesto:', total);
           setTotalBudget(total);
         } else {
-          console.log('⚠️ No se encontraron presupuestos configurados');
           setTotalBudget(0);
         }
 
@@ -359,12 +375,13 @@ const Dashboard = () => {
           .gte('transaction_date', firstDay.toISOString().split('T')[0])
           .lte('transaction_date', lastDay.toISOString().split('T')[0]);
 
-        console.log('💸 Gastos del mes encontrados:', expenseData?.length || 0);
-        if (expenseError) console.error('❌ Error al cargar gastos:', expenseError);
+        if (expenseError) {
+          console.error('❌ Error al cargar gastos:', expenseError);
+          return;
+        }
 
         if (expenseData) {
           const total = expenseData.reduce((sum, t) => sum + Number(t.amount), 0);
-          console.log('📈 Total gastos del mes:', total);
           setCurrentMonthExpenses(total);
         }
       } catch (error) {
@@ -373,7 +390,7 @@ const Dashboard = () => {
     };
 
     loadBudgetData();
-  }, []);
+  }, [user?.id]); // Solo ejecutar cuando cambie el usuario
 
   // Load unread notifications count
   useEffect(() => {
@@ -1806,7 +1823,7 @@ const Dashboard = () => {
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">Tus Metas Grupales</h3>
                   <Button 
                     size="sm" 
-                    onClick={() => navigate('/group-goals')} 
+                    onClick={() => setIsCreateGroupGoalModalOpen(true)} 
                     className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border-0 text-gray-900 hover:bg-white hover:shadow-md text-xs sm:text-sm transition-all"
                   >
                     <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
@@ -2003,6 +2020,22 @@ const Dashboard = () => {
         onClose={() => setIsCreateGoalModalOpen(false)}
         onSuccess={() => {
           setIsCreateGoalModalOpen(false);
+          navigate('/goals');
+        }}
+      />
+
+      <CreateGroupGoalModal
+        isOpen={isCreateGroupGoalModalOpen}
+        onClose={() => setIsCreateGroupGoalModalOpen(false)}
+        circles={userCircles}
+        onSuccess={() => {
+          // Trigger confetti
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+          setIsCreateGroupGoalModalOpen(false);
           navigate('/goals');
         }}
       />

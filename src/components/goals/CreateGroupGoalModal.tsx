@@ -191,7 +191,6 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
 
       toast.success("🎯 ¡Meta grupal creada con éxito! Moni AI activó el seguimiento inteligente.");
       onSuccess();
-      onClose();
       
       setFormData({
         circleId: "",
