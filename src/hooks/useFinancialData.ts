@@ -52,6 +52,44 @@ export const useGoals = () => {
   });
 };
 
+export const useGroupGoals = () => {
+  return useQuery({
+    queryKey: ['groupGoals'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No user');
+
+      // Get user's circle memberships
+      const { data: memberships, error: memberError } = await supabase
+        .from('circle_members')
+        .select('circle_id')
+        .eq('user_id', user.id);
+
+      if (memberError) throw memberError;
+      if (!memberships || memberships.length === 0) return [];
+
+      const circleIds = memberships.map(m => m.circle_id);
+
+      // Get circle goals with user's progress
+      const { data: goals, error: goalsError } = await supabase
+        .from('circle_goals')
+        .select(`
+          *,
+          circle_goal_members!inner(
+            current_amount,
+            completed
+          )
+        `)
+        .in('circle_id', circleIds)
+        .eq('circle_goal_members.user_id', user.id);
+
+      if (goalsError) throw goalsError;
+      return goals || [];
+    },
+    staleTime: STALE_TIME,
+  });
+};
+
 export const useScoreMoni = () => {
   return useQuery({
     queryKey: ['scoreMoni'],

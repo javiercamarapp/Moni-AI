@@ -48,6 +48,7 @@ const Dashboard = () => {
   // Destructure data directly from the hook
   const {
     goals,
+    groupGoals,
     scoreMoni,
     netWorth,
     monthlyIncome,
@@ -1325,11 +1326,23 @@ const Dashboard = () => {
           fixedExpenses={fixedExpenses} 
           budgetedExpenses={0} 
           savingsGoals={goals.reduce((sum, g) => sum + (Number(g.required_weekly_saving || 0) * 4), 0)}
+          groupGoalsSavings={groupGoals.reduce((sum: number, g: any) => {
+            if (!g.required_weekly_saving || !g.circle_goal_members?.[0]) return sum;
+            const currentAmount = Number(g.circle_goal_members[0].current_amount || 0);
+            const targetAmount = Number(g.target_amount || 0);
+            const remaining = targetAmount - currentAmount;
+            if (remaining <= 0) return sum;
+            
+            // Calculate monthly savings needed
+            const weeklySaving = Number(g.required_weekly_saving || 0);
+            return sum + (weeklySaving * 4);
+          }, 0)}
           actualExpenses={monthlyExpenses}
           budgetExcesses={0}
           unbudgetedExpenses={0}
           totalBudget={totalBudget}
           goalsCount={goals.length}
+          groupGoalsCount={groupGoals.length}
         />
 
         {/* Presupuesto Mensual */}

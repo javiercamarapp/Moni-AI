@@ -1,6 +1,6 @@
 import { useQueries } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useMonthlyTotals, useGoals, useScoreMoni, useNetWorth, useBankConnections, useTransactions } from './useFinancialData';
+import { useMonthlyTotals, useGoals, useGroupGoals, useScoreMoni, useNetWorth, useBankConnections, useTransactions } from './useFinancialData';
 
 // Cache time: 5 minutes
 const STALE_TIME = 5 * 60 * 1000;
@@ -8,6 +8,7 @@ const STALE_TIME = 5 * 60 * 1000;
 export const useDashboardData = (monthOffset: number = 0) => {
   // Use los hooks existentes optimizados
   const goals = useGoals();
+  const groupGoals = useGroupGoals();
   const scoreMoni = useScoreMoni();
   const netWorth = useNetWorth();
   const bankConnections = useBankConnections();
@@ -26,6 +27,9 @@ export const useDashboardData = (monthOffset: number = 0) => {
     goals: goals.data || [],
     isLoadingGoals: goals.isLoading,
     
+    groupGoals: groupGoals.data || [],
+    isLoadingGroupGoals: groupGoals.isLoading,
+    
     scoreMoni: scoreMoni.data || 40,
     isLoadingScore: scoreMoni.isLoading,
     
@@ -43,7 +47,7 @@ export const useDashboardData = (monthOffset: number = 0) => {
     recentTransactions: monthOffset === 0 ? (recentTransactions.data || []).slice(0, 20) : [],
     isLoadingTransactions: recentTransactions.isLoading,
     
-    isLoading: goals.isLoading || scoreMoni.isLoading || netWorth.isLoading || 
+    isLoading: goals.isLoading || groupGoals.isLoading || scoreMoni.isLoading || netWorth.isLoading || 
                bankConnections.isLoading || monthlyTotals.isLoading || recentTransactions.isLoading,
   };
 };

@@ -6,11 +6,13 @@ interface SafeToSpendProps {
   fixedExpenses: number;
   budgetedExpenses: number;
   savingsGoals: number;
+  groupGoalsSavings: number;
   actualExpenses: number;
   budgetExcesses: number;
   unbudgetedExpenses: number;
   totalBudget?: number;
   goalsCount?: number;
+  groupGoalsCount?: number;
 }
 
 export default function SafeToSpendWidget({
@@ -18,16 +20,18 @@ export default function SafeToSpendWidget({
   fixedExpenses,
   budgetedExpenses,
   savingsGoals,
+  groupGoalsSavings,
   actualExpenses,
   budgetExcesses,
   unbudgetedExpenses,
   totalBudget = 0,
-  goalsCount = 0
+  goalsCount = 0,
+  groupGoalsCount = 0
 }: SafeToSpendProps) {
   
   // Calcular el disponible para gastar
-  // Fórmula: Ingreso mensual - Presupuesto mensual - Ahorro necesario para metas
-  const safeToSpend = monthlyIncome - totalBudget - savingsGoals;
+  // Fórmula: Ingreso mensual - Presupuesto mensual - Ahorro necesario para metas - Ahorro metas grupales
+  const safeToSpend = monthlyIncome - totalBudget - savingsGoals - groupGoalsSavings;
   
   const percentageOfIncome = monthlyIncome > 0 ? (safeToSpend / monthlyIncome * 100) : 0;
   
@@ -65,6 +69,10 @@ export default function SafeToSpendWidget({
         <div className="flex justify-between">
           <span>Ahorro para metas ({goalsCount})</span>
           <span className="text-foreground font-medium">-${savingsGoals.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Ahorro metas grupales ({groupGoalsCount})</span>
+          <span className="text-foreground font-medium">-${groupGoalsSavings.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
         </div>
         <div className="border-t border-blue-100 pt-2 flex justify-between font-semibold">
           <span className="text-foreground">Disponible</span>
