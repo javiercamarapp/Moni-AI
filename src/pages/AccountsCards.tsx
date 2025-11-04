@@ -141,23 +141,16 @@ export default function AccountsCards() {
             >
               <ArrowLeft className="h-4 w-4 text-gray-700" />
             </Button>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Mis Cuentas y Tarjetas</h1>
+              <p className="text-sm text-gray-500">Gestiona tus medios de pago</p>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
-        {/* Greeting */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-1"
-        >
-          <h1 className="text-2xl font-bold text-gray-900">
-            {getGreeting()} {firstName}! 👋
-          </h1>
-          <p className="text-sm text-gray-500 capitalize">{getFormattedDate()}</p>
-        </motion.div>
 
         {/* Cards Stack */}
         <div className="relative h-[220px] mb-8">
