@@ -6,6 +6,7 @@ import { Crown, Check, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import moniLogo from "@/assets/moni-ai-logo.png";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Subscribe() {
   const navigate = useNavigate();
@@ -32,15 +33,29 @@ export default function Subscribe() {
   const handleSubscribe = async () => {
     setLoading(true);
     try {
-      // Aquí se integrará Stripe
-      toast.info("La integración de pagos se configurará próximamente");
-      // Simular proceso de pago por ahora
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("Por favor inicia sesión para suscribirte");
+        navigate("/auth");
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
     } catch (error) {
       console.error("Error al procesar suscripción:", error);
       toast.error("Error al procesar el pago");
+    } finally {
       setLoading(false);
     }
   };
