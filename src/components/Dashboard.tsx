@@ -27,6 +27,7 @@ import AICoachInsightsWidget from '@/components/analysis/AICoachInsightsWidget';
 import FutureCalendarWidget from '@/components/analysis/FutureCalendarWidget';
 import WeeklyIncomeExpenseWidget from '@/components/analysis/WeeklyIncomeExpenseWidget';
 import BottomNav from '@/components/BottomNav';
+import { CreateGoalModal } from '@/components/goals/CreateGoalModal';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -62,6 +63,7 @@ const Dashboard = () => {
   const [currentMonthExpenses, setCurrentMonthExpenses] = useState(0);
   const [futureEvents, setFutureEvents] = useState<any[]>([]);
   const [last7DaysData, setLast7DaysData] = useState<any[]>([]);
+  const [isCreateGoalModalOpen, setIsCreateGoalModalOpen] = useState(false);
   
   // Goal milestone celebration state
   const [goalMilestone, setGoalMilestone] = useState<{
@@ -1341,7 +1343,10 @@ const Dashboard = () => {
           </button>
 
           <button 
-            onClick={() => navigate('/goals')}
+            onClick={() => {
+              const goalsSection = document.querySelector('[data-section="goals"]');
+              goalsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
             className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer animate-fade-in border-0" 
             style={{ animationDelay: '300ms' }}
           >
@@ -1720,11 +1725,15 @@ const Dashboard = () => {
         <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
           
           {/* Main Goals Section */}
-          <div className="lg:col-span-2 space-y-6 w-full min-w-0">
+          <div className="lg:col-span-2 space-y-6 w-full min-w-0" data-section="goals">
             <div>
               <div className="flex flex-row justify-between items-center mb-4">
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">Tus Metas</h3>
-                <Button size="sm" onClick={() => navigate('/new-goal')} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border-0 text-gray-900 hover:bg-white hover:shadow-md text-xs sm:text-sm transition-all">
+                <Button 
+                  size="sm" 
+                  onClick={() => setIsCreateGoalModalOpen(true)} 
+                  className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border-0 text-gray-900 hover:bg-white hover:shadow-md text-xs sm:text-sm transition-all"
+                >
                   <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   Nueva Meta
                 </Button>
@@ -1911,6 +1920,16 @@ const Dashboard = () => {
       </div>
 
       <BottomNav />
+      
+      <CreateGoalModal
+        isOpen={isCreateGoalModalOpen}
+        onClose={() => setIsCreateGoalModalOpen(false)}
+        onSuccess={() => {
+          setIsCreateGoalModalOpen(false);
+          // Refresh dashboard data
+          window.location.reload();
+        }}
+      />
     </div>
     </>
   );
