@@ -220,8 +220,8 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Goal Title */}
           <div className="space-y-2">
-            <Label htmlFor="title" className="flex items-center gap-2 text-gray-900">
-              <Target className="h-4 w-4 text-amber-600" />
+            <Label htmlFor="title" className="flex items-center gap-2 text-gray-900 group cursor-pointer">
+              <Target className="h-4 w-4 text-amber-600 group-hover:text-black transition-colors" />
               Nombre de la meta
             </Label>
             <Input
@@ -236,8 +236,8 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
 
           {/* Category - Visual Grid */}
           <div className="space-y-3">
-            <Label className="text-gray-900 flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-amber-600" />
+            <Label className="text-gray-900 flex items-center gap-2 group cursor-pointer">
+              <Sparkles className="h-4 w-4 text-amber-600 group-hover:text-black transition-colors" />
               Categoría
             </Label>
             <div className="grid grid-cols-3 gap-3">
@@ -279,8 +279,8 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
           {/* Target Amount & Deadline */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="target" className="flex items-center gap-2 text-gray-900">
-                <DollarSign className="h-4 w-4 text-amber-600" />
+              <Label htmlFor="target" className="flex items-center gap-2 text-gray-900 group cursor-pointer">
+                <DollarSign className="h-4 w-4 text-amber-600 group-hover:text-black transition-colors" />
                 Monto objetivo
               </Label>
               <Input
@@ -298,8 +298,8 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="deadline" className="flex items-center gap-2 text-gray-900">
-                <Calendar className="h-4 w-4 text-amber-600" />
+              <Label htmlFor="deadline" className="flex items-center gap-2 text-gray-900 group cursor-pointer">
+                <Calendar className="h-4 w-4 text-amber-600 group-hover:text-black transition-colors" />
                 Fecha límite
               </Label>
               <Input
@@ -377,9 +377,9 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
 
           {/* Privacy & Options */}
           <div className="space-y-4 bg-amber-50/30 rounded-xl p-4 border border-amber-100">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between group cursor-pointer">
               <div className="flex items-center gap-2">
-                <Bell className="h-4 w-4 text-amber-600" />
+                <Bell className="h-4 w-4 text-amber-600 group-hover:text-black transition-colors" />
                 <div>
                   <Label htmlFor="reminderEnabled" className="text-sm font-medium text-gray-900">
                     🔔 Recordarme semanalmente sobre esta meta
@@ -394,12 +394,12 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
               />
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-amber-100">
+            <div className="flex items-center justify-between pt-4 border-t border-amber-100 group cursor-pointer">
               <div className="flex items-center gap-2">
                 {formData.type === "group" ? (
-                  <Users className="h-4 w-4 text-amber-600" />
+                  <Users className="h-4 w-4 text-amber-600 group-hover:text-black transition-colors" />
                 ) : (
-                  <Lock className="h-4 w-4 text-amber-600" />
+                  <Lock className="h-4 w-4 text-amber-600 group-hover:text-black transition-colors" />
                 )}
                 <div>
                   <Label htmlFor="isPublic" className="text-sm font-medium text-gray-900">
