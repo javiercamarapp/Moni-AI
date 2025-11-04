@@ -412,7 +412,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
               type="button"
               onClick={onClose}
               variant="outline"
-              className="flex-1 h-12 rounded-2xl bg-gray-50 border-0 text-gray-600 font-medium shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+              className="flex-1 h-12 rounded-2xl bg-gray-50 hover:bg-gray-50 border-0 text-gray-600 font-medium shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
               disabled={loading}
             >
               Cancelar
@@ -420,7 +420,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
             <Button
               type="submit"
               disabled={loading}
-              className="flex-1 h-12 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 border-0 text-gray-900 font-semibold"
+              className="flex-1 h-12 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-white/80 transition-all duration-300 border-0 text-gray-900 font-semibold"
             >
               {loading ? "Creando..." : "Crear meta grupal"}
             </Button>
