@@ -25,10 +25,6 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
-    logStep("Stripe key verified");
-
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header provided");
     logStep("Authorization header found");
@@ -41,6 +37,43 @@ serve(async (req) => {
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
+
+    // First, check for local subscription in database
+    const { data: localSub, error: localSubError } = await supabaseClient
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .single();
+
+    if (!localSubError && localSub) {
+      // Check if subscription is still valid
+      const expiresAt = new Date(localSub.expires_at);
+      const now = new Date();
+      
+      if (expiresAt > now) {
+        logStep("Found active local subscription", { 
+          plan: localSub.plan, 
+          expiresAt: localSub.expires_at 
+        });
+        
+        return new Response(JSON.stringify({
+          subscribed: true,
+          product_id: localSub.plan,
+          subscription_end: localSub.expires_at,
+          has_used_trial: false
+        }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+    }
+
+    logStep("No local subscription found, checking Stripe");
+
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
+    logStep("Stripe key verified");
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
