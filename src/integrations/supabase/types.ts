@@ -65,6 +65,63 @@ export type Database = {
         }
         Relationships: []
       }
+      app_invitations: {
+        Row: {
+          created_at: string
+          current_uses: number | null
+          expires_at: string
+          id: string
+          invite_code: string
+          inviter_user_id: string
+          max_uses: number | null
+        }
+        Insert: {
+          created_at?: string
+          current_uses?: number | null
+          expires_at?: string
+          id?: string
+          invite_code: string
+          inviter_user_id: string
+          max_uses?: number | null
+        }
+        Update: {
+          created_at?: string
+          current_uses?: number | null
+          expires_at?: string
+          id?: string
+          invite_code?: string
+          inviter_user_id?: string
+          max_uses?: number | null
+        }
+        Relationships: []
+      }
+      app_referrals: {
+        Row: {
+          created_at: string
+          id: string
+          invite_code: string
+          invited_user_id: string
+          inviter_user_id: string
+          xp_awarded: boolean | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invite_code: string
+          invited_user_id: string
+          inviter_user_id: string
+          xp_awarded?: boolean | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invite_code?: string
+          invited_user_id?: string
+          inviter_user_id?: string
+          xp_awarded?: boolean | null
+        }
+        Relationships: []
+      }
       assets: {
         Row: {
           category: string
@@ -1524,6 +1581,10 @@ export type Database = {
           p_user_id: string
         }
         Returns: string
+      }
+      process_app_referral: {
+        Args: { p_invite_code: string; p_invited_user_id: string }
+        Returns: undefined
       }
       update_circle_goal: {
         Args: { p_amount: number; p_circle_id: string }

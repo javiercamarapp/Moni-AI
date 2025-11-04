@@ -738,17 +738,40 @@ const Social = () => {
     }
   };
 
-  const handleShareInvite = () => {
-    const inviteUrl = window.location.origin + '/auth';
-    if (navigator.share) {
-      navigator.share({
-        title: 'Únete a Moni AI',
-        text: '¡Únete a Moni AI y mejora tus finanzas! 🚀',
-        url: inviteUrl
-      });
-    } else {
-      navigator.clipboard.writeText(inviteUrl);
-      toast.success('Enlace copiado al portapapeles');
+  const handleShareInvite = async () => {
+    try {
+      // Generate unique invite code
+      const inviteCode = `${user?.id?.substring(0, 8)}-${Date.now().toString(36)}`;
+      
+      // Save invitation to database
+      const { error: insertError } = await supabase
+        .from('app_invitations')
+        .insert({
+          inviter_user_id: user?.id,
+          invite_code: inviteCode
+        });
+
+      if (insertError) throw insertError;
+
+      const inviteUrl = `${window.location.origin}/auth?ref=${inviteCode}`;
+      
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'Únete a Moni AI',
+            text: '¡Únete a Moni AI y mejora tus finanzas conmigo! Usa mi código de invitación.',
+            url: inviteUrl,
+          });
+        } catch (error) {
+          console.log('Error sharing:', error);
+        }
+      } else {
+        await navigator.clipboard.writeText(inviteUrl);
+        toast.success('Link de invitación copiado');
+      }
+    } catch (error) {
+      console.error('Error creating invitation:', error);
+      toast.error('Error al crear invitación');
     }
   };
 
@@ -1228,9 +1251,9 @@ const Social = () => {
               <Gift className="h-4 w-4 text-primary" />
               Invita y gana XP
             </h2>
-            <p className="text-gray-600 text-xs mb-3">
-              Invita a tus amigos a Moni AI y gana +50 XP cuando completen su primer reto.
-            </p>
+          <p className="text-gray-600 text-xs mb-3">
+            Invita a tus amigos a descargar Moni AI y gana +50 XP cuando se registren.
+          </p>
             <Button
               onClick={handleShareInvite}
               className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9 flex items-center justify-center gap-2"

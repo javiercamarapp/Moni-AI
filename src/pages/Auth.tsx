@@ -294,10 +294,42 @@ const Auth = () => {
             });
           }
         } else if (data.user) {
-          toast({
-            title: "¡Cuenta creada!",
-            description: "Tu cuenta ha sido creada exitosamente. Redirigiendo...",
-          });
+          // Check if there's a referral code in the URL
+          const urlParams = new URLSearchParams(window.location.search);
+          const refCode = urlParams.get('ref');
+          
+          if (refCode) {
+            // Process the referral after successful signup
+            try {
+              const { error: refError } = await supabase.rpc('process_app_referral', {
+                p_invite_code: refCode,
+                p_invited_user_id: data.user.id
+              });
+              
+              if (!refError) {
+                toast({
+                  title: "¡Cuenta creada!",
+                  description: "Tu cuenta ha sido creada exitosamente y se otorgó el bono de invitación. Redirigiendo...",
+                });
+              } else {
+                toast({
+                  title: "¡Cuenta creada!",
+                  description: "Tu cuenta ha sido creada exitosamente. Redirigiendo...",
+                });
+              }
+            } catch (error) {
+              console.error('Error processing referral:', error);
+              toast({
+                title: "¡Cuenta creada!",
+                description: "Tu cuenta ha sido creada exitosamente. Redirigiendo...",
+              });
+            }
+          } else {
+            toast({
+              title: "¡Cuenta creada!",
+              description: "Tu cuenta ha sido creada exitosamente. Redirigiendo...",
+            });
+          }
         }
       }
     } catch (error) {
