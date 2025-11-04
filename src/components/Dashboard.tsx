@@ -1343,10 +1343,7 @@ const Dashboard = () => {
           </button>
 
           <button 
-            onClick={() => {
-              const goalsSection = document.querySelector('[data-section="goals"]');
-              goalsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
+            onClick={() => navigate('/goals')}
             className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer animate-fade-in border-0" 
             style={{ animationDelay: '300ms' }}
           >
@@ -1926,6 +1923,7 @@ const Dashboard = () => {
         onClose={() => setIsCreateGoalModalOpen(false)}
         onSuccess={() => {
           setIsCreateGoalModalOpen(false);
+          navigate('/goals');
         }}
       />
     </div>
