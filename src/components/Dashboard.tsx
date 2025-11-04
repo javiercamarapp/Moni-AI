@@ -1173,7 +1173,12 @@ const Dashboard = () => {
       </div>
 
       {/* Header con saludo */}
-      <div className="p-4 pt-2 flex items-start justify-between gap-3">
+      <motion.div 
+        className="p-4 pt-2 flex items-start justify-between gap-3"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
         <div>
           <h1 className="text-base sm:text-lg font-semibold text-gray-900 leading-tight tracking-tight">
             ¡Hola, {user?.user_metadata?.full_name || user?.email}! 👋
@@ -1196,7 +1201,7 @@ const Dashboard = () => {
             </div>
           </div>
         </Card>
-      </div>
+      </motion.div>
 
       {/* Score Moni - Compacto */}
       {scoreMoni !== null && <div className="mx-4 mb-4">
@@ -1715,14 +1720,14 @@ const Dashboard = () => {
             <div>
               <div className="flex flex-row justify-between items-center mb-4">
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">Tus Metas</h3>
-                <Button 
-                  size="sm" 
-                  onClick={() => setIsCreateGoalModalOpen(true)} 
-                  className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border-0 text-gray-900 hover:bg-white hover:shadow-md text-xs sm:text-sm transition-all"
-                >
-                  <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                  Nueva Meta
-                </Button>
+                  <Button 
+                    size="sm" 
+                    onClick={() => setIsCreateGoalModalOpen(true)} 
+                    className="bg-gradient-to-r from-black to-neutral-800 hover:from-neutral-900 hover:to-black text-white rounded-xl shadow-sm hover:shadow-lg hover:scale-[1.03] text-xs sm:text-sm transition-all duration-200 font-semibold border-0"
+                  >
+                    <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                    Nueva Meta
+                  </Button>
               </div>
 
               {goals.length === 0 ? (
@@ -1824,7 +1829,7 @@ const Dashboard = () => {
                   <Button 
                     size="sm" 
                     onClick={() => setIsCreateGroupGoalModalOpen(true)} 
-                    className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border-0 text-gray-900 hover:bg-white hover:shadow-md text-xs sm:text-sm transition-all"
+                    className="bg-gradient-to-r from-black to-neutral-800 hover:from-neutral-900 hover:to-black text-white rounded-xl shadow-sm hover:shadow-lg hover:scale-[1.03] text-xs sm:text-sm transition-all duration-200 font-semibold border-0"
                   >
                     <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                     Nueva Meta Grupal
@@ -2029,11 +2034,15 @@ const Dashboard = () => {
         onClose={() => setIsCreateGroupGoalModalOpen(false)}
         circles={userCircles}
         onSuccess={() => {
-          // Trigger confetti
+          // Confeti personalizado con colores elegantes
           confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 }
+            particleCount: 120,
+            spread: 80,
+            origin: { y: 0.6 },
+            colors: ['#6ee7b7', '#ffffff', '#fbbf24', '#d1d5db'], // verde menta, blanco, dorado, gris claro
+            ticks: 200,
+            gravity: 0.8,
+            scalar: 1.2
           });
           setIsCreateGroupGoalModalOpen(false);
           navigate('/goals');

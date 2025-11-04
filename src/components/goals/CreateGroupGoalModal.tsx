@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { X, Users, Target, Calendar, DollarSign, Bell, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -211,8 +212,24 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
+      {/* Backdrop con blur y zoom out */}
+      <motion.div 
+        className="absolute inset-0 bg-black/60 backdrop-blur-md"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        onClick={onClose}
+      />
+      
+      <motion.div 
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-10"
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+      >
         {/* Header */}
         <div className="sticky top-0 bg-white p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
@@ -430,7 +447,7 @@ export const CreateGroupGoalModal = ({ isOpen, onClose, onSuccess, circles }: Cr
             "{inspirationalPhrase}"
           </p>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 };
