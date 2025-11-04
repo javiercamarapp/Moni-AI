@@ -21,35 +21,10 @@ interface AddFundsModalProps {
 
 export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModalProps) => {
   const [amount, setAmount] = useState("");
-  const [displayAmount, setDisplayAmount] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   if (!isOpen) return null;
-
-  const handleAmountChange = (value: string) => {
-    // Remove all non-numeric characters except decimal point
-    const numericValue = value.replace(/[^0-9.]/g, '');
-    
-    // Prevent multiple decimal points
-    const parts = numericValue.split('.');
-    const cleanValue = parts.length > 2 
-      ? parts[0] + '.' + parts.slice(1).join('')
-      : numericValue;
-    
-    setAmount(cleanValue);
-    
-    // Format for display
-    if (cleanValue) {
-      const num = parseFloat(cleanValue);
-      if (!isNaN(num)) {
-        setDisplayAmount(num.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-      } else {
-        setDisplayAmount('');
-      }
-    } else {
-      setDisplayAmount('');
-    }
-  };
 
   const remaining = goal.target - goal.current;
   const suggestedAmounts = [
@@ -184,17 +159,13 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
             <Input
               id="amount"
               type="text"
-              value={displayAmount}
-              onChange={(e) => handleAmountChange(e.target.value)}
-              onBlur={() => {
-                if (amount) {
-                  const num = parseFloat(amount);
-                  if (!isNaN(num)) {
-                    setDisplayAmount(num.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-                  }
-                }
+              value={isFocused ? amount : (amount ? parseFloat(amount).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '')}
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9.]/g, '');
+                setAmount(value);
               }}
-              onFocus={() => setDisplayAmount(amount)}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
               placeholder="1,000.00"
               required
               className="h-14 rounded-xl text-lg bg-gray-50 border-gray-200 font-semibold text-gray-900"
