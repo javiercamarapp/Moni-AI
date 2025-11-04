@@ -70,11 +70,13 @@ const Dashboard = () => {
   const [isCreateGoalModalOpen, setIsCreateGoalModalOpen] = useState(false);
   const [isCreateGroupGoalModalOpen, setIsCreateGroupGoalModalOpen] = useState(false);
   const [userCircles, setUserCircles] = useState<Array<{ id: string; name: string }>>([]);
-  const autoplayPlugin = useRef(
-    Autoplay({ delay: 4000, stopOnInteraction: true })
+  
+  // Crear nuevas instancias de autoplay para cada carrusel
+  const autoplayPersonalGoals = useRef(
+    Autoplay({ delay: 4000, stopOnInteraction: false })
   );
-  const autoplayPluginGroup = useRef(
-    Autoplay({ delay: 4000, stopOnInteraction: true })
+  const autoplayGroupGoals = useRef(
+    Autoplay({ delay: 4000, stopOnInteraction: false })
   );
   
   // Sync recentTransactions when dashboardData updates - use ref to avoid infinite loop
@@ -1741,9 +1743,7 @@ const Dashboard = () => {
                     align: "start",
                     loop: true,
                   }}
-                  plugins={[autoplayPlugin.current]}
-                  onMouseEnter={autoplayPlugin.current?.stop}
-                  onMouseLeave={autoplayPlugin.current?.reset}
+                  plugins={[autoplayPersonalGoals.current]}
                 >
                   <CarouselContent className="-ml-3">
                     {goals.map((goal, index) => {
@@ -1842,9 +1842,7 @@ const Dashboard = () => {
                     align: "start",
                     loop: true,
                   }}
-                  plugins={[autoplayPluginGroup.current]}
-                  onMouseEnter={autoplayPluginGroup.current?.stop}
-                  onMouseLeave={autoplayPluginGroup.current?.reset}
+                  plugins={[autoplayGroupGoals.current]}
                 >
                   <CarouselContent className="-ml-3">
                     {groupGoals.map((goal, index) => {
