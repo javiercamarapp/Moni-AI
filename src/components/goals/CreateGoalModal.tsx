@@ -221,7 +221,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
           {/* Goal Title */}
           <div className="space-y-2">
             <Label htmlFor="title" className="flex items-center gap-2 text-gray-900 group cursor-pointer">
-              <Target className="h-4 w-4 text-amber-600 group-hover:text-black transition-colors" />
+              <Target className="h-4 w-4 text-blue-600 group-hover:text-black transition-colors" />
               Nombre de la meta
             </Label>
             <Input
@@ -237,7 +237,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
           {/* Category - Visual Grid */}
           <div className="space-y-3">
             <Label className="text-gray-900 flex items-center gap-2 group cursor-pointer">
-              <Sparkles className="h-4 w-4 text-amber-600 group-hover:text-black transition-colors" />
+              <Sparkles className="h-4 w-4 text-purple-600 group-hover:text-black transition-colors" />
               Categoría
             </Label>
             <div className="grid grid-cols-3 gap-2">
@@ -280,7 +280,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="target" className="flex items-center gap-2 text-gray-900 group cursor-pointer">
-                <DollarSign className="h-4 w-4 text-amber-600 group-hover:text-black transition-colors" />
+                <DollarSign className="h-4 w-4 text-green-600 group-hover:text-black transition-colors" />
                 Monto objetivo
               </Label>
               <Input
@@ -299,7 +299,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
 
             <div className="space-y-2">
               <Label htmlFor="deadline" className="flex items-center gap-2 text-gray-900 group cursor-pointer">
-                <Calendar className="h-4 w-4 text-amber-600 group-hover:text-black transition-colors" />
+                <Calendar className="h-4 w-4 text-red-600 group-hover:text-black transition-colors" />
                 Fecha límite
               </Label>
               <Input
@@ -379,7 +379,7 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
           <div className="space-y-4 bg-amber-50/30 rounded-xl p-4 border border-amber-100">
             <div className="flex items-center justify-between group cursor-pointer">
               <div className="flex items-center gap-2">
-                <Bell className="h-4 w-4 text-amber-600 group-hover:text-black transition-colors" />
+                <Bell className="h-4 w-4 text-orange-600 group-hover:text-black transition-colors" />
                 <div>
                   <Label htmlFor="reminderEnabled" className="text-sm font-medium text-gray-900">
                     🔔 Recordarme semanalmente sobre esta meta
@@ -397,9 +397,9 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
             <div className="flex items-center justify-between pt-4 border-t border-amber-100 group cursor-pointer">
               <div className="flex items-center gap-2">
                 {formData.type === "group" ? (
-                  <Users className="h-4 w-4 text-amber-600 group-hover:text-black transition-colors" />
+                  <Users className="h-4 w-4 text-indigo-600 group-hover:text-black transition-colors" />
                 ) : (
-                  <Lock className="h-4 w-4 text-amber-600 group-hover:text-black transition-colors" />
+                  <Lock className="h-4 w-4 text-indigo-600 group-hover:text-black transition-colors" />
                 )}
                 <div>
                   <Label htmlFor="isPublic" className="text-sm font-medium text-gray-900">
