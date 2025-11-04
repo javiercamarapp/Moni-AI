@@ -1,4 +1,4 @@
-import { Users, Target, TrendingUp, Calendar, MessageCircle, Sparkles } from "lucide-react";
+import { Users, Target, TrendingUp, Calendar, MessageCircle, Sparkles, Plus } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -40,98 +40,70 @@ export const GroupGoalCard = ({ goal, members = [], onViewDetails, onAddContribu
     : null;
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-[#c8a57b]/20">
-      {/* Header */}
-      <div className="relative bg-gradient-to-br from-[#f5efea] to-white p-4">
-        <div className="flex items-start justify-between mb-2">
-          <div className="bg-white border border-[#c8a57b]/20 rounded-lg px-3 py-1">
-            <p className="text-xs font-medium text-gray-700">👥 {goal.circle_name}</p>
-            <p className="text-[10px] text-gray-500">{goal.member_count} miembros</p>
+    <div 
+      className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer border border-gray-200/50 overflow-hidden"
+      onClick={onViewDetails}
+    >
+      {/* Header - Minimalista */}
+      <div className="p-4">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-2xl">👥</span>
+              <h3 className="font-semibold text-gray-900 text-sm tracking-tight">
+                {goal.title}
+              </h3>
+            </div>
+            <p className="text-[10px] text-gray-400 uppercase tracking-wide">{goal.circle_name} • {goal.member_count} miembros</p>
           </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold text-gray-900">{progress.toFixed(0)}%</div>
+          <div className="text-right ml-4">
+            <p className="text-2xl font-bold text-gray-900 tracking-tight">
+              {progress.toFixed(0)}%
+            </p>
           </div>
         </div>
-        
-        <h3 className="text-base font-bold text-gray-900 mb-1">{goal.title}</h3>
-        {goal.description && (
-          <p className="text-xs text-gray-600 line-clamp-2">{goal.description}</p>
-        )}
-      </div>
 
-      {/* Body */}
-      <div className="p-5 space-y-4">
-        {/* Group Progress */}
-        <div>
-          <div className="flex justify-between text-xs text-gray-600 mb-2">
-            <span>Progreso grupal</span>
-            <span className="font-medium text-gray-900">{formatCurrency(goal.current_amount)} / {formatCurrency(goal.target_amount)}</span>
-          </div>
-          <Progress 
-            value={progress} 
-            className="h-3"
-            indicatorClassName="bg-gradient-to-r from-purple-500 to-cyan-500"
+        {/* Progress Bar - Apple Style */}
+        <div className="w-full bg-gray-100 rounded-full h-1.5 mb-3 overflow-hidden">
+          <div
+            className={`h-1.5 rounded-full transition-all duration-500 ease-out ${
+              progress >= 75 ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' :
+              progress >= 50 ? 'bg-gradient-to-r from-blue-500 to-blue-600' :
+              progress >= 25 ? 'bg-gradient-to-r from-amber-500 to-amber-600' :
+              'bg-gradient-to-r from-gray-400 to-gray-500'
+            }`}
+            style={{ width: `${Math.min(progress, 100)}%` }}
           />
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-[#f5efea] rounded-xl p-3 border border-[#c8a57b]/10">
-            <div className="flex items-center gap-2 mb-1">
-              <Target className="h-3 w-3 text-[#c8a57b]" />
-              <span className="text-[10px] font-medium text-gray-600">Por persona</span>
-            </div>
-            <p className="text-xs font-semibold text-gray-900">{formatCurrency(perPersonCurrent)}</p>
-            <p className="text-[10px] text-gray-600">de {formatCurrency(perPersonTarget)}</p>
+        {/* Stats Grid - Minimalista */}
+        <div className="flex items-center justify-between text-xs mb-3">
+          <div>
+            <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Ahorro Actual</p>
+            <p className="font-semibold text-gray-900">{formatCurrency(goal.current_amount)}</p>
           </div>
-          
-          {daysRemaining !== null && (
-            <div className="bg-[#f5efea] rounded-xl p-3 border border-[#c8a57b]/10">
-              <div className="flex items-center gap-2 mb-1">
-                <Calendar className="h-3 w-3 text-[#c8a57b]" />
-                <span className="text-[10px] font-medium text-gray-600">Tiempo restante</span>
-              </div>
-              <p className="text-xs font-semibold text-gray-900">{daysRemaining} días</p>
-            </div>
-          )}
+          <div className="text-center">
+            <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Falta</p>
+            <p className="font-semibold text-gray-900">{formatCurrency(remaining)}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Meta</p>
+            <p className="font-semibold text-gray-900">{formatCurrency(goal.target_amount)}</p>
+          </div>
         </div>
 
-        {/* Members Progress */}
-        {members.length > 0 && (
-          <div className="bg-gray-50 rounded-xl p-3">
-            <p className="text-xs font-medium text-gray-700 mb-2">Contribuciones del equipo</p>
-            <div className="flex -space-x-2">
-              {members.slice(0, 5).map((member, idx) => (
-                <Avatar key={member.id} className="h-8 w-8 border-2 border-white">
-                  <AvatarFallback className="bg-gradient-to-br from-purple-400 to-cyan-400 text-white text-xs">
-                    {idx + 1}
-                  </AvatarFallback>
-                </Avatar>
-              ))}
-              {members.length > 5 && (
-                <div className="h-8 w-8 rounded-full bg-gray-300 border-2 border-white flex items-center justify-center">
-                  <span className="text-xs font-medium text-gray-700">+{members.length - 5}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* AI Prediction */}
-        {(goal.predicted_completion_date || goal.required_weekly_saving) && (
-          <div className="bg-gradient-to-r from-[#f5efea] to-white rounded-xl p-3 border border-[#c8a57b]/20">
+        {/* AI Prediction - Compacto */}
+        {goal.predicted_completion_date && (
+          <div className="bg-gray-50 rounded-lg p-2.5 mb-3">
             <div className="flex items-start gap-2">
-              <Sparkles className="h-4 w-4 text-[#c8a57b] mt-0.5 flex-shrink-0 animate-pulse" />
+              <Sparkles className="h-3.5 w-3.5 text-gray-600 mt-0.5 flex-shrink-0" />
               <div className="flex-1">
-                <p className="text-xs font-medium text-gray-900 mb-1">🤖 Predicción Moni AI</p>
-                {goal.predicted_completion_date && (
-                  <p className="text-[11px] text-gray-700 mb-1">
-                    Cumplirán el <strong>{new Date(goal.predicted_completion_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })}</strong>
-                  </p>
-                )}
+                <p className="text-[10px] text-gray-900 font-medium mb-0.5">
+                  Podrían lograrlo el {new Date(goal.predicted_completion_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
+                </p>
                 {goal.required_weekly_saving && (
-                  <p className="text-[10px] text-gray-600">
-                    💰 Cada miembro: {formatCurrency(goal.required_weekly_saving / goal.member_count)}/semana
+                  <p className="text-[9px] text-gray-600">
+                    💰 {formatCurrency(goal.required_weekly_saving / goal.member_count)}/semana por miembro
                   </p>
                 )}
               </div>
@@ -139,22 +111,27 @@ export const GroupGoalCard = ({ goal, members = [], onViewDetails, onAddContribu
           </div>
         )}
 
-        {/* Actions */}
+        {/* Actions - Minimalista */}
         <div className="flex gap-2">
-          <Button
-            onClick={onAddContribution}
-            className="flex-1 h-10 bg-white border-2 border-[#c8a57b] text-gray-900 hover:bg-[#e3c890] hover:border-[#e3c890] rounded-xl font-medium transition-all duration-300"
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddContribution();
+            }}
+            className="flex-1 h-9 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-white/80 text-gray-900 font-medium text-xs transition-all flex items-center justify-center gap-1.5 border-0"
           >
-            <Target className="h-4 w-4 mr-1" />
+            <Plus className="h-3.5 w-3.5" />
             Contribuir
-          </Button>
-          <Button
-            onClick={onViewDetails}
-            variant="outline"
-            className="h-10 px-4 rounded-xl border-[#c8a57b]/30 hover:bg-[#c8a57b]/5"
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onViewDetails();
+            }}
+            className="h-9 px-4 bg-gray-50 hover:bg-gray-50 rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 text-gray-600 font-medium text-xs transition-all border-0"
           >
-            💬
-          </Button>
+            Ver más
+          </button>
         </div>
       </div>
     </div>
