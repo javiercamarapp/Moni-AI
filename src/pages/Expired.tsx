@@ -40,11 +40,9 @@ export default function Expired() {
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm overflow-hidden w-16 h-10 flex-shrink-0">
             <img src={moniLogo} alt="Moni AI" className="w-full h-full object-cover" />
           </div>
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm px-3 py-2 flex-1">
-            <p className="text-[10px] text-black font-medium leading-tight">
-              📊 68% de mexicanos no lleva un control de sus gastos mensuales
-            </p>
-          </div>
+          <p className="text-[10px] text-black font-medium leading-tight italic flex-1">
+            📊 68% de mexicanos no lleva un control de sus gastos mensuales
+          </p>
         </div>
 
         {/* Main Card */}
