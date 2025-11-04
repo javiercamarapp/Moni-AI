@@ -124,7 +124,7 @@ const Goals = () => {
               </p>
               <Button
                 onClick={() => setCreateModalOpen(true)}
-                className="h-12 px-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md transition-all border-0 text-gray-900 font-semibold"
+                className="h-12 px-8 bg-gray-900 text-white rounded-xl shadow-sm hover:bg-gray-800 transition-all border-0 font-semibold"
               >
                 <Plus className="h-5 w-5 mr-2" />
                 Crear mi primera meta
@@ -132,58 +132,35 @@ const Goals = () => {
             </div>
           ) : (
             <>
-              {/* Stats Summary */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="bg-emerald-100 rounded-full p-3">
-                      <TrendingUp className="h-5 w-5 text-emerald-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-600">Total ahorrado</p>
-                      <p className="text-2xl font-bold text-gray-900">{formatCurrency(stats.totalSaved)}</p>
-                    </div>
-                  </div>
+              {/* Stats Summary - Minimalist Style */}
+              <div className="grid grid-cols-3 gap-2 mb-6">
+                <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-1.5 text-center shadow-sm">
+                  <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Ahorrado</p>
+                  <p className="text-[11px] font-bold text-white">{formatCurrency(stats.totalSaved)}</p>
                 </div>
-
-                <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="bg-cyan-100 rounded-full p-3">
-                      <Target className="h-5 w-5 text-cyan-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-600">Progreso promedio</p>
-                      <p className="text-2xl font-bold text-gray-900">{stats.avgCompletion.toFixed(0)}%</p>
-                    </div>
-                  </div>
+                
+                <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl p-1.5 text-center shadow-sm">
+                  <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Progreso</p>
+                  <p className="text-[11px] font-bold text-white">{stats.avgCompletion.toFixed(0)}%</p>
                 </div>
-
-                <div className="bg-gradient-to-br from-purple-50 to-cyan-50 rounded-2xl shadow-md p-6 border border-purple-100">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="bg-white rounded-full p-3">
-                      <Sparkles className="h-5 w-5 text-purple-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-700">AI Insight</p>
-                      <p className="text-sm font-semibold text-gray-900">
-                        {stats.goalsOnTrack} de {goals.length} metas en buen ritmo
-                      </p>
-                    </div>
-                  </div>
+                
+                <div className="bg-gradient-to-br from-gray-600 to-gray-700 rounded-xl p-1.5 text-center shadow-sm">
+                  <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">En Ritmo</p>
+                  <p className="text-[11px] font-bold text-white">{stats.goalsOnTrack} de {goals.length}</p>
                 </div>
               </div>
 
-              {/* AI Recommendations Section */}
-              <div className="bg-gradient-to-br from-purple-50 to-cyan-50 rounded-2xl shadow-md p-6 border border-purple-100">
-                <div className="flex items-start gap-4">
-                  <div className="bg-white rounded-full p-3 shadow-sm">
-                    <Lightbulb className="h-6 w-6 text-purple-600" />
+              {/* AI Recommendations Section - Minimalist */}
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm p-4 border border-gray-200/50">
+                <div className="flex items-start gap-3">
+                  <div className="bg-gray-100 rounded-full p-2">
+                    <Lightbulb className="h-4 w-4 text-gray-700" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1.5 flex items-center gap-1.5">
                       🤖 Moni AI recomienda
                     </h3>
-                    <p className="text-sm text-gray-700 mb-4">
+                    <p className="text-xs text-gray-600 mb-3 leading-relaxed">
                       {goals.length > 0 && goals[0].required_weekly_saving
                         ? `Si ahorras $${Math.round(goals[0].required_weekly_saving * 1.1).toLocaleString()}/semana, podrás lograr tu meta 2 semanas antes.`
                         : "Crea una meta para recibir recomendaciones personalizadas de ahorro."}
@@ -191,7 +168,7 @@ const Goals = () => {
                     {goals.length > 0 && goals[0].required_weekly_saving && (
                       <button
                         onClick={() => toast.info("Ajuste automático próximamente")}
-                        className="px-4 py-2 bg-white border-2 border-purple-600 text-purple-700 rounded-xl font-semibold hover:bg-purple-50 transition-all text-sm"
+                        className="px-3 py-1.5 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-all text-xs"
                       >
                         Ajustar plan automáticamente
                       </button>
