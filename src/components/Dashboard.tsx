@@ -1275,7 +1275,7 @@ const Dashboard = () => {
       )}
 
       {/* AI Coach Insights - Carousel de recomendaciones */}
-      <div className="mx-4 mb-3">
+      <div className="mx-4 mb-6">
         <AICoachInsightsWidget monthlyIncome={monthlyIncome} monthlyExpenses={monthlyExpenses} fixedExpenses={fixedExpenses} savingsGoals={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} balance={monthlyIncome - monthlyExpenses} />
       </div>
 
