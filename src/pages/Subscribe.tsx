@@ -12,6 +12,13 @@ export default function Subscribe() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [currentFactIndex, setCurrentFactIndex] = useState(0);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+    });
+  }, []);
 
   const financialFacts = [
     "💡 Solo el 32% de mexicanos tiene educación financiera básica",
@@ -177,7 +184,7 @@ export default function Subscribe() {
         <div className="flex justify-center">
           <Button
             variant="ghost"
-            onClick={() => navigate("/auth")}
+            onClick={() => navigate(isAuthenticated ? "/" : "/auth")}
             className="text-gray-600 hover:text-black text-xs"
           >
             Continuar sin Premium
