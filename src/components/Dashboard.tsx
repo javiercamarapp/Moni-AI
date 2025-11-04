@@ -1690,6 +1690,7 @@ const Dashboard = () => {
           
           {/* Main Goals Section */}
           <div className="lg:col-span-2 space-y-6 w-full min-w-0" data-section="goals">
+            {/* Personal Goals */}
             <div>
               <div className="flex flex-row justify-between items-center mb-4">
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">Tus Metas</h3>
@@ -1703,84 +1704,195 @@ const Dashboard = () => {
                 </Button>
               </div>
 
-              <div className="space-y-3 sm:space-y-4">
-                {goals.length === 0 ? (
-                  <Card className="w-full p-4 sm:p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden text-center animate-fade-in min-w-0">
-                    <div className="relative z-10">
-                      <p className="text-sm sm:text-base text-foreground/90">No tienes metas creadas aún</p>
-                    </div>
-                  </Card>
-                ) : goals.map((goal, index) => {
-                const goalProgress = goal.current / goal.target * 100;
-                
-                return (
-                  <motion.div
-                    key={goal.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <Card 
-                      className="w-full p-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-100 relative overflow-hidden hover:shadow-md transition-all duration-300 min-w-0"
-                    >
-                      <div className="flex justify-between items-start gap-2 mb-2">
-                        <div className="flex-1">
-                          <div className="flex items-center flex-wrap space-x-1 mb-0.5 gap-0.5">
-                            <h4 className="text-xs font-semibold text-gray-900">{goal.title}</h4>
-                            {goal.type === 'group' && <Badge variant="outline" className="text-[10px] text-gray-700 border-gray-300 px-1 py-0">
-                                <Users className="w-2.5 h-2.5 mr-0.5" />
-                                {goal.members}
-                              </Badge>}
-                          </div>
-                          <p className="text-[10px] text-gray-500">{goal.deadline}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-xs font-semibold text-gray-900">
-                            ${Number(goal.current).toLocaleString()}
-                          </p>
-                          <p className="text-[10px] text-gray-500">
-                            de ${Number(goal.target).toLocaleString()}
-                          </p>
-                        </div>
-                      </div>
+              {goals.length === 0 ? (
+                <Card className="w-full p-4 sm:p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden text-center animate-fade-in min-w-0">
+                  <div className="relative z-10">
+                    <p className="text-sm sm:text-base text-foreground/90">No tienes metas creadas aún</p>
+                  </div>
+                </Card>
+              ) : (
+                <Carousel 
+                  className="w-full"
+                  opts={{
+                    align: "start",
+                    loop: goals.length > 1,
+                  }}
+                >
+                  <CarouselContent className="-ml-3">
+                    {goals.map((goal, index) => {
+                      const goalProgress = goal.current / goal.target * 100;
                       
-                      <div>
-                        <div className="relative h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                          <motion.div 
-                            className="h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full relative"
-                            initial={{ width: 0 }}
-                            animate={{ width: `${Math.min(goalProgress, 100)}%` }}
-                            transition={{ duration: 1, ease: "easeOut" }}
+                      return (
+                        <CarouselItem key={goal.id} className="pl-3 md:basis-1/2">
+                          <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1 }}
                           >
-                            <motion.div 
-                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
-                              animate={{ x: ['-100%', '200%'] }}
-                              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                            />
+                            <Card 
+                              className="w-full p-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-100 relative overflow-hidden hover:shadow-md transition-all duration-300 min-w-0"
+                            >
+                              <div className="flex justify-between items-start gap-2 mb-2">
+                                <div className="flex-1">
+                                  <div className="flex items-center flex-wrap space-x-1 mb-0.5 gap-0.5">
+                                    <h4 className="text-xs font-semibold text-gray-900">{goal.title}</h4>
+                                    {goal.type === 'group' && <Badge variant="outline" className="text-[10px] text-gray-700 border-gray-300 px-1 py-0">
+                                        <Users className="w-2.5 h-2.5 mr-0.5" />
+                                        {goal.members}
+                                      </Badge>}
+                                  </div>
+                                  <p className="text-[10px] text-gray-500">{goal.deadline}</p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-xs font-semibold text-gray-900">
+                                    ${Number(goal.current).toLocaleString()}
+                                  </p>
+                                  <p className="text-[10px] text-gray-500">
+                                    de ${Number(goal.target).toLocaleString()}
+                                  </p>
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <div className="relative h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                  <motion.div 
+                                    className="h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full relative"
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${Math.min(goalProgress, 100)}%` }}
+                                    transition={{ duration: 1, ease: "easeOut" }}
+                                  >
+                                    <motion.div 
+                                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                                      animate={{ x: ['-100%', '200%'] }}
+                                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                    />
+                                  </motion.div>
+                                </div>
+                                
+                                <div className="flex justify-between items-center text-[10px] mt-1.5">
+                                  <span className="text-gray-600">
+                                    ${(Number(goal.target) - Number(goal.current)).toLocaleString()} restante
+                                  </span>
+                                  <motion.span 
+                                    className="text-gray-900 font-semibold"
+                                    key={goalProgress}
+                                    initial={{ scale: 1 }}
+                                    animate={{ scale: [1, 1.1, 1] }}
+                                    transition={{ duration: 0.3 }}
+                                  >
+                                    {Math.round(goalProgress)}%
+                                  </motion.span>
+                                </div>
+                              </div>
+                            </Card>
                           </motion.div>
-                        </div>
-                        
-                        <div className="flex justify-between items-center text-[10px] mt-1.5">
-                          <span className="text-gray-600">
-                            ${(Number(goal.target) - Number(goal.current)).toLocaleString()} restante
-                          </span>
-                          <motion.span 
-                            className="text-gray-900 font-semibold"
-                            key={goalProgress}
-                            initial={{ scale: 1 }}
-                            animate={{ scale: [1, 1.1, 1] }}
-                            transition={{ duration: 0.3 }}
-                          >
-                            {Math.round(goalProgress)}%
-                          </motion.span>
-                        </div>
-                      </div>
-                    </Card>
-                  </motion.div>
-                );
-              })}
-              </div>
+                        </CarouselItem>
+                      );
+                    })}
+                  </CarouselContent>
+                </Carousel>
+              )}
             </div>
+
+            {/* Group Goals Section */}
+            {groupGoals.length > 0 && (
+              <div>
+                <div className="flex flex-row justify-between items-center mb-4">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">Tus Metas Grupales</h3>
+                  <Button 
+                    size="sm" 
+                    onClick={() => navigate('/group-goals')} 
+                    className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border-0 text-gray-900 hover:bg-white hover:shadow-md text-xs sm:text-sm transition-all"
+                  >
+                    <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                    Nueva Meta Grupal
+                  </Button>
+                </div>
+
+                <Carousel 
+                  className="w-full"
+                  opts={{
+                    align: "start",
+                    loop: groupGoals.length > 1,
+                  }}
+                >
+                  <CarouselContent className="-ml-3">
+                    {groupGoals.map((goal, index) => {
+                      const userProgress = goal.user_progress?.current_amount || 0;
+                      const goalProgress = userProgress / goal.target_amount * 100;
+                      
+                      return (
+                        <CarouselItem key={goal.id} className="pl-3 md:basis-1/2">
+                          <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                          >
+                            <Card 
+                              className="w-full p-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-100 relative overflow-hidden hover:shadow-md transition-all duration-300 min-w-0 cursor-pointer"
+                              onClick={() => navigate(`/group-goals/${goal.id}`)}
+                            >
+                              <div className="flex justify-between items-start gap-2 mb-2">
+                                <div className="flex-1">
+                                  <div className="flex items-center flex-wrap space-x-1 mb-0.5 gap-0.5">
+                                    <h4 className="text-xs font-semibold text-gray-900">{goal.title}</h4>
+                                    <Badge variant="outline" className="text-[10px] text-gray-700 border-gray-300 px-1 py-0">
+                                      <Users className="w-2.5 h-2.5 mr-0.5" />
+                                      Grupal
+                                    </Badge>
+                                  </div>
+                                  <p className="text-[10px] text-gray-500">{goal.deadline ? new Date(goal.deadline).toLocaleDateString('es-MX') : 'Sin fecha'}</p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-xs font-semibold text-gray-900">
+                                    ${Number(userProgress).toLocaleString()}
+                                  </p>
+                                  <p className="text-[10px] text-gray-500">
+                                    de ${Number(goal.target_amount).toLocaleString()}
+                                  </p>
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <div className="relative h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                  <motion.div 
+                                    className="h-full bg-gradient-to-r from-purple-400 to-purple-500 rounded-full relative"
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${Math.min(goalProgress, 100)}%` }}
+                                    transition={{ duration: 1, ease: "easeOut" }}
+                                  >
+                                    <motion.div 
+                                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                                      animate={{ x: ['-100%', '200%'] }}
+                                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                    />
+                                  </motion.div>
+                                </div>
+                                
+                                <div className="flex justify-between items-center text-[10px] mt-1.5">
+                                  <span className="text-gray-600">
+                                    ${(Number(goal.target_amount) - Number(userProgress)).toLocaleString()} restante
+                                  </span>
+                                  <motion.span 
+                                    className="text-gray-900 font-semibold"
+                                    key={goalProgress}
+                                    initial={{ scale: 1 }}
+                                    animate={{ scale: [1, 1.1, 1] }}
+                                    transition={{ duration: 0.3 }}
+                                  >
+                                    {Math.round(goalProgress)}%
+                                  </motion.span>
+                                </div>
+                              </div>
+                            </Card>
+                          </motion.div>
+                        </CarouselItem>
+                      );
+                    })}
+                  </CarouselContent>
+                </Carousel>
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
