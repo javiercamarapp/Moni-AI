@@ -290,12 +290,12 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
                 <Input
                   id="target"
                   type="text"
-                  value={formData.target}
+                  value={formData.target ? parseFloat(formData.target).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''}
                   onChange={(e) => {
-                    const value = e.target.value.replace(/[^0-9]/g, '');
+                    const value = e.target.value.replace(/[^0-9.]/g, '');
                     setFormData({ ...formData, target: value });
                   }}
-                  placeholder="50,000"
+                  placeholder="50,000.00"
                   required
                   className="h-12 rounded-xl bg-white text-gray-900 border-gray-300 pl-7"
                 />
