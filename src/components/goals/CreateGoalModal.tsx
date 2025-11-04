@@ -315,36 +315,23 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
 
           {/* AI Prediction */}
           {prediction && (
-            <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl p-5 border-2 border-amber-200 animate-fade-in">
-              <div className="flex items-start gap-3">
-                <div className="bg-amber-100 rounded-full p-2">
-                  <Sparkles className="h-5 w-5 text-amber-600 animate-pulse" />
+            <div className="bg-white rounded-xl p-3 border border-gray-200 animate-fade-in">
+              <div className="flex items-center gap-3">
+                <div className="bg-gray-100 rounded-full p-1.5">
+                  <Sparkles className="h-4 w-4 text-gray-900" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                    🔮 Predicción de Moni AI
+                  <h3 className="text-xs font-semibold text-gray-900 mb-1">
+                    Predicción de Moni AI
                   </h3>
-                  <p className="text-sm text-gray-700 mb-2">
-                    Según tus ingresos y hábitos, podrías lograr esta meta el{" "}
-                    <strong>{new Date(prediction.predicted_completion_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })}</strong>.
+                  <p className="text-xs text-gray-600">
+                    Ahorra <strong className="text-gray-900">${prediction.required_weekly_saving.toLocaleString()}/semana</strong> para completarla el{" "}
+                    <strong className="text-gray-900">{new Date(prediction.predicted_completion_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}</strong>
                   </p>
-                  <div className="bg-white/80 rounded-lg p-3 border border-amber-200">
-                    <p className="text-sm font-medium text-amber-700">
-                      💰 Ahorra ${prediction.required_weekly_saving.toLocaleString()} por semana para cumplirla a tiempo.
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 mt-3">
-                    <div className="flex-1 bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-gradient-to-r from-amber-500 to-green-500 h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${prediction.ai_confidence * 100}%` }}
-                      />
-                    </div>
-                    <span className="text-xs font-medium text-gray-600">
-                      {Math.round(prediction.ai_confidence * 100)}% precisión
-                    </span>
-                  </div>
                 </div>
+                <span className="text-xs font-medium text-gray-500">
+                  {Math.round(prediction.ai_confidence * 100)}%
+                </span>
               </div>
             </div>
           )}
