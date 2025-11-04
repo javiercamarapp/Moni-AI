@@ -240,20 +240,20 @@ export const CreateGoalModal = ({ isOpen, onClose, onSuccess }: CreateGoalModalP
               <Sparkles className="h-4 w-4 text-amber-600 group-hover:text-black transition-colors" />
               Categoría
             </Label>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2">
               {GOAL_CATEGORIES.map((cat) => (
                 <button
                   key={cat.value}
                   type="button"
                   onClick={() => setFormData({ ...formData, category: cat.value })}
-                  className={`p-4 rounded-xl border-2 transition-all hover:scale-105 ${
+                  className={`p-2 rounded-lg border-2 transition-all hover:scale-105 ${
                     formData.category === cat.value
                       ? "border-black bg-gray-50 shadow-sm"
                       : cat.color
                   }`}
                 >
-                  <div className="text-3xl mb-2">{cat.icon}</div>
-                  <p className="text-xs font-medium text-gray-900">{cat.label}</p>
+                  <div className="text-xl mb-1">{cat.icon}</div>
+                  <p className="text-[10px] font-medium text-gray-900">{cat.label}</p>
                 </button>
               ))}
             </div>
