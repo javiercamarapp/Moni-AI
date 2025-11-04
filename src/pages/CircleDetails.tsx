@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Users, Trophy, MessageCircle, Newspaper, Plus, UserPlus } from "lucide-react";
+import { ArrowLeft, Users, Trophy, MessageCircle, Newspaper, Plus, UserPlus, Copy, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { MoniLoader } from "@/components/MoniLoader";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const CircleDetails = () => {
   const { id } = useParams();
@@ -12,6 +13,8 @@ const CircleDetails = () => {
   const [circle, setCircle] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
   const [isMember, setIsMember] = useState(false);
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [inviteLink, setInviteLink] = useState("");
 
   useEffect(() => {
     fetchCircleData();
@@ -90,17 +93,48 @@ const CircleDetails = () => {
     }
   };
 
-  const handleShareCircle = () => {
-    const inviteUrl = `${window.location.origin}/circle/${id}`;
+  const handleCreateInvite = async () => {
+    if (!user || !id) return;
+
+    try {
+      // Generate unique code
+      const code = Math.random().toString(36).substring(2, 10).toUpperCase();
+      
+      // Create invitation in database
+      const { error } = await supabase
+        .from('circle_invitations')
+        .insert({
+          circle_id: id,
+          code: code,
+          created_by: user.id
+        });
+
+      if (error) throw error;
+
+      // Create invite link
+      const link = `${window.location.origin}/join-circle/${code}`;
+      setInviteLink(link);
+      setShowInviteDialog(true);
+    } catch (error: any) {
+      console.error('Error creating invitation:', error);
+      toast.error('Error al crear la invitación');
+    }
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(inviteLink);
+    toast.success('Enlace copiado al portapapeles');
+  };
+
+  const handleShareLink = () => {
     if (navigator.share) {
       navigator.share({
         title: `Únete al círculo ${circle?.name}`,
         text: `¡Únete a nuestro círculo "${circle?.name}" en Moni AI! 🚀`,
-        url: inviteUrl
+        url: inviteLink
       });
     } else {
-      navigator.clipboard.writeText(inviteUrl);
-      toast.success('Enlace copiado al portapapeles');
+      handleCopyLink();
     }
   };
 
@@ -154,7 +188,7 @@ const CircleDetails = () => {
               </Button>
             ) : (
               <Button
-                onClick={handleShareCircle}
+                onClick={handleCreateInvite}
                 className="flex-1 bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9"
               >
                 <UserPlus className="h-4 w-4 mr-1" />
@@ -209,6 +243,49 @@ const CircleDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* Invite Dialog */}
+      <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
+        <DialogContent className="max-w-[340px] rounded-3xl border-none shadow-2xl p-6">
+          <DialogHeader className="space-y-2">
+            <DialogTitle className="text-center text-lg font-bold">
+              Invitar al círculo
+            </DialogTitle>
+            <DialogDescription className="text-center text-xs text-muted-foreground">
+              Comparte este enlace para que otros se unan
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 pt-2">
+            {/* Link Display */}
+            <div className="bg-muted/30 rounded-2xl p-3 break-all">
+              <p className="text-xs text-center">{inviteLink}</p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-2">
+              <Button
+                onClick={handleCopyLink}
+                className="flex-1 bg-white text-foreground hover:bg-white/90 rounded-2xl shadow-md font-medium"
+              >
+                <Copy className="h-4 w-4 mr-1" />
+                Copiar
+              </Button>
+              <Button
+                onClick={handleShareLink}
+                className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl shadow-md font-medium"
+              >
+                <Share2 className="h-4 w-4 mr-1" />
+                Compartir
+              </Button>
+            </div>
+
+            <p className="text-[10px] text-muted-foreground text-center">
+              Este enlace expira en 7 días
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -64,6 +64,7 @@ import CircleChat from './pages/CircleChat';
 import CircleMembers from './pages/CircleMembers';
 import CircleChallenges from './pages/CircleChallenges';
 import CircleNews from './pages/CircleNews';
+import JoinCircle from './pages/JoinCircle';
 import Challenges from './pages/Challenges';
 
 import NotFound from "./pages/NotFound";
@@ -148,6 +149,7 @@ function App() {
           <Route path="/circle/:id/members" element={<CircleMembers />} />
           <Route path="/circle/:id/challenges" element={<CircleChallenges />} />
           <Route path="/circle/:id/news" element={<CircleNews />} />
+          <Route path="/join-circle/:code" element={<JoinCircle />} />
           <Route path="/challenges" element={<Challenges />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
