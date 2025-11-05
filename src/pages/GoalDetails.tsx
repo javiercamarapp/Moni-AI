@@ -195,19 +195,19 @@ const GoalDetails = () => {
           </div>
 
           {/* Stats Summary */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200/50">
-              <p className="text-xs text-gray-600 mb-1">Ahorro Actual</p>
-              <p className="text-lg font-bold text-gray-900">{formatCurrency(goal.current)}</p>
+          <div className="grid grid-cols-3 gap-2">
+            <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50">
+              <p className="text-[10px] text-gray-600 mb-0.5">Ahorro Actual</p>
+              <p className="text-sm font-bold text-gray-900">{formatCurrency(goal.current)}</p>
             </div>
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200/50">
-              <p className="text-xs text-gray-600 mb-1">Falta Ahorrar</p>
-              <p className="text-lg font-bold text-gray-900">{formatCurrency(remaining)}</p>
+            <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50">
+              <p className="text-[10px] text-gray-600 mb-0.5">Falta Ahorrar</p>
+              <p className="text-sm font-bold text-gray-900">{formatCurrency(remaining)}</p>
             </div>
             {goal.deadline && daysRemaining !== null && (
-              <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200/50">
-                <p className="text-xs text-gray-600 mb-1">Días Restantes</p>
-                <p className="text-lg font-bold text-gray-900">{daysRemaining} días</p>
+              <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50">
+                <p className="text-[10px] text-gray-600 mb-0.5">Días Restantes</p>
+                <p className="text-sm font-bold text-gray-900">{daysRemaining} días</p>
               </div>
             )}
           </div>
