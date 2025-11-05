@@ -27,8 +27,9 @@ const handler = async (req: Request): Promise<Response> => {
     
     console.log("Sending reset password email to:", email);
 
-    // Construir el enlace de recuperación
-    const resetLink = `${redirectUrl}#access_token=${token}&type=recovery`;
+    // Construir el enlace de recuperación correcto con el formato de Supabase
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const resetLink = `${supabaseUrl}/auth/v1/verify?token=${token}&type=recovery&redirect_to=${redirectUrl}`;
 
     const emailResponse = await resend.emails.send({
       from: "Moni AI <onboarding@resend.dev>",
