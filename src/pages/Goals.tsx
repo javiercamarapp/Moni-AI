@@ -373,7 +373,7 @@ const Goals = () => {
                       <GoalCard
                         goal={goal}
                         onAddFunds={() => setAddFundsModal({ open: true, goal })}
-                        onViewDetails={() => toast.info("Detalles próximamente")}
+                        onViewDetails={() => navigate(`/goals/${goal.id}`)}
                         onComplete={() => handleCompleteGoal(goal.id)}
                       />
                     </CarouselItem>

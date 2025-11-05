@@ -52,6 +52,7 @@ import Groups from './pages/Groups';
 import FinancialEvents from './pages/FinancialEvents';
 import SavingSimulation from './pages/SavingSimulation';
 import Goals from './pages/Goals';
+import GoalDetails from './pages/GoalDetails';
 import GroupGoals from './pages/GroupGoals';
 import GroupGoalDetails from './pages/GroupGoalDetails';
 import GroupGoalChat from './pages/GroupGoalChat';
@@ -152,6 +153,11 @@ function App() {
           <Route path="/goals" element={
             <PremiumFeature featureName="Metas">
               <Goals />
+            </PremiumFeature>
+          } />
+          <Route path="/goals/:id" element={
+            <PremiumFeature featureName="Detalles de Meta">
+              <GoalDetails />
             </PremiumFeature>
           } />
           <Route path="/budgets" element={
