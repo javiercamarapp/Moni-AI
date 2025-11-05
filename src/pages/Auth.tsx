@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Fingerprint } from "lucide-react";
 import heroAuth from "@/assets/moni-ai-logo.png";
+import resetPasswordLogo from "@/assets/moni-reset-password-logo.png";
 import authBackground from "@/assets/auth-abstract-bg.png";
 import { useBiometricAuth } from "@/hooks/useBiometricAuth";
 import { SignIn2 } from "@/components/ui/clean-minimal-sign-in";
@@ -24,15 +25,21 @@ const Auth = () => {
   const [isResetPassword, setIsResetPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isProcessingRecovery, setIsProcessingRecovery] = useState(false);
 
   useEffect(() => {
     const hash = window.location.hash;
     if (hash && hash.includes('type=recovery')) {
-      setIsResetPassword(true);
-      toast({
-        title: "Recuperación de contraseña",
-        description: "Ingresa tu nueva contraseña",
-      });
+      setIsProcessingRecovery(true);
+      // Pequeño delay para asegurar que Supabase procese el token
+      setTimeout(() => {
+        setIsResetPassword(true);
+        setIsProcessingRecovery(false);
+        toast({
+          title: "Recuperación de contraseña",
+          description: "Ingresa tu nueva contraseña",
+        });
+      }, 500);
     }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -464,10 +471,20 @@ const Auth = () => {
       <div 
         className="flex-1 flex items-center justify-center py-8 md:py-12 px-2 md:px-4 relative z-10"
       >
-        {isResetPassword ? (
+        {isProcessingRecovery ? (
           <div className="w-full max-w-[320px] md:max-w-md bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl shadow-opacity-10 pt-6 md:pt-8 px-4 md:px-6 pb-6 md:pb-8 flex flex-col items-center border border-blue-100">
             <div className="flex items-center justify-center w-48 md:w-56 h-16 md:h-20 mb-4 md:mb-6">
-              <img src={heroAuth} alt="Moni AI" className="w-full h-full object-contain" />
+              <img src={resetPasswordLogo} alt="Moni AI" className="w-full h-full object-contain" />
+            </div>
+            <div className="flex flex-col items-center gap-4">
+              <Loader2 className="w-8 h-8 animate-spin text-gray-600" />
+              <p className="text-sm text-gray-600">Procesando recuperación de contraseña...</p>
+            </div>
+          </div>
+        ) : isResetPassword ? (
+          <div className="w-full max-w-[320px] md:max-w-md bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl shadow-opacity-10 pt-6 md:pt-8 px-4 md:px-6 pb-6 md:pb-8 flex flex-col items-center border border-blue-100">
+            <div className="flex items-center justify-center w-48 md:w-56 h-16 md:h-20 mb-4 md:mb-6">
+              <img src={resetPasswordLogo} alt="Moni AI" className="w-full h-full object-contain" />
             </div>
 
             <h2 className="text-xl font-bold text-gray-900 mb-2 text-center">Nueva contraseña</h2>
