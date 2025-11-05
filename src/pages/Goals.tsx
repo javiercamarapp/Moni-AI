@@ -62,11 +62,23 @@ const Goals = () => {
   );
 
   useEffect(() => {
-    fetchGoals();
-    fetchGroupGoals();
+    const loadData = async () => {
+      try {
+        await Promise.all([
+          fetchGoals(),
+          fetchGroupGoals()
+        ]);
+        
+        // Trigger auto-adjustment after initial load
+        triggerAutoAdjustment();
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
     
-    // Trigger auto-adjustment on mount
-    triggerAutoAdjustment();
+    loadData();
   }, []);
 
   useEffect(() => {
@@ -114,8 +126,6 @@ const Goals = () => {
     } catch (error: any) {
       console.error('Error fetching goals:', error);
       toast.error('Error al cargar las metas');
-    } finally {
-      setLoading(false);
     }
   };
 
