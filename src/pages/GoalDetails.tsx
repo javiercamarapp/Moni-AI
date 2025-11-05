@@ -156,29 +156,29 @@ const GoalDetails = () => {
 
         <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
           {/* Progress Card */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200/50">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="h-12 w-12 bg-gradient-to-br from-purple-100 to-cyan-100 rounded-full flex items-center justify-center text-2xl">
+          <div className="bg-white rounded-xl shadow-lg p-3 border border-gray-200/50">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 bg-gradient-to-br from-purple-100 to-cyan-100 rounded-full flex items-center justify-center text-lg">
                   {goal.icon || getCategoryIcon(goal.category)}
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">{goal.title}</h2>
+                  <h2 className="text-base font-bold text-gray-900">{goal.title}</h2>
                   {goal.description && (
-                    <p className="text-sm text-gray-600">{goal.description}</p>
+                    <p className="text-xs text-gray-600">{goal.description}</p>
                   )}
-                  <p className="text-xs text-gray-400 uppercase tracking-wide mt-1">{goal.category}</p>
+                  <p className="text-xs text-gray-400 uppercase tracking-wide">{goal.category}</p>
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-3xl font-bold text-gray-900">{progress.toFixed(0)}%</div>
+                <div className="text-xl font-bold text-gray-900">{progress.toFixed(0)}%</div>
                 <p className="text-xs text-gray-600">completado</p>
               </div>
             </div>
 
-            <div className="w-full bg-gray-100 rounded-full h-3 mb-4 overflow-hidden">
+            <div className="w-full bg-gray-100 rounded-full h-2 mb-2 overflow-hidden">
               <div
-                className={`h-3 rounded-full transition-all duration-500 ${
+                className={`h-2 rounded-full transition-all duration-500 ${
                   progress >= 75 ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' :
                   progress >= 50 ? 'bg-gradient-to-r from-blue-500 to-blue-600' :
                   progress >= 25 ? 'bg-gradient-to-r from-amber-500 to-amber-600' :
@@ -188,7 +188,7 @@ const GoalDetails = () => {
               />
             </div>
 
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-xs">
               <span className="text-gray-600">{formatCurrency(goal.current)} ahorrado</span>
               <span className="font-bold text-gray-900">{formatCurrency(goal.target)} meta</span>
             </div>
