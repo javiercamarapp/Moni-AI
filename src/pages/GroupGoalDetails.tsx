@@ -235,51 +235,51 @@ const GroupGoalDetails = () => {
 
         <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
           {/* Progress Card */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-[#c8a57b]/20">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="h-12 w-12 bg-[#c8a57b]/10 rounded-full flex items-center justify-center text-2xl">
+          <div className="bg-white rounded-xl shadow-lg p-3 border border-[#c8a57b]/20">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 bg-[#c8a57b]/10 rounded-full flex items-center justify-center text-lg">
                   {goal.icon || "🎯"}
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">{goal.title}</h2>
+                  <h2 className="text-base font-bold text-gray-900">{goal.title}</h2>
                   {goal.description && (
-                    <p className="text-sm text-gray-600">{goal.description}</p>
+                    <p className="text-xs text-gray-600">{goal.description}</p>
                   )}
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-3xl font-bold text-gray-900">{progress.toFixed(0)}%</div>
+                <div className="text-xl font-bold text-gray-900">{progress.toFixed(0)}%</div>
                 <p className="text-xs text-gray-600">completado</p>
               </div>
             </div>
 
-            <Progress value={progress} className="h-4 mb-4" />
+            <Progress value={progress} className="h-2 mb-2" />
 
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-xs">
               <span className="text-gray-600">{goal.completed_members} completaron</span>
               <span className="font-bold text-gray-900">{members.length} miembros</span>
             </div>
           </div>
 
           {/* Resumen de Meta */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-[#c8a57b]/10">
-              <p className="text-xs text-gray-600 mb-1">Meta Individual</p>
+          <div className="grid grid-cols-4 gap-2">
+            <div className="bg-white rounded-lg p-2 shadow-sm border border-[#c8a57b]/10">
+              <p className="text-[10px] text-gray-600 mb-0.5">Meta Individual</p>
               <p className="text-sm font-bold text-gray-900">{formatCurrency(goal.target_amount)}</p>
             </div>
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-[#c8a57b]/10">
-              <p className="text-xs text-gray-600 mb-1">Completaron</p>
+            <div className="bg-white rounded-lg p-2 shadow-sm border border-[#c8a57b]/10">
+              <p className="text-[10px] text-gray-600 mb-0.5">Completaron</p>
               <p className="text-sm font-bold text-emerald-600">{goal.completed_members} de {members.length}</p>
             </div>
             {goal.deadline && (
-              <div className="bg-white rounded-xl p-4 shadow-sm border border-[#c8a57b]/10">
-                <p className="text-xs text-gray-600 mb-1">Días Restantes</p>
+              <div className="bg-white rounded-lg p-2 shadow-sm border border-[#c8a57b]/10">
+                <p className="text-[10px] text-gray-600 mb-0.5">Días Restantes</p>
                 <p className="text-sm font-bold text-gray-900">{daysRemaining}</p>
               </div>
             )}
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-[#c8a57b]/10">
-              <p className="text-xs text-gray-600 mb-1">Miembros</p>
+            <div className="bg-white rounded-lg p-2 shadow-sm border border-[#c8a57b]/10">
+              <p className="text-[10px] text-gray-600 mb-0.5">Miembros</p>
               <p className="text-sm font-bold text-gray-900">{members.length}</p>
             </div>
           </div>
