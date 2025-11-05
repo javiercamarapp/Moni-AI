@@ -264,23 +264,23 @@ const GroupGoalDetails = () => {
 
           {/* Resumen de Meta */}
           <div className="grid grid-cols-4 gap-2">
-            <div className="bg-white rounded-lg p-2 shadow-sm border border-[#c8a57b]/10">
-              <p className="text-[10px] text-gray-600 mb-0.5">Meta Individual</p>
-              <p className="text-sm font-bold text-gray-900">{formatCurrency(goal.target_amount)}</p>
+            <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-2 shadow-sm border border-amber-200 text-center">
+              <p className="text-[10px] text-amber-700 mb-0.5">Meta Individual</p>
+              <p className="text-sm font-bold text-amber-900">{formatCurrency(goal.target_amount)}</p>
             </div>
-            <div className="bg-white rounded-lg p-2 shadow-sm border border-[#c8a57b]/10">
-              <p className="text-[10px] text-gray-600 mb-0.5">Completaron</p>
+            <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-lg p-2 shadow-sm border border-emerald-200 text-center">
+              <p className="text-[10px] text-emerald-700 mb-0.5">Completaron</p>
               <p className="text-sm font-bold text-emerald-600">{goal.completed_members} de {members.length}</p>
             </div>
             {goal.deadline && (
-              <div className="bg-white rounded-lg p-2 shadow-sm border border-[#c8a57b]/10">
-                <p className="text-[10px] text-gray-600 mb-0.5">Días Restantes</p>
-                <p className="text-sm font-bold text-gray-900">{daysRemaining}</p>
+              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-2 shadow-sm border border-blue-200 text-center">
+                <p className="text-[10px] text-blue-700 mb-0.5">Días Restantes</p>
+                <p className="text-sm font-bold text-blue-900">{daysRemaining}</p>
               </div>
             )}
-            <div className="bg-white rounded-lg p-2 shadow-sm border border-[#c8a57b]/10">
-              <p className="text-[10px] text-gray-600 mb-0.5">Miembros</p>
-              <p className="text-sm font-bold text-gray-900">{members.length}</p>
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-2 shadow-sm border border-purple-200 text-center">
+              <p className="text-[10px] text-purple-700 mb-0.5">Miembros</p>
+              <p className="text-sm font-bold text-purple-900">{members.length}</p>
             </div>
           </div>
 
