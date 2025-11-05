@@ -5,7 +5,7 @@ import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { SectionLoader } from "@/components/SectionLoader";
+import { MoniLoader } from "@/components/MoniLoader";
 import { GoalCard } from "@/components/goals/GoalCard";
 import { CreateGoalModal } from "@/components/goals/CreateGoalModal";
 import { AddFundsModal } from "@/components/goals/AddFundsModal";
@@ -286,7 +286,7 @@ const Goals = () => {
         <div className="mx-auto px-4 py-6 space-y-6" style={{ maxWidth: '1200px' }}>
           {loading ? (
             <div className="py-12">
-              <SectionLoader size="lg" />
+              <MoniLoader size="lg" message="Cargando tus metas..." />
             </div>
           ) : goals.length === 0 ? (
             // Empty State
