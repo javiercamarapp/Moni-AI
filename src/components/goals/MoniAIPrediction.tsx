@@ -3,9 +3,8 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 
 interface MoniAIPredictionProps {
   target: number;
@@ -79,7 +78,14 @@ export default function MoniAIPrediction({
 
   return (
     <div className="animate-fade-in bg-white rounded-xl shadow-sm border border-gray-200">
-      <Carousel className="w-full">
+      <Carousel 
+        className="w-full"
+        plugins={[
+          Autoplay({
+            delay: 4000,
+          }),
+        ]}
+      >
         <CarouselContent>
           {recommendations.map((rec, index) => (
             <CarouselItem key={index}>
@@ -93,10 +99,6 @@ export default function MoniAIPrediction({
             </CarouselItem>
           ))}
         </CarouselContent>
-        <div className="flex items-center justify-center gap-2 pb-2">
-          <CarouselPrevious className="relative static translate-y-0 h-6 w-6" />
-          <CarouselNext className="relative static translate-y-0 h-6 w-6" />
-        </div>
       </Carousel>
     </div>
   );
