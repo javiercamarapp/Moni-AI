@@ -1,4 +1,11 @@
 import React, { useMemo } from "react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 interface MoniAIPredictionProps {
   target: number;
@@ -15,7 +22,7 @@ export default function MoniAIPrediction({
   saved,
   history = [],
 }: MoniAIPredictionProps) {
-  const { message, predictedDate, status, recommendedPerWeek } = useMemo(() => {
+  const recommendations = useMemo(() => {
     const daysRemaining = Math.max(
       0,
       (new Date(deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
@@ -34,44 +41,63 @@ export default function MoniAIPrediction({
     if (avg < recommendedPerWeek * 0.9) status = "atrasado";
     if (avg > recommendedPerWeek * 1.1) status = "adelantado";
 
-    const predictedWeeks = remaining / (memberCount * avg);
     const predictedDate = new Date(
-      Date.now() + predictedWeeks * 7 * 24 * 60 * 60 * 1000
+      Date.now() + (remaining / (memberCount * avg)) * 7 * 24 * 60 * 60 * 1000
     );
 
-    let message = "";
-    if (status === "adelantado")
-      message = "🚀 Van por excelente camino. Terminarán antes del plazo.";
-    if (status === "al_dia")
-      message = `🟢 Van al día. Si cada miembro ahorra $${recommendedPerWeek.toLocaleString()}/semana, cumplirán a tiempo.`;
-    if (status === "atrasado")
-      message = `🔴 Van un poco retrasados. Si suben su aporte a $${recommendedPerWeek.toLocaleString()}/semana, aún pueden lograrlo.`;
-
-    return { message, predictedDate, status, recommendedPerWeek };
+    // Generar múltiples recomendaciones inteligentes
+    return [
+      {
+        icon: "🎯",
+        title: "Estrategia de ahorro",
+        message: status === "adelantado" 
+          ? "Van excelente. Mantengan el ritmo actual."
+          : `Ahorren $${recommendedPerWeek.toLocaleString()}/semana por miembro para cumplir a tiempo.`
+      },
+      {
+        icon: "📅",
+        title: "Predicción de cumplimiento",
+        message: `Si mantienen el ritmo, completarán para el ${predictedDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}.`
+      },
+      {
+        icon: "💡",
+        title: "Consejo grupal",
+        message: "Compartan sus avances en el chat grupal para mantener la motivación alta."
+      },
+      {
+        icon: "🔔",
+        title: "Recordatorio inteligente",
+        message: `Quedan ${Math.ceil(daysRemaining)} días. Consideren activar aportes automáticos quincenales.`
+      },
+      {
+        icon: "⚡",
+        title: "Optimización",
+        message: "Si cada miembro ahorra un 10% extra semanal, terminarán 2 semanas antes."
+      }
+    ];
   }, [target, deadline, memberCount, saved, history]);
 
   return (
-    <div className="animate-fade-in animate-slide-up bg-card border border-border rounded-2xl p-4 shadow-sm">
-      {/* Encabezado */}
-      <div className="flex items-center gap-2 mb-3">
-        <div className="text-2xl animate-pulse">🦉</div>
-        <h3 className="font-semibold text-lg">Moni AI recomienda:</h3>
-      </div>
-
-      {/* Texto dinámico */}
-      <p className="text-muted-foreground mb-3">{message}</p>
-
-      <div className="border-t border-border my-3" />
-
-      <p className="text-sm text-muted-foreground">
-        Predicción: {predictedDate.toLocaleDateString()}
-      </p>
-
-      {status !== "al_dia" && (
-        <button className="mt-3 border border-foreground rounded-full px-4 py-1.5 text-sm hover:bg-foreground hover:text-background transition-colors">
-          Ajustar plan automáticamente
-        </button>
-      )}
+    <div className="animate-fade-in bg-white rounded-xl shadow-sm border border-gray-200">
+      <Carousel className="w-full">
+        <CarouselContent>
+          {recommendations.map((rec, index) => (
+            <CarouselItem key={index}>
+              <div className="p-3 flex items-start gap-2">
+                <div className="text-lg flex-shrink-0">{rec.icon}</div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-gray-900 mb-0.5">{rec.title}</p>
+                  <p className="text-xs text-gray-600 leading-relaxed">{rec.message}</p>
+                </div>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <div className="flex items-center justify-center gap-2 pb-2">
+          <CarouselPrevious className="relative static translate-y-0 h-6 w-6" />
+          <CarouselNext className="relative static translate-y-0 h-6 w-6" />
+        </div>
+      </Carousel>
     </div>
   );
 }
