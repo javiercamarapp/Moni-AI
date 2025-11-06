@@ -839,29 +839,38 @@ export type Database = {
       }
       goal_comments: {
         Row: {
+          attachment_type: string | null
+          attachment_url: string | null
           comment: string
           created_at: string | null
           deleted_at: string | null
           goal_id: string
           id: string
+          is_pinned: boolean | null
           reply_to_id: string | null
           user_id: string
         }
         Insert: {
+          attachment_type?: string | null
+          attachment_url?: string | null
           comment: string
           created_at?: string | null
           deleted_at?: string | null
           goal_id: string
           id?: string
+          is_pinned?: boolean | null
           reply_to_id?: string | null
           user_id: string
         }
         Update: {
+          attachment_type?: string | null
+          attachment_url?: string | null
           comment?: string
           created_at?: string | null
           deleted_at?: string | null
           goal_id?: string
           id?: string
+          is_pinned?: boolean | null
           reply_to_id?: string | null
           user_id?: string
         }

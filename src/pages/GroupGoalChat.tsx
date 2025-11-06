@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send, Smile, Trash2, Reply, X } from "lucide-react";
+import { ArrowLeft, Send, Smile, Trash2, Reply, X, Edit2, Pin, PinOff, Paperclip, Image as ImageIcon, File, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -23,6 +23,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Comment {
   id: string;
@@ -31,6 +37,9 @@ interface Comment {
   created_at: string;
   deleted_at?: string | null;
   reply_to_id?: string | null;
+  is_pinned?: boolean;
+  attachment_url?: string | null;
+  attachment_type?: string | null;
   reactions?: Reaction[];
   reply_to?: Comment | null;
   mentions?: string[];
@@ -79,15 +88,39 @@ const GroupGoalChat = () => {
   const [showMentionSuggestions, setShowMentionSuggestions] = useState(false);
   const [mentionSearch, setMentionSearch] = useState("");
   const [mentionStartIndex, setMentionStartIndex] = useState(-1);
+  const [editingComment, setEditingComment] = useState<Comment | null>(null);
+  const [editText, setEditText] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [uploadingFile, setUploadingFile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const initializeChat = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setCurrentUserId(user.id);
+        
+        // Check if user is admin
+        const { data: goalData } = await supabase
+          .from('circle_goals')
+          .select('circle_id')
+          .eq('id', id)
+          .single();
+        
+        if (goalData) {
+          const { data: circleData } = await supabase
+            .from('circles')
+            .select('user_id')
+            .eq('id', goalData.circle_id)
+            .single();
+          
+          if (circleData && circleData.user_id === user.id) {
+            setIsAdmin(true);
+          }
+        }
       }
       
       await fetchComments();
@@ -193,6 +226,7 @@ const GroupGoalChat = () => {
         .select('*')
         .eq('goal_id', id)
         .is('deleted_at', null)
+        .order('is_pinned', { ascending: false })
         .order('created_at', { ascending: true });
 
       if (error) throw error;
@@ -482,6 +516,125 @@ const GroupGoalChat = () => {
     inputRef.current?.focus();
   };
 
+  const handleEditComment = (comment: Comment) => {
+    setEditingComment(comment);
+    setEditText(comment.comment);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingComment || !editText.trim()) return;
+
+    try {
+      const { error } = await supabase
+        .from('goal_comments')
+        .update({ comment: editText.trim() })
+        .eq('id', editingComment.id)
+        .eq('user_id', currentUserId);
+
+      if (error) throw error;
+
+      toast.success('Mensaje editado');
+      setEditingComment(null);
+      setEditText("");
+      await fetchComments();
+    } catch (error: any) {
+      console.error('Error editing comment:', error);
+      toast.error('Error al editar el mensaje');
+    }
+  };
+
+  const canEditComment = (comment: Comment): boolean => {
+    if (comment.user_id !== currentUserId) return false;
+    const createdAt = new Date(comment.created_at);
+    const now = new Date();
+    const diffMinutes = (now.getTime() - createdAt.getTime()) / (1000 * 60);
+    return diffMinutes <= 5;
+  };
+
+  const handleTogglePin = async (commentId: string, isPinned: boolean) => {
+    if (!isAdmin) {
+      toast.error('Solo los administradores pueden fijar mensajes');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('goal_comments')
+        .update({ is_pinned: !isPinned })
+        .eq('id', commentId);
+
+      if (error) throw error;
+
+      toast.success(isPinned ? 'Mensaje desfijado' : 'Mensaje fijado');
+      await fetchComments();
+    } catch (error: any) {
+      console.error('Error toggling pin:', error);
+      toast.error('Error al fijar/desfijar el mensaje');
+    }
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('El archivo es demasiado grande (máx. 10MB)');
+      return;
+    }
+
+    try {
+      setUploadingFile(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No user');
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('chat-attachments')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('chat-attachments')
+        .getPublicUrl(fileName);
+
+      // Determine attachment type
+      let attachmentType = 'file';
+      if (file.type.startsWith('image/')) {
+        attachmentType = 'image';
+      }
+
+      // Send message with attachment
+      const { error: insertError } = await supabase
+        .from('goal_comments')
+        .insert({
+          goal_id: id,
+          user_id: user.id,
+          comment: file.name,
+          attachment_url: publicUrl,
+          attachment_type: attachmentType,
+          reply_to_id: replyingTo?.id || null
+        });
+
+      if (insertError) throw insertError;
+
+      setReplyingTo(null);
+      await fetchComments();
+      toast.success('Archivo enviado');
+    } catch (error: any) {
+      console.error('Error uploading file:', error);
+      toast.error('Error al subir el archivo');
+    } finally {
+      setUploadingFile(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   const handleStickerClick = (sticker: string) => {
     setNewComment(newComment + sticker);
   };
@@ -522,6 +675,7 @@ const GroupGoalChat = () => {
           {comments.map((comment) => {
             const isAI = comment.user_id === 'moni-ai';
             const isCurrentUser = comment.user_id === currentUserId;
+            const canEdit = canEditComment(comment);
 
             // Group reactions by emoji
             const reactionGroups = comment.reactions?.reduce((acc, reaction) => {
@@ -544,6 +698,14 @@ const GroupGoalChat = () => {
                     </AvatarFallback>
                   </Avatar>
                   <div>
+                    {/* Pinned indicator */}
+                    {comment.is_pinned && (
+                      <div className="text-xs text-[#c8a57b] mb-1 ml-2 flex items-center gap-1 font-medium">
+                        <Pin className="h-3 w-3" />
+                        <span>Mensaje fijado</span>
+                      </div>
+                    )}
+
                     {/* Reply indicator */}
                     {comment.reply_to && (
                       <div className="text-xs text-gray-500 mb-1 ml-2 flex items-center gap-1">
@@ -552,10 +714,34 @@ const GroupGoalChat = () => {
                       </div>
                     )}
                     
-                    <div className={`${isCurrentUser ? 'bg-white' : 'bg-white'} rounded-2xl p-3 shadow-sm border ${isAI ? 'border-[#c8a57b]/20' : 'border-gray-100'} relative group`}>
+                    <div className={`${isCurrentUser ? 'bg-white' : 'bg-white'} ${comment.is_pinned ? 'border-[#c8a57b] border-2' : 'border-gray-100 border'} rounded-2xl p-3 shadow-sm relative group`}>
                       <p className={`text-sm ${isAI ? 'text-gray-900 font-medium' : 'text-gray-900'}`}>
                         {comment.comment}
                       </p>
+                      
+                      {/* Attachment display */}
+                      {comment.attachment_url && (
+                        <div className="mt-2">
+                          {comment.attachment_type === 'image' ? (
+                            <img 
+                              src={comment.attachment_url} 
+                              alt="Imagen adjunta" 
+                              className="max-w-xs rounded-lg border border-gray-200"
+                            />
+                          ) : (
+                            <a
+                              href={comment.attachment_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors max-w-xs"
+                            >
+                              <File className="h-4 w-4 text-gray-600" />
+                              <span className="text-sm text-gray-700 truncate flex-1">{comment.comment}</span>
+                              <Download className="h-4 w-4 text-gray-400" />
+                            </a>
+                          )}
+                        </div>
+                      )}
                       <div className="flex items-center justify-between mt-1">
                         <p className="text-[10px] text-gray-500">
                           {new Date(comment.created_at).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}
@@ -592,6 +778,26 @@ const GroupGoalChat = () => {
                                 </div>
                               </PopoverContent>
                             </Popover>
+                            
+                            {isCurrentUser && canEdit && (
+                              <button
+                                onClick={() => handleEditComment(comment)}
+                                className="text-blue-400 hover:text-blue-600 p-1"
+                                title="Editar (disponible por 5 min)"
+                              >
+                                <Edit2 className="h-3.5 w-3.5" />
+                              </button>
+                            )}
+
+                            {isAdmin && (
+                              <button
+                                onClick={() => handleTogglePin(comment.id, comment.is_pinned || false)}
+                                className={`${comment.is_pinned ? 'text-[#c8a57b]' : 'text-gray-400'} hover:text-[#c8a57b] p-1`}
+                                title={comment.is_pinned ? "Desfijar mensaje" : "Fijar mensaje"}
+                              >
+                                {comment.is_pinned ? <PinOff className="h-3.5 w-3.5" /> : <Pin className="h-3.5 w-3.5" />}
+                              </button>
+                            )}
                             
                             {isCurrentUser && (
                               <button
@@ -712,6 +918,25 @@ const GroupGoalChat = () => {
 
             {/* Input field */}
             <div className="flex gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                onChange={handleFileSelect}
+                className="hidden"
+                accept="image/*,.pdf,.doc,.docx,.txt"
+              />
+              
+              <Button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingFile}
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 rounded-full hover:bg-gray-100"
+                title="Adjuntar archivo o imagen"
+              >
+                <Paperclip className="h-5 w-5 text-gray-600" />
+              </Button>
+
               <Input
                 ref={inputRef}
                 value={newComment}
@@ -719,10 +944,11 @@ const GroupGoalChat = () => {
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Escribe un mensaje... (usa @ para mencionar)"
                 className="flex-1 rounded-2xl border-[#c8a57b]/30"
+                disabled={uploadingFile}
               />
               <Button
                 onClick={handleSend}
-                disabled={!newComment.trim() || sending}
+                disabled={!newComment.trim() || sending || uploadingFile}
                 className="h-10 w-10 p-0 rounded-full bg-[#c8a57b] hover:bg-[#a08860] transition-all"
               >
                 <Send className="h-4 w-4 text-white" />
@@ -756,6 +982,42 @@ const GroupGoalChat = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Edit Comment Dialog */}
+      <Dialog open={!!editingComment} onOpenChange={() => setEditingComment(null)}>
+        <DialogContent className="bg-white sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Edit2 className="h-5 w-5 text-[#c8a57b]" />
+              Editar mensaje
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+              placeholder="Escribe tu mensaje..."
+              className="border-[#c8a57b]/30"
+            />
+            <div className="flex gap-2 justify-end">
+              <Button
+                variant="ghost"
+                onClick={() => setEditingComment(null)}
+                className="text-gray-600"
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleSaveEdit}
+                disabled={!editText.trim()}
+                className="bg-[#c8a57b] hover:bg-[#a08860]"
+              >
+                Guardar cambios
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
