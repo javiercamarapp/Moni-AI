@@ -120,23 +120,23 @@ export const AddGroupContributionModal = ({ isOpen, onClose, onSuccess, goal }: 
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
         {/* Header */}
-        <div className="bg-gradient-to-b from-amber-50/30 to-orange-50/20 p-6 rounded-t-2xl border-b border-gray-100">
+        <div className="bg-gradient-to-b from-amber-50/30 to-orange-50/20 p-4 rounded-t-2xl border-b border-gray-100">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Contribuir a la meta</h2>
-              <p className="text-sm text-gray-600 mt-1">{goal.title}</p>
+              <h2 className="text-base font-bold text-gray-900">Contribuir a la meta</h2>
+              <p className="text-xs text-gray-600 mt-0.5">{goal.title}</p>
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-600"
+              className="p-1.5 hover:bg-gray-100 rounded-full transition-colors text-gray-600"
             >
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4" />
             </button>
           </div>
         </div>
 
         {/* Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-4 space-y-3">
           {/* Progress Info */}
           <div className="bg-gray-50 rounded-xl p-2 space-y-1">
             <div className="flex justify-between text-xs">
@@ -154,9 +154,9 @@ export const AddGroupContributionModal = ({ isOpen, onClose, onSuccess, goal }: 
           </div>
 
           {/* Amount Input */}
-          <div className="space-y-2">
-            <Label htmlFor="amount" className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-gray-700" />
+          <div className="space-y-1.5">
+            <Label htmlFor="amount" className="flex items-center gap-2 text-xs">
+              <DollarSign className="h-3.5 w-3.5 text-gray-700" />
               Cantidad a contribuir
             </Label>
             <Input
@@ -171,23 +171,23 @@ export const AddGroupContributionModal = ({ isOpen, onClose, onSuccess, goal }: 
               onBlur={() => setIsFocused(false)}
               placeholder="1,000.00"
               required
-              className="h-14 rounded-xl text-lg bg-gray-50 border-gray-200 font-semibold text-gray-900"
+              className="h-12 rounded-xl text-base bg-gray-50 border-gray-200 font-semibold text-gray-900"
             />
           </div>
 
           {/* Quick Amounts */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label className="text-xs text-gray-600">Montos rápidos</Label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-4 gap-1.5">
               {suggestedAmounts.map((suggested) => (
                 <button
                   key={suggested.label}
                   type="button"
                   onClick={() => setAmount(suggested.value.toFixed(2))}
-                  className="p-3 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 transition-colors"
+                  className="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 transition-colors"
                 >
                   <p className="text-xs font-medium text-gray-900">{suggested.label}</p>
-                  <p className="text-[10px] text-gray-600 mt-1">
+                  <p className="text-[10px] text-gray-600 mt-0.5">
                     ${suggested.value.toFixed(0)}
                   </p>
                 </button>
@@ -197,11 +197,11 @@ export const AddGroupContributionModal = ({ isOpen, onClose, onSuccess, goal }: 
 
           {/* AI Insight */}
           {amount && parseFloat(amount) > 0 && (
-            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+            <div className="bg-gray-50 rounded-xl p-2.5 border border-gray-200">
               <div className="flex items-start gap-2">
-                <TrendingUp className="h-4 w-4 text-gray-700 mt-0.5 flex-shrink-0" />
+                <TrendingUp className="h-3.5 w-3.5 text-gray-700 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-xs font-medium text-gray-900 mb-1">Progreso actualizado</p>
+                  <p className="text-xs font-medium text-gray-900 mb-0.5">Progreso actualizado</p>
                   <p className="text-[11px] text-gray-700">
                     El grupo llegará al <span className="font-semibold text-gray-900">
                       {((goal.current_amount + parseFloat(amount)) / goal.target_amount * 100).toFixed(1)}%
@@ -213,19 +213,19 @@ export const AddGroupContributionModal = ({ isOpen, onClose, onSuccess, goal }: 
           )}
 
           {/* Submit */}
-          <div className="flex gap-3">
+          <div className="flex gap-2 pt-1">
             <Button
               type="button"
               onClick={onClose}
               variant="outline"
-              className="flex-1 h-12 bg-gray-50 hover:bg-gray-50 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all border-0 text-gray-600 font-medium"
+              className="flex-1 h-10 bg-gray-50 hover:bg-gray-50 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all border-0 text-gray-600 font-medium text-sm"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={loading}
-              className="flex-1 h-12 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-white/80 transition-all border-0 text-gray-900 font-semibold"
+              className="flex-1 h-10 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:bg-white/80 transition-all border-0 text-gray-900 font-semibold text-sm"
             >
               {loading ? "Procesando..." : "Confirmar"}
             </Button>

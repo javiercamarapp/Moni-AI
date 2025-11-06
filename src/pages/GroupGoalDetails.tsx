@@ -654,20 +654,20 @@ const GroupGoalDetails = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
             {/* Header */}
-            <div className="bg-gradient-to-b from-amber-50/30 to-orange-50/20 p-6 rounded-t-2xl border-b border-gray-100">
+            <div className="bg-gradient-to-b from-amber-50/30 to-orange-50/20 p-4 rounded-t-2xl border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">Contribuir a la meta</h2>
-                  <p className="text-sm text-gray-600 mt-1">{goal.title}</p>
+                  <h2 className="text-base font-bold text-gray-900">Contribuir a la meta</h2>
+                  <p className="text-xs text-gray-600 mt-0.5">{goal.title}</p>
                 </div>
                 <button
                   onClick={() => {
                     setAddFundsModal(false);
                     setContributionAmount("");
                   }}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-600"
+                  className="p-1.5 hover:bg-gray-100 rounded-full transition-colors text-gray-600"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4" />
                 </button>
               </div>
             </div>
@@ -765,7 +765,7 @@ const GroupGoalDetails = () => {
                   setContributionLoading(false);
                 }
               }} 
-              className="p-6 space-y-6"
+              className="p-4 space-y-3"
             >
               {/* Progress Info */}
               <div className="bg-gray-50 rounded-xl p-2 space-y-1">
@@ -785,9 +785,9 @@ const GroupGoalDetails = () => {
               </div>
 
               {/* Amount Input */}
-              <div className="space-y-2">
-                <Label htmlFor="contribution-amount" className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-gray-700" />
+              <div className="space-y-1.5">
+                <Label htmlFor="contribution-amount" className="flex items-center gap-2 text-xs">
+                  <DollarSign className="h-3.5 w-3.5 text-gray-700" />
                   Cantidad a aportar
                 </Label>
                 <Input
@@ -802,14 +802,14 @@ const GroupGoalDetails = () => {
                   onBlur={() => setIsFocused(false)}
                   placeholder="1,000.00"
                   required
-                  className="h-14 rounded-xl text-lg bg-gray-50 border-gray-200 font-semibold text-gray-900"
+                  className="h-12 rounded-xl text-base bg-gray-50 border-gray-200 font-semibold text-gray-900"
                 />
               </div>
 
               {/* Quick Amounts */}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label className="text-xs text-gray-600">Montos rápidos</Label>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-4 gap-1.5">
                   {[
                     { label: "10%", value: perPersonTarget * 0.1 },
                     { label: "25%", value: perPersonTarget * 0.25 },
@@ -820,10 +820,10 @@ const GroupGoalDetails = () => {
                       key={suggested.label}
                       type="button"
                       onClick={() => setContributionAmount(suggested.value.toFixed(2))}
-                      className="p-3 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 transition-colors"
+                      className="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 transition-colors"
                     >
                       <p className="text-xs font-medium text-gray-900">{suggested.label}</p>
-                      <p className="text-[10px] text-gray-600 mt-1">
+                      <p className="text-[10px] text-gray-600 mt-0.5">
                         ${suggested.value.toFixed(0)}
                       </p>
                     </button>
@@ -832,19 +832,19 @@ const GroupGoalDetails = () => {
               </div>
 
               {/* Account Selector */}
-              <div className="space-y-2">
-                <Label htmlFor="account-select" className="flex items-center gap-2 text-gray-700">
+              <div className="space-y-1.5">
+                <Label htmlFor="account-select" className="flex items-center gap-2 text-xs text-gray-700">
                   💳 Cuenta de origen
                 </Label>
                 <Select value={selectedAccount} onValueChange={setSelectedAccount}>
-                  <SelectTrigger className="h-12 rounded-xl bg-gray-50 border-gray-200">
+                  <SelectTrigger className="h-10 rounded-xl bg-gray-50 border-gray-200 text-sm">
                     <SelectValue placeholder="Selecciona una cuenta" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border border-border z-50">
                     {userAccounts.map((account) => (
                       <SelectItem key={account.id} value={account.id}>
                         <div className="flex items-center justify-between w-full">
-                          <span>{account.name}</span>
+                          <span className="text-sm">{account.name}</span>
                           <span className="text-xs text-muted-foreground ml-4">
                             {formatCurrency(account.value)}
                           </span>
@@ -855,27 +855,27 @@ const GroupGoalDetails = () => {
                 </Select>
                 {userAccounts.length === 0 && (
                   <p className="text-xs text-amber-600">
-                    ⚠️ No tienes cuentas registradas. Agrega una en la sección de Patrimonio.
+                    ⚠️ No tienes cuentas registradas.
                   </p>
                 )}
               </div>
 
               {/* Options */}
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="auto"
                     checked={notifyGroup}
                     onCheckedChange={(checked) => setNotifyGroup(!!checked)}
                   />
-                  <label htmlFor="auto" className="text-sm text-gray-700">
+                  <label htmlFor="auto" className="text-xs text-gray-700">
                     Notificar cada 15 días para realizar aportaciones
                   </label>
                 </div>
                 
                 <div className="flex items-center space-x-2">
                   <Checkbox id="notify" defaultChecked />
-                  <label htmlFor="notify" className="text-sm text-gray-700">
+                  <label htmlFor="notify" className="text-xs text-gray-700">
                     Mostrar mi aporte al grupo ✅
                   </label>
                 </div>
@@ -883,11 +883,11 @@ const GroupGoalDetails = () => {
 
               {/* AI Insight */}
               {contributionAmount && parseFloat(contributionAmount) > 0 && (
-                <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                <div className="bg-gray-50 rounded-xl p-2.5 border border-gray-200">
                   <div className="flex items-start gap-2">
-                    <TrendingUp className="h-4 w-4 text-gray-700 mt-0.5 flex-shrink-0" />
+                    <TrendingUp className="h-3.5 w-3.5 text-gray-700 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-xs font-medium text-gray-900 mb-1">Tu progreso</p>
+                      <p className="text-xs font-medium text-gray-900 mb-0.5">Tu progreso</p>
                       <p className="text-[11px] text-gray-700">
                         Con este aporte llegarás al <span className="font-semibold text-gray-900">
                           {((parseFloat(contributionAmount) / perPersonTarget) * 100).toFixed(1)}%
@@ -899,7 +899,7 @@ const GroupGoalDetails = () => {
               )}
 
               {/* Submit */}
-              <div className="flex gap-3">
+              <div className="flex gap-2 pt-1">
                 <Button
                   type="button"
                   onClick={() => {
@@ -907,14 +907,14 @@ const GroupGoalDetails = () => {
                     setContributionAmount("");
                   }}
                   variant="outline"
-                  className="flex-1 h-12 bg-gray-50 hover:bg-gray-50 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all border-0 text-gray-600 font-medium"
+                  className="flex-1 h-10 bg-gray-50 hover:bg-gray-50 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all border-0 text-gray-600 font-medium text-sm"
                 >
                   Cancelar
                 </Button>
                 <Button
                   type="submit"
                   disabled={contributionLoading}
-                  className="flex-1 h-12 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-white/80 transition-all border-0 text-gray-900 font-semibold"
+                  className="flex-1 h-10 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:bg-white/80 transition-all border-0 text-gray-900 font-semibold text-sm"
                 >
                   {contributionLoading ? "Procesando..." : "Confirmar"}
                 </Button>
