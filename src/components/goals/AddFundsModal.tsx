@@ -216,7 +216,7 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
         {/* Body */}
         <form onSubmit={handleSubmit} className="p-4 space-y-3">
           {/* Progress Info */}
-          <div className="bg-gray-50 rounded-xl p-2 space-y-1">
+          <div className="bg-white border border-gray-200 rounded-xl p-2 space-y-1">
             <div className="flex justify-between text-xs">
               <span className="text-gray-600">Ahorro actual</span>
               <span className="font-semibold text-gray-900">{formatCurrency(goal.current)}</span>
@@ -249,7 +249,7 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
               onBlur={() => setIsFocused(false)}
               placeholder="1,000.00"
               required
-              className="h-12 rounded-xl text-base bg-gray-50 border-gray-200 font-semibold text-gray-900"
+              className="h-12 rounded-xl text-base bg-white border-gray-200 font-semibold text-gray-900"
             />
           </div>
 
@@ -262,7 +262,7 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
                   key={suggested.label}
                   type="button"
                   onClick={() => setAmount(suggested.value.toFixed(2))}
-                  className="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 transition-colors"
+                  className="p-2 rounded-lg bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 transition-colors"
                 >
                   <p className="text-xs font-medium text-gray-900">{suggested.label}</p>
                   <p className="text-[10px] text-gray-600 mt-0.5">
@@ -279,7 +279,7 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
               💳 Cuenta de origen
             </Label>
             <Select value={selectedAccount} onValueChange={setSelectedAccount}>
-              <SelectTrigger className="h-10 rounded-xl bg-gray-50 border-gray-200 text-sm">
+              <SelectTrigger className="h-10 rounded-xl bg-white border-gray-200 text-sm">
                 <SelectValue placeholder="Selecciona cuenta de origen" />
               </SelectTrigger>
               <SelectContent className="bg-background border border-border z-50">
@@ -321,7 +321,7 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
 
           {/* AI Insight */}
           {amount && parseFloat(amount) > 0 && (
-            <div className="bg-gray-50 rounded-xl p-2.5 border border-gray-200">
+            <div className="bg-white rounded-xl p-2.5 border border-gray-200">
               <div className="flex items-start gap-2">
                 <TrendingUp className="h-3.5 w-3.5 text-gray-700 mt-0.5 flex-shrink-0" />
                 <div>

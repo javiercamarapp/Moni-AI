@@ -759,8 +759,8 @@ const GroupGoalDetails = () => {
               }} 
               className="p-4 space-y-3"
             >
-              {/* Progress Info */}
-              <div className="bg-gray-50 rounded-xl p-2 space-y-1">
+                {/* Progress Info */}
+                <div className="bg-white border border-gray-200 rounded-xl p-2 space-y-1">
                 <div className="flex justify-between text-xs">
                   <span className="text-gray-600">Tu meta personal</span>
                   <span className="font-semibold text-gray-900">{formatCurrency(perPersonTarget)}</span>
@@ -792,9 +792,9 @@ const GroupGoalDetails = () => {
                   }}
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setIsFocused(false)}
-                  placeholder="1,000.00"
-                  required
-                  className="h-12 rounded-xl text-base bg-gray-50 border-gray-200 font-semibold text-gray-900"
+                    placeholder="1,000.00"
+                    required
+                    className="h-12 rounded-xl text-base bg-white border-gray-200 font-semibold text-gray-900"
                 />
               </div>
 
@@ -812,7 +812,7 @@ const GroupGoalDetails = () => {
                       key={suggested.label}
                       type="button"
                       onClick={() => setContributionAmount(suggested.value.toFixed(2))}
-                      className="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 transition-colors"
+                      className="p-2 rounded-lg bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 transition-colors"
                     >
                       <p className="text-xs font-medium text-gray-900">{suggested.label}</p>
                       <p className="text-[10px] text-gray-600 mt-0.5">
@@ -829,7 +829,7 @@ const GroupGoalDetails = () => {
                     💳 Cuenta de origen
                   </Label>
                   <Select value={selectedAccount} onValueChange={setSelectedAccount}>
-                    <SelectTrigger className="h-10 rounded-xl bg-gray-50 border-gray-200 text-sm">
+                    <SelectTrigger className="h-10 rounded-xl bg-white border-gray-200 text-sm">
                       <SelectValue placeholder="Selecciona cuenta de origen" />
                     </SelectTrigger>
                     <SelectContent className="bg-background border border-border z-50">
@@ -878,9 +878,9 @@ const GroupGoalDetails = () => {
                 </div>
               </div>
 
-              {/* AI Insight */}
-              {contributionAmount && parseFloat(contributionAmount) > 0 && (
-                <div className="bg-gray-50 rounded-xl p-2.5 border border-gray-200">
+                {/* AI Insight */}
+                {contributionAmount && parseFloat(contributionAmount) > 0 && (
+                  <div className="bg-white rounded-xl p-2.5 border border-gray-200">
                   <div className="flex items-start gap-2">
                     <TrendingUp className="h-3.5 w-3.5 text-gray-700 mt-0.5 flex-shrink-0" />
                     <div>
