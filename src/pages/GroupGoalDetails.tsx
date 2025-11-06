@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Users, Target, TrendingUp, MessageCircle, Plus, Sparkles, Send } from "lucide-react";
+import { ArrowLeft, Users, Target, TrendingUp, MessageCircle, Plus, Sparkles, Send, X, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -12,6 +12,7 @@ import BottomNav from "@/components/BottomNav";
 import { AddFundsModal } from "@/components/goals/AddFundsModal";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import MoniAIPrediction from "@/components/goals/MoniAIPrediction";
 
 interface GroupGoal {
@@ -68,6 +69,9 @@ const GroupGoalDetails = () => {
   const [notifyGroup, setNotifyGroup] = useState(true);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<'individual' | 'completed' | 'days' | 'members' | null>(null);
+  const [contributionAmount, setContributionAmount] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
+  const [contributionLoading, setContributionLoading] = useState(false);
 
   useEffect(() => {
     fetchGoalDetails();
@@ -620,22 +624,66 @@ const GroupGoalDetails = () => {
       {addFundsModal && goal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-            <div className="bg-gray-100 p-6 text-gray-900 rounded-t-2xl">
+            {/* Header */}
+            <div className="bg-gradient-to-b from-amber-50/30 to-orange-50/20 p-6 rounded-t-2xl border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-bold">Contribuir a la meta</h2>
+                  <h2 className="text-xl font-bold text-gray-900">Contribuir a la meta</h2>
                   <p className="text-sm text-gray-600 mt-1">{goal.title}</p>
                 </div>
                 <button
-                  onClick={() => setAddFundsModal(false)}
-                  className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                  onClick={() => {
+                    setAddFundsModal(false);
+                    setContributionAmount("");
+                  }}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-600"
                 >
-                  ✕
+                  <X className="h-5 w-5" />
                 </button>
               </div>
             </div>
 
-            <div className="p-6 space-y-6">
+            {/* Body */}
+            <form 
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setContributionLoading(true);
+
+                try {
+                  const { data: { user } } = await supabase.auth.getUser();
+                  if (!user) throw new Error("Not authenticated");
+
+                  const amountNum = parseFloat(contributionAmount);
+                  if (isNaN(amountNum) || amountNum <= 0) {
+                    toast.error("Ingresa un monto válido");
+                    return;
+                  }
+
+                  // Log activity
+                  await supabase
+                    .from('goal_activities')
+                    .insert({
+                      goal_id: goal.id,
+                      user_id: user.id,
+                      activity_type: 'contribution',
+                      amount: amountNum,
+                      message: `Aportó ${formatCurrency(amountNum)} a la meta grupal`
+                    });
+
+                  toast.success(`¡Aporte de ${formatCurrency(amountNum)} registrado! 🎉`);
+                  setAddFundsModal(false);
+                  setContributionAmount("");
+                  fetchGoalDetails();
+                } catch (error: any) {
+                  console.error('Error adding contribution:', error);
+                  toast.error('Error al registrar la contribución');
+                } finally {
+                  setContributionLoading(false);
+                }
+              }} 
+              className="p-6 space-y-6"
+            >
+              {/* Progress Info */}
               <div className="bg-gray-50 rounded-xl p-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Tu meta personal</span>
@@ -652,7 +700,55 @@ const GroupGoalDetails = () => {
                 </div>
               </div>
 
-              <div className="space-y-4">
+              {/* Amount Input */}
+              <div className="space-y-2">
+                <Label htmlFor="contribution-amount" className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-gray-700" />
+                  Cantidad a aportar
+                </Label>
+                <Input
+                  id="contribution-amount"
+                  type="text"
+                  value={isFocused ? contributionAmount : (contributionAmount ? parseFloat(contributionAmount).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '')}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9.]/g, '');
+                    setContributionAmount(value);
+                  }}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  placeholder="1,000.00"
+                  required
+                  className="h-14 rounded-xl text-lg bg-gray-50 border-gray-200 font-semibold text-gray-900"
+                />
+              </div>
+
+              {/* Quick Amounts */}
+              <div className="space-y-2">
+                <Label className="text-xs text-gray-600">Montos rápidos</Label>
+                <div className="grid grid-cols-4 gap-2">
+                  {[
+                    { label: "10%", value: perPersonTarget * 0.1 },
+                    { label: "25%", value: perPersonTarget * 0.25 },
+                    { label: "50%", value: perPersonTarget * 0.5 },
+                    { label: "Total", value: perPersonTarget }
+                  ].map((suggested) => (
+                    <button
+                      key={suggested.label}
+                      type="button"
+                      onClick={() => setContributionAmount(suggested.value.toFixed(2))}
+                      className="p-3 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 transition-colors"
+                    >
+                      <p className="text-xs font-medium text-gray-900">{suggested.label}</p>
+                      <p className="text-[10px] text-gray-600 mt-1">
+                        ${suggested.value.toFixed(0)}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Options */}
+              <div className="space-y-3">
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="auto"
@@ -672,33 +768,45 @@ const GroupGoalDetails = () => {
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                <p className="text-xs font-medium text-gray-900 mb-1">💡 Tip Moni AI</p>
-                <p className="text-xs text-gray-700">
-                  Si aportas constantemente, ayudarás al grupo a cumplir la meta {daysRemaining && daysRemaining > 30 ? 'antes de tiempo' : 'a tiempo'}
-                </p>
-              </div>
+              {/* AI Insight */}
+              {contributionAmount && parseFloat(contributionAmount) > 0 && (
+                <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                  <div className="flex items-start gap-2">
+                    <TrendingUp className="h-4 w-4 text-gray-700 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs font-medium text-gray-900 mb-1">Tu progreso</p>
+                      <p className="text-[11px] text-gray-700">
+                        Con este aporte llegarás al <span className="font-semibold text-gray-900">
+                          {((parseFloat(contributionAmount) / perPersonTarget) * 100).toFixed(1)}%
+                        </span> de tu meta personal
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
+              {/* Submit */}
               <div className="flex gap-3">
                 <Button
-                  onClick={() => setAddFundsModal(false)}
+                  type="button"
+                  onClick={() => {
+                    setAddFundsModal(false);
+                    setContributionAmount("");
+                  }}
                   variant="outline"
-                  className="flex-1 h-12 rounded-xl"
+                  className="flex-1 h-12 bg-gray-50 hover:bg-gray-50 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all border-0 text-gray-600 font-medium"
                 >
                   Cancelar
                 </Button>
                 <Button
-                  onClick={async () => {
-                    toast.success("¡Aporte registrado! 🎉 El grupo ahora lleva " + (progress + 5).toFixed(0) + "% del objetivo.");
-                    setAddFundsModal(false);
-                    fetchGoalDetails();
-                  }}
-                  className="flex-1 h-12 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium"
+                  type="submit"
+                  disabled={contributionLoading}
+                  className="flex-1 h-12 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-white/80 transition-all border-0 text-gray-900 font-semibold"
                 >
-                  Confirmar aporte
+                  {contributionLoading ? "Procesando..." : "Confirmar"}
                 </Button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       )}
