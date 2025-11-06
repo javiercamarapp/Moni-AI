@@ -1,60 +1,96 @@
-import React, { useMemo } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Loader2 } from "lucide-react";
 
 interface MoniAIPredictionProps {
-  target: number;
-  deadline: string;
-  memberCount: number;
-  saved: number;
-  history?: number[];
+  goalId: string;
 }
 
-export default function MoniAIPrediction({
-  target,
-  deadline,
-  memberCount,
-  saved,
-  history = [],
-}: MoniAIPredictionProps) {
-  const recommendation = useMemo(() => {
-    const daysRemaining = Math.max(
-      0,
-      (new Date(deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
-    );
-    const weeksRemaining = Math.ceil(daysRemaining / 7);
-    const remaining = target - saved;
-    const recommendedPerWeek = Math.ceil(
-      remaining / (memberCount * (weeksRemaining || 1))
-    );
-    const avg =
-      history.length > 0
-        ? history.reduce((a, b) => a + b, 0) / history.length
-        : recommendedPerWeek;
+export default function MoniAIPrediction({ goalId }: MoniAIPredictionProps) {
+  const [insights, setInsights] = useState<string[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-    let status = "al_dia";
-    if (avg < recommendedPerWeek * 0.9) status = "atrasado";
-    if (avg > recommendedPerWeek * 1.1) status = "adelantado";
+  useEffect(() => {
+    const fetchInsights = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('generate-goal-insights', {
+          body: { goalId }
+        });
 
-    const predictedDate = new Date(
-      Date.now() + (remaining / (memberCount * avg)) * 7 * 24 * 60 * 60 * 1000
-    );
+        if (error) throw error;
 
-    return {
-      icon: "💡",
-      title: "Consejo inteligente",
-      message: status === "adelantado" 
-        ? "Van excelente. Mantengan el ritmo actual para cumplir antes de tiempo."
-        : `Ahorren $${recommendedPerWeek.toLocaleString()}/semana por miembro para cumplir a tiempo.`
+        if (data?.insights && Array.isArray(data.insights)) {
+          setInsights(data.insights);
+        }
+      } catch (error) {
+        console.error('Error fetching insights:', error);
+        // Fallback insights if API fails
+        setInsights([
+          "💰 Revisa tus gastos diarios para identificar áreas de ahorro",
+          "📊 Mantén un seguimiento constante de tu progreso financiero",
+          "🎯 Establece recordatorios para hacer aportes regulares a tu meta",
+          "⏰ La constancia es clave para alcanzar tus objetivos financieros",
+          "🚀 Pequeños ahorros diarios suman grandes resultados a largo plazo"
+        ]);
+      } finally {
+        setLoading(false);
+      }
     };
-  }, [target, deadline, memberCount, saved, history]);
+
+    fetchInsights();
+  }, [goalId]);
+
+  useEffect(() => {
+    if (insights.length === 0) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % insights.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [insights.length]);
+
+  if (loading) {
+    return (
+      <div className="animate-fade-in bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-300">
+        <div className="p-3 flex items-center justify-center gap-2">
+          <Loader2 className="h-4 w-4 animate-spin text-gray-600" />
+          <p className="text-xs text-gray-600">Generando insights...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (insights.length === 0) {
+    return null;
+  }
+
+  const currentInsight = insights[currentIndex];
 
   return (
-    <div className="animate-fade-in bg-gray-50 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-300">
+    <div className="animate-fade-in bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-300">
       <div className="p-3 flex items-start gap-2">
-        <div className="text-lg flex-shrink-0">{recommendation.icon}</div>
-        <div className="flex-1 min-w-0">
-          <p className="text-xs font-medium text-gray-700 mb-0.5">{recommendation.title}</p>
-          <p className="text-xs text-gray-600 leading-relaxed">{recommendation.message}</p>
+        <div className="text-lg flex-shrink-0">
+          {currentInsight.split(' ')[0]}
         </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-medium text-gray-700 mb-0.5">Insight {currentIndex + 1} de {insights.length}</p>
+          <p className="text-xs text-gray-600 leading-relaxed">
+            {currentInsight.split(' ').slice(1).join(' ')}
+          </p>
+        </div>
+      </div>
+      {/* Progress dots */}
+      <div className="flex justify-center gap-1 pb-2">
+        {insights.map((_, idx) => (
+          <div
+            key={idx}
+            className={`h-1 rounded-full transition-all duration-300 ${
+              idx === currentIndex ? 'w-4 bg-gray-900' : 'w-1 bg-gray-300'
+            }`}
+          />
+        ))}
       </div>
     </div>
   );

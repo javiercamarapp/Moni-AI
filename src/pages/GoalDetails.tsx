@@ -223,14 +223,7 @@ const GoalDetails = () => {
           </div>
 
           {/* AI Prediction */}
-          {goal.deadline && (
-            <MoniAIPrediction
-              target={goal.target}
-              deadline={goal.deadline}
-              memberCount={1}
-              saved={goal.current}
-            />
-          )}
+          <MoniAIPrediction goalId={id!} />
 
           {/* Activities History */}
           {activities.length > 0 && (

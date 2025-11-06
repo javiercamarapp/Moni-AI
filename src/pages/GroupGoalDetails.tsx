@@ -344,12 +344,7 @@ const GroupGoalDetails = () => {
           </div>
 
           {/* AI Recommendation */}
-          <MoniAIPrediction
-            target={goal.target_amount}
-            deadline={goal.deadline || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()}
-            memberCount={1}
-            saved={0}
-          />
+          <MoniAIPrediction goalId={id!} />
 
           {/* Members Progress - Leaderboard Style */}
           <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-all duration-300 animate-fade-in">
