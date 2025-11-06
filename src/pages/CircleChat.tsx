@@ -212,8 +212,9 @@ const CircleChat = () => {
   }
 
   return (
-    <div className="min-h-screen pb-20 bg-gradient-to-b from-[#E5DEFF] to-[#FFDEE2] relative overflow-hidden">
+    <div className="min-h-screen flex flex-col relative overflow-hidden">
       {/* Animated Background */}
+      <div className="fixed inset-0 bg-gradient-to-b from-[#E5DEFF] to-[#FFDEE2] -z-10" />
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)] animate-pulse -z-10" style={{ animationDuration: '4s' }} />
       
       {/* Header */}
@@ -241,8 +242,9 @@ const CircleChat = () => {
       </div>
 
       {/* Chat Content */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <ChatMessageList smooth>
+      <div className="flex-1 w-full overflow-hidden pb-20">
+        <div className="h-full">
+          <ChatMessageList smooth>
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full py-12 px-4">
               <div className="bg-white/60 backdrop-blur-sm rounded-full p-6 mb-4">
@@ -294,10 +296,10 @@ const CircleChat = () => {
             ))
           )}
         </ChatMessageList>
-      </div>
+        </div>
 
-      {/* Input Area - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 p-2.5 border-t border-white/30 bg-white/80 backdrop-blur-sm z-50">
+        {/* Input Area - Fixed at bottom */}
+        <div className="fixed bottom-0 left-0 right-0 p-2.5 border-t border-white/30 z-50">
         <div className="w-full max-w-4xl mx-auto">
           <form
             onSubmit={handleSendMessage}
@@ -341,6 +343,7 @@ const CircleChat = () => {
             </Button>
           </form>
         </div>
+      </div>
       </div>
 
       {/* Hidden audio element */}
