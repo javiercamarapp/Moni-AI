@@ -96,6 +96,7 @@ const GroupGoalDetails = () => {
         .from('assets')
         .select('id, name, value, category')
         .eq('user_id', user.id)
+        .eq('category', 'Activos líquidos')
         .order('value', { ascending: false });
 
       if (error) throw error;
@@ -839,12 +840,12 @@ const GroupGoalDetails = () => {
                   <SelectTrigger className="h-12 rounded-xl bg-gray-50 border-gray-200">
                     <SelectValue placeholder="Selecciona una cuenta" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-background border border-border z-50">
                     {userAccounts.map((account) => (
                       <SelectItem key={account.id} value={account.id}>
                         <div className="flex items-center justify-between w-full">
                           <span>{account.name}</span>
-                          <span className="text-xs text-gray-600 ml-4">
+                          <span className="text-xs text-muted-foreground ml-4">
                             {formatCurrency(account.value)}
                           </span>
                         </div>
