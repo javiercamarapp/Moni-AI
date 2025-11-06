@@ -28,16 +28,39 @@ serve(async (req) => {
       throw new Error("User not authenticated");
     }
 
-    const { goalId } = await req.json();
+    const { goalId, isGroupGoal } = await req.json();
 
-    // Fetch goal details
-    const { data: goal, error: goalError } = await supabase
-      .from("goals")
-      .select("*")
-      .eq("id", goalId)
-      .single();
+    // Fetch goal details from the appropriate table
+    let goal;
+    if (isGroupGoal) {
+      const { data, error: goalError } = await supabase
+        .from("circle_goals")
+        .select("*")
+        .eq("id", goalId)
+        .maybeSingle();
 
-    if (goalError) throw goalError;
+      if (goalError) throw goalError;
+      if (!data) throw new Error("Group goal not found");
+      
+      goal = {
+        id: data.id,
+        title: data.title,
+        target: data.target_amount,
+        current: 0, // Will calculate from members
+        deadline: data.deadline,
+      };
+    } else {
+      const { data, error: goalError } = await supabase
+        .from("goals")
+        .select("*")
+        .eq("id", goalId)
+        .maybeSingle();
+
+      if (goalError) throw goalError;
+      if (!data) throw new Error("Goal not found");
+      
+      goal = data;
+    }
 
     // Fetch user's recent transactions (last 30 days)
     const thirtyDaysAgo = new Date();

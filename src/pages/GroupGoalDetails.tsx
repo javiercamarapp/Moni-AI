@@ -344,7 +344,7 @@ const GroupGoalDetails = () => {
           </div>
 
           {/* AI Recommendation */}
-          <MoniAIPrediction goalId={id!} />
+          <MoniAIPrediction goalId={id!} isGroupGoal={true} />
 
           {/* Members Progress - Leaderboard Style */}
           <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-all duration-300 animate-fade-in">

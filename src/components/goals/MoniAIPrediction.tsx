@@ -4,9 +4,10 @@ import { Loader2 } from "lucide-react";
 
 interface MoniAIPredictionProps {
   goalId: string;
+  isGroupGoal?: boolean;
 }
 
-export default function MoniAIPrediction({ goalId }: MoniAIPredictionProps) {
+export default function MoniAIPrediction({ goalId, isGroupGoal = false }: MoniAIPredictionProps) {
   const [insights, setInsights] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -15,7 +16,7 @@ export default function MoniAIPrediction({ goalId }: MoniAIPredictionProps) {
     const fetchInsights = async () => {
       try {
         const { data, error } = await supabase.functions.invoke('generate-goal-insights', {
-          body: { goalId }
+          body: { goalId, isGroupGoal }
         });
 
         if (error) throw error;
@@ -39,7 +40,7 @@ export default function MoniAIPrediction({ goalId }: MoniAIPredictionProps) {
     };
 
     fetchInsights();
-  }, [goalId]);
+  }, [goalId, isGroupGoal]);
 
   useEffect(() => {
     if (insights.length === 0) return;
