@@ -66,6 +66,8 @@ const GroupGoalDetails = () => {
   const [addFundsModal, setAddFundsModal] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [notifyGroup, setNotifyGroup] = useState(true);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedDetail, setSelectedDetail] = useState<'individual' | 'completed' | 'days' | 'members' | null>(null);
 
   useEffect(() => {
     fetchGoalDetails();
@@ -212,9 +214,9 @@ const GroupGoalDetails = () => {
 
   return (
     <>
-      <div className="min-h-screen pb-24 bg-gray-50">
+      <div className="min-h-screen pb-24 bg-gradient-to-b from-amber-50/30 to-orange-50/20">
         {/* Header */}
-        <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-sm border-b border-gray-100">
+        <div className="sticky top-0 z-40 bg-gradient-to-b from-purple-50/80 via-cyan-50/60 to-transparent backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 py-3">
             <div className="flex items-center gap-3">
               <Button
@@ -264,24 +266,48 @@ const GroupGoalDetails = () => {
 
           {/* Resumen de Meta */}
           <div className="grid grid-cols-4 gap-2">
-            <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-100 text-center hover:shadow-md transition-all duration-300 animate-fade-in">
-              <p className="text-[10px] text-gray-600 mb-0.5">Meta Individual</p>
-              <p className="text-sm font-bold text-gray-900">{formatCurrency(goal.target_amount)}</p>
-            </div>
-            <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-100 text-center hover:shadow-md transition-all duration-300 animate-fade-in">
-              <p className="text-[10px] text-gray-600 mb-0.5">Completaron</p>
-              <p className="text-sm font-bold text-gray-900">{goal.completed_members} de {members.length}</p>
-            </div>
+            <button 
+              onClick={() => {
+                setSelectedDetail('individual');
+                setShowDetailsModal(true);
+              }}
+              className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-2 shadow-sm border border-amber-200 text-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 animate-fade-in cursor-pointer"
+            >
+              <p className="text-[10px] text-amber-700 mb-0.5">Meta Individual</p>
+              <p className="text-sm font-bold text-amber-900">{formatCurrency(goal.target_amount)}</p>
+            </button>
+            <button 
+              onClick={() => {
+                setSelectedDetail('completed');
+                setShowDetailsModal(true);
+              }}
+              className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-lg p-2 shadow-sm border border-emerald-200 text-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 animate-fade-in cursor-pointer"
+            >
+              <p className="text-[10px] text-emerald-700 mb-0.5">Completaron</p>
+              <p className="text-sm font-bold text-emerald-600">{goal.completed_members} de {members.length}</p>
+            </button>
             {goal.deadline && (
-              <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-100 text-center hover:shadow-md transition-all duration-300 animate-fade-in">
-                <p className="text-[10px] text-gray-600 mb-0.5">Días Restantes</p>
-                <p className="text-sm font-bold text-gray-900">{daysRemaining}</p>
-              </div>
+              <button 
+                onClick={() => {
+                  setSelectedDetail('days');
+                  setShowDetailsModal(true);
+                }}
+                className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-2 shadow-sm border border-blue-200 text-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 animate-fade-in cursor-pointer"
+              >
+                <p className="text-[10px] text-blue-700 mb-0.5">Días Restantes</p>
+                <p className="text-sm font-bold text-blue-900">{daysRemaining}</p>
+              </button>
             )}
-            <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-100 text-center hover:shadow-md transition-all duration-300 animate-fade-in">
-              <p className="text-[10px] text-gray-600 mb-0.5">Miembros</p>
-              <p className="text-sm font-bold text-gray-900">{members.length}</p>
-            </div>
+            <button 
+              onClick={() => {
+                setSelectedDetail('members');
+                setShowDetailsModal(true);
+              }}
+              className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-2 shadow-sm border border-purple-200 text-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 animate-fade-in cursor-pointer"
+            >
+              <p className="text-[10px] text-purple-700 mb-0.5">Miembros</p>
+              <p className="text-sm font-bold text-purple-900">{members.length}</p>
+            </button>
           </div>
 
           {/* AI Recommendation */}
@@ -443,6 +469,138 @@ const GroupGoalDetails = () => {
               <MessageCircle className="h-5 w-5 mr-2" />
               Abrir chat grupal ({chatMessages.length} mensajes)
             </Button>
+          )}
+
+          {/* Details Modal */}
+          {showDetailsModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in" onClick={() => setShowDetailsModal(false)}>
+              <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-scale-in" onClick={(e) => e.stopPropagation()}>
+                <div className={`p-6 rounded-t-2xl ${
+                  selectedDetail === 'individual' ? 'bg-gradient-to-br from-amber-50 to-orange-50' :
+                  selectedDetail === 'completed' ? 'bg-gradient-to-br from-emerald-50 to-green-50' :
+                  selectedDetail === 'days' ? 'bg-gradient-to-br from-blue-50 to-cyan-50' :
+                  'bg-gradient-to-br from-purple-50 to-pink-50'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-xl font-bold text-gray-900">
+                      {selectedDetail === 'individual' && '🎯 Meta Individual'}
+                      {selectedDetail === 'completed' && '✅ Miembros que Completaron'}
+                      {selectedDetail === 'days' && '📅 Tiempo Restante'}
+                      {selectedDetail === 'members' && '👥 Lista de Miembros'}
+                    </h2>
+                    <button
+                      onClick={() => setShowDetailsModal(false)}
+                      className="p-2 hover:bg-white/50 rounded-full transition-colors"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+
+                <div className="p-6 space-y-4 max-h-96 overflow-y-auto">
+                  {selectedDetail === 'individual' && (
+                    <div className="space-y-3">
+                      <p className="text-sm text-gray-700">
+                        Cada miembro del grupo debe alcanzar <span className="font-bold text-amber-600">{formatCurrency(goal.target_amount)}</span> para completar su parte.
+                      </p>
+                      <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
+                        <p className="text-xs text-amber-900 mb-2">💡 <strong>Objetivo del grupo:</strong></p>
+                        <p className="text-xs text-amber-800">
+                          Todos juntos buscan reunir <strong>{formatCurrency(goal.target_amount * members.length)}</strong> en total.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedDetail === 'completed' && (
+                    <div className="space-y-3">
+                      <p className="text-sm text-gray-700">
+                        <span className="font-bold text-emerald-600">{goal.completed_members}</span> de <span className="font-bold">{members.length}</span> miembros han completado su meta individual.
+                      </p>
+                      <div className="bg-emerald-50 rounded-lg p-4 border border-emerald-200">
+                        <p className="text-xs text-emerald-900 mb-2">🎉 <strong>Progreso grupal:</strong></p>
+                        <p className="text-xs text-emerald-800">
+                          El {((goal.completed_members / members.length) * 100).toFixed(0)}% del grupo ya alcanzó su objetivo.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedDetail === 'days' && goal.deadline && (
+                    <div className="space-y-3">
+                      <p className="text-sm text-gray-700">
+                        Quedan <span className="font-bold text-blue-600">{daysRemaining} días</span> para alcanzar la meta grupal.
+                      </p>
+                      <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                        <p className="text-xs text-blue-900 mb-2">📅 <strong>Fecha límite:</strong></p>
+                        <p className="text-xs text-blue-800">
+                          {new Date(goal.deadline).toLocaleDateString('es-MX', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                      {daysRemaining < 30 && (
+                        <div className="bg-yellow-50 rounded-lg p-3 border border-yellow-200">
+                          <p className="text-xs text-yellow-900">
+                            ⚠️ Menos de un mes restante. ¡Es momento de acelerar!
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {selectedDetail === 'members' && (
+                    <div className="space-y-3">
+                      <p className="text-sm text-gray-700 mb-4">
+                        El grupo está compuesto por <span className="font-bold text-purple-600">{members.length} miembros</span> activos.
+                      </p>
+                      <div className="space-y-2">
+                        {members.map((member, idx) => {
+                          const memberProgress = (member.contributed / perPersonTarget) * 100;
+                          return (
+                            <div key={member.id} className="bg-purple-50 rounded-lg p-3 border border-purple-200">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-lg">
+                                    {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '👤'}
+                                  </span>
+                                  <div>
+                                    <p className="text-sm font-semibold text-gray-900">Miembro {idx + 1}</p>
+                                    <p className="text-xs text-gray-600">{getStatusText(member.status)}</p>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-sm font-bold text-purple-900">{memberProgress.toFixed(0)}%</p>
+                                  <p className="text-xs text-gray-600">{formatCurrency(member.contributed)}</p>
+                                </div>
+                              </div>
+                              <div className="w-full bg-purple-100 rounded-full h-1.5">
+                                <div
+                                  className={`h-1.5 rounded-full transition-all ${getStatusColor(member.status)}`}
+                                  style={{ width: `${Math.min(memberProgress, 100)}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-6 pt-0">
+                  <Button
+                    onClick={() => setShowDetailsModal(false)}
+                    className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium"
+                  >
+                    Cerrar
+                  </Button>
+                </div>
+              </div>
+            </div>
           )}
 
           {/* Actions */}
