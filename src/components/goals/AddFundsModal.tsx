@@ -1,8 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, DollarSign, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/utils";
@@ -23,6 +31,33 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState<string>("");
+  const [userAccounts, setUserAccounts] = useState<Array<{id: string, name: string, value: number}>>([]);
+  const [enableNotifications, setEnableNotifications] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchUserAccounts();
+    }
+  }, [isOpen]);
+
+  const fetchUserAccounts = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: accounts, error } = await supabase
+        .from('assets')
+        .select('id, name, value, category')
+        .eq('user_id', user.id)
+        .order('value', { ascending: false });
+
+      if (error) throw error;
+      setUserAccounts(accounts || []);
+    } catch (error) {
+      console.error('Error fetching accounts:', error);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -48,6 +83,31 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
         return;
       }
 
+      if (!selectedAccount) {
+        toast.error("Selecciona una cuenta de origen");
+        return;
+      }
+
+      // Get selected account details
+      const account = userAccounts.find(acc => acc.id === selectedAccount);
+      if (!account) {
+        toast.error("Cuenta no encontrada");
+        return;
+      }
+
+      if (account.value < amountNum) {
+        toast.error("Saldo insuficiente en la cuenta seleccionada");
+        return;
+      }
+
+      // Deduct from account
+      const { error: accountError } = await supabase
+        .from('assets')
+        .update({ value: account.value - amountNum })
+        .eq('id', selectedAccount);
+
+      if (accountError) throw accountError;
+
       const newCurrent = goal.current + amountNum;
 
       // Update goal
@@ -69,8 +129,24 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
           user_id: user.id,
           activity_type: 'contribution',
           amount: amountNum,
-          message: `Agregó ${formatCurrency(amountNum)} a la meta`
+          message: `Agregó ${formatCurrency(amountNum)} desde ${account.name}`
         });
+
+      // Schedule reminder if enabled
+      if (enableNotifications) {
+        await supabase
+          .from('notification_history')
+          .insert({
+            user_id: user.id,
+            notification_type: 'goal_reminder',
+            message: `Recordatorio: Realizar aporte a la meta "${goal.title}"`,
+            metadata: {
+              goal_id: goal.id,
+              reminder_type: 'biweekly',
+              next_reminder: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString()
+            }
+          });
+      }
 
       // Recalculate prediction
       const { data: goalData } = await supabase
@@ -101,10 +177,11 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
         }
       }
 
-      toast.success("Fondos agregados exitosamente");
+      toast.success(`Fondos agregados desde ${account.name}`);
       onSuccess();
       onClose();
       setAmount("");
+      setSelectedAccount("");
     } catch (error: any) {
       console.error('Error adding funds:', error);
       toast.error('Error al agregar fondos');
@@ -189,6 +266,49 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
                   </p>
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Account Selector */}
+          <div className="space-y-2">
+            <Label htmlFor="account-select" className="flex items-center gap-2 text-gray-700">
+              💳 Cuenta de origen
+            </Label>
+            <Select value={selectedAccount} onValueChange={setSelectedAccount}>
+              <SelectTrigger className="h-12 rounded-xl bg-gray-50 border-gray-200">
+                <SelectValue placeholder="Selecciona una cuenta" />
+              </SelectTrigger>
+              <SelectContent>
+                {userAccounts.map((account) => (
+                  <SelectItem key={account.id} value={account.id}>
+                    <div className="flex items-center justify-between w-full">
+                      <span>{account.name}</span>
+                      <span className="text-xs text-gray-600 ml-4">
+                        {formatCurrency(account.value)}
+                      </span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {userAccounts.length === 0 && (
+              <p className="text-xs text-amber-600">
+                ⚠️ No tienes cuentas registradas. Agrega una en la sección de Patrimonio.
+              </p>
+            )}
+          </div>
+
+          {/* Notification Option */}
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="notifications"
+                checked={enableNotifications}
+                onCheckedChange={(checked) => setEnableNotifications(!!checked)}
+              />
+              <label htmlFor="notifications" className="text-sm text-gray-700">
+                Notificar cada 15 días para realizar aportaciones
+              </label>
             </div>
           </div>
 

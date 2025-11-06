@@ -13,6 +13,13 @@ import { AddFundsModal } from "@/components/goals/AddFundsModal";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import MoniAIPrediction from "@/components/goals/MoniAIPrediction";
 
 interface GroupGoal {
@@ -72,10 +79,31 @@ const GroupGoalDetails = () => {
   const [contributionAmount, setContributionAmount] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [contributionLoading, setContributionLoading] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState<string>("");
+  const [userAccounts, setUserAccounts] = useState<Array<{id: string, name: string, value: number}>>([]);
 
   useEffect(() => {
     fetchGoalDetails();
+    fetchUserAccounts();
   }, [id]);
+
+  const fetchUserAccounts = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: accounts, error } = await supabase
+        .from('assets')
+        .select('id, name, value, category')
+        .eq('user_id', user.id)
+        .order('value', { ascending: false });
+
+      if (error) throw error;
+      setUserAccounts(accounts || []);
+    } catch (error) {
+      console.error('Error fetching accounts:', error);
+    }
+  };
 
   const fetchGoalDetails = async () => {
     try {
@@ -659,6 +687,59 @@ const GroupGoalDetails = () => {
                     return;
                   }
 
+                  if (!selectedAccount) {
+                    toast.error("Selecciona una cuenta de origen");
+                    return;
+                  }
+
+                  // Get selected account details
+                  const account = userAccounts.find(acc => acc.id === selectedAccount);
+                  if (!account) {
+                    toast.error("Cuenta no encontrada");
+                    return;
+                  }
+
+                  if (account.value < amountNum) {
+                    toast.error("Saldo insuficiente en la cuenta seleccionada");
+                    return;
+                  }
+
+                  // Deduct from account
+                  const { error: accountError } = await supabase
+                    .from('assets')
+                    .update({ value: account.value - amountNum })
+                    .eq('id', selectedAccount);
+
+                  if (accountError) throw accountError;
+
+                  // Log activity
+                  await supabase
+                    .from('goal_activities')
+                    .insert({
+                      goal_id: goal.id,
+                      user_id: user.id,
+                      activity_type: 'contribution',
+                      amount: amountNum,
+                      message: `Aportó ${formatCurrency(amountNum)} desde ${account.name}`
+                    });
+
+                  // Schedule reminder if enabled
+                  if (notifyGroup) {
+                    // Create notification setting for 15-day reminders
+                    await supabase
+                      .from('notification_history')
+                      .insert({
+                        user_id: user.id,
+                        notification_type: 'goal_reminder',
+                        message: `Recordatorio: Realizar aporte a la meta "${goal.title}"`,
+                        metadata: {
+                          goal_id: goal.id,
+                          reminder_type: 'biweekly',
+                          next_reminder: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString()
+                        }
+                      });
+                  }
+
                   // Log activity
                   await supabase
                     .from('goal_activities')
@@ -670,10 +751,12 @@ const GroupGoalDetails = () => {
                       message: `Aportó ${formatCurrency(amountNum)} a la meta grupal`
                     });
 
-                  toast.success(`¡Aporte de ${formatCurrency(amountNum)} registrado! 🎉`);
+                  toast.success(`¡Aporte de ${formatCurrency(amountNum)} registrado desde ${account.name}! 🎉`);
                   setAddFundsModal(false);
                   setContributionAmount("");
+                  setSelectedAccount("");
                   fetchGoalDetails();
+                  fetchUserAccounts();
                 } catch (error: any) {
                   console.error('Error adding contribution:', error);
                   toast.error('Error al registrar la contribución');
@@ -747,6 +830,35 @@ const GroupGoalDetails = () => {
                 </div>
               </div>
 
+              {/* Account Selector */}
+              <div className="space-y-2">
+                <Label htmlFor="account-select" className="flex items-center gap-2 text-gray-700">
+                  💳 Cuenta de origen
+                </Label>
+                <Select value={selectedAccount} onValueChange={setSelectedAccount}>
+                  <SelectTrigger className="h-12 rounded-xl bg-gray-50 border-gray-200">
+                    <SelectValue placeholder="Selecciona una cuenta" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {userAccounts.map((account) => (
+                      <SelectItem key={account.id} value={account.id}>
+                        <div className="flex items-center justify-between w-full">
+                          <span>{account.name}</span>
+                          <span className="text-xs text-gray-600 ml-4">
+                            {formatCurrency(account.value)}
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {userAccounts.length === 0 && (
+                  <p className="text-xs text-amber-600">
+                    ⚠️ No tienes cuentas registradas. Agrega una en la sección de Patrimonio.
+                  </p>
+                )}
+              </div>
+
               {/* Options */}
               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
@@ -756,7 +868,7 @@ const GroupGoalDetails = () => {
                     onCheckedChange={(checked) => setNotifyGroup(!!checked)}
                   />
                   <label htmlFor="auto" className="text-sm text-gray-700">
-                    Aportar automáticamente cada 15 días
+                    Notificar cada 15 días para realizar aportaciones
                   </label>
                 </div>
                 
