@@ -84,8 +84,8 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
         return;
       }
 
-      // Only deduct from account if one is selected
-      if (selectedAccount) {
+      // Only deduct from account if one is selected and it's not "none"
+      if (selectedAccount && selectedAccount !== "none") {
         // Get selected account details
         const account = userAccounts.find(acc => acc.id === selectedAccount);
         if (!account) {
@@ -280,9 +280,14 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
             </Label>
             <Select value={selectedAccount} onValueChange={setSelectedAccount}>
               <SelectTrigger className="h-10 rounded-xl bg-gray-50 border-gray-200 text-sm">
-                <SelectValue placeholder="Sin cuenta - no descontar del patrimonio" />
+                <SelectValue placeholder="Selecciona cuenta de origen" />
               </SelectTrigger>
               <SelectContent className="bg-background border border-border z-50">
+                <SelectItem value="none">
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-sm">Sin cuenta de origen</span>
+                  </div>
+                </SelectItem>
                 {userAccounts.map((account) => (
                   <SelectItem key={account.id} value={account.id}>
                     <div className="flex items-center justify-between w-full">
