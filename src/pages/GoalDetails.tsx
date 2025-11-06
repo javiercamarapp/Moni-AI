@@ -271,7 +271,7 @@ const GoalDetails = () => {
             ) : (
               <Button
                 onClick={() => setAddFundsModal(true)}
-                className="flex-1 h-12 bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white rounded-xl shadow-lg font-semibold"
+                className="flex-1 h-12 bg-white hover:bg-gray-50 text-gray-900 rounded-xl shadow-sm border border-gray-200/50 font-semibold"
               >
                 <Plus className="h-5 w-5 mr-2" />
                 Agregar Fondos
