@@ -69,10 +69,8 @@ const GroupGoalDetails = () => {
   const [members, setMembers] = useState<Member[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [addFundsModal, setAddFundsModal] = useState(false);
-  const [showChat, setShowChat] = useState(false);
   const [notifyGroup, setNotifyGroup] = useState(true);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<'individual' | 'completed' | 'days' | 'members' | null>(null);
@@ -189,32 +187,6 @@ const GroupGoalDetails = () => {
       toast.error('Error al cargar los detalles');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const sendMessage = async () => {
-    if (!newMessage.trim()) return;
-
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
-
-      const { error } = await supabase
-        .from('goal_comments')
-        .insert({
-          goal_id: id!,
-          user_id: user.id,
-          comment: newMessage
-        });
-
-      if (error) throw error;
-
-      setNewMessage("");
-      fetchGoalDetails();
-      toast.success("Mensaje enviado");
-    } catch (error: any) {
-      console.error('Error sending message:', error);
-      toast.error('Error al enviar mensaje');
     }
   };
 
@@ -434,80 +406,14 @@ const GroupGoalDetails = () => {
             </div>
           )}
 
-          {/* Chat Grupal */}
-          {showChat ? (
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-300 animate-fade-in">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5 text-gray-600" />
-                  Chat Grupal
-                </h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowChat(false)}
-                  className="text-gray-600"
-                >
-                  Cerrar
-                </Button>
-              </div>
-              
-              <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
-                {chatMessages.length === 0 ? (
-                  <p className="text-sm text-gray-500 text-center py-4">
-                    No hay mensajes aún. ¡Sé el primero en escribir!
-                  </p>
-                ) : (
-                  chatMessages.map((msg) => (
-                    <div
-                      key={msg.id}
-                      className={`p-3 rounded-xl ${
-                        msg.is_system ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'
-                      }`}
-                    >
-                      {msg.is_system && (
-                        <p className="text-xs text-blue-600 mb-1">🤖 Moni AI</p>
-                      )}
-                      <p className="text-sm text-gray-900">{msg.message}</p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {new Date(msg.created_at).toLocaleString('es-MX', {
-                          day: 'numeric',
-                          month: 'short',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </p>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              <div className="flex gap-2">
-                <Input
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                  placeholder="Escribe un mensaje..."
-                  className="flex-1"
-                />
-                <Button
-                  onClick={sendMessage}
-                  disabled={!newMessage.trim()}
-                  className="bg-white border border-gray-200 text-gray-900 hover:bg-white hover:shadow-md hover:-translate-y-0.5 transition-all"
-                >
-                  <Send className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <Button
-              onClick={() => setShowChat(true)}
-              className="w-full h-12 bg-white border border-gray-200 text-gray-900 hover:bg-white hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 rounded-xl font-semibold"
-            >
-              <MessageCircle className="h-5 w-5 mr-2" />
-              Abrir chat grupal ({chatMessages.length} mensajes)
-            </Button>
-          )}
+          {/* Chat Grupal Button */}
+          <Button
+            onClick={() => navigate(`/group-goals/${id}/chat`)}
+            className="w-full h-12 bg-white border border-gray-200 text-gray-900 hover:bg-white hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 rounded-xl font-semibold"
+          >
+            <MessageCircle className="h-5 w-5 mr-2" />
+            Abrir chat grupal ({chatMessages.length} mensajes)
+          </Button>
 
           {/* Details Modal */}
           {showDetailsModal && (
