@@ -493,7 +493,7 @@ const GroupGoalDetails = () => {
                 <Button
                   onClick={sendMessage}
                   disabled={!newMessage.trim()}
-                  className="bg-gray-900 text-white hover:bg-gray-800"
+                  className="bg-white border border-gray-200 text-gray-900 hover:bg-white hover:shadow-md hover:-translate-y-0.5 transition-all"
                 >
                   <Send className="h-4 w-4" />
                 </Button>
@@ -632,7 +632,7 @@ const GroupGoalDetails = () => {
                 <div className="p-6 pt-0">
                   <Button
                     onClick={() => setShowDetailsModal(false)}
-                    className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium"
+                    className="w-full h-12 bg-white border border-gray-200 text-gray-900 rounded-xl font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
                   >
                     Cerrar
                   </Button>
@@ -971,7 +971,7 @@ const GroupGoalDetails = () => {
                 <Button
                   type="submit"
                   disabled={contributionLoading}
-                  className="flex-1 h-10 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:bg-white/80 transition-all border-0 text-gray-900 font-semibold text-sm"
+                  className="flex-1 h-10 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:bg-white transition-all text-gray-900 font-semibold text-sm"
                 >
                   {contributionLoading ? "Procesando..." : "Confirmar"}
                 </Button>
