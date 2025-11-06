@@ -218,17 +218,19 @@ const CircleChat = () => {
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)] animate-pulse -z-10" style={{ animationDuration: '4s' }} />
       
       {/* Header */}
-      <div className="sticky top-0 z-40 border-b border-white/20 animate-pulse" style={{ animationDuration: '4s' }}>
-        <div className="w-full px-4 py-3 sm:py-4">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-purple-50/80 via-cyan-50/60 to-transparent backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center gap-3">
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => navigate(`/circle/${id}`)}
-              className="p-2 hover:bg-white/50 rounded-full transition-colors"
+              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10"
             >
-              <ArrowLeft className="h-5 w-5 text-gray-900" />
-            </button>
+              <ArrowLeft className="h-4 w-4 text-gray-700" />
+            </Button>
             <div className="flex-1 min-w-0">
-              <h1 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
+              <h1 className="text-lg font-semibold text-gray-900 truncate">
                 {circle.name}
               </h1>
               <p className="text-xs text-gray-600">
