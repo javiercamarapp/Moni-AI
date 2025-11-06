@@ -784,6 +784,35 @@ export type Database = {
           },
         ]
       }
+      goal_comment_mentions: {
+        Row: {
+          comment_id: string
+          created_at: string
+          id: string
+          mentioned_user_id: string
+        }
+        Insert: {
+          comment_id: string
+          created_at?: string
+          id?: string
+          mentioned_user_id: string
+        }
+        Update: {
+          comment_id?: string
+          created_at?: string
+          id?: string
+          mentioned_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goal_comment_mentions_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "goal_comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       goal_comment_reactions: {
         Row: {
           comment_id: string
@@ -812,25 +841,39 @@ export type Database = {
         Row: {
           comment: string
           created_at: string | null
+          deleted_at: string | null
           goal_id: string
           id: string
+          reply_to_id: string | null
           user_id: string
         }
         Insert: {
           comment: string
           created_at?: string | null
+          deleted_at?: string | null
           goal_id: string
           id?: string
+          reply_to_id?: string | null
           user_id: string
         }
         Update: {
           comment?: string
           created_at?: string | null
+          deleted_at?: string | null
           goal_id?: string
           id?: string
+          reply_to_id?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "goal_comments_reply_to_id_fkey"
+            columns: ["reply_to_id"]
+            isOneToOne: false
+            referencedRelation: "goal_comments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       goal_group_adjustments: {
         Row: {
