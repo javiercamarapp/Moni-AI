@@ -464,7 +464,7 @@ const GroupGoalDetails = () => {
           ) : (
             <Button
               onClick={() => setShowChat(true)}
-              className="w-full h-12 bg-white border border-gray-200 text-gray-900 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 rounded-xl font-semibold"
+              className="w-full h-12 bg-white border border-gray-200 text-gray-900 hover:bg-white hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 rounded-xl font-semibold"
             >
               <MessageCircle className="h-5 w-5 mr-2" />
               Abrir chat grupal ({chatMessages.length} mensajes)
@@ -606,7 +606,7 @@ const GroupGoalDetails = () => {
           {/* Actions */}
           <Button
             onClick={() => setAddFundsModal(true)}
-            className="w-full h-14 bg-white border border-gray-200 text-gray-900 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 rounded-xl font-semibold text-base"
+            className="w-full h-14 bg-white border border-gray-200 text-gray-900 hover:bg-white hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 rounded-xl font-semibold text-base"
           >
             <Plus className="h-5 w-5 mr-2" />
             Contribuir 💸
