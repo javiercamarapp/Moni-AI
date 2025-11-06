@@ -639,10 +639,10 @@ const GroupGoalDetails = () => {
           {/* Actions */}
           <Button
             onClick={() => setAddFundsModal(true)}
-            className="w-full h-14 bg-white border border-gray-200 text-gray-900 hover:bg-white hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 rounded-xl font-semibold text-base"
+            className="w-full h-14 bg-white border border-gray-200 text-gray-900 hover:bg-gray-50 hover:shadow-md transition-all duration-300 rounded-xl font-semibold text-base"
           >
             <Plus className="h-5 w-5 mr-2" />
-            Contribuir 💸
+            Contribuir
           </Button>
         </div>
       </div>
@@ -768,12 +768,12 @@ const GroupGoalDetails = () => {
               className="p-6 space-y-6"
             >
               {/* Progress Info */}
-              <div className="bg-gray-50 rounded-xl p-4 space-y-2">
-                <div className="flex justify-between text-sm">
+              <div className="bg-gray-50 rounded-xl p-2 space-y-1">
+                <div className="flex justify-between text-xs">
                   <span className="text-gray-600">Tu meta personal</span>
                   <span className="font-semibold text-gray-900">{formatCurrency(perPersonTarget)}</span>
                 </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-xs">
                   <span className="text-gray-600">Aporte sugerido quincenal</span>
                   <span className="font-bold text-gray-900">
                     {goal.required_weekly_saving 

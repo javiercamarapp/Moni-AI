@@ -271,10 +271,10 @@ const GoalDetails = () => {
             ) : (
               <Button
                 onClick={() => setAddFundsModal(true)}
-                className="flex-1 h-12 bg-white hover:bg-gray-50 text-gray-900 rounded-xl shadow-sm border border-gray-200/50 font-semibold"
+                className="flex-1 h-14 bg-white border border-gray-200 text-gray-900 hover:bg-gray-50 hover:shadow-md transition-all duration-300 rounded-xl font-semibold text-base"
               >
                 <Plus className="h-5 w-5 mr-2" />
-                Agregar Fondos
+                Contribuir
               </Button>
             )}
           </div>

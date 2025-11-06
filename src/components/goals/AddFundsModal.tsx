@@ -198,7 +198,7 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
         <div className="bg-gradient-to-b from-amber-50/30 to-orange-50/20 p-6 rounded-t-2xl border-b border-gray-100">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Agregar fondos</h2>
+              <h2 className="text-xl font-bold text-gray-900">Contribuir a la meta</h2>
               <p className="text-sm text-gray-600 mt-1">{goal.title}</p>
             </div>
             <button
@@ -213,16 +213,16 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
         {/* Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Progress Info */}
-          <div className="bg-gray-50 rounded-xl p-4 space-y-2">
-            <div className="flex justify-between text-sm">
+          <div className="bg-gray-50 rounded-xl p-2 space-y-1">
+            <div className="flex justify-between text-xs">
               <span className="text-gray-600">Ahorro actual</span>
               <span className="font-semibold text-gray-900">{formatCurrency(goal.current)}</span>
             </div>
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-xs">
               <span className="text-gray-600">Meta</span>
               <span className="font-semibold text-gray-900">{formatCurrency(goal.target)}</span>
             </div>
-            <div className="flex justify-between text-sm pt-2 border-t border-gray-200">
+            <div className="flex justify-between text-xs pt-1 border-t border-gray-200">
               <span className="text-gray-600">Restante</span>
               <span className="font-bold text-gray-900">{formatCurrency(remaining)}</span>
             </div>
