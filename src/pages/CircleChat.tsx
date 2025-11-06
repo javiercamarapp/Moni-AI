@@ -212,9 +212,8 @@ const CircleChat = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden">
+    <div className="min-h-screen pb-20 bg-gradient-to-b from-[#E5DEFF] to-[#FFDEE2] relative overflow-hidden">
       {/* Animated Background */}
-      <div className="fixed inset-0 bg-gradient-to-b from-[#E5DEFF] to-[#FFDEE2] -z-10" />
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)] animate-pulse -z-10" style={{ animationDuration: '4s' }} />
       
       {/* Header */}
@@ -242,107 +241,105 @@ const CircleChat = () => {
       </div>
 
       {/* Chat Content */}
-      <div className="flex-1 w-full overflow-hidden pb-20">
-        <div className="h-full">
-          <ChatMessageList smooth>
-            {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full py-12 px-4">
-                <div className="bg-white/60 backdrop-blur-sm rounded-full p-6 mb-4">
-                  <MessageCircle className="h-12 w-12 text-primary" />
-                </div>
-                <p className="text-gray-600 text-sm text-center">
-                  No hay mensajes aún
-                </p>
-                <p className="text-gray-500 text-xs text-center mt-1">
-                  ¡Sé el primero en escribir!
-                </p>
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <ChatMessageList smooth>
+          {messages.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full py-12 px-4">
+              <div className="bg-white/60 backdrop-blur-sm rounded-full p-6 mb-4">
+                <MessageCircle className="h-12 w-12 text-primary" />
               </div>
-            ) : (
-              messages.map((msg) => (
-                <ChatBubble
-                  key={msg.id}
-                  variant={msg.user_id === user?.id ? "sent" : "received"}
-                  className="gap-2"
-                >
-                  <ChatBubbleAvatar
-                    src={msg.profiles?.avatar_url || ''}
-                    fallback={(msg.profiles?.full_name || 'U').substring(0, 2).toUpperCase()}
-                  />
-                  <div className="flex flex-col gap-0.5 max-w-[75%] sm:max-w-[70%]">
-                    <div className="flex items-center gap-2 px-1">
-                      <span className="text-xs font-medium text-gray-600 truncate">
-                        {msg.profiles?.full_name || msg.profiles?.username || 'Usuario'}
-                      </span>
-                      <span className="text-[10px] text-gray-400 flex-shrink-0">
-                        {new Date(msg.created_at).toLocaleTimeString('es-MX', { 
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </span>
-                    </div>
-                    <ChatBubbleMessage 
-                      variant={msg.user_id === user?.id ? "sent" : "received"}
-                      className="bg-white/90 text-gray-900"
-                    >
-                      {msg.description}
-                    </ChatBubbleMessage>
-                    {msg.xp_earned > 0 && (
-                      <span className="text-xs text-emerald-600 font-semibold px-1">
-                        +{msg.xp_earned} XP
-                      </span>
-                    )}
+              <p className="text-gray-600 text-sm text-center">
+                No hay mensajes aún
+              </p>
+              <p className="text-gray-500 text-xs text-center mt-1">
+                ¡Sé el primero en escribir!
+              </p>
+            </div>
+          ) : (
+            messages.map((msg) => (
+              <ChatBubble
+                key={msg.id}
+                variant={msg.user_id === user?.id ? "sent" : "received"}
+                className="gap-2"
+              >
+                <ChatBubbleAvatar
+                  src={msg.profiles?.avatar_url || ''}
+                  fallback={(msg.profiles?.full_name || 'U').substring(0, 2).toUpperCase()}
+                />
+                <div className="flex flex-col gap-0.5 max-w-[75%] sm:max-w-[70%]">
+                  <div className="flex items-center gap-2 px-1">
+                    <span className="text-xs font-medium text-gray-600 truncate">
+                      {msg.profiles?.full_name || msg.profiles?.username || 'Usuario'}
+                    </span>
+                    <span className="text-[10px] text-gray-400 flex-shrink-0">
+                      {new Date(msg.created_at).toLocaleTimeString('es-MX', { 
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </span>
                   </div>
-                </ChatBubble>
-              ))
-            )}
-          </ChatMessageList>
-        </div>
+                  <ChatBubbleMessage 
+                    variant={msg.user_id === user?.id ? "sent" : "received"}
+                    className="bg-white/90 text-gray-900"
+                  >
+                    {msg.description}
+                  </ChatBubbleMessage>
+                  {msg.xp_earned > 0 && (
+                    <span className="text-xs text-emerald-600 font-semibold px-1">
+                      +{msg.xp_earned} XP
+                    </span>
+                  )}
+                </div>
+              </ChatBubble>
+            ))
+          )}
+        </ChatMessageList>
+      </div>
 
-        {/* Input Area - Fixed at bottom */}
-        <div className="fixed bottom-0 left-0 right-0 p-2.5 border-t border-white/30 z-50">
-          <div className="w-full max-w-4xl mx-auto">
-            <form
-              onSubmit={handleSendMessage}
-              className="flex items-center gap-1.5 rounded-full bg-white/95 backdrop-blur-sm px-2.5 py-1.5 shadow-lg"
+      {/* Input Area - Fixed at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 p-2.5 border-t border-white/30 bg-white/80 backdrop-blur-sm z-50">
+        <div className="w-full max-w-4xl mx-auto">
+          <form
+            onSubmit={handleSendMessage}
+            className="flex items-center gap-1.5 rounded-full bg-white/95 backdrop-blur-sm px-2.5 py-1.5 shadow-lg"
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              type="button"
+              onClick={handleCameraClick}
+              className="h-7 w-7 flex-shrink-0 rounded-full hover:bg-gray-100"
             >
-              <Button
-                variant="ghost"
-                size="icon"
-                type="button"
-                onClick={handleCameraClick}
-                className="h-7 w-7 flex-shrink-0 rounded-full hover:bg-gray-100"
-              >
-                <Camera className="h-4 w-4 text-gray-600" />
-              </Button>
+              <Camera className="h-4 w-4 text-gray-600" />
+            </Button>
 
-              <Button
-                variant="ghost"
-                size="icon"
-                type="button"
-                onClick={handleAttachFile}
-                className="h-7 w-7 flex-shrink-0 rounded-full hover:bg-gray-100"
-              >
-                <Paperclip className="h-4 w-4 text-gray-600" />
-              </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              type="button"
+              onClick={handleAttachFile}
+              className="h-7 w-7 flex-shrink-0 rounded-full hover:bg-gray-100"
+            >
+              <Paperclip className="h-4 w-4 text-gray-600" />
+            </Button>
 
-              <ChatInput
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Mensaje..."
-                className="flex-1 min-h-[32px] max-h-[32px] resize-none bg-transparent border-0 px-2 py-1.5 shadow-none focus-visible:ring-0 text-base placeholder:text-gray-400"
-                rows={1}
-              />
+            <ChatInput
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Mensaje..."
+              className="flex-1 min-h-[32px] max-h-[32px] resize-none bg-transparent border-0 px-2 py-1.5 shadow-none focus-visible:ring-0 text-base placeholder:text-gray-400"
+              rows={1}
+            />
 
-              <Button 
-                type="submit" 
-                size="icon"
-                className="flex-shrink-0 bg-primary hover:bg-primary/90 rounded-full h-7 w-7 p-0"
-                disabled={!newMessage.trim()}
-              >
-                <Send className="h-3.5 w-3.5" />
-              </Button>
-            </form>
-          </div>
+            <Button 
+              type="submit" 
+              size="icon"
+              className="flex-shrink-0 bg-primary hover:bg-primary/90 rounded-full h-7 w-7 p-0"
+              disabled={!newMessage.trim()}
+            >
+              <Send className="h-3.5 w-3.5" />
+            </Button>
+          </form>
         </div>
       </div>
 
