@@ -78,6 +78,8 @@ export const AddGroupContributionModal = ({ isOpen, onClose, onSuccess, goal }: 
         return;
       }
 
+      console.log('📊 Starting contribution:', { goalId: goal.id, userId: user.id, amount: amountNum, selectedAccount });
+
       // Only deduct from account if one is selected and it's not "none"
       if (selectedAccount && selectedAccount !== "none") {
         const account = userAccounts.find(acc => acc.id === selectedAccount);
@@ -91,16 +93,22 @@ export const AddGroupContributionModal = ({ isOpen, onClose, onSuccess, goal }: 
           return;
         }
 
+        console.log('💰 Deducting from account:', { accountId: selectedAccount, accountName: account.name, oldValue: account.value, newValue: account.value - amountNum });
+
         // Deduct from account
         const { error: accountError } = await supabase
           .from('assets')
           .update({ value: account.value - amountNum })
           .eq('id', selectedAccount);
 
-        if (accountError) throw accountError;
+        if (accountError) {
+          console.error('❌ Error deducting from account:', accountError);
+          throw accountError;
+        }
       }
 
       // Update or create member record with contribution
+      console.log('🔍 Fetching member record...');
       const { data: memberData, error: fetchError } = await supabase
         .from('circle_goal_members')
         .select('id, current_amount')
@@ -108,14 +116,28 @@ export const AddGroupContributionModal = ({ isOpen, onClose, onSuccess, goal }: 
         .eq('user_id', user.id)
         .maybeSingle();
 
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        console.error('❌ Error fetching member:', fetchError);
+        throw fetchError;
+      }
+
+      console.log('👤 Member data found:', memberData);
 
       const newAmount = (memberData?.current_amount || 0) + amountNum;
       const targetPerPerson = goal.target_amount / goal.member_count;
       const isCompleted = newAmount >= targetPerPerson;
 
+      console.log('📈 Contribution calculation:', { 
+        currentAmount: memberData?.current_amount || 0, 
+        addingAmount: amountNum,
+        newAmount, 
+        targetPerPerson, 
+        isCompleted 
+      });
+
       if (memberData) {
         // Update existing member record
+        console.log('✏️ Updating member record...');
         const { error: updateError } = await supabase
           .from('circle_goal_members')
           .update({ 
@@ -126,9 +148,14 @@ export const AddGroupContributionModal = ({ isOpen, onClose, onSuccess, goal }: 
           })
           .eq('id', memberData.id);
 
-        if (updateError) throw updateError;
+        if (updateError) {
+          console.error('❌ Error updating member:', updateError);
+          throw updateError;
+        }
+        console.log('✅ Member record updated successfully');
       } else {
         // Create new member record
+        console.log('➕ Creating new member record...');
         const { error: insertError } = await supabase
           .from('circle_goal_members')
           .insert({
@@ -139,10 +166,15 @@ export const AddGroupContributionModal = ({ isOpen, onClose, onSuccess, goal }: 
             completed_at: isCompleted ? new Date().toISOString() : null
           });
 
-        if (insertError) throw insertError;
+        if (insertError) {
+          console.error('❌ Error creating member:', insertError);
+          throw insertError;
+        }
+        console.log('✅ Member record created successfully');
       }
 
       // Update completed_members count in circle_goals
+      console.log('📊 Updating completed members count...');
       const { data: completedCount } = await supabase
         .from('circle_goal_members')
         .select('id', { count: 'exact' })
@@ -154,9 +186,12 @@ export const AddGroupContributionModal = ({ isOpen, onClose, onSuccess, goal }: 
         .update({ completed_members: completedCount?.length || 0 })
         .eq('id', goal.id);
 
-      toast.success(selectedAccount
-        ? `Contribución registrada desde ${userAccounts.find(acc => acc.id === selectedAccount)?.name}`
-        : "Contribución registrada exitosamente"
+      console.log('✅ Contribution completed successfully!');
+
+      toast.success(
+        (selectedAccount && selectedAccount !== "none")
+          ? `Contribución registrada desde ${userAccounts.find(acc => acc.id === selectedAccount)?.name}`
+          : "Contribución registrada exitosamente"
       );
       onSuccess();
       onClose();
