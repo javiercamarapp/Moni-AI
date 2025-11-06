@@ -823,11 +823,11 @@ const GroupGoalDetails = () => {
                 </div>
               </div>
 
-              {/* Account Selector */}
-              <div className="space-y-1.5">
-                <Label htmlFor="account-select" className="flex items-center gap-2 text-xs text-gray-700">
-                  💳 Cuenta de origen (opcional)
-                </Label>
+                {/* Account Selector */}
+                <div className="space-y-1.5">
+                  <Label htmlFor="account-select" className="flex items-center gap-2 text-xs text-gray-700">
+                    💳 Cuenta de origen
+                  </Label>
                 <Select value={selectedAccount} onValueChange={setSelectedAccount}>
                   <SelectTrigger className="h-10 rounded-xl bg-gray-50 border-gray-200 text-sm">
                     <SelectValue placeholder="Sin cuenta - no descontar del patrimonio" />
