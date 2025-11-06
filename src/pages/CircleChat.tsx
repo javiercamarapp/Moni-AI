@@ -218,7 +218,7 @@ const CircleChat = () => {
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)] animate-pulse -z-10" style={{ animationDuration: '4s' }} />
       
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-purple-50/80 via-cyan-50/60 to-transparent backdrop-blur-sm">
+      <div className="fixed top-0 left-0 right-0 z-40 bg-[#E5DEFF] border-b border-white/30">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center gap-3">
             <Button
@@ -242,7 +242,7 @@ const CircleChat = () => {
       </div>
 
       {/* Chat Content */}
-      <div className="flex-1 w-full overflow-hidden pb-20">
+      <div className="flex-1 w-full overflow-hidden pb-20 pt-[60px]">
         <div className="h-full">
           <ChatMessageList smooth>
           {messages.length === 0 ? (
