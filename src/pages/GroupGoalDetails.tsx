@@ -688,30 +688,28 @@ const GroupGoalDetails = () => {
                     return;
                   }
 
-                  if (!selectedAccount) {
-                    toast.error("Selecciona una cuenta de origen");
-                    return;
+                  // Only deduct from account if one is selected
+                  if (selectedAccount) {
+                    // Get selected account details
+                    const account = userAccounts.find(acc => acc.id === selectedAccount);
+                    if (!account) {
+                      toast.error("Cuenta no encontrada");
+                      return;
+                    }
+
+                    if (account.value < amountNum) {
+                      toast.error("Saldo insuficiente en la cuenta seleccionada");
+                      return;
+                    }
+
+                    // Deduct from account
+                    const { error: accountError } = await supabase
+                      .from('assets')
+                      .update({ value: account.value - amountNum })
+                      .eq('id', selectedAccount);
+
+                    if (accountError) throw accountError;
                   }
-
-                  // Get selected account details
-                  const account = userAccounts.find(acc => acc.id === selectedAccount);
-                  if (!account) {
-                    toast.error("Cuenta no encontrada");
-                    return;
-                  }
-
-                  if (account.value < amountNum) {
-                    toast.error("Saldo insuficiente en la cuenta seleccionada");
-                    return;
-                  }
-
-                  // Deduct from account
-                  const { error: accountError } = await supabase
-                    .from('assets')
-                    .update({ value: account.value - amountNum })
-                    .eq('id', selectedAccount);
-
-                  if (accountError) throw accountError;
 
                   // Log activity
                   await supabase
@@ -721,7 +719,9 @@ const GroupGoalDetails = () => {
                       user_id: user.id,
                       activity_type: 'contribution',
                       amount: amountNum,
-                      message: `Aportó ${formatCurrency(amountNum)} desde ${account.name}`
+                      message: selectedAccount 
+                        ? `Aportó ${formatCurrency(amountNum)} desde ${userAccounts.find(acc => acc.id === selectedAccount)?.name}`
+                        : `Aportó ${formatCurrency(amountNum)}`
                     });
 
                   // Schedule reminder if enabled
@@ -741,18 +741,10 @@ const GroupGoalDetails = () => {
                       });
                   }
 
-                  // Log activity
-                  await supabase
-                    .from('goal_activities')
-                    .insert({
-                      goal_id: goal.id,
-                      user_id: user.id,
-                      activity_type: 'contribution',
-                      amount: amountNum,
-                      message: `Aportó ${formatCurrency(amountNum)} a la meta grupal`
-                    });
-
-                  toast.success(`¡Aporte de ${formatCurrency(amountNum)} registrado desde ${account.name}! 🎉`);
+                  toast.success(selectedAccount
+                    ? `¡Aporte de ${formatCurrency(amountNum)} registrado desde ${userAccounts.find(acc => acc.id === selectedAccount)?.name}! 🎉`
+                    : `¡Aporte de ${formatCurrency(amountNum)} registrado! 🎉`
+                  );
                   setAddFundsModal(false);
                   setContributionAmount("");
                   setSelectedAccount("");
@@ -834,11 +826,11 @@ const GroupGoalDetails = () => {
               {/* Account Selector */}
               <div className="space-y-1.5">
                 <Label htmlFor="account-select" className="flex items-center gap-2 text-xs text-gray-700">
-                  💳 Cuenta de origen
+                  💳 Cuenta de origen (opcional)
                 </Label>
                 <Select value={selectedAccount} onValueChange={setSelectedAccount}>
                   <SelectTrigger className="h-10 rounded-xl bg-gray-50 border-gray-200 text-sm">
-                    <SelectValue placeholder="Selecciona una cuenta" />
+                    <SelectValue placeholder="Sin cuenta - no descontar del patrimonio" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border border-border z-50">
                     {userAccounts.map((account) => (
@@ -854,8 +846,8 @@ const GroupGoalDetails = () => {
                   </SelectContent>
                 </Select>
                 {userAccounts.length === 0 && (
-                  <p className="text-xs text-amber-600">
-                    ⚠️ No tienes cuentas registradas.
+                  <p className="text-xs text-gray-500">
+                    ℹ️ No tienes cuentas líquidas registradas.
                   </p>
                 )}
               </div>

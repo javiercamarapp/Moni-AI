@@ -84,30 +84,28 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
         return;
       }
 
-      if (!selectedAccount) {
-        toast.error("Selecciona una cuenta de origen");
-        return;
+      // Only deduct from account if one is selected
+      if (selectedAccount) {
+        // Get selected account details
+        const account = userAccounts.find(acc => acc.id === selectedAccount);
+        if (!account) {
+          toast.error("Cuenta no encontrada");
+          return;
+        }
+
+        if (account.value < amountNum) {
+          toast.error("Saldo insuficiente en la cuenta seleccionada");
+          return;
+        }
+
+        // Deduct from account
+        const { error: accountError } = await supabase
+          .from('assets')
+          .update({ value: account.value - amountNum })
+          .eq('id', selectedAccount);
+
+        if (accountError) throw accountError;
       }
-
-      // Get selected account details
-      const account = userAccounts.find(acc => acc.id === selectedAccount);
-      if (!account) {
-        toast.error("Cuenta no encontrada");
-        return;
-      }
-
-      if (account.value < amountNum) {
-        toast.error("Saldo insuficiente en la cuenta seleccionada");
-        return;
-      }
-
-      // Deduct from account
-      const { error: accountError } = await supabase
-        .from('assets')
-        .update({ value: account.value - amountNum })
-        .eq('id', selectedAccount);
-
-      if (accountError) throw accountError;
 
       const newCurrent = goal.current + amountNum;
 
@@ -130,7 +128,9 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
           user_id: user.id,
           activity_type: 'contribution',
           amount: amountNum,
-          message: `Agregó ${formatCurrency(amountNum)} desde ${account.name}`
+          message: selectedAccount 
+            ? `Agregó ${formatCurrency(amountNum)} desde ${userAccounts.find(acc => acc.id === selectedAccount)?.name}`
+            : `Agregó ${formatCurrency(amountNum)}`
         });
 
       // Schedule reminder if enabled
@@ -178,7 +178,10 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
         }
       }
 
-      toast.success(`Fondos agregados desde ${account.name}`);
+      toast.success(selectedAccount 
+        ? `Fondos agregados desde ${userAccounts.find(acc => acc.id === selectedAccount)?.name}`
+        : "Fondos agregados exitosamente"
+      );
       onSuccess();
       onClose();
       setAmount("");
@@ -273,11 +276,11 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
           {/* Account Selector */}
           <div className="space-y-1.5">
             <Label htmlFor="account-select" className="flex items-center gap-2 text-xs text-gray-700">
-              💳 Cuenta de origen
+              💳 Cuenta de origen (opcional)
             </Label>
             <Select value={selectedAccount} onValueChange={setSelectedAccount}>
               <SelectTrigger className="h-10 rounded-xl bg-gray-50 border-gray-200 text-sm">
-                <SelectValue placeholder="Selecciona una cuenta" />
+                <SelectValue placeholder="Sin cuenta - no descontar del patrimonio" />
               </SelectTrigger>
               <SelectContent className="bg-background border border-border z-50">
                 {userAccounts.map((account) => (
@@ -293,8 +296,8 @@ export const AddFundsModal = ({ isOpen, onClose, onSuccess, goal }: AddFundsModa
               </SelectContent>
             </Select>
             {userAccounts.length === 0 && (
-              <p className="text-xs text-amber-600">
-                ⚠️ No tienes cuentas registradas.
+              <p className="text-xs text-gray-500">
+                ℹ️ No tienes cuentas líquidas registradas.
               </p>
             )}
           </div>

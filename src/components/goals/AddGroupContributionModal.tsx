@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, DollarSign, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/utils";
@@ -24,6 +25,33 @@ export const AddGroupContributionModal = ({ isOpen, onClose, onSuccess, goal }: 
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState("");
+  const [userAccounts, setUserAccounts] = useState<Array<{ id: string; name: string; value: number }>>([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchUserAccounts();
+    }
+  }, [isOpen]);
+
+  const fetchUserAccounts = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: accounts, error } = await supabase
+        .from('assets')
+        .select('id, name, value, category')
+        .eq('user_id', user.id)
+        .eq('category', 'Activos líquidos')
+        .order('value', { ascending: false });
+
+      if (error) throw error;
+      setUserAccounts(accounts || []);
+    } catch (error) {
+      console.error('Error fetching accounts:', error);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -48,6 +76,28 @@ export const AddGroupContributionModal = ({ isOpen, onClose, onSuccess, goal }: 
       if (isNaN(amountNum) || amountNum <= 0) {
         toast.error("Ingresa un monto válido");
         return;
+      }
+
+      // Only deduct from account if one is selected
+      if (selectedAccount) {
+        const account = userAccounts.find(acc => acc.id === selectedAccount);
+        if (!account) {
+          toast.error("Cuenta no encontrada");
+          return;
+        }
+
+        if (account.value < amountNum) {
+          toast.error("Saldo insuficiente en la cuenta seleccionada");
+          return;
+        }
+
+        // Deduct from account
+        const { error: accountError } = await supabase
+          .from('assets')
+          .update({ value: account.value - amountNum })
+          .eq('id', selectedAccount);
+
+        if (accountError) throw accountError;
       }
 
       // Update or create member record with contribution
@@ -104,10 +154,14 @@ export const AddGroupContributionModal = ({ isOpen, onClose, onSuccess, goal }: 
         .update({ completed_members: completedCount?.length || 0 })
         .eq('id', goal.id);
 
-      toast.success("Contribución registrada exitosamente");
+      toast.success(selectedAccount
+        ? `Contribución registrada desde ${userAccounts.find(acc => acc.id === selectedAccount)?.name}`
+        : "Contribución registrada exitosamente"
+      );
       onSuccess();
       onClose();
       setAmount("");
+      setSelectedAccount("");
     } catch (error: any) {
       console.error('Error adding contribution:', error);
       toast.error('Error al agregar contribución');
@@ -193,6 +247,35 @@ export const AddGroupContributionModal = ({ isOpen, onClose, onSuccess, goal }: 
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Account Selector */}
+          <div className="space-y-1.5">
+            <Label htmlFor="account-select" className="flex items-center gap-2 text-xs text-gray-700">
+              💳 Cuenta de origen (opcional)
+            </Label>
+            <Select value={selectedAccount} onValueChange={setSelectedAccount}>
+              <SelectTrigger className="h-10 rounded-xl bg-gray-50 border-gray-200 text-sm">
+                <SelectValue placeholder="Sin cuenta - no descontar del patrimonio" />
+              </SelectTrigger>
+              <SelectContent className="bg-background border border-border z-50">
+                {userAccounts.map((account) => (
+                  <SelectItem key={account.id} value={account.id}>
+                    <div className="flex items-center justify-between w-full">
+                      <span className="text-sm">{account.name}</span>
+                      <span className="text-xs text-muted-foreground ml-4">
+                        {formatCurrency(account.value)}
+                      </span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {userAccounts.length === 0 && (
+              <p className="text-xs text-gray-500">
+                ℹ️ No tienes cuentas líquidas registradas.
+              </p>
+            )}
           </div>
 
           {/* AI Insight */}
