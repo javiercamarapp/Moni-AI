@@ -832,7 +832,7 @@ const GroupGoalDetails = () => {
                     <SelectTrigger className="h-10 rounded-xl bg-white border-gray-200 text-sm">
                       <SelectValue placeholder="Selecciona cuenta de origen" />
                     </SelectTrigger>
-                    <SelectContent className="bg-background border border-border z-50">
+                    <SelectContent className="bg-white border border-gray-200 z-50">
                       <SelectItem value="none">
                         <div className="flex items-center justify-between w-full">
                           <span className="text-sm">Sin cuenta de origen</span>
