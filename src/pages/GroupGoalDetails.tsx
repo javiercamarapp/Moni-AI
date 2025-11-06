@@ -126,11 +126,20 @@ const GroupGoalDetails = () => {
 
       if (membersError) throw membersError;
 
+      // Fetch actual contributions from circle_goal_members
+      const { data: contributionsData, error: contribError } = await supabase
+        .from('circle_goal_members')
+        .select('user_id, current_amount, completed')
+        .eq('goal_id', id);
+
+      if (contribError) throw contribError;
+
       // Calculate individual contributions and status
       const perPersonTarget = goalData.target_amount / (membersData?.length || 1);
       const enrichedMembers = (membersData || []).map(member => {
-        // For demo, use XP as proxy for contribution
-        const contributed = member.xp * 100; 
+        // Get real contribution from circle_goal_members
+        const memberContribution = contributionsData?.find(c => c.user_id === member.user_id);
+        const contributed = memberContribution?.current_amount || 0;
         const progressPercent = (contributed / perPersonTarget) * 100;
         
         let status: 'adelantado' | 'al_dia' | 'atrasado' | 'muy_atrasado';
@@ -237,10 +246,11 @@ const GroupGoalDetails = () => {
     );
   }
 
-  // Progress based on members who completed
-  const progress = members.length > 0 ? (goal.completed_members / members.length) * 100 : 0;
+  // Progress based on total contributions vs target
+  const totalContributed = members.reduce((sum, m) => sum + m.contributed, 0);
+  const progress = goal.target_amount > 0 ? (totalContributed / goal.target_amount) * 100 : 0;
   // Each person has the same individual target
-  const perPersonTarget = goal.target_amount;
+  const perPersonTarget = goal.target_amount / members.length;
   const daysRemaining = goal.deadline 
     ? Math.ceil((new Date(goal.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
     : null;
@@ -289,11 +299,11 @@ const GroupGoalDetails = () => {
               </div>
             </div>
 
-            <Progress value={progress} className="h-2 mb-2" />
+            <Progress value={progress} className="h-2 mb-2" indicatorClassName="bg-green-500" />
 
             <div className="flex justify-between text-xs">
-              <span className="text-gray-600">{goal.completed_members} completaron</span>
-              <span className="font-bold text-gray-900">{members.length} miembros</span>
+              <span className="text-gray-600">{formatCurrency(totalContributed)} contribuido</span>
+              <span className="font-bold text-gray-900">{formatCurrency(goal.target_amount)} meta</span>
             </div>
           </div>
 
@@ -307,7 +317,7 @@ const GroupGoalDetails = () => {
               className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-2 shadow-sm border border-amber-200 text-center hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 animate-fade-in cursor-pointer"
             >
               <p className="text-[10px] text-amber-700 mb-0.5">Meta Individual</p>
-              <p className="text-sm font-bold text-amber-900">{formatCurrency(goal.target_amount)}</p>
+              <p className="text-sm font-bold text-amber-900">{formatCurrency(perPersonTarget)}</p>
             </button>
             <button 
               onClick={() => {
@@ -706,6 +716,60 @@ const GroupGoalDetails = () => {
                     if (accountError) throw accountError;
                   }
 
+                  // Update or create member record with contribution
+                  const { data: memberData, error: fetchError } = await supabase
+                    .from('circle_goal_members')
+                    .select('id, current_amount')
+                    .eq('goal_id', goal.id)
+                    .eq('user_id', user.id)
+                    .maybeSingle();
+
+                  if (fetchError) throw fetchError;
+
+                  const newAmount = (memberData?.current_amount || 0) + amountNum;
+                  const targetPerPerson = goal.target_amount / members.length;
+                  const isCompleted = newAmount >= targetPerPerson;
+
+                  if (memberData) {
+                    // Update existing member record
+                    const { error: updateError } = await supabase
+                      .from('circle_goal_members')
+                      .update({ 
+                        current_amount: newAmount,
+                        completed: isCompleted,
+                        completed_at: isCompleted ? new Date().toISOString() : null,
+                        updated_at: new Date().toISOString()
+                      })
+                      .eq('id', memberData.id);
+
+                    if (updateError) throw updateError;
+                  } else {
+                    // Create new member record
+                    const { error: insertError } = await supabase
+                      .from('circle_goal_members')
+                      .insert({
+                        goal_id: goal.id,
+                        user_id: user.id,
+                        current_amount: amountNum,
+                        completed: isCompleted,
+                        completed_at: isCompleted ? new Date().toISOString() : null
+                      });
+
+                    if (insertError) throw insertError;
+                  }
+
+                  // Update completed_members count in circle_goals
+                  const { data: completedCount } = await supabase
+                    .from('circle_goal_members')
+                    .select('id', { count: 'exact' })
+                    .eq('goal_id', goal.id)
+                    .eq('completed', true);
+
+                  await supabase
+                    .from('circle_goals')
+                    .update({ completed_members: completedCount?.length || 0 })
+                    .eq('id', goal.id);
+
                   // Log activity
                   await supabase
                     .from('goal_activities')
@@ -714,7 +778,7 @@ const GroupGoalDetails = () => {
                       user_id: user.id,
                       activity_type: 'contribution',
                       amount: amountNum,
-                      message: selectedAccount 
+                      message: (selectedAccount && selectedAccount !== "none")
                         ? `Aportó ${formatCurrency(amountNum)} desde ${userAccounts.find(acc => acc.id === selectedAccount)?.name}`
                         : `Aportó ${formatCurrency(amountNum)}`
                     });
@@ -736,9 +800,10 @@ const GroupGoalDetails = () => {
                       });
                   }
 
-                  toast.success(selectedAccount
-                    ? `¡Aporte de ${formatCurrency(amountNum)} registrado desde ${userAccounts.find(acc => acc.id === selectedAccount)?.name}! 🎉`
-                    : `¡Aporte de ${formatCurrency(amountNum)} registrado! 🎉`
+                  toast.success(
+                    (selectedAccount && selectedAccount !== "none")
+                      ? `¡Aporte de ${formatCurrency(amountNum)} registrado desde ${userAccounts.find(acc => acc.id === selectedAccount)?.name}! 🎉`
+                      : `¡Aporte de ${formatCurrency(amountNum)} registrado! 🎉`
                   );
                   setAddFundsModal(false);
                   setContributionAmount("");
