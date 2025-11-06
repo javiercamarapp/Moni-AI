@@ -212,9 +212,9 @@ const GroupGoalDetails = () => {
 
   return (
     <>
-      <div className="min-h-screen pb-24 bg-gradient-to-b from-amber-50/30 to-orange-50/20">
+      <div className="min-h-screen pb-24 bg-gray-50">
         {/* Header */}
-        <div className="sticky top-0 z-40 bg-gradient-to-b from-purple-50/80 via-cyan-50/60 to-transparent backdrop-blur-sm">
+        <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-sm border-b border-gray-100">
           <div className="max-w-7xl mx-auto px-4 py-3">
             <div className="flex items-center gap-3">
               <Button
@@ -235,10 +235,10 @@ const GroupGoalDetails = () => {
 
         <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
           {/* Progress Card */}
-          <div className="bg-white rounded-xl shadow-lg p-3 border border-[#c8a57b]/20">
+          <div className="bg-white rounded-xl shadow-sm p-3 border border-gray-100 hover:shadow-md transition-all duration-300 animate-fade-in">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 bg-[#c8a57b]/10 rounded-full flex items-center justify-center text-lg">
+                <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center text-lg">
                   {goal.icon || "🎯"}
                 </div>
                 <div>
@@ -264,23 +264,23 @@ const GroupGoalDetails = () => {
 
           {/* Resumen de Meta */}
           <div className="grid grid-cols-4 gap-2">
-            <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-2 shadow-sm border border-amber-200 text-center">
-              <p className="text-[10px] text-amber-700 mb-0.5">Meta Individual</p>
-              <p className="text-sm font-bold text-amber-900">{formatCurrency(goal.target_amount)}</p>
+            <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-100 text-center hover:shadow-md transition-all duration-300 animate-fade-in">
+              <p className="text-[10px] text-gray-600 mb-0.5">Meta Individual</p>
+              <p className="text-sm font-bold text-gray-900">{formatCurrency(goal.target_amount)}</p>
             </div>
-            <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-lg p-2 shadow-sm border border-emerald-200 text-center">
-              <p className="text-[10px] text-emerald-700 mb-0.5">Completaron</p>
-              <p className="text-sm font-bold text-emerald-600">{goal.completed_members} de {members.length}</p>
+            <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-100 text-center hover:shadow-md transition-all duration-300 animate-fade-in">
+              <p className="text-[10px] text-gray-600 mb-0.5">Completaron</p>
+              <p className="text-sm font-bold text-gray-900">{goal.completed_members} de {members.length}</p>
             </div>
             {goal.deadline && (
-              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-2 shadow-sm border border-blue-200 text-center">
-                <p className="text-[10px] text-blue-700 mb-0.5">Días Restantes</p>
-                <p className="text-sm font-bold text-blue-900">{daysRemaining}</p>
+              <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-100 text-center hover:shadow-md transition-all duration-300 animate-fade-in">
+                <p className="text-[10px] text-gray-600 mb-0.5">Días Restantes</p>
+                <p className="text-sm font-bold text-gray-900">{daysRemaining}</p>
               </div>
             )}
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-2 shadow-sm border border-purple-200 text-center">
-              <p className="text-[10px] text-purple-700 mb-0.5">Miembros</p>
-              <p className="text-sm font-bold text-purple-900">{members.length}</p>
+            <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-100 text-center hover:shadow-md transition-all duration-300 animate-fade-in">
+              <p className="text-[10px] text-gray-600 mb-0.5">Miembros</p>
+              <p className="text-sm font-bold text-gray-900">{members.length}</p>
             </div>
           </div>
 
@@ -293,9 +293,9 @@ const GroupGoalDetails = () => {
           />
 
           {/* Members Progress - Leaderboard Style */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-[#c8a57b]/20">
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-all duration-300 animate-fade-in">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Users className="h-5 w-5 text-[#c8a57b]" />
+              <Users className="h-5 w-5 text-gray-600" />
               Progreso Individual
             </h3>
             <div className="space-y-4">
@@ -308,7 +308,7 @@ const GroupGoalDetails = () => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3 flex-1">
                           <Avatar className="h-10 w-10">
-                            <AvatarFallback className="bg-gradient-to-br from-[#c8a57b] to-[#e3c890] text-white">
+                            <AvatarFallback className="bg-gray-100 text-gray-900">
                               {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}`}
                             </AvatarFallback>
                           </Avatar>
@@ -345,9 +345,9 @@ const GroupGoalDetails = () => {
 
           {/* Recent Activities */}
           {activities.length > 0 && (
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-[#c8a57b]/20">
+            <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-all duration-300 animate-fade-in">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-[#c8a57b]" />
+                <TrendingUp className="h-5 w-5 text-gray-600" />
                 Actividad Reciente
               </h3>
               <div className="space-y-3">
@@ -372,10 +372,10 @@ const GroupGoalDetails = () => {
 
           {/* Chat Grupal */}
           {showChat ? (
-            <div className="bg-white rounded-2xl shadow-lg border border-[#c8a57b]/20 p-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-300 animate-fade-in">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5 text-[#c8a57b]" />
+                  <MessageCircle className="h-5 w-5 text-gray-600" />
                   Chat Grupal
                 </h3>
                 <Button
@@ -429,7 +429,7 @@ const GroupGoalDetails = () => {
                 <Button
                   onClick={sendMessage}
                   disabled={!newMessage.trim()}
-                  className="bg-gradient-to-r from-[#c8a57b] to-[#e3c890] text-white"
+                  className="bg-gray-900 text-white hover:bg-gray-800"
                 >
                   <Send className="h-4 w-4" />
                 </Button>
@@ -438,7 +438,7 @@ const GroupGoalDetails = () => {
           ) : (
             <Button
               onClick={() => setShowChat(true)}
-              className="w-full h-12 bg-white border-2 border-[#c8a57b] text-gray-900 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 rounded-2xl font-semibold"
+              className="w-full h-12 bg-white border border-gray-200 text-gray-900 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 rounded-xl font-semibold"
             >
               <MessageCircle className="h-5 w-5 mr-2" />
               Abrir chat grupal ({chatMessages.length} mensajes)
@@ -448,7 +448,7 @@ const GroupGoalDetails = () => {
           {/* Actions */}
           <Button
             onClick={() => setAddFundsModal(true)}
-            className="w-full h-14 bg-gradient-to-r from-[#c8a57b] to-[#e3c890] text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 rounded-2xl font-semibold text-base"
+            className="w-full h-14 bg-white border border-gray-200 text-gray-900 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 rounded-xl font-semibold text-base"
           >
             <Plus className="h-5 w-5 mr-2" />
             Contribuir 💸
@@ -462,15 +462,15 @@ const GroupGoalDetails = () => {
       {addFundsModal && goal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-            <div className="bg-gradient-to-r from-[#c8a57b] to-[#e3c890] p-6 text-white rounded-t-2xl">
+            <div className="bg-gray-100 p-6 text-gray-900 rounded-t-2xl">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-bold">Contribuir a la meta</h2>
-                  <p className="text-sm text-white/80 mt-1">{goal.title}</p>
+                  <p className="text-sm text-gray-600 mt-1">{goal.title}</p>
                 </div>
                 <button
                   onClick={() => setAddFundsModal(false)}
-                  className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                  className="p-2 hover:bg-gray-200 rounded-full transition-colors"
                 >
                   ✕
                 </button>
@@ -485,7 +485,7 @@ const GroupGoalDetails = () => {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Aporte sugerido quincenal</span>
-                  <span className="font-bold text-[#c8a57b]">
+                  <span className="font-bold text-gray-900">
                     {goal.required_weekly_saving 
                       ? formatCurrency((goal.required_weekly_saving / members.length) * 2)
                       : formatCurrency(1250)
@@ -514,7 +514,7 @@ const GroupGoalDetails = () => {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl p-4 border border-cyan-100">
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                 <p className="text-xs font-medium text-gray-900 mb-1">💡 Tip Moni AI</p>
                 <p className="text-xs text-gray-700">
                   Si aportas constantemente, ayudarás al grupo a cumplir la meta {daysRemaining && daysRemaining > 30 ? 'antes de tiempo' : 'a tiempo'}
@@ -535,7 +535,7 @@ const GroupGoalDetails = () => {
                     setAddFundsModal(false);
                     fetchGoalDetails();
                   }}
-                  className="flex-1 h-12 bg-gradient-to-r from-[#c8a57b] to-[#e3c890] hover:from-[#b8956b] hover:to-[#d3b880] text-white rounded-xl font-medium"
+                  className="flex-1 h-12 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium"
                 >
                   Confirmar aporte
                 </Button>
