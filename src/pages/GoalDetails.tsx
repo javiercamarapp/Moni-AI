@@ -306,63 +306,63 @@ const GoalDetails = () => {
       {/* Insight Modal */}
       {insightModal && goal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-scale-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm animate-scale-in">
             {/* Header */}
-            <div className="bg-gradient-to-b from-purple-50/30 to-indigo-50/20 p-6 rounded-t-2xl border-b border-gray-100">
+            <div className="bg-gradient-to-b from-purple-50/30 to-indigo-50/20 p-4 rounded-t-2xl border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">
+                  <h2 className="text-base font-bold text-gray-900">
                     {insightModal === 'current' && '💰 Ahorro Actual'}
                     {insightModal === 'remaining' && '🎯 Falta Ahorrar'}
                     {insightModal === 'days' && '⏰ Días Restantes'}
                   </h2>
-                  <p className="text-sm text-gray-600 mt-1">{goal.title}</p>
+                  <p className="text-xs text-gray-600 mt-0.5">{goal.title}</p>
                 </div>
                 <button
                   onClick={() => setInsightModal(null)}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-600"
+                  className="p-1.5 hover:bg-gray-100 rounded-full transition-colors text-gray-600"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4" />
                 </button>
               </div>
             </div>
 
             {/* Body */}
-            <div className="p-6 space-y-4">
+            <div className="p-4 space-y-3">
               {insightModal === 'current' && (
                 <>
-                  <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
-                    <p className="text-2xl font-bold text-emerald-900 mb-2">{formatCurrency(goal.current)}</p>
-                    <p className="text-sm text-emerald-700">Has ahorrado el <span className="font-bold">{progress.toFixed(1)}%</span> de tu meta</p>
+                  <div className="bg-emerald-50 rounded-xl p-3 border border-emerald-200">
+                    <p className="text-xl font-bold text-emerald-900 mb-1">{formatCurrency(goal.current)}</p>
+                    <p className="text-xs text-emerald-700">Has ahorrado el <span className="font-bold">{progress.toFixed(1)}%</span> de tu meta</p>
                   </div>
                   
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                        <Sparkles className="h-4 w-4 text-purple-600" />
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-2">
+                      <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                        <Sparkles className="h-3 w-3 text-purple-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">¡Excelente progreso!</p>
-                        <p className="text-xs text-gray-600 mt-1">
+                        <p className="text-xs font-semibold text-gray-900">¡Excelente progreso!</p>
+                        <p className="text-[11px] text-gray-600 mt-0.5">
                           {progress >= 75 
-                            ? "Estás muy cerca de alcanzar tu meta. ¡Sigue así!"
+                            ? "Estás muy cerca de alcanzar tu meta."
                             : progress >= 50
-                            ? "Vas por la mitad del camino. ¡No te detengas ahora!"
+                            ? "Vas por la mitad del camino."
                             : progress >= 25
-                            ? "Has dado los primeros pasos. Cada aporte cuenta."
-                            : "Cada gran meta comienza con un pequeño ahorro."}
+                            ? "Has dado los primeros pasos."
+                            : "Cada gran meta comienza aquí."}
                         </p>
                       </div>
                     </div>
                     
                     {activities.length > 0 && (
-                      <div className="flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                          <TrendingUp className="h-4 w-4 text-blue-600" />
+                      <div className="flex items-start gap-2">
+                        <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                          <TrendingUp className="h-3 w-3 text-blue-600" />
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">Última contribución</p>
-                          <p className="text-xs text-gray-600 mt-1">
+                          <p className="text-xs font-semibold text-gray-900">Última contribución</p>
+                          <p className="text-[11px] text-gray-600 mt-0.5">
                             {formatCurrency(activities[0].amount)} hace {Math.floor((Date.now() - new Date(activities[0].created_at).getTime()) / (1000 * 60 * 60 * 24))} días
                           </p>
                         </div>
@@ -374,38 +374,38 @@ const GoalDetails = () => {
 
               {insightModal === 'remaining' && (
                 <>
-                  <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
-                    <p className="text-2xl font-bold text-amber-900 mb-2">{formatCurrency(remaining)}</p>
-                    <p className="text-sm text-amber-700">Te falta ahorrar para completar tu meta</p>
+                  <div className="bg-amber-50 rounded-xl p-3 border border-amber-200">
+                    <p className="text-xl font-bold text-amber-900 mb-1">{formatCurrency(remaining)}</p>
+                    <p className="text-xs text-amber-700">Te falta ahorrar para completar tu meta</p>
                   </div>
                   
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                        <Target className="h-4 w-4 text-purple-600" />
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-2">
+                      <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                        <Target className="h-3 w-3 text-purple-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">Sugerencia de ahorro</p>
-                        <p className="text-xs text-gray-600 mt-1">
+                        <p className="text-xs font-semibold text-gray-900">Sugerencia de ahorro</p>
+                        <p className="text-[11px] text-gray-600 mt-0.5">
                           {goal.required_weekly_saving 
-                            ? `Ahorra ${formatCurrency(goal.required_weekly_saving)} por semana para completar tu meta a tiempo.`
+                            ? `Ahorra ${formatCurrency(goal.required_weekly_saving)} por semana.`
                             : goal.deadline
-                            ? `Necesitas ahorrar aproximadamente ${formatCurrency(remaining / Math.max(daysRemaining || 1, 1) * 7)} por semana.`
-                            : "Establece una fecha límite para recibir recomendaciones personalizadas."}
+                            ? `Necesitas ${formatCurrency(remaining / Math.max(daysRemaining || 1, 1) * 7)} por semana.`
+                            : "Establece una fecha límite."}
                         </p>
                       </div>
                     </div>
                     
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                        <Sparkles className="h-4 w-4 text-emerald-600" />
+                    <div className="flex items-start gap-2">
+                      <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                        <Sparkles className="h-3 w-3 text-emerald-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">Consejo Moni AI</p>
-                        <p className="text-xs text-gray-600 mt-1">
+                        <p className="text-xs font-semibold text-gray-900">Consejo Moni AI</p>
+                        <p className="text-[11px] text-gray-600 mt-0.5">
                           {remaining > goal.target * 0.5
-                            ? "Considera hacer aportes pequeños pero frecuentes. La consistencia es clave."
-                            : "¡Ya casi llegas! Mantén el ritmo de tus aportes actuales."}
+                            ? "Aportes pequeños pero frecuentes."
+                            : "¡Ya casi llegas! Mantén el ritmo."}
                         </p>
                       </div>
                     </div>
@@ -415,25 +415,24 @@ const GoalDetails = () => {
 
               {insightModal === 'days' && daysRemaining !== null && (
                 <>
-                  <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                    <p className="text-2xl font-bold text-blue-900 mb-2">{daysRemaining} días</p>
-                    <p className="text-sm text-blue-700">
+                  <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
+                    <p className="text-xl font-bold text-blue-900 mb-1">{daysRemaining} días</p>
+                    <p className="text-xs text-blue-700">
                       {daysRemaining > 365 ? `${Math.floor(daysRemaining / 365)} años y ${Math.floor((daysRemaining % 365) / 30)} meses` : 
                        daysRemaining > 30 ? `${Math.floor(daysRemaining / 30)} meses` : 
-                       `${daysRemaining} días`} para alcanzar tu meta
+                       `${daysRemaining} días`} para tu meta
                     </p>
                   </div>
                   
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                        <Calendar className="h-4 w-4 text-purple-600" />
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-2">
+                      <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                        <Calendar className="h-3 w-3 text-purple-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">Fecha objetivo</p>
-                        <p className="text-xs text-gray-600 mt-1">
+                        <p className="text-xs font-semibold text-gray-900">Fecha objetivo</p>
+                        <p className="text-[11px] text-gray-600 mt-0.5">
                           {goal.deadline && new Date(goal.deadline).toLocaleDateString('es-MX', {
-                            weekday: 'long',
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric'
@@ -442,18 +441,18 @@ const GoalDetails = () => {
                       </div>
                     </div>
                     
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
-                        <TrendingUp className="h-4 w-4 text-amber-600" />
+                    <div className="flex items-start gap-2">
+                      <div className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                        <TrendingUp className="h-3 w-3 text-amber-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">Estado del progreso</p>
-                        <p className="text-xs text-gray-600 mt-1">
+                        <p className="text-xs font-semibold text-gray-900">Estado del progreso</p>
+                        <p className="text-[11px] text-gray-600 mt-0.5">
                           {daysRemaining < 30 && progress < 75
-                            ? "⚠️ Necesitas acelerar tus aportes para alcanzar la meta a tiempo."
+                            ? "⚠️ Acelera tus aportes."
                             : daysRemaining < 90 && progress < 50
-                            ? "Considera aumentar la frecuencia de tus aportes."
-                            : "Vas bien encaminado. Mantén tu ritmo actual."}
+                            ? "Considera aportar más frecuente."
+                            : "Vas bien encaminado."}
                         </p>
                       </div>
                     </div>
@@ -463,7 +462,7 @@ const GoalDetails = () => {
 
               <Button
                 onClick={() => setInsightModal(null)}
-                className="w-full h-12 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white rounded-xl font-semibold"
+                className="w-full h-10 bg-white border border-gray-200 text-gray-900 hover:bg-gray-50 hover:shadow-sm transition-all duration-300 rounded-xl font-medium text-sm"
               >
                 Entendido
               </Button>
