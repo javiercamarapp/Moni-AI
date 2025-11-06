@@ -268,7 +268,7 @@ const CircleChat = () => {
                   src={msg.profiles?.avatar_url || ''}
                   fallback={(msg.profiles?.full_name || 'U').substring(0, 2).toUpperCase()}
                 />
-                <div className="flex flex-col gap-0.5 max-w-[75%] sm:max-w-[70%]">
+                <div className="flex flex-col gap-0.5 max-w-[85%] sm:max-w-[80%]">
                   <div className="flex items-center gap-2 px-1">
                     <span className="text-xs font-medium text-gray-600 truncate">
                       {msg.profiles?.full_name || msg.profiles?.username || 'Usuario'}
