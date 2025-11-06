@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Send, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -8,15 +8,33 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SectionLoader } from "@/components/SectionLoader";
 import BottomNav from "@/components/BottomNav";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface Comment {
   id: string;
   user_id: string;
   comment: string;
   created_at: string;
+  reactions?: Reaction[];
+}
+
+interface Reaction {
+  id: string;
+  comment_id: string;
+  user_id: string;
+  emoji: string;
+}
+
+interface TypingUser {
+  user_id: string;
 }
 
 const STICKERS = ["💪", "🎯", "🥂", "🔥", "🎉", "👏"];
+const REACTION_EMOJIS = ["👍", "❤️", "😂", "🎉", "🚀", "💯"];
 
 const AI_MESSAGES = [
   "Llevan 73% del progreso total. ¡Excelente ritmo, equipo!",
@@ -32,21 +50,87 @@ const GroupGoalChat = () => {
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string>("");
+  const [typingUsers, setTypingUsers] = useState<TypingUser[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    fetchComments();
-    
-    // Add AI welcome message
-    setTimeout(() => {
-      const randomAIMessage = AI_MESSAGES[Math.floor(Math.random() * AI_MESSAGES.length)];
-      addAIMessage(randomAIMessage);
-    }, 1000);
+    const initializeChat = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setCurrentUserId(user.id);
+      }
+      
+      await fetchComments();
+      
+      // Add AI welcome message
+      setTimeout(() => {
+        const randomAIMessage = AI_MESSAGES[Math.floor(Math.random() * AI_MESSAGES.length)];
+        addAIMessage(randomAIMessage);
+      }, 1000);
+    };
+
+    initializeChat();
   }, [id]);
 
   useEffect(() => {
     scrollToBottom();
   }, [comments]);
+
+  // Setup realtime subscriptions for messages and presence
+  useEffect(() => {
+    if (!currentUserId || !id) return;
+
+    // Subscribe to new messages
+    const messagesChannel = supabase
+      .channel(`goal-comments-${id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'goal_comments',
+          filter: `goal_id=eq.${id}`
+        },
+        (payload) => {
+          const newComment = payload.new as Comment;
+          setComments(prev => [...prev, newComment]);
+          
+          // Send notification to other members if not from AI
+          if (newComment.user_id !== 'moni-ai' && newComment.user_id !== currentUserId) {
+            // The notification will be sent from the backend
+          }
+        }
+      )
+      .subscribe();
+
+    // Setup presence channel for typing indicators
+    const presenceChannel = supabase.channel(`presence-goal-${id}`, {
+      config: {
+        presence: {
+          key: currentUserId,
+        },
+      },
+    });
+
+    presenceChannel
+      .on('presence', { event: 'sync' }, () => {
+        const state = presenceChannel.presenceState();
+        const typing = Object.values(state)
+          .flat()
+          .filter((user: any) => user.user_id !== currentUserId && user.typing)
+          .map((user: any) => ({ user_id: user.user_id }));
+        setTypingUsers(typing);
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(messagesChannel);
+      supabase.removeChannel(presenceChannel);
+    };
+  }, [currentUserId, id]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -54,14 +138,31 @@ const GroupGoalChat = () => {
 
   const fetchComments = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: commentsData, error } = await supabase
         .from('goal_comments')
         .select('*')
         .eq('goal_id', id)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      setComments(data || []);
+
+      // Fetch reactions for all comments
+      const commentIds = commentsData?.map(c => c.id) || [];
+      if (commentIds.length > 0) {
+        const { data: reactionsData } = await supabase
+          .from('goal_comment_reactions')
+          .select('*')
+          .in('comment_id', commentIds);
+
+        const commentsWithReactions = commentsData?.map(comment => ({
+          ...comment,
+          reactions: reactionsData?.filter(r => r.comment_id === comment.id) || []
+        }));
+
+        setComments(commentsWithReactions || []);
+      } else {
+        setComments(commentsData || []);
+      }
     } catch (error: any) {
       console.error('Error fetching comments:', error);
       toast.error('Error al cargar los mensajes');
@@ -80,6 +181,29 @@ const GroupGoalChat = () => {
     setComments(prev => [...prev, aiComment]);
   };
 
+  const handleTyping = async (text: string) => {
+    setNewComment(text);
+
+    // Update typing status
+    if (text.length > 0 && !isTyping) {
+      setIsTyping(true);
+      const channel = supabase.channel(`presence-goal-${id}`);
+      await channel.track({ user_id: currentUserId, typing: true });
+    }
+
+    // Clear previous timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    // Set new timeout to stop typing indicator
+    typingTimeoutRef.current = setTimeout(async () => {
+      setIsTyping(false);
+      const channel = supabase.channel(`presence-goal-${id}`);
+      await channel.track({ user_id: currentUserId, typing: false });
+    }, 1000);
+  };
+
   const handleSend = async () => {
     if (!newComment.trim() || sending) return;
 
@@ -88,15 +212,55 @@ const GroupGoalChat = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('No user');
 
-      const { error } = await supabase
+      // Stop typing indicator
+      setIsTyping(false);
+      const channel = supabase.channel(`presence-goal-${id}`);
+      await channel.track({ user_id: currentUserId, typing: false });
+
+      const { data: newCommentData, error } = await supabase
         .from('goal_comments')
         .insert({
           goal_id: id,
           user_id: user.id,
           comment: newComment.trim(),
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
+
+      // Get all members of this goal to send notifications
+      const { data: goalData } = await supabase
+        .from('circle_goals')
+        .select('circle_id')
+        .eq('id', id)
+        .single();
+
+      if (goalData) {
+        const { data: members } = await supabase
+          .from('circle_members')
+          .select('user_id')
+          .eq('circle_id', goalData.circle_id)
+          .neq('user_id', user.id);
+
+        // Create notifications for all other members
+        if (members && members.length > 0) {
+          const notifications = members.map(member => ({
+            user_id: member.user_id,
+            notification_type: 'group_message',
+            message: `Nuevo mensaje en el chat grupal: "${newComment.trim().substring(0, 50)}${newComment.length > 50 ? '...' : ''}"`,
+            metadata: {
+              goal_id: id,
+              sender_id: user.id,
+              comment_id: newCommentData.id
+            }
+          }));
+
+          await supabase
+            .from('notification_history')
+            .insert(notifications);
+        }
+      }
 
       setNewComment("");
       await fetchComments();
@@ -113,6 +277,45 @@ const GroupGoalChat = () => {
       toast.error('Error al enviar el mensaje');
     } finally {
       setSending(false);
+    }
+  };
+
+  const handleReaction = async (commentId: string, emoji: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Check if user already reacted with this emoji
+      const existingReaction = comments
+        .find(c => c.id === commentId)
+        ?.reactions?.find(r => r.user_id === user.id && r.emoji === emoji);
+
+      if (existingReaction) {
+        // Remove reaction
+        const { error } = await supabase
+          .from('goal_comment_reactions')
+          .delete()
+          .eq('id', existingReaction.id);
+
+        if (error) throw error;
+      } else {
+        // Add reaction
+        const { error } = await supabase
+          .from('goal_comment_reactions')
+          .insert({
+            comment_id: commentId,
+            user_id: user.id,
+            emoji: emoji
+          });
+
+        if (error) throw error;
+      }
+
+      // Refresh comments to get updated reactions
+      await fetchComments();
+    } catch (error: any) {
+      console.error('Error handling reaction:', error);
+      toast.error('Error al procesar la reacción');
     }
   };
 
@@ -155,7 +358,16 @@ const GroupGoalChat = () => {
         <div className="max-w-7xl mx-auto px-4 py-6 space-y-4">
           {comments.map((comment) => {
             const isAI = comment.user_id === 'moni-ai';
-            const isCurrentUser = !isAI; // Simplified for demo
+            const isCurrentUser = comment.user_id === currentUserId;
+
+            // Group reactions by emoji
+            const reactionGroups = comment.reactions?.reduce((acc, reaction) => {
+              if (!acc[reaction.emoji]) {
+                acc[reaction.emoji] = [];
+              }
+              acc[reaction.emoji].push(reaction);
+              return acc;
+            }, {} as Record<string, Reaction[]>) || {};
 
             return (
               <div
@@ -168,18 +380,81 @@ const GroupGoalChat = () => {
                       {isAI ? '🤖' : '👤'}
                     </AvatarFallback>
                   </Avatar>
-                  <div className={`${isCurrentUser ? 'bg-white' : 'bg-white'} rounded-2xl p-3 shadow-sm border ${isAI ? 'border-[#c8a57b]/20' : 'border-gray-100'}`}>
-                    <p className={`text-sm ${isAI ? 'text-gray-900 font-medium' : 'text-gray-900'}`}>
-                      {comment.comment}
-                    </p>
-                    <p className="text-[10px] text-gray-500 mt-1">
-                      {new Date(comment.created_at).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}
-                    </p>
+                  <div>
+                    <div className={`${isCurrentUser ? 'bg-white' : 'bg-white'} rounded-2xl p-3 shadow-sm border ${isAI ? 'border-[#c8a57b]/20' : 'border-gray-100'}`}>
+                      <p className={`text-sm ${isAI ? 'text-gray-900 font-medium' : 'text-gray-900'}`}>
+                        {comment.comment}
+                      </p>
+                      <div className="flex items-center justify-between mt-1">
+                        <p className="text-[10px] text-gray-500">
+                          {new Date(comment.created_at).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                        {!isAI && (
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button className="text-gray-400 hover:text-gray-600 ml-2">
+                                <Smile className="h-3.5 w-3.5" />
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-2 bg-white border border-gray-200">
+                              <div className="flex gap-1">
+                                {REACTION_EMOJIS.map(emoji => (
+                                  <button
+                                    key={emoji}
+                                    onClick={() => handleReaction(comment.id, emoji)}
+                                    className="text-xl hover:scale-125 transition-transform p-1"
+                                  >
+                                    {emoji}
+                                  </button>
+                                ))}
+                              </div>
+                            </PopoverContent>
+                          </Popover>
+                        )}
+                      </div>
+                    </div>
+                    {/* Reactions display */}
+                    {Object.keys(reactionGroups).length > 0 && (
+                      <div className="flex gap-1 mt-1 flex-wrap">
+                        {Object.entries(reactionGroups).map(([emoji, reactions]) => {
+                          const userReacted = reactions.some(r => r.user_id === currentUserId);
+                          return (
+                            <button
+                              key={emoji}
+                              onClick={() => handleReaction(comment.id, emoji)}
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${
+                                userReacted 
+                                  ? 'bg-blue-100 border border-blue-300' 
+                                  : 'bg-gray-100 border border-gray-200'
+                              } hover:scale-105 transition-transform`}
+                            >
+                              <span>{emoji}</span>
+                              <span className="font-medium">{reactions.length}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             );
           })}
+          
+          {/* Typing indicator */}
+          {typingUsers.length > 0 && (
+            <div className="flex justify-start animate-fade-in">
+              <div className="flex gap-2 items-center px-4 py-2 bg-gray-100 rounded-2xl">
+                <div className="flex gap-1">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+                <span className="text-xs text-gray-600">escribiendo...</span>
+              </div>
+            </div>
+          )}
+          
           <div ref={messagesEndRef} />
         </div>
 
@@ -203,7 +478,7 @@ const GroupGoalChat = () => {
             <div className="flex gap-2">
               <Input
                 value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
+                onChange={(e) => handleTyping(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Escribe un mensaje..."
                 className="flex-1 rounded-2xl border-[#c8a57b]/30"
