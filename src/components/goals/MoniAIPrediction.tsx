@@ -70,27 +70,15 @@ export default function MoniAIPrediction({ goalId }: MoniAIPredictionProps) {
 
   return (
     <div className="animate-fade-in bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-300">
-      <div className="p-3 flex items-start gap-2">
-        <div className="text-lg flex-shrink-0">
+      <div className="p-2 flex items-start gap-2">
+        <div className="text-base flex-shrink-0">
           {currentInsight.split(' ')[0]}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-medium text-gray-700 mb-0.5">Insight {currentIndex + 1} de {insights.length}</p>
           <p className="text-xs text-gray-600 leading-relaxed">
             {currentInsight.split(' ').slice(1).join(' ')}
           </p>
         </div>
-      </div>
-      {/* Progress dots */}
-      <div className="flex justify-center gap-1 pb-2">
-        {insights.map((_, idx) => (
-          <div
-            key={idx}
-            className={`h-1 rounded-full transition-all duration-300 ${
-              idx === currentIndex ? 'w-4 bg-gray-900' : 'w-1 bg-gray-300'
-            }`}
-          />
-        ))}
       </div>
     </div>
   );
