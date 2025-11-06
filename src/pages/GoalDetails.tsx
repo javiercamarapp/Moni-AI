@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Target, TrendingUp, Sparkles, Plus, Calendar } from "lucide-react";
+import { ArrowLeft, Target, TrendingUp, Sparkles, Plus, Calendar, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
@@ -40,6 +40,7 @@ const GoalDetails = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [addFundsModal, setAddFundsModal] = useState(false);
+  const [insightModal, setInsightModal] = useState<'current' | 'remaining' | 'days' | null>(null);
 
   useEffect(() => {
     fetchGoalDetails();
@@ -195,20 +196,29 @@ const GoalDetails = () => {
           </div>
 
           {/* Stats Summary */}
-          <div className="grid grid-cols-3 gap-2">
-            <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50">
+          <div className="grid grid-cols-3 gap-2 justify-center">
+            <button 
+              onClick={() => setInsightModal('current')}
+              className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50 hover:shadow-md hover:border-emerald-300 transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
+            >
               <p className="text-[10px] text-gray-600 mb-0.5">Ahorro Actual</p>
               <p className="text-sm font-bold text-gray-900">{formatCurrency(goal.current)}</p>
-            </div>
-            <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50">
+            </button>
+            <button 
+              onClick={() => setInsightModal('remaining')}
+              className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50 hover:shadow-md hover:border-amber-300 transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
+            >
               <p className="text-[10px] text-gray-600 mb-0.5">Falta Ahorrar</p>
               <p className="text-sm font-bold text-gray-900">{formatCurrency(remaining)}</p>
-            </div>
+            </button>
             {goal.deadline && daysRemaining !== null && (
-              <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50">
+              <button 
+                onClick={() => setInsightModal('days')}
+                className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50 hover:shadow-md hover:border-blue-300 transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
+              >
                 <p className="text-[10px] text-gray-600 mb-0.5">Días Restantes</p>
                 <p className="text-sm font-bold text-gray-900">{daysRemaining} días</p>
-              </div>
+              </button>
             )}
           </div>
 
@@ -291,6 +301,175 @@ const GoalDetails = () => {
           onSuccess={fetchGoalDetails}
           goal={goal}
         />
+      )}
+
+      {/* Insight Modal */}
+      {insightModal && goal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-scale-in">
+            {/* Header */}
+            <div className="bg-gradient-to-b from-purple-50/30 to-indigo-50/20 p-6 rounded-t-2xl border-b border-gray-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">
+                    {insightModal === 'current' && '💰 Ahorro Actual'}
+                    {insightModal === 'remaining' && '🎯 Falta Ahorrar'}
+                    {insightModal === 'days' && '⏰ Días Restantes'}
+                  </h2>
+                  <p className="text-sm text-gray-600 mt-1">{goal.title}</p>
+                </div>
+                <button
+                  onClick={() => setInsightModal(null)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-600"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 space-y-4">
+              {insightModal === 'current' && (
+                <>
+                  <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
+                    <p className="text-2xl font-bold text-emerald-900 mb-2">{formatCurrency(goal.current)}</p>
+                    <p className="text-sm text-emerald-700">Has ahorrado el <span className="font-bold">{progress.toFixed(1)}%</span> de tu meta</p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                        <Sparkles className="h-4 w-4 text-purple-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">¡Excelente progreso!</p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          {progress >= 75 
+                            ? "Estás muy cerca de alcanzar tu meta. ¡Sigue así!"
+                            : progress >= 50
+                            ? "Vas por la mitad del camino. ¡No te detengas ahora!"
+                            : progress >= 25
+                            ? "Has dado los primeros pasos. Cada aporte cuenta."
+                            : "Cada gran meta comienza con un pequeño ahorro."}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {activities.length > 0 && (
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                          <TrendingUp className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900">Última contribución</p>
+                          <p className="text-xs text-gray-600 mt-1">
+                            {formatCurrency(activities[0].amount)} hace {Math.floor((Date.now() - new Date(activities[0].created_at).getTime()) / (1000 * 60 * 60 * 24))} días
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {insightModal === 'remaining' && (
+                <>
+                  <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
+                    <p className="text-2xl font-bold text-amber-900 mb-2">{formatCurrency(remaining)}</p>
+                    <p className="text-sm text-amber-700">Te falta ahorrar para completar tu meta</p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                        <Target className="h-4 w-4 text-purple-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">Sugerencia de ahorro</p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          {goal.required_weekly_saving 
+                            ? `Ahorra ${formatCurrency(goal.required_weekly_saving)} por semana para completar tu meta a tiempo.`
+                            : goal.deadline
+                            ? `Necesitas ahorrar aproximadamente ${formatCurrency(remaining / Math.max(daysRemaining || 1, 1) * 7)} por semana.`
+                            : "Establece una fecha límite para recibir recomendaciones personalizadas."}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                        <Sparkles className="h-4 w-4 text-emerald-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">Consejo Moni AI</p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          {remaining > goal.target * 0.5
+                            ? "Considera hacer aportes pequeños pero frecuentes. La consistencia es clave."
+                            : "¡Ya casi llegas! Mantén el ritmo de tus aportes actuales."}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {insightModal === 'days' && daysRemaining !== null && (
+                <>
+                  <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                    <p className="text-2xl font-bold text-blue-900 mb-2">{daysRemaining} días</p>
+                    <p className="text-sm text-blue-700">
+                      {daysRemaining > 365 ? `${Math.floor(daysRemaining / 365)} años y ${Math.floor((daysRemaining % 365) / 30)} meses` : 
+                       daysRemaining > 30 ? `${Math.floor(daysRemaining / 30)} meses` : 
+                       `${daysRemaining} días`} para alcanzar tu meta
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                        <Calendar className="h-4 w-4 text-purple-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">Fecha objetivo</p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          {goal.deadline && new Date(goal.deadline).toLocaleDateString('es-MX', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                        <TrendingUp className="h-4 w-4 text-amber-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">Estado del progreso</p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          {daysRemaining < 30 && progress < 75
+                            ? "⚠️ Necesitas acelerar tus aportes para alcanzar la meta a tiempo."
+                            : daysRemaining < 90 && progress < 50
+                            ? "Considera aumentar la frecuencia de tus aportes."
+                            : "Vas bien encaminado. Mantén tu ritmo actual."}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <Button
+                onClick={() => setInsightModal(null)}
+                className="w-full h-12 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white rounded-xl font-semibold"
+              >
+                Entendido
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );
