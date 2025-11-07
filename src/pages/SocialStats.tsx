@@ -231,69 +231,17 @@ const SocialStats = () => {
 
       <div className="max-w-2xl mx-auto px-4 py-2 space-y-4">
         {/* Period Filter */}
-        <div className="bg-white rounded-2xl shadow-sm p-4">
-          <h2 className="text-sm font-semibold text-gray-900 mb-3">Período de análisis</h2>
+        <div className="bg-white rounded-2xl shadow-sm p-2">
+          <h2 className="text-[10px] font-semibold text-gray-900 mb-1.5 px-1">Período</h2>
           <Tabs value={periodFilter} onValueChange={setPeriodFilter} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="1m">1 Mes</TabsTrigger>
-              <TabsTrigger value="3m">3 Meses</TabsTrigger>
-              <TabsTrigger value="6m">6 Meses</TabsTrigger>
-              <TabsTrigger value="1y">1 Año</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-4 h-8">
+              <TabsTrigger value="1m" className="text-[10px]">1M</TabsTrigger>
+              <TabsTrigger value="3m" className="text-[10px]">3M</TabsTrigger>
+              <TabsTrigger value="6m" className="text-[10px]">6M</TabsTrigger>
+              <TabsTrigger value="1y" className="text-[10px]">1A</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
-
-        {/* XP Evolution Chart */}
-        {xpHistory.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
-                Evolución de XP
-              </h2>
-              <Badge variant="secondary" className="text-[10px] px-2 py-0.5">
-                Últimos {periodFilter === "1m" ? "1 mes" : periodFilter === "3m" ? "3 meses" : periodFilter === "6m" ? "6 meses" : "12 meses"}
-              </Badge>
-            </div>
-            
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={xpHistory}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                  <XAxis 
-                    dataKey="label" 
-                    stroke="#6B7280"
-                    style={{ fontSize: '12px' }}
-                  />
-                  <YAxis 
-                    stroke="#6B7280"
-                    style={{ fontSize: '12px' }}
-                  />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'white',
-                      border: '1px solid #E5E7EB',
-                      borderRadius: '8px',
-                      fontSize: '12px'
-                    }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="xp" 
-                    stroke="#8B5CF6" 
-                    strokeWidth={3}
-                    dot={{ fill: '#8B5CF6', r: 4 }}
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-            
-            <p className="text-xs text-gray-500 mt-3 text-center">
-              Total acumulado de puntos XP por mes
-            </p>
-          </div>
-        )}
 
         {/* Stats Overview - Compacto */}
         <div className="bg-white rounded-2xl shadow-sm p-3">
@@ -468,6 +416,58 @@ const SocialStats = () => {
             </div>
           )}
         </div>
+
+        {/* XP Evolution Chart */}
+        {xpHistory.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-sm p-4">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                Evolución de XP
+              </h2>
+              <Badge variant="secondary" className="text-[10px] px-2 py-0.5">
+                Últimos {periodFilter === "1m" ? "1 mes" : periodFilter === "3m" ? "3 meses" : periodFilter === "6m" ? "6 meses" : "12 meses"}
+              </Badge>
+            </div>
+            
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={xpHistory}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                  <XAxis 
+                    dataKey="label" 
+                    stroke="#6B7280"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <YAxis 
+                    stroke="#6B7280"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'white',
+                      border: '1px solid #E5E7EB',
+                      borderRadius: '8px',
+                      fontSize: '12px'
+                    }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="xp" 
+                    stroke="#8B5CF6" 
+                    strokeWidth={3}
+                    dot={{ fill: '#8B5CF6', r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            
+            <p className="text-xs text-gray-500 mt-3 text-center">
+              Total acumulado de puntos XP por mes
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
