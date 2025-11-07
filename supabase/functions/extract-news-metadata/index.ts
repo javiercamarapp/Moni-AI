@@ -91,31 +91,53 @@ serve(async (req) => {
       );
     }
 
-    console.log("HTML content length:", htmlContent.length);
+    // Extract metadata from HTML using better parsing
+    let extractedTitle = "";
+    let extractedDescription = "";
+    let extractedImage = "";
+    let extractedDate = "";
 
-    // Direct AI extraction - let the AI handle everything
-    const prompt = `Analiza el siguiente HTML de una página web de noticias financieras y extrae la información principal.
+    // Try to extract from meta tags first
+    const ogTitleMatch = htmlContent.match(/<meta[^>]*property=["']og:title["'][^>]*content=["']([^"']+)["']/i);
+    const twitterTitleMatch = htmlContent.match(/<meta[^>]*name=["']twitter:title["'][^>]*content=["']([^"']+)["']/i);
+    const titleTagMatch = htmlContent.match(/<title[^>]*>([^<]+)<\/title>/i);
+    
+    extractedTitle = ogTitleMatch?.[1] || twitterTitleMatch?.[1] || titleTagMatch?.[1] || "";
 
-IMPORTANTE: Debes extraer el título principal del artículo y crear un resumen informativo.
+    const ogDescMatch = htmlContent.match(/<meta[^>]*property=["']og:description["'][^>]*content=["']([^"']+)["']/i);
+    const twitterDescMatch = htmlContent.match(/<meta[^>]*name=["']twitter:description["'][^>]*content=["']([^"']+)["']/i);
+    const metaDescMatch = htmlContent.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i);
+    
+    extractedDescription = ogDescMatch?.[1] || twitterDescMatch?.[1] || metaDescMatch?.[1] || "";
 
-HTML:
-${htmlContent.substring(0, 15000)}
+    const ogImageMatch = htmlContent.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i);
+    const twitterImageMatch = htmlContent.match(/<meta[^>]*name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i);
+    
+    extractedImage = ogImageMatch?.[1] || twitterImageMatch?.[1] || "";
 
-Instrucciones:
-1. Busca el título principal del artículo (puede estar en <h1>, <title>, meta tags og:title, etc.)
-2. Crea un resumen de 4-5 líneas que capture los puntos clave de la noticia
-3. Si encuentras una imagen principal (og:image, twitter:image, etc.), incluye su URL completa
-4. Si encuentras fecha de publicación, inclúyela en formato ISO
+    console.log("Extracted from HTML:", { title: extractedTitle, description: extractedDescription, image: extractedImage });
 
-Responde ÚNICAMENTE con este JSON (sin texto adicional, sin markdown):
+    // If we have good metadata, use AI to enhance the description
+    const prompt = `Analiza esta noticia financiera y mejora la descripción para hacerla más informativa.
+
+Título extraído: ${extractedTitle}
+Descripción extraída: ${extractedDescription}
+
+IMPORTANTE: Responde ÚNICAMENTE con un objeto JSON válido, sin texto adicional.
+
+Reglas:
+1. Si el título está vacío o es genérico, extráelo del siguiente HTML
+2. Mejora la descripción para que sea un resumen de 4-5 líneas con información clave para inversionistas
+3. La descripción debe ser objetiva, clara y enfocarse en datos relevantes
+
+HTML (primeros 12000 caracteres):
+${htmlContent.substring(0, 12000)}
+
+Responde SOLO con este JSON:
 {
-  "title": "Título principal del artículo (máximo 120 caracteres)",
-  "description": "Resumen en 4-5 líneas con los puntos clave de la noticia",
-  "imageUrl": "URL de la imagen principal o null",
-  "publishedAt": "Fecha en formato ISO o null"
+  "title": "título claro y descriptivo (máximo 120 caracteres)",
+  "description": "resumen en 4-5 líneas con información clave y datos relevantes"
 }`;
-
-    console.log("Calling AI with prompt length:", prompt.length);
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -126,12 +148,10 @@ Responde ÚNICAMENTE con este JSON (sin texto adicional, sin markdown):
       body: JSON.stringify({
         model: "google/gemini-2.5-pro",
         messages: [
-          { 
-            role: "system", 
-            content: "Eres un experto extractor de información de noticias web. Analizas HTML y extraes títulos y descripciones. SIEMPRE respondes con JSON válido, nunca con texto plano." 
-          },
+          { role: "system", content: "Eres un experto en análisis de noticias financieras. Extraes títulos y descripciones claras y precisas. Respondes ÚNICAMENTE con JSON válido." },
           { role: "user", content: prompt }
         ],
+        temperature: 0.3,
       }),
     });
 
@@ -168,86 +188,34 @@ Responde ÚNICAMENTE con este JSON (sin texto adicional, sin markdown):
     let metadata;
     try {
       // Remove markdown code blocks if present
-      let cleanContent = content.trim();
-      
-      // Try to extract JSON from the response
-      const jsonMatch = cleanContent.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        cleanContent = jsonMatch[0];
-      }
-      
-      cleanContent = cleanContent.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-      
-      console.log("Attempting to parse JSON:", cleanContent.substring(0, 200));
+      const cleanContent = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
       metadata = JSON.parse(cleanContent);
       
-      // Validate that we have meaningful data
-      if (!metadata.title || metadata.title.length < 5 || metadata.title.toLowerCase().includes("sin título")) {
-        console.log("Title too short or generic, trying HTML extraction");
-        
-        // Try to extract from HTML directly
-        const ogTitle = htmlContent.match(/<meta[^>]*property=["']og:title["'][^>]*content=["']([^"']+)["']/i);
-        const titleTag = htmlContent.match(/<title[^>]*>([^<]+)<\/title>/i);
-        
-        if (ogTitle?.[1]) {
-          metadata.title = ogTitle[1].substring(0, 120);
-        } else if (titleTag?.[1]) {
-          metadata.title = titleTag[1].substring(0, 120);
-        } else {
-          // Extract from URL as last resort
-          const urlParts = url.split('/').filter(p => p && p.length > 3);
-          metadata.title = urlParts[urlParts.length - 1]?.replace(/-/g, ' ') || "Noticia financiera";
-        }
+      // Use extracted metadata as fallback if AI didn't provide good data
+      if (!metadata.title || metadata.title.length < 10) {
+        metadata.title = extractedTitle || "Noticia compartida";
+      }
+      if (!metadata.description || metadata.description.length < 20) {
+        metadata.description = extractedDescription || "Noticia financiera recomendada por la comunidad";
       }
       
-      if (!metadata.description || metadata.description.length < 30) {
-        console.log("Description too short, trying HTML extraction");
-        
-        const ogDesc = htmlContent.match(/<meta[^>]*property=["']og:description["'][^>]*content=["']([^"']+)["']/i);
-        const metaDesc = htmlContent.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i);
-        
-        if (ogDesc?.[1]) {
-          metadata.description = ogDesc[1];
-        } else if (metaDesc?.[1]) {
-          metadata.description = metaDesc[1];
-        } else {
-          metadata.description = "Artículo financiero recomendado por la comunidad.";
-        }
+      // Use extracted image if AI didn't find one
+      if (!metadata.imageUrl && extractedImage) {
+        metadata.imageUrl = extractedImage;
       }
       
-      // Try to get image from HTML if AI didn't find one
-      if (!metadata.imageUrl) {
-        const ogImage = htmlContent.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i);
-        const twitterImage = htmlContent.match(/<meta[^>]*name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i);
-        
-        metadata.imageUrl = ogImage?.[1] || twitterImage?.[1] || null;
-      }
-      
-      console.log("Final metadata:", { 
-        title: metadata.title, 
-        descLength: metadata.description?.length,
-        hasImage: !!metadata.imageUrl 
-      });
-      
+      console.log("Final metadata:", metadata);
     } catch (parseError) {
       console.error("Error parsing AI response:", parseError);
       console.error("AI response was:", content);
       
-      // Fallback: try to extract from HTML directly
-      const ogTitle = htmlContent.match(/<meta[^>]*property=["']og:title["'][^>]*content=["']([^"']+)["']/i);
-      const titleTag = htmlContent.match(/<title[^>]*>([^<]+)<\/title>/i);
-      const ogDesc = htmlContent.match(/<meta[^>]*property=["']og:description["'][^>]*content=["']([^"']+)["']/i);
-      const metaDesc = htmlContent.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i);
-      const ogImage = htmlContent.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i);
-      
+      // Use extracted metadata as fallback
       metadata = {
-        title: ogTitle?.[1] || titleTag?.[1] || "Noticia financiera",
-        description: ogDesc?.[1] || metaDesc?.[1] || "Artículo financiero recomendado por la comunidad.",
-        imageUrl: ogImage?.[1] || null,
+        title: extractedTitle || "Noticia compartida",
+        description: extractedDescription || "Noticia financiera recomendada por la comunidad",
+        imageUrl: extractedImage || null,
         publishedAt: null,
       };
-      
-      console.log("Using HTML fallback metadata:", metadata);
     }
 
     // Insert the news into the database
