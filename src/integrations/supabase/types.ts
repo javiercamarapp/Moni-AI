@@ -484,6 +484,45 @@ export type Database = {
           },
         ]
       }
+      circle_news: {
+        Row: {
+          circle_id: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          published_at: string | null
+          title: string
+          updated_at: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          circle_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          published_at?: string | null
+          title: string
+          updated_at?: string
+          url: string
+          user_id: string
+        }
+        Update: {
+          circle_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          published_at?: string | null
+          title?: string
+          updated_at?: string
+          url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       circles: {
         Row: {
           category: string
