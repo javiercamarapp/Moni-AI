@@ -335,72 +335,78 @@ const CircleNews = () => {
           <div className="space-y-4">
             {filteredNews.map((item) => (
               <div key={item.id} className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200/50 overflow-hidden hover:shadow-md transition-all">
-                <div className="flex gap-4 p-4">
-                  {item.image_url && (
-                    <div className="w-32 h-32 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
-                      <img 
-                        src={item.image_url} 
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">
-                      {item.title}
-                    </h3>
-                    {item.description && (
-                      <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                        {item.description}
-                      </p>
+                <div className="p-4">
+                  <div className="flex gap-4 mb-3">
+                    {item.image_url && (
+                      <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                        <img 
+                          src={item.image_url} 
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      </div>
                     )}
-                    <div className="flex items-center justify-between">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 text-base">
+                        {item.title}
+                      </h3>
+                      {item.description && (
+                        <p className="text-sm text-gray-600 mb-2 line-clamp-3 leading-relaxed">
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                    <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-2 text-xs text-gray-500">
                         <span>Recomendado por</span>
                         <span className="font-medium text-gray-700">
                           {item.profiles?.full_name || item.profiles?.username || 'Usuario'}
                         </span>
-                        {item.published_at && (
-                          <>
-                            <span>•</span>
-                            <span>{new Date(item.published_at).toLocaleDateString('es-MX')}</span>
-                          </>
-                        )}
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="text-xs text-gray-400">
+                        {new Date(item.created_at).toLocaleDateString('es-MX', { 
+                          year: 'numeric', 
+                          month: 'long', 
+                          day: 'numeric' 
+                        })}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => toggleFavorite(item.id)}
+                        className={`p-2 rounded-lg transition-colors ${
+                          favorites.has(item.id)
+                            ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100'
+                            : 'hover:bg-gray-100 text-gray-400'
+                        }`}
+                        title={favorites.has(item.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
+                      >
+                        <Star className={`h-4 w-4 ${favorites.has(item.id) ? 'fill-current' : ''}`} />
+                      </button>
+                      {currentUser?.id === item.user_id && (
                         <button
-                          onClick={() => toggleFavorite(item.id)}
-                          className={`p-1.5 rounded-lg transition-colors ${
-                            favorites.has(item.id)
-                              ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100'
-                              : 'hover:bg-gray-100 text-gray-400'
-                          }`}
-                          title={favorites.has(item.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
+                          onClick={() => handleDeleteNews(item.id)}
+                          className="p-2 hover:bg-red-50 rounded-lg transition-colors text-red-600"
+                          title="Eliminar noticia"
                         >
-                          <Star className={`h-4 w-4 ${favorites.has(item.id) ? 'fill-current' : ''}`} />
+                          <Trash2 className="h-4 w-4" />
                         </button>
-                        {currentUser?.id === item.user_id && (
-                          <button
-                            onClick={() => handleDeleteNews(item.id)}
-                            className="p-1.5 hover:bg-red-50 rounded-lg transition-colors text-red-600"
-                            title="Eliminar noticia"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        )}
-                        <a
-                          href={item.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-1 text-sm text-gray-600"
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          <span>Ver</span>
-                        </a>
-                      </div>
+                      )}
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium text-primary"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                        Ver noticia completa
+                      </a>
                     </div>
                   </div>
                 </div>

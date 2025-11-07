@@ -91,19 +91,19 @@ serve(async (req) => {
       );
     }
 
-    const prompt = `Analiza el siguiente contenido HTML de una noticia y extrae la información más relevante.
+    const prompt = `Analiza el siguiente contenido HTML de una noticia financiera/económica y extrae la información más relevante.
 
 IMPORTANTE: Responde ÚNICAMENTE con un objeto JSON válido, sin texto adicional antes o después.
 
 HTML:
-${htmlContent.substring(0, 8000)}
+${htmlContent.substring(0, 10000)}
 
 Extrae y devuelve SOLO este JSON:
 {
-  "title": "título principal de la noticia (máximo 100 caracteres)",
-  "description": "resumen breve de 2-3 líneas sobre la noticia",
-  "imageUrl": "URL de la imagen principal (null si no hay)",
-  "publishedAt": "fecha de publicación en formato ISO (null si no se encuentra)"
+  "title": "título principal de la noticia (máximo 120 caracteres, claro y descriptivo)",
+  "description": "resumen objetivo de la noticia en 3-5 líneas, enfocándote en los puntos clave y datos relevantes para inversionistas",
+  "imageUrl": "URL completa de la imagen principal del artículo (null si no hay, busca en meta tags og:image, twitter:image o la primera imagen relevante del artículo)",
+  "publishedAt": "fecha de publicación en formato ISO 8601 (busca en meta tags, article:published_time, o fechas en el contenido. Null si no se encuentra)"
 }`;
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
