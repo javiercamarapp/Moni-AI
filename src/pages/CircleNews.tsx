@@ -51,24 +51,34 @@ const CircleNews = () => {
       }
       setCircle(circleData);
 
-      // Fetch circle news with user profile data
+      // Fetch circle news
       const { data: newsData, error: newsError } = await supabase
         .from('circle_news')
-        .select(`
-          *,
-          profiles:user_id (
-            full_name,
-            username,
-            avatar_url
-          )
-        `)
+        .select('*')
         .eq('circle_id', id)
         .order('created_at', { ascending: false });
 
       if (newsError) {
         console.error('Error fetching news:', newsError);
       } else {
-        setNews(newsData || []);
+        // Fetch profiles for all news items
+        if (newsData && newsData.length > 0) {
+          const userIds = [...new Set(newsData.map(n => n.user_id))];
+          const { data: profilesData } = await supabase
+            .from('profiles')
+            .select('id, full_name, username, avatar_url')
+            .in('id', userIds);
+
+          // Map profiles to news items
+          const newsWithProfiles = newsData.map(newsItem => ({
+            ...newsItem,
+            profiles: profilesData?.find(p => p.id === newsItem.user_id) || null
+          }));
+          
+          setNews(newsWithProfiles);
+        } else {
+          setNews([]);
+        }
       }
 
       // Fetch user's favorites
