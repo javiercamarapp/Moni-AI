@@ -163,7 +163,7 @@ const CircleNews = () => {
             
             <Dialog open={addNewsOpen} onOpenChange={setAddNewsOpen}>
               <DialogTrigger asChild>
-                <Button size="sm" variant="action" className="gap-2 hover-lift">
+                <Button size="sm" variant="white" className="gap-2 hover-lift">
                   <Plus className="h-4 w-4" />
                   Compartir
                 </Button>
@@ -219,7 +219,7 @@ const CircleNews = () => {
               <p className="text-gray-500 text-sm max-w-xs mx-auto mb-6">
                 Sé el primero en compartir una noticia financiera importante con tu círculo
               </p>
-              <Button onClick={() => setAddNewsOpen(true)} className="gap-2">
+              <Button onClick={() => setAddNewsOpen(true)} variant="white" className="gap-2 hover-lift">
                 <Plus className="h-4 w-4" />
                 Compartir primera noticia
               </Button>
