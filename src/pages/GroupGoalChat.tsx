@@ -862,7 +862,7 @@ const GroupGoalChat = () => {
         </div>
 
         {/* Input */}
-        <div className="fixed bottom-20 left-0 right-0 bg-background p-4">
+        <div className="fixed bottom-20 left-0 right-0 bg-background px-4 pt-4 pb-2">
           <div className="max-w-7xl mx-auto">
             {/* Reply indicator */}
             {replyingTo && (
