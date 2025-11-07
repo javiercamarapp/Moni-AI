@@ -197,37 +197,28 @@ const GoalDetails = () => {
           </div>
 
           {/* Stats Summary */}
-          <div className="flex items-center justify-between text-xs mb-3">
+          <div className="grid grid-cols-3 gap-2">
             <button 
               onClick={() => setInsightModal('current')}
-              className="cursor-pointer transition-opacity hover:opacity-70 flex items-center gap-2"
+              className="bg-emerald-50/80 backdrop-blur-sm rounded-lg p-2.5 cursor-pointer transition-all hover:bg-emerald-100/80 border border-emerald-200/50"
             >
-              <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-              <div>
-                <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Ahorro Actual</p>
-                <p className="font-semibold text-gray-900">{formatCurrency(goal.current)}</p>
-              </div>
+              <p className="text-[10px] text-emerald-700 uppercase tracking-wide mb-0.5 font-medium">Ahorro Actual</p>
+              <p className="font-semibold text-emerald-900 text-sm">{formatCurrency(goal.current)}</p>
             </button>
             <button 
               onClick={() => setInsightModal('remaining')}
-              className="text-center cursor-pointer transition-opacity hover:opacity-70 flex items-center gap-2"
+              className="bg-amber-50/80 backdrop-blur-sm rounded-lg p-2.5 cursor-pointer transition-all hover:bg-amber-100/80 border border-amber-200/50"
             >
-              <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-              <div>
-                <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Falta</p>
-                <p className="font-semibold text-gray-900">{formatCurrency(remaining)}</p>
-              </div>
+              <p className="text-[10px] text-amber-700 uppercase tracking-wide mb-0.5 font-medium">Falta</p>
+              <p className="font-semibold text-amber-900 text-sm">{formatCurrency(remaining)}</p>
             </button>
             {goal.deadline && daysRemaining !== null && (
               <button 
                 onClick={() => setInsightModal('days')}
-                className="text-right cursor-pointer transition-opacity hover:opacity-70 flex items-center gap-2"
+                className="bg-blue-50/80 backdrop-blur-sm rounded-lg p-2.5 cursor-pointer transition-all hover:bg-blue-100/80 border border-blue-200/50"
               >
-                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                <div>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Días Restantes</p>
-                  <p className="font-semibold text-gray-900">{daysRemaining} días</p>
-                </div>
+                <p className="text-[10px] text-blue-700 uppercase tracking-wide mb-0.5 font-medium">Días Restantes</p>
+                <p className="font-semibold text-blue-900 text-sm">{daysRemaining} días</p>
               </button>
             )}
           </div>
