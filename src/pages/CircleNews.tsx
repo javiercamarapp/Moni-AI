@@ -362,14 +362,14 @@ const CircleNews = () => {
                   </div>
                   
                   <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <div className="flex flex-col gap-1 min-w-0">
+                      <div className="flex items-center gap-1.5 text-[10px] text-gray-500">
                         <span>Recomendado por</span>
-                        <span className="font-medium text-gray-700">
+                        <span className="font-medium text-gray-700 truncate max-w-[120px]">
                           {item.profiles?.full_name || item.profiles?.username || 'Usuario'}
                         </span>
                       </div>
-                      <div className="text-xs text-gray-400">
+                      <div className="text-[10px] text-gray-400">
                         {new Date(item.created_at).toLocaleDateString('es-MX', { 
                           year: 'numeric', 
                           month: 'long', 
@@ -380,32 +380,32 @@ const CircleNews = () => {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => toggleFavorite(item.id)}
-                        className={`p-2 rounded-lg transition-colors ${
+                        className={`p-1.5 rounded-lg transition-colors ${
                           favorites.has(item.id)
                             ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100'
                             : 'hover:bg-gray-100 text-gray-400'
                         }`}
                         title={favorites.has(item.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
                       >
-                        <Star className={`h-4 w-4 ${favorites.has(item.id) ? 'fill-current' : ''}`} />
+                        <Star className={`h-3.5 w-3.5 ${favorites.has(item.id) ? 'fill-current' : ''}`} />
                       </button>
                       {currentUser?.id === item.user_id && (
                         <button
                           onClick={() => handleDeleteNews(item.id)}
-                          className="p-2 hover:bg-red-50 rounded-lg transition-colors text-red-600"
+                          className="p-1.5 hover:bg-red-50 rounded-lg transition-colors text-red-600"
                           title="Eliminar noticia"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3.5 w-3.5" />
                         </button>
                       )}
                       <a
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-3 py-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium text-primary"
+                        className="px-2 py-1 bg-primary/10 hover:bg-primary/20 rounded-md transition-colors flex items-center gap-1 text-[10px] font-medium text-primary whitespace-nowrap"
                       >
-                        <ExternalLink className="h-4 w-4" />
-                        Ver noticia completa
+                        <ExternalLink className="h-3 w-3" />
+                        Ver completa
                       </a>
                     </div>
                   </div>
