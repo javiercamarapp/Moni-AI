@@ -14,10 +14,7 @@ serve(async (req) => {
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: "No se proporcionó autorización. Por favor, inicia sesión nuevamente." }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      throw new Error("No authorization header");
     }
 
     const supabase = createClient(
@@ -28,42 +25,10 @@ serve(async (req) => {
 
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
-      return new Response(
-        JSON.stringify({ error: "Usuario no autenticado. Por favor, inicia sesión nuevamente." }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      throw new Error("User not authenticated");
     }
 
     const { goalId, isGroupGoal } = await req.json();
-
-    if (!goalId) {
-      return new Response(
-        JSON.stringify({ error: "ID de meta no proporcionado." }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // Check cache first
-    console.log(`Checking cache for goal ${goalId}`);
-    const { data: cachedData, error: cacheError } = await supabase
-      .from("goal_insights_cache")
-      .select("insights, expires_at")
-      .eq("goal_id", goalId)
-      .eq("user_id", user.id)
-      .gt("expires_at", new Date().toISOString())
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (!cacheError && cachedData) {
-      console.log(`Cache hit for goal ${goalId}`);
-      return new Response(
-        JSON.stringify({ insights: cachedData.insights, fromCache: true }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    console.log(`Cache miss for goal ${goalId}, generating new insights`);
 
     // Fetch goal details from the appropriate table
     let goal;
@@ -163,10 +128,7 @@ EJEMPLO DEL FORMATO ESPERADO:
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
-      return new Response(
-        JSON.stringify({ error: "Configuración de IA no disponible. Por favor, contacta al soporte." }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      throw new Error("LOVABLE_API_KEY not configured");
     }
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -187,36 +149,11 @@ EJEMPLO DEL FORMATO ESPERADO:
     if (!aiResponse.ok) {
       const errorText = await aiResponse.text();
       console.error("AI Gateway error:", aiResponse.status, errorText);
-      
-      if (aiResponse.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Demasiadas solicitudes. Por favor, intenta de nuevo en unos momentos." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      
-      if (aiResponse.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "Créditos de IA agotados. Por favor, recarga tu cuenta." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
-      return new Response(
-        JSON.stringify({ error: "Error al generar insights. Por favor, intenta nuevamente." }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      throw new Error("Error generating insights");
     }
 
     const aiData = await aiResponse.json();
-    const insightsText = aiData.choices[0]?.message?.content;
-
-    if (!insightsText) {
-      return new Response(
-        JSON.stringify({ error: "No se pudieron generar insights. Por favor, intenta nuevamente." }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
+    const insightsText = aiData.choices[0].message.content;
 
     // Parse the 5 insights from the response
     const insights = insightsText
@@ -224,42 +161,15 @@ EJEMPLO DEL FORMATO ESPERADO:
       .filter((line: string) => line.trim().length > 0)
       .slice(0, 5);
 
-    // Cache the insights
-    try {
-      await supabase
-        .from("goal_insights_cache")
-        .insert({
-          goal_id: goalId,
-          user_id: user.id,
-          insights: insights,
-        });
-      console.log(`Cached insights for goal ${goalId}`);
-    } catch (cacheInsertError) {
-      console.error("Error caching insights:", cacheInsertError);
-      // Don't fail if caching fails, just log it
-    }
-
     return new Response(
-      JSON.stringify({ insights, fromCache: false }),
+      JSON.stringify({ insights }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
   } catch (error) {
     console.error("Error in generate-goal-insights:", error);
-    
-    // Provide specific error messages based on error type
-    let errorMessage = "Error inesperado al generar insights. Por favor, intenta nuevamente.";
-    
-    if (error.message?.includes("fetch")) {
-      errorMessage = "Error de conexión. Por favor, verifica tu conexión a internet.";
-    } else if (error.message?.includes("timeout")) {
-      errorMessage = "La solicitud tardó demasiado. Por favor, intenta nuevamente.";
-    } else if (error.message?.includes("not found")) {
-      errorMessage = "Meta no encontrada. Por favor, verifica que la meta existe.";
-    }
-    
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: error.message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

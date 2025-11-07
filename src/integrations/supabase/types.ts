@@ -484,74 +484,6 @@ export type Database = {
           },
         ]
       }
-      circle_news: {
-        Row: {
-          circle_id: string
-          created_at: string
-          description: string | null
-          id: string
-          image_url: string | null
-          published_at: string | null
-          title: string
-          updated_at: string
-          url: string
-          user_id: string
-        }
-        Insert: {
-          circle_id: string
-          created_at?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          published_at?: string | null
-          title: string
-          updated_at?: string
-          url: string
-          user_id: string
-        }
-        Update: {
-          circle_id?: string
-          created_at?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          published_at?: string | null
-          title?: string
-          updated_at?: string
-          url?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      circle_news_favorites: {
-        Row: {
-          created_at: string
-          id: string
-          news_id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          news_id: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          news_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "circle_news_favorites_news_id_fkey"
-            columns: ["news_id"]
-            isOneToOne: false
-            referencedRelation: "circle_news"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       circles: {
         Row: {
           category: string
@@ -582,65 +514,6 @@ export type Database = {
           name?: string
           updated_at?: string
           user_id?: string
-        }
-        Relationships: []
-      }
-      competition_group_members: {
-        Row: {
-          group_id: string
-          id: string
-          joined_at: string
-          user_id: string
-        }
-        Insert: {
-          group_id: string
-          id?: string
-          joined_at?: string
-          user_id: string
-        }
-        Update: {
-          group_id?: string
-          id?: string
-          joined_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "competition_group_members_group_id_fkey"
-            columns: ["group_id"]
-            isOneToOne: false
-            referencedRelation: "competition_groups"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      competition_groups: {
-        Row: {
-          created_at: string
-          created_by: string
-          description: string | null
-          id: string
-          is_private: boolean
-          name: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          created_by: string
-          description?: string | null
-          id?: string
-          is_private?: boolean
-          name: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string
-          description?: string | null
-          id?: string
-          is_private?: boolean
-          name?: string
-          updated_at?: string
         }
         Relationships: []
       }
@@ -1060,33 +933,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      goal_insights_cache: {
-        Row: {
-          created_at: string
-          expires_at: string
-          goal_id: string
-          id: string
-          insights: Json
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          expires_at?: string
-          goal_id: string
-          id?: string
-          insights: Json
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          expires_at?: string
-          goal_id?: string
-          id?: string
-          insights?: Json
-          user_id?: string
-        }
-        Relationships: []
       }
       goal_invitations: {
         Row: {

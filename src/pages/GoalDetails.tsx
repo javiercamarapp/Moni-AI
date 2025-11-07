@@ -10,7 +10,6 @@ import { formatCurrency } from "@/lib/utils";
 import BottomNav from "@/components/BottomNav";
 import { AddFundsModal } from "@/components/goals/AddFundsModal";
 import MoniAIPrediction from "@/components/goals/MoniAIPrediction";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface Goal {
   id: string;
@@ -197,28 +196,28 @@ const GoalDetails = () => {
           </div>
 
           {/* Stats Summary */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2 justify-center">
             <button 
               onClick={() => setInsightModal('current')}
-              className="bg-emerald-50/80 backdrop-blur-sm rounded-lg p-1.5 cursor-pointer transition-all hover:bg-emerald-100/80 border border-emerald-200/50"
+              className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50 hover:shadow-md hover:border-emerald-300 transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
             >
-              <p className="text-[9px] text-emerald-700 uppercase tracking-wide mb-0.5 font-medium">Ahorro Actual</p>
-              <p className="font-semibold text-emerald-900 text-xs">{formatCurrency(goal.current)}</p>
+              <p className="text-[10px] text-gray-600 mb-0.5">Ahorro Actual</p>
+              <p className="text-sm font-bold text-gray-900">{formatCurrency(goal.current)}</p>
             </button>
             <button 
               onClick={() => setInsightModal('remaining')}
-              className="bg-amber-50/80 backdrop-blur-sm rounded-lg p-1.5 cursor-pointer transition-all hover:bg-amber-100/80 border border-amber-200/50"
+              className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50 hover:shadow-md hover:border-amber-300 transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
             >
-              <p className="text-[9px] text-amber-700 uppercase tracking-wide mb-0.5 font-medium">Falta</p>
-              <p className="font-semibold text-amber-900 text-xs">{formatCurrency(remaining)}</p>
+              <p className="text-[10px] text-gray-600 mb-0.5">Falta Ahorrar</p>
+              <p className="text-sm font-bold text-gray-900">{formatCurrency(remaining)}</p>
             </button>
             {goal.deadline && daysRemaining !== null && (
               <button 
                 onClick={() => setInsightModal('days')}
-                className="bg-blue-50/80 backdrop-blur-sm rounded-lg p-1.5 cursor-pointer transition-all hover:bg-blue-100/80 border border-blue-200/50"
+                className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50 hover:shadow-md hover:border-blue-300 transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
               >
-                <p className="text-[9px] text-blue-700 uppercase tracking-wide mb-0.5 font-medium">Días Restantes</p>
-                <p className="font-semibold text-blue-900 text-xs">{daysRemaining} días</p>
+                <p className="text-[10px] text-gray-600 mb-0.5">Días Restantes</p>
+                <p className="text-sm font-bold text-gray-900">{daysRemaining} días</p>
               </button>
             )}
           </div>
@@ -226,91 +225,30 @@ const GoalDetails = () => {
           {/* AI Prediction */}
           <MoniAIPrediction goalId={id!} />
 
-          {/* Progress Chart */}
-          {activities.length > 0 && (
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200/50 overflow-hidden p-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-gray-600" />
-                Progreso en el Tiempo
-              </h3>
-              <ResponsiveContainer width="100%" height={90}>
-                <LineChart
-                  data={(() => {
-                    // Crear datos acumulativos para la gráfica
-                    const sortedActivities = [...activities].sort((a, b) => 
-                      new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-                    );
-                    let accumulated = 0;
-                    return sortedActivities.map((activity) => {
-                      accumulated += activity.amount;
-                      return {
-                        date: new Date(activity.created_at).toLocaleDateString('es-MX', { 
-                          day: 'numeric', 
-                          month: 'short' 
-                        }),
-                        amount: accumulated,
-                      };
-                    });
-                  })()}
-                  margin={{ top: 5, right: 5, left: 0, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis 
-                    dataKey="date" 
-                    tick={{ fontSize: 10, fill: '#9ca3af' }}
-                    axisLine={{ stroke: '#e5e7eb' }}
-                  />
-                  <YAxis 
-                    tick={{ fontSize: 10, fill: '#9ca3af' }}
-                    axisLine={{ stroke: '#e5e7eb' }}
-                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                  />
-                  <Tooltip 
-                    formatter={(value: number) => formatCurrency(value)}
-                    contentStyle={{ 
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      fontSize: '12px'
-                    }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="amount" 
-                    stroke="#10b981" 
-                    strokeWidth={2}
-                    dot={{ fill: '#10b981', r: 3 }}
-                    activeDot={{ r: 5 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          )}
-
           {/* Activities History */}
           {activities.length > 0 && (
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200/50 overflow-hidden">
-              <div className="p-4 pb-0">
-                <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-gray-600" />
-                  Historial de Contribuciones
-                </h3>
-              </div>
-              <div className="divide-y divide-gray-100">
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200/50">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-purple-600" />
+                Historial de Contribuciones
+              </h3>
+              <div className="space-y-3">
                 {activities.map((activity) => (
-                  <div key={activity.id} className="flex items-center justify-between p-4 hover:bg-gray-50/50 transition-colors">
-                    <div className="flex-1">
-                      <p className="text-xs font-medium text-gray-900">
+                  <div key={activity.id} className="flex items-center justify-between p-3 border-b border-gray-100 last:border-0">
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
                         {activity.activity_type === 'contribution' ? '💰 Contribución' : '📝 Actividad'}
                       </p>
                       {activity.note && (
-                        <p className="text-[10px] text-gray-600 mt-0.5">{activity.note}</p>
+                        <p className="text-xs text-gray-600 mt-0.5">{activity.note}</p>
                       )}
-                      <p className="text-[9px] text-gray-400 mt-1 uppercase tracking-wide">
+                      <p className="text-xs text-gray-500 mt-1">
                         {new Date(activity.created_at).toLocaleDateString('es-MX', {
                           day: 'numeric',
                           month: 'short',
-                          year: 'numeric'
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
                         })}
                       </p>
                     </div>
@@ -324,23 +262,23 @@ const GoalDetails = () => {
           )}
 
           {/* Actions */}
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             {progress >= 100 ? (
-              <button
+              <Button
                 onClick={handleCompleteGoal}
-                className="flex-1 h-9 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 text-white font-medium text-xs transition-all flex items-center justify-center gap-1.5 border-0"
+                className="flex-1 h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl shadow-lg font-semibold"
               >
-                <Sparkles className="h-3.5 w-3.5" />
+                <Sparkles className="h-5 w-5 mr-2" />
                 Completar Meta
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
                 onClick={() => setAddFundsModal(true)}
-                className="flex-1 h-9 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-white/80 text-gray-900 font-medium text-xs transition-all flex items-center justify-center gap-1.5 border-0"
+                className="flex-1 h-14 bg-white border border-gray-200 text-gray-900 hover:bg-gray-50 hover:shadow-md transition-all duration-300 rounded-xl font-semibold text-base"
               >
-                <Plus className="h-3.5 w-3.5" />
+                <Plus className="h-5 w-5 mr-2" />
                 Contribuir
-              </button>
+              </Button>
             )}
           </div>
         </div>

@@ -1,27 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Newspaper, Link as LinkIcon, Plus, ExternalLink, Trash2, Star, Calendar } from "lucide-react";
+import { ArrowLeft, Newspaper } from "lucide-react";
 import { toast } from "sonner";
 import { MoniLoader } from "@/components/MoniLoader";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const CircleNews = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [circle, setCircle] = useState<any>(null);
-  const [news, setNews] = useState<any[]>([]);
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [addNewsOpen, setAddNewsOpen] = useState(false);
-  const [newsUrl, setNewsUrl] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [favorites, setFavorites] = useState<Set<string>>(new Set());
-  const [dateFilter, setDateFilter] = useState<string>("all");
 
   useEffect(() => {
     fetchData();
@@ -29,13 +16,11 @@ const CircleNews = () => {
 
   const fetchData = async () => {
     try {
-      setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (!currentUser) {
         navigate('/auth');
         return;
       }
-      setCurrentUser(user);
 
       // Fetch circle details
       const { data: circleData, error: circleError } = await supabase
@@ -50,167 +35,13 @@ const CircleNews = () => {
         return;
       }
       setCircle(circleData);
-
-      // Fetch circle news
-      const { data: newsData, error: newsError } = await supabase
-        .from('circle_news')
-        .select('*')
-        .eq('circle_id', id)
-        .order('created_at', { ascending: false });
-
-      if (newsError) {
-        console.error('Error fetching news:', newsError);
-      } else {
-        // Fetch profiles for all news items
-        if (newsData && newsData.length > 0) {
-          const userIds = [...new Set(newsData.map(n => n.user_id))];
-          const { data: profilesData } = await supabase
-            .from('profiles')
-            .select('id, full_name, username, avatar_url')
-            .in('id', userIds);
-
-          // Map profiles to news items
-          const newsWithProfiles = newsData.map(newsItem => ({
-            ...newsItem,
-            profiles: profilesData?.find(p => p.id === newsItem.user_id) || null
-          }));
-          
-          setNews(newsWithProfiles);
-        } else {
-          setNews([]);
-        }
-      }
-
-      // Fetch user's favorites
-      const { data: favoritesData, error: favoritesError } = await supabase
-        .from('circle_news_favorites')
-        .select('news_id')
-        .eq('user_id', user.id);
-
-      if (!favoritesError && favoritesData) {
-        setFavorites(new Set(favoritesData.map(f => f.news_id)));
-      }
     } catch (error: any) {
       console.error('Error fetching data:', error);
       toast.error('Error al cargar datos');
-    } finally {
-      setLoading(false);
     }
   };
 
-  const handleSubmitNews = async () => {
-    if (!newsUrl.trim()) {
-      toast.error('Por favor, ingresa una URL válida');
-      return;
-    }
-
-    // Basic URL validation
-    try {
-      new URL(newsUrl);
-    } catch {
-      toast.error('La URL no es válida');
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('extract-news-metadata', {
-        body: { url: newsUrl, circleId: id }
-      });
-
-      if (error) {
-        console.error('Error submitting news:', error);
-        toast.error(error.message || 'Error al procesar la noticia');
-        return;
-      }
-
-      toast.success('¡Noticia compartida exitosamente!');
-      setNewsUrl("");
-      setAddNewsOpen(false);
-      fetchData(); // Reload news
-    } catch (error: any) {
-      console.error('Error submitting news:', error);
-      toast.error('Error al compartir la noticia');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleDeleteNews = async (newsId: string) => {
-    try {
-      const { error } = await supabase
-        .from('circle_news')
-        .delete()
-        .eq('id', newsId);
-
-      if (error) throw error;
-
-      toast.success('Noticia eliminada');
-      fetchData();
-    } catch (error: any) {
-      console.error('Error deleting news:', error);
-      toast.error('Error al eliminar la noticia');
-    }
-  };
-
-  const toggleFavorite = async (newsId: string) => {
-    try {
-      if (favorites.has(newsId)) {
-        // Remove from favorites
-        const { error } = await supabase
-          .from('circle_news_favorites')
-          .delete()
-          .eq('news_id', newsId)
-          .eq('user_id', currentUser?.id);
-
-        if (error) throw error;
-
-        setFavorites(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(newsId);
-          return newSet;
-        });
-        toast.success('Noticia removida de favoritos');
-      } else {
-        // Add to favorites
-        const { error } = await supabase
-          .from('circle_news_favorites')
-          .insert({ news_id: newsId, user_id: currentUser?.id });
-
-        if (error) throw error;
-
-        setFavorites(prev => new Set(prev).add(newsId));
-        toast.success('Noticia guardada en favoritos');
-      }
-    } catch (error: any) {
-      console.error('Error toggling favorite:', error);
-      toast.error('Error al actualizar favoritos');
-    }
-  };
-
-  const getFilteredNews = () => {
-    const now = new Date();
-    return news.filter(item => {
-      const createdAt = new Date(item.created_at);
-      
-      switch (dateFilter) {
-        case "week":
-          const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-          return createdAt >= weekAgo;
-        case "month":
-          const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-          return createdAt >= monthAgo;
-        case "favorites":
-          return favorites.has(item.id);
-        default:
-          return true;
-      }
-    });
-  };
-
-  const filteredNews = getFilteredNews();
-
-  if (loading) {
+  if (!circle) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <MoniLoader size="lg" />
@@ -223,197 +54,35 @@ const CircleNews = () => {
       {/* Header */}
       <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => navigate(`/circle/${id}`)}
-                className="p-1.5 hover:bg-white/50 rounded-full transition-colors"
-              >
-                <ArrowLeft className="h-4 w-4 text-gray-900" />
-              </button>
-              <div>
-                <h1 className="text-base font-semibold text-gray-900 tracking-tight">
-                  Noticias: {circle?.name}
-                </h1>
-                <p className="text-[10px] text-gray-600">
-                  Noticias recomendadas por la comunidad
-                </p>
-              </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(`/circle/${id}`)}
+              className="p-2 hover:bg-white/50 rounded-full transition-colors"
+            >
+              <ArrowLeft className="h-5 w-5 text-gray-900" />
+            </button>
+            <div>
+              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
+                Noticias: {circle.name}
+              </h1>
+              <p className="text-xs text-gray-600">
+                Noticias financieras y recomendaciones
+              </p>
             </div>
-            
-            <Dialog open={addNewsOpen} onOpenChange={setAddNewsOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm" variant="white" className="gap-2 hover-lift">
-                  <Plus className="h-4 w-4" />
-                  Compartir
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Compartir noticia</DialogTitle>
-                  <DialogDescription>
-                    Pega el enlace de una noticia financiera importante y la IA extraerá automáticamente la información
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="news-url">URL de la noticia</Label>
-                    <Input
-                      id="news-url"
-                      placeholder="https://ejemplo.com/noticia"
-                      value={newsUrl}
-                      onChange={(e) => setNewsUrl(e.target.value)}
-                      disabled={submitting}
-                      className="bg-gray-100/80"
-                    />
-                  </div>
-                  <Button 
-                    onClick={handleSubmitNews} 
-                    disabled={submitting || !newsUrl.trim()}
-                    variant="white"
-                    className="w-full hover-lift"
-                  >
-                    {submitting ? (
-                      <>
-                        <MoniLoader size="sm" />
-                        Extrayendo información...
-                      </>
-                    ) : (
-                      <>
-                        <LinkIcon className="h-4 w-4 mr-2" />
-                        Compartir
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
           </div>
         </div>
       </div>
 
-      <div className="mx-auto px-4 py-2" style={{ maxWidth: '800px' }}>
-        {/* Filters */}
-        <div className="mb-4 flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-sm">
-          <Calendar className="h-4 w-4 text-gray-600" />
-          <ToggleGroup type="single" value={dateFilter} onValueChange={(value) => value && setDateFilter(value)} className="gap-1">
-            <ToggleGroupItem value="all" variant="outline" className="text-xs px-3 py-1 data-[state=on]:bg-primary data-[state=on]:text-white">
-              Todas
-            </ToggleGroupItem>
-            <ToggleGroupItem value="week" variant="outline" className="text-xs px-3 py-1 data-[state=on]:bg-primary data-[state=on]:text-white">
-              Esta semana
-            </ToggleGroupItem>
-            <ToggleGroupItem value="month" variant="outline" className="text-xs px-3 py-1 data-[state=on]:bg-primary data-[state=on]:text-white">
-              Este mes
-            </ToggleGroupItem>
-            <ToggleGroupItem value="favorites" variant="outline" className="text-xs px-3 py-1 data-[state=on]:bg-primary data-[state=on]:text-white">
-              <Star className="h-3 w-3 mr-1" />
-              Favoritas
-            </ToggleGroupItem>
-          </ToggleGroup>
+      <div className="mx-auto px-4 py-2" style={{ maxWidth: '600px' }}>
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
+          <div className="text-center py-16">
+            <Newspaper className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-600 text-base mb-2 font-medium">Próximamente</p>
+            <p className="text-gray-500 text-sm max-w-xs mx-auto">
+              Noticias financieras y recomendaciones personalizadas para el círculo
+            </p>
+          </div>
         </div>
-
-        {filteredNews.length === 0 ? (
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
-            <div className="text-center py-16">
-              <Newspaper className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-600 text-base mb-2 font-medium">
-                {dateFilter === "favorites" ? "No tienes noticias favoritas" : "No hay noticias aún"}
-              </p>
-              <p className="text-gray-500 text-sm max-w-xs mx-auto mb-6">
-                {dateFilter === "favorites" 
-                  ? "Marca noticias como favoritas para verlas aquí" 
-                  : "Sé el primero en compartir una noticia financiera importante con tu círculo"}
-              </p>
-              <Button onClick={() => setAddNewsOpen(true)} variant="white" className="gap-2 hover-lift">
-                <Plus className="h-4 w-4" />
-                Compartir primera noticia
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredNews.map((item) => (
-              <div key={item.id} className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200/50 overflow-hidden hover:shadow-md transition-all">
-                <div className="p-4">
-                  <div className="flex gap-4 mb-3">
-                    {item.image_url && (
-                      <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
-                        <img 
-                          src={item.image_url} 
-                          alt={item.title}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 text-base">
-                        {item.title}
-                      </h3>
-                      {item.description && (
-                        <p className="text-sm text-gray-600 mb-2 line-clamp-3 leading-relaxed">
-                          {item.description}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
-                        <span>Recomendado por</span>
-                        <span className="font-medium text-gray-700">
-                          {item.profiles?.full_name || item.profiles?.username || 'Usuario'}
-                        </span>
-                      </div>
-                      <div className="text-xs text-gray-400">
-                        {new Date(item.created_at).toLocaleDateString('es-MX', { 
-                          year: 'numeric', 
-                          month: 'long', 
-                          day: 'numeric' 
-                        })}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => toggleFavorite(item.id)}
-                        className={`p-2 rounded-lg transition-colors ${
-                          favorites.has(item.id)
-                            ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100'
-                            : 'hover:bg-gray-100 text-gray-400'
-                        }`}
-                        title={favorites.has(item.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
-                      >
-                        <Star className={`h-4 w-4 ${favorites.has(item.id) ? 'fill-current' : ''}`} />
-                      </button>
-                      {currentUser?.id === item.user_id && (
-                        <button
-                          onClick={() => handleDeleteNews(item.id)}
-                          className="p-2 hover:bg-red-50 rounded-lg transition-colors text-red-600"
-                          title="Eliminar noticia"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      )}
-                      <a
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-3 py-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium text-primary"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                        Ver noticia completa
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

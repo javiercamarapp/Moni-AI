@@ -131,57 +131,13 @@ const Goals = () => {
 
   const generateInsights = async () => {
     try {
-      // Skip if no goals available
-      if (!goals || goals.length === 0) {
-        return;
-      }
-
-      // Use the first active goal for insights
-      const activeGoal = goals.find(g => g.current < g.target) || goals[0];
-      
-      if (!activeGoal) {
-        return;
-      }
-
       const { data, error } = await supabase.functions.invoke('generate-goal-insights', {
-        body: { 
-          goalId: activeGoal.id,
-          isGroupGoal: false 
-        }
+        body: { goals }
       });
 
-      if (error) {
-        console.error('Error generating insights:', error);
-        
-        // Handle specific error types
-        if (error.message?.includes('429')) {
-          toast.error('Demasiadas solicitudes. Por favor, intenta de nuevo en unos momentos.');
-        } else if (error.message?.includes('402')) {
-          toast.error('Créditos de IA agotados. Por favor, contacta al soporte.');
-        } else if (error.message?.includes('401')) {
-          toast.error('Sesión expirada. Por favor, inicia sesión nuevamente.');
-        } else {
-          toast.error('Error al generar insights. Intenta nuevamente más tarde.');
-        }
-        
-        // Set default insights as fallback
-        setAiInsights([
-          '💰 Mantén un registro constante de tus ahorros',
-          '📊 Revisa tus metas semanalmente para ajustar estrategias',
-          '🎯 Establece recordatorios para contribuir regularmente',
-          '⏰ Divide metas grandes en objetivos mensuales más pequeños',
-          '🚀 Celebra cada hito alcanzado para mantener la motivación'
-        ]);
-        return;
-      }
-      
+      if (error) throw error;
       if (data?.insights) {
         setAiInsights(data.insights);
-        
-        // Show a subtle indicator if insights are from cache
-        if (data.fromCache) {
-          console.log('Insights cargados desde caché');
-        }
       }
     } catch (error: any) {
       console.error('Error generating insights:', error);

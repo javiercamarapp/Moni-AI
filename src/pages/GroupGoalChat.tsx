@@ -1,13 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send, Camera, Trash2, Reply, X, Edit2, Pin, PinOff, Smile, Image as ImageIcon, File, Download, Heart } from "lucide-react";
-import { Camera as CapacitorCamera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { ArrowLeft, Send, Smile, Trash2, Reply, X, Edit2, Pin, PinOff, Paperclip, Image as ImageIcon, File, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { LoadingScreen } from "@/components/LoadingScreen";
+import { SectionLoader } from "@/components/SectionLoader";
 import BottomNav from "@/components/BottomNav";
 import {
   Popover,
@@ -93,10 +92,10 @@ const GroupGoalChat = () => {
   const [editText, setEditText] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
-  const [showStickers, setShowStickers] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const initializeChat = async () => {
@@ -574,37 +573,27 @@ const GroupGoalChat = () => {
     }
   };
 
-  const handleStickerClick = (sticker: string) => {
-    setNewComment(newComment + sticker);
-  };
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const handleCameraClick = async () => {
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('El archivo es demasiado grande (máx. 10MB)');
+      return;
+    }
+
     try {
       setUploadingFile(true);
-      
-      const photo = await CapacitorCamera.getPhoto({
-        quality: 90,
-        allowEditing: false,
-        resultType: CameraResultType.Base64,
-        source: CameraSource.Camera
-      });
-
-      if (!photo.base64String) {
-        throw new Error('No se pudo capturar la imagen');
-      }
-
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('No user');
 
-      // Convert base64 to blob
-      const response = await fetch(`data:image/${photo.format};base64,${photo.base64String}`);
-      const blob = await response.blob();
-      
-      const fileName = `${user.id}/${Date.now()}.${photo.format}`;
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
         .from('chat-attachments')
-        .upload(fileName, blob);
+        .upload(fileName, file);
 
       if (uploadError) throw uploadError;
 
@@ -612,15 +601,21 @@ const GroupGoalChat = () => {
         .from('chat-attachments')
         .getPublicUrl(fileName);
 
-      // Send message with photo
+      // Determine attachment type
+      let attachmentType = 'file';
+      if (file.type.startsWith('image/')) {
+        attachmentType = 'image';
+      }
+
+      // Send message with attachment
       const { error: insertError } = await supabase
         .from('goal_comments')
         .insert({
           goal_id: id,
           user_id: user.id,
-          comment: 'Foto',
+          comment: file.name,
           attachment_url: publicUrl,
-          attachment_type: 'image',
+          attachment_type: attachmentType,
           reply_to_id: replyingTo?.id || null
         });
 
@@ -628,17 +623,28 @@ const GroupGoalChat = () => {
 
       setReplyingTo(null);
       await fetchComments();
-      toast.success('Foto enviada');
+      toast.success('Archivo enviado');
     } catch (error: any) {
-      console.error('Error capturing photo:', error);
-      toast.error('Error al capturar la foto');
+      console.error('Error uploading file:', error);
+      toast.error('Error al subir el archivo');
     } finally {
       setUploadingFile(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
+  const handleStickerClick = (sticker: string) => {
+    setNewComment(newComment + sticker);
+  };
+
   if (loading) {
-    return <LoadingScreen />;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <SectionLoader size="lg" />
+      </div>
+    );
   }
 
   return (
@@ -755,7 +761,7 @@ const GroupGoalChat = () => {
                             <Popover>
                               <PopoverTrigger asChild>
                                 <button className="text-gray-400 hover:text-gray-600 p-1" title="Reaccionar">
-                                  <Heart className="h-3.5 w-3.5" />
+                                  <Smile className="h-3.5 w-3.5" />
                                 </button>
                               </PopoverTrigger>
                               <PopoverContent className="w-auto p-2 bg-white border border-gray-200">
@@ -856,8 +862,8 @@ const GroupGoalChat = () => {
         </div>
 
         {/* Input */}
-        <div className="fixed bottom-20 left-0 right-0 px-4 pt-4 pb-2 bg-gradient-to-t from-background via-background to-background/0">
-          <div className="max-w-7xl mx-auto bg-background rounded-2xl p-2 shadow-lg border border-border">
+        <div className="fixed bottom-20 left-0 right-0 bg-white border-t border-gray-200 p-4">
+          <div className="max-w-7xl mx-auto">
             {/* Reply indicator */}
             {replyingTo && (
               <div className="mb-2 bg-gray-50 rounded-lg p-2 flex items-center justify-between">
@@ -897,50 +903,38 @@ const GroupGoalChat = () => {
               </div>
             )}
 
-            {/* Input field */}
-            <div className="flex gap-2 items-center">
-              <Popover open={showStickers} onOpenChange={setShowStickers}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-10 w-10 rounded-full hover:bg-muted transition-colors"
-                    title="Agregar emoji"
-                  >
-                    <Smile className="h-5 w-5 text-muted-foreground" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent 
-                  side="top" 
-                  align="start"
-                  className="w-auto p-2 bg-card border-border shadow-lg"
+            {/* Stickers */}
+            <div className="flex gap-2 mb-3 overflow-x-auto pb-2">
+              {STICKERS.map((sticker) => (
+                <button
+                  key={sticker}
+                  onClick={() => handleStickerClick(sticker)}
+                  className="text-2xl hover:scale-110 transition-transform"
                 >
-                  <div className="flex gap-1">
-                    {STICKERS.map((sticker) => (
-                      <button
-                        key={sticker}
-                        onClick={() => {
-                          handleStickerClick(sticker);
-                          setShowStickers(false);
-                        }}
-                        className="text-2xl hover:scale-110 transition-transform p-2 rounded-lg hover:bg-muted"
-                      >
-                        {sticker}
-                      </button>
-                    ))}
-                  </div>
-                </PopoverContent>
-              </Popover>
+                  {sticker}
+                </button>
+              ))}
+            </div>
 
+            {/* Input field */}
+            <div className="flex gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                onChange={handleFileSelect}
+                className="hidden"
+                accept="image/*,.pdf,.doc,.docx,.txt"
+              />
+              
               <Button
-                onClick={handleCameraClick}
+                onClick={() => fileInputRef.current?.click()}
                 disabled={uploadingFile}
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 rounded-full hover:bg-muted transition-colors"
-                title="Tomar foto"
+                className="h-10 w-10 rounded-full hover:bg-gray-100"
+                title="Adjuntar archivo o imagen"
               >
-                <Camera className="h-5 w-5 text-muted-foreground" />
+                <Paperclip className="h-5 w-5 text-gray-600" />
               </Button>
 
               <Input
@@ -948,16 +942,16 @@ const GroupGoalChat = () => {
                 value={newComment}
                 onChange={(e) => handleTyping(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Escribe un mensaje..."
-                className="flex-1 rounded-2xl border border-border bg-card"
+                placeholder="Escribe un mensaje... (usa @ para mencionar)"
+                className="flex-1 rounded-2xl border-[#c8a57b]/30"
                 disabled={uploadingFile}
               />
               <Button
                 onClick={handleSend}
                 disabled={!newComment.trim() || sending || uploadingFile}
-                className="h-10 w-10 p-0 rounded-full bg-primary hover:bg-primary/90 transition-all"
+                className="h-10 w-10 p-0 rounded-full bg-[#c8a57b] hover:bg-[#a08860] transition-all"
               >
-                <Send className="h-4 w-4 text-primary-foreground" />
+                <Send className="h-4 w-4 text-white" />
               </Button>
             </div>
           </div>
