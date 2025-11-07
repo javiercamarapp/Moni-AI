@@ -1760,7 +1760,8 @@ const Dashboard = () => {
                             transition={{ delay: index * 0.1 }}
                           >
                             <Card 
-                              className="w-full p-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-100 relative overflow-hidden hover:shadow-md transition-all duration-300 min-w-0"
+                              className="w-full p-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-100 relative overflow-hidden hover:shadow-md transition-all duration-300 min-w-0 cursor-pointer"
+                              onClick={() => navigate(`/goals/${goal.id}`)}
                             >
                               <div className="flex justify-between items-start gap-2 mb-2">
                                 <div className="flex-1">
