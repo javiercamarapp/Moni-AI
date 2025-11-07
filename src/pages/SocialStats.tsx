@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Trophy, Medal, Users, Zap, Calendar, Award } from "lucide-react";
+import { ArrowLeft, Trophy, Medal, Users, Zap, Calendar, Award, TrendingUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { User } from "@supabase/supabase-js";
 import heroAuth from '@/assets/moni-ai-logo.png';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const SocialStats = () => {
   const navigate = useNavigate();
@@ -16,6 +18,8 @@ const SocialStats = () => {
   const [totalChallenges, setTotalChallenges] = useState<number>(0);
   const [dayStreak, setDayStreak] = useState<number>(0);
   const [friendsRank, setFriendsRank] = useState<number>(0);
+  const [xpHistory, setXpHistory] = useState<any[]>([]);
+  const [periodFilter, setPeriodFilter] = useState<string>("3m");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,6 +39,36 @@ const SocialStats = () => {
 
       const currentMonth = new Date().getMonth() + 1;
       const currentYear = new Date().getFullYear();
+
+      // Get XP history based on period filter
+      let monthsToFetch = 3;
+      if (periodFilter === "1m") monthsToFetch = 1;
+      if (periodFilter === "6m") monthsToFetch = 6;
+      if (periodFilter === "1y") monthsToFetch = 12;
+
+      const { data: xpHistoryData } = await supabase
+        .from('monthly_rankings')
+        .select('month, year, total_points, challenges_completed')
+        .eq('user_id', user.id)
+        .order('year', { ascending: true })
+        .order('month', { ascending: true });
+
+      if (xpHistoryData) {
+        // Filter by period
+        const now = new Date();
+        const filteredHistory = xpHistoryData.filter(record => {
+          const recordDate = new Date(record.year, record.month - 1);
+          const monthsDiff = (now.getFullYear() - recordDate.getFullYear()) * 12 + 
+                            (now.getMonth() - recordDate.getMonth());
+          return monthsDiff <= monthsToFetch;
+        }).map(record => ({
+          label: `${record.month}/${record.year}`,
+          xp: record.total_points,
+          retos: record.challenges_completed
+        }));
+        
+        setXpHistory(filteredHistory);
+      }
 
       // Get user's points for current month
       const { data: userRanking } = await supabase
@@ -169,7 +203,7 @@ const SocialStats = () => {
     };
 
     fetchData();
-  }, []);
+  }, [periodFilter]);
 
   return (
     <div className="min-h-screen pb-24 animate-fade-in">
@@ -196,6 +230,71 @@ const SocialStats = () => {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-2 space-y-4">
+        {/* Period Filter */}
+        <div className="bg-white rounded-2xl shadow-sm p-4">
+          <h2 className="text-sm font-semibold text-gray-900 mb-3">Período de análisis</h2>
+          <Tabs value={periodFilter} onValueChange={setPeriodFilter} className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="1m">1 Mes</TabsTrigger>
+              <TabsTrigger value="3m">3 Meses</TabsTrigger>
+              <TabsTrigger value="6m">6 Meses</TabsTrigger>
+              <TabsTrigger value="1y">1 Año</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+
+        {/* XP Evolution Chart */}
+        {xpHistory.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-sm p-4">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                Evolución de XP
+              </h2>
+              <Badge variant="secondary" className="text-[10px] px-2 py-0.5">
+                Últimos {periodFilter === "1m" ? "1 mes" : periodFilter === "3m" ? "3 meses" : periodFilter === "6m" ? "6 meses" : "12 meses"}
+              </Badge>
+            </div>
+            
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={xpHistory}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                  <XAxis 
+                    dataKey="label" 
+                    stroke="#6B7280"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <YAxis 
+                    stroke="#6B7280"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'white',
+                      border: '1px solid #E5E7EB',
+                      borderRadius: '8px',
+                      fontSize: '12px'
+                    }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="xp" 
+                    stroke="#8B5CF6" 
+                    strokeWidth={3}
+                    dot={{ fill: '#8B5CF6', r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            
+            <p className="text-xs text-gray-500 mt-3 text-center">
+              Total acumulado de puntos XP por mes
+            </p>
+          </div>
+        )}
+
         {/* Stats Overview - Compacto */}
         <div className="bg-white rounded-2xl shadow-sm p-3">
           <div className="grid grid-cols-2 gap-2">
