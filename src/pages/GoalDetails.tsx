@@ -200,25 +200,25 @@ const GoalDetails = () => {
           <div className="grid grid-cols-3 gap-2">
             <button 
               onClick={() => setInsightModal('current')}
-              className="bg-emerald-50/80 backdrop-blur-sm rounded-lg p-2.5 cursor-pointer transition-all hover:bg-emerald-100/80 border border-emerald-200/50"
+              className="bg-emerald-50/80 backdrop-blur-sm rounded-lg p-1.5 cursor-pointer transition-all hover:bg-emerald-100/80 border border-emerald-200/50"
             >
-              <p className="text-[10px] text-emerald-700 uppercase tracking-wide mb-0.5 font-medium">Ahorro Actual</p>
-              <p className="font-semibold text-emerald-900 text-sm">{formatCurrency(goal.current)}</p>
+              <p className="text-[9px] text-emerald-700 uppercase tracking-wide mb-0.5 font-medium">Ahorro Actual</p>
+              <p className="font-semibold text-emerald-900 text-xs">{formatCurrency(goal.current)}</p>
             </button>
             <button 
               onClick={() => setInsightModal('remaining')}
-              className="bg-amber-50/80 backdrop-blur-sm rounded-lg p-2.5 cursor-pointer transition-all hover:bg-amber-100/80 border border-amber-200/50"
+              className="bg-amber-50/80 backdrop-blur-sm rounded-lg p-1.5 cursor-pointer transition-all hover:bg-amber-100/80 border border-amber-200/50"
             >
-              <p className="text-[10px] text-amber-700 uppercase tracking-wide mb-0.5 font-medium">Falta</p>
-              <p className="font-semibold text-amber-900 text-sm">{formatCurrency(remaining)}</p>
+              <p className="text-[9px] text-amber-700 uppercase tracking-wide mb-0.5 font-medium">Falta</p>
+              <p className="font-semibold text-amber-900 text-xs">{formatCurrency(remaining)}</p>
             </button>
             {goal.deadline && daysRemaining !== null && (
               <button 
                 onClick={() => setInsightModal('days')}
-                className="bg-blue-50/80 backdrop-blur-sm rounded-lg p-2.5 cursor-pointer transition-all hover:bg-blue-100/80 border border-blue-200/50"
+                className="bg-blue-50/80 backdrop-blur-sm rounded-lg p-1.5 cursor-pointer transition-all hover:bg-blue-100/80 border border-blue-200/50"
               >
-                <p className="text-[10px] text-blue-700 uppercase tracking-wide mb-0.5 font-medium">Días Restantes</p>
-                <p className="font-semibold text-blue-900 text-sm">{daysRemaining} días</p>
+                <p className="text-[9px] text-blue-700 uppercase tracking-wide mb-0.5 font-medium">Días Restantes</p>
+                <p className="font-semibold text-blue-900 text-xs">{daysRemaining} días</p>
               </button>
             )}
           </div>
