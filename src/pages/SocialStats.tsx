@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Trophy, Medal, Users, Zap, Calendar, Award, TrendingUp } from "lucide-react";
+import { ArrowLeft, Trophy, Medal, Users, Zap, Calendar, Award, TrendingUp, TrendingDown, ChevronUp, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { User } from "@supabase/supabase-js";
-import heroAuth from '@/assets/moni-ai-logo.png';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Bar, BarChart } from 'recharts';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "sonner";
 
 const SocialStats = () => {
   const navigate = useNavigate();
@@ -18,8 +18,11 @@ const SocialStats = () => {
   const [totalChallenges, setTotalChallenges] = useState<number>(0);
   const [dayStreak, setDayStreak] = useState<number>(0);
   const [friendsRank, setFriendsRank] = useState<number>(0);
+  const [previousRank, setPreviousRank] = useState<number>(0);
   const [xpHistory, setXpHistory] = useState<any[]>([]);
   const [periodFilter, setPeriodFilter] = useState<string>("3m");
+  const [selectedDataPoint, setSelectedDataPoint] = useState<any>(null);
+  const [previousXp, setPreviousXp] = useState<number>(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,21 +56,27 @@ const SocialStats = () => {
         .order('year', { ascending: true })
         .order('month', { ascending: true });
 
-      if (xpHistoryData) {
-        // Filter by period
-        const now = new Date();
-        const filteredHistory = xpHistoryData.filter(record => {
-          const recordDate = new Date(record.year, record.month - 1);
-          const monthsDiff = (now.getFullYear() - recordDate.getFullYear()) * 12 + 
-                            (now.getMonth() - recordDate.getMonth());
-          return monthsDiff <= monthsToFetch;
-        }).map(record => ({
+      if (xpHistoryData && xpHistoryData.length > 0) {
+        // Take last N months
+        const sortedData = [...xpHistoryData].sort((a, b) => {
+          if (a.year !== b.year) return a.year - b.year;
+          return a.month - b.month;
+        });
+        
+        const filteredHistory = sortedData.slice(-monthsToFetch).map(record => ({
           label: `${record.month}/${record.year}`,
           xp: record.total_points,
           retos: record.challenges_completed
         }));
         
         setXpHistory(filteredHistory);
+        
+        // Calculate XP change
+        if (filteredHistory.length >= 2) {
+          const lastXp = filteredHistory[filteredHistory.length - 1].xp;
+          const prevXp = filteredHistory[filteredHistory.length - 2].xp;
+          setPreviousXp(prevXp);
+        }
       }
 
       // Get user's points for current month
@@ -132,7 +141,19 @@ const SocialStats = () => {
           
           // Calculate user's rank among friends
           const userRankIndex = enrichedFriendsRank.findIndex(r => r.user_id === user.id);
-          setFriendsRank(userRankIndex >= 0 ? userRankIndex + 1 : friendships.length + 1);
+          const newRank = userRankIndex >= 0 ? userRankIndex + 1 : friendships.length + 1;
+          
+          // Check for rank change notification
+          if (previousRank > 0 && newRank !== previousRank) {
+            if (newRank < previousRank) {
+              toast.success(`¡Subiste al puesto #${newRank} en el ranking de amigos! 🎉`);
+            } else {
+              toast.info(`Bajaste al puesto #${newRank} en el ranking de amigos`);
+            }
+          }
+          
+          setPreviousRank(newRank);
+          setFriendsRank(newRank);
         }
       }
 
@@ -205,6 +226,34 @@ const SocialStats = () => {
     fetchData();
   }, [periodFilter]);
 
+  // Calculate XP percentage change
+  const xpChange = useMemo(() => {
+    if (previousXp === 0 || userPoints === 0) return 0;
+    return ((userPoints - previousXp) / previousXp) * 100;
+  }, [userPoints, previousXp]);
+
+  // Calculate days to reach next rank
+  const daysToNextRank = useMemo(() => {
+    if (friendsRankings.length === 0 || friendsRank === 1) return null;
+    
+    const currentUser = friendsRankings.find(r => r.user_id === user?.id);
+    const nextUser = friendsRankings[friendsRank - 2]; // Previous position
+    
+    if (!currentUser || !nextUser) return null;
+    
+    const xpDifference = nextUser.total_points - currentUser.total_points;
+    
+    // Calculate average daily XP from history
+    if (xpHistory.length < 2) return null;
+    
+    const recentXp = xpHistory.slice(-2);
+    const dailyAverage = (recentXp[1].xp - recentXp[0].xp) / 30; // Assuming 30 days per month
+    
+    if (dailyAverage <= 0) return null;
+    
+    return Math.ceil(xpDifference / dailyAverage);
+  }, [friendsRankings, friendsRank, user, xpHistory]);
+
   return (
     <div className="min-h-screen pb-24 animate-fade-in">
       {/* Header */}
@@ -231,30 +280,42 @@ const SocialStats = () => {
 
       <div className="max-w-2xl mx-auto px-4 py-2 space-y-4">
         {/* Period Filter */}
-        <div className="bg-white rounded-2xl shadow-sm p-1.5">
+        <div className="bg-white rounded-2xl shadow-sm p-1.5 transition-all duration-300">
           <h2 className="text-[8px] font-semibold text-gray-900 mb-1 px-0.5">Período</h2>
           <Tabs value={periodFilter} onValueChange={setPeriodFilter} className="w-full">
             <TabsList className="grid w-full grid-cols-4 h-6">
-              <TabsTrigger value="1m" className="text-[8px] px-2">1M</TabsTrigger>
-              <TabsTrigger value="3m" className="text-[8px] px-2">3M</TabsTrigger>
-              <TabsTrigger value="6m" className="text-[8px] px-2">6M</TabsTrigger>
-              <TabsTrigger value="1y" className="text-[8px] px-2">1A</TabsTrigger>
+              <TabsTrigger value="1m" className="text-[8px] px-2 transition-all duration-200">1M</TabsTrigger>
+              <TabsTrigger value="3m" className="text-[8px] px-2 transition-all duration-200">3M</TabsTrigger>
+              <TabsTrigger value="6m" className="text-[8px] px-2 transition-all duration-200">6M</TabsTrigger>
+              <TabsTrigger value="1y" className="text-[8px] px-2 transition-all duration-200">1A</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
 
         {/* Stats Overview - Compacto */}
-        <div className="bg-white rounded-2xl shadow-sm p-3">
+        <div className="bg-white rounded-2xl shadow-sm p-3 transition-all duration-300">
           <div className="grid grid-cols-2 gap-2">
-            <div className="bg-white border border-gray-100 rounded-lg p-2">
+            <div className="bg-white border border-gray-100 rounded-lg p-2 transition-all duration-200 hover:shadow-md">
               <div className="flex items-center gap-1.5 mb-0.5">
                 <Zap className="h-3 w-3 text-primary" />
                 <span className="text-[9px] text-gray-600">Puntos XP</span>
+                {xpChange !== 0 && (
+                  xpChange > 0 ? (
+                    <ChevronUp className="h-3 w-3 text-green-600" />
+                  ) : (
+                    <ChevronDown className="h-3 w-3 text-red-600" />
+                  )
+                )}
               </div>
               <p className="text-base font-bold text-gray-900">{userPoints}</p>
+              {xpChange !== 0 && (
+                <p className={`text-[8px] ${xpChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {xpChange > 0 ? '+' : ''}{xpChange.toFixed(1)}%
+                </p>
+              )}
             </div>
 
-            <div className="bg-white border border-gray-100 rounded-lg p-2">
+            <div className="bg-white border border-gray-100 rounded-lg p-2 transition-all duration-200 hover:shadow-md">
               <div className="flex items-center gap-1.5 mb-0.5">
                 <Trophy className="h-3 w-3 text-blue-600" />
                 <span className="text-[9px] text-gray-600">Retos</span>
@@ -262,7 +323,7 @@ const SocialStats = () => {
               <p className="text-base font-bold text-gray-900">{totalChallenges}</p>
             </div>
 
-            <div className="bg-white border border-gray-100 rounded-lg p-2">
+            <div className="bg-white border border-gray-100 rounded-lg p-2 transition-all duration-200 hover:shadow-md">
               <div className="flex items-center gap-1.5 mb-0.5">
                 <Calendar className="h-3 w-3 text-green-600" />
                 <span className="text-[9px] text-gray-600">Racha</span>
@@ -271,19 +332,24 @@ const SocialStats = () => {
               <p className="text-[8px] text-gray-500">días seguidos</p>
             </div>
 
-            <div className="bg-white border border-gray-100 rounded-lg p-2">
+            <div className="bg-white border border-gray-100 rounded-lg p-2 transition-all duration-200 hover:shadow-md">
               <div className="flex items-center gap-1.5 mb-0.5">
                 <Users className="h-3 w-3 text-purple-600" />
                 <span className="text-[9px] text-gray-600">Ranking</span>
               </div>
               <p className="text-base font-bold text-gray-900">#{friendsRank}</p>
               <p className="text-[8px] text-gray-500">entre amigos</p>
+              {daysToNextRank && friendsRank > 1 && (
+                <p className="text-[7px] text-purple-600 mt-1">
+                  ~{daysToNextRank} días para #{friendsRank - 1}
+                </p>
+              )}
             </div>
           </div>
         </div>
 
         {/* Friends Ranking */}
-        <div className="bg-white rounded-3xl shadow-sm p-6">
+        <div className="bg-white rounded-3xl shadow-sm p-6 transition-all duration-300">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
               <Trophy className="h-5 w-5 text-yellow-600" />
@@ -316,29 +382,41 @@ const SocialStats = () => {
                             ranking.ranking === 2 ? '🥈' :
                             ranking.ranking === 3 ? '🥉' : '';
                 
+                const maxPoints = Math.max(...friendsRankings.map(r => r.total_points));
+                const barWidth = (ranking.total_points / maxPoints) * 100;
+                
                 return (
                   <div 
                     key={ranking.user_id}
-                    className={`flex items-center justify-between p-3 rounded-xl transition-all ${
+                    className={`flex items-center justify-between p-3 rounded-xl transition-all duration-300 hover:scale-[1.02] ${
                       isCurrentUser 
                         ? 'bg-gradient-to-r from-primary/10 to-primary/5 border-2 border-primary/20' 
                         : 'bg-gray-50 hover:bg-gray-100'
                     }`}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-1">
                       <span className="text-2xl w-8 text-center">
                         {icon || `#${ranking.ranking}`}
                       </span>
-                      <div>
+                      <div className="flex-1">
                         <p className={`text-sm font-medium ${isCurrentUser ? 'text-primary' : 'text-gray-900'}`}>
                           {isCurrentUser ? 'Tú' : ranking.full_name}
                         </p>
                         <p className="text-xs text-gray-500">
                           {ranking.challenges_completed} retos completados
                         </p>
+                        {/* Visual comparison bar */}
+                        <div className="mt-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full transition-all duration-500 ${
+                              isCurrentUser ? 'bg-primary' : 'bg-gray-400'
+                            }`}
+                            style={{ width: `${barWidth}%` }}
+                          />
+                        </div>
                       </div>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right ml-3">
                       <p className="text-sm font-bold text-gray-900">
                         {ranking.total_points}
                       </p>
@@ -419,11 +497,22 @@ const SocialStats = () => {
 
         {/* XP Evolution Chart */}
         {xpHistory.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm p-4">
+          <div className="bg-white rounded-2xl shadow-sm p-4 transition-all duration-300">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
+                {xpChange > 0 ? (
+                  <TrendingUp className="h-5 w-5 text-green-600" />
+                ) : xpChange < 0 ? (
+                  <TrendingDown className="h-5 w-5 text-red-600" />
+                ) : (
+                  <TrendingUp className="h-5 w-5 text-primary" />
+                )}
                 Evolución de XP
+                {xpChange !== 0 && (
+                  <span className={`text-xs ${xpChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    ({xpChange > 0 ? '+' : ''}{xpChange.toFixed(1)}%)
+                  </span>
+                )}
               </h2>
               <Badge variant="secondary" className="text-[10px] px-2 py-0.5">
                 Últimos {periodFilter === "1m" ? "1 mes" : periodFilter === "3m" ? "3 meses" : periodFilter === "6m" ? "6 meses" : "12 meses"}
@@ -432,7 +521,14 @@ const SocialStats = () => {
             
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={xpHistory}>
+                <LineChart 
+                  data={xpHistory}
+                  onClick={(e) => {
+                    if (e && e.activePayload) {
+                      setSelectedDataPoint(e.activePayload[0].payload);
+                    }
+                  }}
+                >
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                   <XAxis 
                     dataKey="label" 
@@ -450,21 +546,61 @@ const SocialStats = () => {
                       borderRadius: '8px',
                       fontSize: '12px'
                     }}
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
+                            <p className="text-xs font-semibold text-gray-900 mb-1">
+                              {payload[0].payload.label}
+                            </p>
+                            <p className="text-xs text-primary font-bold">
+                              {payload[0].payload.xp} XP
+                            </p>
+                            <p className="text-xs text-gray-600">
+                              {payload[0].payload.retos} retos
+                            </p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
                   />
                   <Line 
                     type="monotone" 
                     dataKey="xp" 
                     stroke="#8B5CF6" 
                     strokeWidth={3}
-                    dot={{ fill: '#8B5CF6', r: 4 }}
-                    activeDot={{ r: 6 }}
+                    dot={{ fill: '#8B5CF6', r: 4, cursor: 'pointer' }}
+                    activeDot={{ r: 6, cursor: 'pointer' }}
+                    animationDuration={800}
+                    animationEasing="ease-in-out"
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
             
+            {selectedDataPoint && (
+              <div className="mt-3 p-3 bg-primary/5 rounded-lg border border-primary/20 transition-all duration-300">
+                <p className="text-xs font-semibold text-gray-900 mb-1">
+                  Detalles de {selectedDataPoint.label}
+                </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-primary">{selectedDataPoint.xp} XP</p>
+                    <p className="text-xs text-gray-600">{selectedDataPoint.retos} retos completados</p>
+                  </div>
+                  <button
+                    onClick={() => setSelectedDataPoint(null)}
+                    className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+            )}
+            
             <p className="text-xs text-gray-500 mt-3 text-center">
-              Total acumulado de puntos XP por mes
+              Total acumulado de puntos XP por mes · Haz clic en un punto para ver detalles
             </p>
           </div>
         )}
