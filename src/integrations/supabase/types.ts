@@ -993,6 +993,33 @@ export type Database = {
           },
         ]
       }
+      goal_insights_cache: {
+        Row: {
+          created_at: string
+          expires_at: string
+          goal_id: string
+          id: string
+          insights: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          goal_id: string
+          id?: string
+          insights: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          goal_id?: string
+          id?: string
+          insights?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       goal_invitations: {
         Row: {
           created_at: string | null
