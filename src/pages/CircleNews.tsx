@@ -184,6 +184,7 @@ const CircleNews = () => {
                       value={newsUrl}
                       onChange={(e) => setNewsUrl(e.target.value)}
                       disabled={submitting}
+                      className="bg-gray-100/80"
                     />
                   </div>
                   <Button 
