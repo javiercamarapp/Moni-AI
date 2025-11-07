@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Newspaper, Link as LinkIcon, Plus, ExternalLink, Trash2 } from "lucide-react";
+import { ArrowLeft, Newspaper, Link as LinkIcon, Plus, ExternalLink, Trash2, Star, Calendar } from "lucide-react";
 import { toast } from "sonner";
 import { MoniLoader } from "@/components/MoniLoader";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const CircleNews = () => {
   const { id } = useParams();
@@ -19,6 +20,8 @@ const CircleNews = () => {
   const [addNewsOpen, setAddNewsOpen] = useState(false);
   const [newsUrl, setNewsUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [dateFilter, setDateFilter] = useState<string>("all");
 
   useEffect(() => {
     fetchData();
@@ -66,6 +69,16 @@ const CircleNews = () => {
         console.error('Error fetching news:', newsError);
       } else {
         setNews(newsData || []);
+      }
+
+      // Fetch user's favorites
+      const { data: favoritesData, error: favoritesError } = await supabase
+        .from('circle_news_favorites')
+        .select('news_id')
+        .eq('user_id', user.id);
+
+      if (!favoritesError && favoritesData) {
+        setFavorites(new Set(favoritesData.map(f => f.news_id)));
       }
     } catch (error: any) {
       console.error('Error fetching data:', error);
@@ -129,6 +142,63 @@ const CircleNews = () => {
       toast.error('Error al eliminar la noticia');
     }
   };
+
+  const toggleFavorite = async (newsId: string) => {
+    try {
+      if (favorites.has(newsId)) {
+        // Remove from favorites
+        const { error } = await supabase
+          .from('circle_news_favorites')
+          .delete()
+          .eq('news_id', newsId)
+          .eq('user_id', currentUser?.id);
+
+        if (error) throw error;
+
+        setFavorites(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(newsId);
+          return newSet;
+        });
+        toast.success('Noticia removida de favoritos');
+      } else {
+        // Add to favorites
+        const { error } = await supabase
+          .from('circle_news_favorites')
+          .insert({ news_id: newsId, user_id: currentUser?.id });
+
+        if (error) throw error;
+
+        setFavorites(prev => new Set(prev).add(newsId));
+        toast.success('Noticia guardada en favoritos');
+      }
+    } catch (error: any) {
+      console.error('Error toggling favorite:', error);
+      toast.error('Error al actualizar favoritos');
+    }
+  };
+
+  const getFilteredNews = () => {
+    const now = new Date();
+    return news.filter(item => {
+      const createdAt = new Date(item.created_at);
+      
+      switch (dateFilter) {
+        case "week":
+          const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          return createdAt >= weekAgo;
+        case "month":
+          const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          return createdAt >= monthAgo;
+        case "favorites":
+          return favorites.has(item.id);
+        default:
+          return true;
+      }
+    });
+  };
+
+  const filteredNews = getFilteredNews();
 
   if (loading) {
     return (
@@ -213,13 +283,37 @@ const CircleNews = () => {
       </div>
 
       <div className="mx-auto px-4 py-2" style={{ maxWidth: '800px' }}>
-        {news.length === 0 ? (
+        {/* Filters */}
+        <div className="mb-4 flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-sm">
+          <Calendar className="h-4 w-4 text-gray-600" />
+          <ToggleGroup type="single" value={dateFilter} onValueChange={(value) => value && setDateFilter(value)} className="gap-1">
+            <ToggleGroupItem value="all" variant="outline" className="text-xs px-3 py-1 data-[state=on]:bg-primary data-[state=on]:text-white">
+              Todas
+            </ToggleGroupItem>
+            <ToggleGroupItem value="week" variant="outline" className="text-xs px-3 py-1 data-[state=on]:bg-primary data-[state=on]:text-white">
+              Esta semana
+            </ToggleGroupItem>
+            <ToggleGroupItem value="month" variant="outline" className="text-xs px-3 py-1 data-[state=on]:bg-primary data-[state=on]:text-white">
+              Este mes
+            </ToggleGroupItem>
+            <ToggleGroupItem value="favorites" variant="outline" className="text-xs px-3 py-1 data-[state=on]:bg-primary data-[state=on]:text-white">
+              <Star className="h-3 w-3 mr-1" />
+              Favoritas
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+
+        {filteredNews.length === 0 ? (
           <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
             <div className="text-center py-16">
               <Newspaper className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-600 text-base mb-2 font-medium">No hay noticias aún</p>
+              <p className="text-gray-600 text-base mb-2 font-medium">
+                {dateFilter === "favorites" ? "No tienes noticias favoritas" : "No hay noticias aún"}
+              </p>
               <p className="text-gray-500 text-sm max-w-xs mx-auto mb-6">
-                Sé el primero en compartir una noticia financiera importante con tu círculo
+                {dateFilter === "favorites" 
+                  ? "Marca noticias como favoritas para verlas aquí" 
+                  : "Sé el primero en compartir una noticia financiera importante con tu círculo"}
               </p>
               <Button onClick={() => setAddNewsOpen(true)} variant="white" className="gap-2 hover-lift">
                 <Plus className="h-4 w-4" />
@@ -229,7 +323,7 @@ const CircleNews = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            {news.map((item) => (
+            {filteredNews.map((item) => (
               <div key={item.id} className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200/50 overflow-hidden hover:shadow-md transition-all">
                 <div className="flex gap-4 p-4">
                   {item.image_url && (
@@ -267,6 +361,17 @@ const CircleNews = () => {
                         )}
                       </div>
                       <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => toggleFavorite(item.id)}
+                          className={`p-1.5 rounded-lg transition-colors ${
+                            favorites.has(item.id)
+                              ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100'
+                              : 'hover:bg-gray-100 text-gray-400'
+                          }`}
+                          title={favorites.has(item.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
+                        >
+                          <Star className={`h-4 w-4 ${favorites.has(item.id) ? 'fill-current' : ''}`} />
+                        </button>
                         {currentUser?.id === item.user_id && (
                           <button
                             onClick={() => handleDeleteNews(item.id)}

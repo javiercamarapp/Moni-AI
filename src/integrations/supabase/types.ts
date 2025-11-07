@@ -523,6 +523,35 @@ export type Database = {
         }
         Relationships: []
       }
+      circle_news_favorites: {
+        Row: {
+          created_at: string
+          id: string
+          news_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          news_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          news_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "circle_news_favorites_news_id_fkey"
+            columns: ["news_id"]
+            isOneToOne: false
+            referencedRelation: "circle_news"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       circles: {
         Row: {
           category: string
