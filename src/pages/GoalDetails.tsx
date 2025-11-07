@@ -197,28 +197,37 @@ const GoalDetails = () => {
           </div>
 
           {/* Stats Summary */}
-          <div className="flex items-center justify-between text-xs">
+          <div className="flex items-center justify-between text-xs mb-3">
             <button 
               onClick={() => setInsightModal('current')}
-              className="cursor-pointer transition-opacity hover:opacity-70"
+              className="cursor-pointer transition-opacity hover:opacity-70 flex items-center gap-2"
             >
-              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Ahorro Actual</p>
-              <p className="font-semibold text-gray-900">{formatCurrency(goal.current)}</p>
+              <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+              <div>
+                <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Ahorro Actual</p>
+                <p className="font-semibold text-gray-900">{formatCurrency(goal.current)}</p>
+              </div>
             </button>
             <button 
               onClick={() => setInsightModal('remaining')}
-              className="text-center cursor-pointer transition-opacity hover:opacity-70"
+              className="text-center cursor-pointer transition-opacity hover:opacity-70 flex items-center gap-2"
             >
-              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Falta</p>
-              <p className="font-semibold text-gray-900">{formatCurrency(remaining)}</p>
+              <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+              <div>
+                <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Falta</p>
+                <p className="font-semibold text-gray-900">{formatCurrency(remaining)}</p>
+              </div>
             </button>
             {goal.deadline && daysRemaining !== null && (
               <button 
                 onClick={() => setInsightModal('days')}
-                className="text-right cursor-pointer transition-opacity hover:opacity-70"
+                className="text-right cursor-pointer transition-opacity hover:opacity-70 flex items-center gap-2"
               >
-                <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Días Restantes</p>
-                <p className="font-semibold text-gray-900">{daysRemaining} días</p>
+                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                <div>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Días Restantes</p>
+                  <p className="font-semibold text-gray-900">{daysRemaining} días</p>
+                </div>
               </button>
             )}
           </div>
@@ -233,7 +242,7 @@ const GoalDetails = () => {
                 <TrendingUp className="h-4 w-4 text-gray-600" />
                 Progreso en el Tiempo
               </h3>
-              <ResponsiveContainer width="100%" height={180}>
+              <ResponsiveContainer width="100%" height={90}>
                 <LineChart
                   data={(() => {
                     // Crear datos acumulativos para la gráfica
