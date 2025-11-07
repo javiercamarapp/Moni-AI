@@ -196,28 +196,28 @@ const GoalDetails = () => {
           </div>
 
           {/* Stats Summary */}
-          <div className="grid grid-cols-3 gap-2 justify-center">
+          <div className="flex items-center justify-between text-xs">
             <button 
               onClick={() => setInsightModal('current')}
-              className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50 hover:shadow-md hover:border-emerald-300 transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
+              className="cursor-pointer transition-opacity hover:opacity-70"
             >
-              <p className="text-[10px] text-gray-600 mb-0.5">Ahorro Actual</p>
-              <p className="text-sm font-bold text-gray-900">{formatCurrency(goal.current)}</p>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Ahorro Actual</p>
+              <p className="font-semibold text-gray-900">{formatCurrency(goal.current)}</p>
             </button>
             <button 
               onClick={() => setInsightModal('remaining')}
-              className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50 hover:shadow-md hover:border-amber-300 transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
+              className="text-center cursor-pointer transition-opacity hover:opacity-70"
             >
-              <p className="text-[10px] text-gray-600 mb-0.5">Falta Ahorrar</p>
-              <p className="text-sm font-bold text-gray-900">{formatCurrency(remaining)}</p>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Falta</p>
+              <p className="font-semibold text-gray-900">{formatCurrency(remaining)}</p>
             </button>
             {goal.deadline && daysRemaining !== null && (
               <button 
                 onClick={() => setInsightModal('days')}
-                className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50 hover:shadow-md hover:border-blue-300 transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
+                className="text-right cursor-pointer transition-opacity hover:opacity-70"
               >
-                <p className="text-[10px] text-gray-600 mb-0.5">Días Restantes</p>
-                <p className="text-sm font-bold text-gray-900">{daysRemaining} días</p>
+                <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Días Restantes</p>
+                <p className="font-semibold text-gray-900">{daysRemaining} días</p>
               </button>
             )}
           </div>
