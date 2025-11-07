@@ -196,45 +196,6 @@ const SocialStats = () => {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-2 space-y-4">
-        {/* Stats Overview - Compacto */}
-        <div className="bg-white rounded-2xl shadow-sm p-3">
-          <div className="grid grid-cols-2 gap-2">
-            <div className="bg-white border border-gray-100 rounded-lg p-2">
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <Zap className="h-3 w-3 text-primary" />
-                <span className="text-[9px] text-gray-600">Puntos XP</span>
-              </div>
-              <p className="text-base font-bold text-gray-900">{userPoints}</p>
-            </div>
-
-            <div className="bg-white border border-gray-100 rounded-lg p-2">
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <Trophy className="h-3 w-3 text-blue-600" />
-                <span className="text-[9px] text-gray-600">Retos</span>
-              </div>
-              <p className="text-base font-bold text-gray-900">{totalChallenges}</p>
-            </div>
-
-            <div className="bg-white border border-gray-100 rounded-lg p-2">
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <Calendar className="h-3 w-3 text-green-600" />
-                <span className="text-[9px] text-gray-600">Racha</span>
-              </div>
-              <p className="text-base font-bold text-gray-900">{dayStreak}</p>
-              <p className="text-[8px] text-gray-500">días seguidos</p>
-            </div>
-
-            <div className="bg-white border border-gray-100 rounded-lg p-2">
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <Users className="h-3 w-3 text-purple-600" />
-                <span className="text-[9px] text-gray-600">Ranking</span>
-              </div>
-              <p className="text-base font-bold text-gray-900">#{friendsRank}</p>
-              <p className="text-[8px] text-gray-500">entre amigos</p>
-            </div>
-          </div>
-        </div>
-
         {/* Friends Ranking */}
         <div className="bg-white rounded-3xl shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
@@ -368,54 +329,6 @@ const SocialStats = () => {
               })}
             </div>
           )}
-        </div>
-
-        {/* Achievement Highlights */}
-        <div className="bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-orange-500/10 rounded-3xl shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-4">
-            <Award className="h-5 w-5 text-purple-600" />
-            Logros destacados
-          </h2>
-          
-          <div className="space-y-3">
-            {profile?.level && profile.level >= 5 && (
-              <div className="flex items-center gap-3 p-3 bg-white/80 rounded-xl">
-                <span className="text-2xl">🏆</span>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Nivel Avanzado</p>
-                  <p className="text-xs text-gray-600">Has alcanzado el nivel {profile.level}</p>
-                </div>
-              </div>
-            )}
-            
-            {totalChallenges >= 10 && (
-              <div className="flex items-center gap-3 p-3 bg-white/80 rounded-xl">
-                <span className="text-2xl">⭐</span>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Retador Incansable</p>
-                  <p className="text-xs text-gray-600">{totalChallenges} retos completados</p>
-                </div>
-              </div>
-            )}
-            
-            {dayStreak >= 7 && (
-              <div className="flex items-center gap-3 p-3 bg-white/80 rounded-xl">
-                <span className="text-2xl">🔥</span>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Racha Imparable</p>
-                  <p className="text-xs text-gray-600">{dayStreak} días seguidos</p>
-                </div>
-              </div>
-            )}
-
-            {(profile?.level < 5 && totalChallenges < 10 && dayStreak < 7) && (
-              <div className="text-center py-4">
-                <p className="text-sm text-gray-600">
-                  Completa más retos para desbloquear logros
-                </p>
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </div>
