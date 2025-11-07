@@ -144,18 +144,18 @@ const CircleNews = () => {
       <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => navigate(`/circle/${id}`)}
-                className="p-2 hover:bg-white/50 rounded-full transition-colors"
+                className="p-1.5 hover:bg-white/50 rounded-full transition-colors"
               >
-                <ArrowLeft className="h-5 w-5 text-gray-900" />
+                <ArrowLeft className="h-4 w-4 text-gray-900" />
               </button>
               <div>
-                <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
+                <h1 className="text-base font-semibold text-gray-900 tracking-tight">
                   Noticias: {circle?.name}
                 </h1>
-                <p className="text-xs text-gray-600">
+                <p className="text-[10px] text-gray-600">
                   Noticias recomendadas por la comunidad
                 </p>
               </div>
@@ -163,9 +163,9 @@ const CircleNews = () => {
             
             <Dialog open={addNewsOpen} onOpenChange={setAddNewsOpen}>
               <DialogTrigger asChild>
-                <Button size="sm" className="gap-2">
+                <Button size="sm" variant="action" className="gap-2 hover-lift">
                   <Plus className="h-4 w-4" />
-                  Compartir noticia
+                  Compartir
                 </Button>
               </DialogTrigger>
               <DialogContent>
