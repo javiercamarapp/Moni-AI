@@ -131,8 +131,23 @@ const Goals = () => {
 
   const generateInsights = async () => {
     try {
+      // Skip if no goals available
+      if (!goals || goals.length === 0) {
+        return;
+      }
+
+      // Use the first active goal for insights
+      const activeGoal = goals.find(g => g.current < g.target) || goals[0];
+      
+      if (!activeGoal) {
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('generate-goal-insights', {
-        body: { goals }
+        body: { 
+          goalId: activeGoal.id,
+          isGroupGoal: false 
+        }
       });
 
       if (error) throw error;
