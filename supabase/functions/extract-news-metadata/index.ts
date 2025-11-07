@@ -91,19 +91,52 @@ serve(async (req) => {
       );
     }
 
-    const prompt = `Analiza el siguiente contenido HTML de una noticia financiera/económica y extrae la información más relevante.
+    // Extract metadata from HTML using better parsing
+    let extractedTitle = "";
+    let extractedDescription = "";
+    let extractedImage = "";
+    let extractedDate = "";
 
-IMPORTANTE: Responde ÚNICAMENTE con un objeto JSON válido, sin texto adicional antes o después.
+    // Try to extract from meta tags first
+    const ogTitleMatch = htmlContent.match(/<meta[^>]*property=["']og:title["'][^>]*content=["']([^"']+)["']/i);
+    const twitterTitleMatch = htmlContent.match(/<meta[^>]*name=["']twitter:title["'][^>]*content=["']([^"']+)["']/i);
+    const titleTagMatch = htmlContent.match(/<title[^>]*>([^<]+)<\/title>/i);
+    
+    extractedTitle = ogTitleMatch?.[1] || twitterTitleMatch?.[1] || titleTagMatch?.[1] || "";
 
-HTML:
-${htmlContent.substring(0, 10000)}
+    const ogDescMatch = htmlContent.match(/<meta[^>]*property=["']og:description["'][^>]*content=["']([^"']+)["']/i);
+    const twitterDescMatch = htmlContent.match(/<meta[^>]*name=["']twitter:description["'][^>]*content=["']([^"']+)["']/i);
+    const metaDescMatch = htmlContent.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i);
+    
+    extractedDescription = ogDescMatch?.[1] || twitterDescMatch?.[1] || metaDescMatch?.[1] || "";
 
-Extrae y devuelve SOLO este JSON:
+    const ogImageMatch = htmlContent.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i);
+    const twitterImageMatch = htmlContent.match(/<meta[^>]*name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i);
+    
+    extractedImage = ogImageMatch?.[1] || twitterImageMatch?.[1] || "";
+
+    console.log("Extracted from HTML:", { title: extractedTitle, description: extractedDescription, image: extractedImage });
+
+    // If we have good metadata, use AI to enhance the description
+    const prompt = `Analiza esta noticia financiera y mejora la descripción para hacerla más informativa.
+
+Título extraído: ${extractedTitle}
+Descripción extraída: ${extractedDescription}
+
+IMPORTANTE: Responde ÚNICAMENTE con un objeto JSON válido, sin texto adicional.
+
+Reglas:
+1. Si el título está vacío o es genérico, extráelo del siguiente HTML
+2. Mejora la descripción para que sea un resumen de 4-5 líneas con información clave para inversionistas
+3. La descripción debe ser objetiva, clara y enfocarse en datos relevantes
+
+HTML (primeros 12000 caracteres):
+${htmlContent.substring(0, 12000)}
+
+Responde SOLO con este JSON:
 {
-  "title": "título principal de la noticia (máximo 120 caracteres, claro y descriptivo)",
-  "description": "resumen objetivo de la noticia en 3-5 líneas, enfocándote en los puntos clave y datos relevantes para inversionistas",
-  "imageUrl": "URL completa de la imagen principal del artículo (null si no hay, busca en meta tags og:image, twitter:image o la primera imagen relevante del artículo)",
-  "publishedAt": "fecha de publicación en formato ISO 8601 (busca en meta tags, article:published_time, o fechas en el contenido. Null si no se encuentra)"
+  "title": "título claro y descriptivo (máximo 120 caracteres)",
+  "description": "resumen en 4-5 líneas con información clave y datos relevantes"
 }`;
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -113,11 +146,12 @@ Extrae y devuelve SOLO este JSON:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-2.5-pro",
         messages: [
-          { role: "system", content: "Eres un extractor de metadata de noticias. Respondes ÚNICAMENTE con JSON válido, sin explicaciones adicionales." },
+          { role: "system", content: "Eres un experto en análisis de noticias financieras. Extraes títulos y descripciones claras y precisas. Respondes ÚNICAMENTE con JSON válido." },
           { role: "user", content: prompt }
         ],
+        temperature: 0.3,
       }),
     });
 
@@ -156,13 +190,30 @@ Extrae y devuelve SOLO este JSON:
       // Remove markdown code blocks if present
       const cleanContent = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
       metadata = JSON.parse(cleanContent);
+      
+      // Use extracted metadata as fallback if AI didn't provide good data
+      if (!metadata.title || metadata.title.length < 10) {
+        metadata.title = extractedTitle || "Noticia compartida";
+      }
+      if (!metadata.description || metadata.description.length < 20) {
+        metadata.description = extractedDescription || "Noticia financiera recomendada por la comunidad";
+      }
+      
+      // Use extracted image if AI didn't find one
+      if (!metadata.imageUrl && extractedImage) {
+        metadata.imageUrl = extractedImage;
+      }
+      
+      console.log("Final metadata:", metadata);
     } catch (parseError) {
       console.error("Error parsing AI response:", parseError);
-      // Fallback to basic metadata
+      console.error("AI response was:", content);
+      
+      // Use extracted metadata as fallback
       metadata = {
-        title: "Noticia sin título",
-        description: "No se pudo extraer la descripción.",
-        imageUrl: null,
+        title: extractedTitle || "Noticia compartida",
+        description: extractedDescription || "Noticia financiera recomendada por la comunidad",
+        imageUrl: extractedImage || null,
         publishedAt: null,
       };
     }
