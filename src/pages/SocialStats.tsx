@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Trophy, Medal, Users, Zap, Calendar, Award, TrendingUp } from "lucide-react";
+import { ArrowLeft, Trophy, Medal, Users, Zap, Calendar, Award, TrendingUp, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { User } from "@supabase/supabase-js";
@@ -20,6 +20,7 @@ const SocialStats = () => {
   const [friendsRank, setFriendsRank] = useState<number>(0);
   const [xpHistory, setXpHistory] = useState<any[]>([]);
   const [periodFilter, setPeriodFilter] = useState<string>("3m");
+  const [selectedDataPoint, setSelectedDataPoint] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,21 +54,24 @@ const SocialStats = () => {
         .order('year', { ascending: true })
         .order('month', { ascending: true });
 
-      if (xpHistoryData) {
-        // Filter by period
-        const now = new Date();
-        const filteredHistory = xpHistoryData.filter(record => {
-          const recordDate = new Date(record.year, record.month - 1);
-          const monthsDiff = (now.getFullYear() - recordDate.getFullYear()) * 12 + 
-                            (now.getMonth() - recordDate.getMonth());
-          return monthsDiff <= monthsToFetch;
-        }).map(record => ({
+      if (xpHistoryData && xpHistoryData.length > 0) {
+        // Filter by period - take the last N months
+        const sortedHistory = [...xpHistoryData].sort((a, b) => {
+          if (a.year !== b.year) return b.year - a.year;
+          return b.month - a.month;
+        });
+        
+        const recentHistory = sortedHistory.slice(0, monthsToFetch).reverse();
+        
+        const formattedHistory = recentHistory.map(record => ({
           label: `${record.month}/${record.year}`,
           xp: record.total_points,
-          retos: record.challenges_completed
+          retos: record.challenges_completed,
+          month: record.month,
+          year: record.year
         }));
         
-        setXpHistory(filteredHistory);
+        setXpHistory(formattedHistory);
       }
 
       // Get user's points for current month
@@ -205,6 +209,21 @@ const SocialStats = () => {
     fetchData();
   }, [periodFilter]);
 
+  // Calculate XP change percentage and trend
+  const xpStats = useMemo(() => {
+    if (!xpHistory || xpHistory.length < 2) {
+      return { percentageChange: 0, trend: 'neutral' as const, previousXp: 0, currentXp: 0 };
+    }
+    
+    const currentXp = xpHistory[xpHistory.length - 1].xp;
+    const previousXp = xpHistory[xpHistory.length - 2].xp;
+    const change = currentXp - previousXp;
+    const percentageChange = previousXp > 0 ? ((change / previousXp) * 100) : 0;
+    const trend = change > 0 ? 'up' : change < 0 ? 'down' : 'neutral';
+    
+    return { percentageChange, trend, previousXp, currentXp };
+  }, [xpHistory]);
+
   return (
     <div className="min-h-screen pb-24 animate-fade-in">
       {/* Header */}
@@ -231,27 +250,34 @@ const SocialStats = () => {
 
       <div className="max-w-2xl mx-auto px-4 py-2 space-y-4">
         {/* Period Filter */}
-        <div className="bg-white rounded-2xl shadow-sm p-1.5">
+        <div className="bg-white rounded-2xl shadow-sm p-1.5 transition-all duration-300">
           <h2 className="text-[8px] font-semibold text-gray-900 mb-1 px-0.5">Período</h2>
           <Tabs value={periodFilter} onValueChange={setPeriodFilter} className="w-full">
             <TabsList className="grid w-full grid-cols-4 h-6">
-              <TabsTrigger value="1m" className="text-[8px] px-2">1M</TabsTrigger>
-              <TabsTrigger value="3m" className="text-[8px] px-2">3M</TabsTrigger>
-              <TabsTrigger value="6m" className="text-[8px] px-2">6M</TabsTrigger>
-              <TabsTrigger value="1y" className="text-[8px] px-2">1A</TabsTrigger>
+              <TabsTrigger value="1m" className="text-[8px] px-2 transition-all duration-300">1M</TabsTrigger>
+              <TabsTrigger value="3m" className="text-[8px] px-2 transition-all duration-300">3M</TabsTrigger>
+              <TabsTrigger value="6m" className="text-[8px] px-2 transition-all duration-300">6M</TabsTrigger>
+              <TabsTrigger value="1y" className="text-[8px] px-2 transition-all duration-300">1A</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
 
-        {/* Stats Overview - Compacto */}
-        <div className="bg-white rounded-2xl shadow-sm p-3">
+        {/* Stats Overview - Compacto con indicadores */}
+        <div className="bg-white rounded-2xl shadow-sm p-3 transition-all duration-300">
           <div className="grid grid-cols-2 gap-2">
             <div className="bg-white border border-gray-100 rounded-lg p-2">
               <div className="flex items-center gap-1.5 mb-0.5">
                 <Zap className="h-3 w-3 text-primary" />
                 <span className="text-[9px] text-gray-600">Puntos XP</span>
+                {xpStats.trend === 'up' && <span className="text-green-500 text-[10px]">↑</span>}
+                {xpStats.trend === 'down' && <span className="text-red-500 text-[10px]">↓</span>}
               </div>
               <p className="text-base font-bold text-gray-900">{userPoints}</p>
+              {xpStats.percentageChange !== 0 && (
+                <p className={`text-[7px] font-medium ${xpStats.trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
+                  {xpStats.percentageChange > 0 ? '+' : ''}{xpStats.percentageChange.toFixed(1)}%
+                </p>
+              )}
             </div>
 
             <div className="bg-white border border-gray-100 rounded-lg p-2">
@@ -282,8 +308,115 @@ const SocialStats = () => {
           </div>
         </div>
 
+        {/* XP Evolution Chart */}
+        {xpHistory.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-sm p-4 transition-all duration-300">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                Evolución de XP
+              </h2>
+              <div className="flex items-center gap-2">
+                {xpStats.trend === 'up' && (
+                  <span className="text-green-500 text-xs font-medium flex items-center gap-1">
+                    <TrendingUp className="w-4 h-4" />
+                    +{xpStats.percentageChange.toFixed(1)}%
+                  </span>
+                )}
+                {xpStats.trend === 'down' && (
+                  <span className="text-red-500 text-xs font-medium flex items-center gap-1">
+                    <TrendingUp className="w-4 h-4 rotate-180" />
+                    {xpStats.percentageChange.toFixed(1)}%
+                  </span>
+                )}
+                <Badge variant="secondary" className="text-[10px] px-2 py-0.5">
+                  Últimos {periodFilter === "1m" ? "1 mes" : periodFilter === "3m" ? "3 meses" : periodFilter === "6m" ? "6 meses" : "12 meses"}
+                </Badge>
+              </div>
+            </div>
+            
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={xpHistory}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                  <XAxis 
+                    dataKey="label" 
+                    tick={{ fontSize: 11 }}
+                    stroke="#9CA3AF"
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 11 }}
+                    stroke="#9CA3AF"
+                  />
+                  <Tooltip 
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200 animate-fade-in">
+                            <p className="text-xs font-semibold text-gray-900 mb-2">{data.label}</p>
+                            <p className="text-xs text-gray-600">XP: <span className="font-bold text-primary">{data.xp}</span></p>
+                            <p className="text-xs text-gray-600">Retos: <span className="font-bold text-green-600">{data.retos}</span></p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="xp" 
+                    stroke="hsl(var(--primary))" 
+                    strokeWidth={3}
+                    dot={{ 
+                      fill: 'hsl(var(--primary))', 
+                      r: 4, 
+                      cursor: 'pointer',
+                      strokeWidth: 2,
+                      stroke: '#fff'
+                    }}
+                    activeDot={{ 
+                      r: 6, 
+                      onClick: (e: any, payload: any) => setSelectedDataPoint(payload.payload),
+                      strokeWidth: 2,
+                      stroke: '#fff'
+                    }}
+                    animationDuration={800}
+                    animationEasing="ease-in-out"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            
+            {/* Selected Data Point Details */}
+            {selectedDataPoint && (
+              <div className="mt-4 p-3 bg-primary/5 rounded-lg border border-primary/20 animate-fade-in">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-semibold text-gray-900">{selectedDataPoint.label}</p>
+                  <button 
+                    onClick={() => setSelectedDataPoint(null)}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <span className="text-base">✕</span>
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-xs text-gray-500">XP Total</p>
+                    <p className="text-lg font-bold text-primary">{selectedDataPoint.xp}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Retos Completados</p>
+                    <p className="text-lg font-bold text-green-600">{selectedDataPoint.retos}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Friends Ranking */}
-        <div className="bg-white rounded-3xl shadow-sm p-6">
+        <div className="bg-white rounded-3xl shadow-sm p-6 transition-all duration-300">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
               <Trophy className="h-5 w-5 text-yellow-600" />
@@ -319,7 +452,7 @@ const SocialStats = () => {
                 return (
                   <div 
                     key={ranking.user_id}
-                    className={`flex items-center justify-between p-3 rounded-xl transition-all ${
+                    className={`flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${
                       isCurrentUser 
                         ? 'bg-gradient-to-r from-primary/10 to-primary/5 border-2 border-primary/20' 
                         : 'bg-gray-50 hover:bg-gray-100'
@@ -352,7 +485,7 @@ const SocialStats = () => {
         </div>
 
         {/* General Ranking */}
-        <div className="bg-white rounded-3xl shadow-sm p-6">
+        <div className="bg-white rounded-3xl shadow-sm p-6 transition-all duration-300">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
               <Medal className="h-5 w-5 text-blue-600" />
@@ -385,7 +518,7 @@ const SocialStats = () => {
                 return (
                   <div 
                     key={ranking.user_id}
-                    className={`flex items-center justify-between p-3 rounded-xl transition-all ${
+                    className={`flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${
                       isCurrentUser 
                         ? 'bg-gradient-to-r from-blue-500/10 to-blue-500/5 border-2 border-blue-500/20' 
                         : 'bg-gray-50'
@@ -416,58 +549,6 @@ const SocialStats = () => {
             </div>
           )}
         </div>
-
-        {/* XP Evolution Chart */}
-        {xpHistory.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
-                Evolución de XP
-              </h2>
-              <Badge variant="secondary" className="text-[10px] px-2 py-0.5">
-                Últimos {periodFilter === "1m" ? "1 mes" : periodFilter === "3m" ? "3 meses" : periodFilter === "6m" ? "6 meses" : "12 meses"}
-              </Badge>
-            </div>
-            
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={xpHistory}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                  <XAxis 
-                    dataKey="label" 
-                    stroke="#6B7280"
-                    style={{ fontSize: '12px' }}
-                  />
-                  <YAxis 
-                    stroke="#6B7280"
-                    style={{ fontSize: '12px' }}
-                  />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'white',
-                      border: '1px solid #E5E7EB',
-                      borderRadius: '8px',
-                      fontSize: '12px'
-                    }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="xp" 
-                    stroke="#8B5CF6" 
-                    strokeWidth={3}
-                    dot={{ fill: '#8B5CF6', r: 4 }}
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-            
-            <p className="text-xs text-gray-500 mt-3 text-center">
-              Total acumulado de puntos XP por mes
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );
