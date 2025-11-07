@@ -66,7 +66,7 @@ const SocialStats = () => {
         .not('category', 'is', null);
       
       if (categories) {
-        const uniqueCategories = [...new Set(categories.map(c => c.category))];
+        const uniqueCategories = [...new Set(categories.map(c => c.category))].filter(cat => cat && cat.trim() !== '');
         setChallengeCategories(uniqueCategories);
       }
 
@@ -430,7 +430,7 @@ const SocialStats = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos los amigos</SelectItem>
-                    {competitionGroups.map(group => (
+                    {competitionGroups.filter(group => group.id).map(group => (
                       <SelectItem key={group.id} value={group.id}>
                         {group.name}
                       </SelectItem>
