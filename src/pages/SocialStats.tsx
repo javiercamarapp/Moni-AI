@@ -497,7 +497,6 @@ const SocialStats = () => {
                     <SelectValue placeholder="Mes actual" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Mes actual</SelectItem>
                     {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
                       <SelectItem key={month} value={month.toString()}>
                         {new Date(2024, month - 1).toLocaleString('es', { month: 'long' })}
@@ -510,7 +509,6 @@ const SocialStats = () => {
                     <SelectValue placeholder="Año actual" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Año actual</SelectItem>
                     {[2024, 2025, 2026].map(year => (
                       <SelectItem key={year} value={year.toString()}>
                         {year}
