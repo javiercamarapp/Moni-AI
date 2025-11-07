@@ -189,7 +189,8 @@ const CircleNews = () => {
                   <Button 
                     onClick={handleSubmitNews} 
                     disabled={submitting || !newsUrl.trim()}
-                    className="w-full"
+                    variant="white"
+                    className="w-full hover-lift"
                   >
                     {submitting ? (
                       <>
