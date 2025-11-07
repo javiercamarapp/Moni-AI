@@ -196,6 +196,45 @@ const SocialStats = () => {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-2 space-y-4">
+        {/* Stats Overview - Compacto */}
+        <div className="bg-white rounded-2xl shadow-sm p-3">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-white border border-gray-100 rounded-lg p-2">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <Zap className="h-3 w-3 text-primary" />
+                <span className="text-[9px] text-gray-600">Puntos XP</span>
+              </div>
+              <p className="text-base font-bold text-gray-900">{userPoints}</p>
+            </div>
+
+            <div className="bg-white border border-gray-100 rounded-lg p-2">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <Trophy className="h-3 w-3 text-blue-600" />
+                <span className="text-[9px] text-gray-600">Retos</span>
+              </div>
+              <p className="text-base font-bold text-gray-900">{totalChallenges}</p>
+            </div>
+
+            <div className="bg-white border border-gray-100 rounded-lg p-2">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <Calendar className="h-3 w-3 text-green-600" />
+                <span className="text-[9px] text-gray-600">Racha</span>
+              </div>
+              <p className="text-base font-bold text-gray-900">{dayStreak}</p>
+              <p className="text-[8px] text-gray-500">días seguidos</p>
+            </div>
+
+            <div className="bg-white border border-gray-100 rounded-lg p-2">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <Users className="h-3 w-3 text-purple-600" />
+                <span className="text-[9px] text-gray-600">Ranking</span>
+              </div>
+              <p className="text-base font-bold text-gray-900">#{friendsRank}</p>
+              <p className="text-[8px] text-gray-500">entre amigos</p>
+            </div>
+          </div>
+        </div>
+
         {/* Friends Ranking */}
         <div className="bg-white rounded-3xl shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
