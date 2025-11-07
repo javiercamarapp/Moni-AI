@@ -92,6 +92,7 @@ const GroupGoalChat = () => {
   const [editText, setEditText] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [showStickers, setShowStickers] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -862,8 +863,8 @@ const GroupGoalChat = () => {
         </div>
 
         {/* Input */}
-        <div className="fixed bottom-20 left-0 right-0 bg-background px-4 pt-4 pb-2">
-          <div className="max-w-7xl mx-auto">
+        <div className="fixed bottom-20 left-0 right-0 px-4 pt-4 pb-2 bg-gradient-to-t from-background via-background to-background/0">
+          <div className="max-w-7xl mx-auto bg-background rounded-2xl p-2 shadow-lg border border-border">
             {/* Reply indicator */}
             {replyingTo && (
               <div className="mb-2 bg-gray-50 rounded-lg p-2 flex items-center justify-between">
@@ -904,7 +905,7 @@ const GroupGoalChat = () => {
             )}
 
             {/* Input field */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -918,27 +919,60 @@ const GroupGoalChat = () => {
                 disabled={uploadingFile}
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 rounded-full hover:bg-gray-100"
+                className="h-10 w-10 rounded-full hover:bg-muted transition-colors"
                 title="Adjuntar archivo o imagen"
               >
-                <Paperclip className="h-5 w-5 text-gray-600" />
+                <Paperclip className="h-5 w-5 text-muted-foreground" />
               </Button>
+
+              <Popover open={showStickers} onOpenChange={setShowStickers}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 rounded-full hover:bg-muted transition-colors"
+                    title="Agregar emoji"
+                  >
+                    <Smile className="h-5 w-5 text-muted-foreground" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent 
+                  side="top" 
+                  align="start"
+                  className="w-auto p-2 bg-card border-border shadow-lg"
+                >
+                  <div className="flex gap-1">
+                    {STICKERS.map((sticker) => (
+                      <button
+                        key={sticker}
+                        onClick={() => {
+                          handleStickerClick(sticker);
+                          setShowStickers(false);
+                        }}
+                        className="text-2xl hover:scale-110 transition-transform p-2 rounded-lg hover:bg-muted"
+                      >
+                        {sticker}
+                      </button>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
 
               <Input
                 ref={inputRef}
                 value={newComment}
                 onChange={(e) => handleTyping(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Escribe un mensaje... (usa @ para mencionar)"
+                placeholder="Escribe un mensaje..."
                 className="flex-1 rounded-2xl border border-border bg-card"
                 disabled={uploadingFile}
               />
               <Button
                 onClick={handleSend}
                 disabled={!newComment.trim() || sending || uploadingFile}
-                className="h-10 w-10 p-0 rounded-full bg-[#c8a57b] hover:bg-[#a08860] transition-all"
+                className="h-10 w-10 p-0 rounded-full bg-primary hover:bg-primary/90 transition-all"
               >
-                <Send className="h-4 w-4 text-white" />
+                <Send className="h-4 w-4 text-primary-foreground" />
               </Button>
             </div>
           </div>
