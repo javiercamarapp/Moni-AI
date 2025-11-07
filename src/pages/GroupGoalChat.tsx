@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { SectionLoader } from "@/components/SectionLoader";
+import { LoadingScreen } from "@/components/LoadingScreen";
 import BottomNav from "@/components/BottomNav";
 import {
   Popover,
@@ -638,11 +638,7 @@ const GroupGoalChat = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <SectionLoader size="lg" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
