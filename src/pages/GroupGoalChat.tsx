@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send, Smile, Trash2, Reply, X, Edit2, Pin, PinOff, Paperclip, Image as ImageIcon, File, Download } from "lucide-react";
+import { ArrowLeft, Send, Camera, Trash2, Reply, X, Edit2, Pin, PinOff, Paperclip, Image as ImageIcon, File, Download, Heart } from "lucide-react";
+import { Camera as CapacitorCamera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -640,6 +641,65 @@ const GroupGoalChat = () => {
     setNewComment(newComment + sticker);
   };
 
+  const handleCameraClick = async () => {
+    try {
+      setUploadingFile(true);
+      
+      const photo = await CapacitorCamera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Base64,
+        source: CameraSource.Camera
+      });
+
+      if (!photo.base64String) {
+        throw new Error('No se pudo capturar la imagen');
+      }
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No user');
+
+      // Convert base64 to blob
+      const response = await fetch(`data:image/${photo.format};base64,${photo.base64String}`);
+      const blob = await response.blob();
+      
+      const fileName = `${user.id}/${Date.now()}.${photo.format}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('chat-attachments')
+        .upload(fileName, blob);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('chat-attachments')
+        .getPublicUrl(fileName);
+
+      // Send message with photo
+      const { error: insertError } = await supabase
+        .from('goal_comments')
+        .insert({
+          goal_id: id,
+          user_id: user.id,
+          comment: 'Foto',
+          attachment_url: publicUrl,
+          attachment_type: 'image',
+          reply_to_id: replyingTo?.id || null
+        });
+
+      if (insertError) throw insertError;
+
+      setReplyingTo(null);
+      await fetchComments();
+      toast.success('Foto enviada');
+    } catch (error: any) {
+      console.error('Error capturing photo:', error);
+      toast.error('Error al capturar la foto');
+    } finally {
+      setUploadingFile(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -762,7 +822,7 @@ const GroupGoalChat = () => {
                             <Popover>
                               <PopoverTrigger asChild>
                                 <button className="text-gray-400 hover:text-gray-600 p-1" title="Reaccionar">
-                                  <Smile className="h-3.5 w-3.5" />
+                                  <Heart className="h-3.5 w-3.5" />
                                 </button>
                               </PopoverTrigger>
                               <PopoverContent className="w-auto p-2 bg-white border border-gray-200">
@@ -925,38 +985,16 @@ const GroupGoalChat = () => {
                 <Paperclip className="h-5 w-5 text-muted-foreground" />
               </Button>
 
-              <Popover open={showStickers} onOpenChange={setShowStickers}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-10 w-10 rounded-full hover:bg-muted transition-colors"
-                    title="Agregar emoji"
-                  >
-                    <Smile className="h-5 w-5 text-muted-foreground" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent 
-                  side="top" 
-                  align="start"
-                  className="w-auto p-2 bg-card border-border shadow-lg"
-                >
-                  <div className="flex gap-1">
-                    {STICKERS.map((sticker) => (
-                      <button
-                        key={sticker}
-                        onClick={() => {
-                          handleStickerClick(sticker);
-                          setShowStickers(false);
-                        }}
-                        className="text-2xl hover:scale-110 transition-transform p-2 rounded-lg hover:bg-muted"
-                      >
-                        {sticker}
-                      </button>
-                    ))}
-                  </div>
-                </PopoverContent>
-              </Popover>
+              <Button
+                onClick={handleCameraClick}
+                disabled={uploadingFile}
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 rounded-full hover:bg-muted transition-colors"
+                title="Tomar foto"
+              >
+                <Camera className="h-5 w-5 text-muted-foreground" />
+              </Button>
 
               <Input
                 ref={inputRef}
