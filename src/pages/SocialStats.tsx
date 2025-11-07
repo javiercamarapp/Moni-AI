@@ -1,12 +1,30 @@
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Trophy, Medal, Users, Zap, Calendar, Award, TrendingUp, TrendingDown, ChevronUp, ChevronDown } from "lucide-react";
+import { ArrowLeft, Trophy, Medal, Users, Zap, Calendar, Award, TrendingUp, TrendingDown, ChevronUp, ChevronDown, Filter, Plus, UserPlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { User } from "@supabase/supabase-js";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Bar, BarChart } from 'recharts';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const SocialStats = () => {
   const navigate = useNavigate();
@@ -23,6 +41,16 @@ const SocialStats = () => {
   const [periodFilter, setPeriodFilter] = useState<string>("3m");
   const [selectedDataPoint, setSelectedDataPoint] = useState<any>(null);
   const [previousXp, setPreviousXp] = useState<number>(0);
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [comparisonMonth, setComparisonMonth] = useState<string>("");
+  const [comparisonYear, setComparisonYear] = useState<string>("");
+  const [competitionGroups, setCompetitionGroups] = useState<any[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState<string>("all");
+  const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
+  const [newGroupName, setNewGroupName] = useState("");
+  const [newGroupDescription, setNewGroupDescription] = useState("");
+  const [newGroupPrivate, setNewGroupPrivate] = useState(false);
+  const [challengeCategories, setChallengeCategories] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,6 +58,29 @@ const SocialStats = () => {
       if (!user) return;
       
       setUser(user);
+
+      // Fetch challenge categories
+      const { data: categories } = await supabase
+        .from('daily_challenges')
+        .select('category')
+        .not('category', 'is', null);
+      
+      if (categories) {
+        const uniqueCategories = [...new Set(categories.map(c => c.category))];
+        setChallengeCategories(uniqueCategories);
+      }
+
+      // Fetch competition groups
+      const { data: groups } = await supabase
+        .from('competition_groups')
+        .select(`
+          *,
+          competition_group_members(count)
+        `);
+      
+      if (groups) {
+        setCompetitionGroups(groups);
+      }
 
       // Fetch profile
       const { data: profileData } = await supabase
@@ -79,13 +130,16 @@ const SocialStats = () => {
         }
       }
 
-      // Get user's points for current month
+      // Get user's points for current month (or selected comparison month)
+      const targetMonth = comparisonMonth ? parseInt(comparisonMonth) : currentMonth;
+      const targetYear = comparisonYear ? parseInt(comparisonYear) : currentYear;
+
       const { data: userRanking } = await supabase
         .from('monthly_rankings')
         .select('total_points, challenges_completed')
         .eq('user_id', user.id)
-        .eq('month', currentMonth)
-        .eq('year', currentYear)
+        .eq('month', targetMonth)
+        .eq('year', targetYear)
         .maybeSingle();
 
       if (userRanking) {
@@ -93,32 +147,46 @@ const SocialStats = () => {
         setTotalChallenges(userRanking.challenges_completed);
       }
 
-      // Get friendships
-      const { data: friendships } = await supabase
-        .from('friendships')
-        .select('friend_id')
-        .eq('user_id', user.id)
-        .eq('status', 'accepted');
+      // Determine user IDs based on selected group
+      let allUserIds: string[] = [];
+      
+      if (selectedGroup === "all") {
+        // Get friendships
+        const { data: friendships } = await supabase
+          .from('friendships')
+          .select('friend_id')
+          .eq('user_id', user.id)
+          .eq('status', 'accepted');
 
-      if (friendships) {
+        if (friendships) {
+          const friendIds = friendships.map(f => f.friend_id);
+          allUserIds = [...friendIds, user.id];
+        }
+      } else {
+        // Get members from selected competition group
+        const { data: groupMembers } = await supabase
+          .from('competition_group_members')
+          .select('user_id')
+          .eq('group_id', selectedGroup);
 
-        // Get friend IDs for friends ranking
-        const friendIds = friendships.map(f => f.friend_id);
-        const allUserIds = [...friendIds, user.id];
+        if (groupMembers) {
+          allUserIds = groupMembers.map(m => m.user_id);
+        }
+      }
 
-        // Get rankings for friends
-        const { data: friendsRankData } = await supabase
+      if (allUserIds.length > 0) {
+
+        // Get rankings for selected users and month
+        let rankingsQuery = supabase
           .from('monthly_rankings')
-          .select(`
-            user_id,
-            total_points,
-            challenges_completed
-          `)
+          .select('user_id, total_points, challenges_completed')
           .in('user_id', allUserIds)
-          .eq('month', currentMonth)
-          .eq('year', currentYear)
+          .eq('month', targetMonth)
+          .eq('year', targetYear)
           .order('total_points', { ascending: false })
           .limit(10);
+
+        const { data: friendsRankData } = await rankingsQuery;
 
         if (friendsRankData) {
           // Fetch profiles for friends
@@ -139,9 +207,9 @@ const SocialStats = () => {
           });
           setFriendsRankings(enrichedFriendsRank);
           
-          // Calculate user's rank among friends
+          // Calculate user's rank
           const userRankIndex = enrichedFriendsRank.findIndex(r => r.user_id === user.id);
-          const newRank = userRankIndex >= 0 ? userRankIndex + 1 : friendships.length + 1;
+          const newRank = userRankIndex >= 0 ? userRankIndex + 1 : allUserIds.length + 1;
           
           // Check for rank change notification
           if (previousRank > 0 && newRank !== previousRank) {
@@ -224,7 +292,56 @@ const SocialStats = () => {
     };
 
     fetchData();
-  }, [periodFilter]);
+  }, [periodFilter, categoryFilter, comparisonMonth, comparisonYear, selectedGroup]);
+
+  const createCompetitionGroup = async () => {
+    if (!newGroupName.trim()) {
+      toast.error("El nombre del grupo es requerido");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('competition_groups')
+      .insert({
+        name: newGroupName,
+        description: newGroupDescription,
+        created_by: user?.id,
+        is_private: newGroupPrivate
+      })
+      .select()
+      .single();
+
+    if (error) {
+      toast.error("Error al crear el grupo");
+      return;
+    }
+
+    // Add creator as member
+    await supabase
+      .from('competition_group_members')
+      .insert({
+        group_id: data.id,
+        user_id: user?.id
+      });
+
+    toast.success("Grupo creado exitosamente");
+    setShowCreateGroupModal(false);
+    setNewGroupName("");
+    setNewGroupDescription("");
+    setNewGroupPrivate(false);
+    
+    // Refresh groups
+    const { data: groups } = await supabase
+      .from('competition_groups')
+      .select(`
+        *,
+        competition_group_members(count)
+      `);
+    
+    if (groups) {
+      setCompetitionGroups(groups);
+    }
+  };
 
   // Calculate XP percentage change
   const xpChange = useMemo(() => {
@@ -279,6 +396,146 @@ const SocialStats = () => {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-2 space-y-4">
+        {/* Advanced Filters */}
+        <div className="bg-white rounded-2xl shadow-sm p-4 transition-all duration-300">
+          <div className="flex items-center gap-2 mb-3">
+            <Filter className="h-4 w-4 text-primary" />
+            <h3 className="text-sm font-semibold text-gray-900">Filtros Avanzados</h3>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* Category Filter */}
+            <div>
+              <Label className="text-xs text-gray-600 mb-1">Categoría de Reto</Label>
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="h-9 text-xs">
+                  <SelectValue placeholder="Todas las categorías" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas las categorías</SelectItem>
+                  {challengeCategories.map(cat => (
+                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Competition Group Filter */}
+            <div>
+              <Label className="text-xs text-gray-600 mb-1">Grupo de Competencia</Label>
+              <div className="flex gap-2">
+                <Select value={selectedGroup} onValueChange={setSelectedGroup}>
+                  <SelectTrigger className="h-9 text-xs flex-1">
+                    <SelectValue placeholder="Todos los amigos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos los amigos</SelectItem>
+                    {competitionGroups.map(group => (
+                      <SelectItem key={group.id} value={group.id}>
+                        {group.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Dialog open={showCreateGroupModal} onOpenChange={setShowCreateGroupModal}>
+                  <DialogTrigger asChild>
+                    <Button size="sm" variant="outline" className="h-9 px-2">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Crear Grupo de Competencia</DialogTitle>
+                      <DialogDescription>
+                        Crea un grupo personalizado para competir con amigos específicos
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="groupName">Nombre del Grupo</Label>
+                        <Input
+                          id="groupName"
+                          value={newGroupName}
+                          onChange={(e) => setNewGroupName(e.target.value)}
+                          placeholder="Ej: Mis mejores amigos"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="groupDesc">Descripción</Label>
+                        <Input
+                          id="groupDesc"
+                          value={newGroupDescription}
+                          onChange={(e) => setNewGroupDescription(e.target.value)}
+                          placeholder="Opcional"
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="private"
+                          checked={newGroupPrivate}
+                          onChange={(e) => setNewGroupPrivate(e.target.checked)}
+                          className="h-4 w-4"
+                        />
+                        <Label htmlFor="private" className="text-sm">Grupo privado</Label>
+                      </div>
+                      <Button onClick={createCompetitionGroup} className="w-full">
+                        Crear Grupo
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+
+            {/* Month Comparison */}
+            <div className="md:col-span-2">
+              <Label className="text-xs text-gray-600 mb-1">Comparar Período Específico</Label>
+              <div className="flex gap-2">
+                <Select value={comparisonMonth} onValueChange={setComparisonMonth}>
+                  <SelectTrigger className="h-9 text-xs flex-1">
+                    <SelectValue placeholder="Mes actual" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Mes actual</SelectItem>
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                      <SelectItem key={month} value={month.toString()}>
+                        {new Date(2024, month - 1).toLocaleString('es', { month: 'long' })}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={comparisonYear} onValueChange={setComparisonYear}>
+                  <SelectTrigger className="h-9 text-xs flex-1">
+                    <SelectValue placeholder="Año actual" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Año actual</SelectItem>
+                    {[2024, 2025, 2026].map(year => (
+                      <SelectItem key={year} value={year.toString()}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {(comparisonMonth || comparisonYear) && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      setComparisonMonth("");
+                      setComparisonYear("");
+                    }}
+                    className="h-9 px-3 text-xs"
+                  >
+                    Limpiar
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Period Filter */}
         <div className="bg-white rounded-2xl shadow-sm p-1.5 transition-all duration-300">
           <h2 className="text-[8px] font-semibold text-gray-900 mb-1 px-0.5">Período</h2>
