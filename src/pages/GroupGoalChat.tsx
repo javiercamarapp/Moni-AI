@@ -862,7 +862,7 @@ const GroupGoalChat = () => {
         </div>
 
         {/* Input */}
-        <div className="fixed bottom-20 left-0 right-0 bg-white border-t border-gray-200 p-4">
+        <div className="fixed bottom-20 left-0 right-0 bg-background p-4">
           <div className="max-w-7xl mx-auto">
             {/* Reply indicator */}
             {replyingTo && (
@@ -903,19 +903,6 @@ const GroupGoalChat = () => {
               </div>
             )}
 
-            {/* Stickers */}
-            <div className="flex gap-2 mb-3 overflow-x-auto pb-2">
-              {STICKERS.map((sticker) => (
-                <button
-                  key={sticker}
-                  onClick={() => handleStickerClick(sticker)}
-                  className="text-2xl hover:scale-110 transition-transform"
-                >
-                  {sticker}
-                </button>
-              ))}
-            </div>
-
             {/* Input field */}
             <div className="flex gap-2">
               <input
@@ -943,7 +930,7 @@ const GroupGoalChat = () => {
                 onChange={(e) => handleTyping(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Escribe un mensaje... (usa @ para mencionar)"
-                className="flex-1 rounded-2xl border-[#c8a57b]/30"
+                className="flex-1 rounded-2xl border border-border bg-card"
                 disabled={uploadingFile}
               />
               <Button
