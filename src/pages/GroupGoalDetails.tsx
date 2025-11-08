@@ -538,7 +538,7 @@ const GroupGoalDetails = () => {
                 <div className="p-6 pt-0">
                   <Button
                     onClick={() => setShowDetailsModal(false)}
-                    className="w-full h-12 bg-white border border-gray-200 text-gray-900 rounded-xl font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+                    className="w-full h-12 bg-white border border-gray-200 text-gray-900 rounded-xl font-medium shadow-sm"
                   >
                     Cerrar
                   </Button>
