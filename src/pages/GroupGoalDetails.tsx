@@ -536,12 +536,12 @@ const GroupGoalDetails = () => {
                 </div>
 
                 <div className="p-6 pt-0">
-                  <Button
+                  <button
                     onClick={() => setShowDetailsModal(false)}
-                    className="w-full h-12 bg-white border border-gray-200 text-gray-900 rounded-xl font-medium shadow-sm"
+                    className="w-full h-12 bg-white border border-gray-200 text-gray-900 rounded-xl font-medium shadow-sm hover:bg-white"
                   >
                     Cerrar
-                  </Button>
+                  </button>
                 </div>
               </div>
             </div>
