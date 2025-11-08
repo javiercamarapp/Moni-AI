@@ -4,8 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Trophy, Target, Plus } from "lucide-react";
+import { ArrowLeft, Trophy, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { MoniLoader } from "@/components/MoniLoader";
@@ -15,7 +14,6 @@ const CircleChallenges = () => {
   const navigate = useNavigate();
   const [circle, setCircle] = useState<any>(null);
   const [challenges, setChallenges] = useState<any[]>([]);
-  const [goals, setGoals] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
   const [isMember, setIsMember] = useState(false);
   const [showCreateChallengeDialog, setShowCreateChallengeDialog] = useState(false);
@@ -24,7 +22,6 @@ const CircleChallenges = () => {
   const [challengeXP, setChallengeXP] = useState("20");
   const [showXPGain, setShowXPGain] = useState(false);
   const [xpGainAmount, setXPGainAmount] = useState(0);
-  const [progressGlow, setProgressGlow] = useState(false);
   const [completedChallenges, setCompletedChallenges] = useState<Set<string>>(new Set());
   const xpSoundRef = useRef<HTMLAudioElement>(null);
 
@@ -76,16 +73,6 @@ const CircleChallenges = () => {
 
       if (challengesError) throw challengesError;
       setChallenges(challengesData || []);
-
-      // Fetch goals
-      const { data: goalsData, error: goalsError } = await supabase
-        .from('circle_goals')
-        .select('*')
-        .eq('circle_id', id)
-        .order('created_at', { ascending: false });
-
-      if (goalsError) throw goalsError;
-      setGoals(goalsData || []);
     } catch (error: any) {
       console.error('Error fetching data:', error);
       toast.error('Error al cargar datos');
@@ -97,26 +84,6 @@ const CircleChallenges = () => {
 
     const channel = supabase
       .channel(`circle-challenges-${id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'circle_goals',
-          filter: `circle_id=eq.${id}`
-        },
-        () => {
-          fetchData();
-          setProgressGlow(true);
-          setTimeout(() => setProgressGlow(false), 1500);
-          
-          if (xpSoundRef.current) {
-            xpSoundRef.current.currentTime = 0;
-            xpSoundRef.current.volume = 0.35;
-            xpSoundRef.current.play().catch(() => {});
-          }
-        }
-      )
       .on(
         'postgres_changes',
         {
@@ -190,7 +157,6 @@ const CircleChallenges = () => {
       // Show XP animation
       setXPGainAmount(xpReward);
       setShowXPGain(true);
-      setProgressGlow(true);
 
       if (xpSoundRef.current) {
         xpSoundRef.current.currentTime = 0;
@@ -200,7 +166,6 @@ const CircleChallenges = () => {
 
       setTimeout(() => {
         setShowXPGain(false);
-        setProgressGlow(false);
       }, 2500);
 
       toast.success(`¡Reto completado! +${xpReward} XP`);
@@ -276,47 +241,6 @@ const CircleChallenges = () => {
       </div>
 
       <div className="mx-auto px-4 py-2 space-y-4" style={{ maxWidth: '600px' }}>
-        {/* Group Progress */}
-        {goals.length > 0 && (
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
-            <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
-              <Target className="h-4 w-4 text-primary" />
-              Progreso grupal
-            </h2>
-            {goals.map((goal) => {
-              const progress = (Number(goal.current_amount) / Number(goal.target_amount)) * 100;
-              return (
-                <div key={goal.id} className="mb-4 last:mb-0">
-                  <p className="text-gray-600 text-xs mb-2">
-                    Meta: {goal.title}
-                  </p>
-                  <div className="relative">
-                    <Progress 
-                      value={Math.min(progress, 100)} 
-                      className={cn(
-                        "h-3 mb-2 transition-all duration-700",
-                        progressGlow && "animate-pulse"
-                      )}
-                      style={{
-                        filter: progressGlow ? 'drop-shadow(0 0 8px rgba(52, 211, 153, 0.8))' : 'none'
-                      }}
-                    />
-                    {progressGlow && (
-                      <div className="absolute inset-0 bg-emerald-400/20 rounded-full animate-ping pointer-events-none" />
-                    )}
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-gray-700">{progress.toFixed(0)}% completado</span>
-                    <span className="text-gray-500">
-                      ${Number(goal.current_amount).toLocaleString()} / ${Number(goal.target_amount).toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
         {/* Active Challenges */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
           <h2 className="font-semibold text-gray-900 flex items-center gap-2 text-sm mb-3">
