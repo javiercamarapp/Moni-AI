@@ -43,6 +43,10 @@ interface Comment {
   reactions?: Reaction[];
   reply_to?: Comment | null;
   mentions?: string[];
+  profiles?: {
+    username?: string;
+    full_name?: string;
+  };
 }
 
 interface Reaction {
@@ -231,6 +235,25 @@ const GroupGoalChat = () => {
 
       if (error) throw error;
 
+      // Get unique user IDs
+      const userIds = [...new Set(commentsData?.map(c => c.user_id).filter(id => id !== 'moni-ai') || [])];
+      
+      // Fetch profiles for these users
+      let profilesMap: Record<string, any> = {};
+      if (userIds.length > 0) {
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('id, username, full_name')
+          .in('id', userIds);
+        
+        if (profilesData) {
+          profilesMap = profilesData.reduce((acc, profile) => {
+            acc[profile.id] = profile;
+            return acc;
+          }, {} as Record<string, any>);
+        }
+      }
+
       // Fetch reactions for all comments
       const commentIds = commentsData?.map(c => c.id) || [];
       if (commentIds.length > 0) {
@@ -253,12 +276,17 @@ const GroupGoalChat = () => {
         const commentsWithReactions = commentsData?.map(comment => ({
           ...comment,
           reactions: reactionsData?.filter(r => r.comment_id === comment.id) || [],
-          reply_to: comment.reply_to_id ? replyToComments.find(r => r.id === comment.reply_to_id) : null
+          reply_to: comment.reply_to_id ? replyToComments.find(r => r.id === comment.reply_to_id) : null,
+          profiles: comment.user_id !== 'moni-ai' ? profilesMap[comment.user_id] : undefined
         }));
 
         setComments(commentsWithReactions || []);
       } else {
-        setComments(commentsData || []);
+        const commentsWithProfiles = commentsData?.map(comment => ({
+          ...comment,
+          profiles: comment.user_id !== 'moni-ai' ? profilesMap[comment.user_id] : undefined
+        })) || [];
+        setComments(commentsWithProfiles);
       }
     } catch (error: any) {
       console.error('Error fetching comments:', error);
@@ -696,12 +724,19 @@ const GroupGoalChat = () => {
                 className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} animate-fade-in`}
               >
                 <div className={`flex gap-2 max-w-[80%] ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <Avatar className="h-8 w-8 flex-shrink-0">
+                   <Avatar className="h-8 w-8 flex-shrink-0">
                     <AvatarFallback className={isAI ? 'bg-[#c8a57b]' : 'bg-gradient-to-br from-purple-400 to-cyan-400'}>
                       {isAI ? '🤖' : '👤'}
                     </AvatarFallback>
                   </Avatar>
                   <div>
+                    {/* User name */}
+                    {!isCurrentUser && !isAI && (
+                      <p className="text-xs font-medium text-gray-700 mb-1 ml-2">
+                        {comment.profiles?.username || comment.profiles?.full_name || 'Usuario'}
+                      </p>
+                    )}
+                    
                     {/* Pinned indicator */}
                     {comment.is_pinned && (
                       <div className="text-xs text-[#c8a57b] mb-1 ml-2 flex items-center gap-1 font-medium">
