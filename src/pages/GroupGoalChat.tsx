@@ -67,6 +67,12 @@ interface CircleMember {
 
 const STICKERS = ["💪", "🎯", "🥂", "🔥", "🎉", "👏"];
 const REACTION_EMOJIS = ["👍", "❤️", "😂", "🎉", "🚀", "💯"];
+const COMMON_EMOJIS = [
+  "😊", "😂", "🥰", "😍", "🤗", "🤔", "😎", "🥳",
+  "👍", "👏", "🙌", "💪", "🔥", "✨", "⭐", "🎉",
+  "❤️", "💕", "💖", "💯", "🎯", "🚀", "💰", "💵",
+  "🏆", "🥇", "✅", "📈", "📊", "💼", "📱", "💻"
+];
 
 const AI_MESSAGES = [
   "Llevan 73% del progreso total. ¡Excelente ritmo, equipo!",
@@ -96,6 +102,7 @@ const GroupGoalChat = () => {
   const [editText, setEditText] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [emojiPopoverOpen, setEmojiPopoverOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -973,14 +980,39 @@ const GroupGoalChat = () => {
                 disabled={uploadingFile}
               />
 
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-10 w-10 rounded-full hover:bg-white/50"
-                title="Emojis"
-              >
-                <Smile className="h-5 w-5 text-gray-700" />
-              </Button>
+              <Popover open={emojiPopoverOpen} onOpenChange={setEmojiPopoverOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 rounded-full hover:bg-white/50"
+                    title="Emojis"
+                  >
+                    <Smile className="h-5 w-5 text-gray-700" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent 
+                  className="w-64 p-3 bg-white" 
+                  align="end"
+                  side="top"
+                >
+                  <div className="grid grid-cols-8 gap-1">
+                    {COMMON_EMOJIS.map((emoji, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          setNewComment(prev => prev + emoji);
+                          setEmojiPopoverOpen(false);
+                          inputRef.current?.focus();
+                        }}
+                        className="text-2xl hover:bg-gray-100 rounded p-1 transition-colors"
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
 
               <Button
                 onClick={handleSend}
