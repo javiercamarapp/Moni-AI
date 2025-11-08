@@ -249,10 +249,14 @@ const GroupGoalChat = () => {
       // Fetch profiles for these users
       let profilesMap: Record<string, any> = {};
       if (userIds.length > 0) {
-        const { data: profilesData } = await supabase
+        const { data: profilesData, error: profilesError } = await supabase
           .from('profiles')
           .select('id, username, full_name, email')
           .in('id', userIds);
+        
+        console.log('👥 User IDs to fetch:', userIds);
+        console.log('👥 Profiles fetched:', profilesData);
+        console.log('❌ Profiles error:', profilesError);
         
         if (profilesData) {
           profilesMap = profilesData.reduce((acc, profile) => {
@@ -260,6 +264,7 @@ const GroupGoalChat = () => {
             return acc;
           }, {} as Record<string, any>);
         }
+        console.log('📋 Profiles map:', profilesMap);
       }
 
       // Fetch reactions for all comments
@@ -754,9 +759,9 @@ const GroupGoalChat = () => {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    {/* User name - mostrar para todos */}
+                    {/* User name - mostrar para todos los mensajes */}
                     {!isAI && (
-                      <p className={`text-xs font-medium mb-1 ${isCurrentUser ? 'text-right mr-2' : 'text-left ml-2'} ${isCurrentUser ? 'text-gray-600' : 'text-gray-700'}`}>
+                      <p className={`text-xs font-semibold mb-1 px-2 ${isCurrentUser ? 'text-right' : 'text-left'} ${isCurrentUser ? 'text-purple-600' : 'text-cyan-700'}`}>
                         {isCurrentUser 
                           ? 'Tú' 
                           : (comment.profiles?.full_name || comment.profiles?.username || comment.profiles?.email?.split('@')[0] || 'Usuario')
