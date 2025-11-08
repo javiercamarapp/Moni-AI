@@ -299,7 +299,7 @@ const CircleChat = () => {
         </div>
 
         {/* Input Area - Fixed at bottom */}
-        <div className="fixed bottom-0 left-0 right-0 p-2.5 border-t border-white/30 z-50">
+        <div className="fixed bottom-0 left-0 right-0 p-2.5 border-t border-white/30 z-50 bg-gradient-to-b from-[#E5DEFF] to-[#FFDEE2]">
         <div className="w-full max-w-4xl mx-auto">
           <form
             onSubmit={handleSendMessage}
