@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send, Smile, Trash2, Reply, X, Edit2, Pin, PinOff, Paperclip, Image as ImageIcon, File, Download } from "lucide-react";
+import { ArrowLeft, Send, Smile, Trash2, Reply, X, Edit2, Pin, PinOff, Paperclip, Image as ImageIcon, File, Download, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -649,9 +649,13 @@ const GroupGoalChat = () => {
 
   return (
     <>
-      <div className="min-h-screen pb-32 bg-[#f5efea]">
+      <div className="min-h-screen pb-32 relative overflow-hidden">
+        {/* Animated Background */}
+        <div className="fixed inset-0 bg-gradient-to-b from-[#F5F1E8] to-[#E8DCC8] -z-10" />
+        <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)] animate-pulse -z-10" style={{ animationDuration: '4s' }} />
+        
         {/* Header */}
-        <div className="sticky top-0 z-40 bg-gradient-to-b from-purple-50/80 via-cyan-50/60 to-transparent backdrop-blur-sm">
+        <div className="sticky top-0 z-40 bg-gradient-to-b from-[#F5F1E8]/80 to-transparent backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 py-3">
             <div className="flex items-center gap-3">
               <Button
@@ -862,7 +866,7 @@ const GroupGoalChat = () => {
         </div>
 
         {/* Input */}
-        <div className="fixed bottom-20 left-0 right-0 bg-white border-t border-gray-200 p-4">
+        <div className="fixed bottom-20 left-0 right-0 p-4 border-t border-white/30 z-50 bg-gradient-to-b from-[#F5F1E8] to-[#E8DCC8]">
           <div className="max-w-7xl mx-auto">
             {/* Reply indicator */}
             {replyingTo && (
@@ -903,21 +907,8 @@ const GroupGoalChat = () => {
               </div>
             )}
 
-            {/* Stickers */}
-            <div className="flex gap-2 mb-3 overflow-x-auto pb-2">
-              {STICKERS.map((sticker) => (
-                <button
-                  key={sticker}
-                  onClick={() => handleStickerClick(sticker)}
-                  className="text-2xl hover:scale-110 transition-transform"
-                >
-                  {sticker}
-                </button>
-              ))}
-            </div>
-
             {/* Input field */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -931,10 +922,10 @@ const GroupGoalChat = () => {
                 disabled={uploadingFile}
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 rounded-full hover:bg-gray-100"
-                title="Adjuntar archivo o imagen"
+                className="h-10 w-10 rounded-full hover:bg-white/50"
+                title="Cámara / Adjuntar"
               >
-                <Paperclip className="h-5 w-5 text-gray-600" />
+                <Camera className="h-5 w-5 text-gray-700" />
               </Button>
 
               <Input
@@ -943,9 +934,19 @@ const GroupGoalChat = () => {
                 onChange={(e) => handleTyping(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Escribe un mensaje... (usa @ para mencionar)"
-                className="flex-1 rounded-2xl border-[#c8a57b]/30"
+                className="flex-1 rounded-2xl border-white/30 bg-white/50 backdrop-blur-sm"
                 disabled={uploadingFile}
               />
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 rounded-full hover:bg-white/50"
+                title="Emojis"
+              >
+                <Smile className="h-5 w-5 text-gray-700" />
+              </Button>
+
               <Button
                 onClick={handleSend}
                 disabled={!newComment.trim() || sending || uploadingFile}
