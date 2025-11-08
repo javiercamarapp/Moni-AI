@@ -746,10 +746,13 @@ const GroupGoalChat = () => {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    {/* User name */}
-                    {!isCurrentUser && !isAI && (
-                      <p className="text-xs font-medium text-gray-700 mb-1 ml-2">
-                        {comment.profiles?.full_name || comment.profiles?.username || comment.profiles?.email?.split('@')[0] || 'Usuario'}
+                    {/* User name - mostrar para todos */}
+                    {!isAI && (
+                      <p className={`text-xs font-medium mb-1 ${isCurrentUser ? 'text-right mr-2' : 'text-left ml-2'} ${isCurrentUser ? 'text-gray-600' : 'text-gray-700'}`}>
+                        {isCurrentUser 
+                          ? 'Tú' 
+                          : (comment.profiles?.full_name || comment.profiles?.username || comment.profiles?.email?.split('@')[0] || 'Usuario')
+                        }
                       </p>
                     )}
                     
