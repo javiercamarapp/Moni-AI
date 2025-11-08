@@ -104,6 +104,7 @@ const GroupGoalChat = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
   const [emojiPopoverOpen, setEmojiPopoverOpen] = useState(false);
+  const [reactionPopovers, setReactionPopovers] = useState<Record<string, boolean>>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -496,6 +497,9 @@ const GroupGoalChat = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      // Close the popover immediately
+      setReactionPopovers(prev => ({ ...prev, [commentId]: false }));
+
       // Check if user already reacted with this emoji
       const existingReaction = comments
         .find(c => c.id === commentId)
@@ -829,7 +833,10 @@ const GroupGoalChat = () => {
                               <Reply className="h-3.5 w-3.5" />
                             </button>
                             
-                            <Popover>
+                            <Popover 
+                              open={reactionPopovers[comment.id] || false} 
+                              onOpenChange={(open) => setReactionPopovers(prev => ({ ...prev, [comment.id]: open }))}
+                            >
                               <PopoverTrigger asChild>
                                 <button className="text-gray-400 hover:text-gray-600 p-1" title="Reaccionar">
                                   <Smile className="h-3.5 w-3.5" />
