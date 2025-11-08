@@ -249,13 +249,10 @@ const GroupGoalChat = () => {
       // Fetch profiles for these users
       let profilesMap: Record<string, any> = {};
       if (userIds.length > 0) {
-        const { data: profilesData, error: profilesError } = await supabase
+        const { data: profilesData } = await supabase
           .from('profiles')
           .select('id, username, full_name, email')
           .in('id', userIds);
-        
-        console.log('Profiles data:', profilesData);
-        console.log('Profiles error:', profilesError);
         
         if (profilesData) {
           profilesMap = profilesData.reduce((acc, profile) => {
@@ -263,7 +260,6 @@ const GroupGoalChat = () => {
             return acc;
           }, {} as Record<string, any>);
         }
-        console.log('Profiles map:', profilesMap);
       }
 
       // Fetch reactions for all comments
@@ -285,16 +281,12 @@ const GroupGoalChat = () => {
           replyToComments = data || [];
         }
 
-        const commentsWithReactions = commentsData?.map(comment => {
-          const commentWithData = {
-            ...comment,
-            reactions: reactionsData?.filter(r => r.comment_id === comment.id) || [],
-            reply_to: comment.reply_to_id ? replyToComments.find(r => r.id === comment.reply_to_id) : null,
-            profiles: comment.user_id !== 'moni-ai' ? profilesMap[comment.user_id] : undefined
-          };
-          console.log('Comment with profile:', comment.user_id, commentWithData.profiles);
-          return commentWithData;
-        });
+        const commentsWithReactions = commentsData?.map(comment => ({
+          ...comment,
+          reactions: reactionsData?.filter(r => r.comment_id === comment.id) || [],
+          reply_to: comment.reply_to_id ? replyToComments.find(r => r.id === comment.reply_to_id) : null,
+          profiles: comment.user_id !== 'moni-ai' ? profilesMap[comment.user_id] : undefined
+        }));
 
         setComments(commentsWithReactions || []);
       } else {
@@ -522,7 +514,23 @@ const GroupGoalChat = () => {
             emoji: emoji
           });
 
-        if (error) throw error;
+        // If duplicate key error (23505), it means the reaction already exists
+        // This can happen with quick double-clicks, so we'll remove it instead
+        if (error) {
+          if (error.code === '23505') {
+            // Find and delete the existing reaction
+            const { error: deleteError } = await supabase
+              .from('goal_comment_reactions')
+              .delete()
+              .eq('comment_id', commentId)
+              .eq('user_id', user.id)
+              .eq('emoji', emoji);
+            
+            if (deleteError) throw deleteError;
+          } else {
+            throw error;
+          }
+        }
       }
 
       // Refresh comments to get updated reactions
