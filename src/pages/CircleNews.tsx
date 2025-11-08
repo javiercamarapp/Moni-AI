@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Newspaper } from "lucide-react";
+import { ArrowLeft, Newspaper, ExternalLink, Calendar } from "lucide-react";
 import { toast } from "sonner";
 import { MoniLoader } from "@/components/MoniLoader";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 const CircleNews = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [circle, setCircle] = useState<any>(null);
+  const [news, setNews] = useState<any[]>([]);
 
   useEffect(() => {
     fetchData();
@@ -35,6 +38,19 @@ const CircleNews = () => {
         return;
       }
       setCircle(circleData);
+
+      // Fetch circle news
+      const { data: newsData, error: newsError } = await supabase
+        .from('circle_news' as any)
+        .select('*, profiles(username, avatar_url)')
+        .eq('circle_id', id)
+        .order('created_at', { ascending: false });
+
+      if (newsError) {
+        console.error('Error fetching news:', newsError);
+      } else {
+        setNews(newsData || []);
+      }
     } catch (error: any) {
       console.error('Error fetching data:', error);
       toast.error('Error al cargar datos');
@@ -74,15 +90,64 @@ const CircleNews = () => {
       </div>
 
       <div className="mx-auto px-4 py-2" style={{ maxWidth: '600px' }}>
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
-          <div className="text-center py-16">
-            <Newspaper className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-600 text-base mb-2 font-medium">Próximamente</p>
-            <p className="text-gray-500 text-sm max-w-xs mx-auto">
-              Noticias financieras y recomendaciones personalizadas para el círculo
-            </p>
+        {news.length === 0 ? (
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
+            <div className="text-center py-16">
+              <Newspaper className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-600 text-base mb-2 font-medium">No hay noticias</p>
+              <p className="text-gray-500 text-sm max-w-xs mx-auto">
+                Aún no se han agregado noticias a este círculo
+              </p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="space-y-4">
+            {news.map((item) => (
+              <div
+                key={item.id}
+                className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+              >
+                {item.image_url && (
+                  <img
+                    src={item.image_url}
+                    alt={item.title}
+                    className="w-full h-48 object-cover"
+                  />
+                )}
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-900 text-lg mb-2">
+                    {item.title}
+                  </h3>
+                  {item.description && (
+                    <p className="text-gray-600 text-sm mb-3 line-clamp-3">
+                      {item.description}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      <span>
+                        {format(new Date(item.created_at), "d 'de' MMMM, yyyy", { locale: es })}
+                      </span>
+                    </div>
+                    {item.profiles?.username && (
+                      <span>Por {item.profiles.username}</span>
+                    )}
+                  </div>
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+                  >
+                    Leer más
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
