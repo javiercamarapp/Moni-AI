@@ -1,7 +1,5 @@
 import { motion } from "framer-motion";
-import { Trophy, TrendingUp, Users } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Trophy, Users } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface RankingUser {
@@ -50,128 +48,120 @@ export function MonthlyRanking({ currentUser, friendsRanking, topGlobal }: Month
   const league = leagueConfig[currentUser.league] || leagueConfig.bronze;
 
   return (
-    <div className="space-y-4">
-      {/* Liga actual del usuario */}
+    <div className="space-y-6">
+      {/* Liga actual del usuario - Estilo minimalista */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`bg-gradient-to-br ${league.gradient} p-4 rounded-xl border border-border/50`}
+        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-background via-background to-muted/20 p-6 border border-border/40"
       >
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-muted-foreground">Tu liga este mes</p>
-            <h4 className="text-xl font-bold text-foreground flex items-center gap-2">
-              {league.icon} {league.name}
-            </h4>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">Puntos</p>
-            <p className="text-2xl font-bold text-primary">
-              {currentUser.total_points.toLocaleString()}
-            </p>
-          </div>
+        <div className="absolute top-0 right-0 text-6xl opacity-5">
+          {league.icon}
         </div>
-        
-        {currentUser.rank_global_position && (
-          <div className="mt-3 pt-3 border-t border-border/50">
-            <p className="text-xs text-muted-foreground">
-              Posición global: <span className="font-semibold text-foreground">#{currentUser.rank_global_position}</span>
-            </p>
-          </div>
-        )}
+        <div className="relative space-y-1">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Tu liga
+          </p>
+          <h4 className="text-2xl font-semibold text-foreground">
+            {league.name}
+          </h4>
+          <p className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            {currentUser.total_points.toLocaleString()} <span className="text-sm text-muted-foreground font-normal">XP</span>
+          </p>
+        </div>
       </motion.div>
 
-      {/* Ranking de amigos */}
+      {/* Ranking entre Amigos - Minimalista */}
       {friendsRanking.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Users className="w-5 h-5" />
-              Ranking entre Amigos
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 px-1">
+            <Users className="w-4 h-4 text-muted-foreground" />
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Amigos
+            </h3>
+          </div>
+          <div className="space-y-1">
             {friendsRanking.slice(0, 5).map((friend, index) => (
               <motion.div
                 key={friend.user_id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent/50 transition-colors"
+                transition={{ delay: index * 0.05 }}
+                className="flex items-center gap-3 px-3 py-2 rounded-2xl hover:bg-muted/30 transition-all duration-200 group"
               >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                  index === 0 ? 'bg-amber-500/20 text-amber-500' :
-                  index === 1 ? 'bg-slate-400/20 text-slate-400' :
-                  index === 2 ? 'bg-orange-700/20 text-orange-700' :
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ${
+                  index === 0 ? 'bg-amber-500/10 text-amber-600' :
+                  index === 1 ? 'bg-slate-300/10 text-slate-500' :
+                  index === 2 ? 'bg-orange-600/10 text-orange-600' :
                   'bg-muted text-muted-foreground'
                 }`}>
                   {index + 1}
                 </div>
-                <Avatar className="w-8 h-8">
-                  <AvatarFallback className="text-xs bg-primary/20 text-primary">
+                <Avatar className="w-7 h-7 shrink-0">
+                  <AvatarFallback className="text-[10px] bg-primary/10 text-primary">
                     {friend.full_name?.substring(0, 2).toUpperCase() || '??'}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">
+                  <p className="text-xs font-medium text-foreground truncate leading-tight">
                     {friend.full_name || 'Usuario'}
                   </p>
                 </div>
-                <Badge variant="secondary" className="text-xs">
-                  {friend.total_points.toLocaleString()} XP
-                </Badge>
+                <span className="text-xs font-semibold text-muted-foreground tabular-nums">
+                  {friend.total_points.toLocaleString()}
+                </span>
               </motion.div>
             ))}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
-      {/* Top global */}
+      {/* Ranking Global - Minimalista */}
       {topGlobal.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Trophy className="w-5 h-5 text-amber-500" />
-              Top 10 Global
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 px-1">
+            <Trophy className="w-4 h-4 text-amber-500" />
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Top Global
+            </h3>
+          </div>
+          <div className="space-y-1">
             {topGlobal.slice(0, 10).map((user, index) => (
               <motion.div
                 key={user.user_id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent/50 transition-colors"
+                className="flex items-center gap-3 px-3 py-2 rounded-2xl hover:bg-muted/30 transition-all duration-200 group"
               >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                  index === 0 ? 'bg-amber-500/20 text-amber-500' :
-                  index === 1 ? 'bg-slate-400/20 text-slate-400' :
-                  index === 2 ? 'bg-orange-700/20 text-orange-700' :
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ${
+                  index === 0 ? 'bg-amber-500/10 text-amber-600' :
+                  index === 1 ? 'bg-slate-300/10 text-slate-500' :
+                  index === 2 ? 'bg-orange-600/10 text-orange-600' :
                   'bg-muted text-muted-foreground'
                 }`}>
                   {index + 1}
                 </div>
-                <Avatar className="w-8 h-8">
-                  <AvatarFallback className="text-xs bg-primary/20 text-primary">
+                <Avatar className="w-7 h-7 shrink-0">
+                  <AvatarFallback className="text-[10px] bg-primary/10 text-primary">
                     {user.full_name?.substring(0, 2).toUpperCase() || '??'}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">
+                  <p className="text-xs font-medium text-foreground truncate leading-tight">
                     {user.full_name || 'Usuario'}
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    {leagueConfig[user.league]?.name || 'Liga Bronce'}
+                  <p className="text-[10px] text-muted-foreground leading-tight">
+                    {leagueConfig[user.league]?.icon} {leagueConfig[user.league]?.name || 'Bronce'}
                   </p>
                 </div>
-                <Badge variant="secondary" className="text-xs">
-                  {user.total_points.toLocaleString()} XP
-                </Badge>
+                <span className="text-xs font-semibold text-muted-foreground tabular-nums">
+                  {user.total_points.toLocaleString()}
+                </span>
               </motion.div>
             ))}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
     </div>
   );

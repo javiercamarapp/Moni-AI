@@ -1225,9 +1225,9 @@ const Social = () => {
             </div>
           )}
 
-          {/* Ranking Mensual */}
+          {/* Ranking Mensual - Estilo Apple */}
           {rankingData && (
-            <div className="bg-white rounded-2xl shadow-sm p-6">
+            <div className="bg-white rounded-3xl shadow-sm p-6">
               <MonthlyRanking
                 currentUser={rankingData.currentUser}
                 friendsRanking={rankingData.friendsRanking}
