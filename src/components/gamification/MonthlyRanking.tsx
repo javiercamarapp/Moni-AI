@@ -49,15 +49,21 @@ export function MonthlyRanking({ currentUser, friendsRanking, topGlobal }: Month
 
   return (
     <div className="space-y-6">
-      {/* Liga actual del usuario - Mini */}
+      {/* Liga actual del usuario - Mini con listón */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="relative overflow-hidden rounded-xl bg-gradient-to-br from-background via-background to-muted/20 p-2.5 border border-border/40"
       >
+        {/* Listón de la medalla */}
+        <div className="absolute top-0 right-4 w-1 h-8 bg-gradient-to-b from-primary/30 to-transparent" />
+        <div className="absolute top-0 right-6 w-1 h-8 bg-gradient-to-b from-primary/20 to-transparent" />
+        
+        {/* Medalla */}
         <div className="absolute -top-2 -right-2 text-5xl opacity-60">
           {league.icon}
         </div>
+        
         <div className="relative space-y-0">
           <p className="text-[8px] font-medium text-muted-foreground uppercase tracking-wider">
             Tu liga
