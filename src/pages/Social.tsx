@@ -14,6 +14,10 @@ import { toast } from "sonner";
 import MoniLevelUp from "@/components/social/MoniLevelUp";
 import UserBadges from "@/components/social/UserBadges";
 import XPProgressCard from "@/components/social/XPProgressCard";
+import { LevelProgressCard } from "@/components/gamification/LevelProgressCard";
+import { BadgesGallery } from "@/components/gamification/BadgesGallery";
+import { MonthlyRanking } from "@/components/gamification/MonthlyRanking";
+import { PersonalizedChallenges } from "@/components/gamification/PersonalizedChallenges";
 
 const Social = () => {
   const navigate = useNavigate();
@@ -42,6 +46,12 @@ const Social = () => {
   const achievementSoundRef = useRef<HTMLAudioElement>(null);
   const xpSoundRef = useRef<HTMLAudioElement>(null);
   const socialToastSoundRef = useRef<HTMLAudioElement>(null);
+  
+  // Nuevos estados para gamificación
+  const [userLevel, setUserLevel] = useState<any>(null);
+  const [userBadges, setUserBadges] = useState<any[]>([]);
+  const [personalizedChallenges, setPersonalizedChallenges] = useState<any[]>([]);
+  const [rankingData, setRankingData] = useState<any>(null);
 
   const achievementsList = [
     { id: 1, name: "Ahorrista Nivel 1", xp: 100, icon: "💰", desc: "Primeros 100 XP" },

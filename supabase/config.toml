@@ -107,3 +107,15 @@ verify_jwt = false
 
 [functions.verify-daily-challenge]
 verify_jwt = false
+
+[functions.generate-personalized-challenges]
+verify_jwt = true
+
+[functions.verify-challenge-auto]
+verify_jwt = true
+
+[functions.calculate-monthly-rankings]
+verify_jwt = false
+
+[functions.generate-progress-feedback]
+verify_jwt = true
