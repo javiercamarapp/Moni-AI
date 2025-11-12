@@ -52,6 +52,7 @@ const Social = () => {
   const [userBadges, setUserBadges] = useState<any[]>([]);
   const [personalizedChallenges, setPersonalizedChallenges] = useState<any[]>([]);
   const [rankingData, setRankingData] = useState<any>(null);
+  const [generatingChallenges, setGeneratingChallenges] = useState(false);
 
   const achievementsList = [
     { id: 1, name: "Ahorrista Nivel 1", xp: 100, icon: "💰", desc: "Primeros 100 XP" },
@@ -825,6 +826,36 @@ const Social = () => {
     }
   };
 
+  const handleGenerateChallenges = async () => {
+    try {
+      setGeneratingChallenges(true);
+      
+      const { data, error } = await supabase.functions.invoke('generate-personalized-challenges');
+      
+      if (error) throw error;
+      
+      if (data?.challenges && data.challenges.length > 0) {
+        toast.success('¡Retos personalizados generados! 🎯', {
+          description: `${data.challenges.length} retos creados según tus hábitos`
+        });
+        
+        // Recargar datos
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } else {
+        toast.info('No se pudieron generar retos', {
+          description: 'Necesitas más historial de transacciones'
+        });
+      }
+    } catch (error) {
+      console.error('Error generando retos:', error);
+      toast.error('Error al generar retos personalizados');
+    } finally {
+      setGeneratingChallenges(false);
+    }
+  };
+
   const handleShareInvite = async () => {
     try {
       // Generate unique invite code
@@ -1125,12 +1156,67 @@ const Social = () => {
           )}
 
           {/* Retos Personalizados */}
-          {personalizedChallenges.length > 0 && (
-            <PersonalizedChallenges 
-              challenges={personalizedChallenges}
-              onRefresh={() => window.location.reload()}
-            />
-          )}
+          <div className="bg-white rounded-2xl shadow-sm p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Target className="h-5 w-5 text-primary" />
+                🎯 Tus Retos
+              </h2>
+              <Button
+                onClick={handleGenerateChallenges}
+                disabled={generatingChallenges}
+                size="sm"
+                variant="outline"
+                className="text-xs"
+              >
+                {generatingChallenges ? (
+                  <>
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary mr-2" />
+                    Generando...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    Generar Retos IA
+                  </>
+                )}
+              </Button>
+            </div>
+            
+            {personalizedChallenges.length > 0 ? (
+              <PersonalizedChallenges 
+                challenges={personalizedChallenges}
+                onRefresh={() => window.location.reload()}
+              />
+            ) : (
+              <div className="text-center py-8">
+                <Target className="w-12 h-12 mx-auto mb-3 text-muted-foreground opacity-50" />
+                <p className="text-sm text-muted-foreground mb-4">
+                  No tienes retos activos todavía
+                </p>
+                <p className="text-xs text-muted-foreground mb-4">
+                  Genera retos personalizados basados en tus hábitos de gasto usando IA
+                </p>
+                <Button
+                  onClick={handleGenerateChallenges}
+                  disabled={generatingChallenges}
+                  className="mx-auto"
+                >
+                  {generatingChallenges ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                      Analizando...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Generar Retos con IA
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+          </div>
 
           {/* Insignias */}
           {userBadges.length > 0 && (
