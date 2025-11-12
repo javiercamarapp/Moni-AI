@@ -254,6 +254,83 @@ const Social = () => {
           }
         }
 
+        // NUEVA GAMIFICACIÓN - Cargar nivel del usuario
+        const { data: levelData } = await supabase
+          .from('user_levels')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        setUserLevel(levelData);
+
+        // Cargar insignias desbloqueadas
+        const { data: allBadges } = await supabase.from('badges').select('*');
+        const { data: unlockedBadges } = await supabase
+          .from('user_badges')
+          .select('*')
+          .eq('user_id', user.id);
+
+        if (allBadges) {
+          const badgesWithStatus = allBadges.map(badge => ({
+            ...badge,
+            unlocked: unlockedBadges?.some(ub => ub.badge_name === badge.name) || false,
+            earnedAt: unlockedBadges?.find(ub => ub.badge_name === badge.name)?.earned_at
+          }));
+          setUserBadges(badgesWithStatus);
+        }
+
+        // Cargar retos personalizados activos
+        const { data: activeChallenges } = await supabase
+          .from('user_daily_challenges')
+          .select('*, daily_challenges(*)')
+          .eq('user_id', user.id)
+          .in('status', ['active', 'completed'])
+          .order('challenge_date', { ascending: false })
+          .limit(5);
+
+        if (activeChallenges) {
+          setPersonalizedChallenges(activeChallenges.map(uc => ({
+            id: uc.id,
+            titulo: uc.daily_challenges?.title,
+            descripcion: uc.daily_challenges?.description,
+            period: uc.daily_challenges?.period,
+            challenge_type: uc.daily_challenges?.challenge_type,
+            estimated_savings: uc.daily_challenges?.estimated_savings || 0,
+            xp_reward: uc.daily_challenges?.xp_reward,
+            difficulty: uc.difficulty_level,
+            completed: uc.completed,
+            status: uc.status
+          })));
+        }
+
+        // Cargar datos de ranking con amigos y global
+        const { data: currentRanking } = await supabase
+          .from('monthly_rankings')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('month', currentMonth)
+          .eq('year', currentYear)
+          .maybeSingle();
+
+        if (currentRanking) {
+          setRankingData({
+            currentUser: currentRanking,
+            friendsRanking: friendsRankings.map(r => ({
+              user_id: r.user_id,
+              full_name: r.full_name,
+              total_points: r.total_points,
+              rank_position: r.ranking,
+              league: 'bronze'
+            })),
+            topGlobal: generalRankings.map(r => ({
+              user_id: r.user_id,
+              full_name: r.full_name,
+              total_points: r.total_points,
+              league: 'bronze'
+            }))
+          });
+        }
+
         // Setup realtime subscription for rankings
         const rankingsChannel = supabase
           .channel('realtime-rankings')
@@ -1035,6 +1112,43 @@ const Social = () => {
             </div>
           </div>
 
+          {/* NUEVA GAMIFICACIÓN - Nivel y progreso */}
+          {userLevel && (
+            <div className="space-y-4">
+              <LevelProgressCard
+                currentLevel={userLevel.current_level}
+                totalXP={userLevel.total_xp}
+                xpToNextLevel={userLevel.xp_to_next_level}
+                levelTitle={userLevel.level_title}
+              />
+            </div>
+          )}
+
+          {/* Retos Personalizados */}
+          {personalizedChallenges.length > 0 && (
+            <PersonalizedChallenges 
+              challenges={personalizedChallenges}
+              onRefresh={() => window.location.reload()}
+            />
+          )}
+
+          {/* Insignias */}
+          {userBadges.length > 0 && (
+            <div className="bg-white rounded-2xl shadow-sm p-6">
+              <BadgesGallery badges={userBadges} />
+            </div>
+          )}
+
+          {/* Ranking Mensual */}
+          {rankingData && (
+            <div className="bg-white rounded-2xl shadow-sm p-6">
+              <MonthlyRanking
+                currentUser={rankingData.currentUser}
+                friendsRanking={rankingData.friendsRanking}
+                topGlobal={rankingData.topGlobal}
+              />
+            </div>
+          )}
 
 
           {/* Friend Activity - Interactive - Only show when user has friends */}
