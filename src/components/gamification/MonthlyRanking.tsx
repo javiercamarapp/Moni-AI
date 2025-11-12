@@ -49,24 +49,24 @@ export function MonthlyRanking({ currentUser, friendsRanking, topGlobal }: Month
 
   return (
     <div className="space-y-6">
-      {/* Liga actual del usuario - Compacto */}
+      {/* Liga actual del usuario - Mini */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-background via-background to-muted/20 p-4 border border-border/40"
+        className="relative overflow-hidden rounded-xl bg-gradient-to-br from-background via-background to-muted/20 p-3 border border-border/40"
       >
-        <div className="absolute top-0 right-0 text-4xl opacity-20">
+        <div className="absolute -top-1 -right-1 text-3xl opacity-40">
           {league.icon}
         </div>
         <div className="relative space-y-0.5">
-          <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+          <p className="text-[9px] font-medium text-muted-foreground uppercase tracking-wider">
             Tu liga
           </p>
-          <h4 className="text-base font-semibold text-foreground">
+          <h4 className="text-sm font-semibold text-foreground">
             {league.name}
           </h4>
-          <p className="text-xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            {currentUser.total_points.toLocaleString()} <span className="text-[10px] text-muted-foreground font-normal">XP</span>
+          <p className="text-base font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            {currentUser.total_points.toLocaleString()} <span className="text-[9px] text-muted-foreground font-normal">XP</span>
           </p>
         </div>
       </motion.div>
