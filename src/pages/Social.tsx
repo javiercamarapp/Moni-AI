@@ -19,11 +19,11 @@ import { BadgesGallery } from "@/components/gamification/BadgesGallery";
 import { MonthlyRanking } from "@/components/gamification/MonthlyRanking";
 import { PersonalizedChallenges } from "@/components/gamification/PersonalizedChallenges";
 import { FriendCelebrations } from "@/components/social/FriendCelebrations";
+import { useScoreMoni } from "@/hooks/useFinancialData";
 
 const Social = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
-  const [scoreMoni, setScoreMoni] = useState<number>(40);
   const [totalXP, setTotalXP] = useState<number>(0);
   const [profile, setProfile] = useState<any>(null);
   const [showUsernameDialog, setShowUsernameDialog] = useState(false);
@@ -38,6 +38,9 @@ const Social = () => {
   const [friendActivity, setFriendActivity] = useState<any[]>([]);
   const [showAchievementUnlocked, setShowAchievementUnlocked] = useState(false);
   const [unlockedAchievement, setUnlockedAchievement] = useState<any>(null);
+  
+  // Usar el mismo hook que el Dashboard para obtener el Score Moni
+  const { data: scoreMoni = 40 } = useScoreMoni();
   const [showXPGain, setShowXPGain] = useState(false);
   const [xpGainAmount, setXPGainAmount] = useState(0);
   const [socialToast, setSocialToast] = useState<{ show: boolean; userName: string; type: string; xp: number; challenge?: string }>({ show: false, userName: '', type: '', xp: 0 });
@@ -77,11 +80,8 @@ const Social = () => {
         
         if (profileData) {
           setProfile(profileData);
-          // Set initial XP and Score from profile
+          // Set initial XP from profile
           setTotalXP(profileData.total_xp || 0);
-          if (profileData.score_moni) {
-            setScoreMoni(profileData.score_moni);
-          }
           // Show username dialog if user doesn't have a username
           if (!profileData.username) {
             setShowUsernameDialog(true);
@@ -96,16 +96,7 @@ const Social = () => {
           if (newProfile) setProfile(newProfile);
         }
         
-        // Fetch score from user_scores table
-        const { data: scoreData } = await supabase
-          .from('user_scores')
-          .select('score_moni')
-          .eq('user_id', user.id)
-          .maybeSingle();
-        
-        if (scoreData) {
-          setScoreMoni(scoreData.score_moni);
-        }
+        // El Score Moni se obtiene automáticamente del hook useScoreMoni()
 
         // Calculate monthly ranking among friends
         const { data: friendships } = await supabase
@@ -435,7 +426,7 @@ const Social = () => {
                 }
                 
                 setTotalXP(newXP);
-                setScoreMoni(payload.new.score_moni || 40);
+                // El Score Moni se actualiza automáticamente vía hook useScoreMoni()
                 setProfile(payload.new);
               }
             }
