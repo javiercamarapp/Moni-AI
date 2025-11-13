@@ -4,10 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Bell, TrendingUp, Target, Calendar, MessageSquare, DollarSign, Sparkles } from "lucide-react";
+import { ArrowLeft, Bell, TrendingUp, Target, Calendar, MessageSquare, DollarSign, Sparkles, UserPlus, Check, X } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 interface Notification {
   id: string;
@@ -62,8 +63,79 @@ export default function NotificationHistory() {
       savings_tip: "Consejo de Ahorro",
       goal_reminder: "Recordatorio de Meta",
       spending_alert: "Alerta de Gasto",
+      friend_request: "Solicitud de Amistad",
     };
     return titles[type] || "Notificación";
+  };
+
+  const handleAcceptFriendRequest = async (notification: Notification) => {
+    try {
+      const fromUserId = notification.metadata?.from_user_id;
+      if (!fromUserId) {
+        toast.error("Error: datos de solicitud inválidos");
+        return;
+      }
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("Debes iniciar sesión");
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('respond-friend-request', {
+        body: { 
+          notification_id: notification.id,
+          action: 'accept',
+          from_user_id: fromUserId
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) throw error;
+
+      toast.success("Solicitud aceptada");
+      fetchNotifications(); // Refrescar lista
+    } catch (error: any) {
+      console.error('Error accepting friend request:', error);
+      toast.error('Error al aceptar solicitud');
+    }
+  };
+
+  const handleRejectFriendRequest = async (notification: Notification) => {
+    try {
+      const fromUserId = notification.metadata?.from_user_id;
+      if (!fromUserId) {
+        toast.error("Error: datos de solicitud inválidos");
+        return;
+      }
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("Debes iniciar sesión");
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('respond-friend-request', {
+        body: { 
+          notification_id: notification.id,
+          action: 'reject',
+          from_user_id: fromUserId
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) throw error;
+
+      toast.success("Solicitud rechazada");
+      fetchNotifications(); // Refrescar lista
+    } catch (error: any) {
+      console.error('Error rejecting friend request:', error);
+      toast.error('Error al rechazar solicitud');
+    }
   };
 
   return (
@@ -150,6 +222,7 @@ export default function NotificationHistory() {
                         notification.notification_type === "savings_tip" ? "from-emerald-400 to-teal-600" :
                         notification.notification_type === "goal_reminder" ? "from-amber-400 to-orange-500" :
                         notification.notification_type === "spending_alert" ? "from-rose-400 to-red-500" :
+                        notification.notification_type === "friend_request" ? "from-purple-400 to-pink-500" :
                         "from-gray-400 to-gray-600"
                       }`}
                     />
@@ -164,6 +237,7 @@ export default function NotificationHistory() {
                             notification.notification_type === "savings_tip" ? "from-emerald-400 to-teal-600" :
                             notification.notification_type === "goal_reminder" ? "from-amber-400 to-orange-500" :
                             notification.notification_type === "spending_alert" ? "from-rose-400 to-red-500" :
+                            notification.notification_type === "friend_request" ? "from-purple-400 to-pink-500" :
                             "from-gray-400 to-gray-600"}
                         `}>
                           {notification.notification_type === "daily_summary" ? (
@@ -176,6 +250,8 @@ export default function NotificationHistory() {
                             <Target className="h-5 w-5 text-white" />
                           ) : notification.notification_type === "spending_alert" ? (
                             <Bell className="h-5 w-5 text-white" />
+                          ) : notification.notification_type === "friend_request" ? (
+                            <UserPlus className="h-5 w-5 text-white" />
                           ) : (
                             <MessageSquare className="h-5 w-5 text-white" />
                           )}
@@ -202,8 +278,31 @@ export default function NotificationHistory() {
                             {notification.message}
                           </p>
                           
+                          {/* Botones para solicitudes de amistad */}
+                          {notification.notification_type === "friend_request" && notification.status === "sent" && (
+                            <div className="flex gap-2 mt-3">
+                              <Button
+                                onClick={() => handleAcceptFriendRequest(notification)}
+                                size="sm"
+                                className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-2xl shadow-md"
+                              >
+                                <Check className="h-4 w-4 mr-1" />
+                                Aceptar
+                              </Button>
+                              <Button
+                                onClick={() => handleRejectFriendRequest(notification)}
+                                size="sm"
+                                variant="outline"
+                                className="flex-1 bg-white hover:bg-gray-50 rounded-2xl border-2"
+                              >
+                                <X className="h-4 w-4 mr-1" />
+                                Rechazar
+                              </Button>
+                            </div>
+                          )}
+                          
                           {/* Footer con fecha */}
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 mt-3">
                             <div className="flex items-center gap-1 text-xs text-muted-foreground">
                               <Sparkles className="h-3 w-3" />
                               <span>
