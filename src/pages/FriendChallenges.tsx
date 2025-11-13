@@ -70,21 +70,24 @@ const FriendChallenges = () => {
     <>
       <div className="min-h-screen pb-24 bg-muted/30">
         {/* Header */}
-        <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg border-b border-border">
-          <div className="max-w-7xl mx-auto px-6 py-5">
+        <div className="sticky top-0 z-40 bg-gradient-to-b from-purple-50/80 via-cyan-50/60 to-transparent backdrop-blur-sm">
+          <div className="max-w-7xl mx-auto px-4 py-3">
             <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => navigate(-1)}
-                className="rounded-full h-10 w-10 hover:bg-muted"
+                className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
               >
-                <ArrowLeft className="h-5 w-5" />
+                <ArrowLeft className="h-4 w-4 text-gray-700" />
               </Button>
-              <div className="flex-1">
-                <h1 className="text-2xl font-semibold text-foreground">
+              <div>
+                <h1 className="text-lg font-semibold text-gray-900 tracking-tight">
                   Desafíos
                 </h1>
+                <p className="text-xs text-gray-600">
+                  Reta a tus amigos a cumplir metas de ahorro
+                </p>
               </div>
             </div>
           </div>
