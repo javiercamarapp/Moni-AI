@@ -84,13 +84,13 @@ export const FriendChallengeCard = ({ challenge, currentUserId }: FriendChalleng
   };
 
   return (
-    <Card className="p-5 border-border/40 hover:border-border/60 transition-all">
-      <div className="space-y-4">
+    <Card className="p-6 border-border shadow-sm hover:shadow-md transition-all bg-card">
+      <div className="space-y-5">
         {/* Header */}
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3 flex-1">
-            <div className="p-2 rounded-lg bg-muted">
-              <Icon className="w-5 h-5 text-muted-foreground" />
+            <div className="p-2.5 rounded-xl bg-primary/10">
+              <Icon className="w-5 h-5 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="font-medium text-foreground">{challenge.title}</h3>
