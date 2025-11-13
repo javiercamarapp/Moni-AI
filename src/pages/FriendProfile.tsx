@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Trophy, Target, Award, TrendingUp, Calendar, Star } from "lucide-react";
+import { ArrowLeft, Trophy, Target, Award, TrendingUp, Calendar, Star, Heart, ThumbsUp, Flame, Sparkles, Send, Trash2, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SectionLoader } from "@/components/SectionLoader";
@@ -29,6 +30,18 @@ interface FriendGoal {
   icon: string;
   color: string;
   deadline: string | null;
+  reactions: { reaction_type: string; count: number }[];
+  userReaction: string | null;
+  comments: GoalComment[];
+}
+
+interface GoalComment {
+  id: string;
+  user_id: string;
+  comment: string;
+  created_at: string;
+  user_name: string;
+  user_avatar: string;
 }
 
 interface FriendBadge {
@@ -56,12 +69,49 @@ const FriendProfile = () => {
   const [activities, setActivities] = useState<FriendActivity[]>([]);
   const [loading, setLoading] = useState(true);
   const [ranking, setRanking] = useState(0);
+  const [newComment, setNewComment] = useState<{ [key: string]: string }>({});
+  const [currentUserId, setCurrentUserId] = useState<string>('');
+
+  const reactionEmojis = ['👍', '🎉', '💪', '🔥', '❤️', '👏'];
 
   useEffect(() => {
     if (id) {
       fetchFriendProfile();
+      setupRealtimeSubscription();
     }
   }, [id]);
+
+  const setupRealtimeSubscription = () => {
+    const channel = supabase
+      .channel('goal-interactions')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'goal_reactions'
+        },
+        () => {
+          fetchFriendProfile();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'goal_comments'
+        },
+        () => {
+          fetchFriendProfile();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
 
   const fetchFriendProfile = async () => {
     try {
@@ -114,7 +164,71 @@ const FriendProfile = () => {
         .order('created_at', { ascending: false })
         .limit(5);
 
-      setGoals(goalsData || []);
+      if (goalsData && goalsData.length > 0) {
+        // Fetch reactions for all goals
+        const goalIds = goalsData.map(g => g.id);
+        const { data: reactionsData } = await supabase
+          .from('goal_reactions')
+          .select('goal_id, reaction_type, user_id')
+          .in('goal_id', goalIds);
+
+        // Fetch comments for all goals
+        const { data: commentsData } = await supabase
+          .from('goal_comments')
+          .select('id, goal_id, user_id, comment, created_at')
+          .in('goal_id', goalIds)
+          .order('created_at', { ascending: false });
+
+        // Get unique user IDs from comments
+        const commentUserIds = [...new Set(commentsData?.map(c => c.user_id) || [])];
+        const { data: commentUsers } = await supabase
+          .from('profiles')
+          .select('id, full_name, avatar_url')
+          .in('id', commentUserIds);
+
+        // Format goals with reactions and comments
+        const formattedGoals: FriendGoal[] = goalsData.map(goal => {
+          // Group reactions by type
+          const goalReactions = reactionsData?.filter(r => r.goal_id === goal.id) || [];
+          const reactionCounts: { [key: string]: number } = {};
+          goalReactions.forEach(r => {
+            reactionCounts[r.reaction_type] = (reactionCounts[r.reaction_type] || 0) + 1;
+          });
+          const reactions = Object.entries(reactionCounts).map(([type, count]) => ({
+            reaction_type: type,
+            count
+          }));
+
+          // Check if current user reacted
+          const userReaction = goalReactions.find(r => r.user_id === user.id)?.reaction_type || null;
+
+          // Format comments
+          const goalComments = commentsData?.filter(c => c.goal_id === goal.id).map(c => {
+            const commentUser = commentUsers?.find(u => u.id === c.user_id);
+            return {
+              id: c.id,
+              user_id: c.user_id,
+              comment: c.comment,
+              created_at: c.created_at,
+              user_name: commentUser?.full_name || 'Usuario',
+              user_avatar: commentUser?.avatar_url || ''
+            };
+          }) || [];
+
+          return {
+            ...goal,
+            reactions,
+            userReaction,
+            comments: goalComments
+          };
+        });
+
+        setGoals(formattedGoals);
+      } else {
+        setGoals([]);
+      }
+
+      setCurrentUserId(user.id);
 
       // Fetch badges
       const { data: badgesData } = await supabase
@@ -180,6 +294,85 @@ const FriendProfile = () => {
     }
   };
 
+  const handleReaction = async (goalId: string, reactionType: string) => {
+    try {
+      const goal = goals.find(g => g.id === goalId);
+      if (!goal) return;
+
+      if (goal.userReaction === reactionType) {
+        // Remove reaction
+        await supabase
+          .from('goal_reactions')
+          .delete()
+          .eq('goal_id', goalId)
+          .eq('user_id', currentUserId)
+          .eq('reaction_type', reactionType);
+        
+        toast.success('Reacción eliminada');
+      } else {
+        // Add or change reaction
+        if (goal.userReaction) {
+          // Remove old reaction first
+          await supabase
+            .from('goal_reactions')
+            .delete()
+            .eq('goal_id', goalId)
+            .eq('user_id', currentUserId);
+        }
+
+        // Insert new reaction
+        await supabase
+          .from('goal_reactions')
+          .insert({
+            goal_id: goalId,
+            user_id: currentUserId,
+            reaction_type: reactionType
+          });
+
+        toast.success('Reacción agregada');
+      }
+    } catch (error: any) {
+      console.error('Error handling reaction:', error);
+      toast.error('Error al procesar reacción');
+    }
+  };
+
+  const handleAddComment = async (goalId: string) => {
+    try {
+      const comment = newComment[goalId]?.trim();
+      if (!comment) return;
+
+      await supabase
+        .from('goal_comments')
+        .insert({
+          goal_id: goalId,
+          user_id: currentUserId,
+          comment
+        });
+
+      setNewComment(prev => ({ ...prev, [goalId]: '' }));
+      toast.success('Comentario agregado');
+    } catch (error: any) {
+      console.error('Error adding comment:', error);
+      toast.error('Error al agregar comentario');
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      await supabase
+        .from('goal_comments')
+        .delete()
+        .eq('id', commentId)
+        .eq('user_id', currentUserId);
+
+      toast.success('Comentario eliminado');
+    } catch (error: any) {
+      console.error('Error deleting comment:', error);
+      toast.error('Error al eliminar comentario');
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -213,6 +406,14 @@ const FriendProfile = () => {
               Perfil de Amigo
             </h1>
           </div>
+          <Button
+            onClick={() => navigate(`/friend/${id}/compare`)}
+            size="sm"
+            variant="ghost"
+            className="bg-white hover:bg-white/90 shadow-md rounded-2xl font-medium"
+          >
+            <BarChart3 className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
@@ -303,8 +504,81 @@ const FriendProfile = () => {
                         </p>
                       </div>
                     </div>
-                    <Progress value={progress} className="h-2" />
-                    <p className="text-xs text-gray-600 mt-1 text-right">{Math.round(progress)}%</p>
+                    <Progress value={progress} className="h-2 mb-2" />
+                    <p className="text-xs text-gray-600 mb-3 text-right">{Math.round(progress)}%</p>
+
+                    {/* Reactions */}
+                    <div className="flex items-center gap-2 mb-3 flex-wrap">
+                      {reactionEmojis.map(emoji => {
+                        const reactionData = goal.reactions.find(r => r.reaction_type === emoji);
+                        const isActive = goal.userReaction === emoji;
+                        return (
+                          <button
+                            key={emoji}
+                            onClick={() => handleReaction(goal.id, emoji)}
+                            className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all ${
+                              isActive 
+                                ? 'bg-primary text-white shadow-md' 
+                                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                            }`}
+                          >
+                            <span>{emoji}</span>
+                            {reactionData && reactionData.count > 0 && (
+                              <span className="font-semibold">{reactionData.count}</span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Comments */}
+                    {goal.comments.length > 0 && (
+                      <div className="space-y-2 mb-3">
+                        {goal.comments.map(comment => (
+                          <div key={comment.id} className="bg-white rounded-lg p-2 border border-gray-100">
+                            <div className="flex items-start gap-2">
+                              <Avatar className="h-6 w-6">
+                                <AvatarImage src={comment.user_avatar} />
+                                <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                                  {getInitials(comment.user_name)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-semibold text-gray-900">{comment.user_name}</p>
+                                <p className="text-xs text-gray-700 mt-1">{comment.comment}</p>
+                                <p className="text-xs text-gray-500 mt-1">{formatDate(comment.created_at)}</p>
+                              </div>
+                              {comment.user_id === currentUserId && (
+                                <button
+                                  onClick={() => handleDeleteComment(comment.id)}
+                                  className="text-gray-400 hover:text-red-600 transition-colors"
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Add Comment */}
+                    <div className="flex items-center gap-2">
+                      <Textarea
+                        value={newComment[goal.id] || ''}
+                        onChange={(e) => setNewComment(prev => ({ ...prev, [goal.id]: e.target.value }))}
+                        placeholder="Agregar comentario..."
+                        className="flex-1 min-h-[60px] text-sm resize-none"
+                      />
+                      <Button
+                        size="sm"
+                        onClick={() => handleAddComment(goal.id)}
+                        disabled={!newComment[goal.id]?.trim()}
+                        className="bg-primary hover:bg-primary/90"
+                      >
+                        <Send className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 );
               })}
