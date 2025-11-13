@@ -313,24 +313,32 @@ const Social = () => {
           .eq('year', currentYear)
           .maybeSingle();
 
-        if (currentRanking) {
-          setRankingData({
-            currentUser: currentRanking,
-            friendsRanking: friendsRankings.map(r => ({
-              user_id: r.user_id,
-              full_name: r.full_name,
-              total_points: r.total_points,
-              rank_position: r.ranking,
-              league: 'bronze'
-            })),
-            topGlobal: generalRankings.map(r => ({
-              user_id: r.user_id,
-              full_name: r.full_name,
-              total_points: r.total_points,
-              league: 'bronze'
-            }))
-          });
-        }
+        // Siempre crear rankingData, incluso si no existe currentRanking
+        const defaultRanking = currentRanking || {
+          user_id: user.id,
+          total_points: userPoints || 0,
+          challenges_completed: 0,
+          league: 'bronze',
+          rank_position: undefined,
+          rank_global_position: undefined
+        };
+
+        setRankingData({
+          currentUser: defaultRanking,
+          friendsRanking: friendsRankings.map(r => ({
+            user_id: r.user_id,
+            full_name: r.full_name,
+            total_points: r.total_points,
+            rank_position: r.ranking,
+            league: 'bronze'
+          })),
+          topGlobal: generalRankings.map(r => ({
+            user_id: r.user_id,
+            full_name: r.full_name,
+            total_points: r.total_points,
+            league: 'bronze'
+          }))
+        });
 
         // Setup realtime subscription for rankings
         const rankingsChannel = supabase

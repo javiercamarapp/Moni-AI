@@ -53,15 +53,11 @@ export function MonthlyRanking({ currentUser, friendsRanking, topGlobal }: Month
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-visible rounded-xl bg-gradient-to-br from-background via-background to-muted/20 p-2.5 border border-border/40"
+        className="relative overflow-hidden rounded-xl bg-gradient-to-br from-background via-background to-muted/20 p-2.5 border border-border/40"
       >
-        {/* Listón de la medalla */}
-        <div className="absolute -top-6 right-8 w-0.5 h-14 bg-gradient-to-b from-primary/40 via-primary/30 to-primary/10" />
-        <div className="absolute -top-6 right-10 w-0.5 h-14 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/5" />
-        
         {/* Medalla animada */}
         <motion.div 
-          className="absolute top-6 right-6 text-5xl"
+          className="absolute top-2 right-4 text-4xl"
           animate={{ 
             rotate: [-2, 2, -2],
             y: [0, -2, 0]
@@ -71,12 +67,12 @@ export function MonthlyRanking({ currentUser, friendsRanking, topGlobal }: Month
             repeat: Infinity,
             ease: "easeInOut"
           }}
-          style={{ opacity: 0.7 }}
+          style={{ opacity: 0.8 }}
         >
           {league.icon}
         </motion.div>
         
-        <div className="relative space-y-0 pr-12">
+        <div className="relative space-y-0 pr-14">
           <p className="text-[8px] font-medium text-muted-foreground uppercase tracking-wider">
             Tu liga
           </p>
