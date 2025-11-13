@@ -84,18 +84,18 @@ export const FriendChallengeCard = ({ challenge, currentUserId }: FriendChalleng
   };
 
   return (
-    <Card className="p-4 hover:shadow-lg transition-shadow">
+    <Card className="p-5 border-border/40 hover:border-border/60 transition-all">
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-start justify-between">
-          <div className="flex items-start gap-3">
-            <div className={`p-2 rounded-lg ${config.color}/10`}>
-              <Icon className={`w-5 h-5 ${config.color.replace('bg-', 'text-')}`} />
+          <div className="flex items-start gap-3 flex-1">
+            <div className="p-2 rounded-lg bg-muted">
+              <Icon className="w-5 h-5 text-muted-foreground" />
             </div>
-            <div>
-              <h3 className="font-semibold text-foreground">{challenge.title}</h3>
-              <p className="text-sm text-muted-foreground">
-                {config.label} • ${challenge.target_amount.toLocaleString()}
+            <div className="flex-1 min-w-0">
+              <h3 className="font-medium text-foreground">{challenge.title}</h3>
+              <p className="text-sm text-muted-foreground/70 mt-0.5">
+                {config.label} · ${challenge.target_amount.toLocaleString()}
               </p>
             </div>
           </div>
