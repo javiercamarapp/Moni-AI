@@ -64,6 +64,14 @@ const Auth = () => {
         if (biometricAvailable && savedEmail) {
           const success = await authenticate('Autenticarse con Face ID para continuar');
           if (!success) {
+            // Limpiar datos del usuario antes de cerrar sesión
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user?.id) {
+              localStorage.removeItem(`cachedSubscriptions_${user.id}`);
+              localStorage.removeItem(`subscriptionsLastUpdate_${user.id}`);
+              localStorage.removeItem(`scoreMoni`);
+            }
+            
             // Si falla la autenticación, cerrar sesión
             await supabase.auth.signOut();
             toast({
@@ -80,6 +88,15 @@ const Auth = () => {
           .select('level_quiz_completed')
           .eq('id', session.user.id)
           .single();
+        
+        // Limpiar localStorage de datos de otros usuarios antes de navegar
+        const allKeys = Object.keys(localStorage);
+        allKeys.forEach(key => {
+          if ((key.includes('cachedSubscriptions_') || key.includes('subscriptionsLastUpdate_')) && 
+              !key.includes(session.user.id)) {
+            localStorage.removeItem(key);
+          }
+        });
         
         if (profile && !profile.level_quiz_completed) {
           navigate("/level-quiz");

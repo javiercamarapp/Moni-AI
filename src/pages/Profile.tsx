@@ -276,6 +276,14 @@ const Profile = () => {
 
   const handleLogout = async () => {
     try {
+      // Limpiar datos específicos del usuario en localStorage antes de cerrar sesión
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.id) {
+        localStorage.removeItem(`cachedSubscriptions_${user.id}`);
+        localStorage.removeItem(`subscriptionsLastUpdate_${user.id}`);
+        localStorage.removeItem(`scoreMoni`);
+      }
+      
       await supabase.auth.signOut();
       navigate("/auth");
     } catch (error: any) {
