@@ -847,6 +847,66 @@ export type Database = {
           },
         ]
       }
+      friend_challenges: {
+        Row: {
+          category: string | null
+          challenge_type: string
+          challenged_id: string
+          challenged_progress: number
+          challenger_id: string
+          challenger_progress: number
+          created_at: string
+          description: string | null
+          end_date: string
+          id: string
+          start_date: string
+          status: string
+          target_amount: number
+          title: string
+          updated_at: string
+          winner_id: string | null
+          xp_reward: number
+        }
+        Insert: {
+          category?: string | null
+          challenge_type?: string
+          challenged_id: string
+          challenged_progress?: number
+          challenger_id: string
+          challenger_progress?: number
+          created_at?: string
+          description?: string | null
+          end_date: string
+          id?: string
+          start_date?: string
+          status?: string
+          target_amount?: number
+          title: string
+          updated_at?: string
+          winner_id?: string | null
+          xp_reward?: number
+        }
+        Update: {
+          category?: string | null
+          challenge_type?: string
+          challenged_id?: string
+          challenged_progress?: number
+          challenger_id?: string
+          challenger_progress?: number
+          created_at?: string
+          description?: string | null
+          end_date?: string
+          id?: string
+          start_date?: string
+          status?: string
+          target_amount?: number
+          title?: string
+          updated_at?: string
+          winner_id?: string | null
+          xp_reward?: number
+        }
+        Relationships: []
+      }
       friendships: {
         Row: {
           created_at: string
@@ -952,6 +1012,44 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "goal_adjustments_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      goal_celebrations: {
+        Row: {
+          celebration_type: string
+          created_at: string
+          goal_id: string
+          id: string
+          message: string | null
+          user_id: string
+          viewers: Json | null
+        }
+        Insert: {
+          celebration_type?: string
+          created_at?: string
+          goal_id: string
+          id?: string
+          message?: string | null
+          user_id: string
+          viewers?: Json | null
+        }
+        Update: {
+          celebration_type?: string
+          created_at?: string
+          goal_id?: string
+          id?: string
+          message?: string | null
+          user_id?: string
+          viewers?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goal_celebrations_goal_id_fkey"
             columns: ["goal_id"]
             isOneToOne: false
             referencedRelation: "goals"

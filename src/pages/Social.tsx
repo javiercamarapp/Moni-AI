@@ -18,6 +18,7 @@ import { LevelProgressCard } from "@/components/gamification/LevelProgressCard";
 import { BadgesGallery } from "@/components/gamification/BadgesGallery";
 import { MonthlyRanking } from "@/components/gamification/MonthlyRanking";
 import { PersonalizedChallenges } from "@/components/gamification/PersonalizedChallenges";
+import { FriendCelebrations } from "@/components/social/FriendCelebrations";
 
 const Social = () => {
   const navigate = useNavigate();
@@ -1145,6 +1146,16 @@ const Social = () => {
               </button>
 
               <button 
+                onClick={() => navigate('/friend-challenges')}
+                className="flex flex-col items-center gap-1.5 group w-16"
+              >
+                <div className="bg-gradient-to-br from-purple-500/20 to-purple-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
+                  <Trophy className="h-5 w-5 text-purple-600" />
+                </div>
+                <span className="text-[10px] text-gray-600 font-medium text-center">Desafíos</span>
+              </button>
+
+              <button 
                 onClick={() => navigate('/group-goals')}
                 className="flex flex-col items-center gap-1.5 group w-16"
               >
@@ -1314,6 +1325,9 @@ const Social = () => {
               </p>
             </div>
           )}
+
+          {/* Friend Celebrations */}
+          <FriendCelebrations />
 
           {/* Invite and Earn XP */}
           <div className="bg-white rounded-2xl shadow-sm p-4 text-center">

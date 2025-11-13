@@ -70,6 +70,7 @@ import CircleNews from './pages/CircleNews';
 import JoinCircle from './pages/JoinCircle';
 import Challenges from './pages/Challenges';
 import FriendComparison from './pages/FriendComparison';
+import FriendChallenges from './pages/FriendChallenges';
 
 import NotFound from "./pages/NotFound";
 import Subscribe from './pages/Subscribe';
@@ -226,6 +227,7 @@ function App() {
           <Route path="/friends-list" element={<FriendsList />} />
           <Route path="/friend/:id" element={<FriendProfile />} />
           <Route path="/friend/:id/compare" element={<FriendComparison />} />
+          <Route path="/friend-challenges" element={<FriendChallenges />} />
           <Route path="/add-friend" element={<AddFriend />} />
           <Route path="/groups" element={<Groups />} />
           <Route path="/financial-events" element={<FinancialEvents />} />

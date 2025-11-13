@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { formatCurrency } from "@/lib/utils";
 import { useState } from "react";
+import { useGoalCelebrations } from "@/hooks/useGoalCelebrations";
 
 interface GoalCardProps {
   goal: {
@@ -26,6 +27,7 @@ interface GoalCardProps {
 
 export const GoalCard = ({ goal, onAddFunds, onViewDetails, onComplete }: GoalCardProps) => {
   const [reminderEnabled, setReminderEnabled] = useState(true);
+  const { createCelebration } = useGoalCelebrations();
   const progress = (goal.current / goal.target) * 100;
   const remaining = goal.target - goal.current;
   const daysRemaining = goal.deadline
@@ -128,8 +130,14 @@ export const GoalCard = ({ goal, onAddFunds, onViewDetails, onComplete }: GoalCa
         <div className="flex gap-2">
           {progress >= 100 ? (
             <button
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.stopPropagation();
+                // Crear celebración cuando se completa la meta
+                await createCelebration(
+                  goal.id,
+                  'goal_completed',
+                  `¡Completé mi meta de ${goal.title}!`
+                );
                 onComplete();
               }}
               className="flex-1 h-9 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 text-white font-medium text-xs transition-all flex items-center justify-center gap-1.5 border-0"
