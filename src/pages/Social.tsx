@@ -148,6 +148,10 @@ const Social = () => {
           setUserPoints(userRanking.total_points);
         }
 
+        // Variables para guardar los rankings
+        let enrichedFriendsRank: any[] = [];
+        let enrichedGeneralRank: any[] = [];
+
         // Get friend IDs for friends ranking
         if (friendships && friendships.length > 0) {
           const friendIds = friendships.map(f => f.friend_id);
@@ -174,7 +178,7 @@ const Social = () => {
               .select('id, username, full_name, avatar_url')
               .in('id', friendsRankData.map(r => r.user_id));
 
-            const enrichedFriendsRank = friendsRankData.map((rank, index) => {
+            enrichedFriendsRank = friendsRankData.map((rank, index) => {
               const profile = friendProfiles?.find(p => p.id === rank.user_id);
               return {
                 ...rank,
@@ -208,7 +212,7 @@ const Social = () => {
             .select('id, username, full_name, avatar_url')
             .in('id', generalRankData.map(r => r.user_id));
 
-          const enrichedGeneralRank = generalRankData.map((rank, index) => {
+          enrichedGeneralRank = generalRankData.map((rank, index) => {
             const profile = generalProfiles?.find(p => p.id === rank.user_id);
             return {
               ...rank,
@@ -323,16 +327,17 @@ const Social = () => {
           rank_global_position: undefined
         };
 
+        // Usar los datos cargados directamente, no los estados
         setRankingData({
           currentUser: defaultRanking,
-          friendsRanking: friendsRankings.map(r => ({
+          friendsRanking: enrichedFriendsRank.map(r => ({
             user_id: r.user_id,
             full_name: r.full_name,
             total_points: r.total_points,
             rank_position: r.ranking,
             league: 'bronze'
           })),
-          topGlobal: generalRankings.map(r => ({
+          topGlobal: enrichedGeneralRank.map(r => ({
             user_id: r.user_id,
             full_name: r.full_name,
             total_points: r.total_points,
