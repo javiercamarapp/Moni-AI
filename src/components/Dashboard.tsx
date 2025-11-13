@@ -11,6 +11,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import Autoplay from 'embla-carousel-autoplay';
 import { useToast } from "@/hooks/use-toast";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import { useSecurityAudit } from "@/hooks/useSecurityAudit";
 import { motion } from "framer-motion";
 import { useRef } from 'react';
 import { BlurFade } from '@/components/ui/blur-fade';
@@ -70,6 +71,13 @@ const Dashboard = () => {
   const [isCreateGoalModalOpen, setIsCreateGoalModalOpen] = useState(false);
   const [isCreateGroupGoalModalOpen, setIsCreateGroupGoalModalOpen] = useState(false);
   const [userCircles, setUserCircles] = useState<Array<{ id: string; name: string }>>([]);
+  
+  // SEGURIDAD: Auditoría automática de seguridad y detección de anomalías
+  const { status: securityStatus } = useSecurityAudit({
+    runOnMount: true,
+    autoClean: true,
+    showToasts: false, // No mostrar toasts para no molestar al usuario
+  });
   
   // Crear nuevas instancias de autoplay para cada carrusel
   const autoplayPersonalGoals = useRef(
