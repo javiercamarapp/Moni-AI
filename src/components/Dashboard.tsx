@@ -762,12 +762,14 @@ const Dashboard = () => {
           setDailyExpenses(expenses);
         }
 
-        // Load cached subscriptions immediately for instant display
-        const cachedSubs = localStorage.getItem('cachedSubscriptions');
-        const lastUpdate = localStorage.getItem('subscriptionsLastUpdate');
-        
-        if (cachedSubs) {
-          setUpcomingSubscriptions(JSON.parse(cachedSubs));
+        // Load cached subscriptions immediately for instant display (USER-SPECIFIC)
+        if (user?.id) {
+          const cachedSubs = localStorage.getItem(`cachedSubscriptions_${user.id}`);
+          const lastUpdate = localStorage.getItem(`subscriptionsLastUpdate_${user.id}`);
+          
+          if (cachedSubs) {
+            setUpcomingSubscriptions(JSON.parse(cachedSubs));
+          }
         }
 
         // Detectar suscripciones siempre
@@ -848,9 +850,11 @@ const Dashboard = () => {
             console.log('[Subscriptions] Detected subscriptions:', detectedSubs.length);
             setUpcomingSubscriptions(detectedSubs);
             
-            // Cache the results
-            localStorage.setItem('cachedSubscriptions', JSON.stringify(detectedSubs));
-            localStorage.setItem('subscriptionsLastUpdate', Date.now().toString());
+            // Cache the results (USER-SPECIFIC)
+            if (user?.id) {
+              localStorage.setItem(`cachedSubscriptions_${user.id}`, JSON.stringify(detectedSubs));
+              localStorage.setItem(`subscriptionsLastUpdate_${user.id}`, Date.now().toString());
+            }
           } catch (aiError) {
             console.error('[Subscriptions] Error calling AI:', aiError);
           }
@@ -1122,6 +1126,14 @@ const Dashboard = () => {
 
   const handleLogout = async () => {
     try {
+      // Limpiar datos específicos del usuario en localStorage antes de cerrar sesión
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.id) {
+        localStorage.removeItem(`cachedSubscriptions_${user.id}`);
+        localStorage.removeItem(`subscriptionsLastUpdate_${user.id}`);
+        localStorage.removeItem(`scoreMoni`); // También limpiar el score
+      }
+      
       await supabase.auth.signOut();
       navigate("/auth");
     } catch (error: any) {
