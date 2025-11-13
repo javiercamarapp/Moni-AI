@@ -46,6 +46,7 @@ import Reports from './pages/Reports';
 import CategoryExpenses from './pages/CategoryExpenses';
 import Social from './pages/Social';
 import FriendsList from './pages/FriendsList';
+import FriendProfile from './pages/FriendProfile';
 import AddFriend from './pages/AddFriend';
 import SocialStats from './pages/SocialStats';
 import Groups from './pages/Groups';
@@ -222,6 +223,7 @@ function App() {
             </PremiumFeature>
           } />
           <Route path="/friends-list" element={<FriendsList />} />
+          <Route path="/friend/:id" element={<FriendProfile />} />
           <Route path="/add-friend" element={<AddFriend />} />
           <Route path="/groups" element={<Groups />} />
           <Route path="/financial-events" element={<FinancialEvents />} />

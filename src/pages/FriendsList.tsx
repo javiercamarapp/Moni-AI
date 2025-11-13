@@ -394,7 +394,8 @@ const FriendsList = () => {
                 {friends.map((friend) => (
                   <div
                     key={friend.id}
-                    className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4 hover:shadow-xl transition-shadow"
+                    onClick={() => navigate(`/friend/${friend.id}`)}
+                    className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4 hover:shadow-xl transition-all cursor-pointer active:scale-[0.98]"
                   >
                     <div className="flex items-center gap-3">
                       <Avatar className="h-12 w-12 border-2 border-primary/20">

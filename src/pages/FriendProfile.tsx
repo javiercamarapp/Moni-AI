@@ -1,0 +1,392 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { ArrowLeft, Trophy, Target, Award, TrendingUp, Calendar, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { SectionLoader } from "@/components/SectionLoader";
+
+interface FriendProfile {
+  id: string;
+  username: string;
+  full_name: string;
+  avatar_url: string;
+  score_moni: number;
+  total_xp: number;
+  level: number;
+}
+
+interface FriendGoal {
+  id: string;
+  title: string;
+  target: number;
+  current: number;
+  category: string;
+  icon: string;
+  color: string;
+  deadline: string | null;
+}
+
+interface FriendBadge {
+  id: string;
+  name: string;
+  icon: string;
+  rarity: string;
+  earned_at: string;
+}
+
+interface FriendActivity {
+  id: string;
+  activity_type: string;
+  description: string;
+  xp_earned: number;
+  created_at: string;
+}
+
+const FriendProfile = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [profile, setProfile] = useState<FriendProfile | null>(null);
+  const [goals, setGoals] = useState<FriendGoal[]>([]);
+  const [badges, setBadges] = useState<FriendBadge[]>([]);
+  const [activities, setActivities] = useState<FriendActivity[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [ranking, setRanking] = useState(0);
+
+  useEffect(() => {
+    if (id) {
+      fetchFriendProfile();
+    }
+  }, [id]);
+
+  const fetchFriendProfile = async () => {
+    try {
+      // Verify friendship
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate('/auth');
+        return;
+      }
+
+      const { data: friendship } = await supabase
+        .from('friendships')
+        .select('status')
+        .eq('user_id', user.id)
+        .eq('friend_id', id)
+        .eq('status', 'accepted')
+        .single();
+
+      if (!friendship) {
+        toast.error('No eres amigo de este usuario');
+        navigate('/friends-list');
+        return;
+      }
+
+      // Fetch profile
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('id, username, full_name, avatar_url, score_moni, total_xp, level')
+        .eq('id', id)
+        .single();
+
+      if (profileError) throw profileError;
+      setProfile(profileData);
+
+      // Calculate ranking
+      const { data: allScores } = await supabase
+        .from('user_scores')
+        .select('user_id, score_moni')
+        .order('score_moni', { ascending: false });
+
+      const userRanking = allScores?.findIndex(s => s.user_id === id) ?? -1;
+      setRanking(userRanking + 1);
+
+      // Fetch public goals
+      const { data: goalsData } = await supabase
+        .from('goals')
+        .select('id, title, target, current, category, icon, color, deadline')
+        .eq('user_id', id)
+        .eq('is_public', true)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      setGoals(goalsData || []);
+
+      // Fetch badges
+      const { data: badgesData } = await supabase
+        .from('user_badges')
+        .select(`
+          id,
+          earned_at,
+          badges (
+            name,
+            icon,
+            rarity
+          )
+        `)
+        .eq('user_id', id)
+        .order('earned_at', { ascending: false })
+        .limit(6);
+
+      const formattedBadges = badgesData?.map(b => ({
+        id: b.id,
+        name: (b.badges as any)?.name || '',
+        icon: (b.badges as any)?.icon || '🏆',
+        rarity: (b.badges as any)?.rarity || 'common',
+        earned_at: b.earned_at
+      })) || [];
+
+      setBadges(formattedBadges);
+
+      // Fetch recent activity
+      const { data: activityData } = await supabase
+        .from('friend_activity')
+        .select('id, activity_type, description, xp_earned, created_at')
+        .eq('user_id', id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      setActivities(activityData || []);
+
+    } catch (error: any) {
+      console.error('Error fetching friend profile:', error);
+      toast.error('Error al cargar el perfil');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getInitials = (name: string) => {
+    return name.substring(0, 2).toUpperCase();
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return "text-green-600";
+    if (score >= 60) return "text-blue-600";
+    if (score >= 40) return "text-yellow-600";
+    return "text-red-600";
+  };
+
+  const getRarityColor = (rarity: string) => {
+    switch (rarity) {
+      case 'legendary': return 'bg-gradient-to-r from-yellow-400 to-orange-500';
+      case 'epic': return 'bg-gradient-to-r from-purple-500 to-pink-500';
+      case 'rare': return 'bg-gradient-to-r from-blue-500 to-cyan-500';
+      default: return 'bg-gradient-to-r from-gray-400 to-gray-500';
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <SectionLoader size="lg" />
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return null;
+  }
+
+  return (
+    <div className="min-h-screen pb-24 bg-gradient-to-b from-[#E5DEFF] to-white">
+      {/* Header */}
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/95 to-transparent backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-white/50 rounded-full transition-colors"
+            >
+              <ArrowLeft className="h-5 w-5 text-gray-900" />
+            </button>
+            <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
+              Perfil de Amigo
+            </h1>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto px-4 py-4 space-y-4" style={{ maxWidth: '600px' }}>
+        {/* Profile Card */}
+        <Card className="bg-white/90 backdrop-blur-sm shadow-xl border-0">
+          <CardContent className="pt-6">
+            <div className="flex flex-col items-center text-center space-y-4">
+              <Avatar className="h-24 w-24 border-4 border-primary/20 shadow-lg">
+                <AvatarImage src={profile.avatar_url} />
+                <AvatarFallback className="bg-primary/10 text-primary text-2xl font-bold">
+                  {getInitials(profile.full_name)}
+                </AvatarFallback>
+              </Avatar>
+
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">{profile.full_name}</h2>
+                <p className="text-sm text-primary">@{profile.username}</p>
+              </div>
+
+              <div className="flex items-center gap-6 mt-4">
+                <div className="text-center">
+                  <div className="flex items-center gap-1 justify-center mb-1">
+                    <Trophy className="h-4 w-4 text-yellow-600" />
+                    <span className="text-lg font-bold text-gray-900">#{ranking}</span>
+                  </div>
+                  <p className="text-xs text-gray-600">Ranking</p>
+                </div>
+
+                <div className="text-center">
+                  <p className={`text-lg font-bold ${getScoreColor(profile.score_moni)}`}>
+                    {profile.score_moni}/100
+                  </p>
+                  <p className="text-xs text-gray-600">Score Moni</p>
+                </div>
+
+                <div className="text-center">
+                  <div className="flex items-center gap-1 justify-center mb-1">
+                    <Star className="h-4 w-4 text-primary" />
+                    <span className="text-lg font-bold text-gray-900">Nv.{profile.level}</span>
+                  </div>
+                  <p className="text-xs text-gray-600">{profile.total_xp} XP</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Public Goals */}
+        {goals.length > 0 && (
+          <Card className="bg-white/90 backdrop-blur-sm shadow-lg border-0">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Target className="h-5 w-5 text-primary" />
+                Metas Públicas
+              </CardTitle>
+              <CardDescription className="text-xs">
+                {goals.length} {goals.length === 1 ? 'meta activa' : 'metas activas'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {goals.map((goal) => {
+                const progress = (goal.current / goal.target) * 100;
+                return (
+                  <div key={goal.id} className="bg-gradient-to-r from-primary/5 to-transparent rounded-xl p-3 border border-primary/10">
+                    <div className="flex items-start gap-3 mb-2">
+                      <span className="text-2xl">{goal.icon || '🎯'}</span>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-sm text-gray-900 truncate">{goal.title}</h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge variant="outline" className="text-xs">
+                            {goal.category || 'Personal'}
+                          </Badge>
+                          {goal.deadline && (
+                            <div className="flex items-center gap-1 text-xs text-gray-600">
+                              <Calendar className="h-3 w-3" />
+                              {formatDate(goal.deadline)}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs font-semibold text-gray-900">
+                          ${goal.current.toLocaleString()}
+                        </p>
+                        <p className="text-xs text-gray-600">
+                          de ${goal.target.toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                    <Progress value={progress} className="h-2" />
+                    <p className="text-xs text-gray-600 mt-1 text-right">{Math.round(progress)}%</p>
+                  </div>
+                );
+              })}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Badges */}
+        {badges.length > 0 && (
+          <Card className="bg-white/90 backdrop-blur-sm shadow-lg border-0">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Award className="h-5 w-5 text-primary" />
+                Insignias
+              </CardTitle>
+              <CardDescription className="text-xs">
+                {badges.length} {badges.length === 1 ? 'insignia desbloqueada' : 'insignias desbloqueadas'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-3 gap-3">
+                {badges.map((badge) => (
+                  <div key={badge.id} className="text-center">
+                    <div className={`w-16 h-16 mx-auto rounded-full ${getRarityColor(badge.rarity)} flex items-center justify-center text-2xl shadow-lg`}>
+                      {badge.icon}
+                    </div>
+                    <p className="text-xs font-semibold text-gray-900 mt-2 line-clamp-1">{badge.name}</p>
+                    <p className="text-xs text-gray-500">{formatDate(badge.earned_at)}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Recent Activity */}
+        {activities.length > 0 && (
+          <Card className="bg-white/90 backdrop-blur-sm shadow-lg border-0">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                Actividad Reciente
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {activities.map((activity) => (
+                <div key={activity.id} className="flex items-start gap-3 pb-3 border-b border-gray-100 last:border-0">
+                  <div className="bg-primary/10 rounded-full p-2">
+                    <TrendingUp className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-gray-900">{activity.description}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-primary font-semibold">+{activity.xp_earned} XP</span>
+                      <span className="text-xs text-gray-500">{formatDate(activity.created_at)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Empty State */}
+        {goals.length === 0 && badges.length === 0 && activities.length === 0 && (
+          <Card className="bg-white/90 backdrop-blur-sm shadow-lg border-0">
+            <CardContent className="py-12 text-center">
+              <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <Target className="h-8 w-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Sin actividad pública
+              </h3>
+              <p className="text-sm text-gray-600">
+                {profile.full_name} aún no ha compartido metas o logros públicos
+              </p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default FriendProfile;
