@@ -85,51 +85,6 @@ export function MonthlyRanking({ currentUser, friendsRanking, topGlobal }: Month
         </div>
       </motion.div>
 
-      {/* Ranking entre Amigos - Minimalista */}
-      {friendsRanking.length > 0 && (
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 px-1">
-            <Users className="w-4 h-4 text-muted-foreground" />
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Amigos
-            </h3>
-          </div>
-          <div className="space-y-1">
-            {friendsRanking.slice(0, 5).map((friend, index) => (
-              <motion.div
-                key={friend.user_id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="flex items-center gap-3 px-3 py-2 rounded-2xl hover:bg-muted/30 transition-all duration-200 group"
-              >
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ${
-                  index === 0 ? 'bg-amber-500/10 text-amber-600' :
-                  index === 1 ? 'bg-slate-300/10 text-slate-500' :
-                  index === 2 ? 'bg-orange-600/10 text-orange-600' :
-                  'bg-muted text-muted-foreground'
-                }`}>
-                  {index + 1}
-                </div>
-                <Avatar className="w-7 h-7 shrink-0">
-                  <AvatarFallback className="text-[10px] bg-primary/10 text-primary">
-                    {friend.full_name?.substring(0, 2).toUpperCase() || '??'}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-foreground truncate leading-tight">
-                    {friend.full_name || 'Usuario'}
-                  </p>
-                </div>
-                <span className="text-xs font-semibold text-muted-foreground tabular-nums">
-                  {friend.total_points.toLocaleString()}
-                </span>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Ranking Global - Minimalista */}
       {topGlobal.length > 0 && (
         <div className="space-y-3">
@@ -171,6 +126,51 @@ export function MonthlyRanking({ currentUser, friendsRanking, topGlobal }: Month
                 </div>
                 <span className="text-xs font-semibold text-muted-foreground tabular-nums">
                   {user.total_points.toLocaleString()}
+                </span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Ranking entre Amigos - Minimalista */}
+      {friendsRanking.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 px-1">
+            <Users className="w-4 h-4 text-muted-foreground" />
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Amigos
+            </h3>
+          </div>
+          <div className="space-y-1">
+            {friendsRanking.slice(0, 5).map((friend, index) => (
+              <motion.div
+                key={friend.user_id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="flex items-center gap-3 px-3 py-2 rounded-2xl hover:bg-muted/30 transition-all duration-200 group"
+              >
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ${
+                  index === 0 ? 'bg-amber-500/10 text-amber-600' :
+                  index === 1 ? 'bg-slate-300/10 text-slate-500' :
+                  index === 2 ? 'bg-orange-600/10 text-orange-600' :
+                  'bg-muted text-muted-foreground'
+                }`}>
+                  {index + 1}
+                </div>
+                <Avatar className="w-7 h-7 shrink-0">
+                  <AvatarFallback className="text-[10px] bg-primary/10 text-primary">
+                    {friend.full_name?.substring(0, 2).toUpperCase() || '??'}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-foreground truncate leading-tight">
+                    {friend.full_name || 'Usuario'}
+                  </p>
+                </div>
+                <span className="text-xs font-semibold text-muted-foreground tabular-nums">
+                  {friend.total_points.toLocaleString()}
                 </span>
               </motion.div>
             ))}
