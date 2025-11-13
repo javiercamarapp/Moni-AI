@@ -68,21 +68,21 @@ const FriendChallenges = () => {
 
   return (
     <>
-      <div className="min-h-screen pb-24 bg-background">
+      <div className="min-h-screen pb-24 bg-muted/30">
         {/* Header */}
-        <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border/50">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center gap-4">
+        <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg border-b border-border">
+          <div className="max-w-7xl mx-auto px-6 py-5">
+            <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => navigate(-1)}
-                className="rounded-full h-9 w-9 hover:bg-muted/50"
+                className="rounded-full h-10 w-10 hover:bg-muted"
               >
-                <ArrowLeft className="h-4 w-4" />
+                <ArrowLeft className="h-5 w-5" />
               </Button>
               <div className="flex-1">
-                <h1 className="text-2xl font-semibold text-foreground tracking-tight">
+                <h1 className="text-2xl font-semibold text-foreground">
                   Desafíos
                 </h1>
               </div>
@@ -99,8 +99,8 @@ const FriendChallenges = () => {
             <>
               {/* Friends Quick Actions */}
               {friends.length > 0 && (
-                <div className="bg-card rounded-xl p-5 border border-border/40">
-                  <h3 className="text-sm font-medium text-foreground/70 mb-4">
+                <div className="bg-card rounded-2xl p-6 border border-border shadow-sm">
+                  <h3 className="text-sm font-medium text-muted-foreground mb-5">
                     Crear desafío
                   </h3>
                   <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1">
@@ -108,12 +108,12 @@ const FriendChallenges = () => {
                       <button
                         key={friend.id}
                         onClick={() => handleCreateChallenge(friend)}
-                        className="flex flex-col items-center gap-2.5 min-w-[72px] p-2 rounded-lg hover:bg-muted/50 transition-colors"
+                        className="flex flex-col items-center gap-3 min-w-[80px] p-3 rounded-xl hover:bg-muted/50 transition-all active:scale-95"
                       >
-                        <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center ring-1 ring-border/40">
-                          <Plus className="w-5 h-5 text-muted-foreground" />
+                        <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Plus className="w-6 h-6 text-primary" />
                         </div>
-                        <span className="text-xs font-medium text-foreground/70 text-center line-clamp-2">
+                        <span className="text-xs font-medium text-foreground text-center line-clamp-2">
                           {friend.full_name}
                         </span>
                       </button>
@@ -124,21 +124,21 @@ const FriendChallenges = () => {
 
               {/* Tabs */}
               <Tabs defaultValue="active" className="space-y-6">
-                <TabsList className="w-full justify-start">
-                  <TabsTrigger value="pending">
+                <TabsList className="w-full justify-start bg-card rounded-xl p-1 border border-border shadow-sm">
+                  <TabsTrigger value="pending" className="rounded-lg">
                     Pendientes {pendingChallenges.length > 0 && `(${pendingChallenges.length})`}
                   </TabsTrigger>
-                  <TabsTrigger value="active">
+                  <TabsTrigger value="active" className="rounded-lg">
                     Activos {activeChallenges.length > 0 && `(${activeChallenges.length})`}
                   </TabsTrigger>
-                  <TabsTrigger value="completed">
+                  <TabsTrigger value="completed" className="rounded-lg">
                     Completados {completedChallenges.length > 0 && `(${completedChallenges.length})`}
                   </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="pending" className="space-y-4 mt-6">
                   {pendingChallenges.length === 0 ? (
-                    <div className="text-center py-16 bg-card rounded-xl border border-border/40">
+                    <div className="text-center py-20 bg-card rounded-2xl border border-border shadow-sm">
                       <Trophy className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
                       <p className="text-sm text-muted-foreground">No hay desafíos pendientes</p>
                     </div>
@@ -157,10 +157,10 @@ const FriendChallenges = () => {
 
                 <TabsContent value="active" className="space-y-4 mt-6">
                   {activeChallenges.length === 0 ? (
-                    <div className="text-center py-16 bg-card rounded-xl border border-border/40">
+                    <div className="text-center py-20 bg-card rounded-2xl border border-border shadow-sm">
                       <Trophy className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
                       <p className="text-sm text-muted-foreground">No hay desafíos activos</p>
-                      <p className="text-xs text-muted-foreground/70 mt-1">
+                      <p className="text-xs text-muted-foreground/70 mt-2">
                         Reta a tus amigos a cumplir metas de ahorro
                       </p>
                     </div>
@@ -179,7 +179,7 @@ const FriendChallenges = () => {
 
                 <TabsContent value="completed" className="space-y-4 mt-6">
                   {completedChallenges.length === 0 ? (
-                    <div className="text-center py-16 bg-card rounded-xl border border-border/40">
+                    <div className="text-center py-20 bg-card rounded-2xl border border-border shadow-sm">
                       <Trophy className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
                       <p className="text-sm text-muted-foreground">
                         Aún no has completado ningún desafío
