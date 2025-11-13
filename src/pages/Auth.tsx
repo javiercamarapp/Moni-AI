@@ -11,6 +11,7 @@ import resetPasswordLogo from "@/assets/moni-reset-password-logo.png";
 import authBackground from "@/assets/auth-abstract-bg.png";
 import { useBiometricAuth } from "@/hooks/useBiometricAuth";
 import { SignIn2 } from "@/components/ui/clean-minimal-sign-in";
+import { cleanUserDataOnLogin } from "@/lib/securityAudit";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -89,14 +90,8 @@ const Auth = () => {
           .eq('id', session.user.id)
           .single();
         
-        // Limpiar localStorage de datos de otros usuarios antes de navegar
-        const allKeys = Object.keys(localStorage);
-        allKeys.forEach(key => {
-          if ((key.includes('cachedSubscriptions_') || key.includes('subscriptionsLastUpdate_')) && 
-              !key.includes(session.user.id)) {
-            localStorage.removeItem(key);
-          }
-        });
+        // SEGURIDAD: Limpiar localStorage de datos de otros usuarios antes de navegar
+        cleanUserDataOnLogin(session.user.id);
         
         if (profile && !profile.level_quiz_completed) {
           navigate("/level-quiz");
