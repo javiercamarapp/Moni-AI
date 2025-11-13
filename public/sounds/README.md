@@ -2,7 +2,16 @@
 
 Esta carpeta contiene los archivos de audio para las notificaciones y animaciones de la aplicación.
 
-## Archivo requerido
+## Archivos incluidos
+
+### friend-request.mp3
+**Descripción**: Sonido que se reproduce cuando llega una nueva solicitud de amistad.
+
+**Características**:
+- Duración: 0.5 segundos
+- Tono: Notificación suave y amigable
+- Formato: MP3, 44.1kHz
+- Se reproduce automáticamente cuando llega una nueva solicitud
 
 ### levelup.mp3
 **Descripción**: Sonido que se reproduce cuando un usuario sube de nivel.

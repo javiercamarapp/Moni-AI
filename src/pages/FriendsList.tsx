@@ -32,6 +32,17 @@ const FriendsList = () => {
   const [pendingRequests, setPendingRequests] = useState<PendingRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingRequest, setProcessingRequest] = useState<string | null>(null);
+  const [previousPendingCount, setPreviousPendingCount] = useState(0);
+
+  const playNotificationSound = () => {
+    try {
+      const audio = new Audio('/sounds/friend-request.mp3');
+      audio.volume = 0.5;
+      audio.play().catch(err => console.log('Could not play sound:', err));
+    } catch (error) {
+      console.log('Sound playback failed:', error);
+    }
+  };
 
   useEffect(() => {
     fetchFriends();
@@ -75,6 +86,7 @@ const FriendsList = () => {
 
       if (!requests || requests.length === 0) {
         setPendingRequests([]);
+        setPreviousPendingCount(0);
         return;
       }
 
@@ -96,7 +108,14 @@ const FriendsList = () => {
         };
       });
 
+      // Play sound if new request arrived
+      if (requestsData.length > previousPendingCount && previousPendingCount > 0) {
+        playNotificationSound();
+        toast.success('Nueva solicitud de amistad recibida');
+      }
+
       setPendingRequests(requestsData);
+      setPreviousPendingCount(requestsData.length);
     } catch (error: any) {
       console.error('Error fetching pending requests:', error);
     }

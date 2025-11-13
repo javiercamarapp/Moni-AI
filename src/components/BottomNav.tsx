@@ -1,9 +1,11 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, BarChart3, Users, MessageCircle, User } from 'lucide-react';
+import { usePendingFriendRequests } from '@/hooks/usePendingFriendRequests';
 
 const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { pendingCount } = usePendingFriendRequests();
 
   const isActive = (path: string) => {
     // Para dashboard, también considerar la ruta raíz
@@ -38,11 +40,18 @@ const BottomNav = () => {
         
         <button 
           onClick={() => navigate('/social')}
-          className={`flex flex-col items-center gap-1 transition-colors ${
+          className={`flex flex-col items-center gap-1 transition-colors relative ${
             isActive('/social') ? 'text-foreground' : 'text-foreground/70 hover:text-foreground'
           }`}
         >
-          <Users className="w-5 h-5" />
+          <div className="relative">
+            <Users className="w-5 h-5" />
+            {pendingCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
+                {pendingCount > 9 ? '9+' : pendingCount}
+              </span>
+            )}
+          </div>
           <span className="text-xs">Social</span>
         </button>
         
