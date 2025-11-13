@@ -52,12 +52,12 @@ export const FriendCelebrations = () => {
 
   if (celebrations.length === 0) {
     return (
-      <Card className="p-6 text-center">
-        <Sparkles className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-        <p className="text-muted-foreground">
+      <Card className="bg-card rounded-2xl border border-border shadow-sm p-6 text-center">
+        <Sparkles className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+        <p className="text-sm text-muted-foreground">
           Aún no hay celebraciones de tus amigos
         </p>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-xs text-muted-foreground/70 mt-2">
           ¡Cuando tus amigos completen metas, las verás aquí!
         </p>
       </Card>
