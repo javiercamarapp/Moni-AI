@@ -1698,9 +1698,9 @@ export default function FinancialAnalysis() {
                   variant="ghost" 
                   size="sm" 
                   className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 text-xs h-auto py-2"
-                  onClick={() => navigate('/networth')}
+                  onClick={() => navigate('/accounts-cards')}
                 >
-                  Plan de deudas
+                  Mis tarjetas y cuentas bancarias
                 </Button>
                 <Button 
                   variant="ghost" 
