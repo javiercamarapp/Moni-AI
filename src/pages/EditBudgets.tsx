@@ -391,7 +391,7 @@ export default function EditBudgets() {
           }
         }
 
-        // Crear subcategorías solo como referencia (sin presupuestos)
+        // Guardar presupuestos de subcategorías
         for (const subcategory of category.subcategories) {
           const subcatBudget = subcategoryBudgets[subcategory.id];
           
@@ -401,7 +401,7 @@ export default function EditBudgets() {
               ? customSubcategories[subcategory.id]
               : subcategory.name;
 
-            // Buscar o crear subcategoría solo como referencia
+            // Buscar o crear subcategoría
             let { data: existingSubcat } = await supabase
               .from('categories')
               .select('id')
@@ -410,8 +410,10 @@ export default function EditBudgets() {
               .eq('parent_id', categoryId)
               .maybeSingle();
 
-            if (!existingSubcat) {
-              await supabase
+            let subcatId = existingSubcat?.id;
+
+            if (!subcatId) {
+              const { data: newSubcat, error: subcatError } = await supabase
                 .from('categories')
                 .insert({
                   user_id: user.id,
@@ -419,6 +421,34 @@ export default function EditBudgets() {
                   type: 'gasto',
                   color: 'bg-primary/20',
                   parent_id: categoryId
+                })
+                .select('id')
+                .single();
+
+              if (subcatError) throw subcatError;
+              subcatId = newSubcat.id;
+            }
+
+            // Guardar presupuesto de subcategoría
+            const { data: existingBudget } = await supabase
+              .from('category_budgets')
+              .select('id')
+              .eq('user_id', user.id)
+              .eq('category_id', subcatId)
+              .maybeSingle();
+
+            if (existingBudget) {
+              await supabase
+                .from('category_budgets')
+                .update({ monthly_budget: subcatBudget })
+                .eq('id', existingBudget.id);
+            } else {
+              await supabase
+                .from('category_budgets')
+                .insert({
+                  user_id: user.id,
+                  category_id: subcatId,
+                  monthly_budget: subcatBudget
                 });
             }
           }
@@ -812,7 +842,7 @@ export default function EditBudgets() {
                               }
                             }
 
-                            // Crear subcategorías solo como referencia (sin presupuestos)
+                            // Guardar presupuestos de subcategorías
                             for (const subcategory of category.subcategories) {
                               const subcatBudget = subcategoryBudgets[subcategory.id];
                               
@@ -822,7 +852,7 @@ export default function EditBudgets() {
                                   ? customSubcategories[subcategory.id]
                                   : subcategory.name;
 
-                                // Buscar o crear subcategoría solo como referencia
+                                // Buscar o crear subcategoría
                                 let { data: existingSubcat } = await supabase
                                   .from('categories')
                                   .select('id')
@@ -831,8 +861,10 @@ export default function EditBudgets() {
                                   .eq('parent_id', categoryId)
                                   .maybeSingle();
 
-                                if (!existingSubcat) {
-                                  await supabase
+                                let subcatId = existingSubcat?.id;
+
+                                if (!subcatId) {
+                                  const { data: newSubcat, error: subcatError } = await supabase
                                     .from('categories')
                                     .insert({
                                       user_id: user.id,
@@ -840,6 +872,34 @@ export default function EditBudgets() {
                                       type: 'gasto',
                                       color: 'bg-primary/20',
                                       parent_id: categoryId
+                                    })
+                                    .select('id')
+                                    .single();
+
+                                  if (subcatError) throw subcatError;
+                                  subcatId = newSubcat.id;
+                                }
+
+                                // Guardar presupuesto de subcategoría
+                                const { data: existingBudget } = await supabase
+                                  .from('category_budgets')
+                                  .select('id')
+                                  .eq('user_id', user.id)
+                                  .eq('category_id', subcatId)
+                                  .maybeSingle();
+
+                                if (existingBudget) {
+                                  await supabase
+                                    .from('category_budgets')
+                                    .update({ monthly_budget: subcatBudget })
+                                    .eq('id', existingBudget.id);
+                                } else {
+                                  await supabase
+                                    .from('category_budgets')
+                                    .insert({
+                                      user_id: user.id,
+                                      category_id: subcatId,
+                                      monthly_budget: subcatBudget
                                     });
                                 }
                               }
