@@ -1697,7 +1697,7 @@ export default function FinancialAnalysis() {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 text-xs h-auto py-2"
+                  className="bg-white rounded-[20px] shadow-xl border border-blue-100 hover:bg-white/90 text-[10px] h-auto py-2 px-2"
                   onClick={() => navigate('/accounts-cards')}
                 >
                   Mis tarjetas y cuentas bancarias
