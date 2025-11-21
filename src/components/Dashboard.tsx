@@ -358,11 +358,16 @@ const Dashboard = () => {
     
     const loadBudgetData = async () => {
       try {
-        // Get total monthly budget from category_budgets
+        // Get total monthly budget from category_budgets (only parent categories, excluding savings)
         const { data: budgetData, error: budgetError } = await supabase
           .from('category_budgets')
-          .select('monthly_budget')
-          .eq('user_id', user.id);
+          .select(`
+            monthly_budget,
+            category_id,
+            categories!inner(name, parent_id)
+          `)
+          .eq('user_id', user.id)
+          .is('categories.parent_id', null); // Only get parent categories
 
         if (budgetError) {
           console.error('❌ Error al cargar presupuestos:', budgetError);
@@ -370,8 +375,18 @@ const Dashboard = () => {
         }
 
         if (budgetData && budgetData.length > 0) {
-          const total = budgetData.reduce((sum, b) => sum + Number(b.monthly_budget), 0);
+          // Filter out savings/investment categories
+          const filteredBudgets = budgetData.filter(b => {
+            const categoryName = b.categories?.name || '';
+            // Exclude savings category
+            return !categoryName.includes('Ahorro') && 
+                   !categoryName.includes('Inversión') && 
+                   !categoryName.includes('emergencia');
+          });
+          
+          const total = filteredBudgets.reduce((sum, b) => sum + Number(b.monthly_budget), 0);
           setTotalBudget(total);
+          console.log('💰 Presupuesto mensual (solo categorías padre):', total);
         } else {
           setTotalBudget(0);
         }
