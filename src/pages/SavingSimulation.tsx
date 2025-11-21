@@ -23,10 +23,10 @@ const SavingSimulation = () => {
               </Button>
               <div>
                 <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
-                  Simulación de ahorro por IA
+                  Simulación de ahorro por día
                 </h1>
                 <p className="text-xs text-gray-600">
-                  Proyecta tu ahorro con inteligencia artificial
+                  Proyecta tu ahorro diario con inteligencia artificial
                 </p>
               </div>
             </div>
