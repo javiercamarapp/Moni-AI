@@ -63,8 +63,8 @@ export default function SafeToSpendWidget({
           <span className="text-foreground font-medium">${monthlyIncome.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
         </div>
         <div className="flex justify-between">
-          <span>Presupuesto mensual</span>
-          <span className="text-foreground font-medium">-${totalBudget.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+          <span>Gastado al momento</span>
+          <span className="text-foreground font-medium">-${actualExpenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
         </div>
         <div className="flex justify-between">
           <span>Ahorro para metas ({goalsCount})</span>
