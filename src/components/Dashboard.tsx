@@ -1182,7 +1182,7 @@ const Dashboard = () => {
           {/* Botón de nivel financiero */}
           <Button 
             variant="ghost" 
-            className="bg-card rounded-3xl shadow-lg hover:shadow-xl text-gray-900 h-10 px-3 gap-2 transition-all hover:-translate-y-1 border-0"
+            className="bg-card rounded-3xl shadow-lg text-gray-900 h-10 px-3 gap-2 transition-transform hover:-translate-y-1 border-0"
             onClick={() => {
               sessionStorage.setItem('dashboardScrollPosition', window.scrollY.toString());
               navigate("/financial-journey");
@@ -1200,7 +1200,7 @@ const Dashboard = () => {
               variant="ghost" 
               size="icon" 
               onClick={() => navigate("/notifications")}
-              className="bg-card rounded-3xl shadow-lg hover:shadow-xl text-gray-900 h-10 w-10 transition-all hover:-translate-y-1 border-0"
+              className="bg-card rounded-3xl shadow-lg text-gray-900 h-10 w-10 transition-transform hover:-translate-y-1 border-0"
             >
               <Bell className="h-5 w-5" />
             </Button>
