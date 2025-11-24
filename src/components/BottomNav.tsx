@@ -17,7 +17,7 @@ const BottomNav = () => {
 
   return (
     <nav className="fixed bottom-4 left-4 right-4 z-50 flex justify-center">
-      <div className="bg-card rounded-full shadow-lg px-8 py-3 flex items-center gap-8">
+      <div className="bg-card rounded-full shadow-lg px-8 py-4 flex items-center gap-8">
         <button 
           onClick={() => navigate('/dashboard')}
           className={`transition-colors ${
