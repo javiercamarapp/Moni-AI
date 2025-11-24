@@ -16,63 +16,56 @@ const BottomNav = () => {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-gradient-card/95 backdrop-blur-sm border-t border-white/10 z-50">
-      <div className="flex justify-around items-center py-3 px-4">
+    <nav className="fixed bottom-4 left-4 right-4 z-50 flex justify-center">
+      <div className="bg-card rounded-full shadow-lg px-8 py-3 flex items-center gap-8">
         <button 
           onClick={() => navigate('/dashboard')}
-          className={`flex flex-col items-center gap-1 transition-colors ${
-            isActive('/dashboard') ? 'text-foreground' : 'text-foreground/70 hover:text-foreground'
+          className={`transition-colors ${
+            isActive('/dashboard') ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <Home className="w-5 h-5" />
-          <span className="text-xs">Inicio</span>
+          <Home className="w-6 h-6" />
         </button>
         
         <button 
           onClick={() => navigate('/analysis')}
-          className={`flex flex-col items-center gap-1 transition-colors ${
-            isActive('/analysis') ? 'text-foreground' : 'text-foreground/70 hover:text-foreground'
+          className={`transition-colors ${
+            isActive('/analysis') ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <BarChart3 className="w-5 h-5" />
-          <span className="text-xs">Análisis</span>
+          <BarChart3 className="w-6 h-6" />
         </button>
         
         <button 
           onClick={() => navigate('/social')}
-          className={`flex flex-col items-center gap-1 transition-colors relative ${
-            isActive('/social') ? 'text-foreground' : 'text-foreground/70 hover:text-foreground'
+          className={`transition-colors relative ${
+            isActive('/social') ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <div className="relative">
-            <Users className="w-5 h-5" />
-            {pendingCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
-                {pendingCount > 9 ? '9+' : pendingCount}
-              </span>
-            )}
-          </div>
-          <span className="text-xs">Social</span>
+          <Users className="w-6 h-6" />
+          {pendingCount > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
+              {pendingCount > 9 ? '9+' : pendingCount}
+            </span>
+          )}
         </button>
         
         <button 
           onClick={() => navigate('/chat')}
-          className={`flex flex-col items-center gap-1 transition-colors ${
-            isActive('/chat') ? 'text-foreground' : 'text-foreground/70 hover:text-foreground'
+          className={`transition-colors ${
+            isActive('/chat') ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <MessageCircle className="w-5 h-5" />
-          <span className="text-xs">Chat IA</span>
+          <MessageCircle className="w-6 h-6" />
         </button>
         
         <button 
           onClick={() => navigate('/profile')}
-          className={`flex flex-col items-center gap-1 transition-colors ${
-            isActive('/profile') ? 'text-foreground' : 'text-foreground/70 hover:text-foreground'
+          className={`transition-colors ${
+            isActive('/profile') ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <User className="w-5 h-5" />
-          <span className="text-xs">Perfil</span>
+          <User className="w-6 h-6" />
         </button>
       </div>
     </nav>
