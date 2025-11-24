@@ -1181,7 +1181,6 @@ const Dashboard = () => {
         <div className="flex gap-2 items-center">
           {/* Botón de nivel financiero */}
           <Button 
-            variant="ghost" 
             className="bg-card rounded-3xl text-gray-900 h-10 px-3 gap-2 transition-transform hover:-translate-y-1 border-0"
             onClick={() => {
               sessionStorage.setItem('dashboardScrollPosition', window.scrollY.toString());
@@ -1197,7 +1196,6 @@ const Dashboard = () => {
           {/* Botón de notificaciones */}
           <div className="relative">
             <Button 
-              variant="ghost" 
               size="icon" 
               onClick={() => navigate("/notifications")}
               className="bg-card rounded-3xl text-gray-900 h-10 w-10 transition-transform hover:-translate-y-1 border-0"
