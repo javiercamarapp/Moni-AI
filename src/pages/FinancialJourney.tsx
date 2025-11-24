@@ -178,25 +178,31 @@ export default function FinancialJourney() {
           {(() => {
             let pathD = '';
             nodes.forEach((node, i) => {
+              const x = parseFloat(node.position.x);
+              const y = parseFloat(node.position.y.replace('px', ''));
+              
               if (i === 0) {
-                pathD = `M ${node.position.x} ${node.position.y}`;
+                pathD = `M ${x} ${y}`;
               } else {
                 const prevNode = nodes[i - 1];
-                // Smooth curve between points
-                const midX = (parseFloat(node.position.x) + parseFloat(prevNode.position.x)) / 2;
-                const midY = (parseFloat(node.position.y.replace('px', '')) + parseFloat(prevNode.position.y.replace('px', ''))) / 2;
-                pathD += ` Q ${midX}% ${midY}px, ${node.position.x} ${node.position.y}`;
+                const prevX = parseFloat(prevNode.position.x);
+                const prevY = parseFloat(prevNode.position.y.replace('px', ''));
+                
+                // Smooth curve between points using quadratic bezier
+                const controlX = (x + prevX) / 2;
+                const controlY = (y + prevY) / 2;
+                pathD += ` Q ${controlX} ${controlY}, ${x} ${y}`;
               }
             });
 
             // Inactive path (full length, dashed)
             const inactivePath = (
-              <motion.path
+              <path
                 d={pathD}
                 fill="none"
-                stroke="rgba(255,255,255,0.15)"
-                strokeWidth="2"
-                strokeDasharray="6 3"
+                stroke="rgba(255,255,255,0.2)"
+                strokeWidth="3"
+                strokeDasharray="8 4"
               />
             );
 
@@ -206,7 +212,7 @@ export default function FinancialJourney() {
                 d={pathD}
                 fill="none"
                 stroke="url(#pathGradient)"
-                strokeWidth="3"
+                strokeWidth="4"
                 strokeLinecap="round"
                 filter="url(#glow)"
                 initial={{ pathLength: 0 }}
