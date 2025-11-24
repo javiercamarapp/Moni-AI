@@ -1173,7 +1173,7 @@ const Dashboard = () => {
       {/* Header superior con logo y notificaciones */}
       <div className="p-2 flex justify-between items-start">
         {/* Logo banner - esquina superior izquierda */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm overflow-hidden w-16 h-10">
+        <div className="bg-card rounded-3xl shadow-lg overflow-hidden w-16 h-10">
           <img src={heroAuth} alt="Moni" className="w-full h-full object-cover" />
         </div>
         
@@ -1182,7 +1182,7 @@ const Dashboard = () => {
           {/* Botón de nivel financiero */}
           <Button 
             variant="ghost" 
-            className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md text-gray-900 h-10 px-3 gap-2 transition-all border-0"
+            className="bg-card rounded-3xl shadow-lg hover:shadow-xl text-gray-900 h-10 px-3 gap-2 transition-all border-0"
             onClick={() => {
               sessionStorage.setItem('dashboardScrollPosition', window.scrollY.toString());
               navigate("/financial-journey");
@@ -1200,7 +1200,7 @@ const Dashboard = () => {
               variant="ghost" 
               size="icon" 
               onClick={() => navigate("/notifications")}
-              className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md text-gray-900 h-10 w-10 transition-all border-0"
+              className="bg-card rounded-3xl shadow-lg hover:shadow-xl text-gray-900 h-10 w-10 transition-all border-0"
             >
               <Bell className="h-5 w-5" />
             </Button>
@@ -1226,7 +1226,7 @@ const Dashboard = () => {
         
         {/* Botón de cuentas y tarjetas */}
         <Card 
-          className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer flex-shrink-0 border-0"
+          className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer flex-shrink-0 border-0"
           onClick={() => navigate('/accounts-cards')}
         >
           <div className="flex items-center gap-2">
@@ -1246,7 +1246,7 @@ const Dashboard = () => {
         <div className="mx-4 mb-3">
           <BlurFade delay={0.25} inView>
             <Card 
-              className="p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm hover:shadow-md transition-all cursor-pointer border-0"
+              className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer border-0"
               onClick={() => {
                 navigate('/score-moni');
                 window.scrollTo(0, 0);
@@ -1318,7 +1318,7 @@ const Dashboard = () => {
         {/* Quick Stats - Primera fila: 4 botones */}
         <div className="grid grid-cols-4 gap-2 sm:gap-3">
           <button 
-            className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer animate-fade-in border-0" 
+            className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer animate-fade-in border-0"
             onClick={() => navigate('/balance')}
             style={{ animationDelay: '100ms' }}
           >
@@ -1336,7 +1336,7 @@ const Dashboard = () => {
           </button>
 
           <button 
-            className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer animate-fade-in border-0" 
+            className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer animate-fade-in border-0"
             style={{ animationDelay: '200ms' }}
             onClick={() => navigate('/net-worth')}
           >
@@ -1358,7 +1358,7 @@ const Dashboard = () => {
 
           <button 
             onClick={() => navigate('/goals')}
-            className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer animate-fade-in border-0" 
+            className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer animate-fade-in border-0" 
             style={{ animationDelay: '300ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
@@ -1374,7 +1374,7 @@ const Dashboard = () => {
 
           <button 
             onClick={() => navigate('/budgets')}
-            className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer animate-fade-in border-0" 
+            className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer animate-fade-in border-0"
             style={{ animationDelay: '400ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
@@ -1430,7 +1430,7 @@ const Dashboard = () => {
 
         {/* Presupuesto Mensual */}
         <Card 
-          className="p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden cursor-pointer hover:shadow-md transition-all"
+          className="p-3 bg-card rounded-3xl shadow-lg border-0 relative overflow-hidden cursor-pointer hover:shadow-xl transition-all"
           onClick={() => navigate('/budgets')}
         >
           <div className="space-y-1.5 relative z-10">
@@ -1498,7 +1498,7 @@ const Dashboard = () => {
         {/* Grid de 2 columnas: Suscripciones y Deudas - Alineados horizontalmente siempre */}
         <div className="grid grid-cols-2 gap-2 sm:gap-4">
           {/* Widget combinado: Suscripciones + Gastos Cotidianos */}
-          <Card className="p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:shadow-md transition-all">
+          <Card className="p-3 bg-card rounded-3xl shadow-lg border-0 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:shadow-xl transition-all">
             <GlowingEffect
               spread={40}
               glow={true}
@@ -1643,7 +1643,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Widget de Deudas de Tarjetas */}
-          <Card className="p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:shadow-md transition-all">
+          <Card className="p-3 bg-card rounded-3xl shadow-lg border-0 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:shadow-xl transition-all">
             <GlowingEffect
               spread={40}
               glow={true}
@@ -1721,7 +1721,7 @@ const Dashboard = () => {
 
         {/* WhatsApp Banner */}
         {showWhatsAppBanner && (
-          <Card className="p-3 sm:p-4 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden animate-fade-in hover:shadow-md transition-all cursor-pointer" style={{
+          <Card className="p-3 sm:p-4 bg-card rounded-3xl shadow-lg border-0 relative overflow-hidden animate-fade-in hover:shadow-xl transition-all cursor-pointer" style={{
           animationDelay: '500ms'
         }}>
             <GlowingEffect
@@ -1761,7 +1761,7 @@ const Dashboard = () => {
                   <Button 
                     size="sm" 
                     onClick={() => setIsCreateGoalModalOpen(true)} 
-                    className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white/80 hover:scale-[1.03] text-gray-900 text-xs sm:text-sm transition-all duration-200 font-semibold border-0"
+                    className="bg-card rounded-3xl shadow-lg hover:shadow-xl text-gray-900 text-xs sm:text-sm transition-all duration-200 font-semibold border-0"
                   >
                     <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                     Nueva Meta
@@ -1769,7 +1769,7 @@ const Dashboard = () => {
               </div>
 
               {goals.length === 0 ? (
-                <Card className="w-full p-4 sm:p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden text-center animate-fade-in min-w-0">
+                <Card className="w-full p-4 sm:p-6 bg-card rounded-3xl shadow-lg border-0 relative overflow-hidden text-center animate-fade-in min-w-0">
                   <div className="relative z-10">
                     <p className="text-sm sm:text-base text-foreground/90">No tienes metas creadas aún</p>
                   </div>
@@ -1795,7 +1795,7 @@ const Dashboard = () => {
                             transition={{ delay: index * 0.1 }}
                           >
                             <Card 
-                              className="w-full p-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-100 relative overflow-hidden hover:shadow-md transition-all duration-300 min-w-0"
+                              className="w-full p-2 bg-card rounded-3xl shadow-lg border-0 relative overflow-hidden hover:shadow-xl transition-all duration-300 min-w-0"
                             >
                               <div className="flex justify-between items-start gap-2 mb-2">
                                 <div className="flex-1">
@@ -1867,7 +1867,7 @@ const Dashboard = () => {
                   <Button 
                     size="sm" 
                     onClick={() => setIsCreateGroupGoalModalOpen(true)} 
-                    className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white/80 hover:scale-[1.03] text-gray-900 text-xs sm:text-sm transition-all duration-200 font-semibold border-0"
+                    className="bg-card rounded-3xl shadow-lg hover:shadow-xl text-gray-900 text-xs sm:text-sm transition-all duration-200 font-semibold border-0"
                   >
                     <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                     Nueva Meta Grupal
@@ -1895,7 +1895,7 @@ const Dashboard = () => {
                             transition={{ delay: index * 0.1 }}
                           >
                             <Card 
-                              className="w-full p-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-100 relative overflow-hidden hover:shadow-md transition-all duration-300 min-w-0 cursor-pointer"
+                              className="w-full p-2 bg-card rounded-3xl shadow-lg border-0 relative overflow-hidden hover:shadow-xl transition-all duration-300 min-w-0 cursor-pointer"
                               onClick={() => navigate(`/group-goals/${goal.id}`)}
                             >
                               <div className="flex justify-between items-start gap-2 mb-2">
@@ -1965,7 +1965,7 @@ const Dashboard = () => {
           <div className="space-y-6 w-full min-w-0">
 
             {/* Recent Transactions */}
-            <Card className="w-full p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden h-[220px] flex flex-col cursor-pointer min-w-0">
+            <Card className="w-full p-3 bg-card rounded-3xl shadow-lg border-0 relative overflow-hidden h-[220px] flex flex-col cursor-pointer min-w-0">
               <GlowingEffect
                 spread={40}
                 glow={true}
