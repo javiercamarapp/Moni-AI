@@ -1200,7 +1200,7 @@ const Dashboard = () => {
               variant="ghost" 
               size="icon" 
               onClick={() => navigate("/notifications")}
-              className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md text-gray-900 h-10 w-10 transition-all border-0"
+              className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-card hover:shadow-elegant hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm text-gray-900 h-10 w-10 transition-all duration-300 border-0"
             >
               <Bell className="h-5 w-5" />
             </Button>
@@ -1226,7 +1226,7 @@ const Dashboard = () => {
         
         {/* Botón de cuentas y tarjetas */}
         <Card 
-          className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer flex-shrink-0 border-0"
+          className="p-3 bg-white/90 backdrop-blur-sm rounded-2xl shadow-card hover:shadow-elegant hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm transition-all duration-300 cursor-pointer flex-shrink-0 border-0"
           onClick={() => navigate('/accounts-cards')}
         >
           <div className="flex items-center gap-2">
@@ -1246,7 +1246,7 @@ const Dashboard = () => {
         <div className="mx-4 mb-3">
           <BlurFade delay={0.25} inView>
             <Card 
-              className="p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm hover:shadow-md transition-all cursor-pointer border-0"
+              className="p-3 bg-white/90 backdrop-blur-sm rounded-3xl shadow-card hover:shadow-elegant hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm transition-all duration-300 cursor-pointer border-0"
               onClick={() => {
                 navigate('/score-moni');
                 window.scrollTo(0, 0);
@@ -1318,7 +1318,7 @@ const Dashboard = () => {
         {/* Quick Stats - Primera fila: 4 botones */}
         <div className="grid grid-cols-4 gap-2 sm:gap-3">
           <button 
-            className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer animate-fade-in border-0" 
+            className="p-3 bg-white/90 backdrop-blur-sm rounded-2xl shadow-card hover:shadow-elegant hover:-translate-y-1 active:translate-y-0 active:shadow-sm transition-all duration-300 cursor-pointer animate-fade-in border-0" 
             onClick={() => navigate('/balance')}
             style={{ animationDelay: '100ms' }}
           >
@@ -1336,7 +1336,7 @@ const Dashboard = () => {
           </button>
 
           <button 
-            className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer animate-fade-in border-0" 
+            className="p-3 bg-white/90 backdrop-blur-sm rounded-2xl shadow-card hover:shadow-elegant hover:-translate-y-1 active:translate-y-0 active:shadow-sm transition-all duration-300 cursor-pointer animate-fade-in border-0" 
             style={{ animationDelay: '200ms' }}
             onClick={() => navigate('/net-worth')}
           >
@@ -1358,7 +1358,7 @@ const Dashboard = () => {
 
           <button 
             onClick={() => navigate('/goals')}
-            className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer animate-fade-in border-0" 
+            className="p-3 bg-white/90 backdrop-blur-sm rounded-2xl shadow-card hover:shadow-elegant hover:-translate-y-1 active:translate-y-0 active:shadow-sm transition-all duration-300 cursor-pointer animate-fade-in border-0" 
             style={{ animationDelay: '300ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
@@ -1374,7 +1374,7 @@ const Dashboard = () => {
 
           <button 
             onClick={() => navigate('/budgets')}
-            className="p-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer animate-fade-in border-0" 
+            className="p-3 bg-white/90 backdrop-blur-sm rounded-2xl shadow-card hover:shadow-elegant hover:-translate-y-1 active:translate-y-0 active:shadow-sm transition-all duration-300 cursor-pointer animate-fade-in border-0" 
             style={{ animationDelay: '400ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
@@ -1498,7 +1498,7 @@ const Dashboard = () => {
         {/* Grid de 2 columnas: Suscripciones y Deudas - Alineados horizontalmente siempre */}
         <div className="grid grid-cols-2 gap-2 sm:gap-4">
           {/* Widget combinado: Suscripciones + Gastos Cotidianos */}
-          <Card className="p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:shadow-md transition-all">
+          <Card className="p-3 bg-white/90 backdrop-blur-sm rounded-3xl shadow-card hover:shadow-elegant hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm transition-all duration-300 border-0 relative overflow-hidden h-[220px] flex flex-col cursor-pointer">
             <GlowingEffect
               spread={40}
               glow={true}
@@ -1643,7 +1643,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Widget de Deudas de Tarjetas */}
-          <Card className="p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden h-[220px] flex flex-col cursor-pointer hover:shadow-md transition-all">
+          <Card className="p-3 bg-white/90 backdrop-blur-sm rounded-3xl shadow-card hover:shadow-elegant hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm transition-all duration-300 border-0 relative overflow-hidden h-[220px] flex flex-col cursor-pointer">
             <GlowingEffect
               spread={40}
               glow={true}
