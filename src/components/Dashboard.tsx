@@ -1226,7 +1226,7 @@ const Dashboard = () => {
         
         {/* Botón de cuentas y tarjetas */}
         <Card 
-          className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer flex-shrink-0 border-0"
+          className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer flex-shrink-0 border-0"
           onClick={() => navigate('/accounts-cards')}
         >
           <div className="flex items-center gap-2">
@@ -1246,7 +1246,7 @@ const Dashboard = () => {
         <div className="mx-4 mb-3">
           <BlurFade delay={0.25} inView>
             <Card 
-              className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer border-0"
+              className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer border-0"
               onClick={() => {
                 navigate('/score-moni');
                 window.scrollTo(0, 0);
@@ -1318,7 +1318,7 @@ const Dashboard = () => {
         {/* Quick Stats - Primera fila: 4 botones */}
         <div className="grid grid-cols-4 gap-2 sm:gap-3">
           <button 
-            className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer animate-fade-in border-0"
+            className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer animate-fade-in border-0"
             onClick={() => navigate('/balance')}
             style={{ animationDelay: '100ms' }}
           >
@@ -1336,7 +1336,7 @@ const Dashboard = () => {
           </button>
 
           <button 
-            className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer animate-fade-in border-0"
+            className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer animate-fade-in border-0"
             style={{ animationDelay: '200ms' }}
             onClick={() => navigate('/net-worth')}
           >
@@ -1358,7 +1358,7 @@ const Dashboard = () => {
 
           <button 
             onClick={() => navigate('/goals')}
-            className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer animate-fade-in border-0" 
+            className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer animate-fade-in border-0" 
             style={{ animationDelay: '300ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
@@ -1374,7 +1374,7 @@ const Dashboard = () => {
 
           <button 
             onClick={() => navigate('/budgets')}
-            className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer animate-fade-in border-0"
+            className="p-3 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer animate-fade-in border-0"
             style={{ animationDelay: '400ms' }}
           >
             <div className="flex flex-col sm:flex-row items-center sm:gap-2">
