@@ -139,50 +139,21 @@ const Onboarding = () => {
       <div className={`flex ${currentSlide === 3 ? 'items-end pb-40 md:pb-56' : 'items-start pt-20 md:pt-32'} justify-center px-4 relative z-10 min-h-screen`}>
         <div className="w-full max-w-md md:max-w-4xl space-y-6 md:space-y-8">
           {currentSlide === 0 ? (
-            /* First slide - Feature bullets with staggered animations */
-            <div className="text-center space-y-8 md:space-y-12 px-4">
-              <div className="space-y-4">
-                <h1 className="text-4xl md:text-6xl font-bold leading-tight text-gray-900 animate-fade-in">
-                  ✨ Tu Glow Up Financiero empieza aquí
-                </h1>
-                <p className="text-lg md:text-2xl text-gray-600 animate-fade-in" style={{ animationDelay: '0.2s', opacity: 0, animationFillMode: 'forwards' }}>
-                  Con MONI AI vas a entender tu dinero sin estrés.
-                </p>
-              </div>
-              
-              <div className="space-y-4 md:space-y-6 max-w-2xl mx-auto">
-                <div 
-                  className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg flex items-center gap-4 hover:scale-105 transition-transform animate-fade-in"
-                  style={{ animationDelay: '0.4s', opacity: 0, animationFillMode: 'forwards' }}
-                >
-                  <span className="text-3xl md:text-4xl">👜</span>
-                  <p className="text-lg md:text-2xl font-semibold text-gray-900">Organiza tu dinero</p>
-                </div>
-                
-                <div 
-                  className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg flex items-center gap-4 hover:scale-105 transition-transform animate-fade-in"
-                  style={{ animationDelay: '0.6s', opacity: 0, animationFillMode: 'forwards' }}
-                >
-                  <span className="text-3xl md:text-4xl">💰</span>
-                  <p className="text-lg md:text-2xl font-semibold text-gray-900">Ahorra sin esfuerzo</p>
-                </div>
-                
-                <div 
-                  className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg flex items-center gap-4 hover:scale-105 transition-transform animate-fade-in"
-                  style={{ animationDelay: '0.8s', opacity: 0, animationFillMode: 'forwards' }}
-                >
-                  <span className="text-3xl md:text-4xl">🧠</span>
-                  <p className="text-lg md:text-2xl font-semibold text-gray-900">Toma decisiones inteligentes</p>
-                </div>
-                
-                <div 
-                  className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg flex items-center gap-4 hover:scale-105 transition-transform animate-fade-in"
-                  style={{ animationDelay: '1s', opacity: 0, animationFillMode: 'forwards' }}
-                >
-                  <span className="text-3xl md:text-4xl">✨</span>
-                  <p className="text-lg md:text-2xl font-semibold text-gray-900">...sin complicarte</p>
-                </div>
-              </div>
+            /* First slide - Typewriter effect */
+            <div className="text-center space-y-4 md:space-y-6 px-4">
+              <h1 className="text-4xl md:text-7xl lg:text-8xl font-bold leading-tight">
+                <Typewriter
+                  text="Tu dinero, más inteligente."
+                  speed={80}
+                  loop={true}
+                  deleteSpeed={50}
+                  delay={3000}
+                  className="text-gray-900"
+                />
+              </h1>
+              <p className="text-lg md:text-3xl lg:text-4xl text-gray-900 leading-relaxed font-medium max-w-3xl mx-auto">
+                Con Moni AI, aprende a manejar tus finanzas como un experto, sin complicaciones.
+              </p>
             </div>
           ) : currentSlide === 1 ? (
             /* Second slide - BlurredStagger effect with loop */
