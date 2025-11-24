@@ -1180,8 +1180,8 @@ const Dashboard = () => {
         {/* Puntos y nivel + Notificaciones */}
         <div className="flex gap-2 items-center">
           {/* Botón de nivel financiero */}
-          <Button 
-            className="bg-card rounded-3xl text-gray-900 h-10 px-3 gap-2 transition-transform hover:-translate-y-1 border-0"
+          <button
+            className="inline-flex items-center justify-center gap-2 bg-card rounded-3xl text-gray-900 h-10 px-3 transition-transform hover:-translate-y-1 border-0"
             onClick={() => {
               sessionStorage.setItem('dashboardScrollPosition', window.scrollY.toString());
               navigate("/financial-journey");
@@ -1191,17 +1191,16 @@ const Dashboard = () => {
             <span className="text-xs font-semibold">
               Nivel {totalAspiration > 0 ? Math.floor((netWorth / totalAspiration) * 10000) : 0}
             </span>
-          </Button>
+          </button>
           
           {/* Botón de notificaciones */}
           <div className="relative">
-            <Button 
-              size="icon" 
+            <button
               onClick={() => navigate("/notifications")}
-              className="bg-card rounded-3xl text-gray-900 h-10 w-10 transition-transform hover:-translate-y-1 border-0"
+              className="inline-flex items-center justify-center bg-card rounded-3xl text-gray-900 h-10 w-10 transition-transform hover:-translate-y-1 border-0"
             >
               <Bell className="h-5 w-5" />
-            </Button>
+            </button>
             {unreadNotifications > 0 && (
               <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg animate-pulse">
                 <span className="text-[10px] font-bold text-white">{unreadNotifications}</span>
