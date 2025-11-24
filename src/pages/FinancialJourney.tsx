@@ -51,36 +51,41 @@ export default function FinancialJourney() {
   const currentProgress = totalAspiration > 0 ? (currentNetWorth / totalAspiration) * 100 : 0;
   const currentLevel = totalAspiration > 0 ? Math.floor((currentNetWorth / totalAspiration) * 10000) : 0;
 
-  // Generar nodos del journey
+  // Generar nodos del journey con sine wave pattern
   const generateNodes = (): JourneyNode[] => {
     const nodes: JourneyNode[] = [];
-    const milestones = [
-      { level: 0, x: "50%", y: "15%" },
-      { level: 250, x: "25%", y: "30%" },
-      { level: 500, x: "65%", y: "45%" },
-      { level: 1000, x: "35%", y: "60%" },
-      { level: 2000, x: "70%", y: "75%" },
-      { level: 5000, x: "40%", y: "90%" },
-      { level: 10000, x: "55%", y: "105%" },
-    ];
-
-    milestones.forEach((milestone, index) => {
-      const progress = (milestone.level / 10000) * 100;
+    const steps = 12; // Number of milestones
+    
+    for (let i = 0; i <= steps; i++) {
+      const level = Math.round((i / steps) * 10000);
+      const progress = (level / 10000) * 100;
+      
+      // Sine wave pattern for x position
+      const x = 50 + Math.sin(i * 1.5) * 35;
+      const y = i * 120 + 80; // 120px vertical spacing
+      
       nodes.push({
-        id: index,
-        level: milestone.level,
+        id: i,
+        level: level,
         progress: progress,
-        isUnlocked: currentLevel >= milestone.level,
-        isCurrent: currentLevel >= milestone.level && (index === milestones.length - 1 || currentLevel < milestones[index + 1].level),
-        isCompleted: index < milestones.length - 1 && currentLevel >= milestones[index + 1].level,
-        position: { x: milestone.x, y: milestone.y }
+        isUnlocked: currentLevel >= level,
+        isCurrent: currentLevel >= level && (i === steps || currentLevel < Math.round(((i + 1) / steps) * 10000)),
+        isCompleted: i < steps && currentLevel >= Math.round(((i + 1) / steps) * 10000),
+        position: { x: `${x}%`, y: `${y}px` }
       });
-    });
+    }
 
     return nodes;
   };
 
   const nodes = generateNodes();
+  
+  // Find current node for highlighting
+  const currentNode = nodes.find(n => n.isCurrent);
+  
+  // Calculate path length based on current progress
+  const currentNodeIndex = currentNode ? currentNode.id : 0;
+  const pathProgress = currentNodeIndex / nodes.length;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0f1729] via-[#1a2332] to-[#0f1729] relative overflow-hidden">
@@ -146,22 +151,22 @@ export default function FinancialJourney() {
       </div>
 
       {/* Journey Path */}
-      <div className="container mx-auto max-w-2xl relative" style={{ minHeight: '120vh', paddingTop: '280px' }}>
+      <div className="container mx-auto max-w-2xl relative pb-32" style={{ minHeight: `${(nodes.length * 120) + 300}px`, paddingTop: '280px' }}>
         {/* SVG Path */}
         <svg 
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ minHeight: '100%' }}
+          className="absolute inset-0 w-full pointer-events-none"
+          style={{ height: '100%' }}
         >
           <defs>
             {/* Gradiente para el path activo */}
             <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#10b981" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.8" />
+              <stop offset="0%" stopColor="#10b981" stopOpacity="1" />
+              <stop offset="100%" stopColor="#06b6d4" stopOpacity="1" />
             </linearGradient>
             
             {/* Filtro de glow */}
             <filter id="glow">
-              <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
               <feMerge>
                 <feMergeNode in="coloredBlur"/>
                 <feMergeNode in="SourceGraphic"/>
@@ -169,42 +174,54 @@ export default function FinancialJourney() {
             </filter>
           </defs>
 
-          {/* Path de fondo (inactive) */}
-          <motion.path
-            d={`
-              M 50% 15%
-              Q 15% 22%, 25% 30%
-              Q 35% 38%, 65% 45%
-              Q 95% 52%, 35% 60%
-              Q -15% 68%, 70% 75%
-              Q 100% 82%, 40% 90%
-              Q 10% 98%, 55% 105%
-            `}
-            fill="none"
-            stroke="rgba(255,255,255,0.1)"
-            strokeWidth="3"
-            strokeDasharray="8 4"
-          />
+          {/* Generate path dynamically based on nodes */}
+          {(() => {
+            let pathD = '';
+            nodes.forEach((node, i) => {
+              if (i === 0) {
+                pathD = `M ${node.position.x} ${node.position.y}`;
+              } else {
+                const prevNode = nodes[i - 1];
+                // Smooth curve between points
+                const midX = (parseFloat(node.position.x) + parseFloat(prevNode.position.x)) / 2;
+                const midY = (parseFloat(node.position.y.replace('px', '')) + parseFloat(prevNode.position.y.replace('px', ''))) / 2;
+                pathD += ` Q ${midX}% ${midY}px, ${node.position.x} ${node.position.y}`;
+              }
+            });
 
-          {/* Path activo con gradiente y glow */}
-          <motion.path
-            d={`
-              M 50% 15%
-              Q 15% 22%, 25% 30%
-              Q 35% 38%, 65% 45%
-              Q 95% 52%, 35% 60%
-              Q -15% 68%, 70% 75%
-              Q 100% 82%, 40% 90%
-            `}
-            fill="none"
-            stroke="url(#pathGradient)"
-            strokeWidth="4"
-            strokeLinecap="round"
-            filter="url(#glow)"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: Math.min(currentProgress / 100, 0.6) }}
-            transition={{ duration: 2, ease: "easeInOut" }}
-          />
+            // Inactive path (full length, dashed)
+            const inactivePath = (
+              <motion.path
+                d={pathD}
+                fill="none"
+                stroke="rgba(255,255,255,0.15)"
+                strokeWidth="2"
+                strokeDasharray="6 3"
+              />
+            );
+
+            // Active path (progress-based)
+            const activePath = (
+              <motion.path
+                d={pathD}
+                fill="none"
+                stroke="url(#pathGradient)"
+                strokeWidth="3"
+                strokeLinecap="round"
+                filter="url(#glow)"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: pathProgress }}
+                transition={{ duration: 2, ease: "easeOut" }}
+              />
+            );
+
+            return (
+              <>
+                {inactivePath}
+                {activePath}
+              </>
+            );
+          })()}
         </svg>
 
         {/* Nodos */}
@@ -213,7 +230,7 @@ export default function FinancialJourney() {
             key={node.id}
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: node.id * 0.1 }}
+            transition={{ delay: node.id * 0.05 }}
             className="absolute"
             style={{ 
               left: node.position.x, 
@@ -223,21 +240,21 @@ export default function FinancialJourney() {
             onMouseEnter={() => setHoveredNode(node.id)}
             onMouseLeave={() => setHoveredNode(null)}
           >
-            {/* Node circle */}
+            {/* Node circle - Smaller size */}
             <div className={`
-              relative w-16 h-16 rounded-full flex items-center justify-center
+              relative w-12 h-12 rounded-full flex items-center justify-center
               transition-all duration-300
               ${node.isUnlocked 
-                ? 'bg-gradient-to-br from-green-400 to-cyan-400 shadow-lg shadow-green-500/50' 
-                : 'bg-white/10 backdrop-blur-sm border-2 border-white/20'
+                ? 'bg-gradient-to-br from-green-400 to-cyan-400 shadow-lg shadow-green-500/50 border-2 border-white/20' 
+                : 'bg-white/5 backdrop-blur-sm border-2 border-white/10'
               }
-              ${node.isCurrent ? 'ring-4 ring-white/30 scale-110' : ''}
-              hover:scale-125
+              ${node.isCurrent ? 'ring-4 ring-white/40 scale-125' : ''}
+              hover:scale-110
             `}>
-              {/* Icon */}
-              {!node.isUnlocked && <Lock className="h-6 w-6 text-white/40" />}
-              {node.isCurrent && <Rocket className="h-8 w-8 text-white" />}
-              {node.isCompleted && <Star className="h-6 w-6 text-white" />}
+              {/* Icon - Smaller size */}
+              {!node.isUnlocked && <Lock className="h-4 w-4 text-white/30" />}
+              {node.isCurrent && <Rocket className="h-6 w-6 text-white" />}
+              {node.isCompleted && <Star className="h-4 w-4 text-white" />}
             </div>
 
             {/* Tooltip */}
