@@ -484,8 +484,8 @@ const Auth = () => {
         className="flex-1 flex items-center justify-center py-8 md:py-12 px-2 md:px-4 relative z-10"
       >
         {isProcessingRecovery ? (
-          <div className="w-full max-w-[320px] md:max-w-md bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl shadow-opacity-10 pt-6 md:pt-8 px-4 md:px-6 pb-6 md:pb-8 flex flex-col items-center border border-blue-100">
-            <div className="flex items-center justify-center w-48 md:w-56 h-16 md:h-20 mb-4 md:mb-6">
+          <div className="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 p-8 flex flex-col items-center">
+            <div className="flex items-center justify-center w-48 h-16 mb-8">
               <img src={resetPasswordLogo} alt="Moni AI" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col items-center gap-4">
@@ -494,8 +494,8 @@ const Auth = () => {
             </div>
           </div>
         ) : isResetPassword ? (
-          <div className="w-full max-w-[320px] md:max-w-md bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl shadow-opacity-10 pt-6 md:pt-8 px-4 md:px-6 pb-6 md:pb-8 flex flex-col items-center border border-blue-100">
-            <div className="flex items-center justify-center w-48 md:w-56 h-16 md:h-20 mb-4 md:mb-6">
+          <div className="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 p-8 flex flex-col items-center">
+            <div className="flex items-center justify-center w-48 h-16 mb-8">
               <img src={resetPasswordLogo} alt="Moni AI" className="w-full h-full object-contain" />
             </div>
 
@@ -512,7 +512,7 @@ const Auth = () => {
                   onChange={(e) => setNewPassword(e.target.value)}
                   disabled={loading}
                   placeholder="Mínimo 12 caracteres"
-                  className="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black disabled:opacity-50"
+                  className="w-full h-14 px-4 rounded-2xl border-gray-200 focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black disabled:opacity-50"
                 />
               </div>
 
@@ -525,7 +525,7 @@ const Auth = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   disabled={loading}
                   placeholder="Repite tu contraseña"
-                  className="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black disabled:opacity-50"
+                  className="w-full h-14 px-4 rounded-2xl border-gray-200 focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black disabled:opacity-50"
                 />
               </div>
 
@@ -542,7 +542,7 @@ const Auth = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 rounded-xl shadow hover:brightness-105 hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="w-full h-14 rounded-2xl bg-gray-900 text-white font-bold text-base shadow-lg hover:brightness-105 hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">

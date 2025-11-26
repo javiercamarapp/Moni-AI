@@ -67,6 +67,16 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // New UI Colors
+        bg: '#F0F2F5',
+        'soft-white': '#FFFFFF',
+        'soft-shadow-light': '#FFFFFF',
+        'soft-shadow-dark': '#D1D9E6',
+        'earth-primary': '#A68B76', // Brown beige
+        'earth-dark': '#8C705F',
+        'earth-light': '#DCC9BC',
+        'text-main': '#2D3748',
+        'text-secondary': '#718096',
       },
       fontFamily: {
         inter: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
@@ -80,6 +90,11 @@ export default {
         glow: "var(--shadow-glow)",
         card: "var(--shadow-card)",
         elegant: "var(--shadow-elegant)",
+        // New UI Shadows
+        'soft': '10px 10px 20px #D1D9E6, -10px -10px 20px #FFFFFF',
+        'soft-hover': '6px 6px 12px #D1D9E6, -6px -6px 12px #FFFFFF',
+        'soft-inner': 'inset 6px 6px 12px #D1D9E6, inset -6px -6px 12px #FFFFFF',
+        'soft-btn': '6px 6px 12px #8a7362, -6px -6px 12px #baa08e',
       },
       backgroundImage: {
         'gradient-primary': 'var(--gradient-primary)',

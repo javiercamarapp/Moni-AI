@@ -110,9 +110,9 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
   // Si está en modo "olvidé mi contraseña"
   if (showForgotPassword) {
     return (
-      <div className="min-h-screen w-full flex flex-col items-center justify-end pb-8 rounded-xl z-1">
-        <div className="w-full max-w-[320px] md:max-w-md bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl shadow-opacity-10 pt-2 md:pt-3 px-4 md:px-6 pb-3 md:pb-4 flex flex-col items-center border border-blue-100 text-black">
-          <div className="w-full mb-2">
+      <div className="w-full flex flex-col items-center justify-center z-10">
+        <div className="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 p-8 flex flex-col items-center">
+          <div className="w-full mb-6">
             <button
               type="button"
               onClick={() => setShowForgotPassword(false)}
@@ -123,28 +123,28 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
             </button>
           </div>
           
-          <div className="flex items-center justify-center w-48 md:w-56 h-16 md:h-20 mb-2 md:mb-3">
+          <div className="flex items-center justify-center w-48 h-16 mb-6">
             <img src={moniLogo} alt="Moni AI" className="w-full h-full object-contain" />
           </div>
 
-          <div className="w-full text-center mb-6 mt-2">
+          <div className="w-full text-center mb-8">
             <h2 className="text-xl font-bold text-gray-900 mb-2">¿Olvidaste tu contraseña?</h2>
             <p className="text-sm text-gray-600">
               Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña
             </p>
           </div>
 
-          <form onSubmit={handleForgotPassword} className="w-full flex flex-col gap-3 mb-4">
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                <Mail className="w-4 h-4" />
+          <form onSubmit={handleForgotPassword} className="w-full flex flex-col gap-4 mb-4">
+            <div className="relative group">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-gray-900 transition-colors">
+                <Mail className="w-5 h-5" />
               </span>
               <input
                 placeholder="Correo electrónico"
                 type="email"
                 value={resetEmail}
                 disabled={resetLoading}
-                className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm disabled:opacity-50"
+                className="w-full h-14 pl-12 pr-4 rounded-2xl bg-white border-2 border-transparent focus:border-gray-200 shadow-sm outline-none text-gray-900 text-sm placeholder:text-gray-400 transition-all disabled:opacity-50"
                 onChange={(e) => setResetEmail(e.target.value)}
               />
             </div>
@@ -152,11 +152,11 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
             <button
               type="submit"
               disabled={resetLoading}
-              className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 text-sm rounded-xl shadow hover:brightness-105 hover:scale-105 cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="w-full h-14 rounded-2xl bg-gray-900 text-white font-bold text-base flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {resetLoading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-5 h-5 animate-spin" />
                   Enviando...
                 </span>
               ) : (
@@ -170,64 +170,68 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-end pb-8 rounded-xl z-1">
-      <div className="w-full max-w-[320px] md:max-w-md bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl shadow-opacity-10 pt-2 md:pt-3 px-4 md:px-6 pb-3 md:pb-4 flex flex-col items-center border border-blue-100 text-black">
-        <div className="flex items-center justify-center w-48 md:w-56 h-16 md:h-20 mb-2 md:mb-3">
+    <div className="w-full flex flex-col items-center justify-center z-10">
+      <div className="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 p-8 flex flex-col items-center animate-in fade-in slide-in-from-bottom-8 duration-500">
+        <div className="flex items-center justify-center w-48 h-16 mb-8">
           <img src={moniLogo} alt="Moni AI" className="w-full h-full object-contain" />
         </div>
-        <div className="w-full flex flex-col gap-1.5 md:gap-2 mb-1">
+        
+        <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">
+          {isLogin ? '¡Hola de nuevo!' : 'Crear Cuenta'}
+        </h2>
+
+        <div className="w-full flex flex-col gap-4 mb-2">
           <form onSubmit={handleSubmit} className="contents">
             {!isLogin && (
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  <Mail className="w-4 h-4" />
+              <div className="relative group">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-gray-900 transition-colors">
+                  <Mail className="w-5 h-5" />
                 </span>
                 <input
                   placeholder="Nombre Completo"
                   type="text"
                   value={fullName}
                   disabled={loading}
-                  className="w-full pl-10 pr-3 py-1.5 md:py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm disabled:opacity-50"
+                  className="w-full h-14 pl-12 pr-4 rounded-2xl bg-white border-2 border-transparent focus:border-gray-200 shadow-sm outline-none text-gray-900 text-sm placeholder:text-gray-400 transition-all disabled:opacity-50"
                   onChange={(e) => setFullName(e.target.value)}
                 />
               </div>
             )}
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                <Mail className="w-4 h-4" />
+            <div className="relative group">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-gray-900 transition-colors">
+                <Mail className="w-5 h-5" />
               </span>
               <input
                 placeholder="Email"
                 type="email"
                 value={email}
                 disabled={loading}
-                className="w-full pl-10 pr-3 py-1.5 md:py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm disabled:opacity-50"
+                className="w-full h-14 pl-12 pr-4 rounded-2xl bg-white border-2 border-transparent focus:border-gray-200 shadow-sm outline-none text-gray-900 text-sm placeholder:text-gray-400 transition-all disabled:opacity-50"
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                <Lock className="w-4 h-4" />
+            <div className="relative group">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-gray-900 transition-colors">
+                <Lock className="w-5 h-5" />
               </span>
               <input
                 placeholder="Contraseña"
                 type="password"
                 value={password}
                 disabled={loading}
-                className="w-full pl-10 pr-10 py-1.5 md:py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm disabled:opacity-50"
+                className="w-full h-14 pl-12 pr-4 rounded-2xl bg-white border-2 border-transparent focus:border-gray-200 shadow-sm outline-none text-gray-900 text-sm placeholder:text-gray-400 transition-all disabled:opacity-50"
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer text-xs select-none"></span>
             </div>
-            <div className="w-full flex justify-between items-center">
+            <div className="w-full flex justify-between items-center -mt-1">
               {error && (
-                <div className="text-sm text-red-500 text-left">{error}</div>
+                <div className="text-sm text-red-500 text-left font-medium">{error}</div>
               )}
               {isLogin && (
                 <button 
                   type="button" 
                   onClick={() => setShowForgotPassword(true)}
-                  className="text-xs hover:underline font-medium transition-all hover:text-gray-700 ml-auto"
+                  className="text-xs font-semibold text-gray-700 hover:text-gray-900 hover:underline ml-auto"
                 >
                   ¿Olvidaste tu contraseña?
                 </button>
@@ -239,11 +243,11 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
           type="submit"
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-1.5 md:py-2 text-sm rounded-xl shadow hover:brightness-105 hover:scale-105 cursor-pointer transition-all mb-1 mt-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+          className="w-full h-14 mt-2 rounded-2xl bg-gray-900 text-white font-bold text-base flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="w-5 h-5 animate-spin" />
               {isLogin ? "Iniciando sesión..." : "Creando cuenta..."}
             </span>
           ) : (
@@ -251,64 +255,77 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
           )}
         </button>
         
-        <div className="text-center mt-1.5">
-          <button
-            type="button"
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-xs text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            {isLogin ? (
-              <>
-                ¿No tienes cuenta? <span className="font-semibold underline">Crear cuenta</span>
-              </>
-            ) : (
-              <>
-                ¿Ya tienes cuenta? <span className="font-semibold underline">Iniciar sesión</span>
-              </>
-            )}
-          </button>
+        <div className="relative my-6 w-full">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-200"></div>
+          </div>
+          <div className="relative flex justify-center text-xs">
+            <span className="px-2 bg-transparent text-gray-400 font-medium">
+              {isLogin ? "O inicia sesión con" : "O regístrate con"}
+            </span>
+          </div>
         </div>
-        <div className="flex items-center w-full my-1">
-          <div className="flex-grow border-t border-dashed border-gray-200"></div>
-          <span className="mx-2 text-[10px] text-gray-400">
-            {isLogin ? "O inicia sesión con" : "O regístrate con"}
-          </span>
-          <div className="flex-grow border-t border-dashed border-gray-200"></div>
-        </div>
-        <div className="flex gap-2 w-full justify-center mt-0.5">
+
+        <div className="flex gap-4 w-full justify-center">
           <button 
             onClick={() => onSocialLogin('google')}
             disabled={loading}
-            className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-16 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center hover:scale-105 hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
           >
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google"
-              className="w-5 h-5 md:w-6 md:h-6"
+              className="w-6 h-6"
             />
           </button>
           <button 
             onClick={() => onSocialLogin('facebook')}
             disabled={loading}
-            className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-16 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center hover:scale-105 hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
           >
             <img
               src="https://www.svgrepo.com/show/448224/facebook.svg"
               alt="Facebook"
-              className="w-5 h-5 md:w-6 md:h-6"
+              className="w-6 h-6"
             />
           </button>
           <button 
             onClick={() => onSocialLogin('apple')}
             disabled={loading}
-            className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl bg-white hover:bg-gray-100 hover:scale-110 transition-all grow disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-16 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center hover:scale-105 hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
           >
             <img
               src="https://www.svgrepo.com/show/511330/apple-173.svg"
               alt="Apple"
-              className="w-5 h-5 md:w-6 md:h-6"
+              className="w-6 h-6"
             />
           </button>
+        </div>
+
+        <div className="mt-8 text-center">
+          <p className="text-gray-500 text-sm font-medium">
+            {isLogin ? (
+              <>
+                ¿No tienes cuenta? 
+                <button 
+                  onClick={() => setIsLogin(false)}
+                  className="ml-1 text-gray-900 font-bold hover:underline focus:outline-none underline decoration-2 decoration-gray-200"
+                >
+                  Crear cuenta
+                </button>
+              </>
+            ) : (
+              <>
+                ¿Ya tienes cuenta? 
+                <button 
+                  onClick={() => setIsLogin(true)}
+                  className="ml-1 text-gray-900 font-bold hover:underline focus:outline-none underline decoration-2 decoration-gray-200"
+                >
+                  Iniciar sesión
+                </button>
+              </>
+            )}
+          </p>
         </div>
       </div>
     </div>
