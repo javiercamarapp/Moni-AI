@@ -347,7 +347,7 @@ const Onboarding: React.FC = () => {
                     </div>
 
                     {/* Secondary Section: WhatsApp Quick Capture */}
-                    <div className="mt-24 flex flex-col sm:flex-row items-center gap-3 sm:gap-4 animate-item-alt" style={{ animationDelay: '0.8s' }}>
+                    <div className="mt-12 flex flex-col sm:flex-row items-center gap-3 sm:gap-4 animate-item-alt" style={{ animationDelay: '0.8s' }}>
                         {/* Simple Phone + WhatsApp Bubble SVG (no white chip background) */}
                         <div className="w-18 h-18 sm:w-20 sm:h-20 flex items-center justify-center animate-float-diagonal">
                             <svg viewBox="0 0 64 64" className="w-16 h-16 sm:w-18 sm:h-18">
