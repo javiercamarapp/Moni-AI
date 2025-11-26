@@ -341,7 +341,7 @@ const Onboarding: React.FC = () => {
 
                     {/* Description Text - Increased size */}
                     <div className="max-w-xs text-center mt-0">
-                        <p className="text-text-secondary text-lg font-semibold leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                        <p className="bg-transparent text-text-secondary text-lg font-semibold leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
                             Conecta tus cuentas de banco y controla <b>todas tus transacciones</b>.
                         </p>
                     </div>

@@ -99,16 +99,16 @@ const SemiCircleOrbit: React.FC<SemiCircleOrbitProps> = ({ radius, centerX, cent
 
 export default function MultiOrbitSemiCircle() {
     const width = 300;
-    const height = 220;
+    const height = 320;
     const centerX = width / 2;
-    const centerY = height * 0.9;
+    const centerY = height * 0.75;
 
     // Split icons: 4 for inner, 6 for outer
     const iconsInner = BANK_ICONS.slice(0, 4);
     const iconsOuter = BANK_ICONS.slice(4, 10);
 
     return (
-        <div className="relative w-[300px] h-[220px] mx-auto overflow-hidden flex justify-center md:scale-[1.15] lg:scale-[1.3] origin-bottom">
+        <div className="relative w-[300px] h-[320px] mx-auto overflow-hidden flex justify-center md:scale-[1.15] lg:scale-[1.3] origin-bottom">
             <style>{`
           @keyframes float-y {
             0%, 100% { transform: translateY(0px); }
@@ -120,7 +120,7 @@ export default function MultiOrbitSemiCircle() {
             <div className="absolute inset-0 bg-gradient-to-t from-blue-50/50 to-transparent z-0 rounded-full opacity-50"></div>
 
             {/* Center Hub (Moni Robot) */}
-            <div className="absolute left-1/2 top-[90%] transform -translate-x-1/2 -translate-y-1/2 z-20">
+            <div className="absolute left-1/2 top-[75%] transform -translate-x-1/2 -translate-y-1/2 z-20">
                 <div className="w-16 h-16 bg-earth-primary rounded-2xl shadow-soft flex items-center justify-center text-3xl animate-[pulse_3s_ease-in-out_infinite] border-4 border-white z-20 relative">
                     🤖
                 </div>
