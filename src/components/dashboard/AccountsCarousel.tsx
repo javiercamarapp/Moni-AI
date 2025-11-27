@@ -33,18 +33,28 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
     };
 
     const gradients = {
-        'Banamex': "from-red-600 to-red-800",
+        'Banamex': "from-gray-700 to-gray-900",
         'BBVA': "from-blue-600 to-blue-800",
         'default': "from-slate-700 to-slate-900"
     };
 
     // Get gradient based on bank name
-    const getGradient = (bankName: string) => {
+    const getGradient = (bankName: string, plaidItemId?: string) => {
+        // Special case for Banamex Conquista - dark grey matte
+        if (plaidItemId === 'banamex_conquista') {
+            return 'from-gray-700 to-gray-900';
+        }
         return gradients[bankName as keyof typeof gradients] || gradients.default;
     };
 
-    // Function to get card network based on account_id
-    const getCardNetwork = (accountId: string) => {
+    // Function to get card network based on account_id and plaid_item_id
+    const getCardNetwork = (accountId: string, plaidItemId?: string) => {
+        // Explicit card type mapping for known cards
+        if (plaidItemId === 'banamex_conquista') return 'Mastercard';
+        if (plaidItemId === 'bbva_platinum') return 'Visa';
+        if (plaidItemId === 'bbva_debito') return 'Visa';
+        
+        // Fallback to number-based detection
         if (accountId.startsWith('4')) {
             return 'Visa';
         } else if (accountId.startsWith('5')) {
@@ -105,11 +115,11 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                     {accounts.map((account, index) => {
                         // Simulated balance for display purposes as per original component
                         const simulatedBalance = 5000 + (index * 2500);
-                        const cardNetwork = getCardNetwork(account.account_id);
+                        const cardNetwork = getCardNetwork(account.account_id, account.plaid_item_id);
                         const lastFour = getLastFourDigits(account.account_id);
                         const cardDetails = getCardDetails(account);
                         const bankLogo = getBankLogo(account.bank_name);
-                        const gradient = getGradient(account.bank_name);
+                        const gradient = getGradient(account.bank_name, account.plaid_item_id);
 
                         return (
                             <CarouselItem key={account.id} className="pl-2 md:pl-4 basis-[75%] sm:basis-[45%] lg:basis-[30%]">
