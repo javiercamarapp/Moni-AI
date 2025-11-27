@@ -21,6 +21,7 @@ interface Account {
     account_id: string;
     plaid_item_id?: string;
     last_sync?: string;
+    balance?: number;
 }
 
 interface AccountsCarouselProps {
@@ -148,7 +149,7 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                         const logoUrl = getBankLogo(account.bank_name);
                         const last4 = account.account_id.slice(-4);
                         const displayTitle = getCardName(account.plaid_item_id, account.bank_name);
-                        const displaySubtitle = `${account.bank_name} •••• ${last4}`;
+                        const displaySubtitle = `${account.bank_name} - ••••${last4}`;
                         const networkLogo = getNetworkLogo(account.plaid_item_id, account.account_id);
                         const gradient = getGradient(account.bank_name, account.plaid_item_id);
 
@@ -198,9 +199,9 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                     </div>
 
                                     <div>
-                                        <p className="text-white/70 text-[10px] font-medium mb-0.5">Última sincronización</p>
-                                        <p className="text-white text-xs font-medium">
-                                            {account.last_sync ? new Date(account.last_sync).toLocaleDateString('es-MX', { month: 'short', day: 'numeric' }) : 'Nunca'}
+                                        <p className="text-white/70 text-[10px] font-medium mb-0.5">Balance actual</p>
+                                        <p className="text-white text-xl font-bold">
+                                            ${account.balance?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? '0.00'}
                                         </p>
                                     </div>
                                 </div>
