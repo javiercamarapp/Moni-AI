@@ -26,7 +26,7 @@ const BankCard = ({
   cardName: string;
 }) => {
   const gradients = {
-    'Banamex': "from-red-600 to-red-800",
+    'Banamex': "from-gray-700 to-gray-900",
     'BBVA': "from-blue-600 to-blue-800",
     'default': "from-slate-700 to-slate-900"
   };
@@ -142,7 +142,7 @@ export default function AccountsCards() {
   const firstName = profile?.full_name?.split(' ')[0] || 'Usuario';
 
   return (
-    <div className="min-h-screen pb-20 bg-gradient-to-b from-[#E5DEFF]/30 to-background">
+    <div className="min-h-screen pb-20 bg-gradient-to-b from-[#E5DEFF]/30 to-background overflow-y-auto">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
