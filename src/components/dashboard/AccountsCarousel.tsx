@@ -62,9 +62,15 @@ const getNetworkLogo = (plaidItemId: string | undefined, accountId: string) => {
 };
 
 const getCardName = (plaidItemId?: string, bankName?: string) => {
+    // For these specific cards, use the bank name as the display name
     if (plaidItemId === 'banamex_conquista') return 'Conquista';
     if (plaidItemId === 'bbva_platinum') return 'Platinum';
     if (plaidItemId === 'bbva_debito') return 'Débito';
+    
+    // Extract card type from bank name if it includes it
+    if (bankName?.includes('Conquista')) return 'Conquista';
+    if (bankName?.includes('Platinum')) return 'Platinum';
+    if (bankName?.includes('Débito')) return 'Débito';
     
     // Fallback to bank name
     return bankName || 'Tarjeta';
@@ -149,7 +155,9 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                         const logoUrl = getBankLogo(account.bank_name);
                         const last4 = account.account_id.slice(-4);
                         const displayTitle = getCardName(account.plaid_item_id, account.bank_name);
-                        const displaySubtitle = `${account.bank_name} - •${last4}`;
+                        // Extract just the bank name (first word before space)
+                        const bankNameOnly = account.bank_name.split(' ')[0];
+                        const displaySubtitle = `${bankNameOnly} - •${last4}`;
                         const networkLogo = getNetworkLogo(account.plaid_item_id, account.account_id);
                         const gradient = getGradient(account.bank_name, account.plaid_item_id);
 
