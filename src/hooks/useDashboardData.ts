@@ -1,6 +1,6 @@
 import { useQueries } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useMonthlyTotals, useGoals, useGroupGoals, useScoreMoni, useNetWorth, useBankConnections, useTransactions } from './useFinancialData';
+import { useMonthlyTotals, useGoals, useGroupGoals, useScoreMoni, useNetWorth, useBankConnections, useTransactions, useAccountsList } from './useFinancialData';
 
 // Cache time: 5 minutes
 const STALE_TIME = 5 * 60 * 1000;
@@ -12,6 +12,7 @@ export const useDashboardData = (monthOffset: number = 0) => {
   const scoreMoni = useScoreMoni();
   const netWorth = useNetWorth();
   const bankConnections = useBankConnections();
+  const accountsList = useAccountsList();
   const monthlyTotals = useMonthlyTotals(monthOffset);
 
   // Get recent transactions (only for current month)
@@ -40,6 +41,9 @@ export const useDashboardData = (monthOffset: number = 0) => {
     bankConnections: bankConnections.data || [],
     isLoadingBankConnections: bankConnections.isLoading,
 
+    accounts: accountsList.data || [],
+    isLoadingAccounts: accountsList.isLoading,
+
     monthlyIncome: monthlyTotals.data?.income || 0,
     monthlyExpenses: monthlyTotals.data?.expenses || 0,
     fixedExpenses: monthlyTotals.data?.fixed || 0,
@@ -49,6 +53,6 @@ export const useDashboardData = (monthOffset: number = 0) => {
     isLoadingTransactions: recentTransactions.isLoading,
 
     isLoading: goals.isLoading || groupGoals.isLoading || scoreMoni.isLoading || netWorth.isLoading ||
-      bankConnections.isLoading || monthlyTotals.isLoading || recentTransactions.isLoading,
+      bankConnections.isLoading || monthlyTotals.isLoading || recentTransactions.isLoading || accountsList.isLoading,
   };
 };

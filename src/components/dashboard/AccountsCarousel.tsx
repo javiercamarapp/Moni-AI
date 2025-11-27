@@ -1,21 +1,56 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
 import { Plus, CreditCard } from "lucide-react";
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@/components/ui/carousel";
+
+import banamexLogo from '@/assets/BankIcons/banamex.png';
+import bbvaLogo from '@/assets/BankIcons/bbva.png';
+import hsbcLogo from '@/assets/BankIcons/hsbc.png';
+import inbursaLogo from '@/assets/BankIcons/inbursa.png';
+import nuLogo from '@/assets/BankIcons/nu.png';
+import santanderLogo from '@/assets/BankIcons/santander.png';
+import scotiabankLogo from '@/assets/BankIcons/scotiabank.webp';
+import mastercardLogo from '@/assets/BankIcons/mastercard.jpg';
+import visaLogo from '@/assets/BankIcons/visa.png';
+import amexLogo from '@/assets/BankIcons/amex.png';
 
 interface Account {
     id: string;
     bank_name: string;
+    account_name?: string;
+    balance?: number;
     type?: string;
+    last_sync?: string;
 }
 
 interface AccountsCarouselProps {
     accounts: Account[];
 }
 
+const getBankLogo = (bankName: string) => {
+    const name = bankName.toLowerCase();
+    if (name.includes('bbva')) return bbvaLogo;
+    if (name.includes('banamex') || name.includes('citibanamex')) return banamexLogo;
+    if (name.includes('santander')) return santanderLogo;
+    if (name.includes('hsbc')) return hsbcLogo;
+    if (name.includes('scotiabank')) return scotiabankLogo;
+    if (name.includes('inbursa')) return inbursaLogo;
+    if (name.includes('nu')) return nuLogo;
+    return null;
+};
+
+const getNetworkLogo = (accountName: string, bankName: string) => {
+    const text = (accountName + " " + bankName).toLowerCase();
+    if (text.includes('amex') || text.includes('american express')) return amexLogo;
+    if (text.includes('visa')) return visaLogo;
+    if (text.includes('mastercard') || text.includes('master')) return mastercardLogo;
+    return null;
+};
+
 const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
     const navigate = useNavigate();
+    const [api, setApi] = useState<CarouselApi>();
 
     const gradients = [
         "from-slate-700 to-slate-900",
@@ -23,6 +58,30 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
         "from-purple-500 to-purple-700",
         "from-green-500 to-green-700",
     ];
+
+    // Enable trackpad scrolling (two-finger scroll)
+    useEffect(() => {
+        if (!api) return;
+
+        const onWheel = (e: WheelEvent) => {
+            // Check if horizontal scroll is dominant
+            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+                e.preventDefault();
+                if (e.deltaX > 0) {
+                    api.scrollNext();
+                } else {
+                    api.scrollPrev();
+                }
+            }
+        };
+
+        // Add passive: false to allow preventDefault
+        api.containerNode().addEventListener("wheel", onWheel, { passive: false });
+
+        return () => {
+            api.containerNode().removeEventListener("wheel", onWheel);
+        };
+    }, [api]);
 
     return (
         <div className="w-full">
@@ -37,13 +96,78 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
             </div>
 
             <Carousel
+                setApi={setApi}
                 className="w-full"
                 opts={{
                     align: "start",
                     loop: false,
+                    dragFree: true,
                 }}
             >
                 <CarouselContent className="-ml-2 md:-ml-4">
+                    {/* Accounts List */}
+                    {accounts.map((account, index) => {
+                        const logoUrl = getBankLogo(account.bank_name);
+                        const displayTitle = account.account_name || account.bank_name;
+                        const displaySubtitle = account.bank_name;
+                        const networkLogo = getNetworkLogo(displayTitle, account.bank_name);
+
+                        return (
+                            <CarouselItem key={account.id} className="pl-2 md:pl-4 basis-[75%] sm:basis-[45%] lg:basis-[30%]">
+                                <div
+                                    onClick={() => navigate('/accounts-cards')}
+                                    className={`h-32 rounded-3xl bg-gradient-to-br ${gradients[index % gradients.length]} p-4 flex flex-col justify-between shadow-lg cursor-pointer hover:scale-[1.02] transition-transform`}
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className="relative">
+                                                <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-sm">
+                                                    {logoUrl ? (
+                                                        <img 
+                                                            src={logoUrl} 
+                                                            alt={account.bank_name} 
+                                                            className="w-full h-full object-contain p-1"
+                                                            onError={(e) => {
+                                                                (e.target as HTMLImageElement).style.display = 'none';
+                                                                (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                                                            }}
+                                                        />
+                                                    ) : null}
+                                                    <span className={`text-slate-700 font-bold text-xs ${logoUrl ? 'hidden' : ''}`}>
+                                                        {account.bank_name.charAt(0)}
+                                                    </span>
+                                                </div>
+                                                {networkLogo && (
+                                                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100 overflow-hidden">
+                                                        <img src={networkLogo} alt="Network" className="w-3 h-3 object-contain" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            
+                                            {/* Title and Subtitle */}
+                                            <div className="flex flex-col overflow-hidden">
+                                                <span className="text-white font-bold text-sm truncate max-w-[120px]">
+                                                    {displayTitle}
+                                                </span>
+                                                <span className="text-white/70 text-[10px] truncate">
+                                                    {displaySubtitle}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <CreditCard className="text-white/50" size={16} />
+                                    </div>
+
+                                    <div>
+                                        <p className="text-white/70 text-[10px] font-medium mb-0.5">Balance Total</p>
+                                        <p className="text-white text-xl font-bold">
+                                            {account.balance !== undefined ? `$${account.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}` : 'NA'}
+                                        </p>
+                                    </div>
+                                </div>
+                            </CarouselItem>
+                        );
+                    })}
+
                     {/* Add New Card Button */}
                     <CarouselItem className="pl-2 md:pl-4 basis-[40%] sm:basis-[30%] lg:basis-[20%]">
                         <div
@@ -56,39 +180,10 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                             <span className="text-xs font-bold text-gray-400">Agregar</span>
                         </div>
                     </CarouselItem>
-
-                    {/* Accounts List */}
-                    {accounts.map((account, index) => {
-                        // Simulated balance for display purposes as per original component
-                        const simulatedBalance = 5000 + (index * 2500);
-
-                        return (
-                            <CarouselItem key={account.id} className="pl-2 md:pl-4 basis-[75%] sm:basis-[45%] lg:basis-[30%]">
-                                <div
-                                    onClick={() => navigate('/accounts-cards')}
-                                    className={`h-32 rounded-3xl bg-gradient-to-br ${gradients[index % gradients.length]} p-4 flex flex-col justify-between shadow-lg cursor-pointer hover:scale-[1.02] transition-transform`}
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                                                <span className="text-white font-bold text-xs">{account.bank_name.charAt(0)}</span>
-                                            </div>
-                                            <span className="text-white font-bold text-sm truncate max-w-[100px]">{account.bank_name}</span>
-                                        </div>
-                                        <CreditCard className="text-white/50" size={16} />
-                                    </div>
-
-                                    <div>
-                                        <p className="text-white/70 text-[10px] font-medium mb-0.5">Balance Total</p>
-                                        <p className="text-white text-xl font-bold">
-                                            ${simulatedBalance.toLocaleString('en-US', { minimumFractionDigits: 0 })}
-                                        </p>
-                                    </div>
-                                </div>
-                            </CarouselItem>
-                        );
-                    })}
                 </CarouselContent>
+                
+                <CarouselPrevious className="left-2 bg-white/80 backdrop-blur-sm border-0 shadow-lg" />
+                <CarouselNext className="right-2 bg-white/80 backdrop-blur-sm border-0 shadow-lg" />
             </Carousel>
         </div>
     );

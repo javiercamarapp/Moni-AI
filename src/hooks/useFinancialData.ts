@@ -233,6 +233,81 @@ export const useMonthlyTotals = (monthOffset: number = 0) => {
   });
 };
 
+export const useAccountsList = () => {
+  return useQuery({
+    queryKey: ['accountsList'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No user');
+
+      const [{ data: assets, error: assetsError }, { data: liabilities, error: liabilitiesError }] = await Promise.all([
+        supabase.from('assets').select('*').eq('user_id', user.id),
+        supabase.from('liabilities').select('*').eq('user_id', user.id), // Table name is 'liabilities' but mapped to 'pasivos' in DB structure doc? 
+        // Wait, the code uses 'liabilities' in useNetWorth (line 141). 
+        // But DATABASE_STRUCTURE.md says 'pasivos'.
+        // If useNetWorth uses 'liabilities', I should use 'liabilities'. 
+        // Let me double check useNetWorth in the file.
+      ]);
+
+      if (assetsError) throw assetsError;
+      if (liabilitiesError) throw liabilitiesError;
+
+      // Helper to determine if item is a card or bank account
+      const isCardOrBank = (name: string = '', category: string = '') => {
+        const text = `${name} ${category}`.toLowerCase();
+        
+        // Exclude non-banking items
+        const excluded = [
+          'efectivo', 'cash', 'wallet', 'billetera',
+          'inversión', 'investment', 'bolsa', 'crypto', 'gbh', 'cet', // Investments
+          'hipoteca', 'mortgage', 'casa', 'propiedad', // Real estate
+          'préstamo', 'loan', 'crédito personal', 'automotriz', 'auto' // Loans
+        ];
+        
+        if (excluded.some(term => text.includes(term))) return false;
+
+        // Include banking items
+        const included = [
+          'tarjeta', 'card', 'tdc', // Cards
+          'banco', 'bank', // General bank
+          'ahorro', 'savings', // Savings
+          'cheques', 'checking', 'corriente', // Checking
+          'nómina', 'nomina', // Payroll
+          'débito', 'debit',
+          'crédito', 'credit',
+          'cuenta'
+        ];
+
+        return included.some(term => text.includes(term));
+      };
+
+      // Transform and combine
+      const assetAccounts = (assets || [])
+        .filter(a => isCardOrBank(a.name, a.category))
+        .map(a => ({
+          id: a.id,
+          bank_name: a.category || 'Banco',
+          account_name: a.name,
+          balance: Number(a.value),
+          type: 'asset',
+        }));
+
+      const liabilityAccounts = (liabilities || [])
+        .filter(l => isCardOrBank(l.name, l.category)) // liabilities uses 'name' and 'category' as fixed in previous step
+        .map(l => ({
+          id: l.id,
+          bank_name: l.category || 'Banco',
+          account_name: l.name, 
+          balance: Number(l.value),
+          type: 'liability',
+        }));
+
+      return [...assetAccounts, ...liabilityAccounts];
+    },
+    staleTime: STALE_TIME,
+  });
+};
+
 // Hook to invalidate all financial queries
 export const useInvalidateFinancialData = () => {
   const queryClient = useQueryClient();
