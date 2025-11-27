@@ -47,8 +47,8 @@ const QuickStats: React.FC<QuickStatsProps> = ({
                         className="flex flex-col items-center gap-1.5 cursor-pointer group"
                         onClick={() => navigate(stat.route)}
                     >
-                        {/* Icon Box */}
-                        <div className="bg-white rounded-xl p-3 shadow-[0_8px_20px_-5px_rgba(0,0,0,0.06)] border border-gray-100/50 group-hover:shadow-[0_12px_25px_-5px_rgba(0,0,0,0.1)] group-hover:-translate-y-0.5 transition-all active:scale-95 duration-200">
+                        {/* Icon Box - Rectangular */}
+                        <div className="bg-white rounded-xl px-5 py-2.5 shadow-[0_8px_20px_-5px_rgba(0,0,0,0.06)] border border-gray-100/50 group-hover:shadow-[0_12px_25px_-5px_rgba(0,0,0,0.1)] group-hover:-translate-y-0.5 transition-all active:scale-95 duration-200">
                             {getIcon(stat.icon)}
                         </div>
                         
