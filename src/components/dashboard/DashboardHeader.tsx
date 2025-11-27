@@ -12,19 +12,9 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName = "Usuario",
     const navigate = useNavigate();
 
     return (
-        <header className="flex flex-col sm:flex-row sm:items-start sm:justify-between px-6 py-4 pt-8 gap-4">
-            <div className="flex items-center gap-3">
-                <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-[#F5F0EE] flex items-center justify-center border-2 border-white shadow-[0_8px_20px_-6px_rgba(0,0,0,0.15)] overflow-hidden p-1.5">
-                    <img src={moniLogo} alt="Moni AI" className="h-full w-full object-contain" />
-                </div>
-                <div className="flex flex-col">
-                    <span className="text-gray-400 text-xs sm:text-sm font-medium">Buenos días,</span>
-                    <span className="text-gray-800 font-bold text-lg sm:text-xl leading-tight">{userName}</span>
-                </div>
-            </div>
-
-            <div className="flex items-center gap-2 self-end sm:self-auto">
-                {/* Botón de notificaciones */}
+        <header className="relative px-6 py-4 pt-8">
+            {/* Botón de notificaciones - Top Right */}
+            <div className="absolute top-4 right-6">
                 <div className="relative">
                     <button
                         onClick={() => navigate("/notifications")}
@@ -35,6 +25,17 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName = "Usuario",
                     {unreadNotifications > 0 && (
                         <div className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500 border-2 border-white animate-pulse"></div>
                     )}
+                </div>
+            </div>
+
+            {/* Logo and Name */}
+            <div className="flex items-center gap-3">
+                <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-[#F5F0EE] flex items-center justify-center border-2 border-white shadow-[0_8px_20px_-6px_rgba(0,0,0,0.15)] overflow-hidden p-1.5">
+                    <img src={moniLogo} alt="Moni AI" className="h-full w-full object-contain" />
+                </div>
+                <div className="flex flex-col">
+                    <span className="text-gray-400 text-xs sm:text-sm font-medium">Buenos días,</span>
+                    <span className="text-gray-800 font-bold text-lg sm:text-xl leading-tight">{userName}</span>
                 </div>
             </div>
         </header>
