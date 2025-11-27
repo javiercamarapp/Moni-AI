@@ -198,12 +198,12 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <div className="relative">
-                                                <div className="w-8 sm:w-10 h-8 sm:h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-sm">
+                                                <div className="w-7 sm:w-8 h-7 sm:h-8 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-sm">
                                                     {logoUrl ? (
                                                         <img 
                                                             src={logoUrl} 
                                                             alt={account.bank_name} 
-                                                            className="w-12 sm:w-14 h-12 sm:h-14 object-contain"
+                                                            className="w-10 sm:w-11 h-10 sm:h-11 object-contain"
                                                             onError={(e) => {
                                                                 (e.target as HTMLImageElement).style.display = 'none';
                                                                 (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
