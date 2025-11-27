@@ -60,6 +60,15 @@ const getNetworkLogo = (plaidItemId: string | undefined, accountId: string) => {
     return null;
 };
 
+const getCardName = (plaidItemId?: string, bankName?: string) => {
+    if (plaidItemId === 'banamex_conquista') return 'Conquista';
+    if (plaidItemId === 'bbva_platinum') return 'Platinum';
+    if (plaidItemId === 'bbva_debito') return 'Débito';
+    
+    // Fallback to bank name
+    return bankName || 'Tarjeta';
+};
+
 const getGradient = (bankName: string, plaidItemId?: string) => {
     // Special case for Banamex Conquista - matte dark grey
     if (plaidItemId === 'banamex_conquista') {
@@ -137,8 +146,9 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                     {/* Accounts List */}
                     {accounts.map((account, index) => {
                         const logoUrl = getBankLogo(account.bank_name);
-                        const displayTitle = account.account_id;
-                        const displaySubtitle = account.bank_name;
+                        const last4 = account.account_id.slice(-4);
+                        const displayTitle = getCardName(account.plaid_item_id, account.bank_name);
+                        const displaySubtitle = `${account.bank_name} •••• ${last4}`;
                         const networkLogo = getNetworkLogo(account.plaid_item_id, account.account_id);
                         const gradient = getGradient(account.bank_name, account.plaid_item_id);
 
