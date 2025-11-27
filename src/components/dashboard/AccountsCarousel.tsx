@@ -239,7 +239,7 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                         {/* Network Logo - Lower Right */}
                                         {networkLogo && (
                                             <div className="flex items-center justify-center">
-                                                <img src={networkLogo} alt="Network" className="w-14 h-10 object-contain" />
+                                                <img src={networkLogo} alt="Network" className="w-16 h-12 object-contain" />
                                             </div>
                                         )}
                                     </div>
