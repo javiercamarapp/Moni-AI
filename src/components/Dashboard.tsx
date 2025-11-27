@@ -1251,11 +1251,6 @@ const Dashboard = () => {
             }))}
           />
 
-          {/* Weekly Income vs Expense */}
-          <div className="px-6 mb-6">
-            <WeeklyIncomeExpenseWidget data={last7DaysData} />
-          </div>
-
           {/* Recent Transactions */}
           <RecentTransactionsWidget transactions={recentTransactions} />
         </div>
