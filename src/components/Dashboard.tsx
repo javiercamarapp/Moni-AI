@@ -1189,6 +1189,9 @@ const Dashboard = () => {
           />
 
           <div className="px-6 mb-6 space-y-6">
+            {/* Notification Banner */}
+            <NotificationBanner />
+
             {/* Score Card */}
             <ScoreCard
               score={scoreMoni}
@@ -1198,9 +1201,6 @@ const Dashboard = () => {
               budgetFrequency="Mensual"
             />
           </div>
-
-          {/* Notification Banner */}
-          <NotificationBanner />
 
           <QuickStats
             summaryValue={`$${(currentMonth.balance / 1000).toFixed(0)}k`}

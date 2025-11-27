@@ -38,10 +38,10 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.4 }}
-                        className="relative flex items-center gap-3 p-3 pr-4"
+                        className="relative flex items-center gap-2 p-2 pr-3"
                     >
-                        <div className="h-10 w-10 rounded-2xl bg-white flex items-center justify-center shadow-sm border border-gray-100 shrink-0">
-                            <span className="text-xl">{currentNotification.emoji || "🤖"}</span>
+                        <div className="h-8 w-8 rounded-2xl bg-white flex items-center justify-center shadow-sm border border-gray-100 shrink-0">
+                            <span className="text-lg">{currentNotification.emoji || "🤖"}</span>
                         </div>
                         
                         <div className="flex flex-col min-w-0">
