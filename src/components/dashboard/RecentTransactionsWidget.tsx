@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Coffee, ShoppingBag, Bus, Gamepad2, Plane, Zap, Shirt, Dumbbell, TrendingUp, TrendingDown, Home, Car, ChevronUp, ChevronDown } from 'lucide-react';
+import { Coffee, ShoppingBag, Bus, Gamepad2, Plane, Zap, Shirt, Dumbbell, TrendingUp, TrendingDown, Home, Car, ChevronUp, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface Transaction {
     id: string;
@@ -104,11 +104,12 @@ const RecentTransactionsWidget: React.FC<RecentTransactionsWidgetProps> = ({ tra
                             </button>
                         </div>
                     )}
-                    <button 
+                    <button
                         onClick={() => navigate('/movimientos')}
-                        className="flex items-center gap-1.5 bg-white hover:bg-gray-50 text-[#5D4037] px-4 py-2 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95 border border-gray-100"
+                        className="text-[#8D6E63] text-xs font-bold hover:underline flex items-center gap-0.5 whitespace-nowrap"
                     >
-                        <span>Ver Todo</span> <ArrowRight size={12} strokeWidth={3} />
+                        Ver todas
+                        <ChevronRight size={12} />
                     </button>
                 </div>
             </div>
