@@ -95,6 +95,11 @@ const getGradient = (bankName: string, plaidItemId?: string) => {
     if (plaidItemId === 'banamex_conquista') {
         return 'from-gray-800 to-gray-950';
     }
+    
+    // Special case for BBVA Platinum - silver gradient
+    if (plaidItemId === 'bbva_platinum') {
+        return 'from-slate-300 to-slate-500';
+    }
 
     const name = bankName.toLowerCase();
     if (name.includes('bbva')) return 'from-blue-400 to-blue-600';
@@ -193,12 +198,12 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <div className="relative">
-                                                <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-sm">
+                                                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-sm">
                                                     {logoUrl ? (
                                                         <img 
                                                             src={logoUrl} 
                                                             alt={account.bank_name} 
-                                                            className="w-full h-full object-contain p-1"
+                                                            className="w-16 h-16 object-contain"
                                                             onError={(e) => {
                                                                 (e.target as HTMLImageElement).style.display = 'none';
                                                                 (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
@@ -233,8 +238,8 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
 
                                         {/* Network Logo - Lower Right */}
                                         {networkLogo && (
-                                            <div className="w-10 h-6 bg-white rounded flex items-center justify-center shadow-sm overflow-hidden">
-                                                <img src={networkLogo} alt="Network" className="w-8 h-5 object-contain" />
+                                            <div className="flex items-center justify-center">
+                                                <img src={networkLogo} alt="Network" className="w-14 h-10 object-contain" />
                                             </div>
                                         )}
                                     </div>
