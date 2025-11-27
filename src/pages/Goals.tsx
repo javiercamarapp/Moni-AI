@@ -131,8 +131,20 @@ const Goals = () => {
 
   const generateInsights = async () => {
     try {
+      // Only generate insights if there are goals
+      if (goals.length === 0) {
+        setAiInsights([
+          "💡 Crea tu primera meta para recibir consejos personalizados",
+          "🎯 Define objetivos claros para alcanzar tus sueños",
+          "⚡ El primer paso es el más importante",
+          "🌟 Empieza hoy tu camino al éxito financiero"
+        ]);
+        return;
+      }
+
+      // Use the first goal for insights
       const { data, error } = await supabase.functions.invoke('generate-goal-insights', {
-        body: { goals }
+        body: { goalId: goals[0].id, isGroupGoal: false }
       });
 
       if (error) throw error;
