@@ -18,6 +18,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { SiriOrb } from '@/components/ui/siri-orb';
 import { AudioWaveVisualizer } from '@/components/ui/audio-wave-visualizer';
 import { cn } from '@/lib/utils';
+import BottomNav from '@/components/BottomNav';
 
 // Function to remove asterisks from text
 const removeAsterisks = (text: string): string => {
@@ -1029,7 +1030,7 @@ const ChatInterface = () => {
     background={<div className="absolute inset-0 animated-wave-bg" />}
     className="text-white"
   >
-    <div className="flex flex-col h-screen relative z-10">
+    <div className="flex flex-col h-screen relative z-10 pb-20">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
@@ -1553,6 +1554,8 @@ const ChatInterface = () => {
           </DialogContent>
         </Dialog>
       )}
+      
+      <BottomNav />
     </div>
   </PulseBeams>;
 };
