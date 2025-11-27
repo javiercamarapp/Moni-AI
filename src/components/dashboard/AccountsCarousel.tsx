@@ -188,11 +188,14 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                     onClick={() => navigate('/accounts-cards')}
                                     className={`h-32 rounded-3xl ${solidColor} p-4 flex flex-col justify-between shadow-lg cursor-pointer hover:scale-[1.02] transition-transform relative`}
                                 >
-                                    {/* Card Type Label - Upper Right */}
-                                    <div className="absolute top-3 right-3">
+                                    {/* Card Type Label and Network Logo - Upper Right */}
+                                    <div className="absolute top-3 right-3 flex flex-col items-end gap-1">
                                         <span className="text-white/80 text-[10px] font-semibold px-2 py-1 rounded-full bg-white/10 backdrop-blur-sm">
                                             {cardType}
                                         </span>
+                                        {networkLogo && (
+                                            <img src={networkLogo} alt="Network" className="w-10 h-7 object-contain" />
+                                        )}
                                     </div>
 
                                     <div className="flex items-center justify-between">
@@ -235,13 +238,6 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                                 ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                             </p>
                                         </div>
-
-                                        {/* Network Logo - Lower Right */}
-                                        {networkLogo && (
-                                            <div className="absolute top-3 right-14">
-                                                <img src={networkLogo} alt="Network" className="w-12 h-9 object-contain" />
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             </CarouselItem>
