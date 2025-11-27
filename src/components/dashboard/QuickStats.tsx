@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart3, TrendingUp, Target, CreditCard } from 'lucide-react';
+import { BarChart3, TrendingUp, Target, Wallet } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface QuickStatsProps {
@@ -25,39 +25,38 @@ const QuickStats: React.FC<QuickStatsProps> = ({
     ];
 
     const getIcon = (type: string) => {
-        const size = 16;
-        const cls = "text-[#8D6E63] w-4 h-4 sm:w-5 sm:h-5"; // Warm coffee brown
+        const cls = "text-[#8D6E63]";
+        const size = 20;
         const strokeWidth = 2;
 
         switch (type) {
             case 'chart': return <BarChart3 size={size} strokeWidth={strokeWidth} className={cls} />;
             case 'trend': return <TrendingUp size={size} strokeWidth={strokeWidth} className={cls} />;
             case 'target': return <Target size={size} strokeWidth={strokeWidth} className={cls} />;
-            case 'card': return <CreditCard size={size} strokeWidth={strokeWidth} className={cls} />;
+            case 'card': return <Wallet size={size} strokeWidth={strokeWidth} className={cls} />;
             default: return <BarChart3 size={size} strokeWidth={strokeWidth} className={cls} />;
         }
     };
 
     return (
-        <div className="px-4 sm:px-6 mb-4 sm:mb-8">
-            {/* Mobile: 2x2 grid with vertical layout | Desktop: 1x4 grid with horizontal layout */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-3">
+        <div className="px-6 mb-4">
+            <div className="grid grid-cols-4 gap-2">
                 {stats.map((stat) => (
                     <div 
                         key={stat.id} 
-                        className="bg-white rounded-lg sm:rounded-2xl p-2 sm:p-3 shadow-[0_8px_20px_-5px_rgba(0,0,0,0.1)] border border-white flex flex-col items-center justify-center text-center gap-1 sm:gap-2 cursor-pointer hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 transition-all active:scale-95 duration-200"
+                        className="bg-white rounded-xl p-2.5 shadow-[0_8px_20px_-5px_rgba(0,0,0,0.06)] border border-gray-100/50 flex flex-col items-center justify-center text-center gap-1 cursor-pointer hover:shadow-[0_12px_25px_-5px_rgba(0,0,0,0.1)] hover:-translate-y-0.5 transition-all active:scale-95 duration-200"
                         onClick={() => navigate(stat.route)}
                     >
                         {/* Icon */}
-                        <div className="shrink-0">
+                        <div className="shrink-0 mb-0.5">
                             {getIcon(stat.icon)}
                         </div>
                         
-                        {/* Value */}
-                        <span className="text-[11px] sm:text-[14px] font-bold text-gray-800 leading-none">{stat.value}</span>
-
                         {/* Label */}
-                        <span className="text-[8px] sm:text-[10px] font-bold text-gray-400 tracking-wide uppercase break-words leading-tight w-full">{stat.label}</span>
+                        <span className="text-[8px] font-bold text-gray-400 tracking-wide uppercase leading-tight">{stat.label}</span>
+
+                        {/* Value */}
+                        <span className="text-[11px] font-bold text-gray-800 leading-none">{stat.value}</span>
                     </div>
                 ))}
             </div>

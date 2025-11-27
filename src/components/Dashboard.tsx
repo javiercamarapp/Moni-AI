@@ -1190,13 +1190,7 @@ const Dashboard = () => {
 
           {/* Score Card */}
           <div className="px-6 mb-4">
-            <ScoreCard
-              score={scoreMoni}
-              userLevel={totalAspiration > 0 ? Math.floor((netWorth / totalAspiration) * 10000) : 1}
-              totalBudget={totalBudget}
-              currentSpend={currentMonthExpenses}
-              budgetFrequency="Mensual"
-            />
+            <ScoreCard score={scoreMoni} />
           </div>
 
           {/* Quick Stats */}
