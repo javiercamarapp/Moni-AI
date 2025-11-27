@@ -31,7 +31,7 @@ const FinancialChat = () => {
   };
 
   return (
-    <div className="min-h-screen pb-4">
+    <div className="min-h-screen pb-20">
       {/* Header con botón de regreso */}
       <div className="p-4 flex items-center gap-3">
         <Button
