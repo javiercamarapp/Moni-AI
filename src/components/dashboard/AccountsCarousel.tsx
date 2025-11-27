@@ -90,26 +90,26 @@ const getCardName = (plaidItemId?: string, bankName?: string) => {
     return bankName || 'Tarjeta';
 };
 
-const getGradient = (bankName: string, plaidItemId?: string) => {
+const getSolidColor = (bankName: string, plaidItemId?: string) => {
     // Special case for Banamex Conquista - matte dark grey
     if (plaidItemId === 'banamex_conquista') {
-        return 'from-gray-800 to-gray-950';
+        return 'bg-gray-900';
     }
     
-    // Special case for BBVA Platinum - silver gradient
+    // Special case for BBVA Platinum - silver
     if (plaidItemId === 'bbva_platinum') {
-        return 'from-slate-300 to-slate-500';
+        return 'bg-slate-400';
     }
 
     const name = bankName.toLowerCase();
-    if (name.includes('bbva')) return 'from-blue-400 to-blue-600';
-    if (name.includes('banamex') || name.includes('citibanamex')) return 'from-gray-800 to-gray-950';
-    if (name.includes('santander')) return 'from-red-500 to-red-700';
-    if (name.includes('hsbc')) return 'from-red-600 to-red-800';
-    if (name.includes('scotiabank')) return 'from-red-700 to-red-900';
-    if (name.includes('inbursa')) return 'from-green-600 to-green-800';
-    if (name.includes('nu')) return 'from-purple-500 to-purple-700';
-    return 'from-slate-700 to-slate-900';
+    if (name.includes('bbva')) return 'bg-blue-500';
+    if (name.includes('banamex') || name.includes('citibanamex')) return 'bg-gray-900';
+    if (name.includes('santander')) return 'bg-red-600';
+    if (name.includes('hsbc')) return 'bg-red-700';
+    if (name.includes('scotiabank')) return 'bg-red-800';
+    if (name.includes('inbursa')) return 'bg-green-700';
+    if (name.includes('nu')) return 'bg-purple-600';
+    return 'bg-slate-800';
 };
 
 const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
@@ -178,7 +178,7 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                         const bankNameOnly = account.bank_name.split(' ')[0];
                         const displaySubtitle = `${bankNameOnly} - •${last4}`;
                         const networkLogo = getNetworkLogo(account.plaid_item_id, account.account_id);
-                        const gradient = getGradient(account.bank_name, account.plaid_item_id);
+                        const solidColor = getSolidColor(account.bank_name, account.plaid_item_id);
                         const cardType = getCardType(account.plaid_item_id);
                         const balance = account.balance ?? getMockBalance(account.plaid_item_id);
 
@@ -186,7 +186,7 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                             <CarouselItem key={account.id} className="pl-2 md:pl-4 basis-[75%] sm:basis-[45%] lg:basis-[30%]">
                                 <div
                                     onClick={() => navigate('/accounts-cards')}
-                                    className={`h-32 rounded-3xl bg-gradient-to-br ${gradient} p-4 flex flex-col justify-between shadow-lg cursor-pointer hover:scale-[1.02] transition-transform relative`}
+                                    className={`h-32 rounded-3xl ${solidColor} p-4 flex flex-col justify-between shadow-lg cursor-pointer hover:scale-[1.02] transition-transform relative`}
                                 >
                                     {/* Card Type Label - Upper Right */}
                                     <div className="absolute top-3 right-3">
