@@ -98,7 +98,7 @@ const getSolidColor = (bankName: string, plaidItemId?: string) => {
     
     // Special case for BBVA Platinum - silver
     if (plaidItemId === 'bbva_platinum') {
-        return 'bg-slate-300';
+        return 'bg-[#adaeb0]';
     }
 
     const name = bankName.toLowerCase();
@@ -239,7 +239,7 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                         {/* Network Logo - Lower Right */}
                                         {networkLogo && (
                                             <div className="flex items-center justify-center">
-                                                <img src={networkLogo} alt="Network" className="w-16 h-12 object-contain" />
+                                                <img src={networkLogo} alt="Network" className="w-20 h-14 object-contain" />
                                             </div>
                                         )}
                                     </div>
