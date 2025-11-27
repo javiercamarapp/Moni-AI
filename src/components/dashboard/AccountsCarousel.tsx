@@ -11,7 +11,7 @@ import inbursaLogo from '@/assets/BankIcons/inbursa.png';
 import nuLogo from '@/assets/BankIcons/nu.png';
 import santanderLogo from '@/assets/BankIcons/santander.png';
 import scotiabankLogo from '@/assets/BankIcons/scotiabank.webp';
-import mastercardLogo from '@/assets/BankIcons/mastercard.jpg';
+import mastercardLogo from '@/assets/BankIcons/mastercard.png';
 import visaLogo from '@/assets/BankIcons/visa.png';
 import amexLogo from '@/assets/BankIcons/amex.png';
 
