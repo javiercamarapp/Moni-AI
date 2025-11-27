@@ -40,22 +40,22 @@ const QuickStats: React.FC<QuickStatsProps> = ({
 
     return (
         <div className="px-6 mb-4">
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-4 gap-3">
                 {stats.map((stat) => (
                     <div 
                         key={stat.id} 
-                        className="bg-white rounded-xl p-2.5 shadow-[0_8px_20px_-5px_rgba(0,0,0,0.06)] border border-gray-100/50 flex flex-col items-center justify-center text-center gap-1 cursor-pointer hover:shadow-[0_12px_25px_-5px_rgba(0,0,0,0.1)] hover:-translate-y-0.5 transition-all active:scale-95 duration-200"
+                        className="flex flex-col items-center gap-1.5 cursor-pointer group"
                         onClick={() => navigate(stat.route)}
                     >
-                        {/* Icon */}
-                        <div className="shrink-0 mb-0.5">
+                        {/* Icon Box */}
+                        <div className="bg-white rounded-xl p-3 shadow-[0_8px_20px_-5px_rgba(0,0,0,0.06)] border border-gray-100/50 group-hover:shadow-[0_12px_25px_-5px_rgba(0,0,0,0.1)] group-hover:-translate-y-0.5 transition-all active:scale-95 duration-200">
                             {getIcon(stat.icon)}
                         </div>
                         
-                        {/* Label */}
-                        <span className="text-[8px] font-bold text-gray-400 tracking-wide uppercase leading-tight">{stat.label}</span>
+                        {/* Label - Outside box */}
+                        <span className="text-[9px] font-semibold text-gray-500 tracking-wide uppercase leading-tight text-center">{stat.label}</span>
 
-                        {/* Value */}
+                        {/* Value - Outside box */}
                         <span className="text-[11px] font-bold text-gray-800 leading-none">{stat.value}</span>
                     </div>
                 ))}
