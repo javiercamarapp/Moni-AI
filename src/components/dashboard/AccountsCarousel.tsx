@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
-import { Plus, CreditCard } from "lucide-react";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@/components/ui/carousel";
+import { Plus, CreditCard, ChevronLeft, ChevronRight } from "lucide-react";
+import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 
 import banamexLogo from '@/assets/BankIcons/banamex.png';
 import bbvaLogo from '@/assets/BankIcons/bbva.png';
@@ -150,13 +150,39 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
     return (
         <div className="w-full">
             <div className="flex items-center justify-between px-2 mb-3">
-                <h3 className="text-gray-800 font-bold text-lg">Mis cuentas y tarjetas</h3>
-                <button
-                    onClick={() => navigate('/accounts-cards')}
-                    className="text-[#8D6E63] text-xs font-bold hover:underline"
-                >
-                    Ver todas
-                </button>
+                <h3 className="text-gray-800 font-bold text-lg">Mis tarjetas</h3>
+                <div className="flex items-center gap-3">
+                    <div className="hidden md:flex gap-2">
+                        <button 
+                            onClick={() => api?.scrollPrev()} 
+                            className="p-1.5 rounded-full bg-white border border-gray-100 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors shadow-sm"
+                        >
+                            <ChevronLeft size={16} />
+                        </button>
+                        <button 
+                            onClick={() => api?.scrollNext()} 
+                            className="p-1.5 rounded-full bg-white border border-gray-100 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors shadow-sm"
+                        >
+                            <ChevronRight size={16} />
+                        </button>
+                    </div>
+                    
+                    <button 
+                        onClick={() => navigate('/bank-connection')}
+                        className="flex items-center gap-1.5 bg-[#F5F0EE] hover:bg-[#EBE5E2] text-[#5D4037] p-2 md:px-4 md:py-2 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95"
+                    >
+                        <Plus size={14} strokeWidth={3} />
+                        <span className="hidden md:inline">Agregar</span>
+                    </button>
+
+                    <button
+                        onClick={() => navigate('/accounts-cards')}
+                        className="text-[#8D6E63] text-xs font-bold hover:underline flex items-center gap-0.5"
+                    >
+                        Ver todas
+                        <ChevronRight size={12} />
+                    </button>
+                </div>
             </div>
 
             <Carousel
@@ -206,7 +232,7 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                                         <img 
                                                             src={logoUrl} 
                                                             alt={account.bank_name} 
-                                                            className="w-10 sm:w-11 h-10 sm:h-11 object-contain"
+                                                            className="w-full h-full object-contain p-1"
                                                             onError={(e) => {
                                                                 (e.target as HTMLImageElement).style.display = 'none';
                                                                 (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
@@ -244,22 +270,21 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                         );
                     })}
 
-                    {/* Add New Card Button */}
-                    <CarouselItem className="pl-2 md:pl-4 basis-[40%] sm:basis-[30%] lg:basis-[20%]">
-                        <div
-                            onClick={() => navigate("/bank-connection")}
-                            className="h-32 rounded-3xl bg-gray-50 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gray-100 transition-colors"
-                        >
-                            <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center shadow-sm">
-                                <Plus className="text-gray-400" size={20} />
+                    {/* Add New Card Button - Only show if no accounts */}
+                    {accounts.length === 0 && (
+                        <CarouselItem className="pl-2 md:pl-4 basis-[40%] sm:basis-[30%] lg:basis-[20%]">
+                            <div
+                                onClick={() => navigate("/bank-connection")}
+                                className="h-32 rounded-3xl bg-gray-50 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gray-100 transition-colors"
+                            >
+                                <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center shadow-sm">
+                                    <Plus className="text-gray-400" size={20} />
+                                </div>
+                                <span className="text-xs font-bold text-gray-400">Agregar</span>
                             </div>
-                            <span className="text-xs font-bold text-gray-400">Agregar</span>
-                        </div>
-                    </CarouselItem>
+                        </CarouselItem>
+                    )}
                 </CarouselContent>
-                
-                <CarouselPrevious className="left-2 bg-white/80 backdrop-blur-sm border-0 shadow-lg" />
-                <CarouselNext className="right-2 bg-white/80 backdrop-blur-sm border-0 shadow-lg" />
             </Carousel>
         </div>
     );

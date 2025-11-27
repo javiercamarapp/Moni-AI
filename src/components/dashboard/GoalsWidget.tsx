@@ -91,10 +91,17 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                     )}
                     <button 
                         onClick={() => navigate('/new-goal')}
-                        className="flex items-center gap-1.5 bg-[#F5F0EE] hover:bg-[#EBE5E2] text-[#5D4037] px-4 py-2 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95"
+                        className="flex items-center gap-1.5 bg-[#F5F0EE] hover:bg-[#EBE5E2] text-[#5D4037] p-2 md:px-4 md:py-2 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95"
                     >
                         <Plus size={14} strokeWidth={3} />
-                        <span>Nueva Meta</span>
+                        <span className="hidden md:inline">Nueva Meta</span>
+                    </button>
+                    <button
+                        onClick={() => navigate('/goals')}
+                        className="text-[#8D6E63] text-xs font-bold hover:underline flex items-center gap-0.5"
+                    >
+                        Ver todas
+                        <ChevronRight size={12} />
                     </button>
                 </div>
             </div>
@@ -182,10 +189,17 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                     )}
                     <button 
                         onClick={() => navigate('/new-goal?type=group')}
-                        className="flex items-center gap-1.5 bg-[#F5F0EE] hover:bg-[#EBE5E2] text-[#5D4037] px-4 py-2 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95"
+                        className="flex items-center gap-1.5 bg-[#F5F0EE] hover:bg-[#EBE5E2] text-[#5D4037] p-2 md:px-4 md:py-2 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95"
                     >
                         <Plus size={14} strokeWidth={3} />
-                        <span>Nueva Meta</span>
+                        <span className="hidden md:inline">Nueva Meta</span>
+                    </button>
+                    <button
+                        onClick={() => navigate('/groups')}
+                        className="text-[#8D6E63] text-xs font-bold hover:underline flex items-center gap-0.5"
+                    >
+                        Ver todas
+                        <ChevronRight size={12} />
                     </button>
                 </div>
             </div>
