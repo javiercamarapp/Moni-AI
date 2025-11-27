@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, BarChart3, Users, MessageCircle, User } from 'lucide-react';
+import { Home, BarChart3, Users, MessageCircle, Wallet } from 'lucide-react';
 import { usePendingFriendRequests } from '@/hooks/usePendingFriendRequests';
 
 const BottomNav = () => {
@@ -60,12 +60,12 @@ const BottomNav = () => {
         </button>
 
         <button 
-          onClick={() => navigate('/profile')}
+          onClick={() => navigate('/accounts-cards')}
           className={`transition-colors ${
-            isActive('/profile') ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+            isActive('/accounts-cards') ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <User className="w-6 h-6" />
+          <Wallet className="w-6 h-6" />
         </button>
       </div>
     </nav>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Wallet, User } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import moniLogo from '/moni-logo.png';
 
@@ -24,14 +24,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName = "Usuario",
             </div>
 
             <div className="flex items-center gap-2 self-end sm:self-auto">
-                {/* Cuentas y Tarjetas */}
-                <button
-                    onClick={() => navigate("/accounts-cards")}
-                    className="inline-flex items-center justify-center bg-white rounded-full text-gray-600 h-9 w-9 sm:h-10 sm:w-10 shadow-sm hover:shadow-md transition-all border border-gray-100"
-                >
-                    <Wallet className="h-4 w-4 sm:h-5 sm:w-5" />
-                </button>
-
                 {/* Botón de notificaciones */}
                 <div className="relative">
                     <button
@@ -44,14 +36,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName = "Usuario",
                         <div className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500 border-2 border-white animate-pulse"></div>
                     )}
                 </div>
-
-                {/* Perfil */}
-                <button
-                    onClick={() => navigate("/profile")}
-                    className="inline-flex items-center justify-center bg-white rounded-full text-gray-600 h-9 w-9 sm:h-10 sm:w-10 shadow-sm hover:shadow-md transition-all border border-gray-100"
-                >
-                    <User className="h-4 w-4 sm:h-5 sm:w-5" />
-                </button>
             </div>
         </header>
     );
