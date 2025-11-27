@@ -27,7 +27,7 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ score }) => {
 
     return (
         <div 
-            className="bg-white rounded-[1.5rem] px-5 py-4 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.08)] border border-white cursor-pointer hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.12)] transition-all"
+            className="bg-white rounded-[1.5rem] px-5 py-4 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.08)] border border-white cursor-pointer hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-200"
             onClick={() => navigate('/score-moni')}
         >
             <div className="flex items-center justify-between">
