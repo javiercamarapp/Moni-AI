@@ -7,6 +7,7 @@ import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carouse
 interface Account {
     id: string;
     bank_name: string;
+    account_id: string;
     type?: string;
 }
 
@@ -23,6 +24,24 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
         "from-purple-500 to-purple-700",
         "from-green-500 to-green-700",
     ];
+
+    // Function to get card logo based on account_id or pattern
+    const getCardLogo = (accountId: string) => {
+        if (accountId.startsWith('4')) {
+            return { name: 'VISA', color: 'bg-blue-600' };
+        } else if (accountId.startsWith('5')) {
+            return { name: 'MC', color: 'bg-orange-500' };
+        } else if (accountId.startsWith('3')) {
+            return { name: 'AMEX', color: 'bg-cyan-600' };
+        }
+        return { name: 'CARD', color: 'bg-gray-600' };
+    };
+
+    // Extract last 4 digits
+    const getLastFourDigits = (accountId: string) => {
+        const digits = accountId.replace(/\D/g, '');
+        return digits.slice(-4);
+    };
 
     return (
         <div className="w-full">
@@ -61,6 +80,8 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                     {accounts.map((account, index) => {
                         // Simulated balance for display purposes as per original component
                         const simulatedBalance = 5000 + (index * 2500);
+                        const cardLogo = getCardLogo(account.account_id);
+                        const lastFour = getLastFourDigits(account.account_id);
 
                         return (
                             <CarouselItem key={account.id} className="pl-2 md:pl-4 basis-[75%] sm:basis-[45%] lg:basis-[30%]">
@@ -73,9 +94,14 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                                                 <span className="text-white font-bold text-xs">{account.bank_name.charAt(0)}</span>
                                             </div>
-                                            <span className="text-white font-bold text-sm truncate max-w-[100px]">{account.bank_name}</span>
+                                            <div className="flex flex-col">
+                                                <span className="text-white font-bold text-sm truncate max-w-[100px]">{account.bank_name}</span>
+                                                <span className="text-white/60 text-[10px] font-medium">•••• {lastFour}</span>
+                                            </div>
                                         </div>
-                                        <CreditCard className="text-white/50" size={16} />
+                                        <div className={`${cardLogo.color} px-2 py-1 rounded text-white text-[10px] font-bold`}>
+                                            {cardLogo.name}
+                                        </div>
                                     </div>
 
                                     <div>
