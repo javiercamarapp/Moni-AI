@@ -58,8 +58,15 @@ const BottomNav = () => {
         >
           <MessageCircle className="w-6 h-6" />
         </button>
-        
-    
+
+        <button 
+          onClick={() => navigate('/profile')}
+          className={`transition-colors ${
+            isActive('/profile') ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <User className="w-6 h-6" />
+        </button>
       </div>
     </nav>
   );
