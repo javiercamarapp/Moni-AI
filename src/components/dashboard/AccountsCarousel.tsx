@@ -198,9 +198,9 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                         )}
                                     </div>
 
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <div className="relative">
+                                    <div className="flex items-center justify-between pr-16">
+                                        <div className="flex items-center gap-2 min-w-0">
+                                            <div className="relative flex-shrink-0">
                                                 <div className="w-7 sm:w-8 h-7 sm:h-8 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-sm">
                                                     {logoUrl ? (
                                                         <img 
@@ -220,8 +220,8 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                             </div>
                                             
                                             {/* Title and Subtitle */}
-                                            <div className="flex flex-col overflow-hidden">
-                                                <span className="text-white font-bold text-sm truncate max-w-[120px]">
+                                            <div className="flex flex-col overflow-hidden min-w-0">
+                                                <span className="text-white font-bold text-sm truncate">
                                                     {displayTitle}
                                                 </span>
                                                 <span className="text-white/70 text-[10px] truncate">
