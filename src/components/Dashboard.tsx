@@ -1234,7 +1234,7 @@ const Dashboard = () => {
           <GoalsWidget
             personalGoals={goals.map(g => ({
               id: g.id,
-              name: g.name || g.title || 'Meta',
+              name: g.title || 'Meta',
               target: Number(g.target),
               current: Number(g.current),
               deadline: g.deadline,
@@ -1242,7 +1242,7 @@ const Dashboard = () => {
             }))}
             groupGoals={groupGoals.map((g: any) => ({
               id: g.id,
-              name: g.name || g.title || 'Meta Grupal',
+              name: g.title || 'Meta Grupal',
               target: Number(g.target_amount || 0),
               current: Number(g.user_progress?.current_amount || 0),
               deadline: g.deadline,
