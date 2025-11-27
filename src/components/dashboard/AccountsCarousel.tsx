@@ -149,7 +149,7 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                         const logoUrl = getBankLogo(account.bank_name);
                         const last4 = account.account_id.slice(-4);
                         const displayTitle = getCardName(account.plaid_item_id, account.bank_name);
-                        const displaySubtitle = `${account.bank_name} - ••••${last4}`;
+                        const displaySubtitle = `${account.bank_name} - •${last4}`;
                         const networkLogo = getNetworkLogo(account.plaid_item_id, account.account_id);
                         const gradient = getGradient(account.bank_name, account.plaid_item_id);
 
