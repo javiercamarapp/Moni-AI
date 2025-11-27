@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Users, Car, Home, Shield, Plane, Heart, Briefcase, Target, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -20,6 +20,48 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
     const navigate = useNavigate();
     const personalGoalsRef = useRef<HTMLDivElement>(null);
     const groupGoalsRef = useRef<HTMLDivElement>(null);
+
+    // Enable trackpad scrolling for personal goals
+    useEffect(() => {
+        const ref = personalGoalsRef.current;
+        if (!ref) return;
+
+        const onWheel = (e: WheelEvent) => {
+            // Check if horizontal scroll is dominant
+            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+                e.preventDefault();
+                ref.scrollBy({ left: e.deltaX, behavior: 'auto' });
+            }
+        };
+
+        // Add passive: false to allow preventDefault
+        ref.addEventListener("wheel", onWheel, { passive: false });
+
+        return () => {
+            ref.removeEventListener("wheel", onWheel);
+        };
+    }, []);
+
+    // Enable trackpad scrolling for group goals
+    useEffect(() => {
+        const ref = groupGoalsRef.current;
+        if (!ref) return;
+
+        const onWheel = (e: WheelEvent) => {
+            // Check if horizontal scroll is dominant
+            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+                e.preventDefault();
+                ref.scrollBy({ left: e.deltaX, behavior: 'auto' });
+            }
+        };
+
+        // Add passive: false to allow preventDefault
+        ref.addEventListener("wheel", onWheel, { passive: false });
+
+        return () => {
+            ref.removeEventListener("wheel", onWheel);
+        };
+    }, []);
 
     const scroll = (ref: React.RefObject<HTMLDivElement>, direction: 'left' | 'right') => {
         if (ref.current) {
