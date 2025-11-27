@@ -194,7 +194,7 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                             {cardType}
                                         </span>
                                         {networkLogo && (
-                                            <img src={networkLogo} alt="Network" className="w-10 h-7 object-contain" />
+                                            <img src={networkLogo} alt="Network" className="w-12 h-8 object-cover" />
                                         )}
                                     </div>
 
