@@ -66,7 +66,8 @@ const Dashboard = () => {
     monthlyExpenses,
     fixedExpenses,
     bankConnections,
-    hasBankConnections
+    hasBankConnections,
+    accounts
   } = dashboardData;
 
   // Keep local state for things that update independently
@@ -1219,7 +1220,7 @@ const Dashboard = () => {
             />
 
             {/* Accounts Carousel */}
-            <AccountsCarousel accounts={bankConnections} />
+            <AccountsCarousel accounts={accounts} />
           </div>
 
 
