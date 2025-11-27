@@ -138,36 +138,52 @@ export default function NotificationHistory() {
     }
   };
 
+  const handleDismiss = async (id: string) => {
+    try {
+      // Optimistic update
+      setNotifications(prev => prev.filter(n => n.id !== id));
+      setUnreadCount(prev => Math.max(0, prev - 1));
+
+      const { error } = await supabase
+        .from("notification_history")
+        .update({ status: "read" })
+        .eq("id", id);
+
+      if (error) throw error;
+    } catch (error) {
+      console.error("Error dismissing notification:", error);
+      toast.error("No se pudo descartar la notificación");
+      fetchNotifications(); // Revert on error
+    }
+  };
+
   return (
-    <div className="min-h-screen pb-32">
+    <div className="min-h-screen pb-32 bg-gradient-to-b from-[#efe6dc] via-[#efe6dc] via-10% to-[#f5f0ee]">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+      <div className="sticky top-0 z-40 bg-transparent backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-1">
             <Button
               variant="ghost"
               onClick={() => navigate("/dashboard")}
-              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 p-0"
+              className="bg-[#fafaf9] rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-white hover:bg-white transition-all h-10 w-10 p-0 text-gray-600"
             >
-              <ArrowLeft className="h-4 w-4 text-gray-700" />
+              <ArrowLeft className="h-4 w-4" />
             </Button>
             <div className="flex-1 text-center">
-              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Notificaciones</h1>
+              <h1 className="text-3xl font-bold text-gray-800 tracking-tight">Notificaciones</h1>
             </div>
             <div className="relative">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg">
-                <Bell className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 rounded-xl bg-[#fafaf9] flex items-center justify-center shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-white text-gray-600">
+                <Bell className="h-5 w-5" />
               </div>
               {unreadCount > 0 && (
-                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg animate-pulse">
+                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#8D6E63] border-2 border-[#fafaf9] flex items-center justify-center shadow-sm">
                   <span className="text-[10px] font-bold text-white">{unreadCount}</span>
                 </div>
               )}
             </div>
           </div>
-          <p className="text-xs text-center text-gray-600">
-            Mensajes, recordatorios e insights
-          </p>
         </div>
       </div>
 
@@ -176,23 +192,23 @@ export default function NotificationHistory() {
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3, 4].map((i) => (
-              <Card key={i} className="bg-white/40 backdrop-blur-md rounded-[16px] shadow-md border border-gray-300/30 animate-pulse">
+              <Card key={i} className="bg-[#f3eeea] rounded-[1.75rem] shadow-sm border border-white animate-pulse">
                 <CardContent className="p-4">
-                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
-                  <div className="h-3 bg-gray-200 rounded w-1/2" />
+                  <div className="h-4 bg-white/50 rounded w-3/4 mb-2" />
+                  <div className="h-3 bg-white/50 rounded w-1/2" />
                 </CardContent>
               </Card>
             ))}
           </div>
         ) : notifications.length === 0 ? (
-          <Card className="bg-white/50 backdrop-blur-xl rounded-[20px] shadow-lg border border-gray-200/50 p-8">
+          <Card className="bg-[#fafaf9] rounded-[1.75rem] shadow-sm border border-white p-8">
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 mb-4">
-                <Bell className="h-8 w-8 text-muted-foreground/50" />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 mb-4">
+                <Bell className="h-8 w-8 text-gray-300" />
               </div>
-              <h3 className="font-bold text-foreground mb-2">No hay notificaciones</h3>
-              <p className="text-sm text-muted-foreground">
-                Aquí aparecerán tus mensajes, recordatorios e insights
+              <h3 className="font-bold text-gray-800 mb-2">Todo al día</h3>
+              <p className="text-sm text-gray-500">
+                No tienes notificaciones pendientes
               </p>
             </div>
           </Card>
@@ -206,17 +222,15 @@ export default function NotificationHistory() {
                   key={notification.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, x: -100 }}
                   transition={{ delay: index * 0.05 }}
                 >
                   <Card
-                    className={`
-                      bg-white/70 backdrop-blur-xl rounded-[16px] shadow-lg border border-gray-200/50 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 overflow-hidden relative cursor-pointer
-                      ${isUnread ? 'ring-2 ring-cyan-400/50 animate-pulse' : ''}
-                    `}
+                    className="bg-[#f7f3ed] rounded-[1.75rem] p-4 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.05)] border border-[#e7dbcb] hover:scale-[1.02] transition-all duration-300 overflow-hidden relative group"
                   >
-                    {/* Gradient overlay basado en el tipo */}
+                    {/* Gradient overlay basado en el tipo - More subtle */}
                     <div 
-                      className={`absolute inset-0 opacity-5 pointer-events-none bg-gradient-to-br ${
+                      className={`absolute inset-0 opacity-[0.03] pointer-events-none bg-gradient-to-br ${
                         notification.notification_type === "daily_summary" ? "from-blue-400 to-cyan-500" :
                         notification.notification_type === "weekly_analysis" ? "from-slate-400 to-slate-600" :
                         notification.notification_type === "savings_tip" ? "from-emerald-400 to-teal-600" :
@@ -227,54 +241,64 @@ export default function NotificationHistory() {
                       }`}
                     />
                     
-                    <CardContent className="p-4 relative z-10">
+                    <div className="relative z-10">
                       <div className="flex gap-3">
                         {/* Icono con gradiente */}
                         <div className={`
-                          flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-md bg-gradient-to-br
-                          ${notification.notification_type === "daily_summary" ? "from-blue-400 to-cyan-500" :
-                            notification.notification_type === "weekly_analysis" ? "from-slate-400 to-slate-600" :
-                            notification.notification_type === "savings_tip" ? "from-emerald-400 to-teal-600" :
-                            notification.notification_type === "goal_reminder" ? "from-amber-400 to-orange-500" :
-                            notification.notification_type === "spending_alert" ? "from-rose-400 to-red-500" :
-                            notification.notification_type === "friend_request" ? "from-purple-400 to-pink-500" :
-                            "from-gray-400 to-gray-600"}
+                          flex-shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm bg-gradient-to-br
+                          ${notification.notification_type === "daily_summary" ? "from-blue-100 to-blue-50 text-blue-600" :
+                            notification.notification_type === "weekly_analysis" ? "from-slate-100 to-slate-50 text-slate-600" :
+                            notification.notification_type === "savings_tip" ? "from-emerald-100 to-emerald-50 text-emerald-600" :
+                            notification.notification_type === "goal_reminder" ? "from-amber-100 to-amber-50 text-amber-600" :
+                            notification.notification_type === "spending_alert" ? "from-rose-100 to-rose-50 text-rose-600" :
+                            notification.notification_type === "friend_request" ? "from-purple-100 to-purple-50 text-purple-600" :
+                            "from-gray-100 to-gray-50 text-gray-600"}
                         `}>
                           {notification.notification_type === "daily_summary" ? (
-                            <Calendar className="h-5 w-5 text-white" />
+                            <Calendar className="h-5 w-5" />
                           ) : notification.notification_type === "weekly_analysis" ? (
-                            <TrendingUp className="h-5 w-5 text-white" />
+                            <TrendingUp className="h-5 w-5" />
                           ) : notification.notification_type === "savings_tip" ? (
-                            <DollarSign className="h-5 w-5 text-white" />
+                            <DollarSign className="h-5 w-5" />
                           ) : notification.notification_type === "goal_reminder" ? (
-                            <Target className="h-5 w-5 text-white" />
+                            <Target className="h-5 w-5" />
                           ) : notification.notification_type === "spending_alert" ? (
-                            <Bell className="h-5 w-5 text-white" />
+                            <Bell className="h-5 w-5" />
                           ) : notification.notification_type === "friend_request" ? (
-                            <UserPlus className="h-5 w-5 text-white" />
+                            <UserPlus className="h-5 w-5" />
                           ) : (
-                            <MessageSquare className="h-5 w-5 text-white" />
+                            <MessageSquare className="h-5 w-5" />
                           )}
                         </div>
                         
                         <div className="flex-1 min-w-0">
-                          {/* Título y badge */}
-                          <div className="flex items-start justify-between gap-2 mb-2">
-                            <h3 className={`font-bold text-sm ${isUnread ? 'text-foreground' : 'text-foreground/70'}`}>
-                              {getNotificationTitle(notification.notification_type)}
-                            </h3>
-                            {isUnread && (
-                              <div className="flex items-center gap-1.5">
-                                <div className="flex-shrink-0 w-2 h-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 animate-pulse" />
-                                <Badge className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-[9px] px-1.5 py-0 animate-pulse">
+                          {/* Título, badge y dismiss */}
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <h3 className={`font-bold text-sm truncate ${isUnread ? 'text-gray-900' : 'text-gray-600'}`}>
+                                {getNotificationTitle(notification.notification_type)}
+                              </h3>
+                              {isUnread && (
+                                <Badge className="bg-[#EBE5E2] text-[#5D4037] hover:bg-[#e3ddd9] border-[#e3ddd9] text-[9px] px-2 py-0.5 font-bold shadow-none shrink-0">
                                   NUEVO
                                 </Badge>
-                              </div>
-                            )}
+                              )}
+                            </div>
+                            
+                            {/* Dismiss Button */}
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDismiss(notification.id);
+                              }}
+                              className="text-gray-400 hover:text-gray-500 transition-colors opacity-90 group-hover:opacity-100 shrink-0 p-1"
+                            >
+                              <X className="h-5 w-5" />
+                            </button>
                           </div>
                           
                           {/* Mensaje */}
-                          <p className="text-sm text-foreground/80 leading-relaxed mb-3">
+                          <p className="text-xs text-gray-500 leading-relaxed mb-3">
                             {notification.message}
                           </p>
                           
@@ -314,7 +338,7 @@ export default function NotificationHistory() {
                           </div>
                         </div>
                       </div>
-                    </CardContent>
+                    </div>
                   </Card>
                 </motion.div>
               );

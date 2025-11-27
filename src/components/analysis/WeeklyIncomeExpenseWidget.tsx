@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
-import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Calendar, Maximize2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -107,7 +107,7 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
         income: data.income,
         expense: data.expense,
         net: data.income - data.expense
-      }));
+      })).reverse(); // Chronological for chart
 
       setExpandedData(last30DaysArray);
     } catch (error) {
@@ -117,26 +117,8 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
     }
   };
 
-  if (!data || data.length === 0) {
-    return (
-      <Card className="w-full p-3 bg-card backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden animate-fade-in">
-        <GlowingEffect
-          spread={40}
-          glow={true}
-          disabled={false}
-          proximity={64}
-          inactiveZone={0.01}
-          borderWidth={2}
-        />
-        <div className="text-center text-muted-foreground py-4 relative z-10">
-          No hay datos de los últimos 7 días
-        </div>
-      </Card>
-    );
-  }
-
   // Take only last 7 days for the small view
-  const last7Days = data.slice(-7);
+  const last7Days = (data || []).slice(-7);
 
   // Formatear datos para el gráfico pequeño (últimos 7 días)
   const chartData = last7Days.map(item => ({
@@ -185,76 +167,84 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
 
   return (
     <>
+      {/* Header outside the card */}
+      <div className="flex items-center gap-2 justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <h3 className="text-xl font-bold text-gray-800 tracking-tight">Actividad Reciente</h3>
+        </div>
+        <div className="flex items-center gap-1 bg-white border border-gray-100 text-gray-500 px-3 py-1 rounded-full text-[10px] font-bold shadow-sm">
+            <Calendar className="h-3 w-3" />
+            <span>7 Días</span>
+        </div>
+      </div>
+
       <Card 
-        className="w-full p-3 bg-card backdrop-blur-sm rounded-3xl shadow-sm border-0 relative overflow-hidden animate-fade-in cursor-pointer"
+        className="w-full p-4 bg-white rounded-[1.75rem] shadow-[0_15px_30px_-10px_rgba(0,0,0,0.05)] border border-white relative overflow-hidden animate-fade-in cursor-pointer"
         onClick={() => setIsDialogOpen(true)}
       >
-        <GlowingEffect
-          spread={40}
-          glow={true}
-          disabled={false}
-          proximity={64}
-          inactiveZone={0.01}
-          borderWidth={2}
-        />
         <div className="space-y-2 relative z-10">
-          {/* Header */}
-          <div className="flex items-center gap-2 justify-between">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-3 w-3 text-primary" />
-              <h3 className="text-sm sm:text-xs font-bold text-foreground drop-shadow-sm">📊 Actividad Reciente (Últimos 7 días)</h3>
-            </div>
-            <Maximize2 className="h-3 w-3 text-primary" />
-          </div>
-
           {/* Gráfico pequeño - últimos 7 días */}
           <div className="h-28">
             <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <AreaChart data={chartData} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorIngresos" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="colorGastos" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" vertical={false} />
                 <XAxis 
                   dataKey="day" 
-                  tick={{ fontSize: 8, fill: 'hsl(var(--muted-foreground))' }}
-                  stroke="hsl(var(--border))"
+                  tick={{ fontSize: 10, fill: '#9ca3af' }}
+                  stroke="transparent"
                   interval={0}
+                  axisLine={false}
+                  tickLine={false}
                 />
                 <YAxis 
-                  tick={{ fontSize: 8, fill: 'hsl(var(--muted-foreground))' }}
-                  stroke="hsl(var(--border))"
+                  tick={{ fontSize: 10, fill: '#9ca3af' }}
+                  stroke="transparent"
+                  axisLine={false}
+                  tickLine={false}
                   tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
                 />
-                <Tooltip content={<CustomTooltip />} />
-                <Legend 
-                  wrapperStyle={{ fontSize: '9px' }}
-                  iconType="circle"
-                />
-                <Bar 
-                  dataKey="Gastos" 
-                  fill="hsl(0, 70%, 55%)" 
-                  radius={[4, 4, 0, 0]}
-                />
-                <Line 
+                <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#e5e7eb', strokeWidth: 1 }} />
+                <Area 
+                  type="monotone" 
                   dataKey="Ingresos" 
-                  stroke="hsl(150, 60%, 45%)" 
+                  stroke="#10b981" 
                   strokeWidth={2}
-                  dot={{ r: 3, fill: 'hsl(150, 60%, 45%)' }}
-                  activeDot={{ r: 4 }}
+                  fillOpacity={1} 
+                  fill="url(#colorIngresos)" 
                 />
-              </ComposedChart>
+                <Area 
+                  type="monotone" 
+                  dataKey="Gastos" 
+                  stroke="#ef4444" 
+                  strokeWidth={2}
+                  fillOpacity={1} 
+                  fill="url(#colorGastos)" 
+                />
+              </AreaChart>
             </ResponsiveContainer>
           </div>
 
           {/* Insight de la IA */}
           {insight ? (
-            <div className="bg-primary/10 rounded-2xl px-3 py-2.5 border border-primary/20 shadow-sm animate-fade-in">
-              <p className="text-[10px] text-primary leading-snug font-medium">
-                <span className="text-xs">🤖</span> <span className="font-semibold">Análisis IA:</span> {insight}
+            <div className="bg-indigo-50/50 rounded-2xl px-3 py-2.5 border border-indigo-100/50 shadow-sm animate-fade-in">
+              <p className="text-[10px] text-indigo-600 leading-snug font-medium">
+                <span className="text-xs mr-1">🤖</span> <span className="font-bold">Moni:</span> {insight}
               </p>
             </div>
           ) : (
-            <div className="bg-muted/50 rounded-2xl px-3 py-2.5 border border-border/20 shadow-sm">
-              <p className="text-[10px] text-muted-foreground leading-snug font-medium">
-                <span className="text-xs">🤖</span> <span className="font-semibold">Análisis IA:</span> No hay suficientes datos para análisis
+            <div className="bg-gray-50/50 rounded-2xl px-3 py-2.5 border border-gray-100/50 shadow-sm">
+              <p className="text-[10px] text-gray-400 leading-snug font-medium">
+                <span className="text-xs mr-1">🤖</span> <span className="font-bold">Moni:</span> No hay suficientes datos para análisis
               </p>
             </div>
           )}
@@ -263,16 +253,16 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
 
       {/* Dialog con gráfica expandida - últimos 30 días */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-4xl w-[90vw]">
+        <DialogContent className="max-w-4xl w-[90vw] rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-primary" />
+            <DialogTitle className="flex items-center gap-2 text-xl font-bold text-gray-800">
+              <Calendar className="h-5 w-5 text-[#8D6E63]" />
               Actividad Financiera (Último Mes)
             </DialogTitle>
           </DialogHeader>
           {isLoadingExpanded ? (
             <div className="flex items-center justify-center h-[320px]">
-              <p className="text-sm text-muted-foreground">Cargando últimos 30 días...</p>
+              <p className="text-sm text-gray-400">Cargando últimos 30 días...</p>
             </div>
           ) : (
             <>
@@ -289,26 +279,26 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
               );
 
               return (
-                <div className="grid grid-cols-2 gap-2.5 mb-4 px-2">
-                  <div className="backdrop-blur-xl bg-red-500/10 dark:bg-red-500/20 p-2.5 rounded-2xl border border-red-200/30 dark:border-red-400/20 shadow-sm">
-                    <p className="text-[10px] font-medium text-red-600 dark:text-red-400 mb-0.5 tracking-wide uppercase opacity-80">
-                      Más gastaste
+                <div className="grid grid-cols-2 gap-4 mb-4 px-2">
+                  <div className="bg-red-50 p-4 rounded-2xl border border-red-100">
+                    <p className="text-[10px] font-bold text-red-400 mb-1 tracking-wide uppercase">
+                      Día de mayor gasto
                     </p>
-                    <p className="text-xs font-semibold text-foreground/90 mb-1">
+                    <p className="text-xs font-semibold text-gray-600 mb-1">
                       {maxExpenseDay.dayFull}
                     </p>
-                    <p className="text-base font-bold text-red-600 dark:text-red-400">
+                    <p className="text-xl font-extrabold text-red-500">
                       ${maxExpenseDay.expense.toLocaleString('es-MX')}
                     </p>
                   </div>
-                  <div className="backdrop-blur-xl bg-green-500/10 dark:bg-green-500/20 p-2.5 rounded-2xl border border-green-200/30 dark:border-green-400/20 shadow-sm">
-                    <p className="text-[10px] font-medium text-green-600 dark:text-green-400 mb-0.5 tracking-wide uppercase opacity-80">
-                      Menos gastaste
+                  <div className="bg-green-50 p-4 rounded-2xl border border-green-100">
+                    <p className="text-[10px] font-bold text-green-500 mb-1 tracking-wide uppercase">
+                      Día de menor gasto
                     </p>
-                    <p className="text-xs font-semibold text-foreground/90 mb-1">
+                    <p className="text-xs font-semibold text-gray-600 mb-1">
                       {minExpenseDay.dayFull}
                     </p>
-                    <p className="text-base font-bold text-green-600 dark:text-green-400">
+                    <p className="text-xl font-extrabold text-green-500">
                       ${minExpenseDay.expense.toLocaleString('es-MX')}
                     </p>
                   </div>
@@ -316,40 +306,58 @@ export default function WeeklyIncomeExpenseWidget({ data, insight }: WeeklyIncom
               );
             })()}
             
-            <ScrollArea className="w-full h-[320px]" orientation="horizontal">
+            <ScrollArea className="w-full h-[320px] pr-4" orientation="horizontal">
               <div className="w-[1400px] h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <ComposedChart data={expandedChartData} margin={{ top: 20, right: 30, left: 5, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <AreaChart data={expandedChartData} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
+                  <defs>
+                    <linearGradient id="colorIngresosExpanded" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorGastosExpanded" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" vertical={false} />
                   <XAxis 
                     dataKey="dayFull"
-                    angle={-45}
-                    textAnchor="end"
-                    height={80}
-                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
-                    stroke="hsl(var(--border))"
+                    angle={0}
+                    textAnchor="middle"
+                    height={30}
+                    tick={{ fontSize: 10, fill: '#9ca3af' }}
+                    stroke="transparent"
                     interval={0}
                   />
                   <YAxis 
-                    domain={[0, (dataMax: number) => {
-                      const maxExpense = Math.max(...expandedChartData.map(d => d.Gastos));
-                      return Math.ceil(maxExpense * 1.1);
-                    }]}
-                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
-                    stroke="hsl(var(--border))"
+                    domain={[0, 'auto']}
+                    tick={{ fontSize: 10, fill: '#9ca3af' }}
+                    stroke="transparent"
                     tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
                   />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#e5e7eb', strokeWidth: 1 }} />
                   <Legend 
-                    wrapperStyle={{ fontSize: '11px' }}
+                    wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
                     iconType="circle"
                   />
-                  <Bar 
-                    dataKey="Gastos" 
-                    fill="hsl(0, 70%, 55%)" 
-                    radius={[4, 4, 0, 0]}
+                  <Area 
+                    type="monotone" 
+                    dataKey="Ingresos" 
+                    stroke="#10b981" 
+                    strokeWidth={3}
+                    fillOpacity={1} 
+                    fill="url(#colorIngresosExpanded)" 
                   />
-                  </ComposedChart>
+                  <Area 
+                    type="monotone" 
+                    dataKey="Gastos" 
+                    stroke="#ef4444" 
+                    strokeWidth={3}
+                    fillOpacity={1} 
+                    fill="url(#colorGastosExpanded)" 
+                  />
+                  </AreaChart>
                 </ResponsiveContainer>
               </div>
             </ScrollArea>

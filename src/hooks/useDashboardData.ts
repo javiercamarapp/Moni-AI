@@ -26,28 +26,29 @@ export const useDashboardData = (monthOffset: number = 0) => {
   return {
     goals: goals.data || [],
     isLoadingGoals: goals.isLoading,
-    
+
     groupGoals: groupGoals.data || [],
     isLoadingGroupGoals: groupGoals.isLoading,
-    
+
     scoreMoni: scoreMoni.data || 40,
     isLoadingScore: scoreMoni.isLoading,
-    
+
     netWorth: netWorth.data || 0,
     isLoadingNetWorth: netWorth.isLoading,
-    
+
     hasBankConnections: (bankConnections.data?.length || 0) > 0,
+    bankConnections: bankConnections.data || [],
     isLoadingBankConnections: bankConnections.isLoading,
-    
+
     monthlyIncome: monthlyTotals.data?.income || 0,
     monthlyExpenses: monthlyTotals.data?.expenses || 0,
     fixedExpenses: monthlyTotals.data?.fixed || 0,
     isLoadingMonthly: monthlyTotals.isLoading,
-    
+
     recentTransactions: monthOffset === 0 ? (recentTransactions.data || []).slice(0, 20) : [],
     isLoadingTransactions: recentTransactions.isLoading,
-    
-    isLoading: goals.isLoading || groupGoals.isLoading || scoreMoni.isLoading || netWorth.isLoading || 
-               bankConnections.isLoading || monthlyTotals.isLoading || recentTransactions.isLoading,
+
+    isLoading: goals.isLoading || groupGoals.isLoading || scoreMoni.isLoading || netWorth.isLoading ||
+      bankConnections.isLoading || monthlyTotals.isLoading || recentTransactions.isLoading,
   };
 };
