@@ -28,6 +28,20 @@ interface AccountsCarouselProps {
     accounts: Account[];
 }
 
+const getCardType = (plaidItemId?: string) => {
+    if (plaidItemId === 'banamex_conquista') return 'Crédito';
+    if (plaidItemId === 'bbva_platinum') return 'Crédito';
+    if (plaidItemId === 'bbva_debito') return 'Débito';
+    return 'Cuenta';
+};
+
+const getMockBalance = (plaidItemId?: string) => {
+    if (plaidItemId === 'banamex_conquista') return 25000.00;
+    if (plaidItemId === 'bbva_platinum') return 15000.00;
+    if (plaidItemId === 'bbva_debito') return 8500.00;
+    return 0;
+};
+
 const getBankLogo = (bankName: string) => {
     const name = bankName.toLowerCase();
     if (name.includes('bbva')) return bbvaLogo;
@@ -160,13 +174,22 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                         const displaySubtitle = `${bankNameOnly} - •${last4}`;
                         const networkLogo = getNetworkLogo(account.plaid_item_id, account.account_id);
                         const gradient = getGradient(account.bank_name, account.plaid_item_id);
+                        const cardType = getCardType(account.plaid_item_id);
+                        const balance = account.balance ?? getMockBalance(account.plaid_item_id);
 
                         return (
                             <CarouselItem key={account.id} className="pl-2 md:pl-4 basis-[75%] sm:basis-[45%] lg:basis-[30%]">
                                 <div
                                     onClick={() => navigate('/accounts-cards')}
-                                    className={`h-32 rounded-3xl bg-gradient-to-br ${gradient} p-4 flex flex-col justify-between shadow-lg cursor-pointer hover:scale-[1.02] transition-transform`}
+                                    className={`h-32 rounded-3xl bg-gradient-to-br ${gradient} p-4 flex flex-col justify-between shadow-lg cursor-pointer hover:scale-[1.02] transition-transform relative`}
                                 >
+                                    {/* Card Type Label - Upper Right */}
+                                    <div className="absolute top-3 right-3">
+                                        <span className="text-white/80 text-[10px] font-semibold px-2 py-1 rounded-full bg-white/10 backdrop-blur-sm">
+                                            {cardType}
+                                        </span>
+                                    </div>
+
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <div className="relative">
@@ -186,11 +209,6 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                                         {account.bank_name.charAt(0)}
                                                     </span>
                                                 </div>
-                                                {networkLogo && (
-                                                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100 overflow-hidden">
-                                                        <img src={networkLogo} alt="Network" className="w-3 h-3 object-contain" />
-                                                    </div>
-                                                )}
                                             </div>
                                             
                                             {/* Title and Subtitle */}
@@ -203,14 +221,22 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                                 </span>
                                             </div>
                                         </div>
-                                        <CreditCard className="text-white/50" size={16} />
                                     </div>
 
-                                    <div>
-                                        <p className="text-white/70 text-[10px] font-medium mb-0.5">Balance actual</p>
-                                        <p className="text-white text-xl font-bold">
-                                            ${account.balance?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? '0.00'}
-                                        </p>
+                                    <div className="flex items-end justify-between">
+                                        <div>
+                                            <p className="text-white/70 text-[10px] font-medium mb-0.5">Balance actual</p>
+                                            <p className="text-white text-xl font-bold">
+                                                ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            </p>
+                                        </div>
+
+                                        {/* Network Logo - Lower Right */}
+                                        {networkLogo && (
+                                            <div className="w-10 h-6 bg-white rounded flex items-center justify-center shadow-sm overflow-hidden">
+                                                <img src={networkLogo} alt="Network" className="w-8 h-5 object-contain" />
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </CarouselItem>
