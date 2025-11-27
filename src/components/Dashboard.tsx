@@ -1193,6 +1193,9 @@ const Dashboard = () => {
             <ScoreCard score={scoreMoni} />
           </div>
 
+          {/* Notification Banner - above quick stats */}
+          <NotificationBanner />
+
           {/* Quick Stats */}
           <QuickStats
             summaryValue={`$${(currentMonth.balance / 1000).toFixed(0)}k`}
@@ -1217,10 +1220,6 @@ const Dashboard = () => {
             <AccountsCarousel accounts={bankConnections} />
           </div>
 
-          {/* Notification Banner - moved below main cards */}
-          <div className="px-6 mb-4">
-            <NotificationBanner />
-          </div>
 
           {/* Expense Breakdown - Subscriptions & Daily Expenses */}
           <ExpenseBreakdownWidget
