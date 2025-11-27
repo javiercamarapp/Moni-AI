@@ -1188,11 +1188,8 @@ const Dashboard = () => {
             unreadNotifications={unreadNotifications}
           />
 
-          <div className="px-6 mb-6 space-y-6">
-            {/* Notification Banner */}
-            <NotificationBanner />
-
-            {/* Score Card */}
+          {/* Score Card */}
+          <div className="px-6 mb-4">
             <ScoreCard
               score={scoreMoni}
               userLevel={totalAspiration > 0 ? Math.floor((netWorth / totalAspiration) * 10000) : 1}
@@ -1202,6 +1199,7 @@ const Dashboard = () => {
             />
           </div>
 
+          {/* Quick Stats */}
           <QuickStats
             summaryValue={`$${(currentMonth.balance / 1000).toFixed(0)}k`}
             netWorthValue={netWorth >= 1000000 ? `$${(netWorth / 1000000).toFixed(1)}M` : `$${(netWorth / 1000).toFixed(0)}k`}
@@ -1209,20 +1207,26 @@ const Dashboard = () => {
             budgetValue={`$${totalBudget > 0 ? (totalBudget / 1000).toFixed(0) : 0}k`}
           />
 
-          <div className="px-6 mb-6 space-y-6 mt-6">
-            {/* Balance Card */}
+          {/* Balance Card */}
+          <div className="px-6 mb-4 mt-4">
             <BalanceCard
               income={monthlyIncome}
               expenses={monthlyExpenses}
-              savings={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12} // Estimated monthly savings needed
-              groupSavings={0} // Placeholder for group savings
+              savings={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12}
+              groupSavings={0}
               available={monthlyIncome - monthlyExpenses}
             />
+          </div>
 
-            {/* Accounts Carousel */}
+          {/* Accounts Carousel */}
+          <div className="px-6 mb-6">
             <AccountsCarousel accounts={bankConnections} />
           </div>
 
+          {/* Notification Banner - moved below main cards */}
+          <div className="px-6 mb-4">
+            <NotificationBanner />
+          </div>
 
           {/* Expense Breakdown - Subscriptions & Daily Expenses */}
           <ExpenseBreakdownWidget
