@@ -45,7 +45,7 @@ const QuickStats: React.FC<QuickStatsProps> = ({
                 {stats.map((stat) => (
                     <div 
                         key={stat.id} 
-                        className="bg-white rounded-lg sm:rounded-2xl p-3 sm:p-5 shadow-[0_8px_20px_-5px_rgba(0,0,0,0.1)] border border-white flex flex-col items-center justify-center text-center gap-1 sm:gap-2 cursor-pointer hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 transition-all active:scale-95 duration-200"
+                        className="bg-white rounded-lg sm:rounded-2xl p-2 sm:p-3 shadow-[0_8px_20px_-5px_rgba(0,0,0,0.1)] border border-white flex flex-col items-center justify-center text-center gap-1 sm:gap-2 cursor-pointer hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 transition-all active:scale-95 duration-200"
                         onClick={() => navigate(stat.route)}
                     >
                         {/* Icon */}
