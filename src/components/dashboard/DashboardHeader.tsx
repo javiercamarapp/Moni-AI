@@ -12,7 +12,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName = "Usuario",
     const navigate = useNavigate();
 
     return (
-        <header className="flex items-center justify-between px-6 py-4 pt-8">
+        <header className="flex items-start justify-between px-6 py-4 pt-8">
             <div className="flex items-center gap-3">
                 <div className="h-20 w-20 rounded-full bg-[#F5F0EE] flex items-center justify-center border-2 border-white shadow-[0_8px_20px_-6px_rgba(0,0,0,0.15)] overflow-hidden p-1.5">
                     <img src={moniLogo} alt="Moni AI" className="h-full w-full object-contain" />
