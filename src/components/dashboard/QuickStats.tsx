@@ -39,20 +39,24 @@ const QuickStats: React.FC<QuickStatsProps> = ({
     };
 
     return (
-        <div className="px-6 mb-8">
-            <div className="grid grid-cols-4 gap-3">
+        <div className="px-4 sm:px-6 mb-8">
+            {/* Mobile: 2x2 grid with vertical layout | Desktop: 1x4 grid with horizontal layout */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {stats.map((stat) => (
                     <div 
                         key={stat.id} 
-                        className="bg-white rounded-2xl p-5 shadow-[0_8px_20px_-5px_rgba(0,0,0,0.1)] border border-white flex items-center justify-start gap-6 cursor-pointer hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 transition-all active:scale-95 duration-200"
+                        className="bg-white rounded-2xl p-4 sm:p-5 shadow-[0_8px_20px_-5px_rgba(0,0,0,0.1)] border border-white flex flex-col sm:flex-row items-center sm:justify-start gap-3 sm:gap-6 cursor-pointer hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 transition-all active:scale-95 duration-200"
                         onClick={() => navigate(stat.route)}
                     >
+                        {/* Icon */}
                         <div className="shrink-0">
                             {getIcon(stat.icon)}
                         </div>
-                        <div className="flex flex-col items-start text-left">
-                            <span className="text-[11px] font-bold text-gray-400 tracking-wider uppercase">{stat.label}</span>
-                            <span className="text-[13px] font-bold text-gray-800 leading-none mt-0.5">{stat.value}</span>
+                        
+                        {/* Label and Value - centered on mobile, left-aligned on desktop */}
+                        <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
+                            <span className="text-[10px] sm:text-[11px] font-bold text-gray-400 tracking-wider uppercase">{stat.label}</span>
+                            <span className="text-sm sm:text-[13px] font-bold text-gray-800 leading-none mt-0.5">{stat.value}</span>
                         </div>
                     </div>
                 ))}
