@@ -1034,18 +1034,10 @@ const ChatInterface = () => {
       {/* Header */}
       <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/dashboard")}
-              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 p-0 flex-shrink-0"
-            >
-              <ArrowLeft className="h-4 w-4 text-gray-700" />
-            </Button>
+          <div className="flex items-center justify-center">
             <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden w-16 h-10">
               <img src={moniLogo} alt="Moni" className="w-full h-full object-cover" />
             </div>
-            <div className="w-10" />
           </div>
         </div>
       </div>
