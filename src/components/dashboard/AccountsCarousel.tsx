@@ -9,8 +9,7 @@ interface Account {
     bank_name: string;
     account_id: string;
     type?: string;
-    card_name?: string;
-    card_type?: 'credit' | 'debit';
+    plaid_item_id?: string;
 }
 
 interface AccountsCarouselProps {
@@ -20,51 +19,47 @@ interface AccountsCarouselProps {
 const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
     const navigate = useNavigate();
 
-    // Demo cards with specific names
-    const demoCards: Account[] = [
-        {
-            id: '1',
-            bank_name: 'Banamex',
-            card_name: 'Conquista',
-            account_id: '5234567890123456',
-            card_type: 'credit'
-        },
-        {
-            id: '2',
-            bank_name: 'BBVA',
-            card_name: 'Platinum',
-            account_id: '4123456789012345',
-            card_type: 'credit'
-        },
-        {
-            id: '3',
-            bank_name: 'BBVA',
-            card_name: 'Débito',
-            account_id: '4987654321098765',
-            card_type: 'debit'
+    // Map plaid_item_id to card details
+    const getCardDetails = (account: Account) => {
+        const itemId = account.plaid_item_id || '';
+        if (itemId.includes('conquista') || account.bank_name === 'Banamex') {
+            return { cardName: 'Conquista', cardType: 'credit' as const };
+        } else if (itemId.includes('platinum')) {
+            return { cardName: 'Platinum', cardType: 'credit' as const };
+        } else if (itemId.includes('debito')) {
+            return { cardName: 'Débito', cardType: 'debit' as const };
         }
-    ];
+        return { cardName: '', cardType: 'credit' as const };
+    };
 
-    // Use demo cards if no real accounts, otherwise use real accounts
-    const displayAccounts = accounts.length > 0 ? accounts : demoCards;
+    const gradients = {
+        'Banamex': "from-red-600 to-red-800",
+        'BBVA': "from-blue-600 to-blue-800",
+        'default': "from-slate-700 to-slate-900"
+    };
 
-    const gradients = [
-        "from-slate-700 to-slate-900",
-        "from-blue-400 to-blue-600",
-        "from-purple-500 to-purple-700",
-        "from-green-500 to-green-700",
-    ];
+    // Get gradient based on bank name
+    const getGradient = (bankName: string) => {
+        return gradients[bankName as keyof typeof gradients] || gradients.default;
+    };
 
-    // Function to get card logo based on account_id or pattern
-    const getCardLogo = (accountId: string) => {
+    // Function to get card network based on account_id
+    const getCardNetwork = (accountId: string) => {
         if (accountId.startsWith('4')) {
-            return { name: 'VISA', color: 'bg-blue-600' };
+            return 'Visa';
         } else if (accountId.startsWith('5')) {
-            return { name: 'MC', color: 'bg-orange-500' };
+            return 'Mastercard';
         } else if (accountId.startsWith('3')) {
-            return { name: 'AMEX', color: 'bg-cyan-600' };
+            return 'Amex';
         }
-        return { name: 'CARD', color: 'bg-gray-600' };
+        return 'Card';
+    };
+
+    // Get bank logo emoji
+    const getBankLogo = (bankName: string) => {
+        if (bankName === 'Banamex') return '🏦';
+        if (bankName === 'BBVA') return '🏛️';
+        return '🏦';
     };
 
     // Extract last 4 digits
@@ -107,32 +102,39 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                     </CarouselItem>
 
                     {/* Accounts List */}
-                    {displayAccounts.map((account, index) => {
+                    {accounts.map((account, index) => {
                         // Simulated balance for display purposes as per original component
                         const simulatedBalance = 5000 + (index * 2500);
-                        const cardLogo = getCardLogo(account.account_id);
+                        const cardNetwork = getCardNetwork(account.account_id);
                         const lastFour = getLastFourDigits(account.account_id);
+                        const cardDetails = getCardDetails(account);
+                        const bankLogo = getBankLogo(account.bank_name);
+                        const gradient = getGradient(account.bank_name);
 
                         return (
                             <CarouselItem key={account.id} className="pl-2 md:pl-4 basis-[75%] sm:basis-[45%] lg:basis-[30%]">
                                 <div
                                     onClick={() => navigate('/accounts-cards')}
-                                    className={`h-32 rounded-3xl bg-gradient-to-br ${gradients[index % gradients.length]} p-4 flex flex-col justify-between shadow-lg cursor-pointer hover:scale-[1.02] transition-transform`}
+                                    className={`h-32 rounded-3xl bg-gradient-to-br ${gradient} p-4 flex flex-col justify-between shadow-lg cursor-pointer hover:scale-[1.02] transition-transform`}
                                 >
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                                                <span className="text-white font-bold text-xs">{account.bank_name.charAt(0)}</span>
+                                                <span className="text-xl">{bankLogo}</span>
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-white font-bold text-sm truncate max-w-[100px]">
-                                                    {account.bank_name} {account.card_name}
+                                                <span className="text-white font-bold text-sm truncate max-w-[120px]">
+                                                    {account.bank_name} {cardDetails.cardName}
                                                 </span>
                                                 <span className="text-white/60 text-[10px] font-medium">•••• {lastFour}</span>
                                             </div>
                                         </div>
-                                        <div className={`${cardLogo.color} px-2 py-1 rounded text-white text-[10px] font-bold`}>
-                                            {cardLogo.name}
+                                        <div className={`px-2 py-1 rounded text-white text-[9px] font-bold ${
+                                            cardNetwork === 'Visa' ? 'bg-blue-700' : 
+                                            cardNetwork === 'Mastercard' ? 'bg-orange-600' : 
+                                            'bg-gray-600'
+                                        }`}>
+                                            {cardNetwork.toUpperCase()}
                                         </div>
                                     </div>
 

@@ -14,7 +14,8 @@ const BankCard = ({
   index, 
   isActive, 
   total, 
-  onClick 
+  onClick,
+  cardName
 }: { 
   bank: string; 
   balance: number; 
@@ -22,13 +23,23 @@ const BankCard = ({
   isActive: boolean;
   total: number;
   onClick: () => void;
+  cardName: string;
 }) => {
-  const gradients = [
-    "from-slate-700 to-slate-900",
-    "from-blue-400 to-blue-600",
-    "from-purple-500 to-purple-700",
-    "from-green-500 to-green-700",
-  ];
+  const gradients = {
+    'Banamex': "from-red-600 to-red-800",
+    'BBVA': "from-blue-600 to-blue-800",
+    'default': "from-slate-700 to-slate-900"
+  };
+
+  const getGradient = (bankName: string) => {
+    return gradients[bankName as keyof typeof gradients] || gradients.default;
+  };
+
+  const getBankLogo = (bankName: string) => {
+    if (bankName === 'Banamex') return '🏦';
+    if (bankName === 'BBVA') return '🏛️';
+    return '🏦';
+  };
 
   // Calculate position in the stack
   const offset = isActive ? 0 : (index * 8);
@@ -55,13 +66,16 @@ const BankCard = ({
         transformOrigin: "top center"
       }}
     >
-      <Card className={`bg-gradient-to-br ${gradients[index % gradients.length]} p-6 border-0 shadow-xl rounded-3xl w-full mx-auto max-w-[340px]`}>
+      <Card className={`bg-gradient-to-br ${getGradient(bank)} p-6 border-0 shadow-xl rounded-3xl w-full mx-auto max-w-[340px]`}>
         <div className="flex items-center justify-between mb-12">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-              <span className="text-white font-semibold text-sm">{bank.charAt(0)}</span>
+            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+              <span className="text-2xl">{getBankLogo(bank)}</span>
             </div>
-            <span className="text-white font-semibold">{bank}</span>
+            <div className="flex flex-col">
+              <span className="text-white font-semibold">{bank}</span>
+              <span className="text-white/70 text-sm">{cardName}</span>
+            </div>
           </div>
           <div className="w-10 h-10 bg-white/10 rounded-full backdrop-blur-sm" />
         </div>
@@ -160,10 +174,18 @@ export default function AccountsCards() {
                 {bankConnections.map((connection, index) => {
                   // Balance simulado para cada tarjeta
                   const simulatedBalance = 5000 + (index * 2500);
+                  // Extract card name from plaid_item_id
+                  const getCardName = (itemId: string) => {
+                    if (itemId?.includes('conquista')) return 'Conquista';
+                    if (itemId?.includes('platinum')) return 'Platinum';
+                    if (itemId?.includes('debito')) return 'Débito';
+                    return '';
+                  };
                   return (
                     <BankCard
                       key={connection.id}
                       bank={connection.bank_name}
+                      cardName={getCardName(connection.plaid_item_id || '')}
                       balance={simulatedBalance}
                       index={index}
                       isActive={index === selectedCard}
