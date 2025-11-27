@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, MessageCircle } from 'lucide-react';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
+import BottomNav from '@/components/BottomNav';
 
 const FinancialChat = () => {
   const navigate = useNavigate();
@@ -123,6 +124,8 @@ const FinancialChat = () => {
           </div>
         </div>
       </div>
+      
+      <BottomNav />
     </div>
   );
 };
