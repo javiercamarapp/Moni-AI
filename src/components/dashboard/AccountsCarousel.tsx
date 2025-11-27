@@ -98,7 +98,7 @@ const getSolidColor = (bankName: string, plaidItemId?: string) => {
     
     // Special case for BBVA Platinum - silver
     if (plaidItemId === 'bbva_platinum') {
-        return 'bg-slate-400';
+        return 'bg-slate-300';
     }
 
     const name = bankName.toLowerCase();
