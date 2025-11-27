@@ -9,6 +9,8 @@ interface Transaction {
     type: string;
     categories?: { name: string; color?: string };
     transaction_date: string;
+    payment_method?: string | null;
+    account?: string | null;
 }
 
 interface RecentTransactionsWidgetProps {
@@ -27,6 +29,19 @@ const RecentTransactionsWidget: React.FC<RecentTransactionsWidgetProps> = ({ tra
                 behavior: 'smooth'
             });
         }
+    };
+
+    const getPaymentMethodInfo = (tx: Transaction) => {
+        if (tx.payment_method?.toLowerCase() === 'efectivo') {
+            return { label: 'Efectivo', color: 'bg-teal-50 text-teal-700 border-teal-100' };
+        }
+        if (tx.account) {
+            return { label: tx.account, color: 'bg-gray-50 text-gray-600 border-gray-100' };
+        }
+        if (tx.payment_method?.toLowerCase() === 'tarjeta') {
+            return { label: 'Tarjeta', color: 'bg-purple-50 text-purple-700 border-purple-100' };
+        }
+        return null;
     };
 
     // Helper to get icon and color based on category/description
@@ -116,6 +131,7 @@ const RecentTransactionsWidget: React.FC<RecentTransactionsWidgetProps> = ({ tra
                         transactions.slice(0, 8).map((tx) => {
                             const { icon: Icon, color } = getTransactionStyle(tx);
                             const isExpense = tx.type === 'expense' || tx.type === 'gasto';
+                            const paymentInfo = getPaymentMethodInfo(tx);
                             
                             return (
                                 <div 
@@ -130,11 +146,16 @@ const RecentTransactionsWidget: React.FC<RecentTransactionsWidgetProps> = ({ tra
                                         </div>
                                         
                                         {/* Text Info */}
-                                        <div className="flex flex-col">
+                                        <div className="flex flex-col items-start">
                                             <span className="text-sm font-bold text-gray-800 leading-tight truncate max-w-[150px]">{tx.description}</span>
                                             <span className="text-[10px] font-medium text-gray-400 mt-0.5">
                                                 {tx.categories?.name || 'General'} • {new Date(tx.transaction_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
                                             </span>
+                                            {paymentInfo && (
+                                                <span className={`text-[9px] px-2 py-0.5 rounded-full border ${paymentInfo.color} mt-1 font-medium`}>
+                                                    {paymentInfo.label}
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
 
