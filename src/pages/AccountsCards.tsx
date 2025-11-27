@@ -7,6 +7,7 @@ import { useBankConnections } from "@/hooks/useFinancialData";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
+import BottomNav from "@/components/BottomNav";
 
 const BankCard = ({ 
   bank, 
@@ -331,6 +332,8 @@ export default function AccountsCards() {
           </motion.div>
         </div>
       </div>
+      
+      <BottomNav />
     </div>
   );
 }
