@@ -18,9 +18,8 @@ import amexLogo from '@/assets/BankIcons/amex.png';
 interface Account {
     id: string;
     bank_name: string;
-    account_name?: string;
-    balance?: number;
-    type?: string;
+    account_id: string;
+    plaid_item_id?: string;
     last_sync?: string;
 }
 
@@ -40,12 +39,42 @@ const getBankLogo = (bankName: string) => {
     return null;
 };
 
-const getNetworkLogo = (accountName: string, bankName: string) => {
-    const text = (accountName + " " + bankName).toLowerCase();
-    if (text.includes('amex') || text.includes('american express')) return amexLogo;
-    if (text.includes('visa')) return visaLogo;
-    if (text.includes('mastercard') || text.includes('master')) return mastercardLogo;
+const getNetworkLogo = (plaidItemId: string | undefined, accountId: string) => {
+    // Check plaid_item_id first for explicit identification
+    if (plaidItemId === 'banamex_conquista') return mastercardLogo;
+    if (plaidItemId === 'bbva_platinum') return visaLogo;
+    if (plaidItemId === 'bbva_debito') return visaLogo;
+    
+    // Fallback to account_id patterns
+    const id = accountId.toLowerCase();
+    if (id.includes('amex') || id.includes('american')) return amexLogo;
+    if (id.includes('visa')) return visaLogo;
+    if (id.includes('mastercard') || id.includes('master')) return mastercardLogo;
+    
+    // Smart detection by card number patterns (first 2 digits)
+    const firstTwo = accountId.substring(0, 2);
+    if (['51', '52', '53', '54', '55'].includes(firstTwo)) return mastercardLogo;
+    if (firstTwo === '4') return visaLogo;
+    if (['34', '37'].includes(firstTwo)) return amexLogo;
+    
     return null;
+};
+
+const getGradient = (bankName: string, plaidItemId?: string) => {
+    // Special case for Banamex Conquista - matte dark grey
+    if (plaidItemId === 'banamex_conquista') {
+        return 'from-gray-800 to-gray-950';
+    }
+
+    const name = bankName.toLowerCase();
+    if (name.includes('bbva')) return 'from-blue-400 to-blue-600';
+    if (name.includes('banamex') || name.includes('citibanamex')) return 'from-gray-800 to-gray-950';
+    if (name.includes('santander')) return 'from-red-500 to-red-700';
+    if (name.includes('hsbc')) return 'from-red-600 to-red-800';
+    if (name.includes('scotiabank')) return 'from-red-700 to-red-900';
+    if (name.includes('inbursa')) return 'from-green-600 to-green-800';
+    if (name.includes('nu')) return 'from-purple-500 to-purple-700';
+    return 'from-slate-700 to-slate-900';
 };
 
 const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
@@ -108,15 +137,16 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                     {/* Accounts List */}
                     {accounts.map((account, index) => {
                         const logoUrl = getBankLogo(account.bank_name);
-                        const displayTitle = account.account_name || account.bank_name;
+                        const displayTitle = account.account_id;
                         const displaySubtitle = account.bank_name;
-                        const networkLogo = getNetworkLogo(displayTitle, account.bank_name);
+                        const networkLogo = getNetworkLogo(account.plaid_item_id, account.account_id);
+                        const gradient = getGradient(account.bank_name, account.plaid_item_id);
 
                         return (
                             <CarouselItem key={account.id} className="pl-2 md:pl-4 basis-[75%] sm:basis-[45%] lg:basis-[30%]">
                                 <div
                                     onClick={() => navigate('/accounts-cards')}
-                                    className={`h-32 rounded-3xl bg-gradient-to-br ${gradients[index % gradients.length]} p-4 flex flex-col justify-between shadow-lg cursor-pointer hover:scale-[1.02] transition-transform`}
+                                    className={`h-32 rounded-3xl bg-gradient-to-br ${gradient} p-4 flex flex-col justify-between shadow-lg cursor-pointer hover:scale-[1.02] transition-transform`}
                                 >
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
@@ -158,9 +188,9 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                     </div>
 
                                     <div>
-                                        <p className="text-white/70 text-[10px] font-medium mb-0.5">Balance Total</p>
-                                        <p className="text-white text-xl font-bold">
-                                            {account.balance !== undefined ? `$${account.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}` : 'NA'}
+                                        <p className="text-white/70 text-[10px] font-medium mb-0.5">Última sincronización</p>
+                                        <p className="text-white text-xs font-medium">
+                                            {account.last_sync ? new Date(account.last_sync).toLocaleDateString('es-MX', { month: 'short', day: 'numeric' }) : 'Nunca'}
                                         </p>
                                     </div>
                                 </div>

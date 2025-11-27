@@ -1220,7 +1220,7 @@ const Dashboard = () => {
             />
 
             {/* Accounts Carousel */}
-            <AccountsCarousel accounts={accounts} />
+            <AccountsCarousel accounts={bankConnections} />
           </div>
 
 
