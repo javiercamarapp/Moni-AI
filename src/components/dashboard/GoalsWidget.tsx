@@ -168,7 +168,7 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
 
             {/* --- Group Goals Section --- */}
             <div className="flex items-center justify-between px-6 mb-4">
-                <h2 className="text-xl font-bold text-gray-800 tracking-tight">Tus Metas Grupales</h2>
+                <h2 className="text-xl font-bold text-gray-800 tracking-tight">Metas Grupales</h2>
                 <div className="flex items-center gap-3">
                     {groupGoals.length > 0 && (
                         <div className="hidden md:flex gap-2">
@@ -185,7 +185,7 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                         className="flex items-center gap-1.5 bg-[#F5F0EE] hover:bg-[#EBE5E2] text-[#5D4037] px-4 py-2 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95"
                     >
                         <Plus size={14} strokeWidth={3} />
-                        <span>Nueva Meta Grupal</span>
+                        <span>Nueva Meta</span>
                     </button>
                 </div>
             </div>
