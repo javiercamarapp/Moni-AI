@@ -17,9 +17,9 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName = "Usuario",
                 <div className="h-20 w-20 rounded-full bg-[#F5F0EE] flex items-center justify-center border-2 border-white shadow-[0_8px_20px_-6px_rgba(0,0,0,0.15)] overflow-hidden p-1.5">
                     <img src={moniLogo} alt="Moni AI" className="h-full w-full object-contain" />
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col min-w-0">
                     <span className="text-gray-400 text-sm font-medium">Buenos días,</span>
-                    <span className="text-gray-800 font-bold text-xl leading-tight">{userName}</span>
+                    <span className="text-gray-800 font-bold text-xl leading-tight truncate max-w-[180px]">{userName}</span>
                 </div>
             </div>
 
