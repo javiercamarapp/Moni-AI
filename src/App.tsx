@@ -71,6 +71,7 @@ import JoinCircle from './pages/JoinCircle';
 import Challenges from './pages/Challenges';
 import FriendComparison from './pages/FriendComparison';
 import FriendChallenges from './pages/FriendChallenges';
+import { AddDemoCardsHelper } from './components/AddDemoCardsHelper';
 
 import NotFound from "./pages/NotFound";
 import Subscribe from './pages/Subscribe';
@@ -93,6 +94,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Toaster />
       <Sonner />
+      <AddDemoCardsHelper />
       <BrowserRouter>
         <Routes>
           <Route path="/onboarding" element={<Onboarding />} />
