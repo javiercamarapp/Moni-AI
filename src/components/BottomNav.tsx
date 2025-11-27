@@ -20,29 +20,35 @@ const BottomNav = () => {
       <div className="bg-card rounded-full shadow-lg px-8 py-4 flex items-center gap-8">
         <button 
           onClick={() => navigate('/dashboard')}
-          className={`transition-colors ${
-            isActive('/dashboard') ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+          className={`transition-all ${
+            isActive('/dashboard') 
+              ? 'text-primary scale-110 -translate-y-1' 
+              : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <Home className="w-6 h-6" />
+          <Home className="w-6 h-6" strokeWidth={isActive('/dashboard') ? 2.5 : 2} />
         </button>
         
         <button 
           onClick={() => navigate('/analysis')}
-          className={`transition-colors ${
-            isActive('/analysis') ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+          className={`transition-all ${
+            isActive('/analysis') 
+              ? 'text-primary scale-110 -translate-y-1' 
+              : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <BarChart3 className="w-6 h-6" />
+          <BarChart3 className="w-6 h-6" strokeWidth={isActive('/analysis') ? 2.5 : 2} />
         </button>
         
         <button 
           onClick={() => navigate('/social')}
-          className={`transition-colors relative ${
-            isActive('/social') ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+          className={`transition-all relative ${
+            isActive('/social') 
+              ? 'text-primary scale-110 -translate-y-1' 
+              : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <Users className="w-6 h-6" />
+          <Users className="w-6 h-6" strokeWidth={isActive('/social') ? 2.5 : 2} />
           {pendingCount > 0 && (
             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
               {pendingCount > 9 ? '9+' : pendingCount}
@@ -52,20 +58,24 @@ const BottomNav = () => {
         
         <button 
           onClick={() => navigate('/chat')}
-          className={`transition-colors ${
-            isActive('/chat') ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+          className={`transition-all ${
+            isActive('/chat') 
+              ? 'text-primary scale-110 -translate-y-1' 
+              : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <MessageCircle className="w-6 h-6" />
+          <MessageCircle className="w-6 h-6" strokeWidth={isActive('/chat') ? 2.5 : 2} />
         </button>
 
         <button 
           onClick={() => navigate('/accounts-cards')}
-          className={`transition-colors ${
-            isActive('/accounts-cards') ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+          className={`transition-all ${
+            isActive('/accounts-cards') 
+              ? 'text-primary scale-110 -translate-y-1' 
+              : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <Wallet className="w-6 h-6" />
+          <Wallet className="w-6 h-6" strokeWidth={isActive('/accounts-cards') ? 2.5 : 2} />
         </button>
       </div>
     </nav>
