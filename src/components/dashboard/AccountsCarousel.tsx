@@ -9,6 +9,8 @@ interface Account {
     bank_name: string;
     account_id: string;
     type?: string;
+    card_name?: string;
+    card_type?: 'credit' | 'debit';
 }
 
 interface AccountsCarouselProps {
@@ -17,6 +19,34 @@ interface AccountsCarouselProps {
 
 const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
     const navigate = useNavigate();
+
+    // Demo cards with specific names
+    const demoCards: Account[] = [
+        {
+            id: '1',
+            bank_name: 'Banamex',
+            card_name: 'Conquista',
+            account_id: '5234567890123456',
+            card_type: 'credit'
+        },
+        {
+            id: '2',
+            bank_name: 'BBVA',
+            card_name: 'Platinum',
+            account_id: '4123456789012345',
+            card_type: 'credit'
+        },
+        {
+            id: '3',
+            bank_name: 'BBVA',
+            card_name: 'Débito',
+            account_id: '4987654321098765',
+            card_type: 'debit'
+        }
+    ];
+
+    // Use demo cards if no real accounts, otherwise use real accounts
+    const displayAccounts = accounts.length > 0 ? accounts : demoCards;
 
     const gradients = [
         "from-slate-700 to-slate-900",
@@ -77,7 +107,7 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                     </CarouselItem>
 
                     {/* Accounts List */}
-                    {accounts.map((account, index) => {
+                    {displayAccounts.map((account, index) => {
                         // Simulated balance for display purposes as per original component
                         const simulatedBalance = 5000 + (index * 2500);
                         const cardLogo = getCardLogo(account.account_id);
@@ -95,7 +125,9 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                                 <span className="text-white font-bold text-xs">{account.bank_name.charAt(0)}</span>
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-white font-bold text-sm truncate max-w-[100px]">{account.bank_name}</span>
+                                                <span className="text-white font-bold text-sm truncate max-w-[100px]">
+                                                    {account.bank_name} {account.card_name}
+                                                </span>
                                                 <span className="text-white/60 text-[10px] font-medium">•••• {lastFour}</span>
                                             </div>
                                         </div>
