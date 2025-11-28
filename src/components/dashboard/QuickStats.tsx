@@ -13,15 +13,23 @@ const QuickStats: React.FC<QuickStatsProps> = ({
     summaryValue = "$0",
     netWorthValue = "$0",
     goalsCount = 0,
-    journeyLevel = 1
+    journeyLevel = 0
 }) => {
     const navigate = useNavigate();
+
+    // Format journey level with K for thousands
+    const formatJourneyLevel = (level: number) => {
+        if (level >= 1000) {
+            return `${(level / 1000).toFixed(1).replace(/\.0$/, '')}K`;
+        }
+        return level.toString();
+    };
 
     const stats = [
         { id: '1', label: 'RESUMEN', value: summaryValue, icon: 'chart', route: '/balance' },
         { id: '2', label: 'PATRIMONIO', value: netWorthValue, icon: 'trend', route: '/net-worth' },
         { id: '3', label: 'METAS', value: goalsCount.toString(), icon: 'target', route: '/goals' },
-        { id: '4', label: 'JOURNEY', value: `Nv.${journeyLevel}`, icon: 'rocket', route: '/financial-journey' },
+        { id: '4', label: 'JOURNEY', value: formatJourneyLevel(journeyLevel), icon: 'rocket', route: '/financial-journey' },
     ];
 
     const getIcon = (type: string) => {
