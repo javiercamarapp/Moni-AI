@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart3, TrendingUp, Target, Wallet } from 'lucide-react';
+import { BarChart3, TrendingUp, Target, PieChart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface QuickStatsProps {
@@ -33,7 +33,7 @@ const QuickStats: React.FC<QuickStatsProps> = ({
             case 'chart': return <BarChart3 size={size} strokeWidth={strokeWidth} className={cls} />;
             case 'trend': return <TrendingUp size={size} strokeWidth={strokeWidth} className={cls} />;
             case 'target': return <Target size={size} strokeWidth={strokeWidth} className={cls} />;
-            case 'card': return <Wallet size={size} strokeWidth={strokeWidth} className={cls} />;
+            case 'card': return <PieChart size={size} strokeWidth={strokeWidth} className={cls} />;
             default: return <BarChart3 size={size} strokeWidth={strokeWidth} className={cls} />;
         }
     };
