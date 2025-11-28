@@ -38,6 +38,7 @@ import AccountsCarousel from '@/components/dashboard/AccountsCarousel';
 import ExpenseBreakdownWidget from '@/components/dashboard/ExpenseBreakdownWidget';
 import GoalsWidget from '@/components/dashboard/GoalsWidget';
 import RecentTransactionsWidget from '@/components/dashboard/RecentTransactionsWidget';
+import BudgetWidget from '@/components/dashboard/BudgetWidget';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -1226,6 +1227,12 @@ const Dashboard = () => {
             subscriptionsTotal={upcomingSubscriptions.reduce((sum, sub) => sum + Number(sub.amount), 0)}
             subscriptionsCount={upcomingSubscriptions.length}
             dailyExpenses={dailyExpenses.reduce((sum, exp) => sum + Number(exp.amount), 0)}
+          />
+
+          {/* Budget Widget - above goals */}
+          <BudgetWidget 
+            totalBudget={totalBudget} 
+            currentExpenses={currentMonthExpenses} 
           />
 
           {/* Goals Section - Personal & Group */}
