@@ -75,7 +75,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName = "Usuario",
                 >
                     
                     {/* Avatar container */}
-                    <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-gradient-to-br from-[#8D6E63] to-[#5D4037] p-[3px] shadow-[0_8px_20px_-6px_rgba(93,64,55,0.5)]">
+                    <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-gradient-to-br from-[#8D6E63] to-[#5D4037] p-[3px]">
                         <Avatar className="h-full w-full border-2 border-white">
                             <AvatarImage 
                                 src={avatarUrl || undefined} 
