@@ -73,10 +73,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName = "Usuario",
                     onClick={() => navigate("/profile")}
                     className="relative group"
                 >
-                    {/* Glowing brown border effect */}
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#8D6E63] via-[#A1887F] to-[#5D4037] opacity-80 blur-sm group-hover:opacity-100 group-hover:blur-md transition-all duration-300 animate-pulse" 
-                         style={{ transform: 'scale(1.08)' }} 
-                    />
                     
                     {/* Avatar container */}
                     <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-gradient-to-br from-[#8D6E63] to-[#5D4037] p-[3px] shadow-[0_8px_20px_-6px_rgba(93,64,55,0.5)]">
