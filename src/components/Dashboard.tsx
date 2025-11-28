@@ -1204,7 +1204,7 @@ const Dashboard = () => {
             summaryValue={`$${(currentMonth.balance / 1000).toFixed(0)}k`}
             netWorthValue={netWorth >= 1000000 ? `$${(netWorth / 1000000).toFixed(1)}M` : `$${(netWorth / 1000).toFixed(0)}k`}
             goalsCount={goals.length}
-            budgetValue={`$${totalBudget > 0 ? (totalBudget / 1000).toFixed(0) : 0}k`}
+            journeyLevel={level}
           />
 
           {/* Balance Card */}

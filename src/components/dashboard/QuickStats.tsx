@@ -1,19 +1,19 @@
 import React from 'react';
-import { BarChart3, TrendingUp, Target, PieChart } from 'lucide-react';
+import { BarChart3, TrendingUp, Target, Rocket } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface QuickStatsProps {
     summaryValue?: string;
     netWorthValue?: string;
     goalsCount?: number;
-    budgetValue?: string;
+    journeyLevel?: number;
 }
 
 const QuickStats: React.FC<QuickStatsProps> = ({
     summaryValue = "$0",
     netWorthValue = "$0",
     goalsCount = 0,
-    budgetValue = "$0"
+    journeyLevel = 1
 }) => {
     const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ const QuickStats: React.FC<QuickStatsProps> = ({
         { id: '1', label: 'RESUMEN', value: summaryValue, icon: 'chart', route: '/balance' },
         { id: '2', label: 'PATRIMONIO', value: netWorthValue, icon: 'trend', route: '/net-worth' },
         { id: '3', label: 'METAS', value: goalsCount.toString(), icon: 'target', route: '/goals' },
-        { id: '4', label: 'PRESUPUESTO', value: budgetValue, icon: 'card', route: '/budgets' },
+        { id: '4', label: 'JOURNEY', value: `Nv.${journeyLevel}`, icon: 'rocket', route: '/financial-journey' },
     ];
 
     const getIcon = (type: string) => {
@@ -33,7 +33,7 @@ const QuickStats: React.FC<QuickStatsProps> = ({
             case 'chart': return <BarChart3 size={size} strokeWidth={strokeWidth} className={cls} />;
             case 'trend': return <TrendingUp size={size} strokeWidth={strokeWidth} className={cls} />;
             case 'target': return <Target size={size} strokeWidth={strokeWidth} className={cls} />;
-            case 'card': return <PieChart size={size} strokeWidth={strokeWidth} className={cls} />;
+            case 'rocket': return <Rocket size={size} strokeWidth={strokeWidth} className={cls} />;
             default: return <BarChart3 size={size} strokeWidth={strokeWidth} className={cls} />;
         }
     };
