@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bell, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import moniLogo from '/moni-logo.png';
+import { supabase } from '@/integrations/supabase/client';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 interface DashboardHeaderProps {
     userName?: string;
@@ -10,6 +11,36 @@ interface DashboardHeaderProps {
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName = "Usuario", unreadNotifications = 0 }) => {
     const navigate = useNavigate();
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+    const [userLevel, setUserLevel] = useState<number>(1);
+
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('avatar_url, level')
+                    .eq('id', user.id)
+                    .single();
+                
+                if (profile) {
+                    setAvatarUrl(profile.avatar_url);
+                    setUserLevel(profile.level || 1);
+                }
+            }
+        };
+        fetchUserProfile();
+    }, []);
+
+    const getInitials = (name: string) => {
+        return name
+            .split(' ')
+            .map(word => word[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2);
+    };
 
     return (
         <header className="relative px-6 py-4 pt-8">
@@ -36,11 +67,37 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName = "Usuario",
                 </button>
             </div>
 
-            {/* Logo and Name */}
+            {/* Avatar and Name */}
             <div className="flex items-center gap-3">
-                <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-[#F5F0EE] flex items-center justify-center border-2 border-white shadow-[0_8px_20px_-6px_rgba(0,0,0,0.15)] overflow-hidden p-1.5">
-                    <img src={moniLogo} alt="Moni AI" className="h-full w-full object-contain" />
-                </div>
+                <button 
+                    onClick={() => navigate("/profile")}
+                    className="relative group"
+                >
+                    {/* Glowing brown border effect */}
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#8D6E63] via-[#A1887F] to-[#5D4037] opacity-80 blur-sm group-hover:opacity-100 group-hover:blur-md transition-all duration-300 animate-pulse" 
+                         style={{ transform: 'scale(1.08)' }} 
+                    />
+                    
+                    {/* Avatar container */}
+                    <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-gradient-to-br from-[#8D6E63] to-[#5D4037] p-[3px] shadow-[0_8px_20px_-6px_rgba(93,64,55,0.5)]">
+                        <Avatar className="h-full w-full border-2 border-white">
+                            <AvatarImage 
+                                src={avatarUrl || undefined} 
+                                alt={userName}
+                                className="object-cover"
+                            />
+                            <AvatarFallback className="bg-[#F5F0EE] text-[#5D4037] font-bold text-lg sm:text-xl">
+                                {getInitials(userName)}
+                            </AvatarFallback>
+                        </Avatar>
+                    </div>
+
+                    {/* Level badge */}
+                    <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-[#5D4037] to-[#8D6E63] text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full shadow-md border-2 border-white">
+                        Nv.{userLevel}
+                    </div>
+                </button>
+
                 <div className="flex flex-col">
                     <span className="text-gray-400 text-xs sm:text-sm font-medium">Buenos días,</span>
                     <span className="text-gray-800 font-bold text-lg sm:text-xl leading-tight">{userName}</span>
