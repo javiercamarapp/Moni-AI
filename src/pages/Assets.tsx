@@ -35,7 +35,7 @@ export default function Assets() {
 
   if (isLoading || !netWorthData) {
     return (
-      <div className="min-h-screen pb-20 flex items-center justify-center">
+      <div className="page-standard min-h-screen pb-20 flex items-center justify-center">
         <MoniLoader size="lg" />
         <BottomNav />
       </div>
@@ -51,10 +51,10 @@ export default function Assets() {
   }, {} as Record<AssetCategory, typeof assets>);
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="page-standard min-h-screen pb-20">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
+        <div className="page-container py-4">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
@@ -72,7 +72,7 @@ export default function Assets() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+      <div className="page-container py-6 space-y-6">
         {/* Info Card */}
         <Card className="bg-white/80 backdrop-blur-sm border-0 p-5 rounded-3xl shadow-sm">
           <h2 className="text-lg font-semibold text-gray-900 mb-3 tracking-tight">¿Qué son los Activos?</h2>

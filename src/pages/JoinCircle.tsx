@@ -119,7 +119,7 @@ const JoinCircle = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="page-standard min-h-screen flex items-center justify-center">
         <MoniLoader size="lg" />
       </div>
     );
@@ -127,7 +127,7 @@ const JoinCircle = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="page-standard min-h-screen flex items-center justify-center px-4">
         <div className="max-w-md w-full bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-6 text-center">
           <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
           <h1 className="text-xl font-bold text-gray-900 mb-2">
@@ -146,7 +146,7 @@ const JoinCircle = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="page-standard min-h-screen flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-6">
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">

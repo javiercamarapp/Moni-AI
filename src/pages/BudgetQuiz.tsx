@@ -572,8 +572,8 @@ export default function BudgetQuiz() {
   const percentageOfIncome = monthlyIncome ? (totalBudget / Number(monthlyIncome)) * 100 : 0;
 
   return (
-    <div className="min-h-screen pb-20">
-      <div className="mx-auto px-4 py-4 space-y-4" style={{ maxWidth: '600px' }}>
+    <div className="page-standard min-h-screen pb-20">
+      <div className="page-container py-4 space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
           <Button

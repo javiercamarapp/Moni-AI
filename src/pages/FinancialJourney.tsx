@@ -354,7 +354,7 @@ export default function FinancialJourney() {
   return (
     <>
       <div 
-        className="min-h-screen flex flex-col relative"
+        className="page-standard min-h-screen flex flex-col relative"
         style={{
           backgroundImage: `url(${spaceBackground})`,
           backgroundSize: 'cover',

@@ -5,10 +5,10 @@ const FinancialEvents = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen pb-6 animate-fade-in">
+    <div className="page-standard min-h-screen pb-6 animate-fade-in">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
+        <div className="page-container py-4">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate(-1)}
@@ -28,7 +28,7 @@ const FinancialEvents = () => {
         </div>
       </div>
 
-      <div className="mx-auto px-4 py-4" style={{ maxWidth: '600px' }}>
+      <div className="page-container py-4">
         <div className="text-center py-16 space-y-3">
           <div className="mx-auto w-20 h-20 bg-purple-500/10 rounded-full flex items-center justify-center">
             <Calendar className="h-10 w-10 text-purple-600" />

@@ -161,7 +161,7 @@ export default function NotificationHistory() {
     <div className="min-h-screen pb-32 bg-gradient-to-b from-[#efe6dc] via-[#efe6dc] via-10% to-[#f5f0ee]">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="page-container py-4">
           <div className="flex items-center justify-between mb-1">
             <Button
               variant="ghost"
@@ -188,7 +188,7 @@ export default function NotificationHistory() {
       </div>
 
       {/* Content */}
-      <div className="mx-auto px-4 py-6 space-y-4" style={{ maxWidth: '600px' }}>
+      <div className="page-container py-6 space-y-4">
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3, 4].map((i) => (

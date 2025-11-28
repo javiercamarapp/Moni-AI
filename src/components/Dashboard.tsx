@@ -1194,11 +1194,9 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-[#fafaf9] text-gray-800 font-sans pb-20 relative overflow-x-hidden">
-        {/* Background decoration gradient */}
-        <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-[#f5f0ee] to-transparent pointer-events-none" />
+      <div className="page-standard min-h-screen text-gray-800 font-sans pb-20">
 
-        <div className="max-w-5xl mx-auto w-full relative z-10">
+        <div className="page-container">
           <DashboardHeader
             userName={user?.user_metadata?.full_name || user?.email?.split('@')[0]}
             unreadNotifications={unreadNotifications}

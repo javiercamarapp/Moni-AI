@@ -1032,8 +1032,8 @@ const ChatInterface = () => {
   >
     <div className="flex flex-col h-screen relative z-10 pb-20">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="sticky top-0 z-40 bg-transparent">
+        <div className="page-container py-4">
           <div className="flex items-center justify-center">
             <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden w-16 h-10">
               <img src={moniLogo} alt="Moni" className="w-full h-full object-cover" />
@@ -1043,9 +1043,9 @@ const ChatInterface = () => {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto px-3 sm:px-4">
+      <div className="flex-1 overflow-y-auto">
         {messages.length === 0 ? <div className="h-full flex flex-col items-center justify-center pb-32">
-          </div> : <div className="py-4 sm:py-6 space-y-4 sm:space-y-6 max-w-4xl mx-auto">
+          </div> : <div className="page-container py-4 sm:py-6 space-y-4 sm:space-y-6">
             {messages.map((msg, index) => <div key={msg.id} className="fade-in-up" style={{
           animationDelay: `${index * 0.1}s`
         }}>
@@ -1253,7 +1253,7 @@ const ChatInterface = () => {
       </div>
 
       {/* Input Area */}
-      <div className="px-4 pb-8 pt-4">
+      <div className="page-container pb-8 pt-4">
         {messages.length === 0 && suggestionCards.length > 0 && <div className="mb-4 relative">
             <Carousel opts={{
           align: "start",

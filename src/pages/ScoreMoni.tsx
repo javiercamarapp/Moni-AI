@@ -53,7 +53,7 @@ const ScoreMoni = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F2F4F6]">
+    <div className="page-standard min-h-screen bg-[#F2F4F6]">
       <ScoreDetail 
         onBack={() => navigate('/dashboard')} 
         score={score}

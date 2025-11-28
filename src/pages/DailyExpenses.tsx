@@ -144,10 +144,10 @@ export default function DailyExpenses() {
   }, [expenses]);
 
   return (
-    <div className="min-h-screen pb-24">
+    <div className="page-standard min-h-screen pb-24">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
+        <div className="page-container py-4">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"

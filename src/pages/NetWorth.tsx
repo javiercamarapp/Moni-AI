@@ -117,7 +117,7 @@ export default function NetWorth() {
       <div className="min-h-screen pb-20">
         {/* Header */}
         <div className="sticky top-0 z-40 bg-gradient-to-b from-white/80 to-transparent backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="page-container py-4">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
@@ -135,7 +135,7 @@ export default function NetWorth() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="page-container py-6">
           {/* Skeleton del contenido principal */}
           <Card className="p-6 bg-white/80 backdrop-blur-sm border-0 animate-pulse rounded-3xl shadow-sm">
             <div className="h-80 bg-gray-100 rounded-2xl"></div>
@@ -182,13 +182,11 @@ export default function NetWorth() {
   const liabilityCategories = ['All', ...Array.from(new Set(liabilities.map(l => l.categoria)))];
 
   return (
-    <div className="min-h-screen bg-[#fafaf9] pb-20 relative overflow-x-hidden">
-      {/* Background decoration gradient */}
-      <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-[#f5f0ee] to-transparent pointer-events-none" />
+    <div className="page-standard min-h-screen pb-20">
 
       {/* Header */}
       <div className="sticky top-0 z-40">
-        <div className="max-w-5xl mx-auto px-4 py-4">
+        <div className="page-container py-4">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"

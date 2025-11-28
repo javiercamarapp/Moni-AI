@@ -10,6 +10,7 @@ import AnimatedArmIcon from '../components/onboarding/AnimatedArmIcon';
 import AnimatedScoreIcon from '../components/onboarding/AnimatedScoreIcon';
 import AnimatedSocialIcon from '../components/onboarding/AnimatedSocialIcon';
 import AnimatedNotificationsIcon from '../components/onboarding/AnimatedNotificationsIcon';
+import { LoadingScreen } from '@/components/LoadingScreen';
 import MultiOrbitSemiCircle from '../components/onboarding/ui/MultiOrbitSemiCircle';
 import { StackCardCarousel } from '../components/onboarding/ui/StackCard';
 import onboardingHero from '@/assets/onboarding-hero.png';
@@ -699,18 +700,7 @@ const Onboarding: React.FC = () => {
     }
   };
   if (loading) {
-    return <div className="min-h-screen bg-bg flex flex-col items-center justify-center animate-in fade-out duration-700 delay-300 fill-mode-forwards">
-                <div className="flex flex-col items-center gap-6 animate-in zoom-in duration-1000 fade-in">
-                    <div className="relative">
-                        <h1 className="text-7xl font-black text-black tracking-tighter leading-none">
-                            MONI AI.
-                        </h1>
-                    </div>
-                    <p className="text-sm text-black uppercase tracking-[0.4em] font-medium">
-                        Coach financiero
-                    </p>
-                </div>
-            </div>;
+    return <LoadingScreen showProgress={false} />;
   }
   return <div className="fixed inset-0 bg-bg z-50 flex flex-col h-screen justify-between font-sans overflow-hidden">
 

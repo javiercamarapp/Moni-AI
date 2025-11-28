@@ -107,10 +107,10 @@ export default function Movimientos() {
   };
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="page-standard min-h-screen pb-20">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
+        <div className="page-container py-4">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
@@ -127,7 +127,7 @@ export default function Movimientos() {
         </div>
       </div>
 
-      <div className="mx-auto px-4 py-6 space-y-4" style={{ maxWidth: '600px' }}>
+      <div className="page-container py-6 space-y-4">
         {/* Resumen */}
         <div className="grid grid-cols-2 gap-3">
           <Card className="p-2 rounded-[16px] shadow-lg border border-gray-200/50 bg-white/70 backdrop-blur-xl hover:shadow-xl hover:scale-105 transition-all duration-300 overflow-hidden relative">

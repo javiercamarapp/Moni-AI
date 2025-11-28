@@ -163,10 +163,10 @@ const AddFriend = () => {
   };
 
   return (
-    <div className="min-h-screen pb-6">
+    <div className="page-standard min-h-screen pb-6">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
+        <div className="page-container py-4">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate(-1)}
@@ -186,7 +186,7 @@ const AddFriend = () => {
         </div>
       </div>
 
-      <div className="mx-auto px-4 py-4 space-y-4" style={{ maxWidth: '600px' }}>
+      <div className="page-container py-4 space-y-4">
         {/* Search Card */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
           <div className="space-y-3">

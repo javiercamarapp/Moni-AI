@@ -140,17 +140,17 @@ const CircleDetails = () => {
 
   if (!circle) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="page-standard min-h-screen flex items-center justify-center">
         <MoniLoader size="lg" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pb-8">
+    <div className="page-standard min-h-screen pb-8">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
+        <div className="page-container py-4">
           <div className="flex items-center gap-3 mb-2">
             <button
               onClick={() => navigate('/social')}
@@ -170,7 +170,7 @@ const CircleDetails = () => {
         </div>
       </div>
 
-      <div className="mx-auto px-4 py-2 space-y-4" style={{ maxWidth: '600px' }}>
+      <div className="page-container py-2 space-y-4">
         {/* Circle Info Card */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
           {circle.description && (

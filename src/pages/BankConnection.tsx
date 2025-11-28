@@ -57,11 +57,11 @@ export default function BankConnection() {
   };
 
   return (
-    <div className="min-h-screen pb-24">
+    <div className="page-standard min-h-screen pb-24">
       <div className="max-w-2xl mx-auto">
         {/* Header con mismo estilo que patrimonio */}
         <div className="sticky top-0 z-40 bg-gradient-to-b from-white/80 to-transparent backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="page-container py-4">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"

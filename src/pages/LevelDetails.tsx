@@ -61,7 +61,7 @@ export default function LevelDetails() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center">
+      <div className="page-standard min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
@@ -72,7 +72,7 @@ export default function LevelDetails() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4">
+    <div className="page-standard min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4">
       <div className="max-w-2xl mx-auto pt-6 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">

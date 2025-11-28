@@ -28,6 +28,36 @@ This document defines the design standards, color palette, and layout guidelines
   - This specific gradient should be used at the top of pages to provide a warm, subtle header effect.
   - **Exception**: The Chat interface uses a custom wavy line background.
 
+### ✨ Standard Page Classes (Recommended)
+
+Use these CSS classes (defined in `src/index.css`) for consistent page layouts:
+
+#### `.page-standard` - Background + Gradient
+```tsx
+<div className="page-standard min-h-screen pb-20">
+  {/* Your page content */}
+</div>
+```
+Includes:
+- Background color: `#fafaf9`
+- Gradient overlay via `::before` pseudo-element
+- Proper z-index layering
+- `overflow-x: hidden`
+
+#### `.page-container` - Max-Width Content Container
+```tsx
+<div className="page-standard min-h-screen pb-20">
+  <div className="page-container">
+    {/* Constrained content */}
+  </div>
+</div>
+```
+Includes:
+- `max-width: 64rem` (1024px / max-w-5xl)
+- Centered with `margin: auto`
+- Horizontal padding (`px-4`)
+- Extra left padding on desktop for sidebar nav
+
 ## 🌈 Gradients
 
 ### Page Backgrounds

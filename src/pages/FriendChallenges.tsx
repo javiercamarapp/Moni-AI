@@ -68,10 +68,10 @@ const FriendChallenges = () => {
 
   return (
     <>
-      <div className="min-h-screen pb-24 bg-muted/30">
+      <div className="page-standard min-h-screen pb-24 bg-muted/30">
         {/* Header */}
         <div className="sticky top-0 z-40 bg-gradient-to-b from-purple-50/80 via-cyan-50/60 to-transparent backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="page-container py-3">
             <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
@@ -93,7 +93,7 @@ const FriendChallenges = () => {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+        <div className="page-container px-6 py-8 space-y-8">
           {loading ? (
             <div className="py-12">
               <SectionLoader size="lg" />

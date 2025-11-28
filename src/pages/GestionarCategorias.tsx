@@ -319,10 +319,10 @@ const GestionarCategorias = () => {
   if (loading) {
     return <LoadingScreen />;
   }
-  return <div className="min-h-screen pb-20">
+  return <div className="page-standard min-h-screen pb-20">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
+        <div className="page-container py-4">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4 flex-1">
               <Button 
@@ -456,7 +456,7 @@ const GestionarCategorias = () => {
       </div>
 
       {/* Tabs: Ingresos y Gastos */}
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="page-container">
         <Tabs defaultValue="ingresos" className="w-full">
           <TabsList className="w-full bg-white/80 backdrop-blur-sm shadow-sm border-0 rounded-2xl p-1">
             <TabsTrigger value="ingresos" className="flex-1 data-[state=active]:bg-white data-[state=active]:shadow-sm text-gray-600 data-[state=active]:text-gray-900 transition-all rounded-xl font-medium">

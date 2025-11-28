@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSubscription } from "@/hooks/useSubscription";
-import moniLoadingLogo from "@/assets/moni-loading-logo.png";
+import { LoadingScreen } from "@/components/LoadingScreen";
 
 interface PremiumFeatureProps {
   children: React.ReactNode;
@@ -20,13 +20,7 @@ export default function PremiumFeature({ children }: PremiumFeatureProps) {
   }, [isPremium, loading, navigate]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center animated-wave-bg">
-        <div className="animate-pulse">
-          <img src={moniLoadingLogo} alt="Moni AI" className="w-64 h-auto object-contain" />
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (isPremium) {

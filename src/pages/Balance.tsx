@@ -787,11 +787,9 @@ const Balance = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafaf9] pb-20 relative overflow-x-hidden">
-      {/* Background decoration gradient */}
-      <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-[#f5f0ee] to-transparent pointer-events-none" />
+    <div className="page-standard min-h-screen pb-20">
 
-      <main className="max-w-5xl mx-auto p-4 pt-6 relative z-10 space-y-4">
+      <main className="page-container pt-6 space-y-4">
 
         {/* Header Row */}
         <header className="flex items-center justify-between mb-4">

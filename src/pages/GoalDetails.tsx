@@ -120,7 +120,7 @@ const GoalDetails = () => {
 
   if (loading || !goal) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="page-standard min-h-screen flex items-center justify-center">
         <MoniLoader size="lg" message="Cargando detalles de tu meta..." />
       </div>
     );
@@ -134,10 +134,10 @@ const GoalDetails = () => {
 
   return (
     <>
-      <div className="min-h-screen pb-24 bg-gradient-to-b from-amber-50/30 to-orange-50/20">
+      <div className="page-standard min-h-screen pb-24 bg-gradient-to-b from-amber-50/30 to-orange-50/20">
         {/* Header */}
         <div className="sticky top-0 z-40 bg-gradient-to-b from-purple-50/80 via-cyan-50/60 to-transparent backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="page-container py-3">
             <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
@@ -155,7 +155,7 @@ const GoalDetails = () => {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        <div className="page-container py-6 space-y-6">
           {/* Progress Card */}
           <div className="bg-white rounded-xl shadow-lg p-3 border border-gray-200/50">
             <div className="flex items-center justify-between mb-2">

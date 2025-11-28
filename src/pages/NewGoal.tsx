@@ -165,7 +165,7 @@ const NewGoal = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="page-standard min-h-screen">
       {/* Header */}
       <div className="p-4 flex items-center gap-3">
         <Button

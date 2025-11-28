@@ -1,10 +1,11 @@
-import { MoniLoader } from "./MoniLoader";
+import { LoadingScreen } from "@/components/LoadingScreen";
 
 interface AIAnalysisLoaderProps {
+  /** Optional message for future extension; currently unused */
   message?: string;
-  fullScreen?: boolean;
 }
 
-export function AIAnalysisLoader({ message = "Analizando...", fullScreen = false }: AIAnalysisLoaderProps) {
-  return <MoniLoader size="xl" fullScreen={fullScreen} message={message} />;
+// Reuse the unified LoadingScreen so analysis uses the same loader style
+export function AIAnalysisLoader(_props: AIAnalysisLoaderProps) {
+  return <LoadingScreen />;
 }

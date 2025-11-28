@@ -143,10 +143,11 @@ export default function AccountsCards() {
   const firstName = profile?.full_name?.split(' ')[0] || 'Usuario';
 
   return (
-    <div className="min-h-screen pb-20 bg-gradient-to-b from-[#E5DEFF]/30 to-background overflow-y-auto">
+    <div className="page-standard min-h-screen pb-20 overflow-y-auto">
+      
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
+        <div className="page-container py-4">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -165,7 +166,7 @@ export default function AccountsCards() {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+      <div className="page-container py-6 space-y-6">
 
         {/* Cards Stack */}
         <div className="relative h-[220px] mb-8">
@@ -238,7 +239,7 @@ export default function AccountsCards() {
           onClick={() => navigate("/bank-connection")}
           className="w-full max-w-[340px] mx-auto block mb-6"
         >
-          <Card className="bg-gradient-to-br from-[#E5DEFF] to-[#D0BCFF] p-4 border-0 shadow-lg rounded-2xl hover:scale-105 transition-transform cursor-pointer">
+          <Card className="bg-gradient-to-br from-[#f5f0ee] to-[#D0BCFF] p-4 border-0 shadow-lg rounded-2xl hover:scale-105 transition-transform cursor-pointer">
             <div className="flex items-center justify-center gap-3">
               <div className="w-12 h-12 bg-white/50 rounded-full flex items-center justify-center backdrop-blur-sm">
                 <Plus className="h-6 w-6 text-primary" />

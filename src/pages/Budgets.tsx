@@ -325,10 +325,11 @@ export default function Budgets() {
   }
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="page-standard min-h-screen pb-20">
+      
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
+        <div className="page-container py-4">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -354,7 +355,7 @@ export default function Budgets() {
         </div>
       </div>
 
-      <div className="mx-auto px-5 space-y-6 pb-4" style={{ maxWidth: '600px' }}>
+      <div className="page-container space-y-6 pb-4">
 
         {budgets.length === 0 ? (
           <Card className="p-10 bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0 text-center">

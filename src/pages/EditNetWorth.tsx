@@ -370,10 +370,10 @@ export default function EditNetWorth() {
   }
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="page-standard min-h-screen pb-20">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
+        <div className="page-container py-4">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4 flex-1">
               <Button 
@@ -395,7 +395,7 @@ export default function EditNetWorth() {
         </div>
       </div>
 
-      <div className="mx-auto px-4 py-6 space-y-6" style={{ maxWidth: '600px' }}>
+      <div className="page-container py-6 space-y-6">
 
         {/* Main Card */}
         <Card className="p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 animate-fade-in">

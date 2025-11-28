@@ -391,10 +391,10 @@ const FriendProfile = () => {
   }
 
   return (
-    <div className="min-h-screen pb-24 bg-gradient-to-b from-[#E5DEFF] to-white">
+    <div className="page-standard min-h-screen pb-24">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/95 to-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/95 to-transparent backdrop-blur-sm">
+        <div className="page-container py-4">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate(-1)}
@@ -417,7 +417,7 @@ const FriendProfile = () => {
         </div>
       </div>
 
-      <div className="mx-auto px-4 py-4 space-y-4" style={{ maxWidth: '600px' }}>
+      <div className="page-container py-4 space-y-4">
         {/* Profile Card */}
         <Card className="bg-white/90 backdrop-blur-sm shadow-xl border-0">
           <CardContent className="pt-6">

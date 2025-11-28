@@ -205,21 +205,21 @@ const CircleChat = () => {
 
   if (!circle) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="page-standard min-h-screen flex items-center justify-center">
         <MoniLoader size="lg" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden">
+    <div className="page-standard min-h-screen flex flex-col relative overflow-hidden">
       {/* Animated Background */}
       <div className="fixed inset-0 bg-gradient-to-b from-[#F5F1E8] to-[#E8DCC8] -z-10" />
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)] animate-pulse -z-10" style={{ animationDuration: '4s' }} />
       
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-b border-white/30">
-        <div className="max-w-7xl mx-auto px-4 py-3">
+        <div className="page-container py-3">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"

@@ -102,7 +102,7 @@ export default function Subscribe() {
   ];
 
   return (
-    <div className="min-h-screen p-3 pb-20">
+    <div className="page-standard min-h-screen p-3 pb-20">
       <div className="w-full max-w-sm mx-auto space-y-4">
         {/* Header con logo e insight carrusel */}
         <div className="p-2 flex items-center gap-3">

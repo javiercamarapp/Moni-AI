@@ -115,10 +115,10 @@ const KPICard = ({ label, value, icon: Icon, format = "number" }: any) => {
 const AdminAnalytics = () => {
   return (
     <>
-      <div className="min-h-screen pb-24 bg-gradient-to-b from-gray-50 to-white">
+      <div className="page-standard min-h-screen pb-24 bg-gradient-to-b from-gray-50 to-white">
         {/* Header */}
         <div className="sticky top-0 z-40 bg-gradient-to-b from-white/95 to-white/80 backdrop-blur-md border-b border-gray-100">
-          <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="page-container py-6">
             <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
               📊 Moni AI Analytics Dashboard
             </h1>
@@ -128,7 +128,7 @@ const AdminAnalytics = () => {
           </div>
         </div>
 
-        <div className="mx-auto px-4 py-6 space-y-6" style={{ maxWidth: '1400px' }}>
+        <div className="page-container py-6 space-y-6">
           <Tabs defaultValue="overview" className="space-y-6">
             <TabsList className="grid w-full grid-cols-5 lg:w-auto">
               <TabsTrigger value="overview">Overview</TabsTrigger>

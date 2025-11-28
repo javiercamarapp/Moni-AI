@@ -31,9 +31,10 @@ const FinancialChat = () => {
   };
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="page-standard min-h-screen pb-20">
+      
       {/* Header con botón de regreso */}
-      <div className="p-4 flex items-center gap-3">
+      <div className="p-4 flex items-center gap-3 relative z-10">
         <Button
           variant="ghost"
           size="icon"

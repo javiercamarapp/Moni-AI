@@ -141,7 +141,7 @@ const FriendComparison = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="page-standard min-h-screen flex items-center justify-center">
         <SectionLoader size="lg" />
       </div>
     );
@@ -213,10 +213,10 @@ const FriendComparison = () => {
   ];
 
   return (
-    <div className="min-h-screen pb-24 bg-gradient-to-b from-[#E5DEFF] to-white">
+    <div className="page-standard min-h-screen pb-24 bg-gradient-to-b from-[#f5f0ee] to-white">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/95 to-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/95 to-transparent backdrop-blur-sm">
+        <div className="page-container py-4">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate(-1)}
@@ -231,7 +231,7 @@ const FriendComparison = () => {
         </div>
       </div>
 
-      <div className="mx-auto px-4 py-4 space-y-4" style={{ maxWidth: '600px' }}>
+      <div className="page-container py-4 space-y-4">
         {/* User Avatars */}
         <div className="flex items-center justify-between">
           <div className="text-center flex-1">

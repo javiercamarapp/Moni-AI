@@ -154,8 +154,8 @@ const DayExpenses = () => {
   }
 
   return (
-    <div className="min-h-screen pb-20">
-      <div className="sticky top-0 z-20 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
+    <div className="page-standard min-h-screen pb-20">
+      <div className="sticky top-0 z-20 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center gap-4">
           <Button
             variant="ghost"

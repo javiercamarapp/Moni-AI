@@ -702,7 +702,7 @@ const GroupGoalChat = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="page-standard min-h-screen flex items-center justify-center">
         <SectionLoader size="lg" />
       </div>
     );
@@ -710,14 +710,14 @@ const GroupGoalChat = () => {
 
   return (
     <>
-      <div className="min-h-screen pb-32 relative overflow-hidden">
+      <div className="page-standard min-h-screen pb-32 relative overflow-hidden">
         {/* Animated Background */}
         <div className="fixed inset-0 bg-gradient-to-b from-[#F5F1E8] to-[#E8DCC8] -z-10" />
         <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)] animate-pulse -z-10" style={{ animationDuration: '4s' }} />
         
         {/* Header */}
         <div className="sticky top-0 z-40 bg-gradient-to-b from-[#F5F1E8]/80 to-transparent backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="page-container py-3">
             <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
@@ -736,7 +736,7 @@ const GroupGoalChat = () => {
         </div>
 
         {/* Messages */}
-        <div className="max-w-7xl mx-auto px-4 py-6 space-y-4">
+        <div className="page-container py-6 space-y-4">
           {comments.map((comment) => {
             const isAI = comment.user_id === 'moni-ai';
             const isCurrentUser = comment.user_id === currentUserId;
