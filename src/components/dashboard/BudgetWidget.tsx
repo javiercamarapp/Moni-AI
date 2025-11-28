@@ -1,5 +1,5 @@
 import { Progress } from "@/components/ui/progress";
-import { Wallet } from "lucide-react";
+import { PieChart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface BudgetWidgetProps {
@@ -25,7 +25,7 @@ export default function BudgetWidget({ totalBudget, currentExpenses }: BudgetWid
         >
           <div className="flex items-center gap-3">
             <div className="bg-amber-50 rounded-lg p-2">
-              <Wallet size={20} strokeWidth={2} className="text-[#8D6E63]" />
+              <PieChart size={20} strokeWidth={2} className="text-[#8D6E63]" />
             </div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-gray-800">Presupuesto</p>
@@ -45,7 +45,7 @@ export default function BudgetWidget({ totalBudget, currentExpenses }: BudgetWid
       >
         <div className="flex items-center gap-3">
           <div className="bg-amber-50 rounded-lg p-2">
-            <Wallet size={20} strokeWidth={2} className="text-[#8D6E63]" />
+            <PieChart size={20} strokeWidth={2} className="text-[#8D6E63]" />
           </div>
           <div className="flex-1 space-y-1.5">
             <div className="flex items-center justify-between">
