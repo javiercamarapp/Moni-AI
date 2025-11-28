@@ -20,16 +20,16 @@ export default function BudgetWidget({ totalBudget, currentExpenses }: BudgetWid
     return (
       <div className="px-6 mb-4">
         <Card 
-          className="p-4 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-1 cursor-pointer"
+          className="p-4 bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-1 cursor-pointer"
           onClick={() => navigate('/budgets')}
         >
           <div className="flex items-center gap-4">
-            <div className="w-12 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+            <div className="w-12 h-8 rounded-xl bg-purple-100 flex items-center justify-center">
               <span className="text-base">📊</span>
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold text-foreground">Presupuesto</p>
-              <p className="text-xs text-muted-foreground">Toca para configurar</p>
+              <p className="text-sm font-semibold text-gray-900">Presupuesto</p>
+              <p className="text-xs text-gray-500">Toca para configurar</p>
             </div>
           </div>
         </Card>
@@ -40,18 +40,18 @@ export default function BudgetWidget({ totalBudget, currentExpenses }: BudgetWid
   return (
     <div className="px-6 mb-4">
       <Card 
-        className="p-4 bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-1 cursor-pointer"
+        className="p-4 bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-1 cursor-pointer"
         onClick={() => navigate('/budgets')}
       >
         <div className="flex items-center gap-4">
-          <div className="w-12 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+          <div className="w-12 h-8 rounded-xl bg-purple-100 flex items-center justify-center">
             <span className="text-base">📊</span>
           </div>
           <div className="flex-1 space-y-2">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-foreground">Presupuesto del mes</p>
+              <p className="text-sm font-semibold text-gray-900">Presupuesto del mes</p>
               <span className={`text-xs font-semibold ${
-                isOverBudget ? 'text-destructive' : 
+                isOverBudget ? 'text-red-500' : 
                 isWarning ? 'text-yellow-600' : 
                 'text-green-600'
               }`}>
@@ -61,17 +61,17 @@ export default function BudgetWidget({ totalBudget, currentExpenses }: BudgetWid
             <Progress 
               value={Math.min(percentUsed, 100)} 
               className={`h-1.5 ${
-                isOverBudget ? 'bg-destructive/20' : 
-                isWarning ? 'bg-yellow-500/20' : 
-                'bg-muted'
+                isOverBudget ? 'bg-red-100' : 
+                isWarning ? 'bg-yellow-100' : 
+                'bg-gray-100'
               }`}
             />
             <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-gray-500">
                 ${currentExpenses.toLocaleString()} de ${totalBudget.toLocaleString()}
               </span>
               <span className={`text-xs ${
-                isOverBudget ? 'text-destructive' : 'text-muted-foreground'
+                isOverBudget ? 'text-red-500' : 'text-gray-500'
               }`}>
                 {isOverBudget ? `+$${Math.abs(remaining).toLocaleString()}` : `$${remaining.toLocaleString()} disponible`}
               </span>
