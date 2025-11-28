@@ -24,7 +24,6 @@ import heroAuth from '@/assets/moni-ai-logo.png';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
 import { Target, TrendingUp, Wallet, Trophy, Zap, Users, MessageCircle, Settings, Bell, Plus, LogOut, Home, User, BarChart3, AlertCircle, CreditCard, RefreshCw, Sparkles } from 'lucide-react';
 import moniLogo from '/moni-logo.png';
-import NotificationBanner from '@/components/dashboard/NotificationBanner';
 import WeeklyIncomeExpenseWidget from '@/components/analysis/WeeklyIncomeExpenseWidget';
 import BottomNav from '@/components/BottomNav';
 import { CreateGoalModal } from '@/components/goals/CreateGoalModal';
@@ -1194,8 +1193,11 @@ const Dashboard = () => {
             <ScoreCard score={scoreMoni} />
           </div>
 
-          {/* Notification Banner - above quick stats */}
-          <NotificationBanner />
+          {/* Budget Banner - above quick stats */}
+          <BudgetWidget 
+            totalBudget={totalBudget} 
+            currentExpenses={currentMonthExpenses} 
+          />
 
           {/* Quick Stats */}
           <QuickStats
@@ -1227,12 +1229,6 @@ const Dashboard = () => {
             subscriptionsTotal={upcomingSubscriptions.reduce((sum, sub) => sum + Number(sub.amount), 0)}
             subscriptionsCount={upcomingSubscriptions.length}
             dailyExpenses={dailyExpenses.reduce((sum, exp) => sum + Number(exp.amount), 0)}
-          />
-
-          {/* Budget Widget - above goals */}
-          <BudgetWidget 
-            totalBudget={totalBudget} 
-            currentExpenses={currentMonthExpenses} 
           />
 
           {/* Goals Section - Personal & Group */}
