@@ -26,21 +26,20 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ score }) => {
     const status = getScoreStatus(safeScore);
 
     return (
-        <div 
+        <div
             className="bg-white rounded-[1.5rem] px-5 py-4 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.08)] border border-white cursor-pointer hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-200"
             onClick={() => navigate('/score-moni')}
         >
             <div className="flex items-center justify-between">
                 {/* Left Side: Text Info */}
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-2">
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Score Moni</span>
-                    <span className="text-4xl font-black text-gray-800 leading-none">{safeScore}</span>
-                    <span className={`text-[10px] font-bold ${status.color} uppercase tracking-wider px-2 py-0.5 ${status.bgColor} rounded-full w-fit`}>
+                    <span className={`text-[11px] font-bold ${status.color} uppercase tracking-wider px-2.5 py-1 ${status.bgColor} rounded-full w-fit`}>
                         {status.label}
                     </span>
                 </div>
 
-                {/* Right Side: Circle */}
+                {/* Right Side: Circle with Score Inside */}
                 <div className="relative flex items-center justify-center">
                     <svg className="transform -rotate-90 w-20 h-20">
                         {/* Track */}
@@ -65,6 +64,10 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ score }) => {
                             strokeLinecap="round"
                         />
                     </svg>
+                    {/* Score Number Inside Circle */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-2xl font-black text-gray-800 leading-none">{safeScore}</span>
+                    </div>
                 </div>
             </div>
         </div>

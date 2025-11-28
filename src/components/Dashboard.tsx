@@ -1194,23 +1194,24 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-[#fafaf9] text-gray-800 font-sans pb-20">
-        <div className="max-w-5xl mx-auto w-full">
+      <div className="min-h-screen bg-[#fafaf9] text-gray-800 font-sans pb-20 relative overflow-x-hidden">
+        {/* Background decoration gradient */}
+        <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-[#f5f0ee] to-transparent pointer-events-none" />
+
+        <div className="max-w-5xl mx-auto w-full relative z-10">
           <DashboardHeader
             userName={user?.user_metadata?.full_name || user?.email?.split('@')[0]}
             unreadNotifications={unreadNotifications}
           />
 
-          {/* Score Card */}
-          <div className="px-6 mb-4">
+          {/* Score and Budget Grid */}
+          <div className="px-6 mb-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
             <ScoreCard score={scoreMoni} />
+            <BudgetWidget
+              totalBudget={totalBudget}
+              currentExpenses={currentMonthExpenses}
+            />
           </div>
-
-          {/* Budget Banner - above quick stats */}
-          <BudgetWidget 
-            totalBudget={totalBudget} 
-            currentExpenses={currentMonthExpenses} 
-          />
 
           {/* Quick Stats */}
           <QuickStats

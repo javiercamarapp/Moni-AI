@@ -53,7 +53,7 @@ export default function NetWorth() {
       const rect = semiLiquidButtonRef.current.getBoundingClientRect();
       const spaceBelow = window.innerHeight - rect.bottom;
       const spaceAbove = rect.top;
-      
+
       // Si hay menos de 300px abajo, mostrar arriba
       if (spaceBelow < 300 && spaceAbove > spaceBelow) {
         setDropdownPosition('top');
@@ -82,9 +82,9 @@ export default function NetWorth() {
       <div className="min-h-screen flex flex-col relative">
         {/* Hero Image - Full Screen Background */}
         <div className="absolute inset-0 w-full h-full">
-          <img 
-            src={networthIntro} 
-            alt="Net Worth Intro" 
+          <img
+            src={networthIntro}
+            alt="Net Worth Intro"
             className="w-full h-full object-cover"
           />
         </div>
@@ -98,7 +98,7 @@ export default function NetWorth() {
             <p className="text-lg text-gray-600">
               Nutre a tu Moni AI personal con tu información y empieza a ver la diferencia
             </p>
-            <Button 
+            <Button
               size="lg"
               className="w-full mt-8 text-base py-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm hover:scale-105 hover:bg-white/80 active:scale-95 transition-all duration-200 font-semibold border-0 text-gray-900 animate-fade-in"
               onClick={() => navigate("/edit-assets-liabilities")}
@@ -134,7 +134,7 @@ export default function NetWorth() {
             </div>
           </div>
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-4 py-6">
           {/* Skeleton del contenido principal */}
           <Card className="p-6 bg-white/80 backdrop-blur-sm border-0 animate-pulse rounded-3xl shadow-sm">
@@ -156,13 +156,13 @@ export default function NetWorth() {
     );
   }
 
-  const { 
-    currentNetWorth, 
-    totalAssets, 
-    totalLiabilities, 
-    assets, 
-    liabilities, 
-    chartData, 
+  const {
+    currentNetWorth,
+    totalAssets,
+    totalLiabilities,
+    assets,
+    liabilities,
+    chartData,
     percentageChange,
     highPoint,
     lowPoint
@@ -170,8 +170,8 @@ export default function NetWorth() {
 
   const isPositiveChange = percentageChange >= 0;
 
-  const filteredAssets = assetFilter === 'All' 
-    ? assets 
+  const filteredAssets = assetFilter === 'All'
+    ? assets
     : assets.filter(a => a.categoria === assetFilter);
 
   const filteredLiabilities = liabilityFilter === 'All'
@@ -182,10 +182,13 @@ export default function NetWorth() {
   const liabilityCategories = ['All', ...Array.from(new Set(liabilities.map(l => l.categoria)))];
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen bg-[#fafaf9] pb-20 relative overflow-x-hidden">
+      {/* Background decoration gradient */}
+      <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-[#f5f0ee] to-transparent pointer-events-none" />
+
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-white/80 to-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="sticky top-0 z-40">
+        <div className="max-w-5xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -210,8 +213,8 @@ export default function NetWorth() {
 
       {/* Botón de descarga de PDF */}
       <div className="px-4 mt-4">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           className="w-full bg-white/80 backdrop-blur-sm hover:bg-white rounded-3xl shadow-sm hover:shadow-md transition-all h-auto py-3 px-4 text-xs font-medium flex items-center justify-center border-0"
           onClick={async () => {
             try {
@@ -283,7 +286,7 @@ export default function NetWorth() {
               </div>
               <span className="text-xs font-medium text-gray-700">Filtrar</span>
             </Button>
-            
+
             {showInstitutionFilter && (
               <div className="absolute right-0 top-full mt-2 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border-0 py-2 min-w-[200px] z-50">
                 <button
@@ -353,7 +356,7 @@ export default function NetWorth() {
             .map((account) => {
               const iconName = getIconForCategory(account.categoria);
               const Icon = iconMap[iconName];
-              
+
               return (
                 <div
                   key={account.id}
@@ -378,10 +381,10 @@ export default function NetWorth() {
                 </div>
               );
             })}
-            
+
           {assets.filter(a => isLiquidAsset(a.categoria)).filter(a => selectedInstitution === 'All' || a.nombre.startsWith(selectedInstitution)).length === 0 && (
             <div className="p-8 text-center text-gray-500 bg-white/80 backdrop-blur-sm rounded-xl border-0 shadow-sm">
-              {selectedInstitution === 'All' 
+              {selectedInstitution === 'All'
                 ? 'No hay cuentas líquidas registradas'
                 : `No hay cuentas líquidas de ${selectedInstitution}`}
             </div>
@@ -407,7 +410,7 @@ export default function NetWorth() {
               </div>
               <span className="text-xs font-medium text-gray-700">Filtrar</span>
             </Button>
-            
+
             {showSemiLiquidFilter && (
               <div className={cn(
                 "absolute right-0 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border-0 py-2 min-w-[200px] z-50",
@@ -469,7 +472,7 @@ export default function NetWorth() {
             .map((account) => {
               const iconName = getIconForCategory(account.categoria);
               const Icon = iconMap[iconName];
-              
+
               return (
                 <div
                   key={account.id}
@@ -501,10 +504,10 @@ export default function NetWorth() {
                 </div>
               );
             })}
-            
+
           {assets.filter(a => isSemiLiquidAsset(a.categoria)).filter(a => selectedSemiLiquidType === 'All' || a.subcategoria === selectedSemiLiquidType).length === 0 && (
             <div className="p-8 text-center text-gray-500 bg-white/80 backdrop-blur-sm rounded-xl border-0 shadow-sm">
-              {selectedSemiLiquidType === 'All' 
+              {selectedSemiLiquidType === 'All'
                 ? 'No hay activos semi líquidos registrados'
                 : `No hay activos de tipo ${selectedSemiLiquidType}`}
             </div>

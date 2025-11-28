@@ -1,21 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, TrendingUp, TrendingDown, Wallet, ChevronLeft, ChevronRight, Download } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import BottomNav from '@/components/BottomNav';
-import { Progress } from '@/components/ui/progress';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import Autoplay from 'embla-carousel-autoplay';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { useToast } from '@/hooks/use-toast';
 import { LoadingScreen } from '@/components/LoadingScreen';
-import WeeklyIncomeExpenseWidget from '@/components/analysis/WeeklyIncomeExpenseWidget';
-import CategoryBreakdownWidget from '@/components/analysis/CategoryBreakdownWidget';
-import IncomeExpensePieWidget from '@/components/analysis/IncomeExpensePieWidget';
+import BalanceCard from '@/components/balance/BalanceCard';
+import StatCard from '@/components/balance/StatCard';
+import BalanceCategoryBreakdown from '@/components/balance/BalanceCategoryBreakdown';
+import BalanceInsights from '@/components/balance/BalanceInsights';
+import BalanceEvolutionChart from '@/components/balance/BalanceEvolutionChart';
 
 interface CategoryBalance {
   id: string;
@@ -55,20 +49,20 @@ const getExpenseCategoryColor = (index: number): string => {
 
 // Colores metálicos oscuros para categorías de ingresos
 const incomeCategoryColors: string[] = ['hsl(210, 55%, 35%)',
-// Azul acero
-'hsl(150, 50%, 32%)',
-// Verde esmeralda
-'hsl(280, 52%, 33%)',
-// Morado metálico
-'hsl(30, 58%, 36%)',
-// Cobre
-'hsl(190, 53%, 34%)',
-// Turquesa metálico
-'hsl(45, 55%, 38%)',
-// Oro viejo
-'hsl(0, 50%, 35%)',
-// Rojo hierro
-'hsl(260, 48%, 30%)' // Índigo metálico
+  // Azul acero
+  'hsl(150, 50%, 32%)',
+  // Verde esmeralda
+  'hsl(280, 52%, 33%)',
+  // Morado metálico
+  'hsl(30, 58%, 36%)',
+  // Cobre
+  'hsl(190, 53%, 34%)',
+  // Turquesa metálico
+  'hsl(45, 55%, 38%)',
+  // Oro viejo
+  'hsl(0, 50%, 35%)',
+  // Rojo hierro
+  'hsl(260, 48%, 30%)' // Índigo metálico
 ];
 const getIncomeCategoryColor = (index: number): string => {
   return incomeCategoryColors[index % incomeCategoryColors.length];
@@ -84,7 +78,7 @@ const Balance = () => {
     const urlPeriod = searchParams.get('period');
     if (urlPeriod === 'year') return 'anual';
     if (urlPeriod === 'month') return 'mensual';
-    
+
     // Si no hay parámetro, usar localStorage
     const saved = localStorage.getItem('balanceViewMode');
     return saved as 'mensual' | 'anual' || 'mensual';
@@ -115,7 +109,7 @@ const Balance = () => {
     const cached = localStorage.getItem('balance_totalGastos');
     return cached ? parseFloat(cached) : 0;
   });
-  
+
   // Estados para el widget de Ingresos vs Gastos (independientes del viewMode)
   const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [monthlyExpenses, setMonthlyExpenses] = useState(0);
@@ -194,7 +188,7 @@ const Balance = () => {
     const cacheTimeKey = `${cacheKey}_time`;
     const cachedTime = localStorage.getItem(cacheTimeKey);
     const now = Date.now();
-    
+
     if (cachedTime && (now - parseInt(cachedTime)) < 10 * 60 * 1000) {
       console.log('✅ Using cached projections');
       return; // Ya tenemos datos frescos en caché
@@ -213,11 +207,11 @@ const Balance = () => {
       // Get transactions for the specific period (for insights) with pagination
       const startDate = viewMode === 'mensual' ? new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1) : new Date(currentMonth.getFullYear(), 0, 1);
       const endDate = viewMode === 'mensual' ? new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0) : new Date(currentMonth.getFullYear(), 11, 31);
-      
+
       let periodTransactions: any[] = [];
       let hasMorePeriod = true;
       let lastIdPeriod: string | null = null;
-      
+
       while (hasMorePeriod) {
         let queryPeriod = supabase
           .from('transactions')
@@ -227,24 +221,24 @@ const Balance = () => {
           .lte('transaction_date', endDate.toISOString().split('T')[0])
           .order('id', { ascending: true })
           .limit(10000);
-        
+
         if (lastIdPeriod) {
           queryPeriod = queryPeriod.gt('id', lastIdPeriod);
         }
-        
+
         const { data: pageData } = await queryPeriod;
-        
+
         if (!pageData || pageData.length === 0) {
           hasMorePeriod = false;
           break;
         }
-        
+
         periodTransactions = [...periodTransactions, ...pageData];
         lastIdPeriod = pageData[pageData.length - 1].id;
         hasMorePeriod = pageData.length === 10000;
       }
-      
-      periodTransactions.sort((a, b) => 
+
+      periodTransactions.sort((a, b) =>
         new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime()
       );
 
@@ -252,7 +246,7 @@ const Balance = () => {
       let allTransactions: any[] = [];
       let hasMoreAll = true;
       let lastIdAll: string | null = null;
-      
+
       while (hasMoreAll) {
         let queryAll = supabase
           .from('transactions')
@@ -260,24 +254,24 @@ const Balance = () => {
           .eq('user_id', user.id)
           .order('id', { ascending: true })
           .limit(10000);
-        
+
         if (lastIdAll) {
           queryAll = queryAll.gt('id', lastIdAll);
         }
-        
+
         const { data: pageData } = await queryAll;
-        
+
         if (!pageData || pageData.length === 0) {
           hasMoreAll = false;
           break;
         }
-        
+
         allTransactions = [...allTransactions, ...pageData];
         lastIdAll = pageData[pageData.length - 1].id;
         hasMoreAll = pageData.length === 10000;
       }
-      
-      allTransactions.sort((a, b) => 
+
+      allTransactions.sort((a, b) =>
         new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime()
       );
       const periodLabel = getPeriodLabel();
@@ -332,7 +326,7 @@ const Balance = () => {
       // Get last 7 days of data
       const today = new Date();
       today.setHours(23, 59, 59, 999);
-      
+
       const startDate = new Date(today);
       startDate.setDate(today.getDate() - 6); // Last 7 days including today
       startDate.setHours(0, 0, 0, 0);
@@ -354,22 +348,22 @@ const Balance = () => {
 
       // Create a map for all 7 days
       const dayMap = new Map<string, { date: string; dayName: string; income: number; expense: number }>();
-      
+
       // Initialize all 7 days
       for (let i = 6; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(today.getDate() - i);
         date.setHours(0, 0, 0, 0);
-        
+
         const dateStr = date.toISOString().split('T')[0];
         const dayName = date.toLocaleDateString('es-MX', { weekday: 'short' });
         const fullDayName = date.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'short' });
-        
-        dayMap.set(dateStr, { 
+
+        dayMap.set(dateStr, {
           date: fullDayName,
           dayName: dayName,
-          income: 0, 
-          expense: 0 
+          income: 0,
+          expense: 0
         });
       }
 
@@ -377,10 +371,10 @@ const Balance = () => {
       if (weekTransactions) {
         weekTransactions.forEach(t => {
           const dateStr = t.transaction_date;
-          
+
           if (dayMap.has(dateStr)) {
             const data = dayMap.get(dateStr)!;
-            
+
             if (t.type === 'ingreso') {
               data.income += Number(t.amount);
             } else {
@@ -431,7 +425,7 @@ const Balance = () => {
       console.log('⏳ Ya hay un proceso en curso, ignorando llamada');
       return;
     }
-    
+
     setIsProcessing(true);
     // Solo mostrar loading si NO hay datos iniciales
     if (!hasInitialData) {
@@ -473,7 +467,7 @@ const Balance = () => {
       let lastId: string | null = null;
       let pageCount = 0;
       const PAGE_SIZE = 1000; // Supabase default max
-      
+
       while (hasMore) {
         let query = supabase
           .from('transactions')
@@ -483,31 +477,31 @@ const Balance = () => {
           .lte('transaction_date', endDate.toISOString().split('T')[0])
           .order('id', { ascending: true })
           .limit(PAGE_SIZE);
-        
+
         // Use cursor-based pagination
         if (lastId) {
           query = query.gt('id', lastId);
         }
-        
+
         const { data: pageData, error: txError } = await query;
-        
+
         if (txError) {
           console.error('Error fetching transactions:', txError);
           break;
         }
-        
+
         if (!pageData || pageData.length === 0) {
           hasMore = false;
           break;
         }
-        
+
         allTransactions = [...allTransactions, ...pageData];
         lastId = pageData[pageData.length - 1].id;
         hasMore = pageData.length === PAGE_SIZE; // Continue if we got full page
         pageCount++;
         console.log(`📄 Page ${pageCount}: ${pageData.length} transactions (total: ${allTransactions.length})`);
       }
-      
+
       const transactions = allTransactions;
       console.log('📊 Total transactions loaded:', transactions.length);
       if (!transactions) return;
@@ -524,13 +518,13 @@ const Balance = () => {
       const totalIng = ingresosData.reduce((sum, t) => sum + Number(t.amount), 0);
       setTotalIngresos(totalIng);
       localStorage.setItem('balance_totalIngresos', totalIng.toString());
-      
+
       console.log('Ingresos count:', ingresosData.length);
       console.log('Total Ingresos:', totalIng);
-      
+
       // Categorizar ingresos con AI para identificar todas las categorías (freelance, inversiones, etc.)
       let ingresosWithPercentage: CategoryBalance[] = [];
-      
+
       if (ingresosData.length > 0) {
         try {
           const { data: categorizedData, error: categorizeError } = await supabase.functions.invoke('categorize-income-statement', {
@@ -567,13 +561,13 @@ const Balance = () => {
             ...t,
             category: t.categories?.name || '💼 Salario / Sueldo'
           }));
-          
+
           const ingresosCategoryMap = new Map<string, {
             name: string;
             color: string;
             total: number;
           }>();
-          
+
           categorizedIncome.forEach((t, index) => {
             const categoryName = t.category;
             const existing = ingresosCategoryMap.get(categoryName) || {
@@ -584,7 +578,7 @@ const Balance = () => {
             existing.total += Number(t.amount);
             ingresosCategoryMap.set(categoryName, existing);
           });
-          
+
           ingresosWithPercentage = Array.from(ingresosCategoryMap.entries()).map(([name, data], index) => ({
             id: name,
             name: data.name,
@@ -594,7 +588,7 @@ const Balance = () => {
           })).sort((a, b) => b.total - a.total);
         }
       }
-      
+
       setIngresosByCategory(ingresosWithPercentage);
       localStorage.setItem('balance_ingresos', JSON.stringify(ingresosWithPercentage));
 
@@ -603,27 +597,27 @@ const Balance = () => {
       const totalGast = gastosData.reduce((sum, t) => sum + Number(t.amount), 0);
       setTotalGastos(totalGast);
       localStorage.setItem('balance_totalGastos', totalGast.toString());
-      
+
       console.log('Gastos count:', gastosData.length);
       console.log('Total Gastos:', totalGast);
       console.log('Balance:', totalIng - totalGast);
       console.log('Tasa Ahorro:', totalIng > 0 ? (totalIng - totalGast) / totalIng * 100 : 0);
       console.log('==================================');
-      
+
       // Group by parent category if exists, otherwise by category itself
       const gastosGroupMap = new Map<string, {
         name: string;
         color: string;
         total: number;
       }>();
-      
+
       gastosData.forEach(t => {
         if (t.categories) {
           const category = t.categories;
           let groupId: string;
           let groupName: string;
           let groupColor: string;
-          
+
           // If category has a parent, use parent for grouping
           if (category.parent_id && categoryMap.has(category.parent_id)) {
             const parentCategory = categoryMap.get(category.parent_id)!;
@@ -636,7 +630,7 @@ const Balance = () => {
             groupName = category.name;
             groupColor = category.color;
           }
-          
+
           const existing = gastosGroupMap.get(groupId) || {
             name: groupName,
             color: groupColor,
@@ -646,7 +640,7 @@ const Balance = () => {
           gastosGroupMap.set(groupId, existing);
         }
       });
-      
+
       const gastosWithPercentage: CategoryBalance[] = Array.from(gastosGroupMap.entries()).map(([id, data], index) => ({
         id,
         name: data.name,
@@ -657,12 +651,12 @@ const Balance = () => {
       setGastosByCategory(gastosWithPercentage);
       localStorage.setItem('balance_gastos', JSON.stringify(gastosWithPercentage));
       setHasInitialData(true);
-      
+
       // Calcular totales mensuales y anuales para el widget independiente
       const now = new Date();
       const currentYear = now.getFullYear();
       const currentMonthNum = now.getMonth();
-      
+
       // Calcular totales del mes actual
       const monthStart = new Date(currentYear, currentMonthNum, 1);
       const monthEnd = new Date(currentYear, currentMonthNum + 1, 0);
@@ -674,7 +668,7 @@ const Balance = () => {
       const monthExp = monthTransactions.filter(t => t.type === 'gasto').reduce((sum, t) => sum + Number(t.amount), 0);
       setMonthlyIncome(monthInc);
       setMonthlyExpenses(monthExp);
-      
+
       // Calcular totales del año actual
       const yearStart = new Date(currentYear, 0, 1);
       const yearEnd = new Date(currentYear, 11, 31);
@@ -716,258 +710,209 @@ const Balance = () => {
     }
     return currentMonth.getFullYear().toString();
   };
-  // Solo mostrar pantalla de carga si no hay datos iniciales
-  if (loading && !hasInitialData) {
+
+  // STRICT CHECK: Never show loading screen if we have cached data
+  // We check localStorage directly to avoid any state synchronization issues
+  const hasCachedData = localStorage.getItem('balance_ingresos') && localStorage.getItem('balance_gastos');
+
+  // Only show loading screen if we are loading AND have no data at all
+  if (loading && !hasInitialData && !hasCachedData) {
     return <LoadingScreen />;
   }
-  return <div className="min-h-screen pb-20">
-      {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#E5DEFF]/80 to-transparent backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+
+  // Determine status label based on savings rate
+  const getStatusLabel = () => {
+    if (tasaAhorro >= 60) return 'EXCELENTE';
+    if (tasaAhorro >= 40) return 'BUENO';
+    if (tasaAhorro >= 20) return 'MEDIO';
+    if (tasaAhorro >= 0) return 'BAJO';
+    return 'NEGATIVO';
+  };
+
+  // Handle PDF download
+  const handleDownloadPDF = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "Debes iniciar sesión para descargar el reporte",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      toast({
+        title: "Generando reporte",
+        description: "Preparando tu reporte de movimientos..."
+      });
+
+      const { data, error } = await supabase.functions.invoke('generate-statement-pdf', {
+        body: {
+          viewMode,
+          year: selectedYear,
+          month: selectedMonth,
+          userId: user.id
+        }
+      });
+
+      if (error) throw error;
+
+      if (!data || !data.html || !data.filename) {
+        throw new Error('Datos incompletos en la respuesta');
+      }
+
+      const blob = new Blob([data.html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = data.filename.replace('.pdf', '.html');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: "Reporte descargado",
+        description: "Abre el archivo HTML descargado y usa Ctrl+P (Cmd+P en Mac) para guardarlo como PDF."
+      });
+    } catch (error: any) {
+      console.error('Error al generar reporte:', error);
+      toast({
+        title: "Error",
+        description: error.message || "No se pudo generar el reporte",
+        variant: "destructive"
+      });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#fafaf9] pb-20 relative overflow-x-hidden">
+      {/* Background decoration gradient */}
+      <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-[#f5f0ee] to-transparent pointer-events-none" />
+
+      <main className="max-w-5xl mx-auto p-4 pt-6 relative z-10 space-y-4">
+
+        {/* Header Row */}
+        <header className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
+            <button
               onClick={() => navigate('/dashboard')}
-              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
+              className="w-9 h-9 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all active:scale-95 text-[#5D4037]/70"
             >
-              <ArrowLeft className="h-4 w-4 text-gray-700" />
-            </Button>
-            <div className="flex-1">
-              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Análisis de Balance</h1>
-              <p className="text-xs text-gray-500">Ingresos y Gastos</p>
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <div className="flex flex-col">
+              <h1 className="text-xl font-black text-[#5D4037] leading-none mb-1">Resumen financiero</h1>
+
+              {/* Date Selector */}
+              <div className="flex items-center gap-2 text-gray-500">
+                <button
+                  onClick={handlePreviousPeriod}
+                  className="hover:text-[#5D4037] transition-colors p-1 active:scale-95"
+                  aria-label="Período anterior"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="text-xs font-semibold min-w-[100px] text-center select-none capitalize">
+                  {getPeriodLabel()}
+                </span>
+                <button
+                  onClick={handleNextPeriod}
+                  className="hover:text-[#5D4037] transition-colors p-1 active:scale-95"
+                  aria-label="Período siguiente"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Toggle Mensual/Anual */}
-      <div className="px-4 mb-4">
-        <Tabs value={viewMode} onValueChange={v => setViewMode(v as 'mensual' | 'anual')} className="w-full">
-          <TabsList className="w-full bg-white/80 backdrop-blur-sm shadow-sm border-0 rounded-2xl">
-            <TabsTrigger value="mensual" className="flex-1 data-[state=active]:bg-white data-[state=active]:shadow-sm text-gray-600 data-[state=active]:text-gray-900 transition-all rounded-xl">
-              Mensual
-            </TabsTrigger>
-            <TabsTrigger value="anual" className="flex-1 data-[state=active]:bg-white data-[state=active]:shadow-sm text-gray-600 data-[state=active]:text-gray-900 transition-all rounded-xl">
-              Anual
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </div>
-
-      {/* Período selector */}
-      <div className="px-4 mb-4">
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" size="icon" onClick={handlePreviousPeriod} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white transition-all h-10 w-10">
-            <ChevronLeft className="h-5 w-5 text-gray-900" />
-          </Button>
-          
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm px-4 py-2">
-            <p className="text-gray-900 font-semibold tracking-tight capitalize text-center">
-              {getPeriodLabel()}
-            </p>
+          {/* Toggle */}
+          <div className="bg-white p-1 rounded-xl flex shadow-sm border border-gray-100/50">
+            <button
+              onClick={() => setViewMode('mensual')}
+              className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all duration-200 ${viewMode === 'mensual'
+                ? 'bg-[#8D6E63] text-white shadow-sm'
+                : 'text-gray-500 hover:bg-gray-50'
+                }`}
+            >
+              Mes
+            </button>
+            <button
+              onClick={() => setViewMode('anual')}
+              className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all duration-200 ${viewMode === 'anual'
+                ? 'bg-[#8D6E63] text-white shadow-sm'
+                : 'text-gray-500 hover:bg-gray-50'
+                }`}
+            >
+              Año
+            </button>
           </div>
+        </header>
 
-          <Button variant="ghost" size="icon" onClick={handleNextPeriod} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white transition-all h-10 w-10">
-            <ChevronRight className="h-5 w-5 text-gray-900" />
-          </Button>
-        </div>
-      </div>
-
-      <div className="px-4 space-y-4">
-        {/* Ahorro destacado */}
-        <Card className="p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 animate-fade-in">
-          <div className="flex items-start gap-3 mb-4">
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${ahorro >= 0 ? 'bg-emerald-500/10' : 'bg-red-500/10'}`}>
-              <Wallet className={`h-6 w-6 ${ahorro >= 0 ? 'text-emerald-600' : 'text-red-600'}`} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-600 mb-1 font-medium">
-                Ahorro {viewMode === 'mensual' ? 'Mensual' : 'Anual'}
-              </p>
-              <p className={`text-3xl sm:text-4xl font-semibold tracking-tight leading-tight break-words ${ahorro >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                ${ahorro.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
-              </p>
-            </div>
-          </div>
-          
-          <div className="space-y-2 mb-4">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Tasa de ahorro:</span>
-              <span className="text-lg font-semibold tracking-tight text-gray-900">{tasaAhorro.toFixed(1)}%</span>
-            </div>
-            <Progress 
-              value={tasaAhorro} 
-              className="h-2.5 bg-transparent" 
-              indicatorClassName={ahorro >= 0 ? "bg-emerald-600" : "bg-red-600"}
-            />
-          </div>
-          
-          {/* Botón de descarga de PDF */}
-          <div>
-            <Button variant="ghost" className="w-full bg-gray-50 hover:bg-gray-100 rounded-2xl text-gray-900 transition-all h-auto py-3 px-4 text-xs font-semibold tracking-tight flex items-center justify-center" onClick={async () => {
-            try {
-              // Get current user
-              const {
-                data: {
-                  user
-                }
-              } = await supabase.auth.getUser();
-              if (!user) {
-                toast({
-                  title: "Error",
-                  description: "Debes iniciar sesión para descargar el reporte",
-                  variant: "destructive"
-                });
-                return;
-              }
-              console.log('🔵 Iniciando descarga de reporte...');
-              toast({
-                title: "Generando reporte",
-                description: "Preparando tu reporte de movimientos..."
-              });
-              const {
-                data,
-                error
-              } = await supabase.functions.invoke('generate-statement-pdf', {
-                body: {
-                  viewMode,
-                  year: selectedYear,
-                  month: selectedMonth,
-                  userId: user.id
-                }
-              });
-              console.log('🔵 Respuesta recibida:', {
-                hasData: !!data,
-                hasError: !!error,
-                dataKeys: data ? Object.keys(data) : []
-              });
-              if (error) {
-                console.error('🔴 Error del edge function:', error);
-                throw error;
-              }
-              if (!data || !data.html || !data.filename) {
-                console.error('🔴 Datos incompletos:', {
-                  hasData: !!data,
-                  hasHtml: !!data?.html,
-                  hasFilename: !!data?.filename
-                });
-                throw new Error('Datos incompletos en la respuesta');
-              }
-              console.log('🔵 Creando blob y descargando...', {
-                htmlLength: data.html.length
-              });
-
-              // Crear blob con el HTML
-              const blob = new Blob([data.html], {
-                type: 'text/html'
-              });
-              const url = URL.createObjectURL(blob);
-
-              // Crear link temporal y hacer click
-              const link = document.createElement('a');
-              link.href = url;
-              link.download = data.filename.replace('.pdf', '.html');
-              document.body.appendChild(link);
-              link.click();
-
-              // Limpiar
-              document.body.removeChild(link);
-              URL.revokeObjectURL(url);
-              console.log('✅ Descarga iniciada');
-              toast({
-                title: "Reporte descargado",
-                description: "Abre el archivo HTML descargado y usa Ctrl+P (Cmd+P en Mac) para guardarlo como PDF."
-              });
-            } catch (error: any) {
-              console.error('🔴 Error al generar reporte:', error);
-              toast({
-                title: "Error",
-                description: error.message || "No se pudo generar el reporte",
-                variant: "destructive"
-              });
-            }
-          }}>
-              <Download className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
-              <span className="whitespace-nowrap">Descargar movimientos del {viewMode === 'mensual' ? 'mes' : 'año'} en PDF</span>
-            </Button>
-          </div>
-        </Card>
-
-        {/* Ingresos y Gastos en línea horizontal */}
-        <div className="grid grid-cols-2 gap-4">
-          <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center hover:scale-105 transition-all animate-fade-in cursor-pointer active:scale-95" style={{
-          animationDelay: '100ms'
-        }} onClick={() => navigate('/ingresos')}>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <TrendingUp className="h-5 w-5 text-success" />
-              <p className="text-sm text-muted-foreground">Ingresos</p>
-            </div>
-            <p className="text-base font-bold text-foreground break-words leading-tight overflow-hidden">
-              ${totalIngresos.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </p>
-          </Card>
-
-          <Card className="p-4 bg-white rounded-[20px] shadow-xl border border-blue-100 text-center hover:scale-105 transition-all animate-fade-in cursor-pointer active:scale-95" style={{
-          animationDelay: '200ms'
-        }} onClick={() => navigate('/gastos')}>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <TrendingDown className="h-5 w-5 text-destructive" />
-              <p className="text-sm text-muted-foreground">Gastos</p>
-            </div>
-            <p className="text-base font-bold text-foreground break-words leading-tight overflow-hidden">
-              ${totalGastos.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </p>
-          </Card>
-        </div>
-
-        {/* Widget de análisis semanal */}
-        {weeklyData.length > 0 && (
-          <WeeklyIncomeExpenseWidget data={weeklyData} insight={weeklyInsight} />
-        )}
-
-        {/* Widget de distribución Ingresos vs Gastos */}
-        <IncomeExpensePieWidget 
-          monthlyIncome={monthlyIncome}
-          monthlyExpenses={monthlyExpenses}
-          yearlyIncome={yearlyIncome}
-          yearlyExpenses={yearlyExpenses}
+        {/* 1. Balance Hero */}
+        <BalanceCard
+          amount={ahorro}
+          rate={Math.max(0, Math.min(100, tasaAhorro))}
+          label={viewMode === 'mensual' ? 'Ahorro Mensual' : 'Ahorro Anual'}
+          statusLabel={getStatusLabel()}
+          onDownloadPDF={handleDownloadPDF}
         />
 
-        {/* Category Breakdown Widget para Ingresos */}
-        {ingresosByCategory.length > 0 && (
-          <CategoryBreakdownWidget 
-            title="💰 Ingresos por Categoría"
-            categories={ingresosByCategory.map(cat => ({
-              name: cat.name,
-              value: cat.total,
-              color: cat.color
-            }))}
-            period={viewMode === 'mensual' ? 'month' : 'year'}
-            onPeriodChange={(value) => {
-              setViewMode(value === 'month' ? 'mensual' : 'anual');
-            }}
-          />
+        {/* 2. Stats Grid (Income/Expenses) */}
+        <div className="grid grid-cols-2 gap-3">
+          <StatCard type="income" amount={totalIngresos} onClick={() => navigate('/ingresos')} />
+          <StatCard type="expense" amount={totalGastos} onClick={() => navigate('/gastos')} />
+        </div>
+
+        {/* 3. Insights Carousel */}
+        {proyecciones && proyecciones.insights && proyecciones.insights.length > 0 && (
+          <BalanceInsights insights={proyecciones.insights.map((insight, idx) => ({
+            id: `insight-${idx}`,
+            title: insight.titulo,
+            description: insight.descripcion,
+            type: insight.tipo
+          }))} />
         )}
 
-        {/* Category Breakdown Widget para Gastos */}
-        {gastosByCategory.length > 0 && (
-          <CategoryBreakdownWidget 
-            title="📊 Gastos por Categoría"
-            categories={gastosByCategory.map(cat => ({
-              name: cat.name,
-              value: cat.total,
-              color: cat.color
-            }))}
-            period={viewMode === 'mensual' ? 'month' : 'year'}
-            onPeriodChange={(value) => {
-              setViewMode(value === 'month' ? 'mensual' : 'anual');
-            }}
-          />
+        {/* 4. Evolution Chart (Trend) */}
+        {weeklyData.length > 0 && (
+          <BalanceEvolutionChart data={weeklyData} />
         )}
-      </div>
-      
+
+        {/* 5. Breakdown Charts */}
+        <div className="grid grid-cols-1 gap-3">
+          {ingresosByCategory.length > 0 && (
+            <BalanceCategoryBreakdown
+              title="Fuentes de Ingreso"
+              data={ingresosByCategory.map(cat => ({
+                name: cat.name,
+                amount: cat.total,
+                color: cat.color,
+                percent: Math.round(cat.percentage)
+              }))}
+              type="income"
+            />
+          )}
+          {gastosByCategory.length > 0 && (
+            <BalanceCategoryBreakdown
+              title="Gastos por Categoría"
+              data={gastosByCategory.map(cat => ({
+                name: cat.name,
+                amount: cat.total,
+                color: cat.color,
+                percent: Math.round(cat.percentage)
+              }))}
+              type="expense"
+            />
+          )}
+        </div>
+
+      </main>
+
       <BottomNav />
-    </div>;
+    </div>
+  );
 };
 export default Balance;

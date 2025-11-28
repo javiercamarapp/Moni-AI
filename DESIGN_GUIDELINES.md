@@ -1,6 +1,6 @@
-# Moni Design System - Color Palette
+# Moni Design System - Design Guidelines
 
-This document defines the color palette used across the application, specifically aligned with the "New UI" warm/brown aesthetic.
+This document defines the design standards, color palette, and layout guidelines for the application, specifically aligned with the "New UI" warm/brown aesthetic.
 
 ## 🎨 Core Colors
 
@@ -14,6 +14,19 @@ This document defines the color palette used across the application, specificall
 - **Darker Text**: `#5D4037` - Used for strong text contrast (e.g., inside badges).
 - **Soft Accent**: `#F5F0EE` - Used for button backgrounds (e.g., "Ver Todo", "Nueva Meta") and icon containers.
 - **Borders**: `#EBE5E2` or `#e3ddd9` - Used for subtle borders on cards and badges.
+
+## 📐 Layout Standards
+
+### Page Structure
+- **Max Width**: `max-w-5xl mx-auto`
+  - All main page content must be constrained to this width to ensure consistency across large screens.
+  - Example: `<main className="max-w-5xl mx-auto p-4 ...">`
+
+### Page Backgrounds
+- **Base Color**: `bg-[#fafaf9]` (Stone 50)
+- **Header Gradient**: `bg-gradient-to-b from-[#f5f0ee] to-transparent`
+  - This specific gradient should be used at the top of pages to provide a warm, subtle header effect.
+  - **Exception**: The Chat interface uses a custom wavy line background.
 
 ## 🌈 Gradients
 
@@ -40,6 +53,7 @@ This document defines the color palette used across the application, specificall
 | Element | Color | Tailwind Class |
 |---------|-------|----------------|
 | **App Background** | Warm Stone | `bg-[#fafaf9]` |
+| **Header Gradient** | Warm Beige Fade | `bg-gradient-to-b from-[#f5f0ee] to-transparent` |
 | **Primary Action Button** | Warm Beige | `bg-[#F5F0EE] text-[#5D4037]` |
 | **Active Icon** | Coffee Brown | `text-[#8D6E63]` |
 | **Secondary Text** | Gray | `text-gray-500` or `text-gray-400` |
