@@ -293,12 +293,25 @@ const Dashboard = () => {
           .from("profiles")
           .select("id, xp, level, level_quiz_completed")
           .eq("id", user.id)
-          .single();
+          .maybeSingle();
 
         if (profile) {
           setCurrentXP(profile.xp || 0);
-          setLevel(profile.level || 1);
           setLevelQuizCompleted(profile.level_quiz_completed || false);
+        }
+
+        // Get user level from user_levels table (more accurate)
+        const { data: userLevel } = await supabase
+          .from("user_levels")
+          .select("current_level, total_xp")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (userLevel) {
+          setLevel(userLevel.current_level || 1);
+          setCurrentXP(userLevel.total_xp || 0);
+        } else if (profile) {
+          setLevel(profile.level || 1);
         }
 
         // Check if user has aspirations and calculate total
