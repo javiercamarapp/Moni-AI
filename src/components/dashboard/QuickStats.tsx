@@ -20,9 +20,9 @@ const QuickStats: React.FC<QuickStatsProps> = ({
     // Format journey level with K for thousands
     const formatJourneyLevel = (level: number) => {
         if (level >= 1000) {
-            return `${(level / 1000).toFixed(1).replace(/\.0$/, '')}K`;
+            return `Nv.${(level / 1000).toFixed(1).replace(/\.0$/, '')}K`;
         }
-        return level.toString();
+        return `Nv.${level}`;
     };
 
     const stats = [
