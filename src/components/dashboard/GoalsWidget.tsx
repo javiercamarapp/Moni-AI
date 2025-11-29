@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Users, ChevronLeft, ChevronRight } from 'lucide-react';
+import { headingSection } from '@/styles/typography';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 import { getGoalIcon } from '@/lib/goalIcons';
 
@@ -102,7 +103,13 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
 
             {/* --- Personal Goals Section --- */}
             <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-800 tracking-tight">Tus Metas</h2>
+                <button 
+                    onClick={() => navigate('/goals')}
+                    className={`${headingSection} text-lg hover:text-[#8D6E63] transition-colors flex items-center gap-1.5 group`}
+                >
+                    Tus Metas
+                    <ChevronRight size={18} className="text-gray-400 group-hover:text-[#8D6E63] group-hover:translate-x-0.5 transition-all" />
+                </button>
                 <div className="flex items-center gap-3">
                     {personalGoals.length > 0 && (
                         <div className="hidden md:flex gap-2">
@@ -120,13 +127,6 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                     >
                         <Plus size={14} strokeWidth={3} />
                         <span className="hidden md:inline">Nueva</span>
-                    </button>
-                    <button
-                        onClick={() => navigate('/goals')}
-                        className="text-[#8D6E63] text-xs font-bold hover:underline flex items-center gap-0.5 whitespace-nowrap"
-                    >
-                        Ver todas
-                        <ChevronRight size={12} />
                     </button>
                 </div>
             </div>
@@ -169,14 +169,16 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                                         onClick={() => navigate(`/goals/${goal.id}`)}
                                     >
                                         <div className="flex justify-between items-start mb-1">
-                                            <div>
-                                                <div className="flex items-center gap-2 mb-0.5">
-                                                    <Icon size={16} className="text-gray-400" />
-                                                    <h3 className="text-gray-800 font-bold text-lg leading-tight truncate">{goal.name}</h3>
+                                            <div className="flex items-start gap-3">
+                                                <div className="w-10 h-10 rounded-xl bg-[#F5F0EE] flex items-center justify-center flex-shrink-0">
+                                                    <Icon size={20} className="text-[#8D6E63]" />
                                                 </div>
-                                                <span className="text-[10px] font-medium text-gray-400">
-                                                    {goal.deadline ? new Date(goal.deadline).toLocaleDateString('es-MX') : 'Sin fecha'}
-                                                </span>
+                                                <div>
+                                                    <h3 className="text-gray-800 font-bold text-lg leading-tight truncate">{goal.name}</h3>
+                                                    <span className="text-[10px] font-medium text-gray-400">
+                                                        {goal.deadline ? new Date(goal.deadline).toLocaleDateString('es-MX') : 'Sin fecha'}
+                                                    </span>
+                                                </div>
                                             </div>
                                             <div className="text-right">
                                                 <div className="text-gray-800 font-bold text-sm">{formatCurrency(goal.current)}</div>
@@ -192,9 +194,9 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                                             ></div>
                                         </div>
 
-                                        <div className="flex justify-between items-center text-[10px] font-bold text-gray-500">
-                                            <span>{formatCurrency(remaining)} restante</span>
-                                            <span className={`${getTextColor(index)}`}>{percentage}%</span>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-[10px] font-bold text-gray-500">{formatCurrency(remaining)} restante</span>
+                                            <span className={`text-sm font-bold ${getTextColor(index)}`}>{percentage}%</span>
                                         </div>
                                     </div>
                                 </CarouselItem>
@@ -207,7 +209,13 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
 
             {/* --- Group Goals Section --- */}
             <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-800 tracking-tight">Metas Grupales</h2>
+                <button 
+                    onClick={() => navigate('/goals')}
+                    className={`${headingSection} text-lg hover:text-[#8D6E63] transition-colors flex items-center gap-1.5 group`}
+                >
+                    Metas Grupales
+                    <ChevronRight size={18} className="text-gray-400 group-hover:text-[#8D6E63] group-hover:translate-x-0.5 transition-all" />
+                </button>
                 <div className="flex items-center gap-3">
                     {groupGoals.length > 0 && (
                         <div className="hidden md:flex gap-2">
@@ -225,13 +233,6 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                     >
                         <Plus size={14} strokeWidth={3} />
                         <span className="hidden md:inline">Nueva</span>
-                    </button>
-                    <button
-                        onClick={() => navigate('/groups')}
-                        className="text-[#8D6E63] text-xs font-bold hover:underline flex items-center gap-0.5 whitespace-nowrap"
-                    >
-                        Ver todas
-                        <ChevronRight size={12} />
                     </button>
                 </div>
             </div>
@@ -259,6 +260,7 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                             // Offset index for variety in colors
                             const colorIndex = index + 2;
                             const textColorClass = getTextColor(colorIndex);
+                            const Icon = getGoalIcon(goal.name);
 
                             return (
                                 <CarouselItem key={goal.id} className="pl-4 basis-[85vw] md:basis-auto">
@@ -266,22 +268,22 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                                         className="w-full md:w-80 bg-white rounded-[1.75rem] p-5 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.05)] border border-white relative overflow-hidden group cursor-pointer hover:scale-[1.02] transition-transform"
                                         onClick={() => navigate(`/group-goals/${goal.id}`)}
                                     >
-                                        <div className="flex justify-between items-start mb-1">
-                                            <div className="flex flex-col items-start gap-1">
-                                                <div className="flex items-center gap-2">
-                                                    <h3 className="text-gray-800 font-bold text-lg leading-tight truncate">{goal.name}</h3>
-                                                    <div className={`bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-full flex items-center gap-1`}>
-                                                        <Users size={8} className={textColorClass} />
-                                                        <span className={`text-[8px] font-bold ${textColorClass} uppercase tracking-wide`}>Grupal</span>
-                                                    </div>
-                                                </div>
+                                        {/* Elegant Grupal badge - top right */}
+                                        <div className="absolute top-4 right-4">
+                                            <div className="bg-[#F5F0EE] px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                                                <Users size={10} className="text-[#8D6E63]" />
+                                                <span className="text-[9px] font-semibold text-[#5D4037] tracking-wide">Grupal</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-start gap-3 mb-1 pr-16">
+                                            <div className="w-10 h-10 rounded-xl bg-[#F5F0EE] flex items-center justify-center flex-shrink-0">
+                                                <Icon size={20} className="text-[#8D6E63]" />
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <h3 className="text-gray-800 font-bold text-base leading-tight truncate">{goal.name}</h3>
                                                 <span className="text-[10px] font-medium text-gray-400">
                                                     {goal.deadline ? new Date(goal.deadline).toLocaleDateString('es-MX') : 'Sin fecha'}
                                                 </span>
-                                            </div>
-                                            <div className="text-right">
-                                                <div className="text-gray-800 font-bold text-sm">{formatCurrency(goal.current)}</div>
-                                                <div className="text-[10px] text-gray-400">de {formatCurrency(goal.target)}</div>
                                             </div>
                                         </div>
 
@@ -293,9 +295,12 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                                             ></div>
                                         </div>
 
-                                        <div className="flex justify-between items-center text-[10px] font-bold text-gray-500">
-                                            <span>{formatCurrency(remaining)} restante</span>
-                                            <span className={`${textColorClass}`}>{percentage}%</span>
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <span className="text-gray-800 font-bold text-sm">{formatCurrency(goal.current)}</span>
+                                                <span className="text-[10px] text-gray-400"> / {formatCurrency(goal.target)}</span>
+                                            </div>
+                                            <span className={`text-sm font-bold ${textColorClass}`}>{percentage}%</span>
                                         </div>
                                     </div>
                                 </CarouselItem>

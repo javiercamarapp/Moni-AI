@@ -45,10 +45,10 @@ export default function BudgetWidget({ totalBudget, currentExpenses }: BudgetWid
 
   return (
     <div
-      className="rounded-2xl p-1 shadow-[0_8px_20px_-10px_rgba(0,0,0,0.08)] border border-gray-100 bg-white cursor-pointer hover:-translate-y-0.5 transition-all"
+      className="rounded-2xl p-1 shadow-[0_8px_20px_-10px_rgba(0,0,0,0.08)] border border-gray-100 bg-white cursor-pointer hover:-translate-y-0.5 transition-all h-full flex items-center"
       onClick={() => navigate('/budgets')}
     >
-      <div className="flex items-center gap-3 p-2 pr-3">
+      <div className="flex items-center gap-3 p-2 pr-3 w-full">
         <div className={`h-9 w-9 rounded-xl flex items-center justify-center shadow-sm shrink-0 ${colors.bg} border ${colors.border}`}>
           <PieChart size={16} strokeWidth={2} className={colors.icon} />
         </div>

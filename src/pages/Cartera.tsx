@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Plus, ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import { headingPage } from "@/styles/typography";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useBankConnections } from "@/hooks/useFinancialData";
@@ -158,7 +159,7 @@ export default function AccountsCards() {
               <ArrowLeft className="h-4 w-4 text-gray-700" />
             </Button>
             <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Mis Cuentas y Tarjetas</h1>
+              <h1 className={headingPage}>Mis Cuentas y Tarjetas</h1>
               <p className="text-sm text-gray-500">Gestiona tus medios de pago</p>
             </div>
           </div>

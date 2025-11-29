@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { headingPage } from '@/styles/typography';
 import { supabase } from '@/integrations/supabase/client';
 import BottomNav from '@/components/BottomNav';
 import { useToast } from '@/hooks/use-toast';
@@ -870,7 +871,7 @@ const Balance = () => {
               <ChevronLeft className="w-5 h-5" />
             </button>
             <div className="flex flex-col">
-              <h1 className="text-xl font-black text-[#5D4037] leading-none mb-1">Resumen financiero</h1>
+              <h1 className={`${headingPage} mb-1`}>Resumen financiero</h1>
 
               {/* Date Selector */}
               <div className="flex items-center gap-2 text-gray-500">

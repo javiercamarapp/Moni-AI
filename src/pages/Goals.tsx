@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Target, Plus, TrendingUp, Sparkles, ChevronLeft, Lightbulb, Users, X } from "lucide-react";
+import { headingPage, headingSection } from "@/styles/typography";
 import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -54,6 +55,7 @@ const Goals = () => {
     goal: null
   });
   const [expandedGoal, setExpandedGoal] = useState<Goal | null>(null);
+  const [expandedGroupGoal, setExpandedGroupGoal] = useState<GroupGoal | null>(null);
   
   const autoplayPlugin = useRef(
     Autoplay({ delay: 4000, stopOnInteraction: true })
@@ -285,7 +287,7 @@ const Goals = () => {
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <div className="flex flex-col">
-                <h1 className="text-xl font-black text-[#5D4037] leading-none mb-1">Mis Metas</h1>
+                <h1 className={`${headingPage} mb-1`}>Mis Metas</h1>
                 <p className="text-xs text-gray-500">Alcanza tus objetivos con AI</p>
               </div>
             </div>
@@ -335,8 +337,21 @@ const Goals = () => {
                 </div>
                 
                 <div className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100/50">
-                  <p className="text-[10px] text-gray-400 mb-1 font-medium uppercase tracking-wide">Progreso</p>
-                  <p className="text-sm font-bold text-[#5D4037]">{stats.avgCompletion.toFixed(0)}%</p>
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Progreso</p>
+                    <p className="text-xs font-bold text-[#5D4037]">{stats.avgCompletion.toFixed(0)}%</p>
+                  </div>
+                  <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full rounded-full transition-all ${
+                        stats.avgCompletion >= 75 ? 'bg-emerald-500' :
+                        stats.avgCompletion >= 50 ? 'bg-blue-500' :
+                        stats.avgCompletion >= 25 ? 'bg-amber-500' :
+                        'bg-gray-400'
+                      }`}
+                      style={{ width: `${Math.min(stats.avgCompletion, 100)}%` }}
+                    />
+                  </div>
                 </div>
                 
                 <div className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100/50">
@@ -429,6 +444,146 @@ const Goals = () => {
               </div>
             </>
           )}
+
+          {/* Group Goals Section */}
+          <div className="mt-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Users className="w-5 h-5 text-[#8D6E63]" />
+              <h2 className={headingSection}>Metas Grupales</h2>
+            </div>
+
+            {groupGoals.length === 0 ? (
+              <div className="bg-white rounded-2xl p-6 shadow-sm text-center">
+                <Users className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                <p className="text-sm text-gray-500 mb-3">No tienes metas grupales aún</p>
+                <button
+                  onClick={() => navigate('/groups')}
+                  className="text-xs font-bold text-[#8D6E63] hover:underline"
+                >
+                  Explorar círculos
+                </button>
+              </div>
+            ) : (
+              <>
+                {/* Compact Grid for Small Screens */}
+                <div className="grid grid-cols-2 gap-3 lg:hidden">
+                  {groupGoals.map((goal) => {
+                    const progress = (goal.current_amount / goal.target_amount) * 100;
+                    return (
+                      <div
+                        key={goal.id}
+                        onClick={() => setExpandedGroupGoal(goal)}
+                        className="bg-white rounded-2xl p-4 shadow-sm cursor-pointer hover:shadow-md active:scale-[0.98] transition-all"
+                      >
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="w-9 h-9 rounded-xl bg-[#F5F0EE] flex items-center justify-center flex-shrink-0">
+                            <Users className="w-4 h-4 text-[#8D6E63]" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h3 className="font-bold text-[#5D4037] text-sm truncate">{goal.title}</h3>
+                            <p className="text-[10px] text-gray-400 truncate">{goal.circle_name}</p>
+                          </div>
+                        </div>
+                        
+                        {/* Mini Progress */}
+                        <div className="w-full bg-gray-100 rounded-full h-1.5 mb-2 overflow-hidden">
+                          <div
+                            className={`h-1.5 rounded-full transition-all ${
+                              progress >= 75 ? 'bg-purple-500' :
+                              progress >= 50 ? 'bg-indigo-500' :
+                              progress >= 25 ? 'bg-blue-500' :
+                              'bg-gray-400'
+                            }`}
+                            style={{ width: `${Math.min(progress, 100)}%` }}
+                          />
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-bold text-[#5D4037]">{progress.toFixed(0)}%</span>
+                          <span className="text-[10px] text-gray-400">{formatCurrency(goal.current_amount)}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Full Grid for Large Screens */}
+                <div className="hidden lg:grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {groupGoals.map((goal) => {
+                    const progress = (goal.current_amount / goal.target_amount) * 100;
+                    const remaining = goal.target_amount - goal.current_amount;
+                    return (
+                      <div
+                        key={goal.id}
+                        onClick={() => navigate(`/group-goals/${goal.id}`)}
+                        className="bg-white rounded-[1.75rem] p-5 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.08)] cursor-pointer hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-200"
+                      >
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-10 h-10 rounded-xl bg-[#F5F0EE] flex items-center justify-center">
+                            <Users className="w-5 h-5 text-[#8D6E63]" />
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-[#5D4037] text-base">{goal.title}</h3>
+                            <p className="text-xs text-gray-400">{goal.circle_name}</p>
+                          </div>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="w-full bg-gray-100 rounded-full h-2 mb-3 overflow-hidden">
+                          <div
+                            className={`h-2 rounded-full transition-all ${
+                              progress >= 75 ? 'bg-gradient-to-r from-purple-500 to-purple-600' :
+                              progress >= 50 ? 'bg-gradient-to-r from-indigo-500 to-indigo-600' :
+                              progress >= 25 ? 'bg-gradient-to-r from-blue-500 to-blue-600' :
+                              'bg-gradient-to-r from-gray-400 to-gray-500'
+                            }`}
+                            style={{ width: `${Math.min(progress, 100)}%` }}
+                          />
+                        </div>
+
+                        <div className="flex justify-between items-center mb-3">
+                          <div className="text-xs">
+                            <span className="font-bold text-[#5D4037]">{formatCurrency(goal.current_amount)}</span>
+                            <span className="text-gray-400"> / {formatCurrency(goal.target_amount)}</span>
+                          </div>
+                          <span className="text-sm font-bold text-[#5D4037]">{progress.toFixed(0)}%</span>
+                        </div>
+
+                        {goal.deadline && (
+                          <p className="text-[10px] text-gray-400 mb-3">
+                            Fecha límite: {new Date(goal.deadline).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          </p>
+                        )}
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/group-goals/${goal.id}/contribute`);
+                            }}
+                            className="flex-1 h-9 bg-[#8D6E63] hover:bg-[#795548] rounded-xl text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 active:scale-95"
+                          >
+                            <Plus size={14} />
+                            Agregar
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/group-goals/${goal.id}`);
+                            }}
+                            className="h-9 px-4 bg-[#F5F0EE] hover:bg-[#EBE5E2] rounded-xl text-[#5D4037] font-bold text-xs transition-all active:scale-95"
+                          >
+                            Detalles
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
           </div>
         </main>
       </div>
@@ -469,6 +624,104 @@ const Goals = () => {
                 handleCompleteGoal(expandedGoal.id);
               }}
             />
+          </div>
+        </div>
+      )}
+
+      {/* Expanded Group Goal Modal (Small Screens) */}
+      {expandedGroupGoal && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 lg:hidden"
+          onClick={() => setExpandedGroupGoal(null)}
+        >
+          <div 
+            className="bg-[#f5f0ee] w-full max-w-sm rounded-[2rem] p-5 max-h-[80vh] overflow-y-auto animate-in zoom-in-95 fade-in duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <div className="flex justify-end mb-2">
+              <button
+                onClick={() => setExpandedGroupGoal(null)}
+                className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm"
+              >
+                <X className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+            
+            {/* Group Goal Card Content */}
+            <div className="bg-white rounded-[1.75rem] p-5 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.08)]">
+              {/* Header */}
+              <div className="flex items-start gap-3 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-[#F5F0EE] flex items-center justify-center flex-shrink-0">
+                  <Users className="w-6 h-6 text-[#8D6E63]" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-[#5D4037] text-lg">{expandedGroupGoal.title}</h3>
+                  <p className="text-xs text-gray-400">{expandedGroupGoal.circle_name}</p>
+                  {expandedGroupGoal.deadline && (
+                    <p className="text-[10px] text-gray-400 mt-1">
+                      Fecha límite: {new Date(expandedGroupGoal.deadline).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Progress */}
+              {(() => {
+                const progress = (expandedGroupGoal.current_amount / expandedGroupGoal.target_amount) * 100;
+                return (
+                  <>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm text-gray-500">Progreso</span>
+                      <span className="text-lg font-bold text-[#5D4037]">{progress.toFixed(0)}%</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2.5 mb-3 overflow-hidden">
+                      <div
+                        className={`h-2.5 rounded-full transition-all ${
+                          progress >= 75 ? 'bg-emerald-500' :
+                          progress >= 50 ? 'bg-blue-500' :
+                          progress >= 25 ? 'bg-amber-500' :
+                          'bg-gray-400'
+                        }`}
+                        style={{ width: `${Math.min(progress, 100)}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between items-center mb-4">
+                      <div>
+                        <span className="font-bold text-[#5D4037]">{formatCurrency(expandedGroupGoal.current_amount)}</span>
+                        <span className="text-gray-400 text-sm"> / {formatCurrency(expandedGroupGoal.target_amount)}</span>
+                      </div>
+                      <span className="text-xs text-gray-400">
+                        Faltan {formatCurrency(expandedGroupGoal.target_amount - expandedGroupGoal.current_amount)}
+                      </span>
+                    </div>
+                  </>
+                );
+              })()}
+
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setExpandedGroupGoal(null);
+                    navigate(`/group-goals/${expandedGroupGoal.id}/contribute`);
+                  }}
+                  className="flex-1 h-10 bg-[#8D6E63] hover:bg-[#795548] rounded-xl shadow-sm text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 active:scale-95"
+                >
+                  <Plus className="h-4 w-4" />
+                  Agregar
+                </button>
+                <button
+                  onClick={() => {
+                    setExpandedGroupGoal(null);
+                    navigate(`/group-goals/${expandedGroupGoal.id}`);
+                  }}
+                  className="h-10 px-4 bg-[#F5F0EE] hover:bg-[#EBE5E2] rounded-xl text-[#5D4037] font-bold text-xs transition-all active:scale-95"
+                >
+                  Detalles
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

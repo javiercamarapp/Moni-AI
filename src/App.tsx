@@ -13,7 +13,7 @@ import PremiumFeature from "./components/PremiumFeature";
 import Ingresos from "./pages/Ingresos";
 import Gastos from "./pages/Gastos";
 import GestionarCategorias from "./pages/GestionarCategorias";
-import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import Balance from "./pages/Balance";
 import WhatsAppSetup from "./pages/WhatsAppSetup";
 import FinancialAnalysis from "./pages/FinancialAnalysis";
@@ -44,7 +44,7 @@ import DailyExpenses from './pages/DailyExpenses';
 import DayExpenses from './pages/DayExpenses';
 import Reports from './pages/Reports';
 import CategoryExpenses from './pages/CategoryExpenses';
-import Social from './pages/Social';
+import Retos from './pages/Retos';
 import FriendsList from './pages/FriendsList';
 import FriendProfile from './pages/FriendProfile';
 import AddFriend from './pages/AddFriend';
@@ -57,7 +57,7 @@ import GoalDetails from './pages/GoalDetails';
 import GroupGoals from './pages/GroupGoals';
 import GroupGoalDetails from './pages/GroupGoalDetails';
 import GroupGoalChat from './pages/GroupGoalChat';
-import AccountsCards from './pages/AccountsCards';
+import Cartera from './pages/Cartera';
 import FixedExpenses from './pages/FixedExpenses';
 import VariableExpenses from './pages/VariableExpenses';
 import AntExpenses from './pages/AntExpenses';
@@ -125,7 +125,7 @@ function App() {
           <Route path="/ingresos" element={<Ingresos />} />
           <Route path="/gastos" element={<Gastos />} />
           <Route path="/categorias" element={<GestionarCategorias />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="/balance" element={<Balance />} />
           <Route path="/whatsapp" element={
             <PremiumFeature featureName="WhatsApp Bot con IA">
@@ -148,9 +148,9 @@ function App() {
               <FinancialJourney />
             </PremiumFeature>
           } />
-          <Route path="/accounts-cards" element={
-            <PremiumFeature featureName="Mis Cuentas y Tarjetas">
-              <AccountsCards />
+          <Route path="/cartera" element={
+            <PremiumFeature featureName="Mi Cartera">
+              <Cartera />
             </PremiumFeature>
           } />
           <Route path="/goals" element={
@@ -219,9 +219,9 @@ function App() {
           <Route path="/proximos-movimientos" element={<ProximosMovimientos />} />
           <Route path="/edit-assets-liabilities" element={<EditNetWorth />} />
           <Route path="/initial-net-worth" element={<InitialNetWorth />} />
-          <Route path="/social" element={
-            <PremiumFeature featureName="Social">
-              <Social />
+          <Route path="/retos" element={
+            <PremiumFeature featureName="Retos">
+              <Retos />
             </PremiumFeature>
           } />
           <Route path="/friends-list" element={<FriendsList />} />
@@ -240,11 +240,6 @@ function App() {
           <Route path="/goals" element={
             <PremiumFeature featureName="Metas">
               <Goals />
-            </PremiumFeature>
-          } />
-          <Route path="/accounts-cards" element={
-            <PremiumFeature featureName="Mis Cuentas y Tarjetas">
-              <AccountsCards />
             </PremiumFeature>
           } />
           <Route path="/group-goals" element={

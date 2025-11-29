@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Bell, User } from 'lucide-react';
+import { Bell, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -58,19 +58,19 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ userName = "Usuario",
                     )}
                 </div>
 
-                {/* Perfil */}
+                {/* Ajustes */}
                 <button
-                    onClick={() => navigate("/profile")}
+                    onClick={() => navigate("/settings")}
                     className="inline-flex items-center justify-center bg-white rounded-full text-gray-600 h-9 w-9 sm:h-10 sm:w-10 shadow-sm hover:shadow-md transition-all border border-gray-100"
                 >
-                    <User className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
             </div>
 
             {/* Avatar and Name */}
             <div className="flex items-center gap-3">
                 <button 
-                    onClick={() => navigate("/profile")}
+                    onClick={() => navigate("/settings")}
                     className="relative group"
                 >
                     

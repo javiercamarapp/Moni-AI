@@ -95,7 +95,7 @@ const Reports = () => {
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
-              onClick={() => navigate('/profile')}
+              onClick={() => navigate('/settings')}
               className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 p-0 flex-shrink-0"
             >
               <ArrowLeft className="h-4 w-4 text-gray-700" />

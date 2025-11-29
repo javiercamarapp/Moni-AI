@@ -61,7 +61,14 @@ const QuickStats: React.FC<QuickStatsProps> = ({
                         </div>
 
                         {/* Label - Outside box */}
-                        <span className="text-[9px] lg:text-[10px] font-semibold text-gray-500 tracking-wide uppercase leading-tight text-center">{stat.label}</span>
+                        {stat.id === '1' ? (
+                            <span className="text-[9px] lg:text-[10px] font-semibold text-gray-500 tracking-wide uppercase leading-tight text-center">
+                                <span className="inline lg:hidden">Resumen</span>
+                                <span className="hidden lg:inline">Gastos / ingresos</span>
+                            </span>
+                        ) : (
+                            <span className="text-[9px] lg:text-[10px] font-semibold text-gray-500 tracking-wide uppercase leading-tight text-center">{stat.label}</span>
+                        )}
 
                         {/* Value - Outside box */}
                         <span className="text-[11px] lg:text-xs font-bold text-gray-800 leading-none">{stat.value}</span>

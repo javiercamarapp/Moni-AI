@@ -42,6 +42,28 @@ const getMockBalance = (plaidItemId?: string) => {
     return 0;
 };
 
+const getCreditLimit = (plaidItemId?: string) => {
+    if (plaidItemId === 'banamex_conquista') return 80000.00;
+    if (plaidItemId === 'bbva_platinum') return 50000.00;
+    return null; // No limit for debit cards
+};
+
+const formatLastSync = (lastSync?: string) => {
+    if (!lastSync) return 'Hace un momento';
+    const date = new Date(lastSync);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return 'Ahora';
+    if (diffMins < 60) return `Hace ${diffMins}m`;
+    if (diffHours < 24) return `Hace ${diffHours}h`;
+    if (diffDays === 1) return 'Ayer';
+    return `Hace ${diffDays}d`;
+};
+
 const getBankLogo = (bankName: string) => {
     const name = bankName.toLowerCase();
     if (name.includes('bbva')) return bbvaLogo;
@@ -150,7 +172,13 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
     return (
         <div className="w-full">
             <div className="flex items-center justify-between px-2 mb-3">
-                <h3 className="text-gray-800 font-bold text-lg">Mis tarjetas</h3>
+                <button
+                    onClick={() => navigate('/cartera')}
+                    className="text-gray-800 font-bold text-lg hover:text-[#8D6E63] transition-colors flex items-center gap-1.5 group"
+                >
+                    Mis tarjetas
+                    <ChevronRight size={18} className="text-gray-400 group-hover:text-[#8D6E63] group-hover:translate-x-0.5 transition-all" />
+                </button>
                 <div className="flex items-center gap-3">
                     <div className="hidden md:flex gap-2">
                         <button
@@ -172,15 +200,7 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                         className="flex items-center gap-1.5 bg-[#F5F0EE] hover:bg-[#EBE5E2] text-[#5D4037] p-2 md:px-4 md:py-2 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95"
                     >
                         <Plus size={14} strokeWidth={3} />
-                        <span className="hidden md:inline">Agregar</span>
-                    </button>
-
-                    <button
-                        onClick={() => navigate('/accounts-cards')}
-                        className="text-[#8D6E63] text-xs font-bold hover:underline flex items-center gap-0.5"
-                    >
-                        Ver todas
-                        <ChevronRight size={12} />
+                        <span className="hidden md:inline">Nueva</span>
                     </button>
                 </div>
             </div>
@@ -193,7 +213,7 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                     <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center shadow-sm">
                         <Plus className="text-gray-400" size={20} />
                     </div>
-                    <span className="text-xs font-bold text-gray-400">Agregar tarjeta</span>
+                    <span className="text-xs font-bold text-gray-400">Agregar</span>
                 </div>
             ) : (
                 <Carousel
@@ -216,11 +236,14 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                             const solidColor = getSolidColor(account.bank_name, account.plaid_item_id);
                             const cardType = getCardType(account.plaid_item_id);
                             const balance = account.balance ?? getMockBalance(account.plaid_item_id);
+                            const creditLimit = getCreditLimit(account.plaid_item_id);
+                            const creditUsed = creditLimit ? (balance / creditLimit) * 100 : null;
+                            const lastSyncText = formatLastSync(account.last_sync);
 
                             return (
                                 <CarouselItem key={account.id} className="pl-2 md:pl-4 basis-[70%] sm:basis-[42%] lg:basis-[28%]">
                                     <div
-                                        onClick={() => navigate('/accounts-cards')}
+                                        onClick={() => navigate('/cartera')}
                                         className={`h-32 rounded-3xl ${solidColor} p-4 flex flex-col justify-between shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1),inset_0_-1px_0_rgba(0,0,0,0.2)] cursor-pointer hover:scale-[1.02] hover:shadow-[0_15px_50px_-10px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-1px_0_rgba(0,0,0,0.25)] transition-all duration-200 relative overflow-hidden`}
                                     >
                                         {/* Subtle gradient overlay for depth */}
@@ -268,11 +291,32 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                         </div>
 
                                         <div className="flex items-end justify-between">
-                                            <div>
-                                                <p className="text-white/70 text-[10px] font-medium mb-0.5">Balance actual</p>
-                                                <p className="text-white text-xl font-bold">
-                                                    ${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center justify-between mb-0.5">
+                                                    <p className="text-white/70 text-[10px] font-medium">
+                                                        {cardType === 'Crédito' ? 'Usado' : 'Balance'}
+                                                    </p>
+                                                    <p className="text-white/50 text-[9px]">{lastSyncText}</p>
+                                                </div>
+                                                <p className="text-white text-lg font-bold">
+                                                    ${balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                                    {creditLimit && (
+                                                        <span className="text-white/50 text-xs font-normal"> / ${creditLimit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
+                                                    )}
                                                 </p>
+                                                {/* Credit usage bar for credit cards */}
+                                                {creditUsed !== null && (
+                                                    <div className="mt-1.5 h-1 w-full bg-white/20 rounded-full overflow-hidden">
+                                                        <div 
+                                                            className={`h-full rounded-full transition-all ${
+                                                                creditUsed >= 80 ? 'bg-red-400' :
+                                                                creditUsed >= 50 ? 'bg-amber-400' :
+                                                                'bg-emerald-400'
+                                                            }`}
+                                                            style={{ width: `${Math.min(creditUsed, 100)}%` }}
+                                                        />
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, BarChart3, Users, MessageCircle, Wallet } from 'lucide-react';
+import { Home, BarChart3, Trophy, MessageCircle, Wallet } from 'lucide-react';
 
 const BottomNav = () => {
   const navigate = useNavigate();
@@ -15,9 +15,9 @@ const BottomNav = () => {
   const navItems = [
     { path: '/dashboard', icon: Home, label: 'Inicio' },
     { path: '/analysis', icon: BarChart3, label: 'Análisis' },
-    { path: '/social', icon: Users, label: 'Social' },
+    { path: '/retos', icon: Trophy, label: 'Retos' },
     { path: '/chat', icon: MessageCircle, label: 'Chat' },
-    { path: '/accounts-cards', icon: Wallet, label: 'Cuentas' },
+    { path: '/cartera', icon: Wallet, label: 'Cartera' },
   ];
 
   return (

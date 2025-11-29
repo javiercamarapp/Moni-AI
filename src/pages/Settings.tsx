@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, ChevronRight, Crown, LogOut, Trash2, Fingerprint, Camera, Upload } from 'lucide-react';
+import { headingPage, headingSection } from '@/styles/typography';
 import { useBiometricAuth } from '@/hooks/useBiometricAuth';
 import { Camera as CapacitorCamera, CameraResultType, CameraSource } from '@capacitor/camera';
 import {
@@ -428,11 +429,11 @@ const Profile = () => {
               onClick={() => navigate("/dashboard")}
               className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 p-0 flex-shrink-0"
             >
-              <ArrowLeft className="h-4 w-4 text-gray-700" />
+              <ArrowLeft className="h-4 w-4 text-[#5D4037]" />
             </Button>
-            <div className="flex-1">
-              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Perfil</h1>
-              <p className="text-xs text-gray-600">Configuración de cuenta</p>
+            <div className="flex-1 flex flex-col">
+              <h1 className={`${headingPage} mb-1`}>Ajustes</h1>
+              <p className="text-xs text-gray-500">Configuración de cuenta</p>
             </div>
           </div>
         </div>
@@ -440,7 +441,7 @@ const Profile = () => {
 
       <div className="page-container py-6 space-y-4">
         {/* User Profile Section */}
-        <Card className="bg-white backdrop-blur border-blue-100 shadow-xl p-6 animate-fade-in rounded-[20px]" style={{ animationDelay: '0ms' }}>
+        <Card className="bg-white rounded-[1.75rem] p-5 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.08)] border-0 animate-fade-in" style={{ animationDelay: '0ms' }}>
           <div className="flex items-center space-x-4 mb-4">
             <div className="relative">
               {avatarUrl ? (
@@ -463,7 +464,7 @@ const Profile = () => {
                     <Camera className="h-3 w-3" />
                   </button>
                 </PopoverTrigger>
-                <PopoverContent className="w-56 p-2 bg-white border border-gray-200 shadow-lg z-50" align="end" sideOffset={5} alignOffset={-75}>
+                <PopoverContent className="w-56 p-2 bg-white border border-gray-00 shadow-lg z-50" align="end" sideOffset={5} alignOffset={-75}>
                   <div className="space-y-1">
                     <Button
                       variant="ghost"
@@ -488,11 +489,11 @@ const Profile = () => {
               </Popover>
             </div>
             <div className="flex-1">
-              <h2 className="text-xl font-bold text-foreground">{userName}</h2>
+              <h2 className="text-lg font-bold text-[#5D4037]">{userName}</h2>
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-foreground/70 p-0 h-auto hover:bg-transparent hover:text-foreground"
+                className="text-gray-500 p-0 h-auto hover:bg-transparent hover:text-[#5D4037]"
               >
                 Editar perfil <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
@@ -500,16 +501,16 @@ const Profile = () => {
           </div>
 
           {/* Plan Section */}
-          <Card className="bg-white rounded-[20px] shadow-xl border border-blue-100 p-4 hover:scale-105 transition-transform duration-200">
+          <Card className="mt-2 bg-[#F5F0EE] rounded-[1.5rem] shadow-[0_10px_25px_-12px_rgba(0,0,0,0.25)] border border-white/80 p-4 transition-transform duration-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-foreground/70 mb-1">Tu plan</p>
+                <p className="text-xs text-gray-600 mb-1 uppercase tracking-wide">Tu plan</p>
                 <div className="flex items-center gap-2">
-                  <Crown className="w-5 h-5 text-foreground" />
-                  <span className="text-lg font-bold text-foreground">Pro Black</span>
+                  <Crown className="w-5 h-5 text-[#8D6E63]" />
+                  <span className="text-base font-bold text-[#5D4037]">Pro Black</span>
                 </div>
               </div>
-              <ChevronRight className="h-5 w-5 text-foreground/70" />
+              <ChevronRight className="h-5 w-5 text-[#5D4037]/50" />
             </div>
           </Card>
         </Card>
@@ -517,22 +518,22 @@ const Profile = () => {
 
         {/* Preferencias */}
         <div className="space-y-2">
-          <h3 className="text-lg font-bold text-foreground px-2">Preferencias</h3>
-          <Card className="bg-white backdrop-blur border-blue-100 shadow-xl divide-y divide-border animate-fade-in rounded-[20px]" style={{ animationDelay: '100ms' }}>
+          <h3 className={`${headingSection} text-sm px-1`}>Preferencias</h3>
+          <Card className="bg-white shadow-[0_10px_25px_-12px_rgba(0,0,0,0.25)] animate-fade-in rounded-[1.75rem] border-0 overflow-hidden" style={{ animationDelay: '100ms' }}>
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-50 rounded-none border-0"
               onClick={() => navigate('/notifications')}
             >
-              <span className="text-foreground">Notificaciones</span>
-              <ChevronRight className="h-5 w-5 text-foreground/70" />
+              <span className="text-[#5D4037] text-sm font-medium">Notificaciones</span>
+              <ChevronRight className="h-5 w-5 text-gray-400" />
             </Button>
 
             {biometricAvailable && (
-              <div className="flex items-center justify-between py-4 px-4">
+              <div className="flex items-center justify-between py-4 px-4 rounded-none bg-white">
                 <div className="flex items-center gap-2">
-                  <Fingerprint className="h-5 w-5 text-foreground/70" />
-                  <span className="text-foreground">Face ID al iniciar sesión</span>
+                  <Fingerprint className="h-5 w-5 text-gray-400" />
+                  <span className="text-sm text-[#5D4037]">Face ID al iniciar sesión</span>
                 </div>
                 <Switch 
                   checked={faceIdEnabled} 
@@ -561,22 +562,22 @@ const Profile = () => {
               <PopoverTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
+                  className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-50 rounded-none border-0"
                 >
-                  <span className="text-foreground">Divisa</span>
+                  <span className="text-sm text-[#5D4037]">Divisa</span>
                   <div className="flex items-center gap-2">
                     <span className="text-foreground font-medium">{currencies.find(c => c.code === selectedCurrency)?.name}</span>
                     <ChevronRight className="h-5 w-5 text-foreground/70" />
                   </div>
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-64 bg-white border-blue-100 p-0" align="end">
+              <PopoverContent className="w-64 bg-white border border-white/80 shadow-[0_10px_25px_-12px_rgba(0,0,0,0.25)] p-0" align="end">
                 <div className="max-h-60 overflow-y-auto p-1">
                   {currencies.map((currency) => (
                     <Button
                       key={currency.code}
                       variant="ghost"
-                      className="w-full justify-start text-foreground hover:bg-primary/10"
+                      className="w-full justify-start text-sm text-[#5D4037] hover:bg-gray-50"
                       onClick={() => setSelectedCurrency(currency.code)}
                     >
                       {currency.name}
@@ -586,13 +587,13 @@ const Profile = () => {
               </PopoverContent>
             </Popover>
             
-            <Popover>
+            {/* <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
+                  className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-50 rounded-none border-0"
                 >
-                  <span className="text-foreground">Ubicación</span>
+                  <span className="text-sm text-[#5D4037]">Ubicación</span>
                   <div className="flex items-center gap-2">
                     <span className="text-foreground font-medium">{selectedCountry}</span>
                     <ChevronRight className="h-5 w-5 text-foreground/70" />
@@ -613,113 +614,85 @@ const Profile = () => {
                   ))}
                 </div>
               </PopoverContent>
-            </Popover>
+            </Popover> */}
 
-            <Button
+            {/* <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
-              onClick={() => navigate('/accounts-cards')}
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-50 rounded-none border-0"
+              onClick={() => navigate('/cartera')}
             >
-              <span className="text-foreground">Mis tarjetas/cuentas</span>
-              <ChevronRight className="h-5 w-5 text-foreground/70" />
-            </Button>
+              <span className="text-sm text-[#5D4037]">Mis tarjetas/cuentas</span>
+              <ChevronRight className="h-5 w-5 text-gray-400" />
+            </Button> */}
 
-            <Button
-              variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
-            >
-              <span className="text-foreground">Centro de facturación automática</span>
-              <ChevronRight className="h-5 w-5 text-foreground/70" />
-            </Button>
-
-            <div className="flex items-center justify-between py-4 px-4">
-              <span className="text-foreground">Alertas de audio</span>
-              <Switch checked={audioAlerts} onCheckedChange={setAudioAlerts} />
-            </div>
-
-          </Card>
-        </div>
-
-        {/* Descargas */}
-        <div className="space-y-2">
-          <h3 className="text-lg font-bold text-foreground px-2">Descargas</h3>
-          <Card className="bg-white backdrop-blur border-blue-100 shadow-xl rounded-[20px]">
-            <Button
-              variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
-              onClick={() => navigate('/reports')}
-            >
-              <span className="text-foreground">Historial de ingresos y gastos del año</span>
-              <ChevronRight className="h-5 w-5 text-foreground/70" />
-            </Button>
           </Card>
         </div>
 
         {/* Ayuda */}
         <div className="space-y-2">
-          <h3 className="text-lg font-bold text-foreground px-2">Ayuda</h3>
-          <Card className="bg-white backdrop-blur border-blue-100 shadow-xl divide-y divide-border rounded-[20px]">
+          <h3 className={`${headingSection} text-sm px-1`}>Ayuda</h3>
+          <Card className="bg-white shadow-[0_10px_25px_-12px_rgba(0,0,0,0.25)] rounded-[1.75rem] border-0 overflow-hidden">
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-50 rounded-none border-0"
             >
-              <span className="text-foreground">Centro de ayuda</span>
-              <ChevronRight className="h-5 w-5 text-foreground/70" />
+              <span className="text-sm text-[#5D4037]">Centro de ayuda</span>
+              <ChevronRight className="h-5 w-5 text-gray-400" />
             </Button>
             
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-50 rounded-none border-0"
             >
-              <span className="text-foreground">Preguntas Frecuentes</span>
-              <ChevronRight className="h-5 w-5 text-foreground/70" />
+              <span className="text-sm text-[#5D4037]">Preguntas Frecuentes</span>
+              <ChevronRight className="h-5 w-5 text-gray-400" />
             </Button>
           </Card>
         </div>
 
         {/* Legal */}
         <div className="space-y-2">
-          <h3 className="text-lg font-bold text-foreground px-2">Legal</h3>
-          <Card className="bg-white backdrop-blur border-blue-100 shadow-xl divide-y divide-border rounded-[20px]">
+          <h3 className={`${headingSection} text-sm px-1`}>Legal</h3>
+          <Card className="bg-white shadow-[0_10px_25px_-12px_rgba(0,0,0,0.25)] rounded-[1.75rem] border-0 overflow-hidden">
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-50 rounded-none border-0"
             >
-              <span className="text-foreground">Términos y condiciones</span>
-              <ChevronRight className="h-5 w-5 text-foreground/70" />
+              <span className="text-sm text-[#5D4037]">Términos y condiciones</span>
+              <ChevronRight className="h-5 w-5 text-gray-400" />
             </Button>
             
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-50 rounded-none border-0"
             >
-              <span className="text-foreground">Aviso de privacidad</span>
-              <ChevronRight className="h-5 w-5 text-foreground/70" />
+              <span className="text-sm text-[#5D4037]">Aviso de privacidad</span>
+              <ChevronRight className="h-5 w-5 text-gray-400" />
             </Button>
           </Card>
         </div>
 
         {/* Cuenta */}
         <div className="space-y-2 pb-4">
-          <h3 className="text-lg font-bold text-foreground px-2">Cuenta</h3>
-          <Card className="bg-white backdrop-blur border-blue-100 shadow-xl divide-y divide-border rounded-[20px]">
+          <h3 className={`${headingSection} text-sm px-1`}>Cuenta</h3>
+          <Card className="bg-white shadow-[0_10px_25px_-12px_rgba(0,0,0,0.25)] rounded-[1.75rem] border-0 overflow-hidden">
             <Button
               variant="ghost"
-              className="w-full justify-between h-auto py-4 px-4 hover:bg-primary/10"
+              className="w-full justify-between h-auto py-4 px-4 hover:bg-gray-50 rounded-none border-0"
               onClick={handleLogout}
             >
-              <span className="text-foreground">Cerrar sesión</span>
-              <ChevronRight className="h-5 w-5 text-foreground/70" />
+              <span className="text-sm text-[#5D4037]">Cerrar sesión</span>
+              <ChevronRight className="h-5 w-5 text-gray-400" />
             </Button>
             
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="w-full justify-between h-auto py-4 px-4 hover:bg-destructive/10"
+                  className="w-full justify-between h-auto py-4 px-4 hover:bg-red-50 rounded-none border-0"
                 >
-                  <span className="text-destructive">Eliminar cuenta</span>
-                  <ChevronRight className="h-5 w-5 text-destructive" />
+                  <span className="text-red-600 text-sm font-semibold">Eliminar cuenta</span>
+                  <ChevronRight className="h-5 w-5 text-red-400" />
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent className="bg-white">

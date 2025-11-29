@@ -12,6 +12,7 @@ import authBackground from "@/assets/auth-abstract-bg.png";
 import { useBiometricAuth } from "@/hooks/useBiometricAuth";
 import { SignIn2 } from "@/components/ui/clean-minimal-sign-in";
 import { cleanUserDataOnLogin } from "@/lib/securityAudit";
+import { LoadingScreen } from "@/components/LoadingScreen";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -484,15 +485,8 @@ const Auth = () => {
         className="flex-1 flex items-center justify-center py-8 md:py-12 px-2 md:px-4 relative z-10"
       >
         {isProcessingRecovery ? (
-          <div className="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 p-8 flex flex-col items-center">
-            <div className="flex items-center justify-center w-48 h-16 mb-8">
-              <img src={resetPasswordLogo} alt="Moni AI" className="w-full h-full object-contain" />
-            </div>
-            <div className="flex flex-col items-center gap-4">
-              <Loader2 className="w-8 h-8 animate-spin text-gray-600" />
-              <p className="text-sm text-gray-600">Procesando recuperación de contraseña...</p>
-            </div>
-          </div>
+          // Full-page standardized loading while Supabase processes recovery token
+          <LoadingScreen />
         ) : isResetPassword ? (
           <div className="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 p-8 flex flex-col items-center">
             <div className="flex items-center justify-center w-48 h-16 mb-8">
@@ -674,64 +668,6 @@ const Auth = () => {
         />
         )}
       </div>
-
-      {/* Footer fijo en la parte inferior - oculto en móvil */}
-      <footer className="hidden md:block w-full border-t border-gray-200/20 py-2 md:py-4 bg-white/10 backdrop-blur-sm relative z-10">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 md:gap-4 text-[10px] md:text-xs">
-            {/* Producto */}
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Producto</h4>
-              <ul className="space-y-1">
-                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Características</a></li>
-                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Precios</a></li>
-              </ul>
-            </div>
-
-            {/* Recursos */}
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Recursos</h4>
-              <ul className="space-y-1">
-                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Blog</a></li>
-                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Ayuda</a></li>
-              </ul>
-            </div>
-
-            {/* Empresa */}
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Empresa</h4>
-              <ul className="space-y-1">
-                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Nosotros</a></li>
-                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Impacto Social</a></li>
-              </ul>
-            </div>
-
-            {/* Legal */}
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Legal</h4>
-              <ul className="space-y-1">
-                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Privacidad</a></li>
-                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Términos</a></li>
-              </ul>
-            </div>
-
-            {/* Síguenos */}
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Síguenos</h4>
-              <ul className="space-y-1">
-                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Twitter</a></li>
-                <li><a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">Instagram</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-2 md:mt-4 pt-2 md:pt-4 border-t border-gray-300 text-center">
-            <p className="text-[10px] md:text-xs text-gray-700">
-              © 2025 Moni. Todos los derechos reservados.
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };

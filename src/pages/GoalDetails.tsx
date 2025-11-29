@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Target, TrendingUp, Sparkles, Plus, Calendar, X } from "lucide-react";
+import { headingPage } from "@/styles/typography";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { MoniLoader } from "@/components/MoniLoader";
+import { LoadingScreen } from "@/components/LoadingScreen";
 import { formatCurrency } from "@/lib/utils";
 import BottomNav from "@/components/BottomNav";
 import { AddFundsModal } from "@/components/goals/AddFundsModal";
@@ -108,6 +109,25 @@ const GoalDetails = () => {
     }
   };
 
+  const handleDeleteGoal = async () => {
+    if (!goal) return;
+
+    try {
+      const { error } = await supabase
+        .from('goals')
+        .delete()
+        .eq('id', goal.id);
+
+      if (error) throw error;
+
+      toast.success('Meta eliminada');
+      navigate('/goals');
+    } catch (error: any) {
+      console.error('Error deleting goal:', error);
+      toast.error('Error al eliminar la meta');
+    }
+  };
+
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case "Travel": return "✈️";
@@ -119,11 +139,7 @@ const GoalDetails = () => {
   };
 
   if (loading || !goal) {
-    return (
-      <div className="page-standard min-h-screen flex items-center justify-center">
-        <MoniLoader size="lg" message="Cargando detalles de tu meta..." />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   const progress = (goal.current / goal.target) * 100;
@@ -148,7 +164,7 @@ const GoalDetails = () => {
                 <ArrowLeft className="h-4 w-4 text-gray-700" />
               </Button>
               <div>
-                <h1 className="text-lg font-semibold text-gray-900">Detalles de Meta</h1>
+                <h1 className={headingPage}>Detalles de Meta</h1>
                 <p className="text-xs text-gray-600">{goal.title}</p>
               </div>
             </div>
@@ -262,24 +278,33 @@ const GoalDetails = () => {
           )}
 
           {/* Actions */}
-          <div className="flex gap-3">
-            {progress >= 100 ? (
-              <Button
-                onClick={handleCompleteGoal}
-                className="flex-1 h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl shadow-lg font-semibold"
-              >
-                <Sparkles className="h-5 w-5 mr-2" />
-                Completar Meta
-              </Button>
-            ) : (
-              <Button
-                onClick={() => setAddFundsModal(true)}
-                className="flex-1 h-14 bg-white border border-gray-200 text-gray-900 hover:bg-gray-50 hover:shadow-md transition-all duration-300 rounded-xl font-semibold text-base"
-              >
-                <Plus className="h-5 w-5 mr-2" />
-                Contribuir
-              </Button>
-            )}
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-3">
+              {progress >= 100 ? (
+                <Button
+                  onClick={handleCompleteGoal}
+                  className="flex-1 h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl shadow-lg font-semibold"
+                >
+                  <Sparkles className="h-5 w-5 mr-2" />
+                  Completar Meta
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => setAddFundsModal(true)}
+                  className="flex-1 h-14 bg-white border border-gray-200 text-gray-900 hover:bg-gray-50 hover:shadow-md transition-all duration-300 rounded-xl font-semibold text-base"
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  Contribuir
+                </Button>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={handleDeleteGoal}
+              className="text-xs text-red-500 hover:text-red-600 font-medium self-center mt-1"
+            >
+              Eliminar meta
+            </button>
           </div>
         </div>
       </div>

@@ -135,7 +135,7 @@ const JoinCircle = () => {
           </h1>
           <p className="text-gray-600 mb-6">{error}</p>
           <Button
-            onClick={() => navigate('/social')}
+            onClick={() => navigate('/retos')}
             className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium"
           >
             Volver a Social
@@ -186,7 +186,7 @@ const JoinCircle = () => {
             Unirme al círculo
           </Button>
           <Button
-            onClick={() => navigate('/social')}
+            onClick={() => navigate('/retos')}
             variant="outline"
             className="w-full border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl font-medium h-11"
           >

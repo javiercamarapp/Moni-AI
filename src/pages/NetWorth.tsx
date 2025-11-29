@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { ArrowLeft, TrendingUp, TrendingDown, Download, ListFilter, Wallet, Bitcoin, ChevronRight, Check, Search } from '@/components/networth/new-ui/Icons';
+import { headingPage, headingSection, kpiNumberPrimary } from '@/styles/typography';
 import { EvolutionChart } from '@/components/networth/new-ui/EvolutionChart';
 import { FilterDropdown } from '@/components/networth/new-ui/FilterDropdown';
 import { AssetCard } from '@/components/networth/new-ui/AssetCard';
@@ -24,7 +25,7 @@ const SectionHeader = ({
   children?: React.ReactNode
 }) => (
   <div className="flex justify-between items-center mb-4 mt-8 relative z-30">
-    <h2 className="text-xl font-bold text-[#1C1917] tracking-tight">{title}</h2>
+    <h2 className={headingSection}>{title}</h2>
     <div className="relative">
       <button
         onClick={(e) => {
@@ -155,7 +156,7 @@ const NetWorth: React.FC = () => {
             <ArrowLeft size={20} className="text-[#57534E]" />
           </button>
           <div className="flex flex-col">
-            <h1 className="text-xl font-bold text-[#292524] leading-tight tracking-tight">Patrimonio Neto</h1>
+            <h1 className={headingPage}>Patrimonio Neto</h1>
             <p className="text-sm text-78716C font-medium">Evolución de tu riqueza</p>
           </div>
         </div>
@@ -174,7 +175,7 @@ const NetWorth: React.FC = () => {
           </div>
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-[2.5rem] font-bold text-[#44403C] tracking-tighter leading-none">
+              <h2 className={`${kpiNumberPrimary} text-[2.5rem]`}>
                 ${currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </h2>
               <div className="flex items-center gap-2 mt-3">

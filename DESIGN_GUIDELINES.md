@@ -28,6 +28,30 @@ This document defines the design standards, color palette, and layout guidelines
   - This specific gradient should be used at the top of pages to provide a warm, subtle header effect.
   - **Exception**: The Chat interface uses a custom wavy line background.
 
+### Headings & Numeric Scores
+
+- **Main Page Headings (H1-style)**
+  - Color: use **Darker Text** brown `#5D4037`.
+  - Weight: `font-black`.
+  - Size (responsive):
+    - Mobile: `text-xl`.
+    - Large screens (`md:` and up): `text-2xl`.
+  - Examples: page titles such as "Resumen financiero", "Score Moni", "Mis Metas".
+
+- **Section Subheadings (H2-style)**
+  - Color: `#5D4037` or `#8D6E63` depending on hierarchy (darker for main section labels, lighter for secondary labels).
+  - Weight: `font-bold`.
+  - Size (recommended): `text-lg` on desktop, `text-base` on mobile.
+
+- **Numeric Scores / Key Figures**
+  - Color: use a **much darker brown** than standard headings for emphasis, e.g. `#3E2723` (very dark coffee brown).
+  - Weight: `font-bold`.
+  - Size (responsive, for primary KPIs):
+    - Mobile: `text-4xl`.
+    - Large screens (`md:` and up): `text-5xl`.
+  - Apply to key metrics like Score Moni numbers, main balance amounts, or big percentage scores.
+
+
 ### ✨ Standard Page Classes (Recommended)
 
 Use these CSS classes (defined in `src/index.css`) for consistent page layouts:

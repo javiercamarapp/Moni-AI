@@ -66,7 +66,7 @@ const CircleChat = () => {
 
       if (circleError || !circleData) {
         toast.error('Error al cargar el círculo');
-        navigate('/social');
+        navigate('/retos');
         return;
       }
       setCircle(circleData);

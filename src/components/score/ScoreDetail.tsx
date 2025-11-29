@@ -4,6 +4,7 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer, Pola
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { RADAR_DATA, SCORE_COMPONENTS } from './constants';
 import { ScoreComponent } from './types';
+import { headingPage, kpiNumberPrimary } from '@/styles/typography';
 
 interface ScoreDetailProps {
   onBack?: () => void;
@@ -21,57 +22,36 @@ const ScoreDetail: React.FC<ScoreDetailProps> = ({ onBack, score }) => {
 
   return (
     <div className="pb-24 pt-6 w-full min-h-screen bg-[#F2F4F6] relative">
-      <div className="max-w-5xl mx-auto px-6">
+      <div className="max-w-5xl mx-auto px-4 lg:px-6">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           {onBack && (
             <button 
               onClick={onBack}
-              className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-slate-800 shadow-sm hover:bg-slate-50 transition-colors"
+              className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-800 shadow-sm hover:bg-slate-50 transition-colors"
             >
-              <ArrowLeft size={24} />
+              <ArrowLeft size={20} />
             </button>
           )}
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Score Moni</h1>
-            <p className="text-sm text-slate-400 font-medium">Análisis de salud financiera</p>
+            <h1 className={headingPage}>Score Moni</h1>
+            <p className="text-[11px] md:text-xs text-[#8D6E63] font-medium">Análisis de salud financiera</p>
           </div>
         </div>
 
-        {/* Info/Insight Card - Reduced height */}
-        {showInsight && (
-          <div className="bg-[#F3E8FF] rounded-2xl py-3 px-4 mb-6 flex gap-3 items-center shadow-sm border border-[#E9D5FF]/50">
-            <div className="w-5 h-5 rounded-full border-2 border-[#A855F7] flex items-center justify-center shrink-0">
-                <span className="text-[#A855F7] font-bold text-[10px]">!</span>
-            </div>
-            <div>
-                <h4 className="font-bold text-[#6B21A8] text-sm leading-tight">¿Por qué cambió?</h4>
-                <p className="text-xs text-[#7E22CE] leading-snug mt-0.5">
-                    Tu score mejoró gracias a mejores hábitos financieros.
-                </p>
-            </div>
-            <button 
-              onClick={() => setShowInsight(false)}
-              className="ml-auto text-[#6B21A8] hover:bg-white/20 rounded-full p-1 transition-colors"
-            >
-              <X size={16} />
-            </button>
-          </div>
-        )}
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {/* Score Summary Card - Reduced Height/Padding */}
-          <div className="bg-white rounded-[2rem] p-5 md:p-10 md:pl-16 shadow-sm flex flex-col justify-center">
-            <p className="text-slate-400 font-medium mb-1 text-sm pl-1">Score Moni</p>
+          <div className="bg-white rounded-[1.75rem] p-4 md:p-6 md:pl-10 shadow-sm flex flex-col justify-center">
+            <p className="text-slate-400 font-medium mb-1 text-xs md:text-sm pl-1">Score Moni</p>
             <div className="flex items-baseline gap-2">
-              <span className="text-5xl font-bold text-slate-900 tracking-tighter">{displayScore}</span>
-              <span className="text-lg text-slate-400 font-medium">/100</span>
-              <span className="text-emerald-500 font-bold text-base ml-2">↑ 64 pts</span>
+              <span className={kpiNumberPrimary}>{displayScore}</span>
+              <span className="text-base md:text-lg text-slate-400 font-medium">/100</span>
+              <span className="text-emerald-500 font-bold text-sm md:text-base ml-2">↑ 64 pts</span>
             </div>
           </div>
 
           {/* Radar Chart Card - Reduced Height */}
-          <div className="bg-white rounded-[2rem] p-4 shadow-sm h-[300px] flex items-center justify-center relative">
+          <div className="bg-white rounded-[1.75rem] p-4 shadow-sm h-[260px] md:h-[280px] flex items-center justify-center relative">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="65%" data={RADAR_DATA}>
                 <PolarGrid stroke="#E2E8F0" strokeWidth={1} />
@@ -93,6 +73,26 @@ const ScoreDetail: React.FC<ScoreDetailProps> = ({ onBack, score }) => {
           </div>
         </div>
 
+        {/* Info/Insight Card - now below score */}
+        {showInsight && (
+          <div className="bg-[#F3E8FF] rounded-2xl py-3 px-4 mb-6 flex gap-3 items-center shadow-sm border border-[#E9D5FF]/50">
+            <div className="w-5 h-5 rounded-full border-2 border-[#A855F7] flex items-center justify-center shrink-0">
+                <span className="text-[#A855F7] font-bold text-[10px]">!</span>
+            </div>
+            <div className="min-w-0 flex-1">
+                <h4 className="font-bold text-[#6B21A8] text-xs md:text-sm leading-tight">¿Por qué cambió?</h4>
+                <p className="text-[11px] md:text-xs text-[#7E22CE] leading-snug mt-0.5">
+                    Tu score mejoró gracias a mejores hábitos financieros.
+                </p>
+            </div>
+            <button 
+              onClick={() => setShowInsight(false)}
+              className="ml-auto text-[#6B21A8] hover:bg-white/20 rounded-full p-1 transition-colors"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        )}
 
         <div>
           {/* Breakdown Header */}

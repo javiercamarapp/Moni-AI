@@ -39,13 +39,13 @@ const CircleDetails = () => {
       if (circleError) {
         console.error('Error fetching circle:', circleError);
         toast.error('Error al buscar el círculo');
-        navigate('/social');
+        navigate('/retos');
         return;
       }
       
       if (!circleData) {
         toast.error('Este círculo no existe');
-        navigate('/social');
+        navigate('/retos');
         return;
       }
       setCircle(circleData);
@@ -153,7 +153,7 @@ const CircleDetails = () => {
         <div className="page-container py-4">
           <div className="flex items-center gap-3 mb-2">
             <button
-              onClick={() => navigate('/social')}
+              onClick={() => navigate('/retos')}
               className="p-2 hover:bg-white/50 rounded-full transition-colors"
             >
               <ArrowLeft className="h-5 w-5 text-gray-900" />
