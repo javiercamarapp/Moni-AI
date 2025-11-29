@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Users, Car, Home, Shield, Plane, Heart, Briefcase, Target, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
+import { getGoalIcon } from '@/lib/goalIcons';
 
 interface Goal {
     id: string;
@@ -96,24 +97,11 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
         return colors[index % colors.length];
     };
 
-    // Helper to assign icons based on goal name
-    const getGoalIcon = (name: string) => {
-        if (!name) return Target;
-        const lowerName = name.toLowerCase();
-        if (lowerName.includes('casa') || lowerName.includes('hogar')) return Home;
-        if (lowerName.includes('coche') || lowerName.includes('auto') || lowerName.includes('carro')) return Car;
-        if (lowerName.includes('viaje') || lowerName.includes('vacaciones') || lowerName.includes('europa')) return Plane;
-        if (lowerName.includes('boda') || lowerName.includes('anillo')) return Heart;
-        if (lowerName.includes('emergencia') || lowerName.includes('seguro') || lowerName.includes('fondo')) return Shield;
-        if (lowerName.includes('negocio') || lowerName.includes('empresa') || lowerName.includes('startup')) return Briefcase;
-        return Target;
-    };
-
     return (
         <div className="mb-6">
-            
+
             {/* --- Personal Goals Section --- */}
-            <div className="flex items-center justify-between px-6 mb-4">
+            <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-gray-800 tracking-tight">Tus Metas</h2>
                 <div className="flex items-center gap-3">
                     {personalGoals.length > 0 && (
@@ -126,12 +114,12 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                             </button>
                         </div>
                     )}
-                    <button 
+                    <button
                         onClick={() => navigate('/new-goal')}
                         className="flex items-center gap-1.5 bg-[#F5F0EE] hover:bg-[#EBE5E2] text-[#5D4037] p-2 md:px-4 md:py-2 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95 whitespace-nowrap"
                     >
                         <Plus size={14} strokeWidth={3} />
-                        <span className="hidden md:inline">Nueva Meta</span>
+                        <span className="hidden md:inline">Nueva</span>
                     </button>
                     <button
                         onClick={() => navigate('/goals')}
@@ -145,8 +133,8 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
 
             {/* Personal Goals Carousel */}
             {personalGoals.length === 0 ? (
-                <div className="px-6">
-                    <div 
+                <div>
+                    <div
                         className="bg-white rounded-[1.75rem] p-6 border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center gap-3 cursor-pointer hover:bg-gray-50 transition-colors"
                         onClick={() => navigate('/new-goal')}
                     >
@@ -168,15 +156,15 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                     }}
                     className="w-full"
                 >
-                    <CarouselContent className="-ml-4 pb-8 px-6">
+                    <CarouselContent className="-ml-4 pb-8">
                         {personalGoals.map((goal, index) => {
                             const percentage = Math.min(100, Math.round((goal.current / goal.target) * 100));
                             const remaining = goal.target - goal.current;
                             const Icon = getGoalIcon(goal.name);
-                            
+
                             return (
                                 <CarouselItem key={goal.id} className="pl-4 basis-[85vw] md:basis-auto">
-                                    <div 
+                                    <div
                                         className="w-full md:w-80 bg-white rounded-[1.75rem] p-5 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.05)] border border-white relative overflow-hidden group cursor-pointer hover:scale-[1.02] transition-transform"
                                         onClick={() => navigate(`/goals/${goal.id}`)}
                                     >
@@ -198,8 +186,8 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
 
                                         {/* Progress Bar */}
                                         <div className="h-2 w-full bg-gray-100 rounded-full mt-3 mb-3 overflow-hidden">
-                                            <div 
-                                                className={`h-full bg-gradient-to-r ${getProgressColor(index)} rounded-full`} 
+                                            <div
+                                                className={`h-full bg-gradient-to-r ${getProgressColor(index)} rounded-full`}
                                                 style={{ width: `${percentage}%` }}
                                             ></div>
                                         </div>
@@ -218,7 +206,7 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
 
 
             {/* --- Group Goals Section --- */}
-            <div className="flex items-center justify-between px-6 mb-4">
+            <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-gray-800 tracking-tight">Metas Grupales</h2>
                 <div className="flex items-center gap-3">
                     {groupGoals.length > 0 && (
@@ -231,12 +219,12 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                             </button>
                         </div>
                     )}
-                    <button 
+                    <button
                         onClick={() => navigate('/new-goal?type=group')}
                         className="flex items-center gap-1.5 bg-[#F5F0EE] hover:bg-[#EBE5E2] text-[#5D4037] p-2 md:px-4 md:py-2 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95 whitespace-nowrap"
                     >
                         <Plus size={14} strokeWidth={3} />
-                        <span className="hidden md:inline">Nueva Meta</span>
+                        <span className="hidden md:inline">Nueva</span>
                     </button>
                     <button
                         onClick={() => navigate('/groups')}
@@ -248,14 +236,14 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                 </div>
             </div>
 
-             {/* Group Goals Carousel */}
-             {groupGoals.length === 0 ? (
-                <div className="px-6">
-                     <div className="bg-white rounded-[1.75rem] p-6 border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center gap-2">
+            {/* Group Goals Carousel */}
+            {groupGoals.length === 0 ? (
+                <div>
+                    <div className="bg-white rounded-[1.75rem] p-6 border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center gap-2">
                         <p className="text-sm text-gray-500">No tienes metas grupales aún</p>
-                     </div>
+                    </div>
                 </div>
-             ) : (
+            ) : (
                 <Carousel
                     setApi={setGroupApi}
                     opts={{
@@ -264,17 +252,17 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                     }}
                     className="w-full"
                 >
-                    <CarouselContent className="-ml-4 pb-4 px-6">
+                    <CarouselContent className="-ml-4 pb-4">
                         {groupGoals.map((goal, index) => {
                             const percentage = Math.min(100, Math.round((goal.current / goal.target) * 100));
                             const remaining = goal.target - goal.current;
                             // Offset index for variety in colors
-                            const colorIndex = index + 2; 
+                            const colorIndex = index + 2;
                             const textColorClass = getTextColor(colorIndex);
-                            
+
                             return (
                                 <CarouselItem key={goal.id} className="pl-4 basis-[85vw] md:basis-auto">
-                                    <div 
+                                    <div
                                         className="w-full md:w-80 bg-white rounded-[1.75rem] p-5 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.05)] border border-white relative overflow-hidden group cursor-pointer hover:scale-[1.02] transition-transform"
                                         onClick={() => navigate(`/group-goals/${goal.id}`)}
                                     >
@@ -299,8 +287,8 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
 
                                         {/* Progress Bar */}
                                         <div className="h-2 w-full bg-gray-100 rounded-full mt-3 mb-3 overflow-hidden">
-                                            <div 
-                                                className={`h-full bg-gradient-to-r ${getProgressColor(colorIndex)} rounded-full`} 
+                                            <div
+                                                className={`h-full bg-gradient-to-r ${getProgressColor(colorIndex)} rounded-full`}
                                                 style={{ width: `${percentage}%` }}
                                             ></div>
                                         </div>
@@ -315,7 +303,7 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                         })}
                     </CarouselContent>
                 </Carousel>
-             )}
+            )}
         </div>
     );
 };

@@ -1,10 +1,8 @@
-import { Target, Calendar, TrendingUp, Plus, Sparkles, Bell, Lightbulb } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import { Plus, Sparkles } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { useState } from "react";
 import { useGoalCelebrations } from "@/hooks/useGoalCelebrations";
+import { getGoalIcon } from "@/lib/goalIcons";
 
 interface GoalCardProps {
   goal: {
@@ -37,15 +35,8 @@ export const GoalCard = ({ goal, onAddFunds, onViewDetails, onComplete }: GoalCa
   const weeksRemaining = daysRemaining ? Math.ceil(daysRemaining / 7) : 0;
   const suggestedIncrease = goal.required_weekly_saving ? Math.round(goal.required_weekly_saving * 0.1) : 0;
 
-  const getCategoryIcon = () => {
-    switch (goal.category) {
-      case "Travel": return "✈️";
-      case "Tech": return "💻";
-      case "Education": return "🎓";
-      case "Emergency Fund": return "🛡️";
-      default: return goal.icon || "🎯";
-    }
-  };
+  // Use shared icon utility based on goal title
+  const Icon = getGoalIcon(goal.title);
 
   const getProgressColor = () => {
     if (progress >= 75) return "bg-emerald-500";
@@ -56,23 +47,25 @@ export const GoalCard = ({ goal, onAddFunds, onViewDetails, onComplete }: GoalCa
 
   return (
     <div 
-      className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer border border-gray-200/50 overflow-hidden"
+      className="bg-white rounded-[1.75rem] shadow-[0_15px_30px_-10px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-200 cursor-pointer border border-white/50 overflow-hidden"
       onClick={onViewDetails}
     >
-      {/* Header - Minimalista */}
-      <div className="p-4">
+      {/* Header */}
+      <div className="p-5">
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-2xl">{getCategoryIcon()}</span>
-              <h3 className="font-semibold text-gray-900 text-sm tracking-tight">
+              <div className="w-8 h-8 rounded-xl bg-[#F5F0EE] flex items-center justify-center">
+                <Icon className="w-4 h-4 text-[#8D6E63]" />
+              </div>
+              <h3 className="font-bold text-[#5D4037] text-base tracking-tight">
                 {goal.title}
               </h3>
             </div>
-            <p className="text-[10px] text-gray-400 uppercase tracking-wide">{goal.category}</p>
+            <p className="text-[10px] text-gray-400 uppercase tracking-wide font-medium ml-10">{goal.category}</p>
           </div>
           <div className="text-right ml-4">
-            <p className="text-2xl font-bold text-gray-900 tracking-tight">
+            <p className="text-2xl font-black text-[#5D4037] tracking-tight">
               {progress.toFixed(0)}%
             </p>
           </div>
@@ -91,33 +84,33 @@ export const GoalCard = ({ goal, onAddFunds, onViewDetails, onComplete }: GoalCa
           />
         </div>
 
-        {/* Stats Grid - Minimalista */}
-        <div className="flex items-center justify-between text-xs mb-3">
+        {/* Stats Grid */}
+        <div className="flex items-center justify-between text-xs mb-4">
           <div>
-            <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Ahorro Actual</p>
-            <p className="font-semibold text-gray-900">{formatCurrency(goal.current)}</p>
+            <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Actual</p>
+            <p className="font-bold text-[#5D4037]">{formatCurrency(goal.current)}</p>
           </div>
           <div className="text-center">
             <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Falta</p>
-            <p className="font-semibold text-gray-900">{formatCurrency(remaining)}</p>
+            <p className="font-bold text-[#5D4037]">{formatCurrency(remaining)}</p>
           </div>
           <div className="text-right">
             <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">Meta</p>
-            <p className="font-semibold text-gray-900">{formatCurrency(goal.target)}</p>
+            <p className="font-bold text-[#5D4037]">{formatCurrency(goal.target)}</p>
           </div>
         </div>
 
-        {/* AI Prediction - Compacto */}
+        {/* AI Prediction */}
         {goal.predicted_completion_date && (
-          <div className="bg-gray-50 rounded-lg p-2.5 mb-3">
+          <div className="bg-[#F5F0EE] rounded-xl p-3 mb-4">
             <div className="flex items-start gap-2">
-              <Sparkles className="h-3.5 w-3.5 text-gray-600 mt-0.5 flex-shrink-0" />
+              <Sparkles className="h-4 w-4 text-[#8D6E63] mt-0.5 flex-shrink-0" />
               <div className="flex-1">
-                <p className="text-[10px] text-gray-900 font-medium mb-0.5">
+                <p className="text-xs text-[#5D4037] font-medium mb-0.5">
                   Podrías lograrlo el {new Date(goal.predicted_completion_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
                 </p>
                 {goal.required_weekly_saving && (
-                  <p className="text-[9px] text-gray-600">
+                  <p className="text-[10px] text-[#8D6E63]">
                     💰 {formatCurrency(goal.required_weekly_saving)}/semana
                   </p>
                 )}
@@ -126,13 +119,12 @@ export const GoalCard = ({ goal, onAddFunds, onViewDetails, onComplete }: GoalCa
           </div>
         )}
 
-        {/* Actions - Minimalista */}
+        {/* Actions */}
         <div className="flex gap-2">
           {progress >= 100 ? (
             <button
               onClick={async (e) => {
                 e.stopPropagation();
-                // Crear celebración cuando se completa la meta
                 await createCelebration(
                   goal.id,
                   'goal_completed',
@@ -140,10 +132,10 @@ export const GoalCard = ({ goal, onAddFunds, onViewDetails, onComplete }: GoalCa
                 );
                 onComplete();
               }}
-              className="flex-1 h-9 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 text-white font-medium text-xs transition-all flex items-center justify-center gap-1.5 border-0"
+              className="flex-1 h-10 bg-emerald-500 hover:bg-emerald-600 rounded-xl shadow-sm text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 active:scale-95"
             >
-              <Sparkles className="h-3.5 w-3.5" />
-              Terminar Meta
+              <Sparkles className="h-4 w-4" />
+              Completar
             </button>
           ) : (
             <button
@@ -151,10 +143,10 @@ export const GoalCard = ({ goal, onAddFunds, onViewDetails, onComplete }: GoalCa
                 e.stopPropagation();
                 onAddFunds();
               }}
-              className="flex-1 h-9 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:bg-white/80 text-gray-900 font-medium text-xs transition-all flex items-center justify-center gap-1.5 border-0"
+              className="flex-1 h-10 bg-[#8D6E63] hover:bg-[#795548] rounded-xl shadow-sm text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 active:scale-95"
             >
-              <Plus className="h-3.5 w-3.5" />
-              Agregar fondos
+              <Plus className="h-4 w-4" />
+              Agregar
             </button>
           )}
           <button
@@ -162,9 +154,9 @@ export const GoalCard = ({ goal, onAddFunds, onViewDetails, onComplete }: GoalCa
               e.stopPropagation();
               onViewDetails();
             }}
-            className="h-9 px-4 bg-gray-50 hover:bg-gray-50 rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 text-gray-600 font-medium text-xs transition-all border-0"
+            className="h-10 px-4 bg-[#F5F0EE] hover:bg-[#EBE5E2] rounded-xl text-[#5D4037] font-bold text-xs transition-all active:scale-95"
           >
-            Ver más
+            Detalles
           </button>
         </div>
       </div>

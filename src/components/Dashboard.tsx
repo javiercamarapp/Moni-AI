@@ -34,9 +34,8 @@ import ScoreCard from '@/components/dashboard/ScoreCard';
 import QuickStats from '@/components/dashboard/QuickStats';
 import BalanceCard from '@/components/dashboard/BalanceCard';
 import AccountsCarousel from '@/components/dashboard/AccountsCarousel';
-import ExpenseBreakdownWidget from '@/components/dashboard/ExpenseBreakdownWidget';
 import GoalsWidget from '@/components/dashboard/GoalsWidget';
-import RecentTransactionsWidget from '@/components/dashboard/RecentTransactionsWidget';
+// import RecentTransactionsWidget from '@/components/dashboard/RecentTransactionsWidget';
 import BudgetWidget from '@/components/dashboard/BudgetWidget';
 
 const Dashboard = () => {
@@ -71,7 +70,7 @@ const Dashboard = () => {
   } = dashboardData;
 
   // Keep local state for things that update independently
-  const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
+  // const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
   const [totalBudget, setTotalBudget] = useState(0);
   const [currentMonthExpenses, setCurrentMonthExpenses] = useState(0);
   const [futureEvents, setFutureEvents] = useState<any[]>([]);
@@ -95,12 +94,12 @@ const Dashboard = () => {
     Autoplay({ delay: 4000, stopOnInteraction: false })
   );
 
-  // Sync recentTransactions when dashboardData updates - use ref to avoid infinite loop
-  useEffect(() => {
-    if (JSON.stringify(recentTransactions) !== JSON.stringify(dashboardData.recentTransactions)) {
-      setRecentTransactions(dashboardData.recentTransactions);
-    }
-  }, [dashboardData.recentTransactions]);
+  // Sync recentTransactions when dashboardData updates - DISABLED (we are not showing recent transactions for now)
+  // useEffect(() => {
+  //   if (JSON.stringify(recentTransactions) !== JSON.stringify(dashboardData.recentTransactions)) {
+  //     setRecentTransactions(dashboardData.recentTransactions);
+  //   }
+  // }, [dashboardData.recentTransactions]);
 
   // Calcular últimos 7 días con ingresos y gastos - MOVIDO A useEffect CON DEPENDENCIAS
   useEffect(() => {
@@ -1123,16 +1122,15 @@ const Dashboard = () => {
             }
           } = await supabase.auth.getUser();
           if (!user) return;
-          const {
-            data,
-            error
-          } = await supabase.from('transactions').select('*, categories(name, color)').eq('user_id', user.id).order('transaction_date', {
-            ascending: false
-          }).limit(20);
-          if (error) throw error;
-          setRecentTransactions(data || []);
+          await supabase
+            .from('transactions')
+            .select('id')
+            .eq('user_id', user.id)
+            .order('transaction_date', { ascending: false })
+            .limit(1);
+          // Recent transactions fetching is disabled for now; data is intentionally ignored.
         } catch (error) {
-          console.error('Error fetching recent transactions:', error);
+          console.error('Error fetching recent transactions (disabled widget):', error);
         }
       };
       fetchRecentTransactions();
@@ -1203,7 +1201,7 @@ const Dashboard = () => {
           />
 
           {/* Score and Budget Grid */}
-          <div className="px-6 mb-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="max-w-5xl mx-auto px-6 mb-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
             <ScoreCard score={scoreMoni} />
             <BudgetWidget
               totalBudget={totalBudget}
@@ -1212,15 +1210,17 @@ const Dashboard = () => {
           </div>
 
           {/* Quick Stats */}
-          <QuickStats
-            summaryValue={`$${(currentMonth.balance / 1000).toFixed(0)}k`}
-            netWorthValue={netWorth >= 1000000 ? `$${(netWorth / 1000000).toFixed(1)}M` : `$${(netWorth / 1000).toFixed(0)}k`}
-            goalsCount={goals.length}
-            journeyLevel={totalAspiration > 0 ? Math.floor((netWorth / totalAspiration) * 10000) : 0}
-          />
+          <div className="max-w-5xl mx-auto">
+            <QuickStats
+              summaryValue={`$${(currentMonth.balance / 1000).toFixed(0)}k`}
+              netWorthValue={netWorth >= 1000000 ? `$${(netWorth / 1000000).toFixed(1)}M` : `$${(netWorth / 1000).toFixed(0)}k`}
+              goalsCount={goals.length}
+              journeyLevel={totalAspiration > 0 ? Math.floor((netWorth / totalAspiration) * 10000) : 0}
+            />
+          </div>
 
           {/* Balance Card */}
-          <div className="px-6 mb-4 mt-4">
+          <div className="max-w-5xl mx-auto px-6 mb-4 mt-4">
             <BalanceCard
               income={monthlyIncome}
               expenses={monthlyExpenses}
@@ -1231,40 +1231,38 @@ const Dashboard = () => {
           </div>
 
           {/* Accounts Carousel */}
-          <div className="px-6 mb-6">
+          <div className="max-w-5xl mx-auto px-6 mb-6">
             <AccountsCarousel accounts={bankConnections} />
           </div>
 
-
-          {/* Expense Breakdown - Subscriptions & Daily Expenses */}
-          <ExpenseBreakdownWidget
-            subscriptionsTotal={upcomingSubscriptions.reduce((sum, sub) => sum + Number(sub.amount), 0)}
-            subscriptionsCount={upcomingSubscriptions.length}
-            dailyExpenses={dailyExpenses.reduce((sum, exp) => sum + Number(exp.amount), 0)}
-          />
-
           {/* Goals Section - Personal & Group */}
-          <GoalsWidget
-            personalGoals={goals.map(g => ({
-              id: g.id,
-              name: g.title || 'Meta',
-              target: Number(g.target),
-              current: Number(g.current),
-              deadline: g.deadline,
-              is_group: false
-            }))}
-            groupGoals={groupGoals.map((g: any) => ({
-              id: g.id,
-              name: g.title || 'Meta Grupal',
-              target: Number(g.target_amount || 0),
-              current: Number(g.user_progress?.current_amount || 0),
-              deadline: g.deadline,
-              is_group: true
-            }))}
-          />
+          <div className="max-w-5xl mx-auto px-6">
+            <GoalsWidget
+              personalGoals={goals.map(g => ({
+                id: g.id,
+                name: g.title || 'Meta',
+                target: Number(g.target),
+                current: Number(g.current),
+                deadline: g.deadline,
+                is_group: false
+              }))}
+              groupGoals={groupGoals.map((g: any) => ({
+                id: g.id,
+                name: g.title || 'Meta Grupal',
+                target: Number(g.target_amount || 0),
+                current: Number(g.user_progress?.current_amount || 0),
+                deadline: g.deadline,
+                is_group: true
+              }))}
+            />
+          </div>
 
-          {/* Recent Transactions */}
-          <RecentTransactionsWidget transactions={recentTransactions} />
+          {/* Recent Transactions - disabled for now */}
+          {false && (
+            <div className="max-w-5xl mx-auto px-6">
+              {/* <RecentTransactionsWidget transactions={recentTransactions} /> */}
+            </div>
+          )}
         </div>
 
         <BottomNav />

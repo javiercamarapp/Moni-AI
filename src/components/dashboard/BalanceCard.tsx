@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Wallet, TrendingUp, TrendingDown, PiggyBank, Users, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface BalanceCardProps {
@@ -17,6 +18,7 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
     available
 }) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const navigate = useNavigate();
 
     return (
         <div className="w-full bg-white rounded-[2rem] p-4 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] border border-white relative overflow-hidden">
@@ -32,15 +34,19 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
                 </div>
 
                 <div className="flex gap-2 w-full md:w-auto">
-                    <button className="flex-1 md:flex-none bg-[#8D6E63] text-white py-2 px-3 rounded-xl text-xs font-bold shadow-sm hover:bg-[#795E56] transition-colors flex items-center justify-center gap-1.5 active:scale-95">
+                    <button
+                        onClick={() => navigate('/ingresos')}
+                        className="flex-1 md:flex-none bg-[#8D6E63] text-white py-2 px-3 rounded-xl text-xs font-bold shadow-sm hover:bg-[#795E56] transition-colors flex items-center justify-center gap-1.5 active:scale-95"
+                    >
                         <Plus size={12} />
-                        <TrendingUp size={16} />
-                        <span className="ml-0.5">Ingresos</span>
+                        <span className="ml-0.5">Ingreso</span>
                     </button>
-                    <button className="flex-1 md:flex-none bg-[#F5F0EE] text-[#5D4037] py-2 px-3 rounded-xl text-xs font-bold shadow-sm hover:bg-[#EBE5E2] transition-colors flex items-center justify-center gap-1.5 active:scale-95">
+                    <button
+                        onClick={() => navigate('/gastos')}
+                        className="flex-1 md:flex-none bg-[#F5F0EE] text-[#5D4037] py-2 px-3 rounded-xl text-xs font-bold shadow-sm hover:bg-[#EBE5E2] transition-colors flex items-center justify-center gap-1.5 active:scale-95"
+                    >
                         <Plus size={12} />
-                        <TrendingDown size={16} />
-                        <span className="ml-0.5">Gastos</span>
+                        <span className="ml-0.5">Gasto</span>
                     </button>
                 </div>
             </div>
@@ -98,9 +104,9 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
                 )}
 
                 {/* Available - Always visible with expand/collapse button */}
-                <button 
+                <button
                     onClick={() => setIsExpanded(!isExpanded)}
-                    className="flex items-center justify-between w-full hover:bg-gray-50 rounded-lg p-2 -mx-2 transition-colors"
+                    className="flex items-center justify-between w-full hover:bg-gray-50 rounded-lg p-1 -mx-2 transition-colors"
                 >
                     <div className="flex items-center gap-2">
                         <span className="text-gray-500 text-xs font-bold">Disponible</span>

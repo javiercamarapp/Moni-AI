@@ -1,4 +1,3 @@
-import { Progress } from "@/components/ui/progress";
 import { PieChart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -35,53 +34,48 @@ export default function BudgetWidget({ totalBudget, currentExpenses }: BudgetWid
     );
   }
 
+  // Color logic: green < 80%, yellow 80-100%, red > 100%
+  const getStatusColor = () => {
+    if (isOverBudget) return { icon: 'text-red-600', bg: 'bg-red-100', border: 'border-red-200', text: 'text-red-600', progress: 'bg-red-500' };
+    if (isWarning) return { icon: 'text-amber-600', bg: 'bg-amber-100', border: 'border-amber-200', text: 'text-amber-600', progress: 'bg-amber-500' };
+    return { icon: 'text-emerald-600', bg: 'bg-emerald-100', border: 'border-emerald-200', text: 'text-emerald-600', progress: 'bg-emerald-500' };
+  };
+
+  const colors = getStatusColor();
+
   return (
     <div
-      className={`rounded-2xl p-1 shadow-[0_8px_20px_-10px_rgba(0,0,0,0.08)] border cursor-pointer hover:-translate-y-0.5 transition-all ${isOverBudget
-          ? 'bg-gradient-to-r from-red-50 to-rose-50 border-red-200/50'
-          : isWarning
-            ? 'bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-200/50'
-            : 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200/50'
-        }`}
+      className="rounded-2xl p-1 shadow-[0_8px_20px_-10px_rgba(0,0,0,0.08)] border border-gray-100 bg-white cursor-pointer hover:-translate-y-0.5 transition-all"
       onClick={() => navigate('/budgets')}
     >
       <div className="flex items-center gap-3 p-2 pr-3">
-        <div className={`h-9 w-9 rounded-xl flex items-center justify-center shadow-sm shrink-0 ${isOverBudget
-            ? 'bg-red-100 border border-red-200'
-            : isWarning
-              ? 'bg-yellow-100 border border-yellow-200'
-              : 'bg-green-100 border border-green-200'
-          }`}>
-          <PieChart size={16} strokeWidth={2} className={
-            isOverBudget ? 'text-red-600' : isWarning ? 'text-yellow-600' : 'text-green-600'
-          } />
+        <div className={`h-9 w-9 rounded-xl flex items-center justify-center shadow-sm shrink-0 ${colors.bg} border ${colors.border}`}>
+          <PieChart size={16} strokeWidth={2} className={colors.icon} />
         </div>
 
         <div className="flex flex-col min-w-0 flex-1 gap-1">
           <div className="flex items-center justify-between">
-            <h3 className={`text-xs font-bold ${isOverBudget ? 'text-red-800' : isWarning ? 'text-yellow-800' : 'text-green-800'
-              }`}>
+            <h3 className="text-xs font-bold text-gray-800">
               Presupuesto del mes
             </h3>
-            <span className={`text-[10px] font-bold ${isOverBudget ? 'text-red-600' : isWarning ? 'text-yellow-600' : 'text-green-600'
-              }`}>
+            <span className={`text-[10px] font-bold ${colors.text}`}>
               {percentUsed.toFixed(0)}%
             </span>
           </div>
 
-          <Progress
-            value={Math.min(percentUsed, 100)}
-            className={`h-1 ${isOverBudget ? 'bg-red-200' : isWarning ? 'bg-yellow-200' : 'bg-green-200'
-              }`}
-          />
+          <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+            <div 
+              className={`h-full ${colors.progress} rounded-full transition-all duration-300`}
+              style={{ width: `${Math.min(percentUsed, 100)}%` }}
+            />
+          </div>
 
           <div className="flex items-center justify-between">
-            <span className={`text-[10px] ${isOverBudget ? 'text-red-600' : isWarning ? 'text-yellow-600' : 'text-green-600'
-              }`}>
-              ${currentExpenses.toLocaleString()} / ${totalBudget.toLocaleString()}
+            <span className="text-[10px] text-gray-600">
+              <span className={`font-semibold ${colors.text}`}>${currentExpenses.toLocaleString()}</span>
+              <span className="text-gray-400"> / ${totalBudget.toLocaleString()}</span>
             </span>
-            <span className={`text-[10px] font-medium ${isOverBudget ? 'text-red-700' : isWarning ? 'text-yellow-700' : 'text-green-700'
-              }`}>
+            <span className={`text-[10px] font-medium ${isOverBudget ? 'text-red-600' : 'text-gray-500'}`}>
               {isOverBudget ? `Excedido $${Math.abs(remaining).toLocaleString()}` : `Quedan $${remaining.toLocaleString()}`}
             </span>
           </div>

@@ -1,6 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card } from '@/components/ui/card';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  TrendingDown,
+  Plus,
+  ShoppingCart,
+  ChevronDown,
+  Tags,
+  Camera,
+  ArrowLeft
+} from 'lucide-react';
+import {
+  AreaChart,
+  Area,
+  ResponsiveContainer
+} from 'recharts';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { TransactionSchema } from '@/lib/validation';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,82 +38,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
-  ArrowLeft, 
-  ChevronLeft, 
-  ChevronRight, 
-  Plus,
-  Sliders,
-  Download,
-  TrendingDown,
-  Camera
-} from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
-import { TransactionSchema } from '@/lib/validation';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import BottomNav from '@/components/BottomNav';
 
-// Mapeo de categorías a emojis
-const categoryEmojis: Record<string, string> = {
-  'restaurante': '🍽️',
-  'restaurantes': '🍽️',
-  'comida': '🍔',
-  'alimentos': '🛒',
-  'supermercado': '🛒',
-  'despensa': '🛒',
-  'cafetería': '☕',
-  'entretenimiento': '🎬',
-  'cine': '🎥',
-  'teatro': '🎭',
-  'concierto': '🎵',
-  'museo': '🖼️',
-  'videojuegos': '🎮',
-  'bar': '🍺',
-  'bares': '🍺',
-  'antro': '💃',
-  'discoteca': '🪩',
-  'fiesta': '🎉',
-  'servicios': '⚡',
-  'electricidad': '💡',
-  'agua': '💧',
-  'gas': '🔥',
-  'internet': '📡',
-  'teléfono': '📱',
-  'streaming': '📺',
-  'netflix': '🎬',
-  'spotify': '🎵',
-  'disney': '🏰',
-  'prime': '📦',
-  'hbo': '🎭',
-  'auto': '🚗',
-  'gasolina': '⛽',
-  'combustible': '⛽',
-  'mecánico': '🔧',
-  'reparación': '🔧',
-  'estacionamiento': '🅿️',
-  'uber': '🚕',
-  'taxi': '🚕',
-};
+interface Transaction {
+  id: string;
+  description: string;
+  transaction_date: string;
+  amount: number;
+  payment_method: string;
+  categories?: { name: string; color: string };
+}
 
-const getCategoryEmoji = (categoryName: string): string => {
-  const lowerName = categoryName.toLowerCase();
-  return categoryEmojis[lowerName] || '💸';
-};
+interface ChartPoint {
+  label: string;
+  amount: number;
+}
+
+type SortOption = 'date-desc' | 'date-asc' | 'amount-desc' | 'amount-asc';
+
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: 'date-desc', label: 'Más recientes' },
+  { value: 'date-asc', label: 'Más antiguos' },
+  { value: 'amount-desc', label: 'Mayor cantidad' },
+  { value: 'amount-asc', label: 'Menor cantidad' },
+];
 
 const Gastos = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [viewMode, setViewMode] = useState<'mensual' | 'anual'>(() => {
-    const saved = localStorage.getItem('balanceViewMode');
-    return (saved as 'mensual' | 'anual') || 'mensual';
-  });
+  const [viewMode, setViewMode] = useState<'month' | 'year'>('month');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [amount, setAmount] = useState('');
@@ -98,8 +78,9 @@ const Gastos = () => {
   const [frequency, setFrequency] = useState('');
   const [date, setDate] = useState('');
   const [categories, setCategories] = useState<Array<{ id: string; name: string; color: string }>>([]);
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [sortBy, setSortBy] = useState<'recent' | 'highest' | 'lowest'>('recent');
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [sortOption, setSortOption] = useState<SortOption>('date-desc');
+  const [isSortOpen, setIsSortOpen] = useState(false);
   const [isProcessingReceipt, setIsProcessingReceipt] = useState(false);
 
   useEffect(() => {
@@ -122,10 +103,9 @@ const Gastos = () => {
 
       setCategories(categoriesData || []);
 
-      // Calcular rango de fechas según el modo de vista
       let startDate: Date, endDate: Date;
-      
-      if (viewMode === 'mensual') {
+
+      if (viewMode === 'month') {
         startDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
         endDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
       } else {
@@ -133,49 +113,16 @@ const Gastos = () => {
         endDate = new Date(currentMonth.getFullYear(), 11, 31);
       }
 
-      // Fetch ALL transactions with proper pagination (Supabase max is 1000 per query)
-      let allTransactions: any[] = [];
-      let hasMore = true;
-      let lastId: string | null = null;
-      let pageCount = 0;
-      const PAGE_SIZE = 1000;
-      
-      while (hasMore) {
-        let query = supabase
-          .from('transactions')
-          .select('*, categories(name, color)')
-          .eq('user_id', user.id)
-          .eq('type', 'gasto')
-          .gte('transaction_date', startDate.toISOString().split('T')[0])
-          .lte('transaction_date', endDate.toISOString().split('T')[0])
-          .order('id', { ascending: true })
-          .limit(PAGE_SIZE);
-        
-        if (lastId) {
-          query = query.gt('id', lastId);
-        }
-        
-        const { data: pageData } = await query;
-        
-        if (!pageData || pageData.length === 0) {
-          hasMore = false;
-          break;
-        }
-        
-        allTransactions = [...allTransactions, ...pageData];
-        lastId = pageData[pageData.length - 1].id;
-        hasMore = pageData.length === PAGE_SIZE;
-        pageCount++;
-        console.log(`📄 Gastos Page ${pageCount}: ${pageData.length} (total: ${allTransactions.length})`);
-      }
-      
-      // Sort by date descending for display
-      allTransactions.sort((a, b) => 
-        new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime()
-      );
-      
-      console.log('📊 Gastos loaded:', allTransactions.length);
-      setTransactions(allTransactions);
+      const { data: transactionsData } = await supabase
+        .from('transactions')
+        .select('*, categories(name, color)')
+        .eq('user_id', user.id)
+        .eq('type', 'gasto')
+        .gte('transaction_date', startDate.toISOString().split('T')[0])
+        .lte('transaction_date', endDate.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false });
+
+      setTransactions(transactionsData || []);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -184,7 +131,7 @@ const Gastos = () => {
   const totalGastos = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
 
   const handlePreviousPeriod = () => {
-    if (viewMode === 'mensual') {
+    if (viewMode === 'month') {
       setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
     } else {
       setCurrentMonth(new Date(currentMonth.getFullYear() - 1, currentMonth.getMonth()));
@@ -192,23 +139,18 @@ const Gastos = () => {
   };
 
   const handleNextPeriod = () => {
-    if (viewMode === 'mensual') {
+    if (viewMode === 'month') {
       setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
     } else {
       setCurrentMonth(new Date(currentMonth.getFullYear() + 1, currentMonth.getMonth()));
     }
   };
 
-  const handleWhatsAppRegister = () => {
-    const message = encodeURIComponent('Hola Moni, quiero registrar un gasto');
-    window.open(`https://wa.me/?text=${message}`, '_blank');
-  };
-
   const getPeriodLabel = () => {
-    if (viewMode === 'mensual') {
+    if (viewMode === 'month') {
       return currentMonth.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
     }
-    return currentMonth.getFullYear().toString();
+    return `Año ${currentMonth.getFullYear()}`;
   };
 
   const handleCameraCapture = async () => {
@@ -217,7 +159,7 @@ const Gastos = () => {
       input.type = 'file';
       input.accept = 'image/*';
       input.capture = 'environment';
-      
+
       input.onchange = async (e: any) => {
         const file = e.target?.files?.[0];
         if (!file) return;
@@ -229,26 +171,23 @@ const Gastos = () => {
         });
 
         try {
-          // Convertir imagen a base64
           const reader = new FileReader();
           reader.readAsDataURL(file);
-          
+
           reader.onload = async () => {
             const base64Image = reader.result as string;
-            
+
             const { data: receiptData, error } = await supabase.functions.invoke('analyze-receipt', {
               body: { imageBase64: base64Image, type: 'gasto' }
             });
 
             if (error) throw error;
 
-            // Llenar el formulario con los datos extraídos
             setAmount(receiptData.amount.toString());
             setDescription(receiptData.description);
             setPaymentMethod(receiptData.payment_method);
             setDate(receiptData.date);
-            
-            // Buscar categoría por nombre
+
             const matchingCategory = categories.find(
               cat => cat.name.toLowerCase().includes(receiptData.category.toLowerCase())
             );
@@ -274,7 +213,7 @@ const Gastos = () => {
           setIsProcessingReceipt(false);
         }
       };
-      
+
       input.click();
     } catch (error) {
       console.error('Error capturing image:', error);
@@ -288,7 +227,7 @@ const Gastos = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -332,9 +271,7 @@ const Gastos = () => {
 
       if (error) throw error;
 
-      // Si no tiene categoría y es un gasto, categorizar automáticamente con IA
-      if (!validationResult.data.category_id && validationResult.data.type === 'gasto' && newTransaction) {
-        console.log('Categorizando automáticamente transacción:', newTransaction.id);
+      if (!validationResult.data.category_id && newTransaction) {
         supabase.functions.invoke('categorize-transaction', {
           body: {
             transactionId: newTransaction.id,
@@ -372,444 +309,514 @@ const Gastos = () => {
     }
   };
 
+  // Generate chart data from transactions
+  const chartData: ChartPoint[] = useMemo(() => {
+    if (viewMode === 'month') {
+      const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
+      const dataPoints: ChartPoint[] = [];
+
+      for (let day = 1; day <= daysInMonth; day += Math.ceil(daysInMonth / 7)) {
+        const dayTransactions = transactions.filter(t => {
+          const txDate = new Date(t.transaction_date);
+          return txDate.getDate() === day;
+        });
+        const dayTotal = dayTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
+        dataPoints.push({ label: day.toString(), amount: dayTotal });
+      }
+      return dataPoints;
+    } else {
+      const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+      return months.map((month, index) => {
+        const monthTransactions = transactions.filter(t => {
+          const txDate = new Date(t.transaction_date);
+          return txDate.getMonth() === index;
+        });
+        const monthTotal = monthTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
+        return { label: month, amount: monthTotal };
+      });
+    }
+  }, [transactions, viewMode, currentMonth]);
+
+  const sortedTransactions = useMemo(() => {
+    const sorted = [...transactions];
+    switch (sortOption) {
+      case 'date-desc':
+        return sorted.sort((a, b) => new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime());
+      case 'date-asc':
+        return sorted.sort((a, b) => new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime());
+      case 'amount-desc':
+        return sorted.sort((a, b) => Number(b.amount) - Number(a.amount));
+      case 'amount-asc':
+        return sorted.sort((a, b) => Number(a.amount) - Number(b.amount));
+      default:
+        return sorted;
+    }
+  }, [transactions, sortOption]);
+
+  const selectedLabel = SORT_OPTIONS.find(o => o.value === sortOption)?.label;
+
   return (
-    <div className="page-standard min-h-screen pb-20">
-      
-      {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
-        <div className="page-container py-4">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate('/balance')}
-              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
-            >
-              <ArrowLeft className="h-4 w-4 text-gray-700" />
-            </Button>
-            <div className="flex-1">
-              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Tus Gastos</h1>
-              <p className="text-xs text-gray-500">Gestiona tus salidas</p>
+    <div className="min-h-screen bg-[#FAFAF9] text-gray-800 font-sans pb-24">
+      <div className="max-w-5xl mx-auto min-h-screen flex flex-col p-6">
+        {/* Header */}
+        <div className="flex flex-col gap-4 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate('/balance')}
+                className="p-3 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5 text-gray-700" />
+              </button>
+
+              <div className="flex flex-col">
+                <h1 className="text-xl font-bold text-gray-900 leading-tight">Tus Gastos</h1>
+                <div className="flex items-center gap-1 text-sm text-gray-500 font-medium">
+                  {viewMode === 'month' && <ChevronLeft onClick={handlePreviousPeriod} className="w-3 h-3 cursor-pointer" />}
+                  <span className="animate-in fade-in duration-300">{getPeriodLabel()}</span>
+                  {viewMode === 'month' && <ChevronRight onClick={handleNextPeriod} className="w-3 h-3 cursor-pointer" />}
+                </div>
+              </div>
             </div>
 
-            <div className="flex gap-1.5">
-          <Button
-            size="icon"
-            onClick={handleWhatsAppRegister}
-            className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-8 w-8"
-          >
-            <img src={whatsappLogo} alt="WhatsApp" className="w-4 h-4 object-contain" />
-          </Button>
-
-          <Button
-            size="icon"
-            onClick={handleCameraCapture}
-            disabled={isProcessingReceipt}
-            className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-8 w-8 disabled:opacity-50"
-          >
-            <Camera className="h-4 w-4 text-gray-700" />
-          </Button>
-          
-          <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-            <DialogTrigger asChild>
-              <Button
-                size="icon"
-                className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-8 w-8"
+            {/* Toggle Switch */}
+            <div className="bg-white p-1 rounded-full shadow-sm flex items-center">
+              <button
+                onClick={() => setViewMode('month')}
+                className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all ${viewMode === 'month'
+                  ? 'bg-[#8D6E63] text-white shadow-md'
+                  : 'text-gray-500 hover:bg-gray-100'
+                  }`}
               >
-                <Plus className="h-4 w-4 text-gray-700" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="bg-white rounded-[20px] shadow-xl border border-blue-100 max-h-[85vh] overflow-y-auto max-w-md w-[90%] animate-fade-in">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-bold text-card-foreground">
-                  Registrar Gasto
-                </DialogTitle>
-              </DialogHeader>
-              
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="space-y-2">
-                  <Label htmlFor="amount" className="text-card-foreground/90 text-base">
-                    ¿Cuál es el monto de tu gasto?
-                  </Label>
-                  <Input
-                    id="amount"
-                    type="number"
-                    step="0.01"
-                    placeholder="$0.00"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    required
-                    className="bg-card/50 border-border/30 text-card-foreground placeholder:text-muted-foreground h-14 text-lg"
+                Mes
+              </button>
+              <button
+                onClick={() => setViewMode('year')}
+                className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all ${viewMode === 'year'
+                  ? 'bg-[#8D6E63] text-white shadow-md'
+                  : 'text-gray-500 hover:bg-gray-100'
+                  }`}
+              >
+                Año
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Stats Card */}
+        <div className="bg-white rounded-3xl p-6 shadow-sm mb-6 relative overflow-hidden transition-all duration-500 animate-in fade-in slide-in-from-bottom-4">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs font-bold text-gray-400 tracking-wider uppercase">Gastos Totales</span>
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-4xl font-extrabold text-gray-900">
+                  ${totalGastos.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+                </span>
+                <span className="text-xl text-gray-400 font-medium">
+                  {totalGastos % 1 === 0 ? '.00' : `.${totalGastos.toFixed(2).split('.')[1]}`}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 mt-2">
+                <div className="w-2 h-2 rounded-full bg-[#8D6E63]"></div>
+                <span className="text-sm text-gray-500 font-medium">
+                  {viewMode === 'month'
+                    ? `${transactions.length} Transacciones realizadas`
+                    : `${transactions.length} Transacciones anuales`
+                  }
+                </span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => navigate('/categorias')}
+              className="w-14 h-14 rounded-2xl bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition-colors shadow-sm ml-4"
+              aria-label="Editar categorías"
+            >
+              <Tags className="w-7 h-7 text-[#8D6E63]" />
+            </button>
+          </div>
+
+          {/* Download Button */}
+          <button
+            onClick={async () => {
+              try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) {
+                  toast({
+                    title: "Error",
+                    description: "Debes iniciar sesión para descargar el reporte",
+                    variant: "destructive"
+                  });
+                  return;
+                }
+
+                toast({
+                  title: "Generando reporte",
+                  description: "Por favor espera...",
+                });
+
+                const { data, error } = await supabase.functions.invoke('generate-statement-pdf', {
+                  body: {
+                    userId: user.id,
+                    viewMode: viewMode === 'month' ? 'mensual' : 'anual',
+                    month: currentMonth.getMonth() + 1,
+                    year: currentMonth.getFullYear(),
+                    type: 'gasto'
+                  }
+                });
+
+                if (error) throw error;
+
+                const blob = new Blob([data.html], { type: 'text/html' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = data.filename || `gastos_${viewMode === 'month' ? `${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}` : currentMonth.getFullYear()}.html`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                toast({
+                  title: "Reporte generado",
+                  description: "Abre el archivo y usa Ctrl+P para guardar como PDF",
+                });
+              } catch (error) {
+                console.error('Error al generar reporte:', error);
+                toast({
+                  title: "Error",
+                  description: "No se pudo generar el reporte",
+                  variant: "destructive"
+                });
+              }
+            }}
+            className="w-full py-3.5 border border-gray-100 bg-gray-50 rounded-2xl flex items-center justify-center gap-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 transition-colors mb-8"
+          >
+            <Download className="w-4 h-4 text-gray-500" />
+            Descargar reporte de gastos en PDF
+          </button>
+
+          {/* Chart Section */}
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-gray-900">Evolución de Gastos</h3>
+              <div className="flex gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-[#8D6E63]"></div>
+                <div className="w-2 h-2 rounded-full bg-[#8D6E63] opacity-30"></div>
+              </div>
+            </div>
+
+            <div className="h-48 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData}>
+                  <defs>
+                    <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#8D6E63" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#8D6E63" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <Area
+                    type="monotone"
+                    dataKey="amount"
+                    stroke="#8D6E63"
+                    strokeWidth={3}
+                    fillOpacity={1}
+                    fill="url(#colorExpense)"
+                    animationDuration={1000}
                   />
-                </div>
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="description" className="text-card-foreground/90 text-base">
-                    ¿Qué nombre le quieres dar?
-                  </Label>
-                  <Input
-                    id="description"
-                    placeholder="Nombre de tu gasto"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    required
-                    className="bg-card/50 border-border/30 text-card-foreground placeholder:text-muted-foreground h-14"
-                  />
-                </div>
+            {/* Custom X Axis Labels */}
+            <div className="flex justify-between px-2 mt-2 text-xs text-gray-400 font-medium">
+              {viewMode === 'month' ? (
+                <>
+                  <span>1</span>
+                  <span>5</span>
+                  <span>10</span>
+                  <span>15</span>
+                  <span>20</span>
+                  <span>25</span>
+                  <span>30</span>
+                </>
+              ) : (
+                <>
+                  <span>Ene</span>
+                  <span>Abr</span>
+                  <span>Ago</span>
+                  <span>Dic</span>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
 
-                <div className="space-y-2">
-                  <Label className="text-card-foreground/90 text-base">
-                    ¿El pago fue en efectivo?
-                  </Label>
-                  <Select value={paymentMethod} onValueChange={(value) => {
-                    setPaymentMethod(value);
-                    if (value === 'efectivo') {
-                      setAccount('efectivo');
-                    } else {
-                      setAccount('');
-                    }
-                  }} required>
-                    <SelectTrigger className="bg-card/50 border-border/30 text-card-foreground h-14">
-                      <SelectValue placeholder="Selecciona una opción" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-card border-border/30 z-50">
-                      <SelectItem value="efectivo" className="text-card-foreground">Sí</SelectItem>
-                      <SelectItem value="tarjeta" className="text-card-foreground">No</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+        {/* Transaction History */}
+        <div className="mb-24 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
+          <div className="flex items-center justify-between mb-4 px-2 relative z-10">
+            <h3 className="text-lg font-bold text-gray-900">Historial de Gastos</h3>
 
-                {paymentMethod === 'tarjeta' && (
+            <div className="relative">
+              <button
+                onClick={() => setIsSortOpen(!isSortOpen)}
+                className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full shadow-sm text-xs font-semibold text-gray-600 border border-gray-100 hover:bg-gray-50 transition-colors"
+              >
+                {selectedLabel}
+                <ChevronDown className={`w-3 h-3 transition-transform ${isSortOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isSortOpen && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right z-50">
+                  {SORT_OPTIONS.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => {
+                        setSortOption(option.value);
+                        setIsSortOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors ${sortOption === option.value ? 'font-bold text-[#8D6E63] bg-gray-50' : 'text-gray-600 font-medium'
+                        }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Overlay to close sort menu */}
+          {isSortOpen && (
+            <div className="fixed inset-0 z-0" onClick={() => setIsSortOpen(false)}></div>
+          )}
+
+          {/* Transactions List */}
+          <div className="flex flex-col gap-3 relative z-0 max-h-[460px] overflow-y-auto pr-1 no-scrollbar">
+            {sortedTransactions.length > 0 ? (
+              sortedTransactions.map((tx, index) => {
+                const [year, month, day] = tx.transaction_date.split('-').map(Number);
+                const txDate = new Date(year, month - 1, day);
+
+                return (
+                  <div
+                    key={tx.id}
+                    className="bg-white rounded-3xl p-4 shadow-sm flex items-center justify-between group cursor-pointer hover:shadow-md transition-all animate-in slide-in-from-bottom-2 duration-500 shrink-0"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-[#F5F0EE] flex items-center justify-center text-[#8D6E63]">
+                        <ShoppingCart className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-gray-900">{tx.description}</h4>
+                        <p className="text-xs text-gray-500 font-medium">
+                          {txDate.toLocaleDateString('es-MX', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric'
+                          })}
+                        </p>
+                        <div className="flex gap-1 mt-1">
+                          {tx.categories && (
+                            <Badge className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#F5F0EE] text-[#8D6E63] border-0">
+                              {tx.categories.name}
+                            </Badge>
+                          )}
+                          {tx.payment_method && (
+                            <Badge className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 border-0 uppercase tracking-wide">
+                              {tx.payment_method}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="block font-bold text-gray-900 text-lg">
+                        -${Number(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="text-center py-10 text-gray-400 text-sm">
+                No hay transacciones en este periodo.
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Floating Actions */}
+        <div className="fixed bottom-20 left-0 right-0 px-6 flex justify-center z-50">
+          <div className="flex gap-2">
+            <button
+              onClick={handleCameraCapture}
+              disabled={isProcessingReceipt}
+              className="bg-white text-gray-700 rounded-full p-4 shadow-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
+            >
+              <Camera className="w-5 h-5" />
+            </button>
+
+            <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+              <DialogTrigger asChild>
+                <button className="bg-[#8D6E63] text-white rounded-full px-6 py-4 shadow-xl flex items-center gap-3 hover:scale-105 active:scale-95 transition-all">
+                  <Plus className="w-5 h-5" />
+                  <span className="font-semibold">Nuevo Gasto</span>
+                </button>
+              </DialogTrigger>
+              <DialogContent className="bg-white rounded-[20px] shadow-xl border border-gray-100 max-h-[85vh] overflow-y-auto max-w-md w-[90%]">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-bold text-gray-900">
+                    Registrar Gasto
+                  </DialogTitle>
+                </DialogHeader>
+
+                <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="space-y-2">
-                    <Label className="text-card-foreground/90 text-base">
-                      ¿De cuál tarjeta/cuenta salió el gasto?
+                    <Label htmlFor="amount" className="text-gray-900 text-base">
+                      ¿Cuál es el monto de tu gasto?
                     </Label>
-                    <Select value={account} onValueChange={setAccount} required>
-                      <SelectTrigger className="bg-card/50 border-border/30 text-card-foreground h-14">
-                        <SelectValue placeholder="Escoge o agrega tu tarjeta/cuenta" />
+                    <Input
+                      id="amount"
+                      type="number"
+                      step="0.01"
+                      placeholder="$0.00"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      required
+                      className="bg-gray-50 border-gray-200 text-gray-900 h-14 text-lg"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="description" className="text-gray-900 text-base">
+                      ¿Qué nombre le quieres dar?
+                    </Label>
+                    <Input
+                      id="description"
+                      placeholder="Nombre de tu gasto"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      required
+                      className="bg-gray-50 border-gray-200 text-gray-900 h-14"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-gray-900 text-base">
+                      ¿El pago fue en efectivo?
+                    </Label>
+                    <Select value={paymentMethod} onValueChange={(value) => {
+                      setPaymentMethod(value);
+                      if (value === 'efectivo') {
+                        setAccount('efectivo');
+                      } else {
+                        setAccount('');
+                      }
+                    }} required>
+                      <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900 h-14">
+                        <SelectValue placeholder="Selecciona una opción" />
                       </SelectTrigger>
-                      <SelectContent className="bg-card border-border/30 z-50">
-                        <SelectItem value="banco1" className="text-card-foreground">Cuenta Principal</SelectItem>
-                        <SelectItem value="banco2" className="text-card-foreground">Cuenta de Ahorros</SelectItem>
-                        <SelectItem value="banco3" className="text-card-foreground">Tarjeta Nómina</SelectItem>
-                        <SelectItem value="otro" className="text-card-foreground">Otra cuenta</SelectItem>
+                      <SelectContent className="bg-white border-gray-200 z-50">
+                        <SelectItem value="efectivo">Sí</SelectItem>
+                        <SelectItem value="tarjeta">No</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                )}
 
-                <div className="space-y-2">
-                  <Label className="text-card-foreground/90 text-base">
-                    Categoría de tu gasto
-                  </Label>
-                  <Select value={category} onValueChange={setCategory} required>
-                    <SelectTrigger className="bg-card/50 border-border/30 text-card-foreground h-14">
-                      <SelectValue placeholder="Categorías" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-card border-border/30 z-50">
-                      {categories.length === 0 ? (
-                        <SelectItem value="none" className="text-card-foreground" disabled>
-                          No hay categorías. Créalas en Gestionar Categorías
-                        </SelectItem>
-                      ) : (
-                        categories.map((cat) => (
-                          <SelectItem key={cat.id} value={cat.id} className="text-card-foreground">
-                            {cat.name}
+                  {paymentMethod === 'tarjeta' && (
+                    <div className="space-y-2">
+                      <Label className="text-gray-900 text-base">
+                        ¿De cuál tarjeta/cuenta salió el gasto?
+                      </Label>
+                      <Select value={account} onValueChange={setAccount} required>
+                        <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900 h-14">
+                          <SelectValue placeholder="Escoge o agrega tu tarjeta/cuenta" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white border-gray-200 z-50">
+                          <SelectItem value="banco1">Cuenta Principal</SelectItem>
+                          <SelectItem value="banco2">Cuenta de Ahorros</SelectItem>
+                          <SelectItem value="banco3">Tarjeta Nómina</SelectItem>
+                          <SelectItem value="otro">Otra cuenta</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <Label className="text-gray-900 text-base">
+                      Categoría de tu gasto
+                    </Label>
+                    <Select value={category} onValueChange={setCategory} required>
+                      <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900 h-14">
+                        <SelectValue placeholder="Categorías" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white border-gray-200 z-50">
+                        {categories.length === 0 ? (
+                          <SelectItem value="none" disabled>
+                            No hay categorías. Créalas en Gestionar Categorías
                           </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-card-foreground/90 text-base">
-                    ¿Cada cuánto tienes este gasto?
-                  </Label>
-                  <Select value={frequency} onValueChange={setFrequency} required>
-                    <SelectTrigger className="bg-card/50 border-border/30 text-card-foreground h-14">
-                      <SelectValue placeholder="Sin frecuencia" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-card border-border/30 z-50">
-                      <SelectItem value="unico" className="text-card-foreground">Sin frecuencia</SelectItem>
-                      <SelectItem value="diario" className="text-card-foreground">Diario</SelectItem>
-                      <SelectItem value="semanal" className="text-card-foreground">Semanal</SelectItem>
-                      <SelectItem value="quincenal" className="text-card-foreground">Quincenal</SelectItem>
-                      <SelectItem value="mensual" className="text-card-foreground">Mensual</SelectItem>
-                      <SelectItem value="anual" className="text-card-foreground">Anual</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="date" className="text-card-foreground/90 text-base">
-                    Fecha de tu gasto
-                  </Label>
-                  <Input
-                    id="date"
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    required
-                    className="bg-card/50 border-border/30 text-card-foreground h-14"
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg font-semibold rounded-[20px] shadow-xl border border-blue-100 hover:scale-105 active:scale-95 hover:shadow-2xl transition-all duration-200"
-                >
-                  Agregar Gasto
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
-          
-          <Button
-            size="icon"
-            onClick={() => navigate('/categorias')}
-            className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-8 w-8"
-          >
-            <Sliders className="h-4 w-4 text-gray-700" />
-          </Button>
-        </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Período selector */}
-      <div className="px-4 mt-4 mb-4">
-        <div className="flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handlePreviousPeriod}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          
-          <div className="bg-white rounded-[20px] shadow-xl px-4 py-2 border border-blue-100">
-            <p className="text-foreground font-medium capitalize text-center">
-              {getPeriodLabel()}
-            </p>
-          </div>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleNextPeriod}
-            className="bg-white rounded-[20px] shadow-xl hover:bg-white/90 text-foreground hover:scale-105 transition-all border border-blue-100 h-10 w-10"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </Button>
-        </div>
-      </div>
-
-      <div className="px-4 space-y-4">
-        {/* Total de gastos destacado */}
-        <Card className="p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 animate-fade-in">
-          <div className="flex items-start gap-3 mb-4">
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-red-500/10">
-              <TrendingDown className="h-6 w-6 text-red-600" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-600 mb-1 font-medium">
-                Total de Gastos {viewMode === 'mensual' ? 'Mensuales' : 'Anuales'}
-              </p>
-              <p className="text-3xl sm:text-4xl font-semibold tracking-tight leading-tight break-words text-red-600">
-                ${totalGastos.toLocaleString('es-MX', { minimumFractionDigits: 2 })}
-              </p>
-            </div>
-          </div>
-          
-          <div className="space-y-2 mb-4">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Transacciones:</span>
-              <span className="text-lg font-semibold tracking-tight text-gray-900">{transactions.length}</span>
-            </div>
-          </div>
-          
-          {/* Botón de descarga de PDF */}
-          <div>
-            <Button 
-              variant="ghost" 
-              className="w-full bg-gray-50 hover:bg-gray-100 rounded-2xl text-gray-900 transition-all h-auto py-3 px-4 text-xs font-semibold tracking-tight flex items-center justify-center"
-              onClick={async () => {
-                try {
-                  const { data: { user } } = await supabase.auth.getUser();
-                  if (!user) {
-                    toast({
-                      title: "Error",
-                      description: "Debes iniciar sesión para descargar el reporte",
-                      variant: "destructive"
-                    });
-                    return;
-                  }
-
-                  toast({
-                    title: "Generando reporte",
-                    description: "Por favor espera...",
-                  });
-
-                  const { data, error } = await supabase.functions.invoke('generate-statement-pdf', {
-                    body: {
-                      userId: user.id,
-                      viewMode: viewMode,
-                      month: currentMonth.getMonth() + 1,
-                      year: currentMonth.getFullYear(),
-                      type: 'gasto'
-                    }
-                  });
-
-                  if (error) throw error;
-
-                  // Crear blob del HTML y descargar
-                  const blob = new Blob([data.html], { type: 'text/html' });
-                  const url = window.URL.createObjectURL(blob);
-                  const a = document.createElement('a');
-                  a.href = url;
-                  a.download = data.filename || `gastos_${viewMode === 'mensual' ? `${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}` : currentMonth.getFullYear()}.html`;
-                  document.body.appendChild(a);
-                  a.click();
-                  window.URL.revokeObjectURL(url);
-                  document.body.removeChild(a);
-
-                  toast({
-                    title: "Reporte generado",
-                    description: "Abre el archivo y usa Ctrl+P para guardar como PDF",
-                  });
-                } catch (error) {
-                  console.error('Error al generar reporte:', error);
-                  toast({
-                    title: "Error",
-                    description: "No se pudo generar el reporte",
-                    variant: "destructive"
-                  });
-                }
-              }}
-            >
-              <Download className="h-4 w-4 mr-1.5 flex-shrink-0" />
-              <span className="break-words whitespace-normal">Descargar reporte de gastos en PDF</span>
-            </Button>
-          </div>
-        </Card>
-
-        {/* Botones de filtro */}
-        <div className="flex gap-3 mb-4">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/subscriptions', { state: { from: '/gastos' } })}
-            className="flex-1 bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 text-foreground font-medium"
-          >
-            Suscripciones
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/daily-expenses', { state: { from: '/gastos' } })}
-            className="flex-1 bg-white rounded-[20px] shadow-xl hover:bg-white/90 hover:scale-105 transition-all border border-blue-100 h-12 text-foreground font-medium"
-          >
-            Gastos cotidianos
-          </Button>
-        </div>
-
-        {/* Lista de transacciones */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold tracking-tight text-gray-900 flex items-center gap-2">
-              <TrendingDown className="h-5 w-5 text-destructive" />
-              Historial de Gastos
-            </h3>
-            
-            <Select value={sortBy} onValueChange={(value: 'recent' | 'highest' | 'lowest') => setSortBy(value)}>
-              <SelectTrigger className="w-[160px] bg-white rounded-[12px] shadow-md border border-blue-100 text-foreground h-9 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-card border-border/30 z-[100]">
-                <SelectItem value="recent" className="text-foreground text-xs">Más recientes</SelectItem>
-                <SelectItem value="highest" className="text-foreground text-xs">Mayor a menor</SelectItem>
-                <SelectItem value="lowest" className="text-foreground text-xs">Menor a mayor</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          {transactions.length === 0 ? (
-            <Card className="p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm text-center border-0">
-              <p className="text-gray-600">No hay gastos registrados este mes</p>
-            </Card>
-          ) : (
-            [...transactions].sort((a, b) => {
-              if (sortBy === 'recent') {
-                return new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime();
-              } else if (sortBy === 'highest') {
-                return Number(b.amount) - Number(a.amount);
-              } else {
-                return Number(a.amount) - Number(b.amount);
-              }
-            }).map((item, index) => {
-              const transactionDate = new Date(item.transaction_date);
-              const categoryEmoji = item.categories ? getCategoryEmoji(item.categories.name) : '💸';
-              
-              const capitalizedDescription = item.description.charAt(0).toUpperCase() + item.description.slice(1);
-              const capitalizedPaymentMethod = item.payment_method 
-                ? item.payment_method.charAt(0).toUpperCase() + item.payment_method.slice(1) 
-                : '';
-              
-              return (
-                <Card 
-                  key={item.id} 
-                  className="p-3 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 hover:scale-105 transition-all animate-fade-in active:scale-95 cursor-pointer"
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
-                  <div className="flex items-center gap-2">
-                    {/* Logo de categoría */}
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[hsl(0,55%,40%)] to-[hsl(0,65%,35%)] flex items-center justify-center flex-shrink-0 border border-[hsl(0,60%,45%)]/70 shadow-md">
-                      <span className="text-base">{categoryEmoji}</span>
-                    </div>
-                    
-                    {/* Información */}
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-foreground text-sm leading-tight">
-                        {capitalizedDescription}
-                      </h4>
-                      <p className="text-xs text-foreground/80 font-medium leading-tight">
-                        {transactionDate.toLocaleDateString('es-MX', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric'
-                        })}
-                      </p>
-                      <div className="flex gap-1 flex-wrap mt-1">
-                        {item.categories && (
-                          <Badge 
-                            className="text-[10px] font-semibold bg-gradient-to-r from-[hsl(0,60%,45%)] to-[hsl(0,70%,40%)] text-white border-0 shadow-sm px-2 py-0.5"
-                          >
-                            {item.categories.name.charAt(0).toUpperCase() + item.categories.name.slice(1)}
-                          </Badge>
+                        ) : (
+                          categories.map((cat) => (
+                            <SelectItem key={cat.id} value={cat.id}>
+                              {cat.name}
+                            </SelectItem>
+                          ))
                         )}
-                        {item.payment_method && (
-                          <Badge 
-                            className="text-[10px] font-semibold bg-gradient-to-r from-[hsl(280,60%,45%)] to-[hsl(280,70%,40%)] text-white border-0 shadow-sm px-2 py-0.5"
-                          >
-                            {capitalizedPaymentMethod}
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                    
-                    {/* Monto */}
-                    <div className="text-right flex-shrink-0">
-                      <p className="text-base font-bold text-foreground">
-                        -${Number(item.amount).toLocaleString('es-MX', { minimumFractionDigits: 2 })}
-                      </p>
-                    </div>
+                      </SelectContent>
+                    </Select>
                   </div>
-                </Card>
-              );
-            })
-          )}
+
+                  <div className="space-y-2">
+                    <Label className="text-gray-900 text-base">
+                      ¿Cada cuánto tienes este gasto?
+                    </Label>
+                    <Select value={frequency} onValueChange={setFrequency} required>
+                      <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900 h-14">
+                        <SelectValue placeholder="Sin frecuencia" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white border-gray-200 z-50">
+                        <SelectItem value="unico">Sin frecuencia</SelectItem>
+                        <SelectItem value="diario">Diario</SelectItem>
+                        <SelectItem value="semanal">Semanal</SelectItem>
+                        <SelectItem value="quincenal">Quincenal</SelectItem>
+                        <SelectItem value="mensual">Mensual</SelectItem>
+                        <SelectItem value="anual">Anual</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="date" className="text-gray-900 text-base">
+                      Fecha de tu gasto
+                    </Label>
+                    <Input
+                      id="date"
+                      type="date"
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
+                      required
+                      className="bg-gray-50 border-gray-200 text-gray-900 h-14"
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full bg-[#8D6E63] hover:bg-[#795E56] text-white h-14 text-lg font-semibold rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all duration-200"
+                  >
+                    Agregar Gasto
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
       </div>
+
+      <BottomNav />
     </div>
   );
 };

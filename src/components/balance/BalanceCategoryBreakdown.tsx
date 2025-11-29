@@ -68,18 +68,19 @@ const BalanceCategoryBreakdown: React.FC<BalanceCategoryBreakdownProps> = ({ tit
                 <span className="font-bold text-sm text-[#5D4037]">{title}</span>
             </div>
 
-            <div className="flex flex-col gap-6">
-                {/* Chart Section */}
-                <div className="h-40 w-full relative">
+            {/* Responsive layout: stacked on mobile, side-by-side on large screens */}
+            <div className="flex flex-col lg:flex-row-reverse lg:items-center lg:gap-8">
+                {/* Chart Section - Right side on large screens */}
+                <div className="h-64 lg:h-96 w-full lg:w-[45%] relative flex-shrink-0">
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Pie
                                 data={data}
                                 cx="50%"
                                 cy="50%"
-                                innerRadius={45}
-                                outerRadius={65}
-                                paddingAngle={5}
+                                innerRadius="40%"
+                                outerRadius="70%"
+                                paddingAngle={4}
                                 dataKey="amount"
                                 stroke="none"
                             >
@@ -97,38 +98,46 @@ const BalanceCategoryBreakdown: React.FC<BalanceCategoryBreakdownProps> = ({ tit
                                     padding: '6px 10px',
                                 }}
                                 itemStyle={{ color: '#fff' }}
-                                formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
+                                formatter={(value: number, _name: string, props: any) => [
+                                    `$${(value as number).toLocaleString()}`,
+                                    props?.payload?.name || ''
+                                ]}
                             />
                         </PieChart>
                     </ResponsiveContainer>
                     {/* Center Text - Formatted Amount */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-                        <div className="flex items-baseline gap-[1px]">
-                            <span className="text-sm font-black text-[#5D4037] tracking-tighter leading-none">
-                                ${integerPart}
-                            </span>
-                            <span className="text-[10px] font-bold text-gray-500 opacity-70">
-                                .{decimalPart}
-                            </span>
+                        <div className="flex flex-col items-center">
+                            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wide">Total</span>
+                            <div className="flex items-baseline gap-[1px]">
+                                <span className="text-base lg:text-xl font-black text-[#5D4037] tracking-tighter leading-none">
+                                    ${integerPart}
+                                </span>
+                                <span className="text-[10px] lg:text-xs font-bold text-gray-500 opacity-70">
+                                    .{decimalPart}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Legend List */}
-                <div className="flex flex-col gap-3">
+                {/* Legend List - Left side on large screens */}
+                <div className="flex flex-col gap-3 mt-6 lg:mt-0 lg:w-1/2">
                     {data.map((item, index) => {
                         const IconComponent = getCategoryIcon(item.name, type);
                         return (
-                            <div key={index} className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${item.color}20` }}>
+                            <div key={index} className="flex items-center justify-between group hover:bg-gray-50 rounded-xl p-2 -mx-2 transition-colors">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm" style={{ backgroundColor: `${item.color}15` }}>
                                         <IconComponent className="w-4 h-4" style={{ color: item.color }} />
                                     </div>
-                                    <span className="text-xs font-medium text-gray-500">{item.name}</span>
+                                    <div className="flex flex-col">
+                                        <span className="text-xs font-semibold text-gray-700">{item.name}</span>
+                                        <span className="text-[10px] text-gray-400">{item.percent}% del total</span>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-xs font-bold text-[#5D4037]">${(item.amount / 1000).toFixed(1)}k</span>
-                                    <span className="text-[10px] font-medium text-gray-400 w-8 text-right">{item.percent}%</span>
+                                <div className="flex flex-col items-end">
+                                    <span className="text-sm font-bold text-[#5D4037]">${item.amount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
                                 </div>
                             </div>
                         );

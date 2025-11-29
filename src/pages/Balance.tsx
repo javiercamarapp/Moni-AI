@@ -10,6 +10,7 @@ import StatCard from '@/components/balance/StatCard';
 import BalanceCategoryBreakdown from '@/components/balance/BalanceCategoryBreakdown';
 import BalanceInsights from '@/components/balance/BalanceInsights';
 import BalanceEvolutionChart from '@/components/balance/BalanceEvolutionChart';
+import ExpenseBreakdownWidget from '@/components/dashboard/ExpenseBreakdownWidget';
 
 interface CategoryBalance {
   id: string;
@@ -143,6 +144,8 @@ const Balance = () => {
   const [isUpdatingProjections, setIsUpdatingProjections] = useState(false);
   const [weeklyData, setWeeklyData] = useState<DayData[]>([]);
   const [weeklyInsight, setWeeklyInsight] = useState<string>('');
+  const [upcomingSubscriptions, setUpcomingSubscriptions] = useState<any[]>([]);
+  const [dailyExpenses, setDailyExpenses] = useState<Array<{ name: string, amount: number, icon: string }>>([]);
 
   // Extract year and month for PDF generation
   const selectedYear = currentMonth.getFullYear();
@@ -155,6 +158,7 @@ const Balance = () => {
   useEffect(() => {
     fetchBalanceData();
     fetchWeeklyData();
+    fetchSubscriptionsAndDailyExpenses();
   }, [currentMonth, viewMode]);
 
   // Fetch AI predictions ONCE when component loads or when actual data changes
@@ -416,6 +420,71 @@ const Balance = () => {
       }
     } catch (error) {
       console.error('Error fetching weekly data:', error);
+    }
+  };
+
+  const fetchSubscriptionsAndDailyExpenses = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Fetch subscriptions
+      const { data: subscriptionsData } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('type', 'gasto')
+        .in('frequency', ['mensual', 'monthly', 'anual', 'annual'])
+        .order('amount', { ascending: false });
+
+      setUpcomingSubscriptions(subscriptionsData || []);
+
+      // Calculate daily expenses for current month
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+      const { data: dailyExpensesData } = await supabase
+        .from('transactions')
+        .select('*, categories(name)')
+        .eq('user_id', user.id)
+        .eq('type', 'gasto')
+        .gte('transaction_date', startOfMonth.toISOString().split('T')[0])
+        .lte('transaction_date', endOfMonth.toISOString().split('T')[0])
+        .order('amount', { ascending: false });
+
+      if (dailyExpensesData && dailyExpensesData.length > 0) {
+        const categoryMap = new Map<string, { name: string, total: number, icon: string }>();
+
+        dailyExpensesData.forEach((transaction) => {
+          const categoryName = transaction.categories?.name || transaction.description || 'Otros';
+          const icon = '💸';
+
+          if (categoryMap.has(categoryName)) {
+            const existing = categoryMap.get(categoryName)!;
+            existing.total += Number(transaction.amount);
+          } else {
+            categoryMap.set(categoryName, {
+              name: categoryName,
+              total: Number(transaction.amount),
+              icon
+            });
+          }
+        });
+
+        const expensesArray = Array.from(categoryMap.values())
+          .map(cat => ({
+            name: cat.name,
+            amount: cat.total,
+            icon: cat.icon
+          }))
+          .sort((a, b) => b.amount - a.amount)
+          .slice(0, 5);
+
+        setDailyExpenses(expensesArray);
+      }
+    } catch (error) {
+      console.error('Error fetching subscriptions and daily expenses:', error);
     }
   };
 
@@ -878,6 +947,13 @@ const Balance = () => {
         {weeklyData.length > 0 && (
           <BalanceEvolutionChart data={weeklyData} />
         )}
+
+        {/* 4.5 Expense Breakdown - Subscriptions & Daily Expenses */}
+        <ExpenseBreakdownWidget
+          subscriptionsTotal={upcomingSubscriptions.reduce((sum, sub) => sum + Number(sub.amount), 0)}
+          subscriptionsCount={upcomingSubscriptions.length}
+          dailyExpenses={dailyExpenses.reduce((sum, exp) => sum + Number(exp.amount), 0)}
+        />
 
         {/* 5. Breakdown Charts */}
         <div className="grid grid-cols-1 gap-3">

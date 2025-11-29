@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Target, Plus, TrendingUp, Sparkles, ArrowLeft, Lightbulb, Users } from "lucide-react";
+import { Target, Plus, TrendingUp, Sparkles, ChevronLeft, Lightbulb, Users, X } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +12,7 @@ import { AddFundsModal } from "@/components/goals/AddFundsModal";
 import { formatCurrency } from "@/lib/utils";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { getGoalIcon } from "@/lib/goalIcons";
 
 interface Goal {
   id: string;
@@ -52,6 +53,7 @@ const Goals = () => {
     open: false,
     goal: null
   });
+  const [expandedGoal, setExpandedGoal] = useState<Goal | null>(null);
   
   const autoplayPlugin = useRef(
     Autoplay({ delay: 4000, stopOnInteraction: true })
@@ -270,145 +272,206 @@ const Goals = () => {
 
   return (
     <>
-      <div className="page-standard min-h-screen pb-24 animate-fade-in">
+      <div className="page-standard min-h-screen pb-24">
         
-        {/* Header */}
-        <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
-          <div className="page-container py-3">
+        <main className="page-container pt-6 space-y-4">
+          {/* Header Row */}
+          <header className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate(-1)}
-                className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="w-9 h-9 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all active:scale-95 text-[#5D4037]/70"
               >
-                <ArrowLeft className="h-4 w-4 text-gray-700" />
-              </Button>
-              <div>
-                <h1 className="text-lg font-semibold text-gray-900 tracking-tight">
-                  Mis Metas
-                </h1>
-                <p className="text-xs text-gray-600">
-                  Alcanza tus objetivos con predicciones AI
-                </p>
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <div className="flex flex-col">
+                <h1 className="text-xl font-black text-[#5D4037] leading-none mb-1">Mis Metas</h1>
+                <p className="text-xs text-gray-500">Alcanza tus objetivos con AI</p>
               </div>
             </div>
-          </div>
-        </div>
+            
+            {/* New Goal Button */}
+            <button
+              onClick={() => setCreateModalOpen(true)}
+              className="flex items-center gap-1.5 bg-[#8D6E63] hover:bg-[#795548] text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95"
+            >
+              <Plus size={14} strokeWidth={3} />
+              <span>Nueva</span>
+            </button>
+          </header>
 
-        <div className="page-container py-6 space-y-6">
+          <div className="space-y-4">
           {loading ? (
             <div className="py-12">
               <MoniLoader size="lg" message="Cargando tus metas..." />
             </div>
           ) : goals.length === 0 ? (
             // Empty State
-            <div className="text-center py-16">
-              <div className="bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-                <Target className="h-12 w-12 text-purple-600" />
+            <div className="text-center py-12">
+              <div className="bg-[#F5F0EE] rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-5">
+                <Target className="h-10 w-10 text-[#8D6E63]" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-bold text-[#5D4037] mb-2">
                 Crea tu primera meta
               </h3>
-              <p className="text-sm text-gray-600 mb-6 max-w-md mx-auto">
-                Define objetivos financieros y deja que Moni AI te ayude a alcanzarlos con predicciones inteligentes
+              <p className="text-sm text-gray-500 mb-6 max-w-xs mx-auto">
+                Define objetivos y deja que Moni AI te ayude a alcanzarlos
               </p>
-              <Button
+              <button
                 onClick={() => setCreateModalOpen(true)}
-                className="h-12 px-8 bg-gray-900 text-white rounded-xl shadow-sm hover:bg-gray-800 transition-all border-0 font-semibold"
+                className="h-11 px-6 bg-[#8D6E63] hover:bg-[#795548] text-white rounded-xl shadow-sm transition-all font-bold text-sm active:scale-95"
               >
-                <Plus className="h-5 w-5 mr-2" />
+                <Plus className="h-4 w-4 mr-2 inline" />
                 Crear mi primera meta
-              </Button>
+              </button>
             </div>
           ) : (
             <>
-              {/* Stats Summary - Same as Group Goals */}
-              <div className="grid grid-cols-3 gap-2 mb-6">
-                <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-1.5 text-center shadow-sm">
-                  <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Ahorrado</p>
-                  <p className="text-[11px] font-bold text-white">{formatCurrency(stats.totalSaved)}</p>
+              {/* Stats Summary */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100/50">
+                  <p className="text-[10px] text-gray-400 mb-1 font-medium uppercase tracking-wide">Ahorrado</p>
+                  <p className="text-sm font-bold text-[#5D4037]">{formatCurrency(stats.totalSaved)}</p>
                 </div>
                 
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-1.5 text-center shadow-sm">
-                  <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Progreso</p>
-                  <p className="text-[11px] font-bold text-white">{stats.avgCompletion.toFixed(0)}%</p>
+                <div className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100/50">
+                  <p className="text-[10px] text-gray-400 mb-1 font-medium uppercase tracking-wide">Progreso</p>
+                  <p className="text-sm font-bold text-[#5D4037]">{stats.avgCompletion.toFixed(0)}%</p>
                 </div>
                 
-                <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-1.5 text-center shadow-sm">
-                  <p className="text-[8px] text-white/70 mb-0.5 font-medium uppercase tracking-wide">Activas</p>
-                  <p className="text-[11px] font-bold text-white">{goals.length}</p>
+                <div className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100/50">
+                  <p className="text-[10px] text-gray-400 mb-1 font-medium uppercase tracking-wide">Activas</p>
+                  <p className="text-sm font-bold text-[#5D4037]">{goals.length}</p>
                 </div>
               </div>
 
-              {/* AI Insights Carousel - Compact */}
+              {/* AI Insights Banner */}
               {aiInsights.length > 0 && (
-                <div className="mb-6">
-                  <Carousel 
-                    className="w-full"
-                    opts={{
-                      align: "center",
-                      loop: true,
-                    }}
-                    plugins={[insightsAutoplayPlugin.current]}
-                  >
-                    <CarouselContent>
-                      {aiInsights.map((insight, index) => (
-                        <CarouselItem key={index}>
-                          <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-100">
-                            <div className="flex items-center gap-1.5 justify-center">
-                              <span className="text-xs">🤖</span>
-                              <p className="text-xs text-gray-700 font-medium text-center">
-                                {insight}
-                              </p>
-                            </div>
+                <Carousel 
+                  className="w-full"
+                  opts={{
+                    align: "center",
+                    loop: true,
+                  }}
+                  plugins={[insightsAutoplayPlugin.current]}
+                >
+                  <CarouselContent>
+                    {aiInsights.map((insight, index) => (
+                      <CarouselItem key={index}>
+                        <div className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100/50">
+                          <div className="flex items-center gap-2 justify-center">
+                            <Sparkles className="w-4 h-4 text-[#8D6E63]" />
+                            <p className="text-xs text-gray-600 font-medium text-center">
+                              {insight}
+                            </p>
                           </div>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                  </Carousel>
-                </div>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                </Carousel>
               )}
 
-
-              {/* Goals Carousel */}
-              <Carousel 
-                className="w-full"
-                opts={{
-                  align: "start",
-                  loop: true,
-                }}
-                plugins={[autoplayPlugin.current]}
-              >
-                <CarouselContent className="-ml-4">
-                  {goals.map((goal) => (
-                    <CarouselItem key={goal.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
-                      <GoalCard
-                        goal={goal}
-                        onAddFunds={() => setAddFundsModal({ open: true, goal })}
-                        onViewDetails={() => navigate(`/goals/${goal.id}`)}
-                        onComplete={() => handleCompleteGoal(goal.id)}
-                      />
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-              </Carousel>
-
-              {/* Create Goal Button */}
-              <div className="mt-6 flex justify-center">
-                <Button
-                  onClick={() => setCreateModalOpen(true)}
-                  className="h-11 px-8 bg-white hover:bg-white/90 text-gray-900 rounded-xl font-semibold shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all border-0"
-                >
-                  <Plus className="h-5 w-5 mr-2" />
-                  Crear nueva meta
-                </Button>
+              {/* Compact Grid for Small Screens */}
+              <div className="grid grid-cols-2 gap-3 lg:hidden">
+                {goals.map((goal) => {
+                  const Icon = getGoalIcon(goal.title);
+                  const progress = (goal.current / goal.target) * 100;
+                  return (
+                    <div
+                      key={goal.id}
+                      onClick={() => setExpandedGoal(goal)}
+                      className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100/50 cursor-pointer hover:shadow-md active:scale-[0.98] transition-all"
+                    >
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-9 h-9 rounded-xl bg-[#F5F0EE] flex items-center justify-center flex-shrink-0">
+                          <Icon className="w-4 h-4 text-[#8D6E63]" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-bold text-[#5D4037] text-sm truncate">{goal.title}</h3>
+                          <p className="text-[10px] text-gray-400 uppercase tracking-wide">{goal.category}</p>
+                        </div>
+                      </div>
+                      
+                      {/* Mini Progress */}
+                      <div className="w-full bg-gray-100 rounded-full h-1.5 mb-2 overflow-hidden">
+                        <div
+                          className={`h-1.5 rounded-full transition-all ${
+                            progress >= 75 ? 'bg-emerald-500' :
+                            progress >= 50 ? 'bg-blue-500' :
+                            progress >= 25 ? 'bg-amber-500' :
+                            'bg-gray-400'
+                          }`}
+                          style={{ width: `${Math.min(progress, 100)}%` }}
+                        />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-[#5D4037]">{progress.toFixed(0)}%</span>
+                        <span className="text-[10px] text-gray-400">{formatCurrency(goal.current)}</span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
+              {/* Full Grid for Large Screens */}
+              <div className="hidden lg:grid lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                {goals.map((goal) => (
+                  <GoalCard
+                    key={goal.id}
+                    goal={goal}
+                    onAddFunds={() => setAddFundsModal({ open: true, goal })}
+                    onViewDetails={() => navigate(`/goals/${goal.id}`)}
+                    onComplete={() => handleCompleteGoal(goal.id)}
+                  />
+                ))}
+              </div>
             </>
           )}
-        </div>
+          </div>
+        </main>
       </div>
+
+      {/* Expanded Goal Modal (Small Screens) */}
+      {expandedGoal && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 lg:hidden"
+          onClick={() => setExpandedGoal(null)}
+        >
+          <div 
+            className="bg-[#f5f0ee] w-full max-w-sm rounded-[2rem] p-5 max-h-[80vh] overflow-y-auto animate-in zoom-in-95 fade-in duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <div className="flex justify-end mb-2">
+              <button
+                onClick={() => setExpandedGoal(null)}
+                className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm"
+              >
+                <X className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+            
+            {/* Full Goal Card */}
+            <GoalCard
+              goal={expandedGoal}
+              onAddFunds={() => {
+                setExpandedGoal(null);
+                setAddFundsModal({ open: true, goal: expandedGoal });
+              }}
+              onViewDetails={() => {
+                setExpandedGoal(null);
+                navigate(`/goals/${expandedGoal.id}`);
+              }}
+              onComplete={() => {
+                setExpandedGoal(null);
+                handleCompleteGoal(expandedGoal.id);
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       <BottomNav />
 

@@ -1,103 +1,119 @@
-import { useState, useRef, useEffect } from "react";
-import { ArrowLeft, TrendingUp, TrendingDown, ChevronDown, ChevronUp, Building2, CreditCard, Home, Wallet, Download, Info } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { cn } from "@/lib/utils";
-import { useNetWorth, useHasNetWorthData, TimeRange } from "@/hooks/useNetWorth";
-import NetWorthWidget from "@/components/analysis/NetWorthWidget";
-import networthIntro from "@/assets/networth-coins-bg.png";
-import BottomNav from "@/components/BottomNav";
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { ArrowLeft, TrendingUp, TrendingDown, Download, ListFilter, Wallet, Bitcoin, ChevronRight, Check, Search } from '@/components/networth/new-ui/Icons';
+import { EvolutionChart } from '@/components/networth/new-ui/EvolutionChart';
+import { FilterDropdown } from '@/components/networth/new-ui/FilterDropdown';
+import { AssetCard } from '@/components/networth/new-ui/AssetCard';
+import { useNavigate } from 'react-router-dom';
+import { useNetWorth, useHasNetWorthData, TimeRange, ChartDataPoint } from '@/hooks/useNetWorth';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import networthIntro from "@/assets/networth-coins-bg.png";
+import { Button } from "@/components/ui/button";
+import BottomNav from "@/components/BottomNav";
 
-type CategoryFilter = 'All' | 'Checking' | 'Savings' | 'Credit' | 'Loans' | 'Investments' | 'Property' | 'Other' | 'Mortgage';
+// Reusable Section Header
+const SectionHeader = ({
+  title,
+  onFilterClick,
+  isFilterActive,
+  children
+}: {
+  title: string,
+  onFilterClick: () => void,
+  isFilterActive: boolean,
+  children?: React.ReactNode
+}) => (
+  <div className="flex justify-between items-center mb-4 mt-8 relative z-30">
+    <h2 className="text-xl font-bold text-[#1C1917] tracking-tight">{title}</h2>
+    <div className="relative">
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onFilterClick();
+        }}
+        className={`flex items-center gap-2 px-4 py-2 rounded-full shadow-sm border text-xs font-semibold transition-colors ${isFilterActive ? 'bg-[#8C6A5D] text-white border-[#8C6A5D]' : 'bg-white border-stone-100 text-[#57534E] hover:bg-stone-50'}`}
+      >
+        <ListFilter size={14} />
+        Filtrar
+      </button>
+      {children}
+    </div>
+  </div>
+);
 
-const iconMap: Record<string, any> = {
-  Building2,
-  CreditCard,
-  Home,
-  Wallet,
-  TrendingUp,
-};
-
-const getIconForCategory = (category: string) => {
-  const lowerCategory = category.toLowerCase();
-  if (lowerCategory.includes('check')) return 'Building2';
-  if (lowerCategory.includes('saving')) return 'Wallet';
-  if (lowerCategory.includes('investment')) return 'TrendingUp';
-  if (lowerCategory.includes('property') || lowerCategory.includes('mortgage')) return 'Home';
-  if (lowerCategory.includes('credit')) return 'CreditCard';
-  if (lowerCategory.includes('loan')) return 'Building2';
-  return 'Wallet';
-};
-
-export default function NetWorth() {
+const NetWorth: React.FC = () => {
   const navigate = useNavigate();
-  const [timeRange, setTimeRange] = useState<TimeRange>('1Y');
-  const [assetsExpanded, setAssetsExpanded] = useState(false);
-  const [liabilitiesExpanded, setLiabilitiesExpanded] = useState(false);
-  const [assetFilter, setAssetFilter] = useState<CategoryFilter>('All');
-  const [liabilityFilter, setLiabilityFilter] = useState<CategoryFilter>('All');
-  const [showInstitutionFilter, setShowInstitutionFilter] = useState(false);
-  const [selectedInstitution, setSelectedInstitution] = useState<string>('All');
-  const [showSemiLiquidFilter, setShowSemiLiquidFilter] = useState(false);
-  const [selectedSemiLiquidType, setSelectedSemiLiquidType] = useState<string>('All');
-  const [dropdownPosition, setDropdownPosition] = useState<'bottom' | 'top'>('bottom');
-  const semiLiquidButtonRef = useRef<HTMLButtonElement>(null);
+  const [selectedRange, setSelectedRange] = useState<TimeRange>('1Y');
 
-  useEffect(() => {
-    if (showSemiLiquidFilter && semiLiquidButtonRef.current) {
-      const rect = semiLiquidButtonRef.current.getBoundingClientRect();
-      const spaceBelow = window.innerHeight - rect.bottom;
-      const spaceAbove = rect.top;
+  // Filtering States
+  const [showLiquidityFilters, setShowLiquidityFilters] = useState(false);
+  const [liquidityBank, setLiquidityBank] = useState('Todas');
 
-      // Si hay menos de 300px abajo, mostrar arriba
-      if (spaceBelow < 300 && spaceAbove > spaceBelow) {
-        setDropdownPosition('top');
-      } else {
-        setDropdownPosition('bottom');
-      }
-    }
-  }, [showSemiLiquidFilter]);
+  const [showSemiLiquidityFilters, setShowSemiLiquidityFilters] = useState(false);
+  const [semiLiquidityTag, setSemiLiquidityTag] = useState('Todos');
 
-  const { data: hasData, isLoading: checkingData, refetch: refetchHasData } = useHasNetWorthData();
-  const { data: netWorthData, isLoading: loadingData } = useNetWorth(timeRange);
+  // Data Fetching
+  const { data: hasData, isLoading: checkingData } = useHasNetWorthData();
+  const { data: netWorthData, isLoading: loadingData } = useNetWorth(selectedRange);
 
-  // Helper function to check if an asset is liquid (solo efectivo disponible)
-  const isLiquidAsset = (categoria: string) => {
-    return categoria === 'Activos líquidos';
-  };
+  // Derived Data
+  const liquidAssets = useMemo(() => {
+    if (!netWorthData) return [];
+    return netWorthData.assets.filter(a => a.categoria === 'Activos líquidos').map(a => ({
+      id: a.id,
+      icon: Wallet,
+      title: a.nombre,
+      subtitle: a.categoria,
+      amountFormatted: `$${Number(a.valor).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      institution: a.nombre.split(' ')[0], // Simple heuristic for institution
+      valor: Number(a.valor)
+    }));
+  }, [netWorthData]);
 
-  // Helper function to check if an asset is semi-liquid
-  const isSemiLiquidAsset = (categoria: string) => {
-    return categoria === 'Activos financieros' || categoria === 'Activos por cobrar';
-  };
+  const semiLiquidAssets = useMemo(() => {
+    if (!netWorthData) return [];
+    return netWorthData.assets.filter(a => a.categoria === 'Activos financieros' || a.categoria === 'Activos por cobrar').map(a => ({
+      id: a.id,
+      icon: a.categoria === 'Activos financieros' ? Bitcoin : Wallet,
+      title: a.nombre,
+      subtitle: a.categoria,
+      tag: a.subcategoria || (a.categoria === 'Activos financieros' ? 'Inversión' : 'Por Cobrar'),
+      amountFormatted: `$${Number(a.valor).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      isCrypto: a.subcategoria === 'Criptomonedas',
+      valor: Number(a.valor)
+    }));
+  }, [netWorthData]);
 
-  // Mostrar formulario si definitivamente no hay datos (no mientras está cargando)
+  // Totals
+  const totalLiquid = useMemo(() => liquidAssets.reduce((acc, curr) => acc + curr.valor, 0), [liquidAssets]);
+  const totalSemiLiquid = useMemo(() => semiLiquidAssets.reduce((acc, curr) => acc + curr.valor, 0), [semiLiquidAssets]);
+
+  // Filtered lists
+  const filteredLiquidAssets = liquidAssets.filter(asset => {
+    const matchesBank = liquidityBank === 'Todas' || asset.institution === liquidityBank;
+    return matchesBank;
+  });
+
+  const filteredSemiLiquidAssets = semiLiquidAssets.filter(asset => {
+    const matchesTag = semiLiquidityTag === 'Todos' || asset.tag === semiLiquidityTag;
+    return matchesTag;
+  });
+
+  // Unique filters
+  const uniqueBanks = ['Todas', ...Array.from(new Set(liquidAssets.map(a => a.institution).filter(Boolean))) as string[]];
+  const uniqueTags = ['Todos', ...Array.from(new Set(semiLiquidAssets.map(a => a.tag).filter(Boolean))) as string[]];
+
+  // Loading & Empty States
   if (!checkingData && hasData === false) {
     return (
       <div className="min-h-screen flex flex-col relative">
-        {/* Hero Image - Full Screen Background */}
         <div className="absolute inset-0 w-full h-full">
-          <img
-            src={networthIntro}
-            alt="Net Worth Intro"
-            className="w-full h-full object-cover"
-          />
+          <img src={networthIntro} alt="Net Worth Intro" className="w-full h-full object-cover" />
         </div>
-
-        {/* Content */}
         <div className="flex-1 flex flex-col items-center justify-center px-6 pb-12 relative z-10">
           <div className="max-w-md text-center space-y-6">
-            <h1 className="text-4xl font-semibold text-gray-900 tracking-tight">
-              Vamos a conocernos mejor
-            </h1>
-            <p className="text-lg text-gray-600">
-              Nutre a tu Moni AI personal con tu información y empieza a ver la diferencia
-            </p>
+            <h1 className="text-4xl font-semibold text-gray-900 tracking-tight">Vamos a conocernos mejor</h1>
+            <p className="text-lg text-gray-600">Nutre a tu Moni AI personal con tu información y empieza a ver la diferencia</p>
             <Button
               size="lg"
               className="w-full mt-8 text-base py-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm hover:scale-105 hover:bg-white/80 active:scale-95 transition-all duration-200 font-semibold border-0 text-gray-900 animate-fade-in"
@@ -111,409 +127,291 @@ export default function NetWorth() {
     );
   }
 
-  // Mostrar skeleton/placeholder mientras carga pero solo si ya sabemos que hay datos
   if ((checkingData || loadingData) && hasData !== false) {
     return (
-      <div className="min-h-screen pb-20">
-        {/* Header */}
-        <div className="sticky top-0 z-40 bg-gradient-to-b from-white/80 to-transparent backdrop-blur-sm">
-          <div className="page-container py-4">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate("/dashboard")}
-                className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
-              >
-                <ArrowLeft className="h-4 w-4 text-gray-700" />
-              </Button>
-              <div className="flex-1 min-w-0">
-                <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Patrimonio Neto</h1>
-                <p className="text-sm text-gray-500">Evolución de tu riqueza</p>
-              </div>
-            </div>
-          </div>
+      <div className="min-h-screen bg-[#FAFAF9] flex items-center justify-center">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="h-12 w-12 bg-gray-200 rounded-full mb-4"></div>
+          <div className="h-4 w-32 bg-gray-200 rounded"></div>
         </div>
-
-        <div className="page-container py-6">
-          {/* Skeleton del contenido principal */}
-          <Card className="p-6 bg-white/80 backdrop-blur-sm border-0 animate-pulse rounded-3xl shadow-sm">
-            <div className="h-80 bg-gray-100 rounded-2xl"></div>
-          </Card>
-        </div>
-
         <BottomNav />
       </div>
     );
   }
 
-  if (!netWorthData) {
-    return (
-      <div className="min-h-screen flex items-center justify-center pb-20">
-        <p className="text-foreground font-semibold text-lg">Error cargando datos</p>
-        <BottomNav />
-      </div>
-    );
-  }
+  if (!netWorthData) return null;
 
-  const {
-    currentNetWorth,
-    totalAssets,
-    totalLiabilities,
-    assets,
-    liabilities,
-    chartData,
-    percentageChange,
-    highPoint,
-    lowPoint
-  } = netWorthData;
-
-  const isPositiveChange = percentageChange >= 0;
-
-  const filteredAssets = assetFilter === 'All'
-    ? assets
-    : assets.filter(a => a.categoria === assetFilter);
-
-  const filteredLiabilities = liabilityFilter === 'All'
-    ? liabilities
-    : liabilities.filter(l => l.categoria === liabilityFilter);
-
-  const assetCategories = ['All', ...Array.from(new Set(assets.map(a => a.categoria)))];
-  const liabilityCategories = ['All', ...Array.from(new Set(liabilities.map(l => l.categoria)))];
+  const { currentNetWorth, percentageChange, totalAssets, totalLiabilities, chartData } = netWorthData;
 
   return (
-    <div className="page-standard min-h-screen pb-20">
-
+    <div className="min-h-screen bg-[#FAFAF9] text-[#44403C] pb-24 font-sans selection:bg-[#8C6A5D] selection:text-white">
       {/* Header */}
-      <div className="sticky top-0 z-40">
-        <div className="page-container py-4">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate("/dashboard")}
-              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
-            >
-              <ArrowLeft className="h-4 w-4 text-gray-700" />
-            </Button>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Patrimonio Neto</h1>
-              <p className="text-sm text-gray-500">Evolución de tu riqueza</p>
+      <header className="sticky top-0 z-40 bg-[#FAFAF9]/95 backdrop-blur-sm px-6 pt-6 pb-2">
+        <div className="max-w-5xl mx-auto flex items-center gap-4">
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="bg-white p-3.5 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md transition-all active:scale-95 duration-200 border border-white"
+          >
+            <ArrowLeft size={20} className="text-[#57534E]" />
+          </button>
+          <div className="flex flex-col">
+            <h1 className="text-xl font-bold text-[#292524] leading-tight tracking-tight">Patrimonio Neto</h1>
+            <p className="text-sm text-78716C font-medium">Evolución de tu riqueza</p>
+          </div>
+        </div>
+      </header>
+
+      <main className="px-6 mt-6 max-w-5xl mx-auto w-full">
+
+        {/* Main Net Worth Value */}
+        <div className="space-y-2 animate-[fadeIn_0.6s_ease-out]">
+          <div className="flex items-center gap-2 text-[#78716C] mb-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shield-check">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+            <span className="font-semibold text-xs uppercase tracking-wider">Patrimonio Neto</span>
+          </div>
+          <div className="flex items-start justify-between">
+            <div>
+              <h2 className="text-[2.5rem] font-bold text-[#44403C] tracking-tighter leading-none">
+                ${currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </h2>
+              <div className="flex items-center gap-2 mt-3">
+                <span className={`font-medium text-sm ${percentageChange >= 0 ? 'text-[#10B981]' : 'text-red-500'}`}>
+                  {percentageChange >= 0 ? '+' : ''}{percentageChange.toFixed(2)}%
+                </span>
+                <span className="text-[#A8A29E] text-sm">último periodo</span>
+              </div>
+            </div>
+            <div className={`p-2 rounded-xl ${percentageChange >= 0 ? 'text-[#10B981] bg-[#10B981]/10' : 'text-red-500 bg-red-50'}`}>
+              {percentageChange >= 0 ? <TrendingUp size={24} /> : <TrendingDown size={24} />}
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Widget de Evolución del Patrimonio sin escala adicional */}
-      <div className="max-w-7xl mx-auto">
-        <NetWorthWidget />
-      </div>
+        {/* Chart Section */}
+        <div className="relative animate-[fadeIn_0.8s_ease-out] mt-6">
+          <div className="w-full">
+            <EvolutionChart data={chartData} />
+          </div>
 
-      {/* Botón de descarga de PDF */}
-      <div className="px-4 mt-4">
-        <Button
-          variant="ghost"
-          className="w-full bg-white/80 backdrop-blur-sm hover:bg-white rounded-3xl shadow-sm hover:shadow-md transition-all h-auto py-3 px-4 text-xs font-medium flex items-center justify-center border-0"
-          onClick={async () => {
-            try {
-              const { data: { user } } = await supabase.auth.getUser();
-              if (!user) {
-                toast.error("Debes iniciar sesión para descargar el reporte");
-                return;
-              }
-
-              toast.info("Generando reporte de patrimonio...");
-
-              const { data, error } = await supabase.functions.invoke('generate-networth-pdf', {
-                body: {
-                  userId: user.id,
-                  timeRange
-                }
-              });
-
-              if (error) {
-                console.error('Error al generar reporte:', error);
-                throw error;
-              }
-
-              if (!data || !data.html || !data.filename) {
-                throw new Error('Datos incompletos en la respuesta');
-              }
-
-              // Crear blob con el HTML
-              const blob = new Blob([data.html], { type: 'text/html' });
-              const url = URL.createObjectURL(blob);
-
-              // Crear link temporal y hacer click
-              const link = document.createElement('a');
-              link.href = url;
-              link.download = data.filename.replace('.pdf', '.html');
-              document.body.appendChild(link);
-              link.click();
-
-              // Limpiar
-              document.body.removeChild(link);
-              URL.revokeObjectURL(url);
-
-              toast.success("Reporte descargado. Abre el archivo HTML y usa Ctrl+P (Cmd+P en Mac) para guardarlo como PDF.");
-            } catch (error: any) {
-              console.error('Error al generar reporte:', error);
-              toast.error(error.message || "No se pudo generar el reporte");
-            }
-          }}
-        >
-          <Download className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
-          <span className="whitespace-nowrap">Descargar Reporte de Patrimonio en PDF</span>
-        </Button>
-      </div>
-
-      {/* Liquidez Section */}
-      <div className="px-4 mt-2">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xl font-semibold text-gray-900 tracking-tight">Liquidez</h2>
-          <div className="relative">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowInstitutionFilter(!showInstitutionFilter)}
-              className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-9 px-3 gap-2"
-            >
-              <div className="flex flex-col gap-0.5">
-                <div className="h-0.5 w-3 bg-gray-700"></div>
-                <div className="h-0.5 w-3 bg-gray-700"></div>
-              </div>
-              <span className="text-xs font-medium text-gray-700">Filtrar</span>
-            </Button>
-
-            {showInstitutionFilter && (
-              <div className="absolute right-0 top-full mt-2 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border-0 py-2 min-w-[200px] z-50">
-                <button
-                  onClick={() => {
-                    setSelectedInstitution('All');
-                    setShowInstitutionFilter(false);
-                  }}
-                  className={cn(
-                    "w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors font-medium",
-                    selectedInstitution === 'All' ? "bg-gray-100 text-gray-900" : "text-gray-600"
-                  )}
-                >
-                  Todas las instituciones
-                </button>
-                {Array.from(new Set(
-                  assets
-                    .filter(a => isLiquidAsset(a.categoria))
-                    .map(a => a.nombre.split(' ')[0]) // Get first word as institution name
-                )).map((institution) => (
-                  <button
-                    key={institution}
-                    onClick={() => {
-                      setSelectedInstitution(institution);
-                      setShowInstitutionFilter(false);
-                    }}
-                    className={cn(
-                      "w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors font-medium",
-                      selectedInstitution === institution ? "bg-gray-100 text-gray-900" : "text-gray-600"
-                    )}
-                  >
-                    {institution}
-                  </button>
-                ))}
-              </div>
-            )}
+          {/* Time Range Selectors */}
+          <div className="flex justify-between mt-6 bg-white p-1.5 rounded-2xl shadow-sm border border-[#E7E5E4]">
+            {(['1M', '3M', '6M', '1Y', 'ALL'] as TimeRange[]).map((range) => (
+              <button
+                key={range}
+                onClick={() => setSelectedRange(range)}
+                className={`
+                  px-4 py-2 text-xs font-bold rounded-xl transition-all duration-300
+                  ${selectedRange === range
+                    ? 'bg-[#8C6A5D] text-white shadow-md transform scale-105'
+                    : 'text-[#A8A29E] hover:bg-[#F5F5F4] hover:text-[#57534E]'}
+                `}
+              >
+                {range}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Info sobre conexión bancaria */}
-        <div className="mb-2 bg-blue-50/50 backdrop-blur-sm rounded-lg p-2 border border-blue-100/50">
-          <div className="flex items-start gap-1.5">
-            <Info className="h-3 w-3 text-blue-600 mt-0.5 flex-shrink-0" />
-            <div className="flex-1">
-              <p className="text-[10px] text-blue-900 font-medium leading-snug">
-                Al conectar tus cuentas de banco, la liquidez y el efectivo disponible se actualizarán automáticamente con la información de tus cuentas bancarias y de inversión.
+        {/* Assets vs Liabilities Cards */}
+        <div className="grid grid-cols-2 gap-4 animate-[slideUp_0.8s_ease-out] mt-6">
+          {/* Assets */}
+          <div
+            onClick={() => navigate('/assets')}
+            className="bg-white p-4 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-[#F5F5F4] flex items-center gap-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] cursor-pointer group"
+          >
+            <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-[#10B981] flex-shrink-0 group-hover:scale-105 transition-transform">
+              <TrendingUp size={22} />
+            </div>
+            <div className="flex flex-col min-w-0">
+              <p className="text-[#78716C] text-[10px] font-bold uppercase tracking-wide">Activos</p>
+              <p className="text-lg font-bold text-[#059669] tracking-tight leading-none mt-0.5 truncate">
+                ${(totalAssets / 1000000).toFixed(2)}M
+              </p>
+            </div>
+          </div>
+
+          {/* Liabilities */}
+          <div
+            onClick={() => navigate('/liabilities')}
+            className="bg-white p-4 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-[#F5F5F4] flex items-center gap-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] cursor-pointer group"
+          >
+            <div className="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center text-[#EF4444] flex-shrink-0 group-hover:scale-105 transition-transform">
+              <TrendingDown size={22} />
+            </div>
+            <div className="flex flex-col min-w-0">
+              <p className="text-[#78716C] text-[10px] font-bold uppercase tracking-wide">Pasivos</p>
+              <p className="text-lg font-bold text-[#DC2626] tracking-tight leading-none mt-0.5 truncate">
+                ${(totalLiabilities / 1000000).toFixed(2)}M
               </p>
             </div>
           </div>
         </div>
 
-        {/* Total Líquido */}
-        <div className="mb-4 bg-white/80 backdrop-blur-sm rounded-xl p-4 border-0 shadow-sm">
-          <p className="text-xs text-gray-500 mb-1 font-medium">Efectivo Disponible</p>
-          <p className="text-2xl font-semibold text-blue-900 break-words tracking-tight">
-            ${assets
-              .filter(a => isLiquidAsset(a.categoria))
-              .filter(a => selectedInstitution === 'All' || a.nombre.startsWith(selectedInstitution))
-              .reduce((sum, a) => sum + Number(a.valor), 0)
-              .toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </p>
+        {/* Download Button */}
+        <div className="mt-6 animate-[slideUp_0.9s_ease-out]">
+          <button
+            onClick={async () => {
+              try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) {
+                  toast.error("Debes iniciar sesión para descargar el reporte");
+                  return;
+                }
+
+                toast.info("Generando reporte de patrimonio...");
+
+                const { data, error } = await supabase.functions.invoke('generate-networth-pdf', {
+                  body: {
+                    userId: user.id,
+                    timeRange: selectedRange
+                  }
+                });
+
+                if (error) throw error;
+                if (!data || !data.html || !data.filename) throw new Error('Datos incompletos');
+
+                const blob = new Blob([data.html], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = data.filename.replace('.pdf', '.html');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+
+                toast.success("Reporte descargado.");
+              } catch (error: any) {
+                console.error('Error:', error);
+                toast.error("No se pudo generar el reporte");
+              }
+            }}
+            className="w-full py-3 rounded-2xl border border-[#8C6A5D] bg-[#8C6A5D] text-white flex items-center justify-center gap-2 transition-all duration-500 ease-spring hover:bg-white hover:text-[#8C6A5D] hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(140,106,93,0.3)] cursor-pointer group shadow-md active:scale-95 active:shadow-sm"
+          >
+            <Download size={18} className="text-white transition-colors duration-300 group-hover:text-[#8C6A5D]" strokeWidth={2.5} />
+            <span className="font-bold text-sm tracking-tight">Descargar reporte financiero en PDF</span>
+          </button>
         </div>
 
-        <div className="space-y-3">
-          {assets
-            .filter(account => isLiquidAsset(account.categoria))
-            .filter(account => selectedInstitution === 'All' || account.nombre.startsWith(selectedInstitution))
-            .map((account) => {
-              const iconName = getIconForCategory(account.categoria);
-              const Icon = iconMap[iconName];
-
-              return (
-                <div
-                  key={account.id}
-                  className="p-3 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer border-0 animate-fade-in"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="w-10 h-10 rounded-xl bg-primary/40 flex items-center justify-center flex-shrink-0">
-                        <Icon className="h-5 w-5 text-gray-900" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-900 text-sm leading-tight">{account.nombre}</p>
-                        <p className="text-xs text-gray-500 leading-tight">{account.categoria}</p>
-                      </div>
-                    </div>
-                    <div className="text-right flex-shrink-0">
-                      <p className="font-semibold text-gray-900 text-sm break-words">
-                        ${Number(account.valor).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-
-          {assets.filter(a => isLiquidAsset(a.categoria)).filter(a => selectedInstitution === 'All' || a.nombre.startsWith(selectedInstitution)).length === 0 && (
-            <div className="p-8 text-center text-gray-500 bg-white/80 backdrop-blur-sm rounded-xl border-0 shadow-sm">
-              {selectedInstitution === 'All'
-                ? 'No hay cuentas líquidas registradas'
-                : `No hay cuentas líquidas de ${selectedInstitution}`}
-            </div>
-          )}
+        {/* Info Banner */}
+        <div className="mt-8 animate-[slideUp_0.95s_ease-out]">
+          <div className="bg-blue-50 p-4 rounded-2xl flex items-start gap-3 border border-blue-100/50">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600 flex-shrink-0 mt-0.5">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4" />
+              <path d="M12 8h.01" />
+            </svg>
+            <p className="text-xs leading-relaxed text-blue-900 font-medium">
+              Al conectar tus cuentas de banco, la liquidez y el efectivo disponible se actualizarán automáticamente con la información de tus cuentas bancarias y de inversión.
+            </p>
+          </div>
         </div>
-      </div>
 
-      {/* Activos Semi Líquidos Section */}
-      <div className="px-4 mt-6">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xl font-semibold text-gray-900 tracking-tight">Activos Semi Líquidos</h2>
-          <div className="relative">
-            <Button
-              ref={semiLiquidButtonRef}
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowSemiLiquidFilter(!showSemiLiquidFilter)}
-              className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-9 px-3 gap-2"
-            >
-              <div className="flex flex-col gap-0.5">
-                <div className="h-0.5 w-3 bg-gray-700"></div>
-                <div className="h-0.5 w-3 bg-gray-700"></div>
-              </div>
-              <span className="text-xs font-medium text-gray-700">Filtrar</span>
-            </Button>
+        {/* LIQUIDITY SECTION */}
+        <div className="animate-[slideUp_1s_ease-out] relative z-20">
+          <SectionHeader
+            title="Liquidez"
+            onFilterClick={() => setShowLiquidityFilters(!showLiquidityFilters)}
+            isFilterActive={showLiquidityFilters}
+          >
+            <FilterDropdown
+              isOpen={showLiquidityFilters}
+              onClose={() => setShowLiquidityFilters(false)}
+              options={uniqueBanks}
+              selectedOption={liquidityBank}
+              onOptionSelect={setLiquidityBank}
+            />
+          </SectionHeader>
 
-            {showSemiLiquidFilter && (
-              <div className={cn(
-                "absolute right-0 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border-0 py-2 min-w-[200px] z-50",
-                dropdownPosition === 'bottom' ? "top-full mt-2" : "bottom-full mb-2"
-              )}>
-                <button
-                  onClick={() => {
-                    setSelectedSemiLiquidType('All');
-                    setShowSemiLiquidFilter(false);
-                  }}
-                  className={cn(
-                    "w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors font-medium",
-                    selectedSemiLiquidType === 'All' ? "bg-gray-100 text-gray-900" : "text-gray-600"
-                  )}
-                >
-                  Todos los tipos
-                </button>
-                {Array.from(new Set(
-                  assets
-                    .filter(a => isSemiLiquidAsset(a.categoria))
-                    .map(a => a.subcategoria)
-                    .filter(Boolean)
-                )).map((type) => (
-                  <button
-                    key={type}
-                    onClick={() => {
-                      setSelectedSemiLiquidType(type!);
-                      setShowSemiLiquidFilter(false);
-                    }}
-                    className={cn(
-                      "w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors font-medium",
-                      selectedSemiLiquidType === type ? "bg-gray-100 text-gray-900" : "text-gray-600"
-                    )}
-                  >
-                    {type}
-                  </button>
-                ))}
-              </div>
+          {/* Cash Available Total */}
+          <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-[#F5F5F4] mb-4">
+            <p className="text-[#78716C] font-medium text-sm mb-1">Efectivo Disponible</p>
+            <p className="text-3xl font-bold text-[#1C3668] tracking-tight">
+              ${totalLiquid.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </p>
+          </div>
+
+          {/* Liquid Assets Scrollable List */}
+          <div className="max-h-[480px] overflow-y-auto no-scrollbar pr-1">
+            {filteredLiquidAssets.length > 0 ? (
+              filteredLiquidAssets.map(asset => (
+                <AssetCard
+                  key={asset.id}
+                  icon={asset.icon}
+                  title={asset.title}
+                  subtitle={asset.subtitle}
+                  amount={asset.amountFormatted}
+                />
+              ))
+            ) : (
+              <p className="text-center text-stone-400 text-sm py-4">No se encontraron resultados.</p>
             )}
           </div>
         </div>
 
-        {/* Total Semi Líquido */}
-        <div className="mb-4 bg-white/80 backdrop-blur-sm rounded-xl p-4 border-0 shadow-sm">
-          <p className="text-xs text-gray-500 mb-1 font-medium">Inversiones y Por Cobrar</p>
-          <p className="text-2xl font-semibold text-emerald-700 break-words tracking-tight">
-            ${assets
-              .filter(a => isSemiLiquidAsset(a.categoria))
-              .filter(a => selectedSemiLiquidType === 'All' || a.subcategoria === selectedSemiLiquidType)
-              .reduce((sum, a) => sum + Number(a.valor), 0)
-              .toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </p>
+        {/* SEMI-LIQUID SECTION */}
+        <div className="animate-[slideUp_1.1s_ease-out] pb-6 relative z-10">
+          <SectionHeader
+            title="Activos Semi Líquidos"
+            onFilterClick={() => setShowSemiLiquidityFilters(!showSemiLiquidityFilters)}
+            isFilterActive={showSemiLiquidityFilters}
+          >
+            <FilterDropdown
+              isOpen={showSemiLiquidityFilters}
+              onClose={() => setShowSemiLiquidityFilters(false)}
+              options={uniqueTags}
+              selectedOption={semiLiquidityTag}
+              onOptionSelect={setSemiLiquidityTag}
+            />
+          </SectionHeader>
+
+          {/* Investments Total */}
+          <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-[#F5F5F4] mb-4">
+            <p className="text-[#78716C] font-medium text-sm mb-1">Inversiones y Por Cobrar</p>
+            <p className="text-3xl font-bold text-[#059669] tracking-tight">
+              ${totalSemiLiquid.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </p>
+          </div>
+
+          {/* Semi-Liquid Assets Scrollable List */}
+          <div className="max-h-[480px] overflow-y-auto no-scrollbar pr-1">
+            {filteredSemiLiquidAssets.length > 0 ? (
+              filteredSemiLiquidAssets.map(asset => (
+                <AssetCard
+                  key={asset.id}
+                  icon={asset.icon}
+                  title={asset.title}
+                  subtitle={asset.subtitle}
+                  tag={asset.tag}
+                  amount={asset.amountFormatted}
+                  isCrypto={asset.isCrypto}
+                />
+              ))
+            ) : (
+              <p className="text-center text-stone-400 text-sm py-4">No se encontraron resultados.</p>
+            )}
+          </div>
         </div>
 
-        <div className="space-y-3">
-          {assets
-            .filter(account => isSemiLiquidAsset(account.categoria))
-            .filter(account => selectedSemiLiquidType === 'All' || account.subcategoria === selectedSemiLiquidType)
-            .map((account) => {
-              const iconName = getIconForCategory(account.categoria);
-              const Icon = iconMap[iconName];
+      </main>
 
-              return (
-                <div
-                  key={account.id}
-                  className="p-3 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer border-0 animate-fade-in"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-500/40 flex items-center justify-center flex-shrink-0">
-                        <Icon className="h-5 w-5 text-gray-900" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-900 text-sm leading-tight">{account.nombre}</p>
-                        <div className="flex items-center gap-2">
-                          <p className="text-xs text-gray-500 leading-tight">{account.categoria}</p>
-                          {account.subcategoria && (
-                            <Badge variant="outline" className="text-[8px] px-1.5 py-0.5 border-emerald-500/40 text-emerald-600 bg-emerald-50 whitespace-nowrap">
-                              {account.subcategoria}
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-right flex-shrink-0">
-                      <p className="font-semibold text-gray-900 text-sm break-words">
-                        ${Number(account.valor).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-
-          {assets.filter(a => isSemiLiquidAsset(a.categoria)).filter(a => selectedSemiLiquidType === 'All' || a.subcategoria === selectedSemiLiquidType).length === 0 && (
-            <div className="p-8 text-center text-gray-500 bg-white/80 backdrop-blur-sm rounded-xl border-0 shadow-sm">
-              {selectedSemiLiquidType === 'All'
-                ? 'No hay activos semi líquidos registrados'
-                : `No hay activos de tipo ${selectedSemiLiquidType}`}
-            </div>
-          )}
-        </div>
-      </div>
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
 
       <BottomNav />
     </div>
   );
-}
+};
+
+export default NetWorth;

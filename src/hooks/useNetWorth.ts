@@ -38,7 +38,7 @@ interface Liability {
   user_id: string;
 }
 
-interface NetWorthSnapshot {
+export interface ChartDataPoint {
   date: string;
   value: number;
   assets: number;
@@ -55,7 +55,7 @@ export function useNetWorth(timeRange: TimeRange) {
       // Get date range based on timeRange
       let startDate: Date;
       const now = new Date();
-      
+
       switch (timeRange) {
         case '1M':
           startDate = subMonths(now, 1);
@@ -125,9 +125,9 @@ export function useNetWorth(timeRange: TimeRange) {
 
       // Get today's date
       const today = format(now, 'yyyy-MM-dd');
-      
+
       // Format snapshots for chart (only historical data, not today)
-      let chartData: NetWorthSnapshot[] = snapshots?.map(s => ({
+      let chartData: ChartDataPoint[] = snapshots?.map(s => ({
         date: formatDateLabel(new Date(s.snapshot_date), timeRange),
         value: Number(s.net_worth),
         assets: Number(s.total_assets),
@@ -135,14 +135,14 @@ export function useNetWorth(timeRange: TimeRange) {
       })) || [];
 
       // If we have no historical data or only today's data, create horizontal line
-      const hasHistoricalData = chartData.length > 0 && 
+      const hasHistoricalData = chartData.length > 0 &&
         snapshots?.some(s => s.snapshot_date !== today);
-      
+
       if (!hasHistoricalData) {
         // Create horizontal line from past to today with current net worth value
         chartData = [];
         let dates: Date[] = [];
-        
+
         switch (timeRange) {
           case '1M':
             // Every 5 days for 1 month (6 points)
@@ -175,7 +175,7 @@ export function useNetWorth(timeRange: TimeRange) {
             }
             break;
         }
-        
+
         // All points have the same value (horizontal line)
         chartData = dates.map(date => ({
           date: formatDateLabel(date, timeRange),
@@ -186,7 +186,7 @@ export function useNetWorth(timeRange: TimeRange) {
       } else {
         // We have historical data - use it and add today's point
         const hasToday = snapshots?.some(s => s.snapshot_date === today);
-        
+
         if (!hasToday) {
           chartData.push({
             date: formatDateLabel(now, timeRange),
@@ -195,11 +195,11 @@ export function useNetWorth(timeRange: TimeRange) {
             liabilities: totalLiabilities
           });
         }
-        
+
         // Filter data points to avoid overcrowding
         if (chartData.length > 10) {
           const step = Math.ceil(chartData.length / 6);
-          const filtered: NetWorthSnapshot[] = [];
+          const filtered: ChartDataPoint[] = [];
           for (let i = 0; i < chartData.length; i += step) {
             filtered.push(chartData[i]);
           }
@@ -216,8 +216,8 @@ export function useNetWorth(timeRange: TimeRange) {
       if (chartData.length >= 2) {
         const firstValue = chartData[0].value;
         const lastValue = chartData[chartData.length - 1].value;
-        percentageChange = firstValue !== 0 
-          ? ((lastValue - firstValue) / Math.abs(firstValue)) * 100 
+        percentageChange = firstValue !== 0
+          ? ((lastValue - firstValue) / Math.abs(firstValue)) * 100
           : 0;
       }
 

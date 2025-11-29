@@ -9,7 +9,8 @@ export default {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": "1400px",
+        "2xl": "1200px",
+        "lg": "600px",
       },
     },
     extend: {
@@ -68,6 +69,16 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
         // New UI Colors
+        moni: {
+          bg: '#fafaf9',
+          warm: '#f5f0ee',
+          primary: '#8D6E63',
+          dark: '#5D4037',
+          border: '#EBE5E2',
+          text: '#44403C',
+          green: '#10B981',
+          brown: '#8C6A5D',
+        },
         bg: '#F0F2F5',
         'soft-white': '#FFFFFF',
         'soft-shadow-light': '#FFFFFF',
@@ -104,6 +115,7 @@ export default {
       transitionTimingFunction: {
         smooth: 'cubic-bezier(0.4, 0, 0.2, 1)',
         bounce: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       },
       keyframes: {
         "accordion-down": {
