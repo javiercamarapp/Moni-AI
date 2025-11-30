@@ -20,6 +20,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { TransactionSchema } from '@/lib/validation';
+import { headingPage, headingSection, kpiNumberPrimary } from '@/styles/typography';
 import {
   Dialog,
   DialogContent,
@@ -370,7 +371,7 @@ const Gastos = () => {
               </button>
 
               <div className="flex flex-col">
-                <h1 className="text-xl font-bold text-gray-900 leading-tight">Tus Gastos</h1>
+                <h1 className={headingPage}>Tus Gastos</h1>
                 <div className="flex items-center gap-1 text-sm text-gray-500 font-medium">
                   {viewMode === 'month' && <ChevronLeft onClick={handlePreviousPeriod} className="w-3 h-3 cursor-pointer" />}
                   <span className="animate-in fade-in duration-300">{getPeriodLabel()}</span>
@@ -411,7 +412,7 @@ const Gastos = () => {
                 <span className="text-xs font-bold text-gray-400 tracking-wider uppercase">Gastos Totales</span>
               </div>
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-extrabold text-gray-900">
+                <span className={kpiNumberPrimary}>
                   ${totalGastos.toLocaleString('en-US', { maximumFractionDigits: 0 })}
                 </span>
                 <span className="text-xl text-gray-400 font-medium">
@@ -501,7 +502,7 @@ const Gastos = () => {
           {/* Chart Section */}
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-gray-900">Evolución de Gastos</h3>
+              <h3 className={headingSection}>Evolución de Gastos</h3>
               <div className="flex gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-[#8D6E63]"></div>
                 <div className="w-2 h-2 rounded-full bg-[#8D6E63] opacity-30"></div>

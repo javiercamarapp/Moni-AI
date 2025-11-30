@@ -24,8 +24,8 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
     const navigate = useNavigate();
 
     return (
-        <div className="w-full bg-white rounded-[2rem] p-4 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] border border-white relative overflow-hidden">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-2 mb-4">
+        <div className="w-full bg-white rounded-[2rem] px-4 pt-4 pb-3 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] border border-white relative overflow-hidden">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-2 mb-3">
                 <div className="flex items-center gap-2">
                     <div className="h-10 w-10 rounded-2xl bg-[#F5F0EE] flex items-center justify-center text-[#8D6E63]">
                         <Wallet size={20} />

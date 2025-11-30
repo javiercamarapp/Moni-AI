@@ -12,6 +12,7 @@ import BalanceCategoryBreakdown from '@/components/balance/BalanceCategoryBreakd
 import BalanceInsights from '@/components/balance/BalanceInsights';
 import BalanceEvolutionChart from '@/components/balance/BalanceEvolutionChart';
 import ExpenseBreakdownWidget from '@/components/dashboard/ExpenseBreakdownWidget';
+import AddTransactionModal from '@/components/dashboard/AddTransactionModal';
 
 interface CategoryBalance {
   id: string;
@@ -75,6 +76,8 @@ const Balance = () => {
   const {
     toast
   } = useToast();
+  const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
+  const [isAddIncomeOpen, setIsAddIncomeOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'mensual' | 'anual'>(() => {
     // Primero verificar si hay un parámetro en la URL
     const urlPeriod = searchParams.get('period');
@@ -871,7 +874,7 @@ const Balance = () => {
               <ChevronLeft className="w-5 h-5" />
             </button>
             <div className="flex flex-col">
-              <h1 className={`${headingPage} mb-1`}>Resumen financiero</h1>
+              <h1 className={`${headingPage} mb-1`}>Resumen de gastos e ingresos</h1>
 
               {/* Date Selector */}
               <div className="flex items-center gap-2 text-gray-500">
@@ -930,9 +933,33 @@ const Balance = () => {
 
         {/* 2. Stats Grid (Income/Expenses) */}
         <div className="grid grid-cols-2 gap-3">
-          <StatCard type="income" amount={totalIngresos} onClick={() => navigate('/ingresos')} />
-          <StatCard type="expense" amount={totalGastos} onClick={() => navigate('/gastos')} />
+          <StatCard 
+            type="income" 
+            amount={totalIngresos} 
+            onClick={() => navigate('/ingresos')} 
+            onAdd={() => setIsAddIncomeOpen(true)}
+          />
+          <StatCard 
+            type="expense" 
+            amount={totalGastos} 
+            onClick={() => navigate('/gastos')} 
+            onAdd={() => setIsAddExpenseOpen(true)}
+          />
         </div>
+
+        {/* Add Transaction Modals */}
+        <AddTransactionModal
+          isOpen={isAddIncomeOpen}
+          onClose={() => setIsAddIncomeOpen(false)}
+          mode="income"
+          onSuccess={fetchBalanceData}
+        />
+        <AddTransactionModal
+          isOpen={isAddExpenseOpen}
+          onClose={() => setIsAddExpenseOpen(false)}
+          mode="expense"
+          onSuccess={fetchBalanceData}
+        />
 
         {/* 3. Insights Carousel */}
         {proyecciones && proyecciones.insights && proyecciones.insights.length > 0 && (

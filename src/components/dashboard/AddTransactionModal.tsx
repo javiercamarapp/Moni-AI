@@ -282,10 +282,17 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen, onClo
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-[#f3f4f6] z-[100] flex flex-col h-screen overflow-hidden animate-in slide-in-from-bottom-10 duration-300">
+    <div 
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-[#f3f4f6] w-full max-w-md rounded-[2rem] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
       
       {/* Header */}
-      <div className="px-4 py-4 pt-10 flex items-center justify-between shrink-0 max-w-lg mx-auto w-full">
+      <div className="px-6 py-4 pt-6 flex items-center justify-between shrink-0">
         <button 
           onClick={onClose}
           className="h-10 w-10 bg-white rounded-full shadow-sm flex items-center justify-center text-gray-600 active:scale-95 transition-transform"
@@ -296,13 +303,13 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen, onClo
         <div className="w-10" /> 
       </div>
 
-      <div className="flex-1 flex flex-col px-4 pb-6 min-h-0 max-w-lg mx-auto w-full">
+      <div className="flex-1 flex flex-col px-6 pb-6 min-h-0 overflow-y-auto">
         
         {/* Amount Display */}
-        <div className="flex flex-col items-center justify-center my-auto shrink-0 py-4">
+        <div className="flex flex-col items-center justify-center shrink-0 py-4">
           <span className="text-[10px] font-bold text-gray-400 tracking-widest uppercase mb-2">INGRESAR MONTO</span>
           <div className="bg-white rounded-[2rem] px-8 py-5 w-full shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] border border-white flex justify-center items-center">
-            <span className="text-4xl md:text-5xl font-black text-gray-800 tracking-tight truncate">
+            <span className="text-4xl font-black text-gray-800 tracking-tight truncate">
               ${amount}
             </span>
           </div>
@@ -363,19 +370,19 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen, onClo
         </div>
 
         {/* Keypad */}
-        <div className="grid grid-cols-3 gap-2.5 mb-4 flex-1 min-h-[180px] max-h-[240px]">
+        <div className="grid grid-cols-3 gap-2.5 mb-4 flex-1 min-h-[180px]">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0].map((num) => (
             <button 
               key={num}
               onClick={() => handleNumClick(num.toString())}
-              className="h-full bg-white rounded-xl shadow-[0_2px_0_0_rgba(0,0,0,0.05)] active:shadow-none active:translate-y-[1px] border border-gray-50 flex items-center justify-center text-xl font-bold text-gray-700 hover:bg-gray-50 transition-all"
+              className="h-full bg-white rounded-xl shadow-[0_2px_0_0_rgba(0,0,0,0.05)] active:shadow-none active:translate-y-[1px] border border-gray-50 flex items-center justify-center text-xl font-bold text-gray-700 hover:bg-gray-50 transition-all py-3"
             >
               {num}
             </button>
           ))}
           <button 
             onClick={handleDelete}
-            className="h-full bg-white rounded-xl shadow-[0_2px_0_0_rgba(0,0,0,0.05)] active:shadow-none active:translate-y-[1px] border border-gray-50 flex items-center justify-center text-gray-700 hover:bg-gray-50 transition-all"
+            className="h-full bg-white rounded-xl shadow-[0_2px_0_0_rgba(0,0,0,0.05)] active:shadow-none active:translate-y-[1px] border border-gray-50 flex items-center justify-center text-gray-700 hover:bg-gray-50 transition-all py-3"
           >
             <Delete size={20} />
           </button>
@@ -393,6 +400,7 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen, onClo
           </svg>
           {isSubmitting ? 'Guardando...' : saveLabel}
         </button>
+      </div>
       </div>
 
       {/* Date Picker Modal */}

@@ -4,10 +4,13 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X, Banknote } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X, Banknote, ChevronRight, Wallet, Shield } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
+import { headingPage, headingSection } from "@/styles/typography";
 
 // Helper functions for number formatting
 const formatNumberWithCommas = (value: string): string => {
@@ -33,6 +36,7 @@ type AssetEntry = {
   name: string;
   value: string;
   category: string;
+  placeholder?: string;
 };
 
 type LiabilityEntry = {
@@ -41,6 +45,7 @@ type LiabilityEntry = {
   name: string;
   value: string;
   category: string;
+  placeholder?: string;
 };
 
 type CustomAssetAccount = {
@@ -114,6 +119,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const [step, setStep] = useState(1);
 
   useEffect(() => {
     checkAuth();
@@ -435,456 +441,418 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     }
   };
 
+  const calculateTotals = () => {
+    const assetsTotal = assetEntries
+      .filter(e => parseFloat(e.value) > 0)
+      .reduce((sum, e) => sum + parseFloat(parseFormattedNumber(e.value)), 0);
+    
+    const customAssetsTotal = customAssets.reduce((sum, asset) => {
+      return sum + asset.accounts.reduce((accSum, acc) => accSum + parseFloat(parseFormattedNumber(acc.value) || '0'), 0);
+    }, 0);
+
+    const liabilitiesTotal = liabilityEntries
+      .filter(e => parseFloat(e.value) > 0)
+      .reduce((sum, e) => sum + parseFloat(parseFormattedNumber(e.value)), 0);
+
+    const customLiabilitiesTotal = customLiabilities.reduce((sum, liability) => {
+      return sum + liability.accounts.reduce((accSum, acc) => accSum + parseFloat(parseFormattedNumber(acc.value) || '0'), 0);
+    }, 0);
+
+    return {
+      assets: assetsTotal + customAssetsTotal,
+      liabilities: liabilitiesTotal + customLiabilitiesTotal,
+      netWorth: (assetsTotal + customAssetsTotal) - (liabilitiesTotal + customLiabilitiesTotal)
+    };
+  };
+
+  const totals = calculateTotals();
+
+  const nextStep = () => {
+    window.scrollTo(0, 0);
+    setStep(prev => Math.min(prev + 1, 3));
+  };
+  
+  const prevStep = () => {
+    window.scrollTo(0, 0);
+    setStep(prev => Math.max(prev - 1, 1));
+  };
+
   return (
-    <div className="min-h-screen pb-24">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="sticky top-0 z-40 bg-gradient-to-b from-white/80 to-transparent backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-4 py-4">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onBack ? onBack() : navigate(-1)}
-                className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
-              >
-                <ArrowLeft className="h-4 w-4 text-gray-700" />
-              </Button>
-              <div className="flex-1 min-w-0">
-                <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Configura tu Patrimonio</h1>
-                <p className="text-xs text-gray-500">Completa la información financiera</p>
-              </div>
-              {saveStatus !== 'idle' && (
-                <div className="flex items-center gap-2 text-sm animate-fade-in flex-shrink-0">
-                  {saveStatus === 'saving' && (
-                    <>
-                      <div className="w-4 h-4 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
-                      <span className="hidden sm:inline text-gray-900">Guardando...</span>
-                    </>
-                  )}
-                  {saveStatus === 'saved' && (
-                    <>
-                      <Check className="w-4 h-4 text-green-600" />
-                      <span className="hidden sm:inline text-green-600">Guardado</span>
-                    </>
-                  )}
-                </div>
-              )}
+    <div className="min-h-screen bg-[#faf9f8] pb-32">
+      {/* Header & Progress */}
+      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-100">
+        <div className="max-w-2xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between mb-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => step === 1 ? (onBack ? onBack() : navigate(-1)) : prevStep()}
+              className="h-9 w-9 rounded-full hover:bg-gray-100 text-gray-600"
+            >
+              <ArrowLeft size={18} />
+            </Button>
+            <div className="flex flex-col items-center">
+              <span className="text-xs font-bold text-gray-400 tracking-widest uppercase">Paso {step} de 3</span>
+              <h1 className="text-sm font-bold text-[#5D4037]">
+                {step === 1 && "Tus Activos"}
+                {step === 2 && "Tus Pasivos"}
+                {step === 3 && "Resumen Patrimonial"}
+              </h1>
             </div>
+            <div className="w-9" /> {/* Spacer */}
           </div>
+          <Progress value={(step / 3) * 100} className="h-1.5 bg-gray-100" indicatorClassName="bg-[#8D6E63]" />
         </div>
+      </div>
 
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
-          {/* Activos Card */}
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm rounded-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-gray-100">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-green-100 border border-green-200">
-                  <TrendingUp className="h-5 w-5 text-green-600" />
+      <div className="max-w-2xl mx-auto px-4 pt-6">
+        <AnimatePresence mode="wait">
+          {step === 1 && (
+            <motion.div
+              key="step1"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-6"
+            >
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                  <TrendingUp className="w-8 h-8 text-emerald-600" />
                 </div>
-                <div>
-                  <h3 className="font-bold text-lg text-gray-900">💰 Activos Esenciales</h3>
-                  <p className="text-xs text-gray-600">Lo que posees</p>
-                </div>
+                <h2 className={headingPage}>¿Qué posees?</h2>
+                <p className="text-gray-500 text-sm mt-2 max-w-md mx-auto">
+                  Registra tus cuentas bancarias, inversiones, propiedades y otros bienes de valor.
+                </p>
               </div>
-            </div>
 
-            <div className="p-5 space-y-4 bg-white">
-              {assetCategories.map((asset, index) => {
-                const entriesForCategory = assetEntries.filter(e => e.categoryType === asset.name);
-                return (
-                  <div key={index} className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-gray-900 text-sm font-medium">
-                        {asset.name}
-                      </Label>
-                      <Button
-                        type="button"
-                        size="sm"
-                        onClick={() => addAssetEntry(asset.name, asset.category, asset.examples)}
-                        className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-8 px-3 text-xs gap-1"
-                      >
-                        <Plus className="h-3 w-3 text-gray-700" />
-                        <span className="text-gray-900">Agregar</span>
-                      </Button>
-                    </div>
-                    
-                    {entriesForCategory.map((entry) => (
-                      <div key={entry.id} className="flex gap-1.5 items-start">
-                        <div className="flex-1 space-y-1.5">
-                          <Input
-                            type="text"
-                            placeholder={(entry as any).placeholder || 'Nombre de la cuenta'}
-                            value={entry.name}
-                            onChange={(e) => updateAssetEntry(entry.id, 'name', e.target.value)}
-                            className="bg-white border-gray-200 text-gray-900 text-xs h-7"
-                          />
-                          <div className="relative">
-                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700 font-semibold text-xs">$</span>
-                            <Input
-                              type="text"
-                              placeholder="0.00"
-                              value={formatNumberWithCommas(entry.value)}
-                              onChange={(e) => {
-                                const rawValue = parseFormattedNumber(e.target.value);
-                                updateAssetEntry(entry.id, 'value', rawValue);
-                              }}
-                              className="pl-6 bg-white border-gray-200 text-gray-900 focus:border-green-500 transition-all text-xs h-7"
-                            />
+              {/* Assets Categories */}
+              <div className="space-y-4">
+                {assetCategories.map((asset, index) => {
+                  const entries = assetEntries.filter(e => e.categoryType === asset.name);
+                  const hasEntries = entries.length > 0;
+                  
+                  return (
+                    <div key={index} className={`bg-white rounded-2xl border transition-all ${hasEntries ? 'border-emerald-100 shadow-sm' : 'border-gray-100'}`}>
+                      <div className="p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${hasEntries ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-50 text-gray-400'}`}>
+                              {hasEntries ? <Check size={14} strokeWidth={3} /> : <Plus size={14} />}
+                            </div>
+                            <span className={`font-semibold text-sm ${hasEntries ? 'text-gray-900' : 'text-gray-600'}`}>{asset.name}</span>
                           </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => addAssetEntry(asset.name, asset.category, asset.examples)}
+                            className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 text-xs font-bold h-8 px-3 rounded-lg"
+                          >
+                            <Plus size={12} className="mr-1" />
+                            Agregar
+                          </Button>
                         </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeAssetEntry(entry.id)}
-                          className="mt-0.5 h-6 w-6 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-red-50 hover:shadow-md transition-all border-0"
-                        >
-                          <X className="h-3 w-3 text-red-600" />
-                        </Button>
+
+                        {entries.length > 0 && (
+                          <div className="space-y-3 pl-11">
+                            {entries.map((entry) => (
+                              <div key={entry.id} className="flex gap-3 items-center animate-in slide-in-from-top-2 duration-200">
+                                <div className="flex-1 grid grid-cols-2 gap-3">
+                                  <Input
+                                    placeholder={entry.placeholder}
+                                    value={entry.name}
+                                    onChange={(e) => updateAssetEntry(entry.id, 'name', e.target.value)}
+                                    className="h-9 text-xs bg-gray-50/50 border-gray-200 focus:bg-white transition-all"
+                                  />
+                                  <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">$</span>
+                                    <Input
+                                      placeholder="0.00"
+                                      value={formatNumberWithCommas(entry.value)}
+                                      onChange={(e) => updateAssetEntry(entry.id, 'value', parseFormattedNumber(e.target.value))}
+                                      className="h-9 text-xs pl-6 bg-gray-50/50 border-gray-200 focus:bg-white transition-all font-medium text-gray-900"
+                                    />
+                                  </div>
+                                </div>
+                                <button onClick={() => removeAssetEntry(entry.id)} className="text-gray-300 hover:text-red-500 transition-colors">
+                                  <X size={14} />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    ))}
-                  </div>
-                );
-              })}
-            </div>
-          </Card>
-
-          {/* Activos y Pasivos Personalizados - En fila */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Activos Personalizados Card */}
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm rounded-xl overflow-hidden">
-            <div className="px-5 py-3 border-b border-gray-100">
-              <div className="flex items-center justify-between gap-4">
-                <h3 className="font-bold text-lg text-gray-900 whitespace-nowrap">Activos Personalizados</h3>
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={addCustomAsset}
-                  className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-8 px-3 text-xs gap-1"
-                >
-                  <Plus className="h-4 w-4 text-gray-700" />
-                  <span className="hidden sm:inline text-gray-900">Nueva Categoría</span>
-                  <span className="sm:hidden text-gray-900">Nuevo</span>
-                </Button>
+                    </div>
+                  );
+                })}
               </div>
-            </div>
 
-            <div className="p-5 bg-white/80 backdrop-blur-sm space-y-2">
-              {customAssets.length === 0 && (
-                <div className="text-center py-4 space-y-1">
-                  <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 mb-1">
-                    <Plus className="h-4 w-4 text-gray-600" />
-                  </div>
-                  <p className="text-xs font-medium text-gray-900">
-                    Crea tus propias categorías de activos
-                  </p>
-                  <p className="text-[10px] text-gray-600">
-                    Agrega categorías como colecciones, inversiones privadas o cualquier otro activo
-                  </p>
+              {/* Custom Assets */}
+              <div className="pt-4 border-t border-gray-100">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-bold text-gray-900">Otros Activos</h3>
+                  <Button onClick={addCustomAsset} variant="outline" size="sm" className="text-xs h-8 rounded-lg border-gray-200">
+                    Nueva Categoría
+                  </Button>
                 </div>
-              )}
-
-              {customAssets.map((customAsset) => (
-                <div key={customAsset.id} className="space-y-2 p-3 rounded-lg bg-white border border-gray-200 hover:border-gray-300 transition-all shadow-sm">
-                  <div className="flex gap-2 items-start">
-                    <div className="flex-1">
-                      <Label className="text-gray-900 text-xs font-semibold mb-1 block">
-                        📁 Categoría de Activo
-                      </Label>
-                      <Input
-                        type="text"
-                        placeholder="Ej: Colección de Arte, Negocios, Inversiones Privadas"
+                {customAssets.map(customAsset => (
+                  <div key={customAsset.id} className="bg-white p-4 rounded-2xl border border-gray-100 mb-4 shadow-sm">
+                    <div className="flex gap-3 mb-3">
+                      <Input 
+                        placeholder="Nombre de la categoría (ej. Arte)" 
                         value={customAsset.name}
                         onChange={(e) => updateCustomAssetName(customAsset.id, e.target.value)}
-                        className="bg-white border-gray-200 text-gray-900 font-semibold text-sm h-8"
+                        className="h-9 font-semibold text-sm border-gray-200"
                       />
-                    </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeCustomAsset(customAsset.id)}
-                      className="mt-5 h-7 w-7 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-red-50 hover:shadow-md transition-all border-0"
-                    >
-                      <X className="h-3.5 w-3.5 text-red-600" />
-                    </Button>
-                  </div>
-
-                  <div className="pl-2 border-l-2 border-gray-200 space-y-2 mt-2">
-                    <div className="flex items-center justify-between mb-1">
-                      <Label className="text-gray-900 text-[10px] font-semibold uppercase tracking-wide">
-                        Cuentas dentro de esta categoría
-                      </Label>
-                      <Button
-                        type="button"
-                        size="sm"
-                        onClick={() => addCustomAssetAccount(customAsset.id)}
-                        className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-6 px-2 text-[10px] gap-1"
-                      >
-                        <Plus className="h-2.5 w-2.5 text-gray-700" />
-                        <span className="text-gray-900">Agregar Cuenta</span>
+                      <Button size="icon" variant="ghost" onClick={() => removeCustomAsset(customAsset.id)} className="h-9 w-9 text-gray-400 hover:text-red-500">
+                        <X size={16} />
                       </Button>
                     </div>
-
-                    {customAsset.accounts.length === 0 && (
-                      <div className="text-center py-2 px-2 bg-gray-50 rounded-md border border-dashed border-gray-300">
-                        <p className="text-[10px] text-gray-600">
-                          Agrega cuentas específicas dentro de esta categoría
-                        </p>
-                      </div>
-                    )}
-
-                    {customAsset.accounts.map((account) => (
-                      <div key={account.id} className="flex gap-1.5 items-start p-2 rounded-md bg-white border border-gray-200">
-                        <div className="flex-1 space-y-1.5">
-                          <Input
-                            type="text"
-                            placeholder="Nombre específico (ej: Pintura Picasso, Local Centro)"
-                            value={account.name}
-                            onChange={(e) => updateCustomAssetAccount(customAsset.id, account.id, 'name', e.target.value)}
-                            className="bg-white border-gray-200 text-gray-900 text-xs h-7"
+                    <div className="space-y-2 pl-4 border-l-2 border-gray-100">
+                      {customAsset.accounts.map(acc => (
+                        <div key={acc.id} className="flex gap-2">
+                          <Input 
+                            placeholder="Nombre del item" 
+                            value={acc.name}
+                            onChange={(e) => updateCustomAssetAccount(customAsset.id, acc.id, 'name', e.target.value)}
+                            className="h-8 text-xs bg-gray-50"
                           />
-                          <div className="relative">
-                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700 font-semibold text-xs">$</span>
-                            <Input
-                              type="text"
-                              placeholder="0.00"
-                              value={formatNumberWithCommas(account.value)}
-                              onChange={(e) => {
-                                const rawValue = parseFormattedNumber(e.target.value);
-                                updateCustomAssetAccount(customAsset.id, account.id, 'value', rawValue);
-                              }}
-                              className="pl-6 bg-white border-gray-200 text-gray-900 focus:border-green-500 transition-all text-xs h-7"
-                            />
-                          </div>
+                          <Input 
+                            placeholder="0.00" 
+                            value={formatNumberWithCommas(acc.value)}
+                            onChange={(e) => updateCustomAssetAccount(customAsset.id, acc.id, 'value', parseFormattedNumber(e.target.value))}
+                            className="h-8 text-xs w-32 bg-gray-50"
+                          />
+                          <button onClick={() => removeCustomAssetAccount(customAsset.id, acc.id)} className="text-gray-300 hover:text-red-500">
+                            <X size={14} />
+                          </button>
                         </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeCustomAssetAccount(customAsset.id, account.id)}
-                          className="mt-0.5 h-6 w-6 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-red-50 hover:shadow-md transition-all border-0"
-                        >
-                          <X className="h-3 w-3 text-red-600" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-          </div>
-
-          {/* Pasivos Esenciales Card - Debajo del grid */}
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm rounded-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-gray-100">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-red-100 border border-red-200">
-                  <TrendingDown className="h-5 w-5 text-red-600" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg text-gray-900">💸 Pasivos Esenciales</h3>
-                  <p className="text-xs text-gray-600">Lo que debes</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-5 space-y-4 bg-white">
-              {liabilityCategories.map((liability, index) => {
-                const entriesForCategory = liabilityEntries.filter(e => e.categoryType === liability.name);
-                return (
-                  <div key={index} className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-gray-900 text-sm font-medium">
-                        {liability.name}
-                      </Label>
-                      <Button
-                        type="button"
-                        size="sm"
-                        onClick={() => addLiabilityEntry(liability.name, liability.category, liability.examples)}
-                        className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-8 px-3 text-xs gap-1"
-                      >
-                        <Plus className="h-3 w-3 text-gray-700" />
-                        <span className="text-gray-900">Agregar</span>
+                      ))}
+                      <Button variant="ghost" size="sm" onClick={() => addCustomAssetAccount(customAsset.id)} className="text-xs text-gray-500 h-7 px-2">
+                        + Agregar item
                       </Button>
                     </div>
-                    
-                    {entriesForCategory.map((entry) => (
-                      <div key={entry.id} className="flex gap-1.5 items-start">
-                        <div className="flex-1 space-y-1.5">
-                          <Input
-                            type="text"
-                            placeholder={(entry as any).placeholder || 'Nombre de la deuda'}
-                            value={entry.name}
-                            onChange={(e) => updateLiabilityEntry(entry.id, 'name', e.target.value)}
-                            className="bg-white border-gray-200 text-gray-900 text-xs h-7"
-                          />
-                          <div className="relative">
-                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700 font-semibold text-xs">$</span>
-                            <Input
-                              type="text"
-                              placeholder="0.00"
-                              value={formatNumberWithCommas(entry.value)}
-                              onChange={(e) => {
-                                const rawValue = parseFormattedNumber(e.target.value);
-                                updateLiabilityEntry(entry.id, 'value', rawValue);
-                              }}
-                              className="pl-6 bg-white border-gray-200 text-gray-900 focus:border-red-500 transition-all text-xs h-7"
-                            />
-                          </div>
-                        </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeLiabilityEntry(entry.id)}
-                          className="mt-0.5 h-6 w-6 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-red-50 hover:shadow-md transition-all border-0"
-                        >
-                          <X className="h-3 w-3 text-red-600" />
-                        </Button>
-                      </div>
-                    ))}
                   </div>
-                );
-              })}
-            </div>
-          </Card>
-
-          {/* Pasivos Personalizados Card */}
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm rounded-xl overflow-hidden">
-            <div className="px-5 py-3 border-b border-gray-100">
-              <div className="flex items-center justify-between gap-4">
-                <h3 className="font-bold text-lg text-gray-900 whitespace-nowrap">Pasivos Personalizados</h3>
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={addCustomLiability}
-                  className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-8 px-3 text-xs gap-1"
-                >
-                  <Plus className="h-4 w-4 text-gray-700" />
-                  <span className="hidden sm:inline text-gray-900">Nueva Categoría</span>
-                  <span className="sm:hidden text-gray-900">Nuevo</span>
-                </Button>
+                ))}
               </div>
-            </div>
+            </motion.div>
+          )}
 
-            <div className="p-5 bg-white/80 backdrop-blur-sm space-y-2">
-              {customLiabilities.length === 0 && (
-                <div className="text-center py-4 space-y-1">
-                  <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 mb-1">
-                    <Plus className="h-4 w-4 text-gray-600" />
-                  </div>
-                  <p className="text-xs font-medium text-gray-900">
-                    Crea tus propias categorías de pasivos
-                  </p>
-                  <p className="text-[10px] text-gray-600">
-                    Agrega categorías como compromisos personales, deudas informales o cualquier otro pasivo
-                  </p>
+          {step === 2 && (
+            <motion.div
+              key="step2"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-6"
+            >
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-red-50 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                  <TrendingDown className="w-8 h-8 text-red-600" />
                 </div>
-              )}
+                <h2 className={headingPage}>¿Qué debes?</h2>
+                <p className="text-gray-500 text-sm mt-2 max-w-md mx-auto">
+                  Registra tus deudas de tarjetas, préstamos, créditos e hipotecas.
+                </p>
+              </div>
 
-              {customLiabilities.map((customLiability) => (
-                <div key={customLiability.id} className="space-y-2 p-3 rounded-lg bg-white border border-gray-200 hover:border-gray-300 transition-all shadow-sm">
-                  <div className="flex gap-2 items-start">
-                    <div className="flex-1">
-                      <Label className="text-gray-900 text-xs font-semibold mb-1 block">
-                        📁 Categoría de Pasivo
-                      </Label>
-                      <Input
-                        type="text"
-                        placeholder="Ej: Deudas Familiares, Compromisos Personales, Otros"
+              <div className="space-y-4">
+                {liabilityCategories.map((liability, index) => {
+                  const entries = liabilityEntries.filter(e => e.categoryType === liability.name);
+                  const hasEntries = entries.length > 0;
+                  
+                  return (
+                    <div key={index} className={`bg-white rounded-2xl border transition-all ${hasEntries ? 'border-red-100 shadow-sm' : 'border-gray-100'}`}>
+                      <div className="p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${hasEntries ? 'bg-red-100 text-red-600' : 'bg-gray-50 text-gray-400'}`}>
+                              {hasEntries ? <Check size={14} strokeWidth={3} /> : <Plus size={14} />}
+                            </div>
+                            <span className={`font-semibold text-sm ${hasEntries ? 'text-gray-900' : 'text-gray-600'}`}>{liability.name}</span>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => addLiabilityEntry(liability.name, liability.category, liability.examples)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs font-bold h-8 px-3 rounded-lg"
+                          >
+                            <Plus size={12} className="mr-1" />
+                            Agregar
+                          </Button>
+                        </div>
+
+                        {entries.length > 0 && (
+                          <div className="space-y-3 pl-11">
+                            {entries.map((entry) => (
+                              <div key={entry.id} className="flex gap-3 items-center animate-in slide-in-from-top-2 duration-200">
+                                <div className="flex-1 grid grid-cols-2 gap-3">
+                                  <Input
+                                    placeholder={entry.placeholder}
+                                    value={entry.name}
+                                    onChange={(e) => updateLiabilityEntry(entry.id, 'name', e.target.value)}
+                                    className="h-9 text-xs bg-gray-50/50 border-gray-200 focus:bg-white transition-all"
+                                  />
+                                  <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">$</span>
+                                    <Input
+                                      placeholder="0.00"
+                                      value={formatNumberWithCommas(entry.value)}
+                                      onChange={(e) => updateLiabilityEntry(entry.id, 'value', parseFormattedNumber(e.target.value))}
+                                      className="h-9 text-xs pl-6 bg-gray-50/50 border-gray-200 focus:bg-white transition-all font-medium text-gray-900"
+                                    />
+                                  </div>
+                                </div>
+                                <button onClick={() => removeLiabilityEntry(entry.id)} className="text-gray-300 hover:text-red-500 transition-colors">
+                                  <X size={14} />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Custom Liabilities */}
+              <div className="pt-4 border-t border-gray-100">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-bold text-gray-900">Otras Deudas</h3>
+                  <Button onClick={addCustomLiability} variant="outline" size="sm" className="text-xs h-8 rounded-lg border-gray-200">
+                    Nueva Categoría
+                  </Button>
+                </div>
+                {customLiabilities.map(customLiability => (
+                  <div key={customLiability.id} className="bg-white p-4 rounded-2xl border border-gray-100 mb-4 shadow-sm">
+                    <div className="flex gap-3 mb-3">
+                      <Input 
+                        placeholder="Nombre de la categoría" 
                         value={customLiability.name}
                         onChange={(e) => updateCustomLiabilityName(customLiability.id, e.target.value)}
-                        className="bg-white border-gray-200 text-gray-900 font-semibold text-sm h-8"
+                        className="h-9 font-semibold text-sm border-gray-200"
                       />
-                    </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeCustomLiability(customLiability.id)}
-                      className="mt-5 h-7 w-7 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-red-50 hover:shadow-md transition-all border-0"
-                    >
-                      <X className="h-3.5 w-3.5 text-red-600" />
-                    </Button>
-                  </div>
-
-                  <div className="pl-2 border-l-2 border-gray-200 space-y-2 mt-2">
-                    <div className="flex items-center justify-between mb-1">
-                      <Label className="text-gray-900 text-[10px] font-semibold uppercase tracking-wide">
-                        Cuentas dentro de esta categoría
-                      </Label>
-                      <Button
-                        type="button"
-                        size="sm"
-                        onClick={() => addCustomLiabilityAccount(customLiability.id)}
-                        className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-6 px-2 text-[10px] gap-1"
-                      >
-                        <Plus className="h-2.5 w-2.5 text-gray-700" />
-                        <span className="text-gray-900">Agregar Cuenta</span>
+                      <Button size="icon" variant="ghost" onClick={() => removeCustomLiability(customLiability.id)} className="h-9 w-9 text-gray-400 hover:text-red-500">
+                        <X size={16} />
                       </Button>
                     </div>
-
-                    {customLiability.accounts.length === 0 && (
-                      <div className="text-center py-2 px-2 bg-gray-50 rounded-md border border-dashed border-gray-300">
-                        <p className="text-[10px] text-gray-600">
-                          Agrega cuentas específicas dentro de esta categoría
-                        </p>
-                      </div>
-                    )}
-
-                    {customLiability.accounts.map((account) => (
-                      <div key={account.id} className="flex gap-1.5 items-start p-2 rounded-md bg-white border border-gray-200">
-                        <div className="flex-1 space-y-1.5">
-                          <Input
-                            type="text"
-                            placeholder="Nombre específico (ej: Préstamo Mamá, Deuda Tienda)"
-                            value={account.name}
-                            onChange={(e) => updateCustomLiabilityAccount(customLiability.id, account.id, 'name', e.target.value)}
-                            className="bg-white border-gray-200 text-gray-900 text-xs h-7"
+                    <div className="space-y-2 pl-4 border-l-2 border-gray-100">
+                      {customLiability.accounts.map(acc => (
+                        <div key={acc.id} className="flex gap-2">
+                          <Input 
+                            placeholder="Nombre del item" 
+                            value={acc.name}
+                            onChange={(e) => updateCustomLiabilityAccount(customLiability.id, acc.id, 'name', e.target.value)}
+                            className="h-8 text-xs bg-gray-50"
                           />
-                          <div className="relative">
-                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700 font-semibold text-xs">$</span>
-                            <Input
-                              type="text"
-                              placeholder="0.00"
-                              value={formatNumberWithCommas(account.value)}
-                              onChange={(e) => {
-                                const rawValue = parseFormattedNumber(e.target.value);
-                                updateCustomLiabilityAccount(customLiability.id, account.id, 'value', rawValue);
-                              }}
-                              className="pl-6 bg-white border-gray-200 text-gray-900 focus:border-red-500 transition-all text-xs h-7"
-                            />
-                          </div>
+                          <Input 
+                            placeholder="0.00" 
+                            value={formatNumberWithCommas(acc.value)}
+                            onChange={(e) => updateCustomLiabilityAccount(customLiability.id, acc.id, 'value', parseFormattedNumber(e.target.value))}
+                            className="h-8 text-xs w-32 bg-gray-50"
+                          />
+                          <button onClick={() => removeCustomLiabilityAccount(customLiability.id, acc.id)} className="text-gray-300 hover:text-red-500">
+                            <X size={14} />
+                          </button>
                         </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeCustomLiabilityAccount(customLiability.id, account.id)}
-                          className="mt-0.5 h-6 w-6 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-red-50 hover:shadow-md transition-all border-0"
-                        >
-                          <X className="h-3 w-3 text-red-600" />
-                        </Button>
-                      </div>
-                    ))}
+                      ))}
+                      <Button variant="ghost" size="sm" onClick={() => addCustomLiabilityAccount(customLiability.id)} className="text-xs text-gray-500 h-7 px-2">
+                        + Agregar item
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {step === 3 && (
+            <motion.div
+              key="step3"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-6"
+            >
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-indigo-50 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                  <Shield className="w-8 h-8 text-indigo-600" />
+                </div>
+                <h2 className={headingPage}>Tu Patrimonio Neto</h2>
+                <p className="text-gray-500 text-sm mt-2">
+                  Así se ven tus finanzas hoy. ¡Buen trabajo completando la información!
+                </p>
+              </div>
+
+              {/* Summary Card */}
+              <div className="bg-white rounded-[2rem] p-6 shadow-lg border border-indigo-50 text-center relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 via-indigo-500 to-emerald-400"></div>
+                <span className="text-xs font-bold text-gray-400 tracking-widest uppercase">PATRIMONIO NETO TOTAL</span>
+                <div className="text-4xl font-black text-[#5D4037] mt-2 tracking-tight">
+                  ${totals.netWorth.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4 mt-8">
+                  <div className="bg-emerald-50 rounded-2xl p-4">
+                    <div className="flex items-center justify-center gap-2 mb-1">
+                      <TrendingUp size={14} className="text-emerald-600" />
+                      <span className="text-xs font-bold text-emerald-700">ACTIVOS</span>
+                    </div>
+                    <span className="text-lg font-bold text-emerald-900">
+                      ${totals.assets.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+                    </span>
+                  </div>
+                  <div className="bg-red-50 rounded-2xl p-4">
+                    <div className="flex items-center justify-center gap-2 mb-1">
+                      <TrendingDown size={14} className="text-red-600" />
+                      <span className="text-xs font-bold text-red-700">PASIVOS</span>
+                    </div>
+                    <span className="text-lg font-bold text-red-900">
+                      ${totals.liabilities.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+                    </span>
                   </div>
                 </div>
-              ))}
-            </div>
-          </Card>
+              </div>
 
-          {/* Submit Button */}
-          <Button
-            type="submit" 
-            className="w-full bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-14 text-base font-semibold text-gray-900"
-            disabled={loading}
-          >
-            {loading ? 'Guardando tu patrimonio...' : 'Enviar patrimonio'}
-          </Button>
-        </form>
+              <div className="bg-[#F5F0EE] rounded-xl p-4 text-center">
+                <p className="text-sm text-[#5D4037] font-medium">
+                  "Conocer tu patrimonio es el primer paso para hacerlo crecer."
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Fixed Footer */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 z-50 safe-area-bottom">
+        <div className="max-w-2xl mx-auto flex gap-4">
+          {step > 1 && (
+            <Button
+              variant="outline"
+              onClick={prevStep}
+              className="flex-1 h-12 rounded-xl border-gray-200 text-gray-600 font-bold"
+            >
+              Atrás
+            </Button>
+          )}
+          {step < 3 ? (
+            <Button
+              onClick={nextStep}
+              className="flex-1 h-12 rounded-xl bg-[#5D4037] hover:bg-[#4E342E] text-white font-bold shadow-lg hover:shadow-xl transition-all"
+            >
+              Continuar
+            </Button>
+          ) : (
+            <Button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="flex-1 h-12 rounded-xl bg-[#5D4037] hover:bg-[#4E342E] text-white font-bold shadow-lg hover:shadow-xl transition-all"
+            >
+              {loading ? "Guardando..." : "Finalizar"}
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Target, Plus, TrendingUp, Sparkles, ChevronLeft, Lightbulb, Users, X } from "lucide-react";
 import { headingPage, headingSection } from "@/styles/typography";
 import BottomNav from "@/components/BottomNav";
@@ -45,6 +45,7 @@ interface GroupGoal {
 
 const Goals = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [goals, setGoals] = useState<Goal[]>([]);
   const [groupGoals, setGroupGoals] = useState<GroupGoal[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,6 +65,16 @@ const Goals = () => {
   const insightsAutoplayPlugin = useRef(
     Autoplay({ delay: 5000, stopOnInteraction: false })
   );
+
+  useEffect(() => {
+    if (searchParams.get('action') === 'new') {
+      setCreateModalOpen(true);
+      // Clean up URL
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete('action');
+      setSearchParams(newParams, { replace: true });
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const loadData = async () => {

@@ -172,7 +172,7 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
   return (
     <div className="w-full flex flex-col items-center justify-center z-10">
       <div className="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 p-8 flex flex-col items-center animate-in fade-in slide-in-from-bottom-8 duration-500">
-        <div className="flex items-center justify-center w-48 h-16 mb-8">
+        <div className="flex items-center justify-center w-96 h-40 mb-8">
           <img src={moniLogo} alt="Moni AI" className="w-full h-full object-contain" />
         </div>
         
@@ -243,7 +243,7 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
           type="submit"
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full h-14 mt-2 rounded-2xl bg-gray-900 text-white font-bold text-base flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+          className="w-full h-14 mt-2 rounded-2xl bg-[#5D4037] text-white font-bold text-base flex items-center justify-center gap-2 shadow-lg hover:bg-[#4E342E] hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">

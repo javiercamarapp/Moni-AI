@@ -489,7 +489,7 @@ const Auth = () => {
           <LoadingScreen />
         ) : isResetPassword ? (
           <div className="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 p-8 flex flex-col items-center">
-            <div className="flex items-center justify-center w-48 h-16 mb-8">
+            <div className="flex items-center justify-center w-96 h-40 mb-8">
               <img src={resetPasswordLogo} alt="Moni AI" className="w-full h-full object-contain" />
             </div>
 

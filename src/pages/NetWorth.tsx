@@ -32,7 +32,7 @@ const SectionHeader = ({
           e.stopPropagation();
           onFilterClick();
         }}
-        className={`flex items-center gap-2 px-4 py-2 rounded-full shadow-sm border text-xs font-semibold transition-colors ${isFilterActive ? 'bg-[#8C6A5D] text-white border-[#8C6A5D]' : 'bg-white border-stone-100 text-[#57534E] hover:bg-stone-50'}`}
+        className={`flex items-center gap-2 px-4 py-2 rounded-full shadow-sm border text-xs font-semibold transition-colors ${isFilterActive ? 'bg-[#8D6E63] text-white border-[#8D6E63]' : 'bg-white border-gray-100 text-gray-600 hover:bg-gray-50'}`}
       >
         <ListFilter size={14} />
         Filtrar
@@ -130,7 +130,7 @@ const NetWorth: React.FC = () => {
 
   if ((checkingData || loadingData) && hasData !== false) {
     return (
-      <div className="min-h-screen bg-[#FAFAF9] flex items-center justify-center">
+      <div className="min-h-screen bg-[#faf9f8] flex items-center justify-center">
         <div className="animate-pulse flex flex-col items-center">
           <div className="h-12 w-12 bg-gray-200 rounded-full mb-4"></div>
           <div className="h-4 w-32 bg-gray-200 rounded"></div>
@@ -145,19 +145,19 @@ const NetWorth: React.FC = () => {
   const { currentNetWorth, percentageChange, totalAssets, totalLiabilities, chartData } = netWorthData;
 
   return (
-    <div className="min-h-screen bg-[#FAFAF9] text-[#44403C] pb-24 font-sans selection:bg-[#8C6A5D] selection:text-white">
+    <div className="min-h-screen bg-[#faf9f8] text-[#5D4037] pb-24 font-sans selection:bg-[#8D6E63] selection:text-white">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-[#FAFAF9]/95 backdrop-blur-sm px-6 pt-6 pb-2">
+      <header className="sticky top-0 z-40 bg-[#faf9f8]/95 backdrop-blur-sm px-6 pt-6 pb-2">
         <div className="max-w-5xl mx-auto flex items-center gap-4">
           <button
             onClick={() => navigate('/dashboard')}
             className="bg-white p-3.5 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md transition-all active:scale-95 duration-200 border border-white"
           >
-            <ArrowLeft size={20} className="text-[#57534E]" />
+            <ArrowLeft size={20} className="text-[#5D4037]" />
           </button>
           <div className="flex flex-col">
             <h1 className={headingPage}>Patrimonio Neto</h1>
-            <p className="text-sm text-78716C font-medium">Evolución de tu riqueza</p>
+            <p className="text-sm text-gray-500 font-medium">Evolución de tu riqueza</p>
           </div>
         </div>
       </header>
@@ -166,7 +166,7 @@ const NetWorth: React.FC = () => {
 
         {/* Main Net Worth Value */}
         <div className="space-y-2 animate-[fadeIn_0.6s_ease-out]">
-          <div className="flex items-center gap-2 text-[#78716C] mb-1">
+          <div className="flex items-center gap-2 text-gray-500 mb-1">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shield-check">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
               <path d="m9 12 2 2 4-4" />
@@ -179,13 +179,13 @@ const NetWorth: React.FC = () => {
                 ${currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </h2>
               <div className="flex items-center gap-2 mt-3">
-                <span className={`font-medium text-sm ${percentageChange >= 0 ? 'text-[#10B981]' : 'text-red-500'}`}>
+                <span className={`font-medium text-sm ${percentageChange >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
                   {percentageChange >= 0 ? '+' : ''}{percentageChange.toFixed(2)}%
                 </span>
-                <span className="text-[#A8A29E] text-sm">último periodo</span>
+                <span className="text-gray-400 text-sm">último periodo</span>
               </div>
             </div>
-            <div className={`p-2 rounded-xl ${percentageChange >= 0 ? 'text-[#10B981] bg-[#10B981]/10' : 'text-red-500 bg-red-50'}`}>
+            <div className={`p-2 rounded-xl ${percentageChange >= 0 ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50'}`}>
               {percentageChange >= 0 ? <TrendingUp size={24} /> : <TrendingDown size={24} />}
             </div>
           </div>
@@ -198,7 +198,7 @@ const NetWorth: React.FC = () => {
           </div>
 
           {/* Time Range Selectors */}
-          <div className="flex justify-between mt-6 bg-white p-1.5 rounded-2xl shadow-sm border border-[#E7E5E4]">
+          <div className="flex justify-between mt-6 bg-white p-1.5 rounded-2xl shadow-sm border border-gray-100">
             {(['1M', '3M', '6M', '1Y', 'ALL'] as TimeRange[]).map((range) => (
               <button
                 key={range}
@@ -206,8 +206,8 @@ const NetWorth: React.FC = () => {
                 className={`
                   px-4 py-2 text-xs font-bold rounded-xl transition-all duration-300
                   ${selectedRange === range
-                    ? 'bg-[#8C6A5D] text-white shadow-md transform scale-105'
-                    : 'text-[#A8A29E] hover:bg-[#F5F5F4] hover:text-[#57534E]'}
+                    ? 'bg-[#8D6E63] text-white shadow-md transform scale-105'
+                    : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'}
                 `}
               >
                 {range}
@@ -221,14 +221,14 @@ const NetWorth: React.FC = () => {
           {/* Assets */}
           <div
             onClick={() => navigate('/assets')}
-            className="bg-white p-4 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-[#F5F5F4] flex items-center gap-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] cursor-pointer group"
+            className="bg-white p-4 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-gray-100 flex items-center gap-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] cursor-pointer group"
           >
-            <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-[#10B981] flex-shrink-0 group-hover:scale-105 transition-transform">
+            <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 flex-shrink-0 group-hover:scale-105 transition-transform">
               <TrendingUp size={22} />
             </div>
             <div className="flex flex-col min-w-0">
-              <p className="text-[#78716C] text-[10px] font-bold uppercase tracking-wide">Activos</p>
-              <p className="text-lg font-bold text-[#059669] tracking-tight leading-none mt-0.5 truncate">
+              <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wide">Activos</p>
+              <p className="text-lg font-bold text-emerald-700 tracking-tight leading-none mt-0.5 truncate">
                 ${(totalAssets / 1000000).toFixed(2)}M
               </p>
             </div>
@@ -237,14 +237,14 @@ const NetWorth: React.FC = () => {
           {/* Liabilities */}
           <div
             onClick={() => navigate('/liabilities')}
-            className="bg-white p-4 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-[#F5F5F4] flex items-center gap-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] cursor-pointer group"
+            className="bg-white p-4 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-gray-100 flex items-center gap-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] cursor-pointer group"
           >
-            <div className="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center text-[#EF4444] flex-shrink-0 group-hover:scale-105 transition-transform">
+            <div className="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center text-red-600 flex-shrink-0 group-hover:scale-105 transition-transform">
               <TrendingDown size={22} />
             </div>
             <div className="flex flex-col min-w-0">
-              <p className="text-[#78716C] text-[10px] font-bold uppercase tracking-wide">Pasivos</p>
-              <p className="text-lg font-bold text-[#DC2626] tracking-tight leading-none mt-0.5 truncate">
+              <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wide">Pasivos</p>
+              <p className="text-lg font-bold text-red-700 tracking-tight leading-none mt-0.5 truncate">
                 ${(totalLiabilities / 1000000).toFixed(2)}M
               </p>
             </div>
@@ -290,22 +290,22 @@ const NetWorth: React.FC = () => {
                 toast.error("No se pudo generar el reporte");
               }
             }}
-            className="w-full py-3 rounded-2xl border border-[#8C6A5D] bg-[#8C6A5D] text-white flex items-center justify-center gap-2 transition-all duration-500 ease-spring hover:bg-white hover:text-[#8C6A5D] hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(140,106,93,0.3)] cursor-pointer group shadow-md active:scale-95 active:shadow-sm"
+            className="w-full py-3 rounded-2xl border border-[#5D4037] bg-[#5D4037] text-white flex items-center justify-center gap-2 transition-all duration-500 ease-spring hover:bg-white hover:text-[#5D4037] hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(93,64,55,0.3)] cursor-pointer group shadow-md active:scale-95 active:shadow-sm"
           >
-            <Download size={18} className="text-white transition-colors duration-300 group-hover:text-[#8C6A5D]" strokeWidth={2.5} />
+            <Download size={18} className="text-white transition-colors duration-300 group-hover:text-[#5D4037]" strokeWidth={2.5} />
             <span className="font-bold text-sm tracking-tight">Descargar reporte financiero en PDF</span>
           </button>
         </div>
 
         {/* Info Banner */}
         <div className="mt-8 animate-[slideUp_0.95s_ease-out]">
-          <div className="bg-blue-50 p-4 rounded-2xl flex items-start gap-3 border border-blue-100/50">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600 flex-shrink-0 mt-0.5">
+          <div className="bg-white p-4 rounded-2xl flex items-start gap-3 border border-gray-100 shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#8D6E63] flex-shrink-0 mt-0.5">
               <circle cx="12" cy="12" r="10" />
               <path d="M12 16v-4" />
               <path d="M12 8h.01" />
             </svg>
-            <p className="text-xs leading-relaxed text-blue-900 font-medium">
+            <p className="text-xs leading-relaxed text-gray-600 font-medium">
               Al conectar tus cuentas de banco, la liquidez y el efectivo disponible se actualizarán automáticamente con la información de tus cuentas bancarias y de inversión.
             </p>
           </div>
@@ -328,9 +328,9 @@ const NetWorth: React.FC = () => {
           </SectionHeader>
 
           {/* Cash Available Total */}
-          <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-[#F5F5F4] mb-4">
-            <p className="text-[#78716C] font-medium text-sm mb-1">Efectivo Disponible</p>
-            <p className="text-3xl font-bold text-[#1C3668] tracking-tight">
+          <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 mb-4">
+            <p className="text-gray-500 font-medium text-sm mb-1">Efectivo Disponible</p>
+            <p className="text-3xl font-bold text-[#5D4037] tracking-tight">
               ${totalLiquid.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
           </div>
@@ -348,7 +348,7 @@ const NetWorth: React.FC = () => {
                 />
               ))
             ) : (
-              <p className="text-center text-stone-400 text-sm py-4">No se encontraron resultados.</p>
+              <p className="text-center text-gray-400 text-sm py-4">No se encontraron resultados.</p>
             )}
           </div>
         </div>
@@ -370,9 +370,9 @@ const NetWorth: React.FC = () => {
           </SectionHeader>
 
           {/* Investments Total */}
-          <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-[#F5F5F4] mb-4">
-            <p className="text-[#78716C] font-medium text-sm mb-1">Inversiones y Por Cobrar</p>
-            <p className="text-3xl font-bold text-[#059669] tracking-tight">
+          <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 mb-4">
+            <p className="text-gray-500 font-medium text-sm mb-1">Inversiones y Por Cobrar</p>
+            <p className="text-3xl font-bold text-emerald-600 tracking-tight">
               ${totalSemiLiquid.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
           </div>
@@ -392,7 +392,7 @@ const NetWorth: React.FC = () => {
                 />
               ))
             ) : (
-              <p className="text-center text-stone-400 text-sm py-4">No se encontraron resultados.</p>
+              <p className="text-center text-gray-400 text-sm py-4">No se encontraron resultados.</p>
             )}
           </div>
         </div>

@@ -170,7 +170,7 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
     }, [api]);
 
     return (
-        <div className="w-full">
+        <div className="w-full bg-[#faf9f8]">
             <div className="flex items-center justify-between px-2 mb-3">
                 <button
                     onClick={() => navigate('/cartera')}
@@ -208,7 +208,7 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
             {accounts.length === 0 ? (
                 <div
                     onClick={() => navigate("/bank-connection")}
-                    className="h-32 rounded-3xl bg-gray-50 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gray-100 transition-colors"
+                    className="h-[138px] rounded-3xl bg-gray-50 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gray-100 transition-colors"
                 >
                     <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center shadow-sm">
                         <Plus className="text-gray-400" size={20} />
@@ -218,14 +218,14 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
             ) : (
                 <Carousel
                     setApi={setApi}
-                    className="w-full"
+                    className="w-full bg-transparent"
                     opts={{
                         align: "start",
                         loop: false,
                         dragFree: true,
                     }}
                 >
-                    <CarouselContent className="-ml-2 md:-ml-4">
+                    <CarouselContent className="-ml-3 md:-ml-4 bg-transparent">
                         {accounts.map((account, index) => {
                             const logoUrl = getBankLogo(account.bank_name);
                             const last4 = account.account_id.slice(-4);
@@ -241,10 +241,10 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                             const lastSyncText = formatLastSync(account.last_sync);
 
                             return (
-                                <CarouselItem key={account.id} className="pl-2 md:pl-4 basis-[70%] sm:basis-[42%] lg:basis-[28%]">
+                                <CarouselItem key={account.id} className="pl-3 md:pl-4 basis-[75%] sm:basis-[46%] lg:basis-[32%] bg-transparent">
                                     <div
                                         onClick={() => navigate('/cartera')}
-                                        className={`h-32 rounded-3xl ${solidColor} p-4 flex flex-col justify-between shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1),inset_0_-1px_0_rgba(0,0,0,0.2)] cursor-pointer hover:scale-[1.02] hover:shadow-[0_15px_50px_-10px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-1px_0_rgba(0,0,0,0.25)] transition-all duration-200 relative overflow-hidden`}
+                                        className={`h-[138px] rounded-3xl ${solidColor} p-4 flex flex-col justify-between shadow-md cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-200 relative overflow-hidden`}
                                     >
                                         {/* Subtle gradient overlay for depth */}
                                         <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/20 pointer-events-none" />
@@ -290,34 +290,33 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                                             </div>
                                         </div>
 
-                                        <div className="flex items-end justify-between">
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center justify-between mb-0.5">
-                                                    <p className="text-white/70 text-[10px] font-medium">
-                                                        {cardType === 'Crédito' ? 'Usado' : 'Balance'}
-                                                    </p>
-                                                    <p className="text-white/50 text-[9px]">{lastSyncText}</p>
-                                                </div>
-                                                <p className="text-white text-lg font-bold">
-                                                    ${balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                                                    {creditLimit && (
-                                                        <span className="text-white/50 text-xs font-normal"> / ${creditLimit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
-                                                    )}
+                                        <div className="flex flex-col">
+                                            <div className="flex items-center justify-between mb-0.5">
+                                                <p className="text-white/70 text-[10px] font-medium">
+                                                    {cardType === 'Crédito' ? 'Usado' : 'Balance'}
                                                 </p>
-                                                {/* Credit usage bar for credit cards */}
-                                                {creditUsed !== null && (
-                                                    <div className="mt-1.5 h-1 w-full bg-white/20 rounded-full overflow-hidden">
-                                                        <div 
-                                                            className={`h-full rounded-full transition-all ${
-                                                                creditUsed >= 80 ? 'bg-red-400' :
-                                                                creditUsed >= 50 ? 'bg-amber-400' :
-                                                                'bg-emerald-400'
-                                                            }`}
-                                                            style={{ width: `${Math.min(creditUsed, 100)}%` }}
-                                                        />
-                                                    </div>
-                                                )}
                                             </div>
+                                            <p className="text-white text-lg font-bold">
+                                                ${balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                                {creditLimit && (
+                                                    <span className="text-white/50 text-xs font-normal"> / ${creditLimit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
+                                                )}
+                                            </p>
+                                            {/* Credit usage bar for credit cards */}
+                                            {creditUsed !== null && (
+                                                <div className="mt-1.5 h-1 w-full bg-white/20 rounded-full overflow-hidden">
+                                                    <div 
+                                                        className={`h-full rounded-full transition-all ${
+                                                            creditUsed >= 80 ? 'bg-red-400' :
+                                                            creditUsed >= 50 ? 'bg-amber-400' :
+                                                            'bg-emerald-400'
+                                                        }`}
+                                                        style={{ width: `${Math.min(creditUsed, 100)}%` }}
+                                                    />
+                                                </div>
+                                            )}
+                                            {/* Last sync - always at bottom */}
+                                            <p className="text-white text-[10px] mt-1">{lastSyncText}</p>
                                         </div>
                                     </div>
                                 </CarouselItem>

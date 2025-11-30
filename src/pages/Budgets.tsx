@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { Skeleton } from "@/components/ui/skeleton";
+import { headingPage, headingSection } from "@/styles/typography";
 
 interface Budget {
   id: string;

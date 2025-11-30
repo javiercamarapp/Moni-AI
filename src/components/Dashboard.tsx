@@ -1192,7 +1192,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="page-standard min-h-screen text-gray-800 font-sans pb-20">
+      <div className="min-h-screen bg-[#faf9f8] text-gray-800 font-sans pb-20">
 
         <div className="page-container">
           <DashboardHeader
@@ -1231,7 +1231,7 @@ const Dashboard = () => {
           </div>
 
           {/* Accounts Carousel */}
-          <div className="max-w-5xl mx-auto px-6 mb-6">
+          <div className="max-w-5xl mx-auto px-6 mb-6 bg-[#faf9f8]">
             <AccountsCarousel accounts={bankConnections} />
           </div>
 

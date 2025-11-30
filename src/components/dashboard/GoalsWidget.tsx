@@ -122,7 +122,7 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                         </div>
                     )}
                     <button
-                        onClick={() => navigate('/new-goal')}
+                        onClick={() => navigate('/goals?action=new')}
                         className="flex items-center gap-1.5 bg-[#F5F0EE] hover:bg-[#EBE5E2] text-[#5D4037] p-2 md:px-4 md:py-2 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95 whitespace-nowrap"
                     >
                         <Plus size={14} strokeWidth={3} />
@@ -136,7 +136,7 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                 <div>
                     <div
                         className="bg-white rounded-[1.75rem] p-6 border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center gap-3 cursor-pointer hover:bg-gray-50 transition-colors"
-                        onClick={() => navigate('/new-goal')}
+                        onClick={() => navigate('/goals?action=new')}
                     >
                         <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
                             <Plus className="text-purple-600" size={24} />
@@ -228,7 +228,7 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                         </div>
                     )}
                     <button
-                        onClick={() => navigate('/new-goal?type=group')}
+                        onClick={() => navigate('/goals?action=new')}
                         className="flex items-center gap-1.5 bg-[#F5F0EE] hover:bg-[#EBE5E2] text-[#5D4037] p-2 md:px-4 md:py-2 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95 whitespace-nowrap"
                     >
                         <Plus size={14} strokeWidth={3} />
