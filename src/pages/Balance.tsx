@@ -161,7 +161,7 @@ const Balance = () => {
   const tasaAhorro = totalIngresos > 0 ? ahorro / totalIngresos * 100 : 0;
   useEffect(() => {
     fetchBalanceData();
-    fetchWeeklyData();
+    fetchEvolutionData();
     fetchSubscriptionsAndDailyExpenses();
   }, [currentMonth, viewMode]);
 
@@ -326,63 +326,88 @@ const Balance = () => {
     }
   };
 
-  const fetchWeeklyData = async () => {
+  const fetchEvolutionData = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Get last 7 days of data
-      const today = new Date();
-      today.setHours(23, 59, 59, 999);
+      let startDate: Date;
+      let endDate: Date;
+      let dataPoints: { key: string; label: string; fullLabel: string }[] = [];
 
-      const startDate = new Date(today);
-      startDate.setDate(today.getDate() - 6); // Last 7 days including today
-      startDate.setHours(0, 0, 0, 0);
+      if (viewMode === 'mensual') {
+        // Monthly view: show each day of the selected month
+        startDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+        endDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+        
+        // Generate all days of the month
+        const daysInMonth = endDate.getDate();
+        for (let day = 1; day <= daysInMonth; day++) {
+          const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+          const dateStr = date.toISOString().split('T')[0];
+          dataPoints.push({
+            key: dateStr,
+            label: day.toString(),
+            fullLabel: date.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' })
+          });
+        }
+      } else {
+        // Annual view: show each month of the selected year
+        startDate = new Date(currentMonth.getFullYear(), 0, 1);
+        endDate = new Date(currentMonth.getFullYear(), 11, 31);
+        
+        // Generate all months
+        const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        for (let month = 0; month < 12; month++) {
+          dataPoints.push({
+            key: `${currentMonth.getFullYear()}-${String(month + 1).padStart(2, '0')}`,
+            label: monthNames[month],
+            fullLabel: `${monthNames[month]} ${currentMonth.getFullYear()}`
+          });
+        }
+      }
 
-      console.log('📅 Últimos 7 días:', {
+      console.log('📅 Período seleccionado:', {
+        modo: viewMode,
         inicio: startDate.toISOString().split('T')[0],
-        fin: today.toISOString().split('T')[0]
+        fin: endDate.toISOString().split('T')[0],
+        puntos: dataPoints.length
       });
 
-      // Fetch transactions for last 7 days
-      const { data: weekTransactions } = await supabase
+      // Fetch transactions for the period
+      const { data: periodTransactions } = await supabase
         .from('transactions')
         .select('*')
         .eq('user_id', user.id)
         .gte('transaction_date', startDate.toISOString().split('T')[0])
-        .lte('transaction_date', today.toISOString().split('T')[0]);
+        .lte('transaction_date', endDate.toISOString().split('T')[0]);
 
-      console.log('📊 Transacciones de la semana:', weekTransactions?.length || 0);
+      console.log('📊 Transacciones del período:', periodTransactions?.length || 0);
 
-      // Create a map for all 7 days
-      const dayMap = new Map<string, { date: string; dayName: string; income: number; expense: number }>();
-
-      // Initialize all 7 days
-      for (let i = 6; i >= 0; i--) {
-        const date = new Date(today);
-        date.setDate(today.getDate() - i);
-        date.setHours(0, 0, 0, 0);
-
-        const dateStr = date.toISOString().split('T')[0];
-        const dayName = date.toLocaleDateString('es-MX', { weekday: 'short' });
-        const fullDayName = date.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'short' });
-
-        dayMap.set(dateStr, {
-          date: fullDayName,
-          dayName: dayName,
-          income: 0,
-          expense: 0
-        });
-      }
+      // Create a map for all data points
+      const dataMap = new Map<string, { income: number; expense: number }>();
+      
+      // Initialize all data points
+      dataPoints.forEach(point => {
+        dataMap.set(point.key, { income: 0, expense: 0 });
+      });
 
       // Process transactions
-      if (weekTransactions) {
-        weekTransactions.forEach(t => {
-          const dateStr = t.transaction_date;
+      if (periodTransactions) {
+        periodTransactions.forEach(t => {
+          let key: string;
+          
+          if (viewMode === 'mensual') {
+            // For monthly view, use the exact date
+            key = t.transaction_date;
+          } else {
+            // For annual view, use year-month
+            const date = new Date(t.transaction_date);
+            key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+          }
 
-          if (dayMap.has(dateStr)) {
-            const data = dayMap.get(dateStr)!;
-
+          if (dataMap.has(key)) {
+            const data = dataMap.get(key)!;
             if (t.type === 'ingreso') {
               data.income += Number(t.amount);
             } else {
@@ -393,28 +418,30 @@ const Balance = () => {
       }
 
       // Convert to array format for chart
-      const weeklyDataArray: DayData[] = Array.from(dayMap.entries()).map(([dateStr, data]) => ({
-        day: data.dayName, // Short day name for small view
-        dayFull: data.date, // Full date for expanded view
-        date: dateStr,
-        income: data.income,
-        expense: data.expense,
-        net: data.income - data.expense
-      }));
+      const evolutionDataArray: DayData[] = dataPoints.map(point => {
+        const data = dataMap.get(point.key) || { income: 0, expense: 0 };
+        return {
+          day: point.label,
+          dayFull: point.fullLabel,
+          income: data.income,
+          expense: data.expense,
+          net: data.income - data.expense
+        };
+      });
 
-      console.log('📈 Datos procesados (últimos 7 días):', weeklyDataArray);
+      console.log('📈 Datos procesados:', evolutionDataArray.length, 'puntos');
 
-      setWeeklyData(weeklyDataArray);
+      setWeeklyData(evolutionDataArray);
 
       // Generate insight using AI
       const { data: aiData } = await supabase.functions.invoke('financial-analysis', {
         body: {
-          analysisType: 'weekly-pattern',
-          data: weeklyDataArray,
-          transactions: weekTransactions || [],
+          analysisType: viewMode === 'mensual' ? 'monthly-pattern' : 'yearly-pattern',
+          data: evolutionDataArray,
+          transactions: periodTransactions || [],
           period: {
             start: startDate.toISOString().split('T')[0],
-            end: today.toISOString().split('T')[0]
+            end: endDate.toISOString().split('T')[0]
           }
         }
       });
@@ -423,7 +450,7 @@ const Balance = () => {
         setWeeklyInsight(aiData.insight);
       }
     } catch (error) {
-      console.error('Error fetching weekly data:', error);
+      console.error('Error fetching evolution data:', error);
     }
   };
 
