@@ -147,7 +147,7 @@ export default function LiquidityGaugeWidget({
             <p className="text-[7px] text-gray-500">(efectivo disponible)</p>
           </div>
           <div className="bg-purple-50 rounded-lg p-1.5 border border-purple-200">
-            <p className="text-[8px] text-purple-700 font-medium">Gasto/mes</p>
+            <p className="text-[8px] text-purple-700 font-medium">Gasto</p>
             <p className="text-[11px] font-bold text-purple-900">${(validExpenses / 1000).toFixed(1)}k</p>
             <p className="text-[7px] text-gray-500">(prom. últimos 6 meses)</p>
           </div>

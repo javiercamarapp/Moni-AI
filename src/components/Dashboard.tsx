@@ -1201,7 +1201,7 @@ const Dashboard = () => {
           />
 
           {/* Score and Budget Grid */}
-          <div className="max-w-5xl mx-auto px-6 mb-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="mb-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
             <ScoreCard score={scoreMoni} />
             <BudgetWidget
               totalBudget={totalBudget}
@@ -1210,7 +1210,7 @@ const Dashboard = () => {
           </div>
 
           {/* Quick Stats */}
-          <div className="max-w-5xl mx-auto">
+          <div>
             <QuickStats
               summaryValue={`$${(currentMonth.balance / 1000).toFixed(0)}k`}
               netWorthValue={netWorth >= 1000000 ? `$${(netWorth / 1000000).toFixed(1)}M` : `$${(netWorth / 1000).toFixed(0)}k`}
@@ -1220,7 +1220,7 @@ const Dashboard = () => {
           </div>
 
           {/* Balance Card */}
-          <div className="max-w-5xl mx-auto px-6 mb-4 mt-4">
+          <div className="mb-4 mt-4">
             <BalanceCard
               income={monthlyIncome}
               expenses={monthlyExpenses}
@@ -1231,12 +1231,12 @@ const Dashboard = () => {
           </div>
 
           {/* Accounts Carousel */}
-          <div className="max-w-5xl mx-auto px-6 mb-6 bg-[#faf9f8]">
+          <div className="mb-6 bg-[#faf9f8]">
             <AccountsCarousel accounts={bankConnections} />
           </div>
 
           {/* Goals Section - Personal & Group */}
-          <div className="max-w-5xl mx-auto px-6">
+          <div>
             <GoalsWidget
               personalGoals={goals.map(g => ({
                 id: g.id,
