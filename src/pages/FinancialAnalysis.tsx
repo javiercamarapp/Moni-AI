@@ -91,25 +91,13 @@ export default function FinancialAnalysis() {
 
       setTransactions(txData || []);
 
-      // Load credit cards
-      const { data: creditCardsData } = await supabase
-        .from('credit_cards')
+      // Load liabilities (pasivos) as debts
+      const { data: pasivosData } = await supabase
+        .from('pasivos')
         .select('*')
         .eq('user_id', user.id);
 
-      // Load loans
-      const { data: loansData } = await supabase
-        .from('loans')
-        .select('*')
-        .eq('user_id', user.id);
-
-      // Combine credit cards and loans into debts array
-      const allDebts = [
-        ...(creditCardsData || []),
-        ...(loansData || [])
-      ];
-
-      setDebts(allDebts);
+      setDebts(pasivosData || []);
 
     } catch (error) {
       console.error('Error loading data:', error);
@@ -286,15 +274,8 @@ export default function FinancialAnalysis() {
       <div className="page-container">
 
         {/* Header */}
-        <div className="sticky top-0 z-20 bg-[#f5f0ee]/90 backdrop-blur-sm py-4 flex justify-between items-center">
+        <div className="sticky top-0 z-20 bg-transparent backdrop-blur-sm py-4 flex justify-between items-center">
           <div>
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="mb-2 text-[#A8A29E] hover:text-[#292524] transition-colors flex items-center gap-2"
-            >
-              <ArrowLeft size={16} />
-              <span className="text-xs font-bold">Volver</span>
-            </button>
             <h1 className="text-xl md:text-2xl font-black text-[#5D4037] tracking-tight">
               Análisis de tus finanzas
             </h1>
@@ -307,20 +288,19 @@ export default function FinancialAnalysis() {
             <button
               onClick={() => setShowExportMenu(!showExportMenu)}
               disabled={isExporting !== null}
-              className={`p - 2.5 rounded - full shadow - sm border transition - all duration - 200 active: scale - 95 ${showExportMenu || isExporting
-                ? 'bg-[#292524] text-white border-[#292524]'
-                : 'bg-white text-[#78716C] border-stone-200 hover:bg-[#F5F5F4] hover:text-[#292524]'
-                } `}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-full shadow-md border transition-all duration-200 active:scale-95 ${
+                showExportMenu || isExporting
+                  ? 'bg-[#292524] text-white border-[#292524]'
+                  : 'bg-white text-[#57534E] border-stone-200 hover:bg-[#F5F5F4] hover:text-[#292524] hover:shadow-lg'
+              }`}
               aria-label="Opciones de exportación"
             >
               {isExporting ? (
-                <Loader2 size={20} className="animate-spin" />
+                <Loader2 size={18} className="animate-spin" />
               ) : (
-                <>
-                  <Share size={20} strokeWidth={2.5} className="block md:hidden" />
-                  <Download size={20} strokeWidth={2.5} className="hidden md:block" />
-                </>
+                <Download size={18} strokeWidth={2} />
               )}
+              <span className="hidden sm:inline text-sm font-semibold">Exportar</span>
             </button>
 
             {showExportMenu && (
