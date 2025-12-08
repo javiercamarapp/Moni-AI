@@ -2,7 +2,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Download, Share, Loader2, Table, FileText } from 'lucide-react';
+import { Download, Loader2, Table, FileText } from 'lucide-react';
+import { format, subMonths } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { jsPDF } from "jspdf";
 import BottomNav from "@/components/BottomNav";
 import { useDashboardData } from "@/hooks/useDashboardData";
@@ -280,7 +282,7 @@ export default function FinancialAnalysis() {
               Análisis de tus finanzas
             </h1>
             <p className="text-[#78716C] font-bold text-xs mt-1">
-              Entiende tus finanzas con ayuda de la AI
+              {format(subMonths(new Date(), 6), "MMMM yyyy", { locale: es })} - {format(new Date(), "MMMM yyyy", { locale: es })}
             </p>
           </div>
 
