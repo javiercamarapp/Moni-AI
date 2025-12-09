@@ -71,6 +71,9 @@ import JoinCircle from './pages/JoinCircle';
 import Challenges from './pages/Challenges';
 import FriendComparison from './pages/FriendComparison';
 import FriendChallenges from './pages/FriendChallenges';
+import FriendsListPage from './pages/FriendsListPage';
+import StatsPage from './pages/StatsPage';
+import ChallengesPage from './pages/ChallengesPage';
 
 import NotFound from "./pages/NotFound";
 import Subscribe from './pages/Subscribe';
@@ -185,7 +188,7 @@ function App() {
           } />
           <Route path="/level-details" element={<LevelDetails />} />
           <Route path="/logros" element={<Logros />} />
-          
+
           <Route path="/edit-aspirations" element={<EditAspirations />} />
           <Route path="/subscriptions" element={
             <PremiumFeature featureName="Análisis de Suscripciones con IA">
@@ -219,11 +222,7 @@ function App() {
           <Route path="/proximos-movimientos" element={<ProximosMovimientos />} />
           <Route path="/edit-assets-liabilities" element={<EditNetWorth />} />
           <Route path="/initial-net-worth" element={<InitialNetWorth />} />
-          <Route path="/retos" element={
-            <PremiumFeature featureName="Retos">
-              <Retos />
-            </PremiumFeature>
-          } />
+          <Route path="/retos" element={<Retos />} />
           <Route path="/friends-list" element={<FriendsList />} />
           <Route path="/friend/:id" element={<FriendProfile />} />
           <Route path="/friend/:id/compare" element={<FriendComparison />} />
@@ -231,7 +230,9 @@ function App() {
           <Route path="/add-friend" element={<AddFriend />} />
           <Route path="/groups" element={<Groups />} />
           <Route path="/financial-events" element={<FinancialEvents />} />
-          <Route path="/social-stats" element={<SocialStats />} />
+          <Route path="/social-stats" element={<StatsPage />} />
+          <Route path="/amigos" element={<FriendsListPage />} />
+          <Route path="/challenges" element={<ChallengesPage />} />
           <Route path="/saving-simulation" element={
             <PremiumFeature featureName="Simulación de Ahorro con IA">
               <SavingSimulation />
@@ -268,7 +269,7 @@ function App() {
           <Route path="/circle/:id/news" element={<CircleNews />} />
           <Route path="/join-circle/:code" element={<JoinCircle />} />
           <Route path="/challenges" element={<Challenges />} />
-          
+
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

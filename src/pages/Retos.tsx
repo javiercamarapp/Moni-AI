@@ -20,6 +20,145 @@ import { MonthlyRanking } from "@/components/gamification/MonthlyRanking";
 import { PersonalizedChallenges } from "@/components/gamification/PersonalizedChallenges";
 import { FriendCelebrations } from "@/components/social/FriendCelebrations";
 import { useScoreMoni } from "@/hooks/useFinancialData";
+import { SocialProfileCard } from "@/components/social/SocialProfileCard";
+import { SocialActions } from "@/components/social/SocialActions";
+import { ChallengesCarousel } from "@/components/social/ChallengesCarousel";
+import { BadgesSection } from "@/components/social/BadgesSection";
+import { ChallengeDetailsModal } from "@/components/social/ChallengeDetailsModal";
+
+const DEMO_WEEKLY_CHALLENGES = [
+  {
+    id: '1',
+    type: 'budget',
+    title: 'Café en Casa',
+    description: 'Prepara tu café en casa 3 veces esta semana.',
+    xpReward: 850,
+    icon: 'Wallet',
+    target: 500,
+    unit: 'MXN',
+    currentProgress: 320,
+    isActive: false,
+    period: 'weekly' as const,
+    theme: 'latte' as const,
+    aiReason: 'Tus gastos en cafeterías suman $1,200/mes. Reducirlo tendrá gran impacto.',
+    tips: ['Compra café de grano de buena calidad.', 'Invierte en un termo bonito.']
+  },
+  {
+    id: 'saving',
+    type: 'saving',
+    title: 'Stash Express',
+    description: 'Guarda $1,000 extra en tu fondo de emergencia.',
+    xpReward: 1200,
+    icon: 'PiggyBank',
+    target: 1000,
+    unit: 'MXN',
+    currentProgress: 0,
+    isActive: false,
+    period: 'weekly' as const,
+    theme: 'sage' as const,
+    aiReason: 'Tu fondo de emergencia está un poco bajo este mes.',
+    tips: ['Transfiere lo que te sobre del finde.', 'Vende algo que no uses.']
+  },
+  {
+    id: '3',
+    type: 'ratio',
+    title: 'Ahorro Turbo',
+    description: 'Ahorra el 20% de todo ingreso extra hoy.',
+    xpReward: 1000,
+    icon: 'TrendingUp',
+    target: 20,
+    unit: '%',
+    currentProgress: 15,
+    isActive: false,
+    period: 'weekly' as const,
+    theme: 'clay' as const,
+    aiReason: 'Tu tasa de ahorro está al 18%. Llega al 20% para subir de nivel.',
+    tips: ['Transfiere el monto apenas lo recibas.', 'Usa apartados automáticos.']
+  },
+  {
+    id: '4',
+    type: 'streak',
+    title: 'Sin Uber Eats',
+    description: 'Cocina en casa. Cero delivery por 5 días.',
+    xpReward: 600,
+    icon: 'Utensils',
+    target: 5,
+    unit: 'días',
+    currentProgress: 4,
+    isActive: false,
+    period: 'weekly' as const,
+    theme: 'sand' as const,
+    aiReason: 'Gastaste $3,200 en delivery el mes pasado.',
+    tips: ['Haz Meal Prep el domingo.', 'Borra la app temporalmente.']
+  },
+  {
+    id: '5',
+    type: 'budget',
+    title: 'Fin de Semana',
+    description: 'Presupuesto estricto de ocio para el finde.',
+    xpReward: 1200,
+    icon: 'ShoppingBag',
+    target: 2000,
+    unit: 'MXN',
+    currentProgress: 0,
+    isActive: false,
+    period: 'weekly' as const,
+    theme: 'espresso' as const,
+    aiReason: 'El ocio representa el 40% de tus gastos variables.',
+    tips: ['Busca actividades gratuitas.', 'Lleva efectivo, deja la tarjeta.']
+  }
+];
+
+const DEMO_MONTHLY_CHALLENGES = [
+  {
+    id: 'invest1',
+    type: 'investment',
+    title: 'Inversor Novato',
+    description: 'Realiza tu primera aportación a un ETF o Fondo.',
+    xpReward: 3000,
+    icon: 'Landmark',
+    target: 1,
+    unit: 'acción',
+    currentProgress: 0,
+    isActive: false,
+    period: 'monthly' as const,
+    theme: 'espresso' as const,
+    aiReason: 'Tienes exceso de liquidez perdiendo valor por inflación.',
+    tips: ['Busca ETFs de bajo costo como VOO o IVVPESO.', 'Empieza con poco.']
+  },
+  {
+    id: 'debt1',
+    type: 'debt',
+    title: 'Bola de Nieve',
+    description: 'Paga $2,000 extra a tu deuda más pequeña.',
+    xpReward: 2500,
+    icon: 'CreditCard',
+    target: 2000,
+    unit: 'MXN',
+    currentProgress: 500,
+    isActive: false,
+    period: 'monthly' as const,
+    theme: 'latte' as const,
+    aiReason: 'Eliminar esa tarjeta pequeña liberará $1,500 de flujo mensual.',
+    tips: ['Usa el método bola de nieve.', 'Aplica pagos directo a capital.']
+  },
+  {
+    id: 'm1',
+    type: 'ratio',
+    title: 'Ahorro Agresivo',
+    description: 'Ahorra el 30% de tus ingresos este mes.',
+    xpReward: 2500,
+    icon: 'TrendingUp',
+    target: 30,
+    unit: '%',
+    currentProgress: 12,
+    isActive: false,
+    period: 'monthly' as const,
+    theme: 'sage' as const,
+    aiReason: 'Tus ingresos fueron altos este mes, aprovecha.',
+    tips: ['Revisa tus gastos fijos.', 'Cancela suscripciones no usadas.']
+  }
+];
 
 const Social = () => {
   const navigate = useNavigate();
@@ -33,51 +172,36 @@ const Social = () => {
   const [friendsRankings, setFriendsRankings] = useState<any[]>([]);
   const [generalRankings, setGeneralRankings] = useState<any[]>([]);
   const [userPoints, setUserPoints] = useState<number>(0);
-  const [monthlyChallenges, setMonthlyChallenges] = useState<any[]>([]);
-  const [recommendedChallenge, setRecommendedChallenge] = useState<any>(null);
   const [friendActivity, setFriendActivity] = useState<any[]>([]);
-  const [showAchievementUnlocked, setShowAchievementUnlocked] = useState(false);
-  const [unlockedAchievement, setUnlockedAchievement] = useState<any>(null);
-  
+
+  // New state for selected challenge
+  const [selectedChallenge, setSelectedChallenge] = useState<any>(null);
+
   // Usar el mismo hook que el Dashboard para obtener el Score Moni
   const { data: scoreMoni = 40 } = useScoreMoni();
-  const [showXPGain, setShowXPGain] = useState(false);
-  const [xpGainAmount, setXPGainAmount] = useState(0);
   const [socialToast, setSocialToast] = useState<{ show: boolean; userName: string; type: string; xp: number; challenge?: string }>({ show: false, userName: '', type: '', xp: 0 });
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [previousLevel, setPreviousLevel] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const achievementSoundRef = useRef<HTMLAudioElement>(null);
-  const xpSoundRef = useRef<HTMLAudioElement>(null);
   const socialToastSoundRef = useRef<HTMLAudioElement>(null);
-  
+
   // Nuevos estados para gamificación
-  const [userLevel, setUserLevel] = useState<any>(null);
   const [userBadges, setUserBadges] = useState<any[]>([]);
   const [personalizedChallenges, setPersonalizedChallenges] = useState<any[]>([]);
-  const [rankingData, setRankingData] = useState<any>(null);
-  const [generatingChallenges, setGeneratingChallenges] = useState(false);
-
-  const achievementsList = [
-    { id: 1, name: "Ahorrista Nivel 1", xp: 100, icon: "💰", desc: "Primeros 100 XP" },
-    { id: 2, name: "Finanzas al Día", xp: 300, icon: "📊", desc: "Alcanza 300 XP" },
-    { id: 3, name: "Estratega", xp: 600, icon: "🧠", desc: "Suma 600 XP" },
-    { id: 4, name: "Maestro del Dinero", xp: 1000, icon: "👑", desc: "Alcanza 1000 XP totales" }
-  ];
 
   useEffect(() => {
     const fetchUserData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUser(user);
-        
+
         // Fetch profile data including username and avatar
         const { data: profileData } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', user.id)
           .maybeSingle();
-        
+
         if (profileData) {
           setProfile(profileData);
           // Set initial XP from profile
@@ -95,260 +219,34 @@ const Social = () => {
             .single();
           if (newProfile) setProfile(newProfile);
         }
-        
-        // El Score Moni se obtiene automáticamente del hook useScoreMoni()
 
-        // Calculate monthly ranking among friends
+        // Fetch initial data
+        const currentMonth = new Date().getMonth() + 1;
+        const currentYear = new Date().getFullYear();
+
+        // Check if we have active friendships
         const { data: friendships } = await supabase
           .from('friendships')
           .select('friend_id')
           .eq('user_id', user.id)
           .eq('status', 'accepted');
 
-        if (friendships && friendships.length > 0) {
-          const friendIds = friendships.map(f => f.friend_id);
-          const allUserIds = [...friendIds, user.id];
-
-          const { data: allScores } = await supabase
-            .from('user_scores')
-            .select('user_id, score_moni')
-            .in('user_id', allUserIds)
-            .order('score_moni', { ascending: false });
-
-          if (allScores) {
-            const ranking = allScores.findIndex(s => s.user_id === user.id) + 1;
-            setMonthlyRanking(ranking);
-          }
-        } else {
-          setMonthlyRanking(1);
-        }
-
-        // Fetch monthly rankings
-        const currentMonth = new Date().getMonth() + 1;
-        const currentYear = new Date().getFullYear();
-
-        // Get user's points for current month
-        const { data: userRanking } = await supabase
-          .from('monthly_rankings')
-          .select('total_points, challenges_completed')
-          .eq('user_id', user.id)
-          .eq('month', currentMonth)
-          .eq('year', currentYear)
-          .maybeSingle();
-
-        if (userRanking) {
-          setUserPoints(userRanking.total_points);
-        }
-
-        // Variables para guardar los rankings
-        let enrichedFriendsRank: any[] = [];
-        let enrichedGeneralRank: any[] = [];
-
-        // Get friend IDs for friends ranking
-        if (friendships && friendships.length > 0) {
-          const friendIds = friendships.map(f => f.friend_id);
-          const allUserIds = [...friendIds, user.id];
-
-          // Get rankings for friends
-          const { data: friendsRankData } = await supabase
-            .from('monthly_rankings')
-            .select(`
-              user_id,
-              total_points,
-              challenges_completed
-            `)
-            .in('user_id', allUserIds)
-            .eq('month', currentMonth)
-            .eq('year', currentYear)
-            .order('total_points', { ascending: false })
-            .limit(10);
-
-          if (friendsRankData) {
-            // Fetch profiles for friends
-            const { data: friendProfiles } = await supabase
-              .from('profiles')
-              .select('id, username, full_name, avatar_url')
-              .in('id', friendsRankData.map(r => r.user_id));
-
-            enrichedFriendsRank = friendsRankData.map((rank, index) => {
-              const profile = friendProfiles?.find(p => p.id === rank.user_id);
-              return {
-                ...rank,
-                ranking: index + 1,
-                username: profile?.username || 'usuario',
-                full_name: profile?.full_name || 'Usuario',
-                avatar_url: profile?.avatar_url
-              };
-            });
-            setFriendsRankings(enrichedFriendsRank);
-          }
-        }
-
-        // Get general rankings (top 10)
-        const { data: generalRankData } = await supabase
-          .from('monthly_rankings')
-          .select(`
-            user_id,
-            total_points,
-            challenges_completed
-          `)
-          .eq('month', currentMonth)
-          .eq('year', currentYear)
-          .order('total_points', { ascending: false })
-          .limit(10);
-
-        if (generalRankData) {
-          // Fetch profiles for general rankings
-          const { data: generalProfiles } = await supabase
-            .from('profiles')
-            .select('id, username, full_name, avatar_url')
-            .in('id', generalRankData.map(r => r.user_id));
-
-          enrichedGeneralRank = generalRankData.map((rank, index) => {
-            const profile = generalProfiles?.find(p => p.id === rank.user_id);
-            return {
-              ...rank,
-              ranking: index + 1,
-              username: profile?.username || 'usuario',
-              full_name: profile?.full_name || 'Usuario',
-              avatar_url: profile?.avatar_url
-            };
-          });
-          setGeneralRankings(enrichedGeneralRank);
-        }
-
-        // Fetch monthly challenges
-        const { data: challengesData } = await supabase
-          .from('monthly_challenges')
-          .select('*')
-          .eq('month', currentMonth)
-          .eq('year', currentYear)
-          .order('points', { ascending: false });
-
-        if (challengesData) {
-          setMonthlyChallenges(challengesData);
-          // Set recommended challenge (first one)
-          if (challengesData.length > 0) {
-            setRecommendedChallenge(challengesData[0]);
-          }
-        }
-
-        // Fetch friend activity
-        if (friendships && friendships.length > 0) {
-          const friendIds = friendships.map(f => f.friend_id);
-          const { data: activityData } = await supabase
-            .from('friend_activity')
-            .select(`
-              *,
-              profiles:user_id (full_name, username)
-            `)
-            .in('user_id', friendIds)
-            .order('created_at', { ascending: false })
-            .limit(10);
-
-          if (activityData) {
-            setFriendActivity(activityData);
-          }
-        }
-
-        // NUEVA GAMIFICACIÓN - Cargar nivel del usuario
-        const { data: levelData } = await supabase
-          .from('user_levels')
-          .select('*')
-          .eq('user_id', user.id)
-          .maybeSingle();
-        
-        setUserLevel(levelData);
-
-        // Cargar insignias desbloqueadas
-        const { data: allBadges } = await supabase.from('badges').select('*');
-        const { data: unlockedBadges } = await supabase
-          .from('user_badges')
-          .select('*')
-          .eq('user_id', user.id);
-
-        if (allBadges) {
-          const badgesWithStatus = allBadges.map(badge => ({
-            ...badge,
-            unlocked: unlockedBadges?.some(ub => ub.badge_name === badge.name) || false,
-            earnedAt: unlockedBadges?.find(ub => ub.badge_name === badge.name)?.earned_at
-          }));
-          setUserBadges(badgesWithStatus);
-        }
-
-        // Cargar retos personalizados activos
-        const { data: activeChallenges } = await supabase
-          .from('user_daily_challenges')
-          .select('*, daily_challenges(*)')
-          .eq('user_id', user.id)
-          .in('status', ['active', 'completed'])
-          .order('challenge_date', { ascending: false })
-          .limit(5);
-
-        if (activeChallenges) {
-          setPersonalizedChallenges(activeChallenges.map(uc => ({
-            id: uc.id,
-            titulo: uc.daily_challenges?.title,
-            descripcion: uc.daily_challenges?.description,
-            period: uc.daily_challenges?.period,
-            challenge_type: uc.daily_challenges?.challenge_type,
-            estimated_savings: uc.daily_challenges?.estimated_savings || 0,
-            xp_reward: uc.daily_challenges?.xp_reward,
-            difficulty: uc.difficulty_level,
-            completed: uc.completed,
-            status: uc.status
-          })));
-        }
-
-        // Cargar datos de ranking con amigos y global
-        const { data: currentRanking } = await supabase
-          .from('monthly_rankings')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('month', currentMonth)
-          .eq('year', currentYear)
-          .maybeSingle();
-
-        // Siempre crear rankingData, incluso si no existe currentRanking
-        const defaultRanking = currentRanking || {
-          user_id: user.id,
-          total_points: userPoints || 0,
-          challenges_completed: 0,
-          league: 'bronze',
-          rank_position: undefined,
-          rank_global_position: undefined
-        };
-
-        // Usar los datos cargados directamente, no los estados
-        setRankingData({
-          currentUser: defaultRanking,
-          friendsRanking: enrichedFriendsRank.map(r => ({
-            user_id: r.user_id,
-            full_name: r.full_name,
-            total_points: r.total_points,
-            rank_position: r.ranking,
-            league: 'bronze'
-          })),
-          topGlobal: enrichedGeneralRank.map(r => ({
-            user_id: r.user_id,
-            full_name: r.full_name,
-            total_points: r.total_points,
-            league: 'bronze'
-          }))
-        });
+        // Parallel data fetching
+        fetchRankingsData(user.id, currentMonth, currentYear, friendships);
+        fetchChallengesData(user.id);
+        fetchFriendActivity(user.id, friendships);
 
         // Setup realtime subscription for rankings
         const rankingsChannel = supabase
           .channel('realtime-rankings')
           .on(
             'postgres_changes',
-            { 
-              event: '*', 
-              schema: 'public', 
-              table: 'monthly_rankings' 
+            {
+              event: '*',
+              schema: 'public',
+              table: 'monthly_rankings'
             },
             () => {
-              // Reload rankings when any change occurs
               fetchRankingsData(user.id, currentMonth, currentYear, friendships);
             }
           )
@@ -356,22 +254,38 @@ const Social = () => {
 
         // Setup realtime subscription for friend activity
         const activityChannel = supabase
-          .channel('realtime-friend-activity')
+          .channel('realtime-activity')
           .on(
             'postgres_changes',
             {
               event: 'INSERT',
               schema: 'public',
-              table: 'friend_activity'
+              table: 'user_activities'
             },
-            () => {
-              // Reload friend activity when new activity is added
-              fetchUserData();
+            (payload: any) => {
+              // If activity is from a friend, show toast and update list
+              const isFriend = friendships?.some((f: any) => f.friend_id === payload.new.user_id);
+              if (isFriend) {
+                // Fetch user name
+                fetchFriendName(payload.new.user_id).then(name => {
+                  setSocialToast({
+                    show: true,
+                    userName: name,
+                    type: payload.new.activity_type,
+                    xp: payload.new.xp_earned || 0
+                  });
+                  if (socialToastSoundRef.current) {
+                    socialToastSoundRef.current.play().catch(e => console.log('Audio play failed', e));
+                  }
+                  // Refresh activity list
+                  fetchFriendActivity(user.id, friendships);
+                });
+              }
             }
           )
           .subscribe();
 
-        // Setup realtime subscription for reactions
+        // Subscribe to reactions table 
         const reactionsChannel = supabase
           .channel('realtime-reactions')
           .on(
@@ -379,20 +293,20 @@ const Social = () => {
             {
               event: 'INSERT',
               schema: 'public',
-              table: 'friend_activity_reactions'
+              table: 'activity_reactions',
+              filter: `friend_id=eq.${user.id}`
             },
             async (payload: any) => {
-              // Show toast notification if the reaction is for current user
-              if (payload.new.to_user_id === user.id) {
-                // Get the user who reacted
+              // Someone reacted to my activity
+              if (payload.new) {
                 const { data: fromUser } = await supabase
                   .from('profiles')
                   .select('username, full_name')
-                  .eq('id', payload.new.from_user_id)
+                  .eq('id', payload.new.user_id)
                   .single();
 
                 if (fromUser) {
-                  showSocialToast(
+                  showNotification(
                     fromUser.username || fromUser.full_name || 'Un amigo',
                     'reaction',
                     1
@@ -402,7 +316,7 @@ const Social = () => {
             }
           )
           .subscribe();
-        
+
         // Setup realtime subscription for profile updates (XP and Score Moni)
         const profileChannel = supabase
           .channel('realtime-profile-updates')
@@ -418,13 +332,13 @@ const Social = () => {
               if (payload.new) {
                 const newXP = payload.new.total_xp || 0;
                 const newLevel = Math.floor(newXP / 100) + 1;
-                
+
                 // Detectar subida de nivel
                 if (newLevel > previousLevel) {
                   setShowLevelUp(true);
                   setPreviousLevel(newLevel);
                 }
-                
+
                 setTotalXP(newXP);
                 // El Score Moni se actualiza automáticamente vía hook useScoreMoni()
                 setProfile(payload.new);
@@ -444,7 +358,7 @@ const Social = () => {
     };
 
     let cleanup: (() => void) | undefined;
-    
+
     fetchUserData().then((cleanupFn) => {
       cleanup = cleanupFn;
     });
@@ -568,7 +482,7 @@ const Social = () => {
       // Upload to Supabase Storage
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}/avatar.${fileExt}`;
-      
+
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(fileName, file, { upsert: true });
@@ -599,405 +513,189 @@ const Social = () => {
     }
   };
 
-  const handleUsernameSubmit = async () => {
-    if (!user || !username.trim()) {
-      toast.error('Por favor ingresa un nombre de usuario');
-      return;
-    }
-
-    // Validate username format
-    if (!/^[a-z0-9_]{3,20}$/.test(username.toLowerCase())) {
-      toast.error('El usuario debe tener 3-20 caracteres (solo letras, números y _)');
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ username: username.toLowerCase() })
-        .eq('id', user.id);
-
-      if (error) {
-        if (error.code === '23505') {
-          toast.error('Este nombre de usuario ya existe');
-        } else {
-          throw error;
-        }
-        return;
-      }
-
-      setProfile({ ...profile, username: username.toLowerCase() });
-      setShowUsernameDialog(false);
-      toast.success('Usuario creado exitosamente');
-    } catch (error: any) {
-      console.error('Error creating username:', error);
-      toast.error('Error al crear usuario');
-    }
+  const fetchFriendName = async (userId: string) => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('username, full_name')
+      .eq('id', userId)
+      .single();
+    return data?.username || data?.full_name || 'Un amigo';
   };
 
-  const getInitials = (email: string) => {
-    return email.substring(0, 2).toUpperCase();
-  };
+  const fetchFriendActivity = async (userId: string, friendships: any) => {
+    if (!friendships || friendships.length === 0) return;
 
-  const getScoreLabel = (score: number) => {
-    if (score >= 80) return "Excelente";
-    if (score >= 60) return "Bueno";
-    if (score >= 40) return "Regular";
-    return "Necesita Mejora";
-  };
+    const friendIds = friendships.map((f: any) => f.friend_id);
 
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-blue-600";
-    if (score >= 40) return "text-yellow-600";
-    return "text-red-600";
-  };
+    // Get last 20 activities from friends
+    const { data: activities } = await supabase
+      .from('user_activities')
+      .select(`
+        id,
+        user_id,
+        activity_type,
+        xp_earned,
+        created_at,
+        details,
+        profiles:user_id (
+          username,
+          full_name,
+          avatar_url
+        )
+      `)
+      .in('user_id', friendIds)
+      .order('created_at', { ascending: false })
+      .limit(20);
 
-  const calculateXPProgress = () => {
-    const level = profile?.level || 1;
-    const currentXP = profile?.xp || 0;
-    const xpForNextLevel = level * 100;
-    const progress = (currentXP / xpForNextLevel) * 100;
-    return { currentXP, xpForNextLevel, progress: Math.min(progress, 100) };
-  };
+    if (activities) {
+      // Fetch reactions for these activities
+      const activityIds = activities.map(a => a.id);
+      const { data: reactions } = await supabase
+        .from('activity_reactions')
+        .select('*')
+        .in('activity_id', activityIds);
 
-  const xpData = calculateXPProgress();
+      const enrichedActivities = activities.map(activity => {
+        const activityReactions = reactions?.filter(r => r.activity_id === activity.id) || [];
+        const userReacted = activityReactions.some(r => r.user_id === userId);
 
-  const handleJoinChallenge = async (challengeId: string) => {
-    if (!user) return;
-    
-    try {
-      const { error } = await supabase
-        .from('user_challenge_progress')
-        .insert({
-          user_id: user.id,
-          challenge_id: challengeId,
-          completed: false
-        });
-
-      if (error) throw error;
-      toast.success('¡Te has unido al reto!');
-    } catch (error: any) {
-      console.error('Error joining challenge:', error);
-      toast.error('Error al unirse al reto');
-    }
-  };
-
-  const handleCompleteChallenge = async (challengeId: string, points: number) => {
-    if (!user) {
-      toast.error('Debes iniciar sesión para completar retos');
-      return;
-    }
-
-    try {
-      // Mark challenge as completed
-      const { error: progressError } = await supabase
-        .from('user_challenge_progress')
-        .upsert({
-          user_id: user.id,
-          challenge_id: challengeId,
-          completed: true,
-          completed_at: new Date().toISOString()
-        }, {
-          onConflict: 'user_id,challenge_id'
-        });
-
-      if (progressError) throw progressError;
-
-      // Update monthly ranking
-      const currentMonth = new Date().getMonth() + 1;
-      const currentYear = new Date().getFullYear();
-
-      // Get current ranking or create new one
-      const { data: existingRanking } = await supabase
-        .from('monthly_rankings')
-        .select('total_points, challenges_completed')
-        .eq('user_id', user.id)
-        .eq('month', currentMonth)
-        .eq('year', currentYear)
-        .maybeSingle();
-
-      const newPoints = (existingRanking?.total_points || 0) + points;
-      const newChallengesCount = (existingRanking?.challenges_completed || 0) + 1;
-
-      const { error: rankingError } = await supabase
-        .from('monthly_rankings')
-        .upsert({
-          user_id: user.id,
-          month: currentMonth,
-          year: currentYear,
-          total_points: newPoints,
-          challenges_completed: newChallengesCount
-        }, {
-          onConflict: 'user_id,month,year'
-        });
-
-      if (rankingError) throw rankingError;
-
-      // Update local state
-      setUserPoints(newPoints);
-
-      // Show XP gain animation with sound
-      setXPGainAmount(points);
-      setShowXPGain(true);
-      
-      // Play XP sound
-      if (xpSoundRef.current) {
-        xpSoundRef.current.currentTime = 0;
-        xpSoundRef.current.volume = 0.35;
-        xpSoundRef.current.play().catch(() => {});
-      }
-      
-      setTimeout(() => setShowXPGain(false), 2500);
-
-      // Check for newly unlocked achievements
-      await checkAndUnlockAchievements(newPoints);
-
-      // Create friend activity
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('full_name')
-        .eq('id', user.id)
-        .single();
-
-      await supabase
-        .from('friend_activity')
-        .insert({
-          user_id: user.id,
-          activity_type: 'challenge_completed',
-          description: `completó un reto y ganó ${points} XP`,
-          xp_earned: points
-        });
-
-      toast.success(`¡Reto completado! +${points} XP 🎉`);
-    } catch (error: any) {
-      console.error('Error completing challenge:', error);
-      toast.error('Error al completar el reto');
-    }
-  };
-
-  const checkAndUnlockAchievements = async (currentXP: number) => {
-    if (!user) return;
-
-    for (const achievement of achievementsList) {
-      if (currentXP >= achievement.xp) {
-        // Check if already unlocked
-        const { data: existing } = await supabase
-          .from('user_achievements')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('achievement_id', achievement.id)
-          .maybeSingle();
-
-        if (!existing) {
-          // Unlock new achievement
-          const { error } = await supabase
-            .from('user_achievements')
-            .insert({
-              user_id: user.id,
-              achievement_id: achievement.id,
-              achievement_name: achievement.name,
-              unlocked: true,
-              unlocked_at: new Date().toISOString()
-            });
-
-          if (!error) {
-            // Play achievement sound
-            if (achievementSoundRef.current) {
-              achievementSoundRef.current.currentTime = 0;
-              achievementSoundRef.current.volume = 0.35;
-              achievementSoundRef.current.play().catch(() => {
-                // Ignore autoplay errors
-              });
-            }
-
-            // Show achievement unlocked animation
-            setUnlockedAchievement(achievement);
-            setShowAchievementUnlocked(true);
-            setTimeout(() => setShowAchievementUnlocked(false), 3000);
-
-            // Create friend activity
-            await supabase
-              .from('friend_activity')
-              .insert({
-                user_id: user.id,
-                activity_type: 'achievement_unlocked',
-                description: `desbloqueó el logro "${achievement.name}"`,
-                xp_earned: 0
-              });
-          }
-        }
-      }
-    }
-  };
-
-  const handleGenerateChallenges = async () => {
-    try {
-      setGeneratingChallenges(true);
-      
-      const { data, error } = await supabase.functions.invoke('generate-personalized-challenges');
-      
-      if (error) throw error;
-      
-      if (data?.challenges && data.challenges.length > 0) {
-        toast.success('¡Retos personalizados generados! 🎯', {
-          description: `${data.challenges.length} retos creados según tus hábitos`
-        });
-        
-        // Recargar datos
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
-      } else {
-        toast.info('No se pudieron generar retos', {
-          description: 'Necesitas más historial de transacciones'
-        });
-      }
-    } catch (error) {
-      console.error('Error generando retos:', error);
-      toast.error('Error al generar retos personalizados');
-    } finally {
-      setGeneratingChallenges(false);
-    }
-  };
-
-  const handleShareInvite = async () => {
-    try {
-      // Generate unique invite code
-      const inviteCode = `${user?.id?.substring(0, 8)}-${Date.now().toString(36)}`;
-      
-      // Save invitation to database
-      const { error: insertError } = await supabase
-        .from('app_invitations')
-        .insert({
-          inviter_user_id: user?.id,
-          invite_code: inviteCode
-        });
-
-      if (insertError) throw insertError;
-
-      const inviteUrl = `${window.location.origin}/auth?ref=${inviteCode}`;
-      
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: 'Únete a Moni AI',
-            text: '¡Únete a Moni AI y mejora tus finanzas conmigo! Usa mi código de invitación.',
-            url: inviteUrl,
-          });
-        } catch (error) {
-          console.log('Error sharing:', error);
-        }
-      } else {
-        await navigator.clipboard.writeText(inviteUrl);
-        toast.success('Link de invitación copiado');
-      }
-    } catch (error) {
-      console.error('Error creating invitation:', error);
-      toast.error('Error al crear invitación');
-    }
-  };
-
-  const handleReaction = async (activityId: string, activityAuthorId: string, reactionType: string) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      toast.error('Debes iniciar sesión para reaccionar');
-      return;
-    }
-
-    try {
-      // Insert reaction
-      const { error: reactionError } = await supabase
-        .from('friend_activity_reactions')
-        .insert({
-          activity_id: activityId,
-          from_user_id: user.id,
-          to_user_id: activityAuthorId,
-          emoji: reactionType
-        });
-
-      if (reactionError) {
-        if (reactionError.code === '23505') {
-          toast.info('Ya reaccionaste con este emoji');
-          return;
-        }
-        throw reactionError;
-      }
-
-      // Increment social XP for the activity author
-      const { error: xpError } = await supabase.rpc('increment_social_xp', {
-        target_user_id: activityAuthorId,
-        xp_amount: 1
+        return {
+          ...activity,
+          reactions_count: activityReactions.length,
+          user_reacted: userReacted
+        };
       });
 
-      if (xpError) {
-        console.error('Error incrementing XP:', xpError);
-      }
+      setFriendActivity(enrichedActivities);
+    }
+  };
 
-      // Play social XP sound
-      if (socialToastSoundRef.current) {
-        socialToastSoundRef.current.currentTime = 0;
-        socialToastSoundRef.current.volume = 0.25;
-        socialToastSoundRef.current.play().catch(() => {});
-      }
+  const fetchChallengesData = async (userId: string) => {
+    // 1. Fetch user's badges
+    const { data: userBadgesData } = await supabase
+      .from('user_badges')
+      .select(`
+        *,
+        badges:badge_id (*)
+      `)
+      .eq('user_id', userId);
 
-      // Haptic feedback
-      if (navigator.vibrate) {
-        navigator.vibrate(20);
-      }
+    if (userBadgesData) {
+      const formattedBadges = userBadgesData.map((ub: any) => ({
+        id: ub.badge_id,
+        name: ub.badges?.name || 'Insignia',
+        description: ub.badges?.description || '',
+        icon: ub.badges?.icon || '🏆',
+        unlocked: true,
+        date_earned: ub.earned_at
+      }));
+      setUserBadges(formattedBadges);
+    }
 
-      toast.success(`Reacción enviada ${reactionType}`);
+    // 2. Fetch active challenges
+    const { data: activeChallenges } = await supabase
+      .from('user_challenge_progress')
+      .select(`
+        *,
+        daily_challenges (*)
+      `)
+      .eq('user_id', userId)
+      .eq('completed', false);
+
+    if (activeChallenges) {
+      const formattedChallenges = activeChallenges.map((c: any) => ({
+        ...c.daily_challenges,
+        progress_id: c.id,
+        status: 'active',
+        completed: c.completed
+      }));
+      setPersonalizedChallenges(formattedChallenges);
+    }
+  };
+
+  const handleUpdateUsername = async () => {
+    if (!user || !username.trim()) return;
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ username: username.trim() })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      setProfile({ ...profile, username: username.trim() });
+      setShowUsernameDialog(false);
+      toast.success("Nombre de usuario actualizado");
     } catch (error: any) {
-      console.error('Error handling reaction:', error);
-      toast.error('Error al enviar reacción');
+      toast.error("Error al actualizar usuario");
     }
   };
 
-  const fetchFriendActivity = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    // Get friendships
-    const { data: friendships } = await supabase
-      .from('friendships')
-      .select('friend_id')
-      .eq('user_id', user.id)
-      .eq('status', 'accepted');
-
-    if (friendships && friendships.length > 0) {
-      const friendIds = friendships.map(f => f.friend_id);
-      const { data: activityData } = await supabase
-        .from('friend_activity')
-        .select(`
-          *,
-          profiles:user_id (full_name, username)
-        `)
-        .in('user_id', friendIds)
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (activityData) {
-        setFriendActivity(activityData);
-      }
-    }
-  };
-
-  const showSocialToast = (userName: string, type: string, xp: number, challenge?: string) => {
-    setSocialToast({ show: true, userName, type, xp, challenge });
-    
+  const showNotification = (userName: string, type: string, xp: number) => {
+    setSocialToast({ show: true, userName, type, xp });
     if (socialToastSoundRef.current) {
-      socialToastSoundRef.current.currentTime = 0;
-      socialToastSoundRef.current.volume = 0.25;
-      socialToastSoundRef.current.play().catch(() => {});
-    }
-
-    if (navigator.vibrate) {
-      navigator.vibrate(20);
+      socialToastSoundRef.current.play().catch(e => console.log('Audio play failed', e));
     }
 
     setTimeout(() => {
       setSocialToast({ show: false, userName: '', type: '', xp: 0 });
     }, 3000);
+  };
+
+  const handleAcceptChallenge = (id: string) => {
+    console.log('Accept challenge:', id);
+    toast.success('¡Reto aceptado!');
+    // Ideally update backend here
+  };
+
+  // Helper to get challenges for carousel
+  const getWeeklyChallenges = () => {
+    const active = personalizedChallenges
+      .filter(c => c.period === 'weekly')
+      .slice(0, 6)
+      .map(c => ({
+        id: c.id,
+        title: c.titulo || 'Reto',
+        description: c.descripcion || '',
+        xpReward: c.xp_reward || 0,
+        icon: 'Target',
+        target: 100,
+        unit: 'puntos',
+        currentProgress: c.completed ? 100 : 0,
+        isActive: c.status === 'active',
+        period: 'weekly' as const,
+        theme: 'sand' as const
+      }));
+
+    if (active.length > 0) return active;
+
+    // If no active challenges, show demo ones
+    return DEMO_WEEKLY_CHALLENGES;
+  };
+
+  const getMonthlyChallenges = () => {
+    const active = personalizedChallenges
+      .filter(c => c.period === 'monthly')
+      .slice(0, 4)
+      .map(c => ({
+        id: c.id,
+        title: c.titulo || 'Reto',
+        description: c.descripcion || '',
+        xpReward: c.xp_reward || 0,
+        icon: 'Target',
+        target: 100,
+        unit: 'puntos',
+        currentProgress: c.completed ? 100 : 0,
+        isActive: c.status === 'active',
+        period: 'monthly' as const,
+        theme: 'sand' as const
+      }));
+
+    if (active.length > 0) return active;
+
+    // If no active challenges, show demo ones
+    return DEMO_MONTHLY_CHALLENGES;
   };
 
   return (
@@ -1007,10 +705,10 @@ const Social = () => {
         <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
           <div className="page-container py-4">
             <div>
-              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">
-                Social
+              <h1 className="text-2xl font-extrabold text-[#292524] tracking-tight">
+                Retos financieros
               </h1>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs font-bold uppercase tracking-wide text-[#78716C]">
                 Encuentra tus amigos y disfruta de tus finanzas
               </p>
             </div>
@@ -1018,425 +716,166 @@ const Social = () => {
         </div>
 
         <div className="page-container py-2 space-y-4">
-          {/* User Profile Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-3">
-            <div className="flex items-center gap-2">
-              {/* Avatar with Upload Button */}
-              <div className="relative">
-                <Avatar className="h-12 w-12 border-2 border-primary/20">
-                  <AvatarImage src={profile?.avatar_url || user?.user_metadata?.avatar_url} />
-                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
-                    {user?.email ? getInitials(user.email) : "US"}
-                  </AvatarFallback>
-                </Avatar>
-                <button
-                  onClick={handleAvatarClick}
-                  disabled={uploadingAvatar}
-                  className="absolute -bottom-0.5 -right-0.5 bg-primary text-white rounded-full p-1 shadow-lg hover:bg-primary/90 transition-all disabled:opacity-50"
-                >
-                  <Camera className="h-2.5 w-2.5" />
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarUpload}
-                  className="hidden"
-                />
-              </div>
+          {/* New Social Profile Card */}
+          <SocialProfileCard
+            user={{
+              name: profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Usuario",
+              username: profile?.username,
+              avatarUrl: profile?.avatar_url || user?.user_metadata?.avatar_url || '',
+              level: Math.floor(totalXP / 100) + 1,
+              currentXP: totalXP % 100,
+              xpForNextLevel: 100,
+              rank: monthlyRanking
+            }}
+            badges={userBadges.map(badge => ({
+              id: badge.id,
+              name: badge.name,
+              icon: badge.icon || '🏆',
+              unlocked: badge.unlocked
+            }))}
+            onAvatarUpdate={() => {
+              // Refresh profile data after avatar update
+              const fetchProfile = async () => {
+                if (user) {
+                  const { data: profileData } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .maybeSingle();
+                  if (profileData) setProfile(profileData);
+                }
+              };
+              fetchProfile();
+            }}
+          />
 
-              {/* User Info */}
-              <div className="flex-1">
-                <h2 className="text-sm font-bold text-gray-900">
-                  {profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Usuario"}
-                </h2>
-                
-                {/* Username or Create Username Button */}
-                {profile?.username ? (
-                  <p className="text-[10px] text-primary font-medium mt-0.5">
-                    @{profile.username}
-                  </p>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowUsernameDialog(true)}
-                    className="h-4 px-1.5 text-[9px] text-primary hover:text-primary/80 -ml-1.5 mt-0.5"
-                  >
-                    Crear usuario
-                  </Button>
-                )}
-                
-                <div className="flex items-center gap-1 mt-0.5">
-                  <span className="text-[9px] text-gray-500">Score Moni:</span>
-                  <span className={`text-[10px] font-semibold ${getScoreColor(scoreMoni)}`}>
-                    {scoreMoni}/100
-                  </span>
-                  <span className={`text-[8px] px-1 py-0.5 rounded-full bg-primary/10 ${getScoreColor(scoreMoni)}`}>
-                    {getScoreLabel(scoreMoni)}
-                  </span>
-                </div>
-              </div>
-            </div>
+          {/* Social Actions */}
+          <SocialActions
+            onNavigate={(id) => {
+              // Keep navigation simple - no external routes for now
+              console.log('Navigate to:', id);
+            }}
+            activeChallengesCount={personalizedChallenges.filter(c => c.status === 'active').length}
+            friendsCount={0}
+          />
 
+          {/* Weekly Challenges Carousel */}
+          <ChallengesCarousel
+            period="weekly"
+            challenges={getWeeklyChallenges()}
+            onAcceptChallenge={handleAcceptChallenge}
+            onViewDetails={(challenge) => setSelectedChallenge(challenge)}
+          />
 
-            {/* Level Badge & Monthly Ranking */}
-            <div className="mt-2 pt-2 border-t border-gray-200">
-              <div className="flex items-center justify-between mb-1.5">
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="flex items-center gap-1 px-2 py-0.5">
-                    <Zap className="h-2.5 w-2.5 text-primary" />
-                    <span className="text-[10px] font-bold">Nivel {Math.floor(totalXP / 100) + 1}</span>
-                  </Badge>
-                  <Badge variant="outline" className="flex items-center gap-1 px-2 py-0.5 border-yellow-600/30 bg-yellow-50">
-                    <Trophy className="h-2.5 w-2.5 text-yellow-600" />
-                    <span className="text-[10px] font-bold text-yellow-700">#{monthlyRanking} entre amigos</span>
-                  </Badge>
-                </div>
-                <span className="text-[10px] text-muted-foreground">
-                  {totalXP % 100} / 100 XP
-                </span>
-              </div>
-              
-              {/* XP Progress Bar */}
-              <Progress value={((totalXP % 100) / 100) * 100} className="h-1.5" />
-            </div>
-          </div>
+          {/* Monthly Challenges Carousel */}
+          <ChallengesCarousel
+            period="monthly"
+            challenges={getMonthlyChallenges()}
+            onAcceptChallenge={handleAcceptChallenge}
+            onViewDetails={(challenge) => setSelectedChallenge(challenge)}
+          />
 
-          {/* Action Buttons Card */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4">
-            <div className="flex justify-center gap-4">
-              <button 
-                onClick={() => navigate('/friends-list')}
-                className="flex flex-col items-center gap-1.5 group w-16"
-              >
-                <div className="bg-gradient-to-br from-primary/20 to-primary/10 rounded-full p-3 group-hover:scale-110 transition-transform">
-                  <Users className="h-5 w-5 text-primary" />
-                </div>
-                <span className="text-[10px] text-gray-600 font-medium text-center">Amigos</span>
-              </button>
+          {/* New Badges Section */}
+          <BadgesSection
+            badges={userBadges}
+          />
 
-              <button 
-                onClick={() => navigate('/groups')}
-                className="flex flex-col items-center gap-1.5 group w-16"
-              >
-                <div className="bg-gradient-to-br from-blue-500/20 to-blue-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
-                  <Users className="h-5 w-5 text-blue-600" />
-                </div>
-                <span className="text-[8px] text-gray-600 font-medium text-center leading-tight">Círculos Moni</span>
-              </button>
-
-              <button 
-                onClick={() => navigate('/social-stats')}
-                className="flex flex-col items-center gap-1.5 group w-16"
-              >
-                <div className="bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
-                  <TrendingUp className="h-5 w-5 text-green-600" />
-                </div>
-                <span className="text-[10px] text-gray-600 font-medium text-center">Stats</span>
-              </button>
-
-              <button 
-                onClick={() => navigate('/friend-challenges')}
-                className="flex flex-col items-center gap-1.5 group w-16"
-              >
-                <div className="bg-gradient-to-br from-purple-500/20 to-purple-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
-                  <Trophy className="h-5 w-5 text-purple-600" />
-                </div>
-                <span className="text-[10px] text-gray-600 font-medium text-center">Desafíos</span>
-              </button>
-
-              <button 
-                onClick={() => navigate('/group-goals')}
-                className="flex flex-col items-center gap-1.5 group w-16"
-              >
-                <div className="bg-gradient-to-br from-purple-500/20 to-purple-500/10 rounded-full p-3 group-hover:scale-110 transition-transform">
-                  <Target className="h-5 w-5 text-purple-600" />
-                </div>
-                <span className="text-[10px] text-gray-600 font-medium text-center leading-tight">Metas grupales</span>
-              </button>
-            </div>
-          </div>
-
-          {/* NUEVA GAMIFICACIÓN - Nivel y progreso */}
-          {userLevel && (
-            <div className="space-y-4">
-              <LevelProgressCard
-                currentLevel={userLevel.current_level}
-                totalXP={userLevel.total_xp}
-                xpToNextLevel={userLevel.xp_to_next_level}
-                levelTitle={userLevel.level_title}
-              />
-            </div>
-          )}
-
-          {/* Retos Personalizados */}
-          <div className="bg-white rounded-2xl shadow-sm p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <Target className="h-5 w-5 text-primary" />
-                🎯 Tus Retos
-              </h2>
-              <Button
-                onClick={handleGenerateChallenges}
-                disabled={generatingChallenges}
-                size="sm"
-                variant="outline"
-                className="text-xs"
-              >
-                {generatingChallenges ? (
-                  <>
-                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary mr-2" />
-                    Generando...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="h-3 w-3 mr-1" />
-                    Generar Retos IA
-                  </>
-                )}
-              </Button>
-            </div>
-            
-            {personalizedChallenges.length > 0 ? (
-              <PersonalizedChallenges 
-                challenges={personalizedChallenges}
-                onRefresh={() => window.location.reload()}
-              />
-            ) : (
-              <div className="text-center py-8">
-                <Target className="w-12 h-12 mx-auto mb-3 text-muted-foreground opacity-50" />
-                <p className="text-sm text-muted-foreground mb-4">
-                  No tienes retos activos todavía
-                </p>
-                <p className="text-xs text-muted-foreground mb-4">
-                  Genera retos personalizados basados en tus hábitos de gasto usando IA
-                </p>
-                <Button
-                  onClick={handleGenerateChallenges}
-                  disabled={generatingChallenges}
-                  className="mx-auto"
-                >
-                  {generatingChallenges ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                      Analizando...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-4 w-4 mr-2" />
-                      Generar Retos con IA
-                    </>
-                  )}
-                </Button>
-              </div>
-            )}
-          </div>
-
-          {/* Insignias */}
-          {userBadges.length > 0 && (
-            <div className="bg-white rounded-2xl shadow-sm p-6">
-              <BadgesGallery badges={userBadges} />
-            </div>
-          )}
-
-          {/* Ranking Mensual - Estilo Apple */}
-          {rankingData && (
-            <div className="bg-white rounded-3xl shadow-sm p-6">
-              <MonthlyRanking
-                currentUser={rankingData.currentUser}
-                friendsRanking={rankingData.friendsRanking}
-                topGlobal={rankingData.topGlobal}
-              />
-            </div>
-          )}
-
-
-          {/* Friend Activity - Interactive - Only show when user has friends */}
-          {friendActivity.length > 0 && (
-            <div className="bg-white rounded-2xl shadow-sm p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5 text-primary" />
-                  👥 Actividad de amigos
-                </h2>
-                <Button 
-                  onClick={() => navigate('/friends-list')}
-                  className="bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-8 px-3 text-xs"
-                >
-                  Ver todo
-                </Button>
-              </div>
-
-              <div className="space-y-4">
+          {/* Friend Activity Feed */}
+          <div className="mb-24">
+            <h3 className="text-[#A1887F] font-bold text-[10px] uppercase tracking-wider mb-4 px-1">
+              Actividad Reciente
+            </h3>
+            {friendActivity.length > 0 ? (
+              <div className="bg-white rounded-[2rem] p-4 shadow-sm border border-stone-100">
                 {friendActivity.map((activity) => (
-                  <div key={activity.id} className="border-b border-gray-100 pb-4 last:border-0">
-                    <p className="text-sm text-gray-800 mb-1">
-                      <strong className="font-medium">{activity.profiles?.username || activity.profiles?.full_name || 'Usuario'}</strong>{' '}
-                      <span className="text-gray-600">{activity.description}</span>
-                    </p>
-                    <p className="text-xs text-gray-500 mb-2">
-                      {activity.xp_earned > 0 && `+${activity.xp_earned} XP • `}
-                      {new Date(activity.created_at).toLocaleDateString('es-MX', { 
-                        month: 'short', 
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </p>
-
-                    {/* Reactions */}
-                    <div className="flex items-center gap-2">
-                      <button 
-                        onClick={() => handleReaction(activity.id, activity.user_id, '👏')}
-                        className="hover:scale-110 transition-transform text-lg"
-                      >
-                        👏
-                      </button>
-                      <button 
-                        onClick={() => handleReaction(activity.id, activity.user_id, '🔥')}
-                        className="hover:scale-110 transition-transform text-lg"
-                      >
-                        🔥
-                      </button>
-                      <button 
-                        onClick={() => handleReaction(activity.id, activity.user_id, '💬')}
-                        className="hover:scale-110 transition-transform text-lg"
-                      >
-                        💬
-                      </button>
-                      <span className="text-xs text-gray-500 ml-2">0 reacciones</span>
+                  <div key={activity.id} className="flex gap-3 py-3 border-b border-stone-50 last:border-0 pl-2">
+                    <Avatar className="w-8 h-8 border border-stone-100">
+                      <AvatarImage src={activity.profiles?.avatar_url} />
+                      <AvatarFallback>{activity.profiles?.username?.[0] || 'U'}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-xs text-[#5D4037]">
+                        <span className="font-bold">{activity.profiles?.username || 'Usuario'}</span>{' '}
+                        {activity.details}
+                      </p>
+                      <p className="text-[10px] text-[#A8A29E] font-medium mt-0.5">
+                        +{activity.xp_earned} XP • Hace 2h
+                      </p>
                     </div>
                   </div>
                 ))}
               </div>
-
-              <p className="text-xs text-gray-500 pt-2 border-t">
-                Las actualizaciones se generan automáticamente cuando tus amigos completan retos o desbloquean logros.
-              </p>
-            </div>
-          )}
-
-          {/* Friend Celebrations */}
-          <FriendCelebrations />
-
-          {/* Invite and Earn XP */}
-          <div className="bg-white rounded-2xl shadow-sm p-4 text-center">
-            <h2 className="font-semibold text-gray-900 flex items-center justify-center gap-2 text-sm mb-2">
-              <Gift className="h-4 w-4 text-primary" />
-              Invita y gana XP
-            </h2>
-          <p className="text-gray-600 text-xs mb-3">
-            Invita a tus amigos a descargar Moni AI y gana +50 XP cuando se registren.
-          </p>
-            <Button
-              onClick={handleShareInvite}
-              className="w-full bg-white text-gray-800 hover:bg-white/90 shadow-sm border rounded-xl font-medium h-9 flex items-center justify-center gap-2"
-            >
-              <Share2 className="h-4 w-4" />
-              Compartir enlace
-            </Button>
+            ) : (
+              <div className="bg-white/50 border border-stone-100 rounded-[2rem] p-8 text-center">
+                <div className="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-3 text-stone-300">
+                  <Users size={20} />
+                </div>
+                <p className="text-sm font-bold text-[#A8A29E]">Sin actividad reciente</p>
+                <p className="text-xs text-[#D7CCC8] mt-1">Tus amigos aparecerán aquí</p>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Achievement Unlocked Toast */}
-        {showAchievementUnlocked && unlockedAchievement && (
-          <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
-            <div className="bg-white/90 backdrop-blur-md border border-gray-200 rounded-2xl shadow-2xl px-5 py-3 flex items-center gap-3">
-              <div className="text-3xl animate-bounce">{unlockedAchievement.icon}</div>
-              <div>
-                <p className="font-semibold text-gray-900 text-sm">{unlockedAchievement.name}</p>
-                <p className="text-gray-600 text-xs">{unlockedAchievement.desc}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* XP Gain Animation (center bottom - secondary) */}
-        {showXPGain && (
-          <div className="fixed bottom-32 left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-fade-in">
-            <div className={`text-green-600 text-3xl font-bold drop-shadow-2xl transition-all duration-700 ${showXPGain ? 'opacity-100 -translate-y-8 scale-110' : 'opacity-0'}`}>
-              +{xpGainAmount} XP
-            </div>
-          </div>
-        )}
-
-        {/* Social Toast Notification */}
+        {/* Floating XP Toast */}
         {socialToast.show && (
-          <div 
-            className="fixed right-4 bottom-8 bg-white/90 backdrop-blur-md border border-gray-100 rounded-2xl p-4 shadow-xl z-50 flex items-center gap-2 animate-in slide-in-from-right duration-500"
-            style={{ maxWidth: '320px' }}
-          >
-            <span className="text-xl">
-              {socialToast.type === 'reaction' && '👏'}
-              {socialToast.type === 'comment' && '💬'}
-              {socialToast.type === 'achievement' && '🏅'}
-              {socialToast.type === 'join_circle' && '💬'}
-            </span>
-            <p className="text-sm font-medium text-gray-900">
-              <strong>{socialToast.userName}</strong>{' '}
-              {socialToast.type === 'reaction' && 'reaccionó a tu progreso'}
-              {socialToast.type === 'comment' && `comentó tu reto${socialToast.challenge ? ` "${socialToast.challenge}"` : ''}`}
-              {socialToast.type === 'achievement' && `felicitó tu logro${socialToast.challenge ? ` "${socialToast.challenge}"` : ''}`}
-              {socialToast.type === 'join_circle' && `se unió a tu círculo${socialToast.challenge ? ` "${socialToast.challenge}"` : ''}`}
-            </p>
+          <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-[#292524] text-white px-4 py-3 rounded-full shadow-xl flex items-center gap-3 animate-in slide-in-from-bottom-5 fade-in duration-300 z-50 whitespace-nowrap">
+            <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-lg shadow-inner">
+              {socialToast.type === 'challenge' ? '🏆' : '🔥'}
+            </div>
+            <div>
+              <p className="text-xs font-bold">
+                {socialToast.userName}
+              </p>
+              <p className="text-[10px] text-stone-400">
+                +{socialToast.xp} XP ganados
+              </p>
+            </div>
           </div>
         )}
 
-        {/* Hidden audio elements */}
-        <audio 
-          ref={achievementSoundRef}
-          preload="auto"
-          src="https://cdn.pixabay.com/audio/2022/03/15/audio_2b21d3ad9f.mp3"
-        />
-        <audio 
-          ref={xpSoundRef}
-          preload="auto"
-          src="https://cdn.pixabay.com/audio/2022/03/15/audio_3b7f0b1df4.mp3"
-        />
-        <audio 
-          ref={socialToastSoundRef}
-          preload="auto"
-          src="https://cdn.pixabay.com/audio/2022/03/15/audio_3b7f0b1df4.mp3"
-        />
-
-        {/* Username Creation Dialog */}
+        {/* Modals */}
         <Dialog open={showUsernameDialog} onOpenChange={setShowUsernameDialog}>
-          <DialogContent className="max-w-[280px] rounded-3xl border-none shadow-2xl p-6">
-            <DialogHeader className="space-y-2">
-              <DialogTitle className="text-center text-lg font-bold">Crear usuario</DialogTitle>
-              <DialogDescription className="text-center text-xs text-muted-foreground">
-                3-20 caracteres (a-z, 0-9, _)
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>¡Bienvenido a Social!</DialogTitle>
+              <DialogDescription>
+                Elige un nombre de usuario único para que tus amigos te encuentren.
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 pt-2">
-              <div className="flex items-center gap-2 bg-muted/30 rounded-2xl px-4 py-2.5">
-                <span className="text-sm text-muted-foreground font-medium">@</span>
-                <Input
-                  placeholder="usuario"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value.toLowerCase())}
-                  maxLength={20}
-                  className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-sm"
-                />
-              </div>
-              <Button 
-                onClick={handleUsernameSubmit} 
-                className="w-full bg-white text-foreground hover:bg-white/90 rounded-2xl shadow-md font-medium"
-              >
-                Crear usuario
+            <div className="space-y-4 py-4">
+              <Input
+                placeholder="@usuario"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <Button onClick={handleUpdateUsername} className="w-full">
+                Empezar
               </Button>
             </div>
           </DialogContent>
         </Dialog>
-
-        {/* Level Up Animation */}
-        <MoniLevelUp 
-          level={Math.floor(totalXP / 100) + 1}
-          show={showLevelUp}
-          onComplete={() => setShowLevelUp(false)}
-        />
       </div>
+
+      {selectedChallenge && (
+        <ChallengeDetailsModal
+          challenge={selectedChallenge}
+          onClose={() => setSelectedChallenge(null)}
+          onAccept={() => handleAcceptChallenge(selectedChallenge.id)}
+        />
+      )}
+
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        accept="image/*"
+        onChange={handleAvatarUpload}
+      />
+
+      {/* Hidden Audio Elements for Effects */}
+      <audio ref={socialToastSoundRef} src="/sounds/notification.mp3" />
+
       <BottomNav />
     </>
   );
