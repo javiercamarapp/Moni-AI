@@ -42,22 +42,22 @@ const StatCard: React.FC<StatCardProps> = ({ type, amount, onClick, onAdd }) => 
                 </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                 {onAdd && (
                     <button
                         onClick={(e) => {
                             e.stopPropagation();
                             onAdd();
                         }}
-                        className="w-8 h-8 rounded-full bg-[#F5F0EE] flex items-center justify-center hover:bg-[#8D6E63] hover:text-white text-[#5D4037] transition-all active:scale-95 shadow-sm"
+                        className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#F5F0EE] flex items-center justify-center hover:bg-[#8D6E63] hover:text-white text-[#5D4037] transition-all active:scale-95 shadow-sm"
                     >
-                        <Plus className="w-4 h-4" strokeWidth={2.5} />
+                        <Plus className="w-3 h-3 sm:w-4 sm:h-4" strokeWidth={2.5} />
                     </button>
                 )}
                 
                 {onClick && (
-                    <div className="w-6 h-6 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#F5F0EE] group-hover:text-[#5D4037] transition-colors">
-                        <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#5D4037] transition-colors" strokeWidth={2.5} />
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#F5F0EE] group-hover:text-[#5D4037] transition-colors">
+                        <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-400 group-hover:text-[#5D4037] transition-colors" strokeWidth={2.5} />
                     </div>
                 )}
             </div>
