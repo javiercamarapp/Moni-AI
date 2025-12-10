@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Onboarding from "./pages/Onboarding";
 import Auth from "./pages/Auth";
 import Dashboard from "./components/Dashboard";
-import ChatInterface from "./components/ChatInterface";
 import NewGoal from "./pages/NewGoal";
 import FinancialChat from "./pages/FinancialChat";
 import PremiumFeature from "./components/PremiumFeature";
@@ -106,15 +105,10 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/chat" element={
             <PremiumFeature featureName="Chat con IA">
-              <ChatInterface />
-            </PremiumFeature>
-          } />
-          <Route path="/new-goal" element={<NewGoal />} />
-          <Route path="/financial-chat" element={
-            <PremiumFeature featureName="Chat con Moni AI" description="Conversa con tu asistente financiero inteligente">
               <FinancialChat />
             </PremiumFeature>
           } />
+          <Route path="/new-goal" element={<NewGoal />} />
           <Route path="/analysis" element={
             <PremiumFeature featureName="Análisis Financiero con IA" description="Obtén insights avanzados sobre tus finanzas">
               <FinancialAnalysis />
