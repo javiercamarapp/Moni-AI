@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 
-let chatHistory: { role: 'user' | 'model'; parts: string }[] = [];
+let chatHistory: { role: 'user' | 'assistant'; content: string }[] = [];
 
 export const resetChat = () => {
   chatHistory = [];
@@ -12,13 +12,22 @@ export const sendMessageStream = async (
 ): Promise<string> => {
   try {
     // Add user message to history
-    chatHistory.push({ role: 'user', parts: message });
+    chatHistory.push({ role: 'user', content: message });
+
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Format messages for the API (use 'user' and 'assistant' roles)
+    const formattedMessages = chatHistory.slice(-10).map(msg => ({
+      role: msg.role,
+      content: msg.content
+    }));
 
     // Call the AI chat edge function
     const { data, error } = await supabase.functions.invoke('ai-chat', {
       body: {
-        message,
-        history: chatHistory.slice(-10) // Keep last 10 messages for context
+        messages: formattedMessages,
+        userId: user?.id
       }
     });
 
@@ -37,7 +46,7 @@ export const sendMessageStream = async (
     }
 
     // Add model response to history
-    chatHistory.push({ role: 'model', parts: responseText });
+    chatHistory.push({ role: 'assistant', content: responseText });
 
     return responseText;
   } catch (error) {
