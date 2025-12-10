@@ -11,13 +11,23 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, userId } = await req.json();
+    const body = await req.json();
+    const messages = Array.isArray(body.messages) ? body.messages : [];
+    const userId = body.userId;
+    
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
+    }
+    
+    if (messages.length === 0) {
+      return new Response(
+        JSON.stringify({ response: "Hola, soy Moni AI. ¿En qué puedo ayudarte con tus finanzas?" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     // Obtener datos financieros del usuario si está disponible
