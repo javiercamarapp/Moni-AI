@@ -26,10 +26,27 @@ import { ChallengesCarousel } from "@/components/social/ChallengesCarousel";
 import { BadgesSection } from "@/components/social/BadgesSection";
 import { ChallengeDetailsModal } from "@/components/social/ChallengeDetailsModal";
 
-const DEMO_WEEKLY_CHALLENGES = [
+interface Challenge {
+  id: string;
+  title: string;
+  description: string;
+  xpReward: number;
+  icon: string;
+  target: number;
+  unit: string;
+  currentProgress?: number;
+  isActive: boolean;
+  period: 'weekly' | 'monthly';
+  theme?: 'espresso' | 'latte' | 'sand' | 'clay' | 'sage';
+  type?: 'budget' | 'saving' | 'ratio' | 'streak' | 'debt' | 'investment';
+  aiReason?: string;
+  tips?: string[];
+}
+
+const DEMO_WEEKLY_CHALLENGES: Challenge[] = [
   {
     id: '1',
-    type: 'budget',
+    type: 'budget' as const,
     title: 'Café en Casa',
     description: 'Prepara tu café en casa 3 veces esta semana.',
     xpReward: 850,
@@ -45,7 +62,7 @@ const DEMO_WEEKLY_CHALLENGES = [
   },
   {
     id: 'saving',
-    type: 'saving',
+    type: 'saving' as const,
     title: 'Stash Express',
     description: 'Guarda $1,000 extra en tu fondo de emergencia.',
     xpReward: 1200,
@@ -61,7 +78,7 @@ const DEMO_WEEKLY_CHALLENGES = [
   },
   {
     id: '3',
-    type: 'ratio',
+    type: 'ratio' as const,
     title: 'Ahorro Turbo',
     description: 'Ahorra el 20% de todo ingreso extra hoy.',
     xpReward: 1000,
@@ -77,7 +94,7 @@ const DEMO_WEEKLY_CHALLENGES = [
   },
   {
     id: '4',
-    type: 'streak',
+    type: 'streak' as const,
     title: 'Sin Uber Eats',
     description: 'Cocina en casa. Cero delivery por 5 días.',
     xpReward: 600,
@@ -93,7 +110,7 @@ const DEMO_WEEKLY_CHALLENGES = [
   },
   {
     id: '5',
-    type: 'budget',
+    type: 'budget' as const,
     title: 'Fin de Semana',
     description: 'Presupuesto estricto de ocio para el finde.',
     xpReward: 1200,
@@ -109,10 +126,10 @@ const DEMO_WEEKLY_CHALLENGES = [
   }
 ];
 
-const DEMO_MONTHLY_CHALLENGES = [
+const DEMO_MONTHLY_CHALLENGES: Challenge[] = [
   {
     id: 'invest1',
-    type: 'investment',
+    type: 'investment' as const,
     title: 'Inversor Novato',
     description: 'Realiza tu primera aportación a un ETF o Fondo.',
     xpReward: 3000,
@@ -128,7 +145,7 @@ const DEMO_MONTHLY_CHALLENGES = [
   },
   {
     id: 'debt1',
-    type: 'debt',
+    type: 'debt' as const,
     title: 'Bola de Nieve',
     description: 'Paga $2,000 extra a tu deuda más pequeña.',
     xpReward: 2500,
@@ -144,7 +161,7 @@ const DEMO_MONTHLY_CHALLENGES = [
   },
   {
     id: 'm1',
-    type: 'ratio',
+    type: 'ratio' as const,
     title: 'Ahorro Agresivo',
     description: 'Ahorra el 30% de tus ingresos este mes.',
     xpReward: 2500,
@@ -527,40 +544,45 @@ const Social = () => {
 
     const friendIds = friendships.map((f: any) => f.friend_id);
 
-    // Get last 20 activities from friends
+    // Get last 20 activities from friends using friend_activity table
     const { data: activities } = await supabase
-      .from('user_activities')
+      .from('friend_activity')
       .select(`
         id,
         user_id,
         activity_type,
         xp_earned,
         created_at,
-        details,
-        profiles:user_id (
-          username,
-          full_name,
-          avatar_url
-        )
+        description
       `)
       .in('user_id', friendIds)
       .order('created_at', { ascending: false })
       .limit(20);
 
     if (activities) {
+      // Fetch profiles for the activities
+      const userIds = [...new Set(activities.map(a => a.user_id))];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, username, full_name, avatar_url')
+        .in('id', userIds);
+
       // Fetch reactions for these activities
       const activityIds = activities.map(a => a.id);
       const { data: reactions } = await supabase
-        .from('activity_reactions')
+        .from('friend_activity_reactions')
         .select('*')
         .in('activity_id', activityIds);
 
       const enrichedActivities = activities.map(activity => {
+        const profile = profiles?.find(p => p.id === activity.user_id);
         const activityReactions = reactions?.filter(r => r.activity_id === activity.id) || [];
-        const userReacted = activityReactions.some(r => r.user_id === userId);
+        const userReacted = activityReactions.some(r => r.from_user_id === userId);
 
         return {
           ...activity,
+          details: activity.description,
+          profiles: profile,
           reactions_count: activityReactions.length,
           user_reacted: userReacted
         };
@@ -777,7 +799,12 @@ const Social = () => {
 
           {/* New Badges Section */}
           <BadgesSection
-            badges={userBadges}
+            badges={userBadges.map(b => ({
+              ...b,
+              requiredXP: b.requiredXP || 100,
+              theme: b.theme || 'bronze' as const
+            }))}
+            userTotalXP={totalXP}
           />
 
           {/* Friend Activity Feed */}
