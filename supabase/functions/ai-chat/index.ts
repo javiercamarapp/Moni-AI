@@ -292,27 +292,17 @@ Características de tu personalidad:
 - Eres empático pero directo
 - Usas ejemplos concretos y números
 - Motivas sin juzgar
-- Puedes analizar imágenes de recibos, facturas, estados de cuenta y documentos financieros
-- Puedes crear tablas y gráficas cuando el usuario lo solicite
 
 Formato de respuestas:
 - Usa saltos de línea para organizar ideas
 - Incluye listas numeradas o con viñetas cuando sea apropiado
 - Resalta puntos clave con emojis
 - Sé conciso pero completo (máximo 4-5 párrafos)
-- Cuando analices documentos o imágenes, proporciona insights específicos
-- Cuando el usuario pida visualizar datos, usa las herramientas disponibles para crear tablas o gráficas
-
-Herramientas disponibles:
-- generar_tabla: Para mostrar datos en formato de tabla
-- generar_grafica: Para crear gráficas de barras, líneas o circulares
 
 INSTRUCCIÓN CRÍTICA SOBRE DATOS:
 Recibirás datos financieros completos del usuario en el contexto. ESTOS DATOS SON REALES Y ESTÁN DISPONIBLES.
 - Si ves "RESUMEN 2025" con valores, significa que HAY datos de 2025
-- Si ves "INGRESOS 2025 MES POR MES" o "GASTOS 2025 MES POR MES", usa EXACTAMENTE esos valores
 - NUNCA digas "no tengo datos" si los datos están en el contexto
-- NUNCA digas "no hay información" si puedes ver los valores en las secciones de resumen
 
 ${financialContext}
 
@@ -320,68 +310,7 @@ Recuerda: Tu misión es hacer que el ahorro sea divertido y alcanzable.`
           },
           ...messages
         ],
-        tools: [
-          {
-            type: "function",
-            function: {
-              name: "generar_tabla",
-              description: "Genera una tabla con datos financieros o comparativos",
-              parameters: {
-                type: "object",
-                properties: {
-                  titulo: { type: "string", description: "Título de la tabla" },
-                  columnas: { 
-                    type: "array", 
-                    items: { type: "string" },
-                    description: "Nombres de las columnas"
-                  },
-                  filas: {
-                    type: "array",
-                    items: {
-                      type: "array",
-                      items: { type: "string" }
-                    },
-                    description: "Datos de cada fila"
-                  }
-                },
-                required: ["titulo", "columnas", "filas"],
-                additionalProperties: false
-              }
-            }
-          },
-          {
-            type: "function",
-            function: {
-              name: "generar_grafica",
-              description: "Genera una gráfica para visualizar datos financieros. CRÍTICO: Si el usuario pide datos anuales, la gráfica DEBE tener los 12 meses completos (enero a diciembre), usando valor 0 para meses sin datos. NUNCA omitas meses.",
-              parameters: {
-                type: "object",
-                properties: {
-                  titulo: { type: "string", description: "Título de la gráfica" },
-                  tipo: { 
-                    type: "string", 
-                    enum: ["barras", "linea", "circular"],
-                    description: "Tipo de gráfica a generar"
-                  },
-                  datos: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        nombre: { type: "string", description: "Nombre de la categoría o mes. Si es un mes, debe ser el nombre completo en español (enero, febrero, etc.)" },
-                        valor: { type: "number", description: "Valor numérico. Usa 0 para meses sin datos en gráficas anuales." }
-                      }
-                    },
-                    description: "Datos a graficar. Para gráficas anuales, DEBE contener exactamente 12 elementos, uno por cada mes en orden cronológico, usando valor 0 para meses sin datos."
-                  }
-                },
-                required: ["titulo", "tipo", "datos"],
-                additionalProperties: false
-              }
-            }
-          }
-        ],
-        stream: true,
+        stream: false,
       }),
     });
 
@@ -407,9 +336,13 @@ Recuerda: Tu misión es hacer que el ahorro sea divertido y alcanzable.`
       );
     }
 
-    return new Response(response.body, {
-      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
-    });
+    const data = await response.json();
+    const aiResponse = data.choices?.[0]?.message?.content || "Lo siento, no pude generar una respuesta.";
+
+    return new Response(
+      JSON.stringify({ response: aiResponse }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   } catch (e) {
     console.error("chat error:", e);
     return new Response(
