@@ -14,14 +14,14 @@ const ScoreMoni = () => {
     return cached ? parseInt(cached) : 40;
   });
   const [previousScore] = useState(35); // Simulated previous score
-  
+
   // We keep the fetch logic to update the score, but for now the components are hardcoded in the UI
   // until we map them correctly to the new RADAR_DATA structure.
 
   useEffect(() => {
     // Scroll to top immediately when page loads
     window.scrollTo(0, 0);
-    
+
     // Fetch latest score in background
     fetchScore();
   }, []);
@@ -53,9 +53,9 @@ const ScoreMoni = () => {
   };
 
   return (
-    <div className="page-standard min-h-screen bg-[#F2F4F6]">
-      <ScoreDetail 
-        onBack={() => navigate('/dashboard')} 
+    <div className="page-standard min-h-screen bg-[#faf9f8]">
+      <ScoreDetail
+        onBack={() => navigate('/dashboard')}
         score={score}
       />
       <BottomNav />

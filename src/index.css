@@ -133,6 +133,10 @@
     display: none;
   }
 
+  html {
+    background-color: #faf9f8;
+  }
+
   body {
     @apply text-foreground font-inter antialiased;
     background-color: #faf9f8;

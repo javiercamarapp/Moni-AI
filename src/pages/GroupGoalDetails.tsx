@@ -78,7 +78,7 @@ const GroupGoalDetails = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [contributionLoading, setContributionLoading] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<string>("");
-  const [userAccounts, setUserAccounts] = useState<Array<{id: string, name: string, value: number}>>([]);
+  const [userAccounts, setUserAccounts] = useState<Array<{ id: string, name: string, value: number }>>([]);
 
   useEffect(() => {
     fetchGoalDetails();
@@ -139,7 +139,7 @@ const GroupGoalDetails = () => {
         const memberContribution = contributionsData?.find(c => c.user_id === member.user_id);
         const contributed = memberContribution?.current_amount || 0;
         const progressPercent = (contributed / perPersonTarget) * 100;
-        
+
         let status: 'adelantado' | 'al_dia' | 'atrasado' | 'muy_atrasado';
         if (progressPercent >= 110) status = 'adelantado';
         else if (progressPercent >= 90) status = 'al_dia';
@@ -223,13 +223,13 @@ const GroupGoalDetails = () => {
   const progress = goal.target_amount > 0 ? (totalContributed / goal.target_amount) * 100 : 0;
   // Each person has the same individual target
   const perPersonTarget = goal.target_amount / members.length;
-  const daysRemaining = goal.deadline 
+  const daysRemaining = goal.deadline
     ? Math.ceil((new Date(goal.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
     : null;
 
   return (
     <>
-      <div className="page-standard min-h-screen pb-24 bg-gradient-to-b from-amber-50/30 to-orange-50/20">
+      <div className="page-standard min-h-screen pb-24 bg-[#faf9f8]">
         {/* Header */}
         <div className="sticky top-0 z-40 bg-gradient-to-b from-purple-50/80 via-cyan-50/60 to-transparent backdrop-blur-sm">
           <div className="page-container py-3">
@@ -281,7 +281,7 @@ const GroupGoalDetails = () => {
 
           {/* Resumen de Meta */}
           <div className="grid grid-cols-4 gap-2">
-            <button 
+            <button
               onClick={() => {
                 setSelectedDetail('individual');
                 setShowDetailsModal(true);
@@ -291,7 +291,7 @@ const GroupGoalDetails = () => {
               <p className="text-[10px] text-amber-700 mb-0.5">Meta Individual</p>
               <p className="text-sm font-bold text-amber-900">{formatCurrency(perPersonTarget)}</p>
             </button>
-            <button 
+            <button
               onClick={() => {
                 setSelectedDetail('completed');
                 setShowDetailsModal(true);
@@ -302,7 +302,7 @@ const GroupGoalDetails = () => {
               <p className="text-sm font-bold text-emerald-600">{goal.completed_members} de {members.length}</p>
             </button>
             {goal.deadline && (
-              <button 
+              <button
                 onClick={() => {
                   setSelectedDetail('days');
                   setShowDetailsModal(true);
@@ -313,7 +313,7 @@ const GroupGoalDetails = () => {
                 <p className="text-sm font-bold text-blue-900">{daysRemaining}</p>
               </button>
             )}
-            <button 
+            <button
               onClick={() => {
                 setSelectedDetail('members');
                 setShowDetailsModal(true);
@@ -419,12 +419,11 @@ const GroupGoalDetails = () => {
           {showDetailsModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in" onClick={() => setShowDetailsModal(false)}>
               <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-scale-in" onClick={(e) => e.stopPropagation()}>
-                <div className={`p-6 rounded-t-2xl ${
-                  selectedDetail === 'individual' ? 'bg-gradient-to-br from-amber-50 to-orange-50' :
-                  selectedDetail === 'completed' ? 'bg-gradient-to-br from-emerald-50 to-green-50' :
-                  selectedDetail === 'days' ? 'bg-gradient-to-br from-blue-50 to-cyan-50' :
-                  'bg-gradient-to-br from-purple-50 to-pink-50'
-                }`}>
+                <div className={`p-6 rounded-t-2xl ${selectedDetail === 'individual' ? 'bg-gradient-to-br from-amber-50 to-orange-50' :
+                    selectedDetail === 'completed' ? 'bg-gradient-to-br from-emerald-50 to-green-50' :
+                      selectedDetail === 'days' ? 'bg-gradient-to-br from-blue-50 to-cyan-50' :
+                        'bg-gradient-to-br from-purple-50 to-pink-50'
+                  }`}>
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-bold text-gray-900">
                       {selectedDetail === 'individual' && '🎯 Meta Individual'}
@@ -584,7 +583,7 @@ const GroupGoalDetails = () => {
             </div>
 
             {/* Body */}
-            <form 
+            <form
               onSubmit={async (e) => {
                 e.preventDefault();
                 setContributionLoading(true);
@@ -599,8 +598,8 @@ const GroupGoalDetails = () => {
                     return;
                   }
 
-          // Only deduct from account if one is selected and it's not "none"
-          if (selectedAccount && selectedAccount !== "none") {
+                  // Only deduct from account if one is selected and it's not "none"
+                  if (selectedAccount && selectedAccount !== "none") {
                     // Get selected account details
                     const account = userAccounts.find(acc => acc.id === selectedAccount);
                     if (!account) {
@@ -640,7 +639,7 @@ const GroupGoalDetails = () => {
                     // Update existing member record
                     const { error: updateError } = await supabase
                       .from('circle_goal_members')
-                      .update({ 
+                      .update({
                         current_amount: newAmount,
                         completed: isCompleted,
                         completed_at: isCompleted ? new Date().toISOString() : null,
@@ -722,11 +721,11 @@ const GroupGoalDetails = () => {
                 } finally {
                   setContributionLoading(false);
                 }
-              }} 
+              }}
               className="p-4 space-y-3"
             >
-                {/* Progress Info */}
-                <div className="bg-white border border-gray-200 rounded-xl p-2 space-y-1">
+              {/* Progress Info */}
+              <div className="bg-white border border-gray-200 rounded-xl p-2 space-y-1">
                 <div className="flex justify-between text-xs">
                   <span className="text-gray-600">Tu meta personal</span>
                   <span className="font-semibold text-gray-900">{formatCurrency(perPersonTarget)}</span>
@@ -734,7 +733,7 @@ const GroupGoalDetails = () => {
                 <div className="flex justify-between text-xs">
                   <span className="text-gray-600">Aporte sugerido quincenal</span>
                   <span className="font-bold text-gray-900">
-                    {goal.required_weekly_saving 
+                    {goal.required_weekly_saving
                       ? formatCurrency((goal.required_weekly_saving / members.length) * 2)
                       : formatCurrency(1250)
                     }
@@ -758,9 +757,9 @@ const GroupGoalDetails = () => {
                   }}
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setIsFocused(false)}
-                    placeholder="1,000.00"
-                    required
-                    className="h-12 rounded-xl text-base bg-white border-gray-200 font-semibold text-gray-900"
+                  placeholder="1,000.00"
+                  required
+                  className="h-12 rounded-xl text-base bg-white border-gray-200 font-semibold text-gray-900"
                 />
               </div>
 
@@ -789,22 +788,22 @@ const GroupGoalDetails = () => {
                 </div>
               </div>
 
-                {/* Account Selector */}
-                <div className="space-y-1.5">
-                  <Label htmlFor="account-select" className="flex items-center gap-2 text-xs text-gray-700">
-                    💳 Cuenta de origen
-                  </Label>
-                  <Select value={selectedAccount} onValueChange={setSelectedAccount}>
-                    <SelectTrigger className="h-10 rounded-xl bg-white border-gray-200 text-sm">
-                      <SelectValue placeholder="Selecciona cuenta de origen" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white border border-gray-200 z-50">
-                      <SelectItem value="none">
-                        <div className="flex items-center justify-between w-full">
-                          <span className="text-sm">Sin cuenta de origen</span>
-                        </div>
-                      </SelectItem>
-                      {userAccounts.map((account) => (
+              {/* Account Selector */}
+              <div className="space-y-1.5">
+                <Label htmlFor="account-select" className="flex items-center gap-2 text-xs text-gray-700">
+                  💳 Cuenta de origen
+                </Label>
+                <Select value={selectedAccount} onValueChange={setSelectedAccount}>
+                  <SelectTrigger className="h-10 rounded-xl bg-white border-gray-200 text-sm">
+                    <SelectValue placeholder="Selecciona cuenta de origen" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border border-gray-200 z-50">
+                    <SelectItem value="none">
+                      <div className="flex items-center justify-between w-full">
+                        <span className="text-sm">Sin cuenta de origen</span>
+                      </div>
+                    </SelectItem>
+                    {userAccounts.map((account) => (
                       <SelectItem key={account.id} value={account.id}>
                         <div className="flex items-center justify-between w-full">
                           <span className="text-sm">{account.name}</span>
@@ -835,7 +834,7 @@ const GroupGoalDetails = () => {
                     Notificar cada 15 días para realizar aportaciones
                   </label>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <Checkbox id="notify" defaultChecked />
                   <label htmlFor="notify" className="text-xs text-gray-700">
@@ -844,9 +843,9 @@ const GroupGoalDetails = () => {
                 </div>
               </div>
 
-                {/* AI Insight */}
-                {contributionAmount && parseFloat(contributionAmount) > 0 && (
-                  <div className="bg-white rounded-xl p-2.5 border border-gray-200">
+              {/* AI Insight */}
+              {contributionAmount && parseFloat(contributionAmount) > 0 && (
+                <div className="bg-white rounded-xl p-2.5 border border-gray-200">
                   <div className="flex items-start gap-2">
                     <TrendingUp className="h-3.5 w-3.5 text-gray-700 mt-0.5 flex-shrink-0" />
                     <div>

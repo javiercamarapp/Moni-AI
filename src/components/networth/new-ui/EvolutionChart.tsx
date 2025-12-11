@@ -16,7 +16,7 @@ export const EvolutionChart: React.FC<EvolutionChartProps> = ({ data }) => {
     }
 
     return (
-        <div className="h-[280px] w-full -ml-4">
+        <div className="h-[180px] lg:h-[180px] w-full lg:-ml-4">
             <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                     <defs>

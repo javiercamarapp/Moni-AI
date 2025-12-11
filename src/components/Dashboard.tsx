@@ -16,9 +16,9 @@ import { motion } from "framer-motion";
 import { useRef } from 'react';
 import { BlurFade } from '@/components/ui/blur-fade';
 import { addDays, addMonths, isBefore, startOfDay } from "date-fns";
-import bannerInvestment from '@/assets/banner-investment.jpg';
-import bannerGoals from '@/assets/banner-goals.jpg';
-import bannerGroups from '@/assets/banner-groups.jpg';
+import bannerInvestment from '@/assets/banner-investment.webp';
+import bannerGoals from '@/assets/banner-goals.webp';
+import bannerGroups from '@/assets/banner-groups.webp';
 import bannerHalloween from '@/assets/banner-halloween.png';
 import heroAuth from '@/assets/moni-ai-logo.png';
 import whatsappLogo from '@/assets/whatsapp-logo.png';
@@ -1201,12 +1201,14 @@ const Dashboard = () => {
           />
 
           {/* Score and Budget Grid */}
-          <div className="mb-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="mb-4 grid grid-cols-3 gap-4">
             <ScoreCard score={scoreMoni} />
-            <BudgetWidget
-              totalBudget={totalBudget}
-              currentExpenses={currentMonthExpenses}
-            />
+            <div className="col-span-2">
+              <BudgetWidget
+                totalBudget={totalBudget}
+                currentExpenses={currentMonthExpenses}
+              />
+            </div>
           </div>
 
           {/* Quick Stats */}
@@ -1230,10 +1232,6 @@ const Dashboard = () => {
             />
           </div>
 
-          {/* Accounts Carousel */}
-          <div className="mb-6 bg-[#faf9f8]">
-            <AccountsCarousel accounts={bankConnections} />
-          </div>
 
           {/* Goals Section - Personal & Group */}
           <div>
@@ -1255,6 +1253,11 @@ const Dashboard = () => {
                 is_group: true
               }))}
             />
+          </div>
+
+          {/* Accounts Carousel */}
+          <div className="mb-6 bg-[#faf9f8]">
+            <AccountsCarousel accounts={bankConnections} />
           </div>
 
           {/* Recent Transactions - disabled for now */}

@@ -61,18 +61,18 @@ export default function LevelDetails() {
 
   if (isLoading) {
     return (
-      <div className="page-standard min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center">
+      <div className="page-standard min-h-screen bg-[#faf9f8] flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
 
-  const progressPercent = levelInfo 
-    ? (levelInfo.xpToNextLevel / levelInfo.totalXpForNextLevel) * 100 
+  const progressPercent = levelInfo
+    ? (levelInfo.xpToNextLevel / levelInfo.totalXpForNextLevel) * 100
     : 0;
 
   return (
-    <div className="page-standard min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4">
+    <div className="page-standard min-h-screen bg-[#faf9f8] p-4">
       <div className="max-w-2xl mx-auto pt-6 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -161,7 +161,7 @@ export default function LevelDetails() {
               { level: (levelInfo?.level || 1) + 2, reward: "Función Premium desbloqueada" },
               { level: (levelInfo?.level || 1) + 3, reward: "Avatar personalizado" },
             ].map((milestone, idx) => (
-              <div 
+              <div
                 key={idx}
                 className="flex items-center justify-between p-3 rounded-lg border"
               >

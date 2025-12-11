@@ -33,7 +33,7 @@ export default function Expired() {
   };
 
   return (
-    <div className="page-standard min-h-screen bg-[hsl(48,25%,92%)] p-3 pb-20">
+    <div className="page-standard min-h-screen bg-[#faf9f8] p-3 pb-20">
       <div className="w-full max-w-md mx-auto space-y-4">
         {/* Header con logo e insight */}
         <div className="p-2 flex items-center gap-3">

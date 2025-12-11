@@ -115,7 +115,7 @@ const KPICard = ({ label, value, icon: Icon, format = "number" }: any) => {
 const AdminAnalytics = () => {
   return (
     <>
-      <div className="page-standard min-h-screen pb-24 bg-gradient-to-b from-gray-50 to-white">
+      <div className="page-standard min-h-screen pb-24 bg-[#faf9f8]">
         {/* Header */}
         <div className="sticky top-0 z-40 bg-gradient-to-b from-white/95 to-white/80 backdrop-blur-md border-b border-gray-100">
           <div className="page-container py-6">

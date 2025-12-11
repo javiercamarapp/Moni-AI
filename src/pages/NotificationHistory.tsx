@@ -45,7 +45,7 @@ export default function NotificationHistory() {
 
       if (error) throw error;
       setNotifications(data || []);
-      
+
       // Contar notificaciones sin leer
       const unread = data?.filter(n => n.status === "sent").length || 0;
       setUnreadCount(unread);
@@ -83,7 +83,7 @@ export default function NotificationHistory() {
       }
 
       const { data, error } = await supabase.functions.invoke('respond-friend-request', {
-        body: { 
+        body: {
           notification_id: notification.id,
           action: 'accept',
           from_user_id: fromUserId
@@ -118,7 +118,7 @@ export default function NotificationHistory() {
       }
 
       const { data, error } = await supabase.functions.invoke('respond-friend-request', {
-        body: { 
+        body: {
           notification_id: notification.id,
           action: 'reject',
           from_user_id: fromUserId
@@ -158,7 +158,7 @@ export default function NotificationHistory() {
   };
 
   return (
-    <div className="min-h-screen pb-32 bg-gradient-to-b from-[#efe6dc] via-[#efe6dc] via-10% to-[#f5f0ee]">
+    <div className="min-h-screen pb-32 bg-[#faf9f8]">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-transparent backdrop-blur-sm">
         <div className="page-container py-4">
@@ -216,7 +216,7 @@ export default function NotificationHistory() {
           <div className="space-y-3">
             {notifications.map((notification, index) => {
               const isUnread = notification.status === "sent";
-              
+
               return (
                 <motion.div
                   key={notification.id}
@@ -229,18 +229,17 @@ export default function NotificationHistory() {
                     className="bg-[#f7f3ed] rounded-[1.75rem] p-4 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.05)] border border-[#e7dbcb] hover:scale-[1.02] transition-all duration-300 overflow-hidden relative group"
                   >
                     {/* Gradient overlay basado en el tipo - More subtle */}
-                    <div 
-                      className={`absolute inset-0 opacity-[0.03] pointer-events-none bg-gradient-to-br ${
-                        notification.notification_type === "daily_summary" ? "from-blue-400 to-cyan-500" :
-                        notification.notification_type === "weekly_analysis" ? "from-slate-400 to-slate-600" :
-                        notification.notification_type === "savings_tip" ? "from-emerald-400 to-teal-600" :
-                        notification.notification_type === "goal_reminder" ? "from-amber-400 to-orange-500" :
-                        notification.notification_type === "spending_alert" ? "from-rose-400 to-red-500" :
-                        notification.notification_type === "friend_request" ? "from-purple-400 to-pink-500" :
-                        "from-gray-400 to-gray-600"
-                      }`}
+                    <div
+                      className={`absolute inset-0 opacity-[0.03] pointer-events-none bg-gradient-to-br ${notification.notification_type === "daily_summary" ? "from-blue-400 to-cyan-500" :
+                          notification.notification_type === "weekly_analysis" ? "from-slate-400 to-slate-600" :
+                            notification.notification_type === "savings_tip" ? "from-emerald-400 to-teal-600" :
+                              notification.notification_type === "goal_reminder" ? "from-amber-400 to-orange-500" :
+                                notification.notification_type === "spending_alert" ? "from-rose-400 to-red-500" :
+                                  notification.notification_type === "friend_request" ? "from-purple-400 to-pink-500" :
+                                    "from-gray-400 to-gray-600"
+                        }`}
                     />
-                    
+
                     <div className="relative z-10">
                       <div className="flex gap-3">
                         {/* Icono con gradiente */}
@@ -248,11 +247,11 @@ export default function NotificationHistory() {
                           flex-shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm bg-gradient-to-br
                           ${notification.notification_type === "daily_summary" ? "from-blue-100 to-blue-50 text-blue-600" :
                             notification.notification_type === "weekly_analysis" ? "from-slate-100 to-slate-50 text-slate-600" :
-                            notification.notification_type === "savings_tip" ? "from-emerald-100 to-emerald-50 text-emerald-600" :
-                            notification.notification_type === "goal_reminder" ? "from-amber-100 to-amber-50 text-amber-600" :
-                            notification.notification_type === "spending_alert" ? "from-rose-100 to-rose-50 text-rose-600" :
-                            notification.notification_type === "friend_request" ? "from-purple-100 to-purple-50 text-purple-600" :
-                            "from-gray-100 to-gray-50 text-gray-600"}
+                              notification.notification_type === "savings_tip" ? "from-emerald-100 to-emerald-50 text-emerald-600" :
+                                notification.notification_type === "goal_reminder" ? "from-amber-100 to-amber-50 text-amber-600" :
+                                  notification.notification_type === "spending_alert" ? "from-rose-100 to-rose-50 text-rose-600" :
+                                    notification.notification_type === "friend_request" ? "from-purple-100 to-purple-50 text-purple-600" :
+                                      "from-gray-100 to-gray-50 text-gray-600"}
                         `}>
                           {notification.notification_type === "daily_summary" ? (
                             <Calendar className="h-5 w-5" />
@@ -270,7 +269,7 @@ export default function NotificationHistory() {
                             <MessageSquare className="h-5 w-5" />
                           )}
                         </div>
-                        
+
                         <div className="flex-1 min-w-0">
                           {/* Título, badge y dismiss */}
                           <div className="flex items-start justify-between gap-2 mb-1">
@@ -284,9 +283,9 @@ export default function NotificationHistory() {
                                 </Badge>
                               )}
                             </div>
-                            
+
                             {/* Dismiss Button */}
-                            <button 
+                            <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleDismiss(notification.id);
@@ -296,12 +295,12 @@ export default function NotificationHistory() {
                               <X className="h-5 w-5" />
                             </button>
                           </div>
-                          
+
                           {/* Mensaje */}
                           <p className="text-xs text-gray-500 leading-relaxed mb-3">
                             {notification.message}
                           </p>
-                          
+
                           {/* Botones para solicitudes de amistad */}
                           {notification.notification_type === "friend_request" && notification.status === "sent" && (
                             <div className="flex gap-2 mt-3">
@@ -324,7 +323,7 @@ export default function NotificationHistory() {
                               </Button>
                             </div>
                           )}
-                          
+
                           {/* Footer con fecha */}
                           <div className="flex items-center gap-2 mt-3">
                             <div className="flex items-center gap-1 text-xs text-muted-foreground">

@@ -68,7 +68,7 @@ const FriendChallenges = () => {
 
   return (
     <>
-      <div className="page-standard min-h-screen pb-24 bg-muted/30">
+      <div className="page-standard min-h-screen pb-24 bg-[#faf9f8]">
         {/* Header */}
         <div className="sticky top-0 z-40 bg-gradient-to-b from-purple-50/80 via-cyan-50/60 to-transparent backdrop-blur-sm">
           <div className="page-container py-3">

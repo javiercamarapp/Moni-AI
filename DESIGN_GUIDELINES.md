@@ -26,7 +26,6 @@ This document defines the design standards, color palette, and layout guidelines
 - **Base Color**: `bg-[#fafaf9]` (Stone 50)
 - **Header Gradient**: `bg-gradient-to-b from-[#f5f0ee] to-transparent`
   - This specific gradient should be used at the top of pages to provide a warm, subtle header effect.
-  - **Exception**: The Chat interface uses a custom wavy line background.
 
 ### Headings & Numeric Scores
 

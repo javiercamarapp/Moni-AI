@@ -213,7 +213,7 @@ const FriendComparison = () => {
   ];
 
   return (
-    <div className="page-standard min-h-screen pb-24 bg-gradient-to-b from-[#f5f0ee] to-white">
+    <div className="page-standard min-h-screen pb-24 bg-[#faf9f8]">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/95 to-transparent backdrop-blur-sm">
         <div className="page-container py-4">
@@ -356,10 +356,10 @@ const FriendComparison = () => {
                   </span>
                 </div>
                 <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-gradient-to-r from-primary to-primary/70"
-                    style={{ 
-                      width: `${Math.min((myStats.active_savings / Math.max(myStats.active_savings, friendStats.active_savings)) * 100, 100)}%` 
+                    style={{
+                      width: `${Math.min((myStats.active_savings / Math.max(myStats.active_savings, friendStats.active_savings)) * 100, 100)}%`
                     }}
                   />
                 </div>
@@ -373,10 +373,10 @@ const FriendComparison = () => {
                   </span>
                 </div>
                 <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-gradient-to-r from-purple-600 to-purple-400"
-                    style={{ 
-                      width: `${Math.min((friendStats.active_savings / Math.max(myStats.active_savings, friendStats.active_savings)) * 100, 100)}%` 
+                    style={{
+                      width: `${Math.min((friendStats.active_savings / Math.max(myStats.active_savings, friendStats.active_savings)) * 100, 100)}%`
                     }}
                   />
                 </div>

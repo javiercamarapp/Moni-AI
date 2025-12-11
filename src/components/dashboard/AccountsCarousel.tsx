@@ -56,7 +56,7 @@ const formatLastSync = (lastSync?: string) => {
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
-    
+
     if (diffMins < 1) return 'Ahora';
     if (diffMins < 60) return `Hace ${diffMins}m`;
     if (diffHours < 24) return `Hace ${diffHours}h`;
@@ -231,7 +231,7 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                             const last4 = account.account_id.slice(-4);
                             const displayTitle = getCardName(account.plaid_item_id, account.bank_name);
                             const bankNameOnly = account.bank_name.split(' ')[0];
-                            const displaySubtitle = `${bankNameOnly} - •${last4}`;
+                            const maskedNumber = `•••• •••• •••• ${last4}`;
                             const networkLogo = getNetworkLogo(account.plaid_item_id, account.account_id);
                             const solidColor = getSolidColor(account.bank_name, account.plaid_item_id);
                             const cardType = getCardType(account.plaid_item_id);
@@ -241,83 +241,81 @@ const AccountsCarousel: React.FC<AccountsCarouselProps> = ({ accounts }) => {
                             const lastSyncText = formatLastSync(account.last_sync);
 
                             return (
-                                <CarouselItem key={account.id} className="pl-3 md:pl-4 basis-[75%] sm:basis-[46%] lg:basis-[32%] bg-transparent">
+                                <CarouselItem key={account.id} className="pl-3 md:pl-4 basis-[280px] bg-transparent">
                                     <div
                                         onClick={() => navigate('/cartera')}
-                                        className={`h-[138px] rounded-3xl ${solidColor} p-4 flex flex-col justify-between shadow-md cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-200 relative overflow-hidden`}
+                                        className={`h-[176px] rounded-2xl ${solidColor} p-5 flex flex-col justify-between shadow-lg cursor-pointer hover:scale-[1.02] hover:shadow-xl transition-all duration-200 relative overflow-hidden`}
                                     >
                                         {/* Subtle gradient overlay for depth */}
                                         <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/20 pointer-events-none" />
-                                        {/* Card Type Label and Network Logo - Upper Right */}
-                                        <div className="absolute top-3 right-3 flex flex-col items-end gap-1">
-                                            <span className="text-white/80 text-[10px] font-semibold px-2 py-1 rounded-full bg-white/10 backdrop-blur-sm">
-                                                {cardType}
-                                            </span>
+
+                                        {/* Top Section: Bank Logo and Network Logo */}
+                                        <div className="flex items-start justify-between relative z-10">
+                                            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center overflow-hidden shadow-sm">
+                                                {logoUrl ? (
+                                                    <img
+                                                        src={logoUrl}
+                                                        alt={account.bank_name}
+                                                        className="w-full h-full object-cover"
+                                                        onError={(e) => {
+                                                            (e.target as HTMLImageElement).style.display = 'none';
+                                                            (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                                                        }}
+                                                    />
+                                                ) : null}
+                                                <span className={`text-slate-700 font-bold text-sm ${logoUrl ? 'hidden' : ''}`}>
+                                                    {account.bank_name.charAt(0)}
+                                                </span>
+                                            </div>
                                             {networkLogo && (
-                                                <img src={`${networkLogo}?v=${Date.now()}`} alt="Network" className="w-12 h-8 object-contain" />
+                                                <img src={`${networkLogo}?v=${Date.now()}`} alt="Network" className="w-14 h-9 object-contain opacity-90" />
                                             )}
                                         </div>
 
-                                        <div className="flex items-center justify-between pr-16">
-                                            <div className="flex items-center gap-2 min-w-0">
-                                                <div className="relative flex-shrink-0">
-                                                    <div className="w-7 sm:w-8 h-7 sm:h-8 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-sm">
-                                                        {logoUrl ? (
-                                                            <img
-                                                                src={logoUrl}
-                                                                alt={account.bank_name}
-                                                                className="w-full h-full object-cover"
-                                                                onError={(e) => {
-                                                                    (e.target as HTMLImageElement).style.display = 'none';
-                                                                    (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
-                                                                }}
-                                                            />
-                                                        ) : null}
-                                                        <span className={`text-slate-700 font-bold text-xs ${logoUrl ? 'hidden' : ''}`}>
-                                                            {account.bank_name.charAt(0)}
-                                                        </span>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex flex-col overflow-hidden min-w-0">
-                                                    <span className="text-white font-bold text-sm truncate">
-                                                        {displayTitle}
-                                                    </span>
-                                                    <span className="text-white/70 text-[10px] truncate">
-                                                        {displaySubtitle}
-                                                    </span>
-                                                </div>
-                                            </div>
+                                        {/* Middle Section: Card Number */}
+                                        <div className="relative z-10">
+                                            <p className="text-white/90 text-base font-mono tracking-wider">
+                                                {maskedNumber}
+                                            </p>
                                         </div>
 
-                                        <div className="flex flex-col">
-                                            <div className="flex items-center justify-between mb-0.5">
-                                                <p className="text-white/70 text-[10px] font-medium">
-                                                    {cardType === 'Crédito' ? 'Usado' : 'Balance'}
+                                        {/* Bottom Section: Cardholder Info and Balance */}
+                                        <div className="flex items-end justify-between relative z-10">
+                                            <div className="flex flex-col">
+                                                <p className="text-white/60 text-[9px] font-semibold uppercase tracking-wide mb-0.5">
+                                                    {cardType}
+                                                </p>
+                                                <p className="text-white font-bold text-sm truncate max-w-[140px]">
+                                                    {displayTitle}
                                                 </p>
                                             </div>
-                                            <p className="text-white text-lg font-bold">
-                                                ${balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                            <div className="flex flex-col items-end">
+                                                <p className="text-white/60 text-[9px] font-medium mb-0.5">
+                                                    {cardType === 'Crédito' ? 'Usado' : 'Balance'}
+                                                </p>
+                                                <p className="text-white text-base font-bold">
+                                                    ${balance.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                                </p>
                                                 {creditLimit && (
-                                                    <span className="text-white/50 text-xs font-normal"> / ${creditLimit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
+                                                    <p className="text-white/50 text-[10px] font-normal">
+                                                        de ${creditLimit.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                                    </p>
                                                 )}
-                                            </p>
-                                            {/* Credit usage bar for credit cards */}
-                                            {creditUsed !== null && (
-                                                <div className="mt-1.5 h-1 w-full bg-white/20 rounded-full overflow-hidden">
-                                                    <div 
-                                                        className={`h-full rounded-full transition-all ${
-                                                            creditUsed >= 80 ? 'bg-red-400' :
-                                                            creditUsed >= 50 ? 'bg-amber-400' :
-                                                            'bg-emerald-400'
-                                                        }`}
-                                                        style={{ width: `${Math.min(creditUsed, 100)}%` }}
-                                                    />
-                                                </div>
-                                            )}
-                                            {/* Last sync - always at bottom */}
-                                            <p className="text-white text-[10px] mt-1">{lastSyncText}</p>
+                                            </div>
                                         </div>
+
+                                        {/* Credit usage indicator for credit cards */}
+                                        {creditUsed !== null && (
+                                            <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10">
+                                                <div
+                                                    className={`h-full transition-all ${creditUsed >= 80 ? 'bg-red-400' :
+                                                            creditUsed >= 50 ? 'bg-amber-400' :
+                                                                'bg-emerald-400'
+                                                        }`}
+                                                    style={{ width: `${Math.min(creditUsed, 100)}%` }}
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                 </CarouselItem>
                             );

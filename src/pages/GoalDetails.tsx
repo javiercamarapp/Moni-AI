@@ -84,7 +84,7 @@ const GoalDetails = () => {
 
   const handleCompleteGoal = async () => {
     if (!goal) return;
-    
+
     try {
       const { error } = await supabase
         .from('goals')
@@ -144,13 +144,13 @@ const GoalDetails = () => {
 
   const progress = (goal.current / goal.target) * 100;
   const remaining = goal.target - goal.current;
-  const daysRemaining = goal.deadline 
+  const daysRemaining = goal.deadline
     ? Math.ceil((new Date(goal.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
     : null;
 
   return (
     <>
-      <div className="page-standard min-h-screen pb-24 bg-gradient-to-b from-amber-50/30 to-orange-50/20">
+      <div className="page-standard min-h-screen pb-24 bg-[#faf9f8]">
         {/* Header */}
         <div className="sticky top-0 z-40 bg-gradient-to-b from-purple-50/80 via-cyan-50/60 to-transparent backdrop-blur-sm">
           <div className="page-container py-3">
@@ -195,12 +195,11 @@ const GoalDetails = () => {
 
             <div className="w-full bg-gray-100 rounded-full h-2 mb-2 overflow-hidden">
               <div
-                className={`h-2 rounded-full transition-all duration-500 ${
-                  progress >= 75 ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' :
-                  progress >= 50 ? 'bg-gradient-to-r from-blue-500 to-blue-600' :
-                  progress >= 25 ? 'bg-gradient-to-r from-amber-500 to-amber-600' :
-                  'bg-gradient-to-r from-gray-400 to-gray-500'
-                }`}
+                className={`h-2 rounded-full transition-all duration-500 ${progress >= 75 ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' :
+                    progress >= 50 ? 'bg-gradient-to-r from-blue-500 to-blue-600' :
+                      progress >= 25 ? 'bg-gradient-to-r from-amber-500 to-amber-600' :
+                        'bg-gradient-to-r from-gray-400 to-gray-500'
+                  }`}
                 style={{ width: `${Math.min(progress, 100)}%` }}
               />
             </div>
@@ -213,14 +212,14 @@ const GoalDetails = () => {
 
           {/* Stats Summary */}
           <div className="grid grid-cols-3 gap-2 justify-center">
-            <button 
+            <button
               onClick={() => setInsightModal('current')}
               className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50 hover:shadow-md hover:border-emerald-300 transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
             >
               <p className="text-[10px] text-gray-600 mb-0.5">Ahorro Actual</p>
               <p className="text-sm font-bold text-gray-900">{formatCurrency(goal.current)}</p>
             </button>
-            <button 
+            <button
               onClick={() => setInsightModal('remaining')}
               className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50 hover:shadow-md hover:border-amber-300 transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
             >
@@ -228,7 +227,7 @@ const GoalDetails = () => {
               <p className="text-sm font-bold text-gray-900">{formatCurrency(remaining)}</p>
             </button>
             {goal.deadline && daysRemaining !== null && (
-              <button 
+              <button
                 onClick={() => setInsightModal('days')}
                 className="bg-white rounded-lg p-2 shadow-sm border border-gray-200/50 hover:shadow-md hover:border-blue-300 transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
               >
@@ -353,7 +352,7 @@ const GoalDetails = () => {
                     <p className="text-xl font-bold text-emerald-900 mb-1">{formatCurrency(goal.current)}</p>
                     <p className="text-xs text-emerald-700">Has ahorrado el <span className="font-bold">{progress.toFixed(1)}%</span> de tu meta</p>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex items-start gap-2">
                       <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
@@ -362,17 +361,17 @@ const GoalDetails = () => {
                       <div>
                         <p className="text-xs font-semibold text-gray-900">¡Excelente progreso!</p>
                         <p className="text-[11px] text-gray-600 mt-0.5">
-                          {progress >= 75 
+                          {progress >= 75
                             ? "Estás muy cerca de alcanzar tu meta."
                             : progress >= 50
-                            ? "Vas por la mitad del camino."
-                            : progress >= 25
-                            ? "Has dado los primeros pasos."
-                            : "Cada gran meta comienza aquí."}
+                              ? "Vas por la mitad del camino."
+                              : progress >= 25
+                                ? "Has dado los primeros pasos."
+                                : "Cada gran meta comienza aquí."}
                         </p>
                       </div>
                     </div>
-                    
+
                     {activities.length > 0 && (
                       <div className="flex items-start gap-2">
                         <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
@@ -396,7 +395,7 @@ const GoalDetails = () => {
                     <p className="text-xl font-bold text-amber-900 mb-1">{formatCurrency(remaining)}</p>
                     <p className="text-xs text-amber-700">Te falta ahorrar para completar tu meta</p>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex items-start gap-2">
                       <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
@@ -405,15 +404,15 @@ const GoalDetails = () => {
                       <div>
                         <p className="text-xs font-semibold text-gray-900">Sugerencia de ahorro</p>
                         <p className="text-[11px] text-gray-600 mt-0.5">
-                          {goal.required_weekly_saving 
+                          {goal.required_weekly_saving
                             ? `Ahorra ${formatCurrency(goal.required_weekly_saving)} por semana.`
                             : goal.deadline
-                            ? `Necesitas ${formatCurrency(remaining / Math.max(daysRemaining || 1, 1) * 7)} por semana.`
-                            : "Establece una fecha límite."}
+                              ? `Necesitas ${formatCurrency(remaining / Math.max(daysRemaining || 1, 1) * 7)} por semana.`
+                              : "Establece una fecha límite."}
                         </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-start gap-2">
                       <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
                         <Sparkles className="h-3 w-3 text-emerald-600" />
@@ -436,12 +435,12 @@ const GoalDetails = () => {
                   <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
                     <p className="text-xl font-bold text-blue-900 mb-1">{daysRemaining} días</p>
                     <p className="text-xs text-blue-700">
-                      {daysRemaining > 365 ? `${Math.floor(daysRemaining / 365)} años y ${Math.floor((daysRemaining % 365) / 30)} meses` : 
-                       daysRemaining > 30 ? `${Math.floor(daysRemaining / 30)} meses` : 
-                       `${daysRemaining} días`} para tu meta
+                      {daysRemaining > 365 ? `${Math.floor(daysRemaining / 365)} años y ${Math.floor((daysRemaining % 365) / 30)} meses` :
+                        daysRemaining > 30 ? `${Math.floor(daysRemaining / 30)} meses` :
+                          `${daysRemaining} días`} para tu meta
                     </p>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex items-start gap-2">
                       <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
@@ -458,7 +457,7 @@ const GoalDetails = () => {
                         </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-start gap-2">
                       <div className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
                         <TrendingUp className="h-3 w-3 text-amber-600" />
@@ -469,8 +468,8 @@ const GoalDetails = () => {
                           {daysRemaining < 30 && progress < 75
                             ? "⚠️ Acelera tus aportes."
                             : daysRemaining < 90 && progress < 50
-                            ? "Considera aportar más frecuente."
-                            : "Vas bien encaminado."}
+                              ? "Considera aportar más frecuente."
+                              : "Vas bien encaminado."}
                         </p>
                       </div>
                     </div>
