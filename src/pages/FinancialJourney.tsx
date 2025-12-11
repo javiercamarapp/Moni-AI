@@ -602,32 +602,12 @@ const FinancialJourney: React.FC = () => {
   }, [currentView]);
 
   useEffect(() => {
-    const checkTutorialStatus = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('has_seen_journey_tutorial')
-        .eq('id', user.id)
-        .single();
-
-      if (profile && !profile.has_seen_journey_tutorial) {
-        setTimeout(() => setTutorialStep(1), 1000);
-      }
-    };
-
-    checkTutorialStatus();
+    // Tutorial disabled - column doesn't exist in profiles table
+    // To enable, add has_seen_journey_tutorial column to profiles
   }, []);
 
   const completeTutorial = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      await supabase
-        .from('profiles')
-        .update({ has_seen_journey_tutorial: true })
-        .eq('id', user.id);
-    }
+    // Tutorial completion disabled - column doesn't exist in profiles table
   };
 
   const handleNextTutorial = () => {
