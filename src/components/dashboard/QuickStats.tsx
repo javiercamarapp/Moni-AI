@@ -55,8 +55,8 @@ const QuickStats: React.FC<QuickStatsProps> = ({
                         className="flex flex-col items-center gap-1.5 group outline-none"
                         onClick={() => navigate(stat.route)}
                     >
-                        {/* Icon Box - Button Style */}
-                        <div className="bg-gradient-to-b from-white to-gray-50 rounded-xl px-5 py-3 lg:px-10 lg:py-5 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.8)] border border-gray-200 group-hover:shadow-[0_4px_12px_-2px_rgba(141,110,99,0.2)] group-hover:border-[#8D6E63]/50 group-hover:-translate-y-1 group-active:translate-y-0 group-active:shadow-[0_1px_4px_-1px_rgba(0,0,0,0.1),inset_0_2px_4px_rgba(0,0,0,0.05)] transition-all duration-200 w-full flex items-center justify-center">
+                        {/* Icon Box - Card Style matching app design */}
+                        <div className="bg-white rounded-2xl px-5 py-3 lg:px-10 lg:py-5 shadow-md border border-gray-100/50 group-hover:shadow-lg group-hover:-translate-y-1 group-active:shadow-sm group-active:translate-y-0 transition-all duration-200 w-full flex items-center justify-center">
                             {getIcon(stat.icon)}
                         </div>
 
