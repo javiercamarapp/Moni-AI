@@ -468,17 +468,12 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden">
-      {/* Fondo abstracto */}
-      <div 
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: `url(${authBackground})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      />
+    <div className="min-h-screen flex flex-col relative overflow-hidden bg-gradient-to-br from-[#F5F0EB] via-[#FAF8F5] to-[#EDE8E3]">
+      {/* Subtle decorative elements */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#5D4037]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#A1887F]/8 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+      </div>
       
       <div 
         className="flex-1 flex items-center justify-center py-8 md:py-12 px-2 md:px-4 relative z-10"
