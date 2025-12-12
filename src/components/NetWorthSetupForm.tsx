@@ -74,21 +74,12 @@ type CustomLiability = {
 
 const assetCategories = [
   { name: 'Cuentas bancarias (ahorro + cheques)', category: 'Checking', examples: ['BBVA Cuenta Ahorro', 'Santander Nómina', 'Banorte Smart'] },
-  { name: 'Inversiones financieras (fondos, CETES, bonos)', category: 'Investments', examples: ['CETES 28 días', 'Fondo GBM+', 'Bonos HSBC'] },
-  { name: 'Acciones o ETFs en bolsa', category: 'Investments', examples: ['Apple (AAPL)', 'Tesla (TSLA)', 'VOO ETF'] },
-  { name: 'Criptomonedas', category: 'Investments', examples: ['Bitcoin (BTC)', 'Ethereum (ETH)', 'USDT Stablecoin'] },
-  { name: 'Propiedad principal (casa o departamento)', category: 'Property', examples: ['Casa Polanco', 'Depto Reforma', 'Casa Santa Fe'] },
-  { name: 'Propiedades adicionales (en renta o inversión)', category: 'Property', examples: ['Depto en Renta Centro', 'Local Comercial', 'Casa Playa'] },
-  { name: 'Vehículos (auto o moto)', category: 'Other', examples: ['Toyota Corolla 2020', 'Honda CRV', 'Moto Italika'] },
-  { name: 'Ahorro para el retiro (Afore o plan privado)', category: 'Savings', examples: ['Afore Sura', 'Plan Pensión', 'Afore XXI Banorte'] },
-  { name: 'Seguros con valor de rescate / inversión', category: 'Savings', examples: ['Seguro Vida GNP', 'Plan Metlife', 'AXA Inversión'] },
-  { name: 'Dinero prestado a terceros (por cobrar)', category: 'Other', examples: ['Préstamo a Juan', 'Deuda Socio', 'Préstamo Hermano'] },
-  { name: 'Participaciones en empresas o startups', category: 'Investments', examples: ['Startup Tech', 'Negocio Restaurante', 'Empresa Familiar'] },
-  { name: 'Propiedad intelectual (marca, royalties, licencias)', category: 'Other', examples: ['Marca Registrada', 'Royalties Libro', 'Patente Software'] },
-  { name: 'Saldos en apps fintech (MercadoPago, PayPal, Revolut)', category: 'Checking', examples: ['Mercado Pago', 'PayPal USD', 'Revolut EUR'] },
-  { name: 'Inventario o mercancía para venta', category: 'Other', examples: ['Inventario Tienda', 'Productos Bodega', 'Mercancía Online'] },
-  { name: 'Obras de arte / joyas / metales preciosos', category: 'Other', examples: ['Anillo Oro', 'Cuadro Arte', 'Monedas Plata'] },
-  { name: 'Otros activos personalizados', category: 'Other', examples: ['Otro Activo 1', 'Activo Diverso', 'Activo Personal'] },
+  { name: 'Propiedad principal', category: 'Property', examples: ['Casa Polanco', 'Depto Reforma', 'Casa Santa Fe'] },
+  { name: 'Otras propiedades', category: 'Property', examples: ['Depto en Renta Centro', 'Local Comercial', 'Casa Playa'] },
+  { name: 'Vehículos', category: 'Other', examples: ['Toyota Corolla 2020', 'Honda CRV', 'Moto Italika'] },
+  { name: 'Fondos de ahorro', category: 'Savings', examples: ['Afore Sura', 'Fondo GBM+', 'CETES'] },
+  { name: 'Dinero prestado', category: 'Other', examples: ['Préstamo a Juan', 'Deuda Socio', 'Préstamo Hermano'] },
+  { name: 'Relojes o joyas', category: 'Other', examples: ['Rolex Submariner', 'Anillo Oro', 'Collar Diamantes'] },
 ];
 
 const liabilityCategories = [
