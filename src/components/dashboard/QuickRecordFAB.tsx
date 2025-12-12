@@ -24,7 +24,7 @@ const QuickRecordFAB: React.FC = () => {
               exit={{ opacity: 0, y: 20, scale: 0.8 }}
               transition={{ duration: 0.15 }}
               onClick={() => handleRecord('income')}
-              className="absolute bottom-28 right-0 flex items-center gap-2 bg-green-500 text-white rounded-full pl-3 pr-4 py-2 shadow-lg hover:bg-green-600 transition-colors"
+              className="absolute bottom-32 right-0 flex items-center justify-center gap-2 bg-green-500 text-white rounded-full px-4 py-2.5 shadow-lg hover:bg-green-600 transition-colors min-w-[110px]"
             >
               <TrendingUp className="w-4 h-4" />
               <span className="text-sm font-medium">Ingreso</span>
@@ -37,7 +37,7 @@ const QuickRecordFAB: React.FC = () => {
               exit={{ opacity: 0, y: 20, scale: 0.8 }}
               transition={{ duration: 0.15, delay: 0.05 }}
               onClick={() => handleRecord('expense')}
-              className="absolute bottom-14 right-0 flex items-center gap-2 bg-red-500 text-white rounded-full pl-3 pr-4 py-2 shadow-lg hover:bg-red-600 transition-colors"
+              className="absolute bottom-[72px] right-0 flex items-center justify-center gap-2 bg-red-500 text-white rounded-full px-4 py-2.5 shadow-lg hover:bg-red-600 transition-colors min-w-[110px]"
             >
               <TrendingDown className="w-4 h-4" />
               <span className="text-sm font-medium">Gasto</span>

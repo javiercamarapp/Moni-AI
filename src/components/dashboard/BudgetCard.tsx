@@ -69,10 +69,10 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
     if (lower.includes('alimenta') || lower.includes('comida') || lower.includes('super')) return 'Super';
     if (lower.includes('restaur')) return 'Comida';
     if (lower.includes('transport') || lower.includes('uber') || lower.includes('gasolina')) return 'Transporte';
-    if (lower.includes('entreten') || lower.includes('netflix') || lower.includes('spotify') || lower.includes('cine') || lower.includes('ocio')) return 'Ocio';
+    if (lower.includes('entreten') || lower.includes('netflix') || lower.includes('spotify') || lower.includes('cine') || lower.includes('ocio')) return 'Entretenimiento';
     if (lower.includes('vivienda') || lower.includes('renta') || lower.includes('casa')) return 'Vivienda';
     if (lower.includes('salud') || lower.includes('médico') || lower.includes('farmacia')) return 'Salud';
-    if (lower.includes('educación') || lower.includes('curso') || lower.includes('desarrollo')) return 'Ocio';
+    if (lower.includes('educación') || lower.includes('curso') || lower.includes('desarrollo')) return 'Entretenimiento';
     if (lower.includes('servicio') || lower.includes('luz') || lower.includes('agua')) return 'Servicios';
     if (lower.includes('deuda') || lower.includes('crédito') || lower.includes('tarjeta')) return 'Deudas';
     if (lower.includes('compras') || lower.includes('ropa')) return 'Compras';
@@ -156,7 +156,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
 
       {/* Single Compound Progress Bar - Income vs Expenses */}
       <div className="mb-3">
-        <div className="h-4 rounded-full overflow-hidden flex w-full">
+        <div className="h-4 lg:h-6 rounded-full overflow-hidden flex w-full">
           <div 
             className="h-full bg-[#5D4037] rounded-l-full"
             style={{ width: `${incomePercent}%` }}
