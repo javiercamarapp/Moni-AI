@@ -542,30 +542,30 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9f8] pb-32">
+    <div className="min-h-screen bg-gradient-to-b from-[#5D4037] via-[#4E342E] to-[#3E2723] pb-32">
       {/* Header & Progress */}
-      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-100">
+      <div className="sticky top-0 z-40 bg-[#5D4037]/95 backdrop-blur-xl border-b border-white/10">
         <div className="max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-4">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => step === 1 ? (onBack ? onBack() : navigate(-1)) : prevStep()}
-              className="h-9 w-9 rounded-full hover:bg-gray-100 text-gray-600"
+              className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 text-white"
             >
               <ArrowLeft size={18} />
             </Button>
             <div className="flex flex-col items-center">
-              <span className="text-xs font-bold text-gray-400 tracking-widest uppercase">Paso {step} de 3</span>
-              <h1 className="text-sm font-bold text-[#5D4037]">
+              <span className="text-xs font-bold text-white/60 tracking-widest uppercase">Paso {step} de 3</span>
+              <h1 className="text-base font-bold text-white">
                 {step === 1 && "Tus Activos"}
                 {step === 2 && "Tus Pasivos"}
                 {step === 3 && "Resumen Patrimonial"}
               </h1>
             </div>
-            <div className="w-9" /> {/* Spacer */}
+            <div className="w-10" />
           </div>
-          <Progress value={(step / 3) * 100} className="h-1.5 bg-gray-100" indicatorClassName="bg-[#8D6E63]" />
+          <Progress value={(step / 3) * 100} className="h-2 bg-white/20" indicatorClassName="bg-white" />
         </div>
       </div>
 
@@ -577,39 +577,39 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="space-y-6"
+              className="space-y-5"
             >
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                  <TrendingUp className="w-8 h-8 text-emerald-600" />
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-3xl flex items-center justify-center mx-auto mb-4 border border-white/20">
+                  <TrendingUp className="w-8 h-8 text-white" />
                 </div>
-                <h2 className={headingPage}>¿Qué posees?</h2>
-                <p className="text-gray-500 text-sm mt-2 max-w-md mx-auto">
-                  Registra tus cuentas bancarias, inversiones, propiedades y otros bienes de valor.
+                <h2 className="text-2xl font-bold text-white">¿Qué posees?</h2>
+                <p className="text-white/70 text-sm mt-2 max-w-md mx-auto">
+                  Registra tus cuentas bancarias, propiedades y otros bienes de valor.
                 </p>
               </div>
 
               {/* Assets Categories */}
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {assetCategories.map((asset, index) => {
                   const entries = assetEntries.filter(e => e.categoryType === asset.name);
                   const hasEntries = entries.length > 0;
                   
                   return (
-                    <div key={index} className={`bg-white rounded-2xl border transition-all ${hasEntries ? 'border-emerald-100 shadow-sm' : 'border-gray-100'}`}>
+                    <Card key={index} className={`bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all border-0 ${hasEntries ? 'ring-2 ring-[#A1887F]/30' : ''}`}>
                       <div className="p-4">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${hasEntries ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-50 text-gray-400'}`}>
-                              {hasEntries ? <Check size={14} strokeWidth={3} /> : <Plus size={14} />}
+                            <div className={`w-9 h-9 rounded-2xl flex items-center justify-center ${hasEntries ? 'bg-[#A1887F]/20 text-[#5D4037]' : 'bg-gray-100 text-gray-400'}`}>
+                              {hasEntries ? <Check size={16} strokeWidth={3} /> : <Plus size={16} />}
                             </div>
-                            <span className={`font-semibold text-sm ${hasEntries ? 'text-gray-900' : 'text-gray-600'}`}>{asset.name}</span>
+                            <span className={`font-semibold text-sm ${hasEntries ? 'text-[#5D4037]' : 'text-gray-600'}`}>{asset.name}</span>
                           </div>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => addAssetEntry(asset.name, asset.category, asset.examples)}
-                            className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 text-xs font-bold h-8 px-3 rounded-lg"
+                            className="text-[#5D4037] hover:text-[#4E342E] hover:bg-[#A1887F]/10 text-xs font-bold h-8 px-3 rounded-xl"
                           >
                             <Plus size={12} className="mr-1" />
                             Agregar
@@ -617,47 +617,47 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         </div>
 
                         {entries.length > 0 && (
-                          <div className="space-y-3 pl-11">
+                          <div className="space-y-3 pl-12">
                             {entries.map((entry) => (
                               <div key={entry.id} className="flex gap-3 items-center animate-in slide-in-from-top-2 duration-200">
-                                <div className="flex-1 grid grid-cols-2 gap-3">
+                                <div className="flex-1 grid grid-cols-2 gap-2">
                                   <Input
                                     placeholder={entry.placeholder}
                                     value={entry.name}
                                     onChange={(e) => updateAssetEntry(entry.id, 'name', e.target.value)}
-                                    className="h-9 text-xs bg-gray-50/50 border-gray-200 focus:bg-white transition-all"
+                                    className="h-10 text-sm bg-[#F5F0EE] border-0 focus:ring-2 focus:ring-[#A1887F]/30 rounded-xl"
                                   />
                                   <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">$</span>
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8D6E63] text-sm font-bold">$</span>
                                     <Input
                                       placeholder="0.00"
                                       value={formatNumberWithCommas(entry.value)}
                                       onChange={(e) => updateAssetEntry(entry.id, 'value', parseFormattedNumber(e.target.value))}
-                                      className="h-9 text-xs pl-6 bg-gray-50/50 border-gray-200 focus:bg-white transition-all font-medium text-gray-900"
+                                      className="h-10 text-sm pl-7 bg-[#F5F0EE] border-0 focus:ring-2 focus:ring-[#A1887F]/30 rounded-xl font-semibold text-[#5D4037]"
                                     />
                                   </div>
                                 </div>
-                                <button onClick={() => removeAssetEntry(entry.id)} className="text-gray-300 hover:text-red-500 transition-colors">
-                                  <X size={14} />
+                                <button onClick={() => removeAssetEntry(entry.id)} className="text-gray-300 hover:text-red-500 transition-colors p-1">
+                                  <X size={16} />
                                 </button>
                               </div>
                             ))}
                           </div>
                         )}
                       </div>
-                    </div>
+                    </Card>
                   );
                 })}
               </div>
 
               {/* Stocks/ETFs Question */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-4">
+              <Card className="bg-card rounded-3xl shadow-lg border-0 p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${hasStocks ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-50 text-gray-400'}`}>
-                      {hasStocks ? <Check size={14} strokeWidth={3} /> : <TrendingUp size={14} />}
+                    <div className={`w-9 h-9 rounded-2xl flex items-center justify-center ${hasStocks ? 'bg-[#A1887F]/20 text-[#5D4037]' : 'bg-gray-100 text-gray-400'}`}>
+                      {hasStocks ? <Check size={16} strokeWidth={3} /> : <TrendingUp size={16} />}
                     </div>
-                    <span className="font-semibold text-sm text-gray-700">¿Tienes acciones o ETFs?</span>
+                    <span className="font-semibold text-sm text-[#5D4037]">¿Tienes acciones o ETFs?</span>
                   </div>
                   <div className="flex gap-2">
                     <Button
@@ -668,8 +668,8 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         if (stockEntries.length === 0) addStockEntry();
                       }}
                       className={cn(
-                        "text-xs h-8 px-4 rounded-lg",
-                        hasStocks === true ? "bg-emerald-600 hover:bg-emerald-700" : "border-gray-200"
+                        "text-xs h-9 px-5 rounded-xl font-bold",
+                        hasStocks === true ? "bg-[#5D4037] hover:bg-[#4E342E] text-white" : "border-[#A1887F]/30 text-[#5D4037]"
                       )}
                     >
                       Sí
@@ -682,8 +682,8 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         setStockEntries([]);
                       }}
                       className={cn(
-                        "text-xs h-8 px-4 rounded-lg",
-                        hasStocks === false ? "bg-gray-600 hover:bg-gray-700" : "border-gray-200"
+                        "text-xs h-9 px-5 rounded-xl font-bold",
+                        hasStocks === false ? "bg-gray-500 hover:bg-gray-600 text-white" : "border-gray-200 text-gray-500"
                       )}
                     >
                       No
@@ -692,37 +692,37 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                 </div>
 
                 {hasStocks && (
-                  <div className="space-y-3 mt-4 pt-4 border-t border-gray-100">
+                  <div className="space-y-3 mt-4 pt-4 border-t border-[#A1887F]/20">
                     {stockEntries.map((entry) => (
-                      <div key={entry.id} className="bg-gray-50/50 rounded-xl p-3 space-y-3 animate-in slide-in-from-top-2 duration-200">
+                      <div key={entry.id} className="bg-[#F5F0EE] rounded-2xl p-4 space-y-3 animate-in slide-in-from-top-2 duration-200">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-medium text-gray-500">Acción / ETF</span>
-                          <button onClick={() => removeStockEntry(entry.id)} className="text-gray-300 hover:text-red-500 transition-colors">
-                            <X size={14} />
+                          <span className="text-xs font-bold text-[#8D6E63] uppercase tracking-wide">Acción / ETF</span>
+                          <button onClick={() => removeStockEntry(entry.id)} className="text-gray-300 hover:text-red-500 transition-colors p-1">
+                            <X size={16} />
                           </button>
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-2 gap-2">
                           <Input
                             placeholder="Ej: Apple, VOO, SPY"
                             value={entry.name}
                             onChange={(e) => updateStockEntry(entry.id, 'name', e.target.value)}
-                            className="h-9 text-xs bg-white border-gray-200"
+                            className="h-10 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#A1887F]/30"
                           />
                           <Input
                             placeholder="Cantidad"
                             value={formatNumberWithCommas(entry.quantity)}
                             onChange={(e) => updateStockEntry(entry.id, 'quantity', parseFormattedNumber(e.target.value))}
-                            className="h-9 text-xs bg-white border-gray-200"
+                            className="h-10 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#A1887F]/30"
                           />
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-2 gap-2">
                           <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">$</span>
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8D6E63] text-sm font-bold">$</span>
                             <Input
-                              placeholder="Precio de compra"
+                              placeholder="Precio"
                               value={formatNumberWithCommas(entry.purchasePrice)}
                               onChange={(e) => updateStockEntry(entry.id, 'purchasePrice', parseFormattedNumber(e.target.value))}
-                              className="h-9 text-xs pl-6 bg-white border-gray-200"
+                              className="h-10 text-sm pl-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#A1887F]/30"
                             />
                           </div>
                           <Popover>
@@ -730,12 +730,12 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                               <Button
                                 variant="outline"
                                 className={cn(
-                                  "h-9 text-xs justify-start text-left font-normal bg-white border-gray-200",
+                                  "h-10 text-sm justify-start text-left font-normal bg-white border-0 rounded-xl",
                                   !entry.purchaseDate && "text-muted-foreground"
                                 )}
                               >
-                                <CalendarIcon className="mr-2 h-3 w-3" />
-                                {entry.purchaseDate ? format(entry.purchaseDate, "dd/MM/yyyy") : <span>Fecha compra</span>}
+                                <CalendarIcon className="mr-2 h-4 w-4 text-[#8D6E63]" />
+                                {entry.purchaseDate ? format(entry.purchaseDate, "dd/MM/yyyy") : <span>Fecha</span>}
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0" align="start">
@@ -750,9 +750,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                           </Popover>
                         </div>
                         {entry.quantity && entry.purchasePrice && (
-                          <div className="text-right">
-                            <span className="text-xs text-gray-500">Valor total: </span>
-                            <span className="text-xs font-bold text-emerald-600">
+                          <div className="text-right bg-white/50 rounded-xl p-2">
+                            <span className="text-xs text-[#8D6E63]">Valor total: </span>
+                            <span className="text-sm font-bold text-[#5D4037]">
                               ${formatNumberWithCommas(String((parseFloat(parseFormattedNumber(entry.quantity)) || 0) * (parseFloat(parseFormattedNumber(entry.purchasePrice)) || 0)))}
                             </span>
                           </div>
@@ -763,61 +763,62 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                       variant="ghost"
                       size="sm"
                       onClick={addStockEntry}
-                      className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 text-xs font-bold h-8 px-3 rounded-lg w-full"
+                      className="text-[#5D4037] hover:text-[#4E342E] hover:bg-[#A1887F]/10 text-xs font-bold h-10 px-4 rounded-xl w-full"
                     >
-                      <Plus size={12} className="mr-1" />
+                      <Plus size={14} className="mr-2" />
                       Agregar otra acción
                     </Button>
                   </div>
                 )}
-              </div>
+              </Card>
 
               {/* Custom Assets */}
-              <div className="pt-4 border-t border-gray-100">
+              <div className="pt-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-gray-900">Otros Activos</h3>
-                  <Button onClick={addCustomAsset} variant="outline" size="sm" className="text-xs h-8 rounded-lg border-gray-200">
+                  <h3 className="text-sm font-bold text-white/90">Otros Activos</h3>
+                  <Button onClick={addCustomAsset} variant="outline" size="sm" className="text-xs h-9 rounded-xl border-white/20 text-white bg-white/10 hover:bg-white/20">
+                    <Plus size={12} className="mr-1" />
                     Nueva Categoría
                   </Button>
                 </div>
                 {customAssets.map(customAsset => (
-                  <div key={customAsset.id} className="bg-white p-4 rounded-2xl border border-gray-100 mb-4 shadow-sm">
+                  <Card key={customAsset.id} className="bg-card p-4 rounded-3xl shadow-lg border-0 mb-3">
                     <div className="flex gap-3 mb-3">
                       <Input 
                         placeholder="Nombre de la categoría (ej. Arte)" 
                         value={customAsset.name}
                         onChange={(e) => updateCustomAssetName(customAsset.id, e.target.value)}
-                        className="h-9 font-semibold text-sm border-gray-200"
+                        className="h-10 font-semibold text-sm bg-[#F5F0EE] border-0 rounded-xl"
                       />
-                      <Button size="icon" variant="ghost" onClick={() => removeCustomAsset(customAsset.id)} className="h-9 w-9 text-gray-400 hover:text-red-500">
+                      <Button size="icon" variant="ghost" onClick={() => removeCustomAsset(customAsset.id)} className="h-10 w-10 text-gray-400 hover:text-red-500 rounded-xl">
                         <X size={16} />
                       </Button>
                     </div>
-                    <div className="space-y-2 pl-4 border-l-2 border-gray-100">
+                    <div className="space-y-2 pl-4 border-l-2 border-[#A1887F]/20">
                       {customAsset.accounts.map(acc => (
                         <div key={acc.id} className="flex gap-2">
                           <Input 
                             placeholder="Nombre del item" 
                             value={acc.name}
                             onChange={(e) => updateCustomAssetAccount(customAsset.id, acc.id, 'name', e.target.value)}
-                            className="h-8 text-xs bg-gray-50"
+                            className="h-9 text-sm bg-[#F5F0EE] border-0 rounded-xl"
                           />
                           <Input 
                             placeholder="0.00" 
                             value={formatNumberWithCommas(acc.value)}
                             onChange={(e) => updateCustomAssetAccount(customAsset.id, acc.id, 'value', parseFormattedNumber(e.target.value))}
-                            className="h-8 text-xs w-32 bg-gray-50"
+                            className="h-9 text-sm w-32 bg-[#F5F0EE] border-0 rounded-xl"
                           />
-                          <button onClick={() => removeCustomAssetAccount(customAsset.id, acc.id)} className="text-gray-300 hover:text-red-500">
+                          <button onClick={() => removeCustomAssetAccount(customAsset.id, acc.id)} className="text-gray-300 hover:text-red-500 p-1">
                             <X size={14} />
                           </button>
                         </div>
                       ))}
-                      <Button variant="ghost" size="sm" onClick={() => addCustomAssetAccount(customAsset.id)} className="text-xs text-gray-500 h-7 px-2">
+                      <Button variant="ghost" size="sm" onClick={() => addCustomAssetAccount(customAsset.id)} className="text-xs text-[#5D4037] h-8 px-2 hover:bg-[#A1887F]/10 rounded-lg">
                         + Agregar item
                       </Button>
                     </div>
-                  </div>
+                  </Card>
                 ))}
               </div>
             </motion.div>
@@ -829,38 +830,38 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="space-y-6"
+              className="space-y-5"
             >
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-red-50 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                  <TrendingDown className="w-8 h-8 text-red-600" />
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-3xl flex items-center justify-center mx-auto mb-4 border border-white/20">
+                  <TrendingDown className="w-8 h-8 text-white" />
                 </div>
-                <h2 className={headingPage}>¿Qué debes?</h2>
-                <p className="text-gray-500 text-sm mt-2 max-w-md mx-auto">
+                <h2 className="text-2xl font-bold text-white">¿Qué debes?</h2>
+                <p className="text-white/70 text-sm mt-2 max-w-md mx-auto">
                   Registra tus deudas de tarjetas, préstamos, créditos e hipotecas.
                 </p>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {liabilityCategories.map((liability, index) => {
                   const entries = liabilityEntries.filter(e => e.categoryType === liability.name);
                   const hasEntries = entries.length > 0;
                   
                   return (
-                    <div key={index} className={`bg-white rounded-2xl border transition-all ${hasEntries ? 'border-red-100 shadow-sm' : 'border-gray-100'}`}>
+                    <Card key={index} className={`bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all border-0 ${hasEntries ? 'ring-2 ring-red-200/50' : ''}`}>
                       <div className="p-4">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${hasEntries ? 'bg-red-100 text-red-600' : 'bg-gray-50 text-gray-400'}`}>
-                              {hasEntries ? <Check size={14} strokeWidth={3} /> : <Plus size={14} />}
+                            <div className={`w-9 h-9 rounded-2xl flex items-center justify-center ${hasEntries ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-400'}`}>
+                              {hasEntries ? <Check size={16} strokeWidth={3} /> : <Plus size={16} />}
                             </div>
-                            <span className={`font-semibold text-sm ${hasEntries ? 'text-gray-900' : 'text-gray-600'}`}>{liability.name}</span>
+                            <span className={`font-semibold text-sm ${hasEntries ? 'text-red-700' : 'text-gray-600'}`}>{liability.name}</span>
                           </div>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => addLiabilityEntry(liability.name, liability.category, liability.examples)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs font-bold h-8 px-3 rounded-lg"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs font-bold h-8 px-3 rounded-xl"
                           >
                             <Plus size={12} className="mr-1" />
                             Agregar
@@ -868,85 +869,86 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         </div>
 
                         {entries.length > 0 && (
-                          <div className="space-y-3 pl-11">
+                          <div className="space-y-3 pl-12">
                             {entries.map((entry) => (
                               <div key={entry.id} className="flex gap-3 items-center animate-in slide-in-from-top-2 duration-200">
-                                <div className="flex-1 grid grid-cols-2 gap-3">
+                                <div className="flex-1 grid grid-cols-2 gap-2">
                                   <Input
                                     placeholder={entry.placeholder}
                                     value={entry.name}
                                     onChange={(e) => updateLiabilityEntry(entry.id, 'name', e.target.value)}
-                                    className="h-9 text-xs bg-gray-50/50 border-gray-200 focus:bg-white transition-all"
+                                    className="h-10 text-sm bg-[#F5F0EE] border-0 focus:ring-2 focus:ring-red-200 rounded-xl"
                                   />
                                   <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">$</span>
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-red-400 text-sm font-bold">$</span>
                                     <Input
                                       placeholder="0.00"
                                       value={formatNumberWithCommas(entry.value)}
                                       onChange={(e) => updateLiabilityEntry(entry.id, 'value', parseFormattedNumber(e.target.value))}
-                                      className="h-9 text-xs pl-6 bg-gray-50/50 border-gray-200 focus:bg-white transition-all font-medium text-gray-900"
+                                      className="h-10 text-sm pl-7 bg-[#F5F0EE] border-0 focus:ring-2 focus:ring-red-200 rounded-xl font-semibold text-red-700"
                                     />
                                   </div>
                                 </div>
-                                <button onClick={() => removeLiabilityEntry(entry.id)} className="text-gray-300 hover:text-red-500 transition-colors">
-                                  <X size={14} />
+                                <button onClick={() => removeLiabilityEntry(entry.id)} className="text-gray-300 hover:text-red-500 transition-colors p-1">
+                                  <X size={16} />
                                 </button>
                               </div>
                             ))}
                           </div>
                         )}
                       </div>
-                    </div>
+                    </Card>
                   );
                 })}
               </div>
 
               {/* Custom Liabilities */}
-              <div className="pt-4 border-t border-gray-100">
+              <div className="pt-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-gray-900">Otras Deudas</h3>
-                  <Button onClick={addCustomLiability} variant="outline" size="sm" className="text-xs h-8 rounded-lg border-gray-200">
+                  <h3 className="text-sm font-bold text-white/90">Otras Deudas</h3>
+                  <Button onClick={addCustomLiability} variant="outline" size="sm" className="text-xs h-9 rounded-xl border-white/20 text-white bg-white/10 hover:bg-white/20">
+                    <Plus size={12} className="mr-1" />
                     Nueva Categoría
                   </Button>
                 </div>
                 {customLiabilities.map(customLiability => (
-                  <div key={customLiability.id} className="bg-white p-4 rounded-2xl border border-gray-100 mb-4 shadow-sm">
+                  <Card key={customLiability.id} className="bg-card p-4 rounded-3xl shadow-lg border-0 mb-3">
                     <div className="flex gap-3 mb-3">
                       <Input 
                         placeholder="Nombre de la categoría" 
                         value={customLiability.name}
                         onChange={(e) => updateCustomLiabilityName(customLiability.id, e.target.value)}
-                        className="h-9 font-semibold text-sm border-gray-200"
+                        className="h-10 font-semibold text-sm bg-[#F5F0EE] border-0 rounded-xl"
                       />
-                      <Button size="icon" variant="ghost" onClick={() => removeCustomLiability(customLiability.id)} className="h-9 w-9 text-gray-400 hover:text-red-500">
+                      <Button size="icon" variant="ghost" onClick={() => removeCustomLiability(customLiability.id)} className="h-10 w-10 text-gray-400 hover:text-red-500 rounded-xl">
                         <X size={16} />
                       </Button>
                     </div>
-                    <div className="space-y-2 pl-4 border-l-2 border-gray-100">
+                    <div className="space-y-2 pl-4 border-l-2 border-red-200/30">
                       {customLiability.accounts.map(acc => (
                         <div key={acc.id} className="flex gap-2">
                           <Input 
                             placeholder="Nombre del item" 
                             value={acc.name}
                             onChange={(e) => updateCustomLiabilityAccount(customLiability.id, acc.id, 'name', e.target.value)}
-                            className="h-8 text-xs bg-gray-50"
+                            className="h-9 text-sm bg-[#F5F0EE] border-0 rounded-xl"
                           />
                           <Input 
                             placeholder="0.00" 
                             value={formatNumberWithCommas(acc.value)}
                             onChange={(e) => updateCustomLiabilityAccount(customLiability.id, acc.id, 'value', parseFormattedNumber(e.target.value))}
-                            className="h-8 text-xs w-32 bg-gray-50"
+                            className="h-9 text-sm w-32 bg-[#F5F0EE] border-0 rounded-xl"
                           />
-                          <button onClick={() => removeCustomLiabilityAccount(customLiability.id, acc.id)} className="text-gray-300 hover:text-red-500">
+                          <button onClick={() => removeCustomLiabilityAccount(customLiability.id, acc.id)} className="text-gray-300 hover:text-red-500 p-1">
                             <X size={14} />
                           </button>
                         </div>
                       ))}
-                      <Button variant="ghost" size="sm" onClick={() => addCustomLiabilityAccount(customLiability.id)} className="text-xs text-gray-500 h-7 px-2">
+                      <Button variant="ghost" size="sm" onClick={() => addCustomLiabilityAccount(customLiability.id)} className="text-xs text-red-600 h-8 px-2 hover:bg-red-50 rounded-lg">
                         + Agregar item
                       </Button>
                     </div>
-                  </div>
+                  </Card>
                 ))}
               </div>
             </motion.div>
@@ -958,66 +960,66 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="space-y-6"
+              className="space-y-5"
             >
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-indigo-50 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                  <Shield className="w-8 h-8 text-indigo-600" />
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-3xl flex items-center justify-center mx-auto mb-4 border border-white/20">
+                  <Shield className="w-8 h-8 text-white" />
                 </div>
-                <h2 className={headingPage}>Tu Patrimonio Neto</h2>
-                <p className="text-gray-500 text-sm mt-2">
-                  Así se ven tus finanzas hoy. ¡Buen trabajo completando la información!
+                <h2 className="text-2xl font-bold text-white">Tu Patrimonio Neto</h2>
+                <p className="text-white/70 text-sm mt-2">
+                  Así se ven tus finanzas hoy. ¡Buen trabajo!
                 </p>
               </div>
 
               {/* Summary Card */}
-              <div className="bg-white rounded-[2rem] p-6 shadow-lg border border-indigo-50 text-center relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 via-indigo-500 to-emerald-400"></div>
-                <span className="text-xs font-bold text-gray-400 tracking-widest uppercase">PATRIMONIO NETO TOTAL</span>
-                <div className="text-4xl font-black text-[#5D4037] mt-2 tracking-tight">
+              <Card className="bg-card rounded-3xl p-6 shadow-xl border-0 text-center relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#A1887F] via-[#5D4037] to-[#A1887F]"></div>
+                <span className="text-xs font-bold text-[#8D6E63] tracking-widest uppercase">PATRIMONIO NETO TOTAL</span>
+                <div className="text-4xl font-black text-[#5D4037] mt-3 tracking-tight">
                   ${totals.netWorth.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4 mt-8">
-                  <div className="bg-emerald-50 rounded-2xl p-4">
-                    <div className="flex items-center justify-center gap-2 mb-1">
-                      <TrendingUp size={14} className="text-emerald-600" />
-                      <span className="text-xs font-bold text-emerald-700">ACTIVOS</span>
+                  <div className="bg-[#F5F0EE] rounded-2xl p-4">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <TrendingUp size={16} className="text-[#5D4037]" />
+                      <span className="text-xs font-bold text-[#5D4037]">ACTIVOS</span>
                     </div>
-                    <span className="text-lg font-bold text-emerald-900">
+                    <span className="text-xl font-bold text-[#5D4037]">
                       ${totals.assets.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
                     </span>
                   </div>
                   <div className="bg-red-50 rounded-2xl p-4">
-                    <div className="flex items-center justify-center gap-2 mb-1">
-                      <TrendingDown size={14} className="text-red-600" />
-                      <span className="text-xs font-bold text-red-700">PASIVOS</span>
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <TrendingDown size={16} className="text-red-600" />
+                      <span className="text-xs font-bold text-red-600">PASIVOS</span>
                     </div>
-                    <span className="text-lg font-bold text-red-900">
+                    <span className="text-xl font-bold text-red-700">
                       ${totals.liabilities.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
                     </span>
                   </div>
                 </div>
-              </div>
+              </Card>
 
-              <div className="bg-[#F5F0EE] rounded-xl p-4 text-center">
-                <p className="text-sm text-[#5D4037] font-medium">
+              <Card className="bg-card/50 backdrop-blur-sm rounded-2xl p-4 text-center border-0">
+                <p className="text-sm text-[#5D4037] font-medium italic">
                   "Conocer tu patrimonio es el primer paso para hacerlo crecer."
                 </p>
-              </div>
+              </Card>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
       {/* Fixed Footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 z-50 safe-area-bottom">
-        <div className="max-w-2xl mx-auto flex gap-4">
+      <div className="fixed bottom-0 left-0 right-0 bg-[#4E342E] border-t border-white/10 p-4 z-50 safe-area-bottom">
+        <div className="max-w-2xl mx-auto flex gap-3">
           {step > 1 && (
             <Button
               variant="outline"
               onClick={prevStep}
-              className="flex-1 h-12 rounded-xl border-gray-200 text-gray-600 font-bold"
+              className="flex-1 h-12 rounded-2xl border-white/20 text-white font-bold bg-white/10 hover:bg-white/20"
             >
               Atrás
             </Button>
@@ -1025,7 +1027,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
           {step < 3 ? (
             <Button
               onClick={nextStep}
-              className="flex-1 h-12 rounded-xl bg-[#5D4037] hover:bg-[#4E342E] text-white font-bold shadow-lg hover:shadow-xl transition-all"
+              className="flex-1 h-12 rounded-2xl bg-white text-[#5D4037] hover:bg-white/90 font-bold shadow-lg hover:shadow-xl transition-all"
             >
               Continuar
             </Button>
@@ -1033,7 +1035,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
             <Button
               onClick={handleSubmit}
               disabled={loading}
-              className="flex-1 h-12 rounded-xl bg-[#5D4037] hover:bg-[#4E342E] text-white font-bold shadow-lg hover:shadow-xl transition-all"
+              className="flex-1 h-12 rounded-2xl bg-white text-[#5D4037] hover:bg-white/90 font-bold shadow-lg hover:shadow-xl transition-all"
             >
               {loading ? "Guardando..." : "Finalizar"}
             </Button>
