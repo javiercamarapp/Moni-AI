@@ -16,33 +16,37 @@ const QuickRecordFAB: React.FC = () => {
     <div className="fixed bottom-24 right-6 z-50">
       <AnimatePresence>
         {isOpen && (
-          <>
-            {/* Income button */}
-            <motion.button
-              initial={{ opacity: 0, y: 20, scale: 0.8 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.8 }}
-              transition={{ duration: 0.15 }}
-              onClick={() => handleRecord('income')}
-              className="absolute bottom-32 right-0 flex items-center justify-center gap-2 bg-[#5D4037] text-white rounded-full px-4 py-2.5 shadow-lg hover:bg-[#4E342E] transition-colors min-w-[110px]"
-            >
-              <TrendingUp className="w-4 h-4" />
-              <span className="text-sm font-medium">Ingreso</span>
-            </motion.button>
-
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.9 }}
+            transition={{ duration: 0.15 }}
+            className="absolute bottom-16 right-0 flex items-center gap-2"
+          >
             {/* Expense button */}
             <motion.button
-              initial={{ opacity: 0, y: 20, scale: 0.8 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.8 }}
-              transition={{ duration: 0.15, delay: 0.05 }}
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.1, delay: 0.05 }}
               onClick={() => handleRecord('expense')}
-              className="absolute bottom-[72px] right-0 flex items-center justify-center gap-2 bg-[#BCAAA4] text-white rounded-full px-4 py-2.5 shadow-lg hover:bg-[#A1887F] transition-colors min-w-[110px]"
+              className="flex items-center justify-center gap-2 bg-[#D4A574] text-white rounded-full px-4 py-2.5 shadow-lg hover:bg-[#C4956A] transition-colors min-w-[100px]"
             >
               <TrendingDown className="w-4 h-4" />
               <span className="text-sm font-medium">Gasto</span>
             </motion.button>
-          </>
+
+            {/* Income button */}
+            <motion.button
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.1 }}
+              onClick={() => handleRecord('income')}
+              className="flex items-center justify-center gap-2 bg-[#5D4037] text-white rounded-full px-4 py-2.5 shadow-lg hover:bg-[#4E342E] transition-colors min-w-[100px]"
+            >
+              <TrendingUp className="w-4 h-4" />
+              <span className="text-sm font-medium">Ingreso</span>
+            </motion.button>
+          </motion.div>
         )}
       </AnimatePresence>
 

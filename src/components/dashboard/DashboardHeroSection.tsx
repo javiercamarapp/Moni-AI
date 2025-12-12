@@ -135,8 +135,8 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
                 <Skeleton className="flex-1 w-full" />
               </div>
             ) : (
-              <div className="flex-1 flex flex-col">
-                <span className="text-lg font-bold text-gray-900 mb-1">
+              <div className="flex-1 flex flex-col items-center">
+                <span className="text-xl md:text-2xl font-bold text-gray-900 mb-1 text-center">
                   {formatFullCurrency(netWorthData?.currentNetWorth || 0)}
                 </span>
                 
@@ -156,6 +156,7 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
                           axisLine={false}
                           tickLine={false}
                           tick={{ fontSize: 9, fill: '#9ca3af' }}
+                          interval="preserveStartEnd"
                           hide={false}
                         />
                         <YAxis 
