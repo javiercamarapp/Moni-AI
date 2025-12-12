@@ -2065,6 +2065,51 @@ export type Database = {
           },
         ]
       }
+      user_journey_paths: {
+        Row: {
+          ai_generated_plan: Json | null
+          created_at: string
+          current_invested: number | null
+          id: string
+          is_active: boolean | null
+          journey_type: string
+          milestones: Json | null
+          monthly_investment_capacity: number | null
+          target_amount: number | null
+          target_years: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_generated_plan?: Json | null
+          created_at?: string
+          current_invested?: number | null
+          id?: string
+          is_active?: boolean | null
+          journey_type: string
+          milestones?: Json | null
+          monthly_investment_capacity?: number | null
+          target_amount?: number | null
+          target_years?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_generated_plan?: Json | null
+          created_at?: string
+          current_invested?: number | null
+          id?: string
+          is_active?: boolean | null
+          journey_type?: string
+          milestones?: Json | null
+          monthly_investment_capacity?: number | null
+          target_amount?: number | null
+          target_years?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_levels: {
         Row: {
           created_at: string
