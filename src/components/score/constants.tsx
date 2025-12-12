@@ -1,4 +1,4 @@
-import { BarChart3, TrendingUp, Target, CreditCard } from 'lucide-react';
+import { BarChart3, TrendingUp, Target, CreditCard, PiggyBank, Wallet, CalendarCheck, Scale, Rocket } from 'lucide-react';
 import { FinancialStat, ScoreComponent, CardInfo } from './types';
 
 export const DASHBOARD_STATS: FinancialStat[] = [
@@ -28,7 +28,7 @@ export const SCORE_COMPONENTS: ScoreComponent[] = [
     maxScore: 30,
     description: 'Ahorro y Liquidez (30 pts): Se evalúa tu tasa de ahorro mensual (% de ingreso que ahorras).',
     color: 'bg-emerald-500',
-    icon: '💰',
+    IconComponent: PiggyBank,
     trend: '+20 pts',
     details: {
       whyImproved: [
@@ -51,7 +51,7 @@ export const SCORE_COMPONENTS: ScoreComponent[] = [
     maxScore: 25,
     description: 'Nivel de endeudamiento y capacidad de pago mensual.',
     color: 'bg-blue-500',
-    icon: '💳',
+    IconComponent: Wallet,
     trend: '+5 pts',
     details: {
       whyImproved: [
@@ -72,7 +72,7 @@ export const SCORE_COMPONENTS: ScoreComponent[] = [
     maxScore: 20,
     description: 'Consistencia en el registro de gastos y cumplimiento de presupuesto.',
     color: 'bg-purple-500',
-    icon: '📅',
+    IconComponent: CalendarCheck,
     trend: '+2 pts',
     details: {
       whyImproved: [
@@ -93,7 +93,7 @@ export const SCORE_COMPONENTS: ScoreComponent[] = [
     maxScore: 15,
     description: 'Capacidad para mantenerse dentro del presupuesto asignado y evitar gastos impulsivos.',
     color: 'bg-orange-500',
-    icon: '⚖️',
+    IconComponent: Scale,
     trend: '+3 pts',
     details: {
       whyImproved: [
@@ -114,7 +114,7 @@ export const SCORE_COMPONENTS: ScoreComponent[] = [
     maxScore: 10,
     description: 'Evolución positiva de tu patrimonio neto a través de activos e inversiones.',
     color: 'bg-pink-500',
-    icon: '🚀',
+    IconComponent: Rocket,
     trend: '+1 pts',
     details: {
       whyImproved: [
