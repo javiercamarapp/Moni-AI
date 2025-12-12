@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X, Banknote, ChevronRight, Wallet, Shield, CalendarIcon, Building2, Home, Car, PiggyBank, HandCoins, Watch, LucideIcon } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X, Banknote, ChevronRight, Wallet, Shield, CalendarIcon, Building2, Home, Car, PiggyBank, HandCoins, Watch, LucideIcon, Bitcoin } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
@@ -83,6 +83,14 @@ type StockEntry = {
   purchaseDate: Date | undefined;
 };
 
+type CryptoEntry = {
+  id: string;
+  name: string;
+  quantity: string;
+  purchasePrice: string;
+  purchaseDate: Date | undefined;
+};
+
 const assetCategories: { name: string; category: string; examples: string[]; icon: LucideIcon }[] = [
   { name: 'Cuentas bancarias (ahorro + cheques)', category: 'Checking', examples: ['BBVA Cuenta Ahorro', 'Santander Nómina', 'Banorte Smart'], icon: Banknote },
   { name: 'Propiedad principal', category: 'Property', examples: ['Casa Polanco', 'Depto Reforma', 'Casa Santa Fe'], icon: Home },
@@ -120,6 +128,8 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
   const [customLiabilities, setCustomLiabilities] = useState<CustomLiability[]>([]);
   const [hasStocks, setHasStocks] = useState<boolean | null>(null);
   const [stockEntries, setStockEntries] = useState<StockEntry[]>([]);
+  const [hasCrypto, setHasCrypto] = useState<boolean | null>(null);
+  const [cryptoEntries, setCryptoEntries] = useState<CryptoEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
@@ -206,6 +216,36 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
 
   const calculateStockTotal = () => {
     return stockEntries.reduce((sum, entry) => {
+      const qty = parseFloat(parseFormattedNumber(entry.quantity)) || 0;
+      const price = parseFloat(parseFormattedNumber(entry.purchasePrice)) || 0;
+      return sum + (qty * price);
+    }, 0);
+  };
+
+  // Crypto functions
+  const addCryptoEntry = () => {
+    const newEntry: CryptoEntry = {
+      id: Date.now().toString(),
+      name: '',
+      quantity: '',
+      purchasePrice: '',
+      purchaseDate: undefined
+    };
+    setCryptoEntries([...cryptoEntries, newEntry]);
+  };
+
+  const removeCryptoEntry = (id: string) => {
+    setCryptoEntries(cryptoEntries.filter(entry => entry.id !== id));
+  };
+
+  const updateCryptoEntry = (id: string, field: keyof CryptoEntry, value: any) => {
+    setCryptoEntries(cryptoEntries.map(entry => 
+      entry.id === id ? { ...entry, [field]: value } : entry
+    ));
+  };
+
+  const calculateCryptoTotal = () => {
+    return cryptoEntries.reduce((sum, entry) => {
       const qty = parseFloat(parseFormattedNumber(entry.quantity)) || 0;
       const price = parseFloat(parseFormattedNumber(entry.purchasePrice)) || 0;
       return sum + (qty * price);
@@ -410,6 +450,24 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
         }
       });
 
+      // Agregar criptomonedas como activos
+      cryptoEntries.forEach(crypto => {
+        if (crypto.name.trim() && parseFloat(crypto.quantity) > 0 && parseFloat(crypto.purchasePrice) > 0) {
+          const totalValue = parseFloat(crypto.quantity) * parseFloat(crypto.purchasePrice);
+          validAssets.push({
+            user_id: user.id,
+            nombre: crypto.name.trim(),
+            valor: totalValue,
+            categoria: 'Criptomonedas',
+            subcategoria: `${crypto.quantity} unidades @ $${crypto.purchasePrice}`,
+            moneda: 'MXN',
+            es_activo_fijo: false,
+            liquidez_porcentaje: 85,
+            fecha_adquisicion: crypto.purchaseDate ? format(crypto.purchaseDate, 'yyyy-MM-dd') : null
+          });
+        }
+      });
+
       // Preparar pasivos válidos
       const validLiabilities = liabilityEntries
         .filter(entry => entry.name.trim() && parseFloat(entry.value) > 0)
@@ -513,6 +571,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     }, 0);
 
     const stocksTotal = calculateStockTotal();
+    const cryptoTotal = calculateCryptoTotal();
 
     const liabilitiesTotal = liabilityEntries
       .filter(e => parseFloat(e.value) > 0)
@@ -523,9 +582,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     }, 0);
 
     return {
-      assets: assetsTotal + customAssetsTotal + stocksTotal,
+      assets: assetsTotal + customAssetsTotal + stocksTotal + cryptoTotal,
       liabilities: liabilitiesTotal + customLiabilitiesTotal,
-      netWorth: (assetsTotal + customAssetsTotal + stocksTotal) - (liabilitiesTotal + customLiabilitiesTotal)
+      netWorth: (assetsTotal + customAssetsTotal + stocksTotal + cryptoTotal) - (liabilitiesTotal + customLiabilitiesTotal)
     };
   };
 
@@ -673,6 +732,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
 
                     {/* Stocks/ETFs Question - Right after Cuentas bancarias */}
                     {isBankAccount && (
+                      <>
                       <Card className="bg-white rounded-3xl shadow-lg border-0 overflow-hidden mt-4">
                         <div className="p-4">
                           <div className="flex items-center justify-between mb-3">
@@ -795,6 +855,131 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                           )}
                         </div>
                       </Card>
+
+                      {/* Crypto Question - Right after Stocks */}
+                      <Card className="bg-white rounded-3xl shadow-lg border-0 overflow-hidden mt-4">
+                        <div className="p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasCrypto ? 'bg-[#5D4037]/10 text-[#5D4037]' : 'bg-[#A1887F]/10 text-[#A1887F]'}`}>
+                                {hasCrypto ? <Check size={18} strokeWidth={3} /> : <Bitcoin size={18} />}
+                              </div>
+                              <span className="font-semibold text-sm text-gray-900">¿Tienes criptomonedas?</span>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                variant={hasCrypto === true ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => {
+                                  setHasCrypto(true);
+                                  if (cryptoEntries.length === 0) addCryptoEntry();
+                                }}
+                                className={cn(
+                                  "text-xs h-9 px-5 rounded-xl font-bold transition-all",
+                                  hasCrypto === true ? "bg-[#5D4037] hover:bg-[#4E342E] text-white shadow-md" : "border-[#A1887F]/30 text-[#5D4037] hover:bg-[#A1887F]/20 hover:border-[#5D4037]/50"
+                                )}
+                              >
+                                Sí
+                              </Button>
+                              <Button
+                                variant={hasCrypto === false ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => {
+                                  setHasCrypto(false);
+                                  setCryptoEntries([]);
+                                }}
+                                className={cn(
+                                  "text-xs h-9 px-5 rounded-xl font-bold transition-all",
+                                  hasCrypto === false ? "bg-[#8D6E63] hover:bg-[#6D4C41] text-white shadow-md" : "border-[#A1887F]/30 text-[#8D6E63] hover:bg-[#A1887F]/20 hover:border-[#8D6E63]/50"
+                                )}
+                              >
+                                No
+                              </Button>
+                            </div>
+                          </div>
+
+                          {hasCrypto && (
+                            <div className="space-y-3 mt-4 pt-4 border-t border-[#A1887F]/20">
+                              {cryptoEntries.map((entry) => (
+                                <div key={entry.id} className="bg-[#F5F0EE] rounded-2xl p-4 space-y-3">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs font-bold text-[#5D4037] uppercase tracking-wide">Criptomoneda</span>
+                                    <button onClick={() => removeCryptoEntry(entry.id)} className="text-[#A1887F] hover:text-red-500 transition-colors p-1">
+                                      <X size={16} />
+                                    </button>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <Input
+                                      placeholder="Ej: Bitcoin, Ethereum"
+                                      value={entry.name}
+                                      onChange={(e) => updateCryptoEntry(entry.id, 'name', e.target.value)}
+                                      className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
+                                    />
+                                    <Input
+                                      placeholder="Cantidad"
+                                      value={formatNumberWithCommas(entry.quantity)}
+                                      onChange={(e) => updateCryptoEntry(entry.id, 'quantity', parseFormattedNumber(e.target.value))}
+                                      className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
+                                    />
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <div className="relative">
+                                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4037] text-sm font-bold">$</span>
+                                      <Input
+                                        placeholder="Precio"
+                                        value={formatNumberWithCommas(entry.purchasePrice)}
+                                        onChange={(e) => updateCryptoEntry(entry.id, 'purchasePrice', parseFormattedNumber(e.target.value))}
+                                        className="h-11 text-sm pl-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
+                                      />
+                                    </div>
+                                    <Popover>
+                                      <PopoverTrigger asChild>
+                                        <Button
+                                          variant="outline"
+                                          className={cn(
+                                            "h-11 text-sm justify-start text-left font-normal bg-white border-0 rounded-xl hover:bg-[#A1887F]/10",
+                                            !entry.purchaseDate && "text-muted-foreground"
+                                          )}
+                                        >
+                                          <CalendarIcon className="mr-2 h-4 w-4 text-[#5D4037]" />
+                                          {entry.purchaseDate ? format(entry.purchaseDate, "dd/MM/yyyy") : <span>Fecha</span>}
+                                        </Button>
+                                      </PopoverTrigger>
+                                      <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                          mode="single"
+                                          selected={entry.purchaseDate}
+                                          onSelect={(date) => updateCryptoEntry(entry.id, 'purchaseDate', date)}
+                                          initialFocus
+                                          className={cn("p-3 pointer-events-auto")}
+                                        />
+                                      </PopoverContent>
+                                    </Popover>
+                                  </div>
+                                  {entry.quantity && entry.purchasePrice && (
+                                    <div className="text-right bg-[#5D4037]/5 rounded-xl p-3">
+                                      <span className="text-xs text-[#8D6E63]">Valor total: </span>
+                                      <span className="text-sm font-bold text-[#5D4037]">
+                                        ${formatNumberWithCommas(String((parseFloat(parseFormattedNumber(entry.quantity)) || 0) * (parseFloat(parseFormattedNumber(entry.purchasePrice)) || 0)))}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={addCryptoEntry}
+                                className="text-[#5D4037] hover:text-[#4E342E] hover:bg-[#A1887F]/20 text-xs font-bold h-10 px-4 rounded-xl w-full"
+                              >
+                                <Plus size={14} className="mr-2" />
+                                Agregar otra cripto
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </Card>
+                      </>
                     )}
                   </div>
                 );
