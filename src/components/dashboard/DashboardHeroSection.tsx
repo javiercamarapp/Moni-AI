@@ -52,7 +52,7 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
     : 0;
 
   return (
-    <div className="grid grid-cols-5 gap-3 max-w-md mx-auto">
+    <div className="grid grid-cols-5 md:grid-cols-7 lg:grid-cols-8 gap-3 max-w-md md:max-w-2xl lg:max-w-3xl mx-auto">
           {/* Score Moni Card - slightly wider */}
           <div 
             className="col-span-2 bg-white/95 backdrop-blur-sm rounded-2xl p-3 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5"
@@ -104,7 +104,7 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
 
           {/* Net Worth Card */}
           <div 
-            className="col-span-3 bg-white/95 backdrop-blur-sm rounded-2xl p-3 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 flex flex-col"
+            className="col-span-3 md:col-span-5 lg:col-span-6 bg-white/95 backdrop-blur-sm rounded-2xl p-3 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 flex flex-col"
             onClick={() => navigate('/net-worth')}
           >
             <div className="flex items-center justify-between mb-1">
