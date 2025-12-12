@@ -389,7 +389,7 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
               </span>
 
               {!showAddCategory ? (
-                <div className="space-y-1.5">
+                <div className="space-y-3">
                   {/* Standard Categories - 2 rows of 3 */}
                   <div className="grid grid-cols-6 gap-1.5">
                     {standardCategories.map((cat) => (
@@ -414,13 +414,13 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
                     ))}
                   </div>
 
-                  {/* Custom Categories (if any) + Add Button */}
-                  <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                    {customCategories.slice(0, 4).map((cat) => (
-                      <div key={cat.id} className="relative group">
+                  {/* Custom Categories (if any) + Add Button - same grid */}
+                  <div className="grid grid-cols-6 gap-1.5">
+                    {customCategories.slice(0, 5).map((cat) => (
+                      <div key={cat.id} className="relative group flex flex-col items-center gap-0.5">
                         <button
                           onClick={() => setSelectedCategoryId(cat.id)}
-                          className="flex flex-col items-center gap-0.5 min-w-[36px]"
+                          className="flex flex-col items-center"
                         >
                           <div className={`h-9 w-9 rounded-full flex items-center justify-center transition-all ${
                             selectedCategoryId === cat.id
@@ -429,16 +429,16 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
                           }`}>
                             {getCategoryIcon(cat.icon)}
                           </div>
-                          <span className={`text-[7px] font-semibold truncate w-9 text-center ${
-                            selectedCategoryId === cat.id ? 'text-[#5D4037]' : 'text-gray-400'
-                          }`}>
-                            {cat.name}
-                          </span>
                         </button>
-                        {/* Delete button on hover */}
+                        <span className={`text-[7px] font-semibold truncate w-full text-center ${
+                          selectedCategoryId === cat.id ? 'text-[#5D4037]' : 'text-gray-400'
+                        }`}>
+                          {cat.name}
+                        </span>
+                        {/* Delete button */}
                         <button
                           onClick={(e) => { e.stopPropagation(); handleDeleteCategory(cat.id); }}
-                          className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                          className="absolute -top-1.5 -right-0.5 h-4 w-4 bg-[#5D4037] text-white rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
                         >
                           <X size={10} />
                         </button>
@@ -448,7 +448,7 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
                     {/* Add new category button */}
                     <button
                       onClick={() => setShowAddCategory(true)}
-                      className="flex flex-col items-center gap-0.5 min-w-[36px]"
+                      className="flex flex-col items-center gap-0.5"
                     >
                       <div className="h-9 w-9 rounded-full bg-[#8D6E63]/10 flex items-center justify-center border border-dashed border-[#8D6E63]/40">
                         <Plus size={14} className="text-[#8D6E63]" />
