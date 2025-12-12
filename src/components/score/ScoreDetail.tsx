@@ -175,81 +175,99 @@ const ScoreDetail: React.FC<ScoreDetailProps> = ({ onBack, score }) => {
         </div>
       </div>
 
-      {/* Detailed Modal Overlay - Brown theme */}
+      {/* Detailed Modal Overlay - Dashboard style */}
       {selectedComponent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
           <div 
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity"
             onClick={() => setSelectedComponent(null)}
           ></div>
           
-          <div className="relative w-full max-w-[340px] bg-gradient-to-br from-[#5D4037] to-[#8D6E63] rounded-3xl p-6 text-white shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+          <div className="relative w-full max-w-md bg-card rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl animate-[slideUp_0.3s_ease-out] sm:animate-[fadeIn_0.2s_ease-out] max-h-[85vh] overflow-y-auto">
             {/* Close Button */}
             <button 
               onClick={() => setSelectedComponent(null)}
-              className="absolute top-5 right-5 w-8 h-8 bg-white text-[#5D4037] hover:bg-white/90 rounded-full flex items-center justify-center transition-colors shadow-md"
+              className="absolute top-4 right-4 w-9 h-9 bg-[#8D6E63] text-white hover:bg-[#5D4037] rounded-full flex items-center justify-center transition-all shadow-lg hover:shadow-xl"
             >
               <X size={18} />
             </button>
 
             {/* Header */}
-            <div className="flex flex-col items-center mt-2 mb-6">
-              <div className="text-3xl mb-2">{selectedComponent.icon || '📊'}</div>
-              <h2 className="text-xl font-bold mb-4 text-center">{selectedComponent.title || selectedComponent.name}</h2>
-              
-              <div className="flex items-center gap-3">
-                <span className="text-4xl font-bold">
-                  {selectedComponent.score}/{selectedComponent.maxScore}
-                </span>
-                {selectedComponent.trend && (
-                  <div className="flex items-center text-white/80 font-semibold text-sm bg-white/20 px-2 py-1 rounded-full">
-                    <TrendingUp size={14} className="mr-1" />
-                    {selectedComponent.trend}
-                  </div>
-                )}
+            <div className="flex items-start gap-4 mb-6 pr-10">
+              <div className="w-14 h-14 bg-gradient-to-br from-[#5D4037] to-[#8D6E63] rounded-2xl flex items-center justify-center shadow-lg shrink-0">
+                <span className="text-2xl">{selectedComponent.icon || '📊'}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-lg font-bold text-gray-900 mb-1">{selectedComponent.title || selectedComponent.name}</h2>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-black text-[#5D4037]">
+                    {selectedComponent.score}/{selectedComponent.maxScore}
+                  </span>
+                  {selectedComponent.trend && (
+                    <span className="flex items-center text-emerald-600 font-bold text-xs bg-emerald-50 px-2 py-1 rounded-full">
+                      <TrendingUp size={12} className="mr-1" />
+                      {selectedComponent.trend}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
-            <div className="w-full h-px bg-white/20 mb-6"></div>
+            {/* Progress Bar */}
+            <div className="mb-6">
+              <div className="h-3 bg-[#F5EDE8] rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-[#8D6E63] to-[#5D4037] rounded-full transition-all duration-500"
+                  style={{ width: `${(selectedComponent.score / selectedComponent.maxScore) * 100}%` }}
+                />
+              </div>
+              <p className="text-xs text-[#A1887F] mt-2 text-right font-medium">
+                {((selectedComponent.score / selectedComponent.maxScore) * 100).toFixed(0)}% completado
+              </p>
+            </div>
 
             {/* Why Improved Section */}
-            <div className="bg-white/15 rounded-2xl p-5 mb-3 border border-white/10">
+            <div className="bg-[#F5EDE8] rounded-2xl p-4 mb-3 border border-[#E8DDD4]">
               <div className="flex items-center gap-2 mb-3">
-                <TrendingUp size={18} className="text-white/90" />
-                <h3 className="font-bold text-white">¿Por qué mejoró?</h3>
+                <div className="w-7 h-7 bg-[#8D6E63] rounded-lg flex items-center justify-center">
+                  <TrendingUp size={14} className="text-white" />
+                </div>
+                <h3 className="font-bold text-[#5D4037] text-sm">¿Por qué mejoró?</h3>
               </div>
-              <ul className="space-y-2.5">
+              <ul className="space-y-2">
                 {selectedComponent.details?.whyImproved.map((item, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5 text-[13px] font-medium leading-snug text-white/85">
-                    <div className="w-1.5 h-1.5 rounded-full bg-white/70 mt-1.5 shrink-0" />
-                    {item}
-                  </li>
-                ))}
-                {!selectedComponent.details && (
-                  <li className="text-sm opacity-70">Detalles no disponibles.</li>
-                )}
-              </ul>
-            </div>
-
-            {/* How to Improve Section */}
-            <div className="bg-white/15 rounded-2xl p-5 border border-white/10">
-              <div className="flex items-center gap-2 mb-3">
-                <Lightbulb size={18} className="text-yellow-200" />
-                <h3 className="font-bold text-white">Cómo mejorar</h3>
-              </div>
-              <ul className="space-y-3">
-                {selectedComponent.details?.howToImprove.map((item, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5 text-[13px] font-medium leading-snug text-white/85">
-                    <div className="min-w-[14px] pt-0.5">
-                      <svg viewBox="0 0 12 12" className="w-3.5 h-3.5 text-white/70" fill="none" stroke="currentColor" strokeWidth="3">
-                        <polyline points="1 7 4.5 10 11 2" />
-                      </svg>
+                  <li key={idx} className="flex items-start gap-2.5 text-[13px] font-medium leading-snug text-[#5D4037]">
+                    <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                      <span className="text-[#8D6E63] text-xs">✓</span>
                     </div>
                     {item}
                   </li>
                 ))}
                 {!selectedComponent.details && (
-                  <li className="text-sm opacity-70">Consejos no disponibles.</li>
+                  <li className="text-sm text-[#A1887F]">Detalles no disponibles.</li>
+                )}
+              </ul>
+            </div>
+
+            {/* How to Improve Section */}
+            <div className="bg-gradient-to-br from-[#5D4037] to-[#8D6E63] rounded-2xl p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center">
+                  <Lightbulb size={14} className="text-yellow-200" />
+                </div>
+                <h3 className="font-bold text-white text-sm">Cómo mejorar</h3>
+              </div>
+              <ul className="space-y-2.5">
+                {selectedComponent.details?.howToImprove.map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-2.5 text-[13px] font-medium leading-snug text-white/90">
+                    <div className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                      <span className="text-white text-[10px] font-bold">{idx + 1}</span>
+                    </div>
+                    {item}
+                  </li>
+                ))}
+                {!selectedComponent.details && (
+                  <li className="text-sm text-white/70">Consejos no disponibles.</li>
                 )}
               </ul>
             </div>
