@@ -166,8 +166,8 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
       <div className="h-px bg-gray-100 my-2" />
 
         {/* Top 3 Categories - Icons only, evenly distributed */}
-        <div className="space-y-1.5">
-          <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">
+        <div>
+          <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide block text-center mb-2">
             Top categorías
           </span>
           
