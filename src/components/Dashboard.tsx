@@ -38,7 +38,6 @@ import GoalsWidget from '@/components/dashboard/GoalsWidget';
 // import RecentTransactionsWidget from '@/components/dashboard/RecentTransactionsWidget';
 import BudgetWidget from '@/components/dashboard/BudgetWidget';
 import QuickRecordFAB from '@/components/dashboard/QuickRecordFAB';
-
 const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -78,22 +77,29 @@ const Dashboard = () => {
   const [last7DaysData, setLast7DaysData] = useState<any[]>([]);
   const [isCreateGoalModalOpen, setIsCreateGoalModalOpen] = useState(false);
   const [isCreateGroupGoalModalOpen, setIsCreateGroupGoalModalOpen] = useState(false);
-  const [userCircles, setUserCircles] = useState<Array<{ id: string; name: string }>>([]);
+  const [userCircles, setUserCircles] = useState<Array<{
+    id: string;
+    name: string;
+  }>>([]);
 
   // SEGURIDAD: Auditoría automática de seguridad y detección de anomalías
-  const { status: securityStatus } = useSecurityAudit({
+  const {
+    status: securityStatus
+  } = useSecurityAudit({
     runOnMount: true,
     autoClean: true,
-    showToasts: false, // No mostrar toasts para no molestar al usuario
+    showToasts: false // No mostrar toasts para no molestar al usuario
   });
 
   // Crear nuevas instancias de autoplay para cada carrusel
-  const autoplayPersonalGoals = useRef(
-    Autoplay({ delay: 4000, stopOnInteraction: false })
-  );
-  const autoplayGroupGoals = useRef(
-    Autoplay({ delay: 4000, stopOnInteraction: false })
-  );
+  const autoplayPersonalGoals = useRef(Autoplay({
+    delay: 4000,
+    stopOnInteraction: false
+  }));
+  const autoplayGroupGoals = useRef(Autoplay({
+    delay: 4000,
+    stopOnInteraction: false
+  }));
 
   // Sync recentTransactions when dashboardData updates - DISABLED (we are not showing recent transactions for now)
   // useEffect(() => {
@@ -105,46 +111,30 @@ const Dashboard = () => {
   // Calcular últimos 7 días con ingresos y gastos - MOVIDO A useEffect CON DEPENDENCIAS
   useEffect(() => {
     if (!user?.id) return;
-
     const fetchLast7Days = async () => {
       try {
         // Obtener transacciones de los últimos 7 días
         const todayDate = new Date();
         const sevenDaysAgo = new Date(todayDate);
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
-
-        const { data: transactions, error } = await supabase
-          .from('transactions')
-          .select('*')
-          .eq('user_id', user.id)
-          .gte('transaction_date', sevenDaysAgo.toISOString().split('T')[0])
-          .lte('transaction_date', todayDate.toISOString().split('T')[0]);
-
+        const {
+          data: transactions,
+          error
+        } = await supabase.from('transactions').select('*').eq('user_id', user.id).gte('transaction_date', sevenDaysAgo.toISOString().split('T')[0]).lte('transaction_date', todayDate.toISOString().split('T')[0]);
         if (error) throw error;
 
         // Calcular datos por día
         const weekDayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
         const last7Days: any[] = [];
-
         for (let i = 6; i >= 0; i--) {
           const date = new Date(todayDate);
           date.setDate(date.getDate() - i);
           const dateString = date.toISOString().split('T')[0];
           const dayName = weekDayNames[date.getDay()];
           const dayNumber = date.getDate();
-
-          const dayTransactions = transactions?.filter(
-            tx => tx.transaction_date === dateString
-          ) || [];
-
-          const dayIncome = dayTransactions
-            .filter(tx => tx.type === 'income' || tx.type === 'ingreso')
-            .reduce((sum, tx) => sum + Number(tx.amount), 0);
-
-          const dayExpense = dayTransactions
-            .filter(tx => tx.type === 'expense' || tx.type === 'gasto')
-            .reduce((sum, tx) => sum + Number(tx.amount), 0);
-
+          const dayTransactions = transactions?.filter(tx => tx.transaction_date === dateString) || [];
+          const dayIncome = dayTransactions.filter(tx => tx.type === 'income' || tx.type === 'ingreso').reduce((sum, tx) => sum + Number(tx.amount), 0);
+          const dayExpense = dayTransactions.filter(tx => tx.type === 'expense' || tx.type === 'gasto').reduce((sum, tx) => sum + Number(tx.amount), 0);
           last7Days.push({
             date: dateString,
             day: `${dayName} ${dayNumber}`,
@@ -153,13 +143,11 @@ const Dashboard = () => {
             balance: dayIncome - dayExpense
           });
         }
-
         setLast7DaysData(last7Days);
       } catch (error) {
         console.error('Error fetching last 7 days data:', error);
       }
     };
-
     fetchLast7Days();
   }, [user?.id]); // Solo ejecutar cuando cambie el usuario
 
@@ -171,7 +159,11 @@ const Dashboard = () => {
   const [creditCardDebts, setCreditCardDebts] = useState<any[]>([]);
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const [loadingScore, setLoadingScore] = useState(false);
-  const [dailyExpenses, setDailyExpenses] = useState<Array<{ name: string, amount: number, icon: string }>>([]);
+  const [dailyExpenses, setDailyExpenses] = useState<Array<{
+    name: string;
+    amount: number;
+    icon: string;
+  }>>([]);
   const [proyecciones, setProyecciones] = useState<{
     proyeccionAnual: number;
     proyeccionSemestral: number;
@@ -260,53 +252,45 @@ const Dashboard = () => {
       }, 100);
     }
   }, [location]);
-
   useEffect(() => {
     const getUserData = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: {
+            user
+          }
+        } = await supabase.auth.getUser();
         if (!user) {
           navigate("/auth");
           return;
         }
-
         setUser(user);
 
         // Fetch user's circles for group goal modal
-        const { data: circleMembers } = await supabase
-          .from('circle_members')
-          .select('circle_id, circles:circle_id(id, name)')
-          .eq('user_id', user.id);
-
+        const {
+          data: circleMembers
+        } = await supabase.from('circle_members').select('circle_id, circles:circle_id(id, name)').eq('user_id', user.id);
         if (circleMembers) {
-          const circles = circleMembers
-            .map(cm => ({
-              id: (cm.circles as any)?.id || '',
-              name: (cm.circles as any)?.name || 'Círculo'
-            }))
-            .filter(c => c.id);
+          const circles = circleMembers.map(cm => ({
+            id: (cm.circles as any)?.id || '',
+            name: (cm.circles as any)?.name || 'Círculo'
+          })).filter(c => c.id);
           setUserCircles(circles);
         }
 
         // Get profile data including xp, level, and quiz completion
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("id, xp, level, level_quiz_completed")
-          .eq("id", user.id)
-          .maybeSingle();
-
+        const {
+          data: profile
+        } = await supabase.from("profiles").select("id, xp, level, level_quiz_completed").eq("id", user.id).maybeSingle();
         if (profile) {
           setCurrentXP(profile.xp || 0);
           setLevelQuizCompleted(profile.level_quiz_completed || false);
         }
 
         // Get user level from user_levels table (more accurate)
-        const { data: userLevel } = await supabase
-          .from("user_levels")
-          .select("current_level, total_xp")
-          .eq("user_id", user.id)
-          .maybeSingle();
-
+        const {
+          data: userLevel
+        } = await supabase.from("user_levels").select("current_level, total_xp").eq("user_id", user.id).maybeSingle();
         if (userLevel) {
           setLevel(userLevel.current_level || 1);
           setCurrentXP(userLevel.total_xp || 0);
@@ -315,35 +299,27 @@ const Dashboard = () => {
         }
 
         // Check if user has aspirations and calculate total
-        const { data: aspirationsData } = await supabase
-          .from("user_aspirations")
-          .select("*")
-          .eq("user_id", user.id);
-
+        const {
+          data: aspirationsData
+        } = await supabase.from("user_aspirations").select("*").eq("user_id", user.id);
         setHasAspirations((aspirationsData?.length || 0) > 0);
-
         if (aspirationsData && aspirationsData.length > 0) {
           const total = aspirationsData.reduce((sum, asp) => sum + Number(asp.value), 0);
           setTotalAspiration(total);
         }
 
         // Check if user has net worth data
-        const { data: assetsData } = await supabase
-          .from("assets")
-          .select("id")
-          .eq("user_id", user.id)
-          .limit(1);
+        const {
+          data: assetsData
+        } = await supabase.from("assets").select("id").eq("user_id", user.id).limit(1);
 
         // NOTE: useBankConnections and useFinancialData are React hooks and cannot be called inside this async function.
         // They should be called at the top level of the functional component.
         // The provided diff snippet for these lines is syntactically incorrect in this context.
         // For now, I'm keeping the original liabilities fetch.
-        const { data: liabilitiesData } = await supabase
-          .from("liabilities")
-          .select("id")
-          .eq("user_id", user.id)
-          .limit(1);
-
+        const {
+          data: liabilitiesData
+        } = await supabase.from("liabilities").select("id").eq("user_id", user.id).limit(1);
         setHasNetWorthData((assetsData?.length || 0) > 0 || (liabilitiesData?.length || 0) > 0);
 
         // Removed automatic score recalculation - it was causing infinite reload loop
@@ -352,16 +328,18 @@ const Dashboard = () => {
         console.error("Error fetching user data:", error);
       }
     };
-
     getUserData();
   }, [navigate]);
 
   // Recalcular score automáticamente
   const recalculateScore = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (!session) return;
-
       await supabase.functions.invoke('financial-analysis', {
         headers: {
           Authorization: `Bearer ${session.access_token}`
@@ -380,35 +358,29 @@ const Dashboard = () => {
   // Load budget data from category_budgets - OPTIMIZADO
   useEffect(() => {
     if (!user?.id) return;
-
     const loadBudgetData = async () => {
       try {
         // Get total monthly budget from category_budgets (only parent categories, excluding savings)
-        const { data: budgetData, error: budgetError } = await supabase
-          .from('category_budgets')
-          .select(`
+        const {
+          data: budgetData,
+          error: budgetError
+        } = await supabase.from('category_budgets').select(`
             monthly_budget,
             category_id,
             categories!inner(name, parent_id)
-          `)
-          .eq('user_id', user.id)
-          .is('categories.parent_id', null); // Only get parent categories
+          `).eq('user_id', user.id).is('categories.parent_id', null); // Only get parent categories
 
         if (budgetError) {
           console.error('❌ Error al cargar presupuestos:', budgetError);
           return;
         }
-
         if (budgetData && budgetData.length > 0) {
           // Filter out savings/investment categories
           const filteredBudgets = budgetData.filter(b => {
             const categoryName = b.categories?.name || '';
             // Exclude savings category
-            return !categoryName.includes('Ahorro') &&
-              !categoryName.includes('Inversión') &&
-              !categoryName.includes('emergencia');
+            return !categoryName.includes('Ahorro') && !categoryName.includes('Inversión') && !categoryName.includes('emergencia');
           });
-
           const total = filteredBudgets.reduce((sum, b) => sum + Number(b.monthly_budget), 0);
           setTotalBudget(total);
           console.log('💰 Presupuesto mensual (solo categorías padre):', total);
@@ -420,20 +392,14 @@ const Dashboard = () => {
         const now = new Date();
         const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
         const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
-        const { data: expenseData, error: expenseError } = await supabase
-          .from('transactions')
-          .select('amount')
-          .eq('user_id', user.id)
-          .eq('type', 'gasto')
-          .gte('transaction_date', firstDay.toISOString().split('T')[0])
-          .lte('transaction_date', lastDay.toISOString().split('T')[0]);
-
+        const {
+          data: expenseData,
+          error: expenseError
+        } = await supabase.from('transactions').select('amount').eq('user_id', user.id).eq('type', 'gasto').gte('transaction_date', firstDay.toISOString().split('T')[0]).lte('transaction_date', lastDay.toISOString().split('T')[0]);
         if (expenseError) {
           console.error('❌ Error al cargar gastos:', expenseError);
           return;
         }
-
         if (expenseData) {
           const total = expenseData.reduce((sum, t) => sum + Number(t.amount), 0);
           setCurrentMonthExpenses(total);
@@ -442,7 +408,6 @@ const Dashboard = () => {
         console.error('❌ Error general cargando datos de presupuesto:', error);
       }
     };
-
     loadBudgetData();
   }, [user?.id]); // Solo ejecutar cuando cambie el usuario
 
@@ -450,33 +415,36 @@ const Dashboard = () => {
   useEffect(() => {
     const loadUnreadNotifications = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: {
+            user
+          }
+        } = await supabase.auth.getUser();
         if (!user) return;
-
-        const { data, error } = await supabase
-          .from('notification_history')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', user.id)
-          .eq('status', 'sent');
-
+        const {
+          data,
+          error
+        } = await supabase.from('notification_history').select('id', {
+          count: 'exact',
+          head: true
+        }).eq('user_id', user.id).eq('status', 'sent');
         if (error) {
           console.error('Error loading unread notifications:', error);
           return;
         }
 
         // Get count from response
-        const { count } = await supabase
-          .from('notification_history')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', user.id)
-          .eq('status', 'sent');
-
+        const {
+          count
+        } = await supabase.from('notification_history').select('*', {
+          count: 'exact',
+          head: true
+        }).eq('user_id', user.id).eq('status', 'sent');
         setUnreadNotifications(count || 0);
       } catch (error) {
         console.error('Error loading unread notifications:', error);
       }
     };
-
     loadUnreadNotifications();
 
     // Refresh count every minute
@@ -488,36 +456,29 @@ const Dashboard = () => {
   useEffect(() => {
     const checkWhatsAppStatus = async () => {
       if (!user?.id) return;
-
       try {
         // Verificar si tiene conexión activa de WhatsApp
-        const { data: whatsappUser, error: userError } = await supabase
-          .from('whatsapp_users')
-          .select('is_active')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
+        const {
+          data: whatsappUser,
+          error: userError
+        } = await supabase.from('whatsapp_users').select('is_active').eq('user_id', user.id).maybeSingle();
         if (userError && userError.code !== 'PGRST116') throw userError;
 
         // Verificar si tiene mensajes enviados
-        const { data: messages, error: messagesError } = await supabase
-          .from('whatsapp_messages')
-          .select('id')
-          .eq('user_id', user.id)
-          .limit(1);
-
+        const {
+          data: messages,
+          error: messagesError
+        } = await supabase.from('whatsapp_messages').select('id').eq('user_id', user.id).limit(1);
         if (messagesError) throw messagesError;
 
         // Mostrar banner solo si NO tiene WhatsApp activo Y NO ha enviado mensajes
         const hasActiveWhatsApp = whatsappUser?.is_active === true;
         const hasMessages = messages && messages.length > 0;
-
         setShowWhatsAppBanner(!hasActiveWhatsApp && !hasMessages);
       } catch (error) {
         console.error('Error checking WhatsApp status:', error);
       }
     };
-
     checkWhatsAppStatus();
   }, [user?.id]);
 
@@ -534,20 +495,22 @@ const Dashboard = () => {
   useEffect(() => {
     const loadFutureEvents = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: {
+            user
+          }
+        } = await supabase.auth.getUser();
         if (!user) return;
 
         // Get last 6 months of transactions for pattern detection
         const sixMonthsAgo = new Date();
         sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-
-        const { data: allTx, error: allError } = await supabase
-          .from('transactions')
-          .select('*')
-          .eq('user_id', user.id)
-          .gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0])
-          .order('transaction_date', { ascending: false });
-
+        const {
+          data: allTx,
+          error: allError
+        } = await supabase.from('transactions').select('*').eq('user_id', user.id).gte('transaction_date', sixMonthsAgo.toISOString().split('T')[0]).order('transaction_date', {
+          ascending: false
+        });
         if (allError) throw allError;
 
         // Detect recurring payments and predict future events
@@ -557,26 +520,19 @@ const Dashboard = () => {
         console.error('Error loading future events:', error);
       }
     };
-
     loadFutureEvents();
 
     // Subscribe to real-time changes in transactions table
-    const channel = supabase
-      .channel('transactions-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
-          schema: 'public',
-          table: 'transactions'
-        },
-        (payload) => {
-          console.log('Transaction change detected:', payload);
-          // Reload future events when transactions change
-          loadFutureEvents();
-        }
-      )
-      .subscribe();
+    const channel = supabase.channel('transactions-changes').on('postgres_changes', {
+      event: '*',
+      // Listen to all events (INSERT, UPDATE, DELETE)
+      schema: 'public',
+      table: 'transactions'
+    }, payload => {
+      console.log('Transaction change detected:', payload);
+      // Reload future events when transactions change
+      loadFutureEvents();
+    }).subscribe();
 
     // Cleanup subscription on unmount
     return () => {
@@ -590,43 +546,23 @@ const Dashboard = () => {
     const futurePayments: any[] = [];
 
     // Categorías permitidas para próximos movimientos
-    const allowedCategories = [
-      'suscripciones', 'subscripciones', 'subscription', 'servicios',
-      'utilidades', 'utilities', 'renta', 'rent', 'alquiler',
-      'internet', 'telefono', 'celular', 'telefonía', 'luz', 'agua',
-      'gas', 'cfe', 'telmex', 'izzi', 'netflix', 'spotify', 'disney',
-      'hbo', 'amazon prime', 'gym', 'gimnasio', 'seguro', 'insurance'
-    ];
+    const allowedCategories = ['suscripciones', 'subscripciones', 'subscription', 'servicios', 'utilidades', 'utilities', 'renta', 'rent', 'alquiler', 'internet', 'telefono', 'celular', 'telefonía', 'luz', 'agua', 'gas', 'cfe', 'telmex', 'izzi', 'netflix', 'spotify', 'disney', 'hbo', 'amazon prime', 'gym', 'gimnasio', 'seguro', 'insurance'];
 
     // Palabras clave que NO deben estar (gastos variables)
-    const excludedKeywords = [
-      'bar', 'antro', 'club', 'restaurante', 'restaurant', 'cafe', 'coffee',
-      'starbucks', 'oxxo', '7-eleven', 'entretenimiento', 'entertainment',
-      'cine', 'cinema', 'uber', 'didi', 'rappi', 'didi food', 'uber eats',
-      'amazon', 'mercado libre', 'liverpool', 'walmart', 'soriana', 'costco',
-      'farmacia', 'gasolina', 'gas station'
-    ];
+    const excludedKeywords = ['bar', 'antro', 'club', 'restaurante', 'restaurant', 'cafe', 'coffee', 'starbucks', 'oxxo', '7-eleven', 'entretenimiento', 'entertainment', 'cine', 'cinema', 'uber', 'didi', 'rappi', 'didi food', 'uber eats', 'amazon', 'mercado libre', 'liverpool', 'walmart', 'soriana', 'costco', 'farmacia', 'gasolina', 'gas station'];
 
     // Filtrar solo transacciones de tipo gasto
-    const expenses = transactions.filter(tx =>
-      tx.type === 'gasto' || tx.type === 'expense'
-    );
+    const expenses = transactions.filter(tx => tx.type === 'gasto' || tx.type === 'expense');
 
     // Group transactions by similar descriptions (normalize text)
     const groupedByDescription: Record<string, any[]> = {};
-
     expenses.forEach(tx => {
-      const normalizedDesc = tx.description
-        .toLowerCase()
-        .replace(/\d+/g, '') // Remove numbers
-        .replace(/[^\w\s]/g, '') // Remove special chars
-        .trim();
+      const normalizedDesc = tx.description.toLowerCase().replace(/\d+/g, '') // Remove numbers
+      .replace(/[^\w\s]/g, '') // Remove special chars
+      .trim();
 
       // Verificar si contiene palabras excluidas
-      const isExcluded = excludedKeywords.some(keyword =>
-        normalizedDesc.includes(keyword.toLowerCase())
-      );
-
+      const isExcluded = excludedKeywords.some(keyword => normalizedDesc.includes(keyword.toLowerCase()));
       if (isExcluded) return; // Skip this transaction
 
       if (!groupedByDescription[normalizedDesc]) {
@@ -640,45 +576,30 @@ const Dashboard = () => {
       if (txs.length < 3) return; // Need at least 3 occurrences to confirm pattern
 
       // Sort by date
-      const sortedTxs = txs.sort((a, b) =>
-        new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime()
-      );
+      const sortedTxs = txs.sort((a, b) => new Date(a.transaction_date).getTime() - new Date(b.transaction_date).getTime());
 
       // Verificar consistencia del monto (no debe variar más del 20%)
       const amounts = sortedTxs.map(tx => Number(tx.amount));
       const avgAmount = amounts.reduce((a, b) => a + b, 0) / amounts.length;
       const maxVariation = Math.max(...amounts.map(amt => Math.abs(amt - avgAmount) / avgAmount));
-
       if (maxVariation > 0.2) return; // Skip if amount varies more than 20%
 
       // Verificar si tiene frequency definida O si es una categoría permitida
-      const hasFrequency = sortedTxs.some(tx =>
-        tx.frequency && tx.frequency !== 'once'
-      );
-
-      const isAllowedCategory = allowedCategories.some(category =>
-        desc.includes(category.toLowerCase())
-      );
-
+      const hasFrequency = sortedTxs.some(tx => tx.frequency && tx.frequency !== 'once');
+      const isAllowedCategory = allowedCategories.some(category => desc.includes(category.toLowerCase()));
       if (!hasFrequency && !isAllowedCategory) return; // Skip if not recurring
 
       // Calculate average interval between transactions (in days)
       const intervals: number[] = [];
       const dayOfMonths: number[] = [];
-
       for (let i = 1; i < sortedTxs.length; i++) {
-        const daysDiff = Math.round(
-          (new Date(sortedTxs[i].transaction_date).getTime() -
-            new Date(sortedTxs[i - 1].transaction_date).getTime()) /
-          (1000 * 60 * 60 * 24)
-        );
+        const daysDiff = Math.round((new Date(sortedTxs[i].transaction_date).getTime() - new Date(sortedTxs[i - 1].transaction_date).getTime()) / (1000 * 60 * 60 * 24));
         intervals.push(daysDiff);
 
         // Track day of month for consistency
         const dayOfMonth = new Date(sortedTxs[i].transaction_date).getDate();
         dayOfMonths.push(dayOfMonth);
       }
-
       const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
 
       // Verificar consistencia de fecha (mismo día del mes)
@@ -693,7 +614,6 @@ const Dashboard = () => {
       // Detect if it's a recurring pattern (only monthly for now)
       let frequency: string | null = null;
       let predictInterval = 30;
-
       if (avgInterval >= 25 && avgInterval <= 35) {
         frequency = 'Mensual';
         predictInterval = 30;
@@ -716,7 +636,6 @@ const Dashboard = () => {
         // Generate next 3 occurrences
         const nextThreeMonths = addMonths(today, 3);
         let count = 0;
-
         while (isBefore(nextDate, nextThreeMonths) && count < 3) {
           if (!isBefore(nextDate, today)) {
             futurePayments.push({
@@ -735,13 +654,10 @@ const Dashboard = () => {
         }
       }
     });
-
     return futurePayments.sort((a, b) => a.date.getTime() - b.date.getTime());
   };
-
   const calculatePaymentRisk = (date: Date, amount: number): "low" | "medium" | "high" => {
     const daysUntil = Math.ceil((date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-
     if (daysUntil <= 3 && amount > 1000) return "high";
     if (daysUntil <= 7 && amount > 500) return "medium";
     return "low";
@@ -754,38 +670,37 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchSubscriptionsAndDebts = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: {
+            user
+          }
+        } = await supabase.auth.getUser();
         if (!user) return;
 
         // Check for bank connections (already handled by dashboardData hook, no need to set)
-        const { data: bankData } = await supabase
-          .from('bank_connections')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('is_active', true);
+        const {
+          data: bankData
+        } = await supabase.from('bank_connections').select('*').eq('user_id', user.id).eq('is_active', true);
 
         // Calculate daily expenses for current month - get specific transactions
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
-        const { data: dailyExpensesData } = await supabase
-          .from('transactions')
-          .select('*, categories(name)')
-          .eq('user_id', user.id)
-          .eq('type', 'gasto')
-          .gte('transaction_date', startOfMonth.toISOString().split('T')[0])
-          .lte('transaction_date', endOfMonth.toISOString().split('T')[0])
-          .order('amount', { ascending: false });
-
+        const {
+          data: dailyExpensesData
+        } = await supabase.from('transactions').select('*, categories(name)').eq('user_id', user.id).eq('type', 'gasto').gte('transaction_date', startOfMonth.toISOString().split('T')[0]).lte('transaction_date', endOfMonth.toISOString().split('T')[0]).order('amount', {
+          ascending: false
+        });
         if (dailyExpensesData && dailyExpensesData.length > 0) {
           // Group by category and sum amounts
-          const categoryMap = new Map<string, { name: string, total: number, icon: string }>();
-
-          dailyExpensesData.forEach((transaction) => {
+          const categoryMap = new Map<string, {
+            name: string;
+            total: number;
+            icon: string;
+          }>();
+          dailyExpensesData.forEach(transaction => {
             const categoryName = transaction.categories?.name || transaction.description || 'Otros';
             const icon = getCategoryIcon(categoryName);
-
             if (categoryMap.has(categoryName)) {
               const existing = categoryMap.get(categoryName)!;
               existing.total += Number(transaction.amount);
@@ -799,14 +714,11 @@ const Dashboard = () => {
           });
 
           // Convert to array and sort by total
-          const expenses = Array.from(categoryMap.values())
-            .sort((a, b) => b.total - a.total)
-            .map(e => ({
-              name: e.name,
-              amount: e.total,
-              icon: e.icon
-            }));
-
+          const expenses = Array.from(categoryMap.values()).sort((a, b) => b.total - a.total).map(e => ({
+            name: e.name,
+            amount: e.total,
+            icon: e.icon
+          }));
           setDailyExpenses(expenses);
         }
 
@@ -814,7 +726,6 @@ const Dashboard = () => {
         if (user?.id) {
           const cachedSubs = localStorage.getItem(`cachedSubscriptions_${user.id}`);
           const lastUpdate = localStorage.getItem(`subscriptionsLastUpdate_${user.id}`);
-
           if (cachedSubs) {
             setUpcomingSubscriptions(JSON.parse(cachedSubs));
           }
@@ -824,23 +735,24 @@ const Dashboard = () => {
         console.log('[Subscriptions] Starting detection...');
 
         // Fetch all expense transactions for AI analysis
-        const { data: allExpenses } = await supabase
-          .from('transactions')
-          .select('*, categories(name)')
-          .eq('user_id', user.id)
-          .eq('type', 'gasto')
-          .order('transaction_date', { ascending: false });
-
+        const {
+          data: allExpenses
+        } = await supabase.from('transactions').select('*, categories(name)').eq('user_id', user.id).eq('type', 'gasto').order('transaction_date', {
+          ascending: false
+        });
         console.log('[Subscriptions] Found transactions:', allExpenses?.length || 0);
-
         if (allExpenses && allExpenses.length > 0) {
           try {
             // Use AI to detect subscriptions
             console.log('[Subscriptions] Calling detect-subscriptions function...');
-            const { data: aiResult, error: aiError } = await supabase.functions.invoke('detect-subscriptions', {
-              body: { transactions: allExpenses }
+            const {
+              data: aiResult,
+              error: aiError
+            } = await supabase.functions.invoke('detect-subscriptions', {
+              body: {
+                transactions: allExpenses
+              }
             });
-
             if (aiError) {
               console.error('[Subscriptions] Error from function:', aiError);
             } else {
@@ -851,19 +763,17 @@ const Dashboard = () => {
               if (subscriptionsWithIncrease.length > 0) {
                 // Insert notifications into database
                 for (const sub of subscriptionsWithIncrease) {
-                  await supabase
-                    .from('notification_history')
-                    .insert({
-                      user_id: user.id,
-                      notification_type: 'price_increase',
-                      message: `${sub.description}: aumentó de $${sub.oldAmount?.toFixed(2)} a $${sub.newAmount?.toFixed(2)}. ¿Es el nuevo precio de tu suscripción?`,
-                      status: 'sent',
-                      metadata: {
-                        subscription: sub.description,
-                        oldAmount: sub.oldAmount,
-                        newAmount: sub.newAmount,
-                      }
-                    });
+                  await supabase.from('notification_history').insert({
+                    user_id: user.id,
+                    notification_type: 'price_increase',
+                    message: `${sub.description}: aumentó de $${sub.oldAmount?.toFixed(2)} a $${sub.newAmount?.toFixed(2)}. ¿Es el nuevo precio de tu suscripción?`,
+                    status: 'sent',
+                    metadata: {
+                      subscription: sub.description,
+                      oldAmount: sub.oldAmount,
+                      newAmount: sub.newAmount
+                    }
+                  });
                 }
               }
             }
@@ -871,30 +781,24 @@ const Dashboard = () => {
             // Agrupar por nombre de concepto para mostrar solo UNO por tipo
             const uniqueSubs = new Map();
             (aiResult?.subscriptions || []).forEach((sub: any) => {
-              const normalizedName = sub.description.toLowerCase()
-                .replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '')
-                .replace(/\s*\d{4}$/g, '')
-                .trim();
-
+              const normalizedName = sub.description.toLowerCase().replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '').replace(/\s*\d{4}$/g, '').trim();
               if (!uniqueSubs.has(normalizedName)) {
                 uniqueSubs.set(normalizedName, {
                   name: sub.description.replace(/\s*(oct|sept|ago|jul|jun|may|abr|mar|feb|ene)\s*\d{2}/gi, '').trim(),
                   amount: Number(sub.amount),
                   icon: getSubscriptionIcon(sub.description),
-                  frequency: sub.frequency || 'mensual',
+                  frequency: sub.frequency || 'mensual'
                 });
               }
             });
-
             const detectedSubs = Array.from(uniqueSubs.values()).map((sub: any, index: number) => ({
               id: `ai-sub-${index}`,
               name: sub.name,
               amount: sub.amount,
               icon: sub.icon,
               frequency: sub.frequency,
-              dueDate: calculateNextDueDate(sub.frequency),
+              dueDate: calculateNextDueDate(sub.frequency)
             }));
-
             console.log('[Subscriptions] Detected subscriptions:', detectedSubs.length);
             setUpcomingSubscriptions(detectedSubs);
 
@@ -912,11 +816,22 @@ const Dashboard = () => {
 
         // Mock credit card debts (esto se obtendría de la conexión bancaria real)
         if (bankData && bankData.length > 0) {
-          setCreditCardDebts([
-            { name: 'Tarjeta Principal', balance: 15420.50, limit: 30000, percentage: 51.4 },
-            { name: 'Tarjeta Oro', balance: 8250.00, limit: 20000, percentage: 41.3 },
-            { name: 'Tarjeta Platino', balance: 3100.00, limit: 15000, percentage: 20.7 },
-          ]);
+          setCreditCardDebts([{
+            name: 'Tarjeta Principal',
+            balance: 15420.50,
+            limit: 30000,
+            percentage: 51.4
+          }, {
+            name: 'Tarjeta Oro',
+            balance: 8250.00,
+            limit: 20000,
+            percentage: 41.3
+          }, {
+            name: 'Tarjeta Platino',
+            balance: 3100.00,
+            limit: 15000,
+            percentage: 20.7
+          }]);
         } else {
           setCreditCardDebts([]);
         }
@@ -924,10 +839,8 @@ const Dashboard = () => {
         console.error('Error fetching subscriptions:', error);
       }
     };
-
     fetchSubscriptionsAndDebts();
   }, []);
-
   const getCategoryIcon = (categoryName: string): string => {
     const lower = categoryName.toLowerCase();
     if (lower.includes('comida') || lower.includes('restaurante') || lower.includes('alimento')) return '🍔';
@@ -940,7 +853,6 @@ const Dashboard = () => {
     if (lower.includes('gasolina') || lower.includes('combustible')) return '⛽';
     return '💰';
   };
-
   const getSubscriptionIcon = (description: string): string => {
     const lower = description.toLowerCase();
     if (lower.includes('netflix')) return '🎬';
@@ -955,7 +867,6 @@ const Dashboard = () => {
     if (lower.includes('gas')) return '🔥';
     return '💳';
   };
-
   const calculateNextDueDate = (frequency: string): Date => {
     const now = new Date();
     if (frequency === 'semanal') {
@@ -980,7 +891,7 @@ const Dashboard = () => {
 
       // Mostrar mensaje inmediato basado en lógica simple
       const budget = monthlyIncome * 0.8;
-      const percentageSpent = (monthlyExpenses / budget) * 100;
+      const percentageSpent = monthlyExpenses / budget * 100;
       if (percentageSpent > 90) {
         setBudgetMessage("⚠️ Hay que mejorar o no lograremos el presupuesto del mensual");
       } else if (percentageSpent > 75) {
@@ -994,8 +905,10 @@ const Dashboard = () => {
         const now = new Date();
         const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
         const daysIntoMonth = now.getDate();
-
-        const { data, error } = await supabase.functions.invoke('analyze-budget', {
+        const {
+          data,
+          error
+        } = await supabase.functions.invoke('analyze-budget', {
           body: {
             monthlyIncome,
             monthlyExpenses,
@@ -1003,7 +916,6 @@ const Dashboard = () => {
             daysInMonth
           }
         });
-
         if (!error && data?.message) {
           setBudgetMessage(data?.message || "✅ Dentro del presupuesto del mes");
         }
@@ -1014,14 +926,12 @@ const Dashboard = () => {
         setLoadingBudgetMessage(false);
       }
     };
-
     fetchBudgetAnalysis();
   }, [monthlyIncome, monthlyExpenses, selectedMonthOffset]);
 
   // Fetch AI projections
   useEffect(() => {
     if (isUpdatingProjections) return;
-
     if (monthlyIncome > 0 || monthlyExpenses > 0) {
       fetchAIProjections();
     } else {
@@ -1039,39 +949,39 @@ const Dashboard = () => {
       setLoadingProyecciones(false);
     }
   }, [monthlyIncome, monthlyExpenses]);
-
   const fetchAIProjections = async () => {
     if (isUpdatingProjections) return;
-
     try {
       setIsUpdatingProjections(true);
       setLoadingProyecciones(true);
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
       if (!user) return;
 
       // Get current month transactions
       const now = new Date();
       const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
       const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
-      const { data: transactions } = await supabase
-        .from('transactions')
-        .select('*, categories(name)')
-        .eq('user_id', user.id)
-        .gte('transaction_date', firstDay.toISOString().split('T')[0])
-        .lte('transaction_date', lastDay.toISOString().split('T')[0])
-        .order('transaction_date', { ascending: false });
+      const {
+        data: transactions
+      } = await supabase.from('transactions').select('*, categories(name)').eq('user_id', user.id).gte('transaction_date', firstDay.toISOString().split('T')[0]).lte('transaction_date', lastDay.toISOString().split('T')[0]).order('transaction_date', {
+        ascending: false
+      });
 
       // Get todas las transacciones históricas para análisis completo
-      const { data: allTransactions } = await supabase
-        .from('transactions')
-        .select('*, categories(name)')
-        .eq('user_id', user.id)
-        .order('transaction_date', { ascending: false });
-
+      const {
+        data: allTransactions
+      } = await supabase.from('transactions').select('*, categories(name)').eq('user_id', user.id).order('transaction_date', {
+        ascending: false
+      });
       const periodLabel = getMonthName(0);
-
-      const { data, error } = await supabase.functions.invoke('predict-savings', {
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('predict-savings', {
         body: {
           userId: user.id,
           transactions,
@@ -1083,7 +993,6 @@ const Dashboard = () => {
           periodLabel
         }
       });
-
       if (error) throw error;
       setProyecciones(data);
     } catch (error) {
@@ -1123,12 +1032,9 @@ const Dashboard = () => {
             }
           } = await supabase.auth.getUser();
           if (!user) return;
-          await supabase
-            .from('transactions')
-            .select('id')
-            .eq('user_id', user.id)
-            .order('transaction_date', { ascending: false })
-            .limit(1);
+          await supabase.from('transactions').select('id').eq('user_id', user.id).order('transaction_date', {
+            ascending: false
+          }).limit(1);
           // Recent transactions fetching is disabled for now; data is intentionally ignored.
         } catch (error) {
           console.error('Error fetching recent transactions (disabled widget):', error);
@@ -1168,19 +1074,19 @@ const Dashboard = () => {
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
-
-
-
   const handleLogout = async () => {
     try {
       // Limpiar datos específicos del usuario en localStorage antes de cerrar sesión
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
       if (user?.id) {
         localStorage.removeItem(`cachedSubscriptions_${user.id}`);
         localStorage.removeItem(`subscriptionsLastUpdate_${user.id}`);
         localStorage.removeItem(`scoreMoni`); // También limpiar el score
       }
-
       await supabase.auth.signOut();
       navigate("/auth");
     } catch (error: any) {
@@ -1191,34 +1097,27 @@ const Dashboard = () => {
   const progressPercentage = currentXP / nextLevelXP * 100;
   const achievements: any[] = []; // Los logros se implementarán en el futuro basados en la actividad del usuario
 
-  return (
-    <>
+  return <>
       <div className="min-h-screen bg-[#faf9f8] text-gray-800 font-sans pb-20">
         {/* Hero Section with Brown Background */}
         <div className="relative">
           {/* Brown background - extended to fit budget bar */}
-          <div 
-            className="absolute inset-x-0 top-0 h-44 rounded-b-[2rem]"
-            style={{
-              background: 'linear-gradient(135deg, #8D6E63 0%, #6D4C41 50%, #5D4037 100%)'
-            }}
-          />
+          <div className="absolute inset-x-0 top-0 h-44 rounded-b-[2rem]" style={{
+          background: 'linear-gradient(135deg, #8D6E63 0%, #6D4C41 50%, #5D4037 100%)'
+        }} />
           
           {/* Header with remaining amount and buttons */}
           <header className="relative z-20 px-6 py-2 pt-4">
             <div className="flex items-center justify-between">
               {/* Remaining Amount - Large */}
-              <div 
-                className="cursor-pointer group" 
-                onClick={() => navigate('/budgets')}
-              >
+              <div className="cursor-pointer group" onClick={() => navigate('/budgets')}>
                 <span className="text-2xl font-bold text-white group-hover:text-white/90 transition-colors">
                   {new Intl.NumberFormat('es-MX', {
-                    style: 'currency',
-                    currency: 'MXN',
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                  }).format(Math.max(0, totalBudget - currentMonthExpenses))}
+                  style: 'currency',
+                  currency: 'MXN',
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0
+                }).format(Math.max(0, totalBudget - currentMonthExpenses))}
                 </span>
                 <p className="text-xs text-white/70 flex items-center gap-1">
                   Disponible este mes
@@ -1229,20 +1128,12 @@ const Dashboard = () => {
               {/* Buttons */}
               <div className="flex items-center gap-2">
                 <div className="relative">
-                  <button 
-                    onClick={() => navigate("/notifications")} 
-                    className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-7 w-7 shadow-sm transition-all border border-white/20"
-                  >
+                  <button onClick={() => navigate("/notifications")} className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-7 w-7 shadow-sm transition-all border border-white/20">
                     <Bell className="h-3.5 w-3.5" />
                   </button>
-                  {unreadNotifications > 0 && (
-                    <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-red-500 border border-white animate-pulse" />
-                  )}
+                  {unreadNotifications > 0 && <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-red-500 border border-white animate-pulse" />}
                 </div>
-                <button 
-                  onClick={() => navigate("/settings")} 
-                  className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-7 w-7 shadow-sm transition-all border border-white/20"
-                >
+                <button onClick={() => navigate("/settings")} className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-7 w-7 shadow-sm transition-all border border-white/20">
                   <Settings className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -1263,46 +1154,37 @@ const Dashboard = () => {
         <div className="page-container pt-2">
           {/* Balance Card - links to resumen */}
           <div className="mb-3">
-            <BudgetCard
-              income={monthlyIncome}
-              expenses={monthlyExpenses}
-              totalBudget={totalBudget}
-            />
+            <BudgetCard income={monthlyIncome} expenses={monthlyExpenses} totalBudget={totalBudget} />
           </div>
 
           {/* Goals Section - Personal & Group */}
           <div>
-            <GoalsWidget
-              personalGoals={goals.map(g => ({
-                id: g.id,
-                name: g.title || 'Meta',
-                target: Number(g.target),
-                current: Number(g.current),
-                deadline: g.deadline,
-                is_group: false
-              }))}
-              groupGoals={groupGoals.map((g: any) => ({
-                id: g.id,
-                name: g.title || 'Meta Grupal',
-                target: Number(g.target_amount || 0),
-                current: Number(g.user_progress?.current_amount || 0),
-                deadline: g.deadline,
-                is_group: true
-              }))}
-            />
+            <GoalsWidget personalGoals={goals.map(g => ({
+            id: g.id,
+            name: g.title || 'Meta',
+            target: Number(g.target),
+            current: Number(g.current),
+            deadline: g.deadline,
+            is_group: false
+          }))} groupGoals={groupGoals.map((g: any) => ({
+            id: g.id,
+            name: g.title || 'Meta Grupal',
+            target: Number(g.target_amount || 0),
+            current: Number(g.user_progress?.current_amount || 0),
+            deadline: g.deadline,
+            is_group: true
+          }))} />
           </div>
 
           {/* Accounts Carousel */}
           <div className="mb-6 bg-[#faf9f8]">
-            <AccountsCarousel accounts={bankConnections} />
+            
           </div>
 
           {/* Recent Transactions - disabled for now */}
-          {false && (
-            <div className="max-w-5xl mx-auto px-6">
+          {false && <div className="max-w-5xl mx-auto px-6">
               {/* <RecentTransactionsWidget transactions={recentTransactions} /> */}
-            </div>
-          )}
+            </div>}
         </div>
 
         <QuickRecordFAB />
@@ -1311,36 +1193,27 @@ const Dashboard = () => {
 
 
 
-        <CreateGoalModal
-          isOpen={isCreateGoalModalOpen}
-          onClose={() => setIsCreateGoalModalOpen(false)}
-          onSuccess={() => {
-            setIsCreateGoalModalOpen(false);
-            navigate('/goals');
-          }}
-        />
+        <CreateGoalModal isOpen={isCreateGoalModalOpen} onClose={() => setIsCreateGoalModalOpen(false)} onSuccess={() => {
+        setIsCreateGoalModalOpen(false);
+        navigate('/goals');
+      }} />
 
-        <CreateGroupGoalModal
-          isOpen={isCreateGroupGoalModalOpen}
-          onClose={() => setIsCreateGroupGoalModalOpen(false)}
-          circles={userCircles}
-          onSuccess={() => {
-            confetti({
-              particleCount: 120,
-              spread: 80,
-              origin: { y: 0.6 },
-              colors: ['#6ee7b7', '#ffffff', '#fbbf24', '#d1d5db'],
-              ticks: 200,
-              gravity: 0.8,
-              scalar: 1.2
-            });
-            setIsCreateGroupGoalModalOpen(false);
-            navigate('/goals');
-          }}
-        />
+        <CreateGroupGoalModal isOpen={isCreateGroupGoalModalOpen} onClose={() => setIsCreateGroupGoalModalOpen(false)} circles={userCircles} onSuccess={() => {
+        confetti({
+          particleCount: 120,
+          spread: 80,
+          origin: {
+            y: 0.6
+          },
+          colors: ['#6ee7b7', '#ffffff', '#fbbf24', '#d1d5db'],
+          ticks: 200,
+          gravity: 0.8,
+          scalar: 1.2
+        });
+        setIsCreateGroupGoalModalOpen(false);
+        navigate('/goals');
+      }} />
       </div>
-    </>
-  );
+    </>;
 };
-
 export default Dashboard;
