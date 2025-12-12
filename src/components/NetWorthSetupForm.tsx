@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X, Banknote, ChevronRight, Wallet, Shield, CalendarIcon } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X, Banknote, ChevronRight, Wallet, Shield, CalendarIcon, Building2, Home, Car, PiggyBank, HandCoins, Watch, LucideIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
@@ -83,14 +83,14 @@ type StockEntry = {
   purchaseDate: Date | undefined;
 };
 
-const assetCategories = [
-  { name: 'Cuentas bancarias (ahorro + cheques)', category: 'Checking', examples: ['BBVA Cuenta Ahorro', 'Santander Nómina', 'Banorte Smart'] },
-  { name: 'Propiedad principal', category: 'Property', examples: ['Casa Polanco', 'Depto Reforma', 'Casa Santa Fe'] },
-  { name: 'Otras propiedades', category: 'Property', examples: ['Depto en Renta Centro', 'Local Comercial', 'Casa Playa'] },
-  { name: 'Vehículos', category: 'Other', examples: ['Toyota Corolla 2020', 'Honda CRV', 'Moto Italika'] },
-  { name: 'Fondos de ahorro', category: 'Savings', examples: ['Afore Sura', 'Fondo GBM+', 'CETES'] },
-  { name: 'Dinero prestado', category: 'Other', examples: ['Préstamo a Juan', 'Deuda Socio', 'Préstamo Hermano'] },
-  { name: 'Relojes o joyas', category: 'Other', examples: ['Rolex Submariner', 'Anillo Oro', 'Collar Diamantes'] },
+const assetCategories: { name: string; category: string; examples: string[]; icon: LucideIcon }[] = [
+  { name: 'Cuentas bancarias (ahorro + cheques)', category: 'Checking', examples: ['BBVA Cuenta Ahorro', 'Santander Nómina', 'Banorte Smart'], icon: Banknote },
+  { name: 'Propiedad principal', category: 'Property', examples: ['Casa Polanco', 'Depto Reforma', 'Casa Santa Fe'], icon: Home },
+  { name: 'Otras propiedades', category: 'Property', examples: ['Depto en Renta Centro', 'Local Comercial', 'Casa Playa'], icon: Building2 },
+  { name: 'Vehículos', category: 'Other', examples: ['Toyota Corolla 2020', 'Honda CRV', 'Moto Italika'], icon: Car },
+  { name: 'Fondos de ahorro', category: 'Savings', examples: ['Afore Sura', 'Fondo GBM+', 'CETES'], icon: PiggyBank },
+  { name: 'Dinero prestado', category: 'Other', examples: ['Préstamo a Juan', 'Deuda Socio', 'Préstamo Hermano'], icon: HandCoins },
+  { name: 'Relojes o joyas', category: 'Other', examples: ['Rolex Submariner', 'Anillo Oro', 'Collar Diamantes'], icon: Watch },
 ];
 
 const liabilityCategories = [
@@ -625,7 +625,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
                             <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasEntries ? 'bg-[#5D4037]/10 text-[#5D4037]' : 'bg-[#A1887F]/10 text-[#A1887F]'}`}>
-                              {hasEntries ? <Check size={18} strokeWidth={3} /> : <Plus size={18} />}
+                              {hasEntries ? <Check size={18} strokeWidth={3} /> : <asset.icon size={18} />}
                             </div>
                             <span className={`font-semibold text-sm ${hasEntries ? 'text-gray-900' : 'text-gray-600'}`}>{asset.name}</span>
                           </div>
