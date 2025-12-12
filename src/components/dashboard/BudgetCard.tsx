@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PiggyBank, TrendingUp, TrendingDown, ShoppingBag, Utensils, Car, Film, Home, CreditCard, Heart, GraduationCap, Zap } from 'lucide-react';
+import { Wallet, TrendingUp, TrendingDown, ShoppingBag, Utensils, Car, Film, Home, CreditCard, Heart, GraduationCap, Zap, ChevronRight } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -130,14 +130,20 @@ const BudgetCard: React.FC<BudgetCardProps> = ({ income, expenses, totalBudget }
   return (
     <div 
       className="w-full bg-white rounded-2xl px-4 py-3 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08)] border border-gray-100 relative overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
-      onClick={() => navigate('/budgets')}
+      onClick={() => navigate('/balance')}
     >
       {/* Header */}
-      <div className="flex items-center gap-2 mb-3">
-        <div className="h-8 w-8 rounded-xl bg-[#F5F0EE] flex items-center justify-center text-[#8D6E63]">
-          <PiggyBank size={16} />
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-xl bg-[#F5F0EE] flex items-center justify-center text-[#8D6E63]">
+            <Wallet size={16} />
+          </div>
+          <h3 className="text-gray-800 font-bold text-sm">Balance del mes</h3>
         </div>
-        <h3 className="text-gray-800 font-bold text-sm">Presupuesto del mes</h3>
+        <div className="flex items-center gap-1 text-gray-400">
+          <span className="text-xs">Resumen</span>
+          <ChevronRight className="w-3 h-3" />
+        </div>
       </div>
 
       {/* Income & Expenses */}
