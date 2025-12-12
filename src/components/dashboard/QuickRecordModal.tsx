@@ -288,7 +288,7 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
         payment_method: 'efectivo',
         account: 'efectivo',
         category_id: categoryId,
-        frequency: 'once',
+        frequency: 'unico',
         transaction_date: date,
         type: isIncome ? 'ingreso' : 'gasto',
       });
