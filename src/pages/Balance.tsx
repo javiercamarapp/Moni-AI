@@ -13,6 +13,7 @@ import BalanceInsights from '@/components/balance/BalanceInsights';
 import BalanceEvolutionChart from '@/components/balance/BalanceEvolutionChart';
 import ExpenseBreakdownWidget from '@/components/dashboard/ExpenseBreakdownWidget';
 import AddTransactionModal from '@/components/dashboard/AddTransactionModal';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 
 interface CategoryBalance {
   id: string;
@@ -1012,33 +1013,41 @@ const Balance = () => {
           dailyExpenses={dailyExpenses.reduce((sum, exp) => sum + Number(exp.amount), 0)}
         />
 
-        {/* 5. Breakdown Charts */}
-        <div className="grid grid-cols-1 gap-3">
-          {ingresosByCategory.length > 0 && (
-            <BalanceCategoryBreakdown
-              title="Fuentes de Ingreso"
-              data={ingresosByCategory.map(cat => ({
-                name: cat.name,
-                amount: cat.total,
-                color: cat.color,
-                percent: Math.round(cat.percentage)
-              }))}
-              type="income"
-            />
-          )}
-          {gastosByCategory.length > 0 && (
-            <BalanceCategoryBreakdown
-              title="Gastos por Categoría"
-              data={gastosByCategory.map(cat => ({
-                name: cat.name,
-                amount: cat.total,
-                color: cat.color,
-                percent: Math.round(cat.percentage)
-              }))}
-              type="expense"
-            />
-          )}
-        </div>
+        {/* 5. Breakdown Charts Carousel */}
+        {(ingresosByCategory.length > 0 || gastosByCategory.length > 0) && (
+          <Carousel className="w-full">
+            <CarouselContent>
+              {ingresosByCategory.length > 0 && (
+                <CarouselItem>
+                  <BalanceCategoryBreakdown
+                    title="Ingresos"
+                    data={ingresosByCategory.map(cat => ({
+                      name: cat.name,
+                      amount: cat.total,
+                      color: cat.color,
+                      percent: Math.round(cat.percentage)
+                    }))}
+                    type="income"
+                  />
+                </CarouselItem>
+              )}
+              {gastosByCategory.length > 0 && (
+                <CarouselItem>
+                  <BalanceCategoryBreakdown
+                    title="Gastos"
+                    data={gastosByCategory.map(cat => ({
+                      name: cat.name,
+                      amount: cat.total,
+                      color: cat.color,
+                      percent: Math.round(cat.percentage)
+                    }))}
+                    type="expense"
+                  />
+                </CarouselItem>
+              )}
+            </CarouselContent>
+          </Carousel>
+        )}
 
       </main>
 
