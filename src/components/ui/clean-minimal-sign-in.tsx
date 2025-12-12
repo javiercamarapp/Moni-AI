@@ -170,17 +170,17 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
   }
 
   return (
-    <div className="w-full flex flex-col items-center justify-center z-10">
-      <div className="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 p-8 flex flex-col items-center animate-in fade-in slide-in-from-bottom-8 duration-500">
-        <div className="flex items-center justify-center w-96 h-40 mb-8">
+    <div className="w-full flex flex-col items-center justify-center z-10 px-4">
+      <div className="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-[1.5rem] sm:rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 p-5 sm:p-8 flex flex-col items-center animate-in fade-in slide-in-from-bottom-8 duration-500">
+        <div className="flex items-center justify-center w-48 sm:w-72 h-20 sm:h-32 mb-4 sm:mb-8">
           <img src={moniLogo} alt="Moni AI" className="w-full h-full object-contain" />
         </div>
         
-        <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6 text-center">
           {isLogin ? '¡Hola de nuevo!' : 'Crear Cuenta'}
         </h2>
 
-        <div className="w-full flex flex-col gap-4 mb-2">
+        <div className="w-full flex flex-col gap-3 sm:gap-4 mb-2">
           <form onSubmit={handleSubmit} className="contents">
             {!isLogin && (
               <div className="relative group">
@@ -192,7 +192,7 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
                   type="text"
                   value={fullName}
                   disabled={loading}
-                  className="w-full h-14 pl-12 pr-4 rounded-2xl bg-white border-2 border-transparent focus:border-gray-200 shadow-sm outline-none text-gray-900 text-sm placeholder:text-gray-400 transition-all disabled:opacity-50"
+                  className="w-full h-12 sm:h-14 pl-10 sm:pl-12 pr-4 rounded-xl sm:rounded-2xl bg-white border-2 border-transparent focus:border-gray-200 shadow-sm outline-none text-gray-900 text-sm placeholder:text-gray-400 transition-all disabled:opacity-50"
                   onChange={(e) => setFullName(e.target.value)}
                 />
               </div>
@@ -206,7 +206,7 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
                 type="email"
                 value={email}
                 disabled={loading}
-                className="w-full h-14 pl-12 pr-4 rounded-2xl bg-white border-2 border-transparent focus:border-gray-200 shadow-sm outline-none text-gray-900 text-sm placeholder:text-gray-400 transition-all disabled:opacity-50"
+                className="w-full h-12 sm:h-14 pl-10 sm:pl-12 pr-4 rounded-xl sm:rounded-2xl bg-white border-2 border-transparent focus:border-gray-200 shadow-sm outline-none text-gray-900 text-sm placeholder:text-gray-400 transition-all disabled:opacity-50"
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
@@ -219,7 +219,7 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
                 type="password"
                 value={password}
                 disabled={loading}
-                className="w-full h-14 pl-12 pr-4 rounded-2xl bg-white border-2 border-transparent focus:border-gray-200 shadow-sm outline-none text-gray-900 text-sm placeholder:text-gray-400 transition-all disabled:opacity-50"
+                className="w-full h-12 sm:h-14 pl-10 sm:pl-12 pr-4 rounded-xl sm:rounded-2xl bg-white border-2 border-transparent focus:border-gray-200 shadow-sm outline-none text-gray-900 text-sm placeholder:text-gray-400 transition-all disabled:opacity-50"
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
@@ -243,7 +243,7 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
           type="submit"
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full h-14 mt-2 rounded-2xl bg-[#5D4037] text-white font-bold text-base flex items-center justify-center gap-2 shadow-lg hover:bg-[#4E342E] hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+          className="w-full h-12 sm:h-14 mt-2 rounded-xl sm:rounded-2xl bg-[#5D4037] text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg hover:bg-[#4E342E] hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">
@@ -255,7 +255,7 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
           )}
         </button>
         
-        <div className="relative my-6 w-full">
+        <div className="relative my-4 sm:my-6 w-full">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-200"></div>
           </div>
@@ -266,11 +266,11 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
           </div>
         </div>
 
-        <div className="flex gap-4 w-full justify-center">
+        <div className="flex gap-3 sm:gap-4 w-full justify-center">
           <button 
             onClick={() => onSocialLogin('google')}
             disabled={loading}
-            className="w-16 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center hover:scale-105 hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
+            className="w-14 h-12 sm:w-16 sm:h-14 bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center hover:scale-105 hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
           >
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -281,7 +281,7 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
           <button 
             onClick={() => onSocialLogin('facebook')}
             disabled={loading}
-            className="w-16 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center hover:scale-105 hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
+            className="w-14 h-12 sm:w-16 sm:h-14 bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center hover:scale-105 hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
           >
             <img
               src="https://www.svgrepo.com/show/448224/facebook.svg"
@@ -292,7 +292,7 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
           <button 
             onClick={() => onSocialLogin('apple')}
             disabled={loading}
-            className="w-16 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center hover:scale-105 hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
+            className="w-14 h-12 sm:w-16 sm:h-14 bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center hover:scale-105 hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
           >
             <img
               src="https://www.svgrepo.com/show/511330/apple-173.svg"
@@ -302,7 +302,7 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
           </button>
         </div>
 
-        <div className="mt-8 text-center">
+        <div className="mt-5 sm:mt-8 text-center">
           <p className="text-gray-500 text-sm font-medium">
             {isLogin ? (
               <>
