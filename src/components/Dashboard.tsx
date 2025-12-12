@@ -38,6 +38,7 @@ import GoalsWidget from '@/components/dashboard/GoalsWidget';
 // import RecentTransactionsWidget from '@/components/dashboard/RecentTransactionsWidget';
 import BudgetWidget from '@/components/dashboard/BudgetWidget';
 import QuickRecordFAB from '@/components/dashboard/QuickRecordFAB';
+import { PortfolioWidget } from '@/components/dashboard/PortfolioWidget';
 const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -1155,6 +1156,11 @@ const Dashboard = () => {
           {/* Balance Card - links to resumen */}
           <div className="mb-3">
             <BudgetCard income={monthlyIncome} expenses={monthlyExpenses} totalBudget={totalBudget} />
+          </div>
+
+          {/* Portfolio Widget */}
+          <div className="mb-3">
+            <PortfolioWidget />
           </div>
 
           {/* Goals Section - Personal & Group */}
