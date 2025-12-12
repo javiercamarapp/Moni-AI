@@ -52,9 +52,7 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
     : 0;
 
   return (
-    <div className="px-4 pb-8">
-      {/* Cards container */}
-      <div className="grid grid-cols-2 gap-3 max-w-md mx-auto">
+    <div className="grid grid-cols-2 gap-3 max-w-md mx-auto">
           {/* Score Moni Card */}
           <div 
             className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5"
@@ -185,7 +183,6 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
             )}
           </div>
         </div>
-    </div>
   );
 };
 

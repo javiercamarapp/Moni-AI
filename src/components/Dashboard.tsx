@@ -1192,16 +1192,19 @@ const Dashboard = () => {
   return (
     <>
       <div className="min-h-screen bg-[#faf9f8] text-gray-800 font-sans pb-20">
-        {/* Hero Section with Brown Background - Combined Header and Cards */}
-        <div 
-          className="relative rounded-b-[2.5rem]"
-          style={{
-            background: 'linear-gradient(135deg, #8D6E63 0%, #6D4C41 50%, #5D4037 100%)'
-          }}
-        >
-          {/* Header Buttons */}
-          <header className="relative px-6 py-4 pt-6">
-            <div className="absolute top-4 right-6 flex items-center gap-2">
+        {/* Hero Section with Brown Background */}
+        <div className="relative">
+          {/* Brown background - shorter, cards will overflow */}
+          <div 
+            className="absolute inset-x-0 top-0 h-32 rounded-b-[2rem]"
+            style={{
+              background: 'linear-gradient(135deg, #8D6E63 0%, #6D4C41 50%, #5D4037 100%)'
+            }}
+          />
+          
+          {/* Header Buttons - positioned above cards */}
+          <header className="relative z-20 px-6 py-4 pt-6">
+            <div className="flex items-center justify-end gap-2">
               <div className="relative">
                 <button 
                   onClick={() => navigate("/notifications")} 
@@ -1222,11 +1225,13 @@ const Dashboard = () => {
             </div>
           </header>
           
-          {/* Score and Net Worth Cards */}
-          <DashboardHeroSection scoreMoni={scoreMoni} />
+          {/* Score and Net Worth Cards - overlapping the brown bg */}
+          <div className="relative z-10 px-4 pb-4">
+            <DashboardHeroSection scoreMoni={scoreMoni} />
+          </div>
         </div>
 
-        <div className="page-container pt-4">
+        <div className="page-container pt-2">
           {/* Quick Stats */}
           <div>
             <QuickStats
