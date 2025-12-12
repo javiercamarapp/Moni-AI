@@ -1,45 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Wallet, TrendingUp, TrendingDown, ShoppingBag, Utensils, Car, Film, Home, CreditCard, Heart, GraduationCap, Zap, ChevronRight } from 'lucide-react';
+import { PiggyBank, TrendingUp, TrendingDown, ShoppingBag, Utensils, Car, Film, Home, CreditCard, Heart, GraduationCap, Zap } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
-
 interface CategorySpending {
   name: string;
   amount: number;
   icon: string;
   color: string;
 }
-
 interface BudgetCardProps {
   income: number;
   expenses: number;
   totalBudget: number;
 }
-
-const BudgetCard: React.FC<BudgetCardProps> = ({ income, expenses, totalBudget }) => {
+const BudgetCard: React.FC<BudgetCardProps> = ({
+  income,
+  expenses,
+  totalBudget
+}) => {
   const navigate = useNavigate();
   const [topCategories, setTopCategories] = useState<CategorySpending[]>([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const fetchTopCategories = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: {
+            user
+          }
+        } = await supabase.auth.getUser();
         if (!user) return;
-
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
-        const { data: transactions } = await supabase
-          .from('transactions')
-          .select('amount, categories(name)')
-          .eq('user_id', user.id)
-          .eq('type', 'gasto')
-          .gte('transaction_date', startOfMonth.toISOString().split('T')[0])
-          .lte('transaction_date', endOfMonth.toISOString().split('T')[0]);
-
+        const {
+          data: transactions
+        } = await supabase.from('transactions').select('amount, categories(name)').eq('user_id', user.id).eq('type', 'gasto').gte('transaction_date', startOfMonth.toISOString().split('T')[0]).lte('transaction_date', endOfMonth.toISOString().split('T')[0]);
         if (transactions && transactions.length > 0) {
           // Group by category
           const categoryMap = new Map<string, number>();
@@ -50,16 +47,13 @@ const BudgetCard: React.FC<BudgetCardProps> = ({ income, expenses, totalBudget }
           });
 
           // Sort and get top 3
-          const sorted = Array.from(categoryMap.entries())
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 3)
-            .map(([name, amount]) => ({
-              name: name.replace(/^[^\w\s]+\s*/, ''), // Remove emoji prefix
-              amount,
-              icon: getCategoryIcon(name),
-              color: getCategoryColor(name)
-            }));
-
+          const sorted = Array.from(categoryMap.entries()).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([name, amount]) => ({
+            name: name.replace(/^[^\w\s]+\s*/, ''),
+            // Remove emoji prefix
+            amount,
+            icon: getCategoryIcon(name),
+            color: getCategoryColor(name)
+          }));
           setTopCategories(sorted);
         }
       } catch (error) {
@@ -68,10 +62,8 @@ const BudgetCard: React.FC<BudgetCardProps> = ({ income, expenses, totalBudget }
         setLoading(false);
       }
     };
-
     fetchTopCategories();
   }, []);
-
   const getCategoryIcon = (name: string): string => {
     const lower = name.toLowerCase();
     if (lower.includes('alimenta') || lower.includes('comida') || lower.includes('restaur')) return 'food';
@@ -84,7 +76,6 @@ const BudgetCard: React.FC<BudgetCardProps> = ({ income, expenses, totalBudget }
     if (lower.includes('deuda') || lower.includes('crédito') || lower.includes('tarjeta')) return 'credit';
     return 'shopping';
   };
-
   const getCategoryColor = (name: string): string => {
     const lower = name.toLowerCase();
     if (lower.includes('alimenta') || lower.includes('comida')) return 'bg-green-500';
@@ -97,53 +88,52 @@ const BudgetCard: React.FC<BudgetCardProps> = ({ income, expenses, totalBudget }
     if (lower.includes('deuda')) return 'bg-orange-500';
     return 'bg-gray-500';
   };
-
   const renderIcon = (iconType: string, className: string) => {
-    const props = { size: 14, className };
+    const props = {
+      size: 14,
+      className
+    };
     switch (iconType) {
-      case 'food': return <Utensils {...props} />;
-      case 'car': return <Car {...props} />;
-      case 'film': return <Film {...props} />;
-      case 'home': return <Home {...props} />;
-      case 'health': return <Heart {...props} />;
-      case 'education': return <GraduationCap {...props} />;
-      case 'zap': return <Zap {...props} />;
-      case 'credit': return <CreditCard {...props} />;
-      default: return <ShoppingBag {...props} />;
+      case 'food':
+        return <Utensils {...props} />;
+      case 'car':
+        return <Car {...props} />;
+      case 'film':
+        return <Film {...props} />;
+      case 'home':
+        return <Home {...props} />;
+      case 'health':
+        return <Heart {...props} />;
+      case 'education':
+        return <GraduationCap {...props} />;
+      case 'zap':
+        return <Zap {...props} />;
+      case 'credit':
+        return <CreditCard {...props} />;
+      default:
+        return <ShoppingBag {...props} />;
     }
   };
-
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('es-MX', {
       style: 'currency',
       currency: 'MXN',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(value);
   };
 
   // Calculate progress percentages
-  const budgetUsed = totalBudget > 0 ? Math.min((expenses / totalBudget) * 100, 100) : 0;
-  const incomeVsBudget = totalBudget > 0 ? Math.min((income / totalBudget) * 100, 100) : 0;
+  const budgetUsed = totalBudget > 0 ? Math.min(expenses / totalBudget * 100, 100) : 0;
+  const incomeVsBudget = totalBudget > 0 ? Math.min(income / totalBudget * 100, 100) : 0;
   const maxCategoryAmount = topCategories.length > 0 ? topCategories[0].amount : 1;
-
-  return (
-    <div 
-      className="w-full bg-white rounded-2xl px-4 py-3 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08)] border border-gray-100 relative overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
-      onClick={() => navigate('/balance')}
-    >
+  return <div className="w-full bg-white rounded-2xl px-4 py-3 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08)] border border-gray-100 relative overflow-hidden cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/budgets')}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-xl bg-[#F5F0EE] flex items-center justify-center text-[#8D6E63]">
-            <Wallet size={16} />
-          </div>
-          <h3 className="text-gray-800 font-bold text-sm">Balance del mes</h3>
+      <div className="flex items-center gap-2 mb-3">
+        <div className="h-8 w-8 rounded-xl bg-[#F5F0EE] flex items-center justify-center text-[#8D6E63]">
+          <PiggyBank size={16} />
         </div>
-        <div className="flex items-center gap-1 text-gray-400">
-          <span className="text-xs">Resumen</span>
-          <ChevronRight className="w-3 h-3" />
-        </div>
+        <h3 className="text-gray-800 font-bold text-sm">Balance del mes</h3>
       </div>
 
       {/* Income & Expenses */}
@@ -174,15 +164,8 @@ const BudgetCard: React.FC<BudgetCardProps> = ({ income, expenses, totalBudget }
             <span className="text-sm font-bold text-gray-800">{formatCurrency(expenses)}</span>
           </div>
           <div className="relative">
-            <Progress 
-              value={budgetUsed} 
-              className={`h-2 ${budgetUsed > 80 ? 'bg-red-100' : 'bg-gray-100'}`}
-            />
-            {totalBudget > 0 && (
-              <span className="text-[10px] text-gray-400 mt-0.5 block">
-                {budgetUsed.toFixed(0)}% del presupuesto ({formatCurrency(totalBudget)})
-              </span>
-            )}
+            <Progress value={budgetUsed} className={`h-2 ${budgetUsed > 80 ? 'bg-red-100' : 'bg-gray-100'}`} />
+            {totalBudget > 0}
           </div>
         </div>
 
@@ -195,18 +178,12 @@ const BudgetCard: React.FC<BudgetCardProps> = ({ income, expenses, totalBudget }
             Top categorías
           </span>
           
-          {loading ? (
-            <div className="space-y-2">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="animate-pulse flex items-center gap-2">
+          {loading ? <div className="space-y-2">
+              {[1, 2, 3].map(i => <div key={i} className="animate-pulse flex items-center gap-2">
                   <div className="h-6 w-6 rounded-full bg-gray-200" />
                   <div className="flex-1 h-2 bg-gray-200 rounded" />
-                </div>
-              ))}
-            </div>
-          ) : topCategories.length > 0 ? (
-            topCategories.map((category, index) => (
-              <div key={index} className="space-y-1">
+                </div>)}
+            </div> : topCategories.length > 0 ? topCategories.map((category, index) => <div key={index} className="space-y-1">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className={`h-6 w-6 rounded-full ${category.color}/10 flex items-center justify-center`}>
@@ -218,19 +195,10 @@ const BudgetCard: React.FC<BudgetCardProps> = ({ income, expenses, totalBudget }
                   </div>
                   <span className="text-xs font-bold text-gray-800">{formatCurrency(category.amount)}</span>
                 </div>
-                <Progress 
-                  value={(category.amount / maxCategoryAmount) * 100} 
-                  className="h-1.5 bg-gray-100"
-                />
-              </div>
-            ))
-          ) : (
-            <p className="text-xs text-gray-400 text-center py-2">Sin gastos este mes</p>
-          )}
+                <Progress value={category.amount / maxCategoryAmount * 100} className="h-1.5 bg-gray-100" />
+              </div>) : <p className="text-xs text-gray-400 text-center py-2">Sin gastos este mes</p>}
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default BudgetCard;
