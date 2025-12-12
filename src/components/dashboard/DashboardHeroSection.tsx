@@ -165,7 +165,7 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
                           tick={{ fontSize: 9, fill: '#9ca3af' }}
                           tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
                           width={40}
-                          hide={false}
+                          hide={typeof window !== 'undefined' && window.innerWidth < 1024}
                         />
                         <Area
                           type="monotone"
