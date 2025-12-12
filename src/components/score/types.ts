@@ -16,6 +16,7 @@ export interface ScoreComponent {
   color: string;
   trend?: string;
   icon?: string;
+  IconComponent?: React.ElementType;
   details?: {
     whyImproved: string[];
     howToImprove: string[];
