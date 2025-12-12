@@ -1,74 +1,23 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, Check, Home, Car, Wallet, Shield, LineChart, Bitcoin, Landmark, Briefcase, Building2, MapPin, Target } from "lucide-react";
 import { useHasNetWorthData } from "@/hooks/useNetWorth";
-import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
-
-// Helper functions for number formatting
-const formatNumberWithCommas = (value: string): string => {
-  if (!value) return '';
-  const cleanValue = value.replace(/[^\d.]/g, '');
-  const parts = cleanValue.split('.');
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  return parts.length > 1 ? `${parts[0]}.${parts[1].slice(0, 2)}` : parts[0];
-};
-
-const parseFormattedNumber = (value: string): string => {
-  return value.replace(/,/g, '');
-};
-
-// Aspirational questions grouped by category
-const aspirationalCategories = [
-  {
-    name: "Bienes Raíces",
-    icon: Home,
-    questions: [
-      { id: 1, question: "¿Cuánto vale la casa en la que quisieras vivir?", placeholder: "Ejemplo: 1,000,000", required: true },
-      { id: 8, question: "¿Quieres tener una segunda propiedad? ¿Cuánto costaría?", placeholder: "Ejemplo: 800,000" },
-      { id: 9, question: "¿Propiedades de inversión (terrenos, departamentos o casas en renta)?", placeholder: "Ejemplo: 1,500,000", icon: Building2 },
-      { id: 10, question: "¿Terrenos u otros bienes raíces?", placeholder: "Ejemplo: 600,000", icon: MapPin },
-    ]
-  },
-  {
-    name: "Vehículos",
-    icon: Car,
-    questions: [
-      { id: 2, question: "¿Cuánto cuesta el coche de tus sueños?", placeholder: "Ejemplo: 500,000", required: true },
-      { id: 7, question: "¿Cuánto cuesta el coche que quieres darle a tu cónyuge?", placeholder: "Ejemplo: 400,000" },
-      { id: 15, question: "¿Vehículos extras? Valor total", placeholder: "Ejemplo: 300,000" },
-    ]
-  },
-  {
-    name: "Inversiones y Dinero Líquido",
-    icon: Wallet,
-    questions: [
-      { id: 3, question: "¿Cuánto quieres tener en ahorros disponibles (cuentas bancarias)?", placeholder: "Ejemplo: 300,000", required: true },
-      { id: 11, question: "¿Cuánto en tu fondo de emergencia?", placeholder: "Ejemplo: 150,000", icon: Shield },
-      { id: 4, question: "¿Cuánto en inversiones en bolsa o fondos (indexados, ETFs)?", placeholder: "Ejemplo: 800,000", required: true, icon: LineChart },
-      { id: 12, question: "¿Cuánto en criptomonedas?", placeholder: "Ejemplo: 200,000", icon: Bitcoin },
-      { id: 13, question: "¿Cuánto en aportaciones a retiro (AFORE, IRA)?", placeholder: "Ejemplo: 500,000", icon: Landmark },
-      { id: 14, question: "¿Cuánto en participaciones en empresas o startups?", placeholder: "Ejemplo: 400,000", icon: Briefcase },
-    ]
-  }
-];
+import JourneyTypeSelector, { JourneyType } from "@/components/journey/JourneyTypeSelector";
+import FinancialLifeQuiz from "@/components/journey/FinancialLifeQuiz";
+import FirstMillionQuiz from "@/components/journey/FirstMillionQuiz";
+import FirstPropertyQuiz from "@/components/journey/FirstPropertyQuiz";
 
 export default function LevelQuiz() {
   const navigate = useNavigate();
-  const [aspirationalAnswers, setAspirationalAnswers] = useState<Record<number, string>>({});
+  const [selectedJourney, setSelectedJourney] = useState<JourneyType | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [isCheckingAspirations, setIsCheckingAspirations] = useState(true);
+  const [isCheckingExisting, setIsCheckingExisting] = useState(true);
   const { data: hasNetWorthData, isLoading: checkingNetWorth } = useHasNetWorthData();
-  const [step, setStep] = useState(1);
 
-  // Check if user already has aspirations saved
+  // Check if user already has a journey path or aspirations
   useEffect(() => {
-    const checkExistingAspirations = async () => {
+    const checkExisting = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) {
@@ -76,6 +25,22 @@ export default function LevelQuiz() {
           return;
         }
 
+        // Check for existing journey path
+        const { data: journeyPath } = await supabase
+          .from("user_journey_paths")
+          .select("id, journey_type")
+          .eq("user_id", user.id)
+          .eq("is_active", true)
+          .limit(1)
+          .single();
+
+        if (journeyPath) {
+          // User already has a journey, redirect to analysis
+          navigate("/aspirations-analysis");
+          return;
+        }
+
+        // Check for existing aspirations (legacy)
         const { data: aspirations } = await supabase
           .from("user_aspirations")
           .select("id")
@@ -84,265 +49,348 @@ export default function LevelQuiz() {
 
         if (aspirations && aspirations.length > 0) {
           navigate("/aspirations-analysis");
+          return;
         }
       } catch (error) {
-        console.error("Error checking aspirations:", error);
+        console.error("Error checking existing data:", error);
       } finally {
-        setIsCheckingAspirations(false);
+        setIsCheckingExisting(false);
       }
     };
 
-    checkExistingAspirations();
+    checkExisting();
   }, [navigate]);
 
-  if (checkingNetWorth || isCheckingAspirations) {
+  if (checkingNetWorth || isCheckingExisting) {
     return null;
   }
 
-  const handleAnswer = (questionId: number, value: string) => {
-    const numericValue = parseFormattedNumber(value);
-    setAspirationalAnswers({ ...aspirationalAnswers, [questionId]: numericValue });
-  };
-
-  const handleComplete = async () => {
+  const handleFinancialLifeComplete = async (answers: Record<number, number>) => {
     setIsSaving(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      
       if (!user) {
         toast.error("Error de autenticación");
         return;
       }
 
-      // Validate mandatory questions (1, 2, 3, 4)
-      const mandatoryQuestions = [1, 2, 3, 4];
-      const answeredMandatory = mandatoryQuestions.filter(q => 
-        aspirationalAnswers[q] && parseFloat(aspirationalAnswers[q]) > 0
-      );
-
-      if (answeredMandatory.length < 4) {
-        toast.error("Por favor completa las 4 preguntas principales");
-        setIsSaving(false);
-        return;
-      }
-
       // Save aspirations
-      const aspirationsToSave = Object.entries(aspirationalAnswers)
-        .filter(([_, value]) => value && parseFloat(value) > 0)
-        .map(([questionId, value]) => ({
-          user_id: user.id,
-          question_id: parseInt(questionId),
-          value: parseFloat(value)
-        }));
+      const aspirationsToSave = Object.entries(answers).map(([questionId, value]) => ({
+        user_id: user.id,
+        question_id: parseInt(questionId),
+        value: value
+      }));
 
       const { error: aspirationsError } = await supabase
         .from("user_aspirations")
         .upsert(aspirationsToSave, { 
           onConflict: 'user_id,question_id',
           ignoreDuplicates: false 
-        })
-        .select();
+        });
 
       if (aspirationsError) throw aspirationsError;
 
+      // Calculate total aspirations
+      const totalAspirations = Object.values(answers).reduce((sum, val) => sum + val, 0);
+
+      // Generate milestones for financial life journey
+      const milestones = generateLifetimeMilestones(totalAspirations);
+
+      // Save journey path
+      const { error: journeyError } = await supabase
+        .from("user_journey_paths")
+        .insert({
+          user_id: user.id,
+          journey_type: 'financial_life',
+          target_amount: totalAspirations,
+          milestones: milestones as any,
+          is_active: true
+        } as any);
+
+      if (journeyError) throw journeyError;
+
       // Mark quiz as completed
-      const { error: profileError } = await supabase
+      await supabase
         .from("profiles")
         .update({ level_quiz_completed: true })
         .eq("id", user.id);
 
-      if (profileError) throw profileError;
-
       if (hasNetWorthData) {
-        toast.success("¡Aspiraciones guardadas!");
+        toast.success("¡Journey creado!");
         navigate("/aspirations-analysis");
       } else {
-        toast.success("¡Aspiraciones guardadas! Ahora completa tu patrimonio");
+        toast.success("¡Journey creado! Ahora completa tu patrimonio");
         navigate("/initial-net-worth");
       }
     } catch (error: any) {
-      console.error("Error saving aspirations:", error);
+      console.error("Error saving:", error);
       toast.error("Error al guardar: " + (error.message || "Error desconocido"));
     } finally {
       setIsSaving(false);
     }
   };
 
-  // Progress calculation
-  const requiredIds = [1, 2, 3, 4];
-  const answeredRequired = requiredIds.filter(id => 
-    aspirationalAnswers[id] && parseFloat(aspirationalAnswers[id]) > 0
-  ).length;
-  const isComplete = answeredRequired === requiredIds.length;
+  const handleFirstMillionComplete = async (data: {
+    currentInvested: number;
+    totalAssets: number;
+    totalLiabilities: number;
+    monthlyInvestmentCapacity: number;
+    breakdown: Record<string, number>;
+  }) => {
+    setIsSaving(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("Error de autenticación");
+        return;
+      }
 
-  const currentCategory = aspirationalCategories[step - 1];
-  const CategoryIcon = currentCategory?.icon || Target;
+      const targetAmount = 1000000;
+      const remaining = targetAmount - data.currentInvested;
+      
+      // Calculate years to reach goal (assuming 10% annual return)
+      const monthlyReturn = 0.10 / 12;
+      const monthlyInvestment = data.monthlyInvestmentCapacity;
+      let months = 0;
+      let balance = data.currentInvested;
+      
+      while (balance < targetAmount && months < 600) { // Max 50 years
+        balance = balance * (1 + monthlyReturn) + monthlyInvestment;
+        months++;
+      }
+      
+      const years = Math.ceil(months / 12);
 
-  const nextStep = () => {
-    window.scrollTo(0, 0);
-    setStep(prev => Math.min(prev + 1, 3));
+      // Generate milestones
+      const milestones = generateMillionMilestones(data.currentInvested, targetAmount, years);
+
+      // Generate AI plan
+      const aiPlan = {
+        currentInvested: data.currentInvested,
+        netWorth: data.totalAssets - data.totalLiabilities,
+        monthlyCapacity: monthlyInvestment,
+        estimatedYears: years,
+        estimatedMonthlyReturn: monthlyReturn,
+        strategy: monthlyInvestment >= 10000 ? 'aggressive' : monthlyInvestment >= 5000 ? 'moderate' : 'conservative',
+        breakdown: data.breakdown
+      };
+
+      // Save journey path
+      const { error: journeyError } = await supabase
+        .from("user_journey_paths")
+        .insert({
+          user_id: user.id,
+          journey_type: 'first_million',
+          target_amount: targetAmount,
+          target_years: years,
+          current_invested: data.currentInvested,
+          monthly_investment_capacity: monthlyInvestment,
+          milestones: milestones as any,
+          ai_generated_plan: aiPlan as any,
+          is_active: true
+        } as any);
+
+      if (journeyError) throw journeyError;
+
+      await supabase
+        .from("profiles")
+        .update({ level_quiz_completed: true })
+        .eq("id", user.id);
+
+      toast.success(`¡Plan generado! Alcanzarás tu millón en ~${years} años`);
+      navigate("/financial-journey");
+    } catch (error: any) {
+      console.error("Error saving:", error);
+      toast.error("Error al guardar: " + (error.message || "Error desconocido"));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const prevStep = () => {
-    window.scrollTo(0, 0);
-    setStep(prev => Math.max(prev - 1, 1));
+  const handleFirstPropertyComplete = async (data: {
+    propertyValue: number;
+    downPaymentPercent: number;
+    currentSavings: number;
+    monthlySavingsCapacity: number;
+    monthlyIncome: number;
+    totalDebts: number;
+    location?: string;
+    breakdown: Record<string, number | string>;
+  }) => {
+    setIsSaving(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("Error de autenticación");
+        return;
+      }
+
+      const downPaymentNeeded = data.propertyValue * (data.downPaymentPercent / 100);
+      const remaining = downPaymentNeeded - data.currentSavings;
+      
+      // Calculate months to save for down payment
+      const monthsToSave = remaining > 0 ? Math.ceil(remaining / data.monthlySavingsCapacity) : 0;
+      const years = Math.ceil(monthsToSave / 12);
+
+      // Generate milestones
+      const milestones = generatePropertyMilestones(data.currentSavings, downPaymentNeeded, years);
+
+      // Calculate debt-to-income ratio
+      const dti = (data.totalDebts / data.monthlyIncome) * 100;
+
+      // Generate AI plan
+      const aiPlan = {
+        propertyValue: data.propertyValue,
+        downPaymentPercent: data.downPaymentPercent,
+        downPaymentNeeded: downPaymentNeeded,
+        currentSavings: data.currentSavings,
+        remaining: remaining,
+        monthlyCapacity: data.monthlySavingsCapacity,
+        estimatedMonths: monthsToSave,
+        estimatedYears: years,
+        monthlyIncome: data.monthlyIncome,
+        debtToIncomeRatio: dti,
+        mortgageReady: dti < 35,
+        location: data.location,
+        breakdown: data.breakdown
+      };
+
+      // Save journey path
+      const { error: journeyError } = await supabase
+        .from("user_journey_paths")
+        .insert({
+          user_id: user.id,
+          journey_type: 'first_property',
+          target_amount: downPaymentNeeded,
+          target_years: years,
+          current_invested: data.currentSavings,
+          monthly_investment_capacity: data.monthlySavingsCapacity,
+          milestones: milestones as any,
+          ai_generated_plan: aiPlan as any,
+          is_active: true
+        } as any);
+
+      if (journeyError) throw journeyError;
+
+      await supabase
+        .from("profiles")
+        .update({ level_quiz_completed: true })
+        .eq("id", user.id);
+
+      if (years > 0) {
+        toast.success(`¡Plan generado! Tendrás tu enganche en ~${years} año${years > 1 ? 's' : ''}`);
+      } else {
+        toast.success("¡Ya tienes el enganche! Estás listo para comprar");
+      }
+      navigate("/financial-journey");
+    } catch (error: any) {
+      console.error("Error saving:", error);
+      toast.error("Error al guardar: " + (error.message || "Error desconocido"));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FAF7F5] to-[#F5F0EE] pb-32">
-      {/* Header - Brown gradient like NetWorthSetupForm */}
-      <div className="bg-gradient-to-b from-[#5D4037] via-[#5D4037] to-[#5D4037]/95 pb-8 rounded-b-[2rem]">
-        <div className="sticky top-0 z-40 pt-4">
-          <div className="max-w-2xl mx-auto px-4">
-            <div className="flex items-center justify-center mb-4">
-              <div className="flex flex-col items-center">
-                <span className="text-xs font-medium text-white/70 tracking-wide">Paso {step} de 3</span>
-                <h1 className="text-lg font-bold text-white">
-                  Tus Aspiraciones
-                </h1>
-              </div>
-            </div>
-            
-            {/* Progress bar */}
-            <div className="flex gap-2 mb-6">
-              {[1, 2, 3].map(i => (
-                <div 
-                  key={i} 
-                  className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${i <= step ? 'bg-white' : 'bg-white/30'}`} 
-                />
-              ))}
-            </div>
+  // If no journey selected, show selector
+  if (!selectedJourney) {
+    return <JourneyTypeSelector onSelect={setSelectedJourney} />;
+  }
 
-            {/* Icon and description inside header */}
-            <div className="text-center pb-2">
-              <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <CategoryIcon className="w-7 h-7 text-white" />
-              </div>
-              <h2 className="text-xl font-bold text-white">
-                {currentCategory?.name}
-              </h2>
-              <p className="text-white/70 text-sm mt-1 max-w-sm mx-auto">
-                {step === 1 && "Define tus metas en bienes raíces."}
-                {step === 2 && "Define tus metas en vehículos."}
-                {step === 3 && "Define tus metas en inversiones y ahorros."}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+  // Render appropriate quiz based on selection
+  switch (selectedJourney) {
+    case 'financial_life':
+      return <FinancialLifeQuiz onComplete={handleFinancialLifeComplete} isSaving={isSaving} />;
+    case 'first_million':
+      return <FirstMillionQuiz onComplete={handleFirstMillionComplete} isSaving={isSaving} />;
+    case 'first_property':
+      return <FirstPropertyQuiz onComplete={handleFirstPropertyComplete} isSaving={isSaving} />;
+    default:
+      return <JourneyTypeSelector onSelect={setSelectedJourney} />;
+  }
+}
 
-      {/* Content area */}
-      <div className="max-w-2xl mx-auto px-4 -mt-4">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={step}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="space-y-4"
-          >
-            {/* Questions for current category */}
-            {currentCategory?.questions.map((q) => {
-              const QuestionIcon = q.icon || currentCategory.icon;
-              const hasValue = aspirationalAnswers[q.id] && parseFloat(aspirationalAnswers[q.id]) > 0;
-              
-              return (
-                <Card 
-                  key={q.id} 
-                  className={cn(
-                    "bg-white rounded-3xl shadow-lg transition-all border-0",
-                    hasValue && "ring-2 ring-[#A1887F]/30"
-                  )}
-                >
-                  <div className="p-4">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className={cn(
-                        "w-10 h-10 rounded-2xl flex items-center justify-center",
-                        hasValue 
-                          ? "bg-[#5D4037]/10 text-[#5D4037]" 
-                          : "bg-[#A1887F]/10 text-[#A1887F]"
-                      )}>
-                        {hasValue ? <Check size={18} strokeWidth={3} /> : <QuestionIcon size={18} />}
-                      </div>
-                      <div className="flex-1">
-                        <span className={cn(
-                          "font-semibold text-sm",
-                          hasValue ? "text-[#3E2723]" : "text-[#8D6E63]"
-                        )}>
-                          {q.question}
-                        </span>
-                        {q.required && (
-                          <span className="ml-1 text-xs text-[#A1887F]">*</span>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4037] text-sm font-bold">$</span>
-                      <Input
-                        type="text"
-                        inputMode="numeric"
-                        pattern="[0-9]*"
-                        placeholder={q.placeholder}
-                        value={formatNumberWithCommas(aspirationalAnswers[q.id] || "")}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/[^0-9]/g, '');
-                          handleAnswer(q.id, value);
-                        }}
-                        className="h-11 text-sm pl-8 bg-[#F5F0EE] border-0 focus:ring-2 focus:ring-[#5D4037]/20 rounded-xl font-semibold text-[#5D4037]"
-                      />
-                    </div>
-                  </div>
-                </Card>
-              );
-            })}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+// Helper functions to generate milestones
+function generateLifetimeMilestones(totalAspirations: number): object[] {
+  const percentages = [10, 25, 50, 75, 100];
+  return percentages.map((pct, index) => ({
+    id: index + 1,
+    percentage: pct,
+    amount: Math.round(totalAspirations * (pct / 100)),
+    title: getMilestoneTitle(pct),
+    status: 'locked',
+    icon: getMilestoneIcon(pct)
+  }));
+}
 
-      {/* Fixed bottom buttons */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 pb-6 bg-gradient-to-t from-[#FAF7F5] via-[#FAF7F5] to-transparent z-20">
-        <div className="max-w-2xl mx-auto flex gap-3">
-          {step > 1 && (
-            <Button
-              variant="outline"
-              onClick={prevStep}
-              className="flex-1 h-14 rounded-2xl border-[#A1887F]/30 text-[#5D4037] font-bold hover:bg-[#A1887F]/10"
-            >
-              Anterior
-            </Button>
-          )}
-          
-          {step < 3 ? (
-            <Button
-              onClick={nextStep}
-              className="flex-1 h-14 rounded-2xl bg-[#5D4037] hover:bg-[#4E342E] text-white font-bold shadow-lg"
-            >
-              Siguiente
-            </Button>
-          ) : (
-            <Button
-              onClick={handleComplete}
-              disabled={!isComplete || isSaving}
-              className={cn(
-                "flex-1 h-14 rounded-2xl font-bold shadow-lg transition-all",
-                isComplete 
-                  ? "bg-[#5D4037] hover:bg-[#4E342E] text-white" 
-                  : "bg-[#A1887F]/50 text-white/70 cursor-not-allowed"
-              )}
-            >
-              {isSaving ? (
-                <span className="flex items-center gap-2">
-                  <span className="animate-spin w-5 h-5 border-2 border-white/30 border-t-white rounded-full" />
-                  Guardando...
-                </span>
-              ) : (
-                "Guardar Aspiraciones"
-              )}
-            </Button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+function generateMillionMilestones(current: number, target: number, years: number): object[] {
+  const amounts = [100000, 250000, 500000, 750000, 1000000];
+  return amounts.map((amount, index) => ({
+    id: index + 1,
+    amount: amount,
+    percentage: (amount / target) * 100,
+    title: `$${(amount / 1000).toFixed(0)}K invertidos`,
+    status: current >= amount ? 'completed' : 'locked',
+    estimatedYear: Math.ceil((index + 1) * (years / 5)),
+    icon: getInvestmentIcon(amount)
+  }));
+}
+
+function generatePropertyMilestones(current: number, target: number, years: number): object[] {
+  const percentages = [20, 40, 60, 80, 100];
+  return percentages.map((pct, index) => {
+    const amount = Math.round(target * (pct / 100));
+    return {
+      id: index + 1,
+      percentage: pct,
+      amount: amount,
+      title: `${pct}% del enganche`,
+      status: current >= amount ? 'completed' : 'locked',
+      estimatedMonths: Math.ceil((index + 1) * (years * 12 / 5)),
+      icon: getPropertyIcon(pct)
+    };
+  });
+}
+
+function getMilestoneTitle(pct: number): string {
+  switch (pct) {
+    case 10: return "Primer paso";
+    case 25: return "En camino";
+    case 50: return "Mitad del camino";
+    case 75: return "Casi llegamos";
+    case 100: return "¡Meta alcanzada!";
+    default: return `${pct}% completado`;
+  }
+}
+
+function getMilestoneIcon(pct: number): string {
+  switch (pct) {
+    case 10: return "🌱";
+    case 25: return "🚀";
+    case 50: return "⭐";
+    case 75: return "🏆";
+    case 100: return "👑";
+    default: return "📍";
+  }
+}
+
+function getInvestmentIcon(amount: number): string {
+  switch (amount) {
+    case 100000: return "💰";
+    case 250000: return "📈";
+    case 500000: return "🎯";
+    case 750000: return "🔥";
+    case 1000000: return "👑";
+    default: return "💵";
+  }
+}
+
+function getPropertyIcon(pct: number): string {
+  switch (pct) {
+    case 20: return "🔑";
+    case 40: return "🏗️";
+    case 60: return "🏠";
+    case 80: return "🎯";
+    case 100: return "🏡";
+    default: return "📍";
+  }
 }
