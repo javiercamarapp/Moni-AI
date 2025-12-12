@@ -18,6 +18,22 @@ interface BudgetCardProps {
   totalBudget: number;
 }
 
+// Helper to validate and sanitize cached categories
+const validateCachedCategories = (cached: any): CategorySpending[] => {
+  if (!Array.isArray(cached)) return [];
+  return cached
+    .filter((c): c is CategorySpending => 
+      c && typeof c.name === 'string' && typeof c.amount === 'number'
+    )
+    .slice(0, 3) // Always ensure max 3
+    .map(c => ({
+      name: c.name,
+      amount: c.amount,
+      icon: c.icon || 'shopping',
+      color: c.color || 'bg-[#5D4037]'
+    }));
+};
+
 const BudgetCard: React.FC<BudgetCardProps> = ({
   income,
   expenses,
@@ -25,15 +41,16 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
 }) => {
   const navigate = useNavigate();
   
-  // Initialize with cached data immediately for instant display
+  // Initialize with validated cached data - only top 3, never more
   const [topCategories, setTopCategories] = useState<CategorySpending[]>(() => {
     const cached = getCache<CategorySpending[]>(CACHE_KEYS.TOP_CATEGORIES);
-    return cached || [];
+    return validateCachedCategories(cached);
   });
+  
   const [loading, setLoading] = useState(() => {
-    // If we have cache, don't show loading state
     const cached = getCache<CategorySpending[]>(CACHE_KEYS.TOP_CATEGORIES);
-    return !cached || cached.length === 0;
+    const validated = validateCachedCategories(cached);
+    return validated.length === 0;
   });
 
   useEffect(() => {
@@ -63,19 +80,19 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
             categoryMap.set(categoryName, current + Number(tx.amount));
           });
 
-          // Sort and get top 3
-          const sorted = Array.from(categoryMap.entries())
+          // Sort and get ONLY top 3
+          const sorted: CategorySpending[] = Array.from(categoryMap.entries())
             .sort((a, b) => b[1] - a[1])
             .slice(0, 3)
             .map(([name, amount]) => ({
               name: getShortCategoryName(name),
               amount,
               icon: getCategoryIcon(name),
-              color: getCategoryColor()
+              color: 'bg-[#5D4037]'
             }));
 
           setTopCategories(sorted);
-          // Cache the result with user id for proper isolation
+          // Cache ONLY the top 3 with user id
           setCache(CACHE_KEYS.TOP_CATEGORIES, sorted, CACHE_TTL.SHORT, user.id);
         }
       } catch (error) {
