@@ -158,9 +158,10 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
                           tick={{ fontSize: 9, fill: '#9ca3af' }}
                           interval={0}
                           tickFormatter={(value, index) => {
-                            // Deduplicate: only show if different from previous
+                            // Only show unique months (first occurrence)
                             const data = netWorthData?.chartData || [];
-                            if (index > 0 && data[index - 1]?.date === value) {
+                            const previousDates = data.slice(0, index).map(d => d.date);
+                            if (previousDates.includes(value)) {
                               return '';
                             }
                             return value;
