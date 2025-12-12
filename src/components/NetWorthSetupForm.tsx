@@ -89,7 +89,7 @@ const assetCategories: { name: string; category: string; examples: string[]; ico
   { name: 'Otras propiedades', category: 'Property', examples: ['Depto en Renta Centro', 'Local Comercial', 'Casa Playa'], icon: Building2 },
   { name: 'Vehículos', category: 'Other', examples: ['Toyota Corolla 2020', 'Honda CRV', 'Moto Italika'], icon: Car },
   { name: 'Fondos de ahorro', category: 'Savings', examples: ['Afore Sura', 'Fondo GBM+', 'CETES'], icon: PiggyBank },
-  { name: 'Dinero prestado', category: 'Other', examples: ['Préstamo a Juan', 'Deuda Socio', 'Préstamo Hermano'], icon: HandCoins },
+  { name: 'Préstamos otorgados', category: 'Other', examples: ['Préstamo a Juan', 'Deuda Socio', 'Préstamo Hermano'], icon: HandCoins },
   { name: 'Relojes o joyas', category: 'Other', examples: ['Rolex Submariner', 'Anillo Oro', 'Collar Diamantes'], icon: Watch },
 ];
 
