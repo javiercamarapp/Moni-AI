@@ -416,7 +416,7 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
 
                   {/* Custom Categories (if any) + Add Button - same grid */}
                   <div className="grid grid-cols-6 gap-1.5">
-                    {customCategories.slice(0, 5).map((cat) => (
+                    {customCategories.slice(0, 6).map((cat) => (
                       <div key={cat.id} className="relative group flex flex-col items-center gap-0.5">
                         <button
                           onClick={() => setSelectedCategoryId(cat.id)}
@@ -445,16 +445,18 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
                       </div>
                     ))}
 
-                    {/* Add new category button */}
-                    <button
-                      onClick={() => setShowAddCategory(true)}
-                      className="flex flex-col items-center gap-0.5"
-                    >
-                      <div className="h-9 w-9 rounded-full bg-[#8D6E63]/10 flex items-center justify-center border border-dashed border-[#8D6E63]/40">
-                        <Plus size={14} className="text-[#8D6E63]" />
-                      </div>
-                      <span className="text-[7px] font-semibold text-[#8D6E63]">Nueva</span>
-                    </button>
+                    {/* Add new category button - only show if less than 6 custom categories */}
+                    {customCategories.length < 6 && (
+                      <button
+                        onClick={() => setShowAddCategory(true)}
+                        className="flex flex-col items-center gap-0.5"
+                      >
+                        <div className="h-9 w-9 rounded-full bg-[#8D6E63]/10 flex items-center justify-center border border-dashed border-[#8D6E63]/40">
+                          <Plus size={14} className="text-[#8D6E63]" />
+                        </div>
+                        <span className="text-[7px] font-semibold text-[#8D6E63]">Nueva</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               ) : (
