@@ -30,42 +30,40 @@ const QuickRecordFAB: React.FC = () => {
         <AnimatePresence>
           {isOpen && (
             <>
-              {/* Income button - top left */}
+              {/* Mic button - north */}
               <motion.button
                 initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1, x: -70, y: -70 }}
-                exit={{ opacity: 0, scale: 0.5, x: 0, y: 0 }}
-                transition={{ duration: 0.15 }}
-                onClick={() => handleRecord('income')}
-                className="absolute bottom-0 right-0 flex items-center gap-2 bg-[#A1887F] text-white rounded-full px-4 py-2.5 shadow-lg hover:bg-[#8D6E63] transition-colors"
-              >
-                <TrendingUp className="w-4 h-4" />
-                <span className="text-sm font-medium">Ingreso</span>
-              </motion.button>
-
-              {/* Expense button - top */}
-              <motion.button
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1, y: -110 }}
+                animate={{ opacity: 1, scale: 1, y: -75 }}
                 exit={{ opacity: 0, scale: 0.5, y: 0 }}
-                transition={{ duration: 0.15, delay: 0.05 }}
-                onClick={() => handleRecord('expense')}
-                className="absolute bottom-0 right-0 flex items-center gap-2 bg-[#5D4037] text-white rounded-full px-4 py-2.5 shadow-lg hover:bg-[#4E342E] transition-colors"
-              >
-                <TrendingDown className="w-4 h-4" />
-                <span className="text-sm font-medium">Gasto</span>
-              </motion.button>
-
-              {/* Voice button - top right */}
-              <motion.button
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1, x: 70, y: -70 }}
-                exit={{ opacity: 0, scale: 0.5, x: 0, y: 0 }}
-                transition={{ duration: 0.15, delay: 0.1 }}
+                transition={{ duration: 0.15 }}
                 onClick={openVoiceRecording}
                 className="absolute bottom-0 right-0 flex items-center justify-center w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
               >
                 <Mic className="w-5 h-5" />
+              </motion.button>
+
+              {/* Income button - northwest */}
+              <motion.button
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1, x: -55, y: -55 }}
+                exit={{ opacity: 0, scale: 0.5, x: 0, y: 0 }}
+                transition={{ duration: 0.15, delay: 0.05 }}
+                onClick={() => handleRecord('income')}
+                className="absolute bottom-0 right-0 flex items-center justify-center w-11 h-11 bg-[#A1887F] text-white rounded-full shadow-lg hover:bg-[#8D6E63] transition-colors"
+              >
+                <TrendingUp className="w-5 h-5" />
+              </motion.button>
+
+              {/* Expense button - west */}
+              <motion.button
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1, x: -75, y: 0 }}
+                exit={{ opacity: 0, scale: 0.5, x: 0, y: 0 }}
+                transition={{ duration: 0.15, delay: 0.1 }}
+                onClick={() => handleRecord('expense')}
+                className="absolute bottom-0 right-0 flex items-center justify-center w-11 h-11 bg-[#5D4037] text-white rounded-full shadow-lg hover:bg-[#4E342E] transition-colors"
+              >
+                <TrendingDown className="w-5 h-5" />
               </motion.button>
             </>
           )}
