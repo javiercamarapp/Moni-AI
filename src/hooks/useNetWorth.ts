@@ -45,17 +45,28 @@ export interface ChartDataPoint {
   liabilities: number;
 }
 
-// Generate realistic fluctuations based on a seed (for consistency)
-const generateFluctuation = (baseValue: number, dayIndex: number, volatility: number = 0.02): number => {
-  // Use sine waves with different frequencies for natural-looking fluctuations
-  const wave1 = Math.sin(dayIndex * 0.3) * volatility;
-  const wave2 = Math.sin(dayIndex * 0.7 + 1.5) * (volatility * 0.5);
-  const wave3 = Math.sin(dayIndex * 0.1 + 3) * (volatility * 0.3);
+// Generate realistic fluctuations with positive trend over time
+const generateFluctuationWithTrend = (
+  currentValue: number, 
+  pointIndex: number, 
+  totalPoints: number,
+  volatility: number = 0.02
+): number => {
+  // Calculate progress from start to end (0 = oldest, 1 = now)
+  const progress = pointIndex / totalPoints;
   
-  // Add some "spending" patterns - slight downward trend with occasional jumps up (income)
-  const spendingTrend = (dayIndex % 30) < 25 ? -0.001 * (dayIndex % 30) : 0.02;
+  // Start value is lower than current (positive trend)
+  // The further back, the lower the value (growth of 15-25% over the period)
+  const growthFactor = 0.75 + (progress * 0.25); // Starts at 75% of current, grows to 100%
+  const baseValue = currentValue * growthFactor;
   
-  const totalFluctuation = wave1 + wave2 + wave3 + spendingTrend;
+  // Add natural fluctuations using sine waves
+  const wave1 = Math.sin(pointIndex * 0.4) * volatility;
+  const wave2 = Math.sin(pointIndex * 0.9 + 1.5) * (volatility * 0.5);
+  const wave3 = Math.sin(pointIndex * 0.15 + 3) * (volatility * 0.3);
+  
+  // Combine base growth with fluctuations
+  const totalFluctuation = wave1 + wave2 + wave3;
   return baseValue * (1 + totalFluctuation);
 };
 
@@ -187,7 +198,7 @@ export function useNetWorth(timeRange: TimeRange) {
                             timeRange === '6M' ? 0.03 : 
                             timeRange === '3M' ? 0.02 : 0.01;
           
-          value = generateFluctuation(currentNetWorth, i, volatility);
+          value = generateFluctuationWithTrend(currentNetWorth, i, numPoints, volatility);
           
           // Simulate assets and liabilities
           const assetRatio = totalAssets / (totalAssets + totalLiabilities || 1);
