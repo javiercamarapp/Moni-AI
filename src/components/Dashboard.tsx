@@ -1270,17 +1270,6 @@ const Dashboard = () => {
             />
           </div>
 
-          {/* Quick Stats */}
-          <div className="mb-4">
-            <QuickStats
-              summaryValue={`$${(currentMonth.balance / 1000).toFixed(0)}k`}
-              netWorthValue={netWorth >= 1000000 ? `$${(netWorth / 1000000).toFixed(1)}M` : `$${(netWorth / 1000).toFixed(0)}k`}
-              goalsCount={goals.length}
-              journeyLevel={totalAspiration > 0 ? Math.floor((netWorth / totalAspiration) * 10000) : 0}
-            />
-          </div>
-
-
           {/* Goals Section - Personal & Group */}
           <div>
             <GoalsWidget

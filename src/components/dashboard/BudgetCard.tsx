@@ -127,78 +127,67 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
   const budgetUsed = totalBudget > 0 ? Math.min(expenses / totalBudget * 100, 100) : 0;
   const incomeVsBudget = totalBudget > 0 ? Math.min(income / totalBudget * 100, 100) : 0;
   const maxCategoryAmount = topCategories.length > 0 ? topCategories[0].amount : 1;
-  return <div className="w-full bg-white rounded-2xl px-4 py-3 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08)] border border-gray-100 relative overflow-hidden cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/budgets')}>
+  return <div className="w-full bg-white rounded-2xl px-4 py-2.5 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08)] border border-gray-100 relative overflow-hidden cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/balance')}>
       {/* Header */}
-      <div className="flex items-center gap-2 mb-3">
-        <div className="h-8 w-8 rounded-xl bg-[#F5F0EE] flex items-center justify-center text-[#8D6E63]">
-          <PiggyBank size={16} />
+      <div className="flex items-center gap-2 mb-2">
+        <div className="h-7 w-7 rounded-xl bg-[#F5F0EE] flex items-center justify-center text-[#8D6E63]">
+          <PiggyBank size={14} />
         </div>
         <h3 className="text-gray-800 font-bold text-sm">Balance del mes</h3>
       </div>
 
-      {/* Income & Expenses */}
-      <div className="space-y-3">
+      {/* Income & Expenses - Compact horizontal layout */}
+      <div className="grid grid-cols-2 gap-3 mb-2">
         {/* Income */}
         <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="h-6 w-6 rounded-full bg-green-50 flex items-center justify-center">
-                <TrendingUp size={12} className="text-green-600" />
-              </div>
-              <span className="text-xs font-medium text-gray-600">Ingresos</span>
+          <div className="flex items-center gap-1.5">
+            <div className="h-5 w-5 rounded-full bg-green-50 flex items-center justify-center">
+              <TrendingUp size={10} className="text-green-600" />
             </div>
-            <span className="text-sm font-bold text-gray-800">{formatCurrency(income)}</span>
+            <span className="text-[10px] font-medium text-gray-500">Ingresos</span>
           </div>
-          <Progress value={incomeVsBudget} className="h-2 bg-gray-100" />
+          <span className="text-sm font-bold text-gray-800 block">{formatCurrency(income)}</span>
+          <Progress value={incomeVsBudget} className="h-1.5 bg-gray-100" />
         </div>
 
         {/* Expenses */}
         <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="h-6 w-6 rounded-full bg-red-50 flex items-center justify-center">
-                <TrendingDown size={12} className="text-red-600" />
-              </div>
-              <span className="text-xs font-medium text-gray-600">Gastos</span>
+          <div className="flex items-center gap-1.5">
+            <div className="h-5 w-5 rounded-full bg-red-50 flex items-center justify-center">
+              <TrendingDown size={10} className="text-red-600" />
             </div>
-            <span className="text-sm font-bold text-gray-800">{formatCurrency(expenses)}</span>
+            <span className="text-[10px] font-medium text-gray-500">Gastos</span>
           </div>
-          <div className="relative">
-            <Progress value={budgetUsed} className={`h-2 ${budgetUsed > 80 ? 'bg-red-100' : 'bg-gray-100'}`} />
-            {totalBudget > 0}
-          </div>
+          <span className="text-sm font-bold text-gray-800 block">{formatCurrency(expenses)}</span>
+          <Progress value={budgetUsed} className={`h-1.5 ${budgetUsed > 80 ? 'bg-red-100' : 'bg-gray-100'}`} />
         </div>
+      </div>
 
-        {/* Divider */}
-        <div className="h-px bg-gray-100" />
+      {/* Divider */}
+      <div className="h-px bg-gray-100 my-2" />
 
-        {/* Top 3 Categories */}
-        <div className="space-y-2">
+        {/* Top 3 Categories - Compact */}
+        <div className="space-y-1.5">
           <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">
             Top categorías
           </span>
           
-          {loading ? <div className="space-y-2">
-              {[1, 2, 3].map(i => <div key={i} className="animate-pulse flex items-center gap-2">
-                  <div className="h-6 w-6 rounded-full bg-gray-200" />
-                  <div className="flex-1 h-2 bg-gray-200 rounded" />
-                </div>)}
-            </div> : topCategories.length > 0 ? topCategories.map((category, index) => <div key={index} className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className={`h-6 w-6 rounded-full ${category.color}/10 flex items-center justify-center`}>
-                      {renderIcon(category.icon, `${category.color.replace('bg-', 'text-')}`)}
-                    </div>
-                    <span className="text-xs font-medium text-gray-600 truncate max-w-[100px]">
-                      {category.name}
-                    </span>
+          {loading ? <div className="flex gap-2">
+              {[1, 2, 3].map(i => <div key={i} className="animate-pulse h-6 w-16 rounded-full bg-gray-200" />)}
+            </div> : topCategories.length > 0 ? <div className="flex flex-wrap gap-1.5">
+              {topCategories.map((category, index) => (
+                <div key={index} className="flex items-center gap-1.5 bg-gray-50 rounded-full px-2 py-1">
+                  <div className={`h-4 w-4 rounded-full ${category.color}/10 flex items-center justify-center`}>
+                    {renderIcon(category.icon, `${category.color.replace('bg-', 'text-')}`)}
                   </div>
-                  <span className="text-xs font-bold text-gray-800">{formatCurrency(category.amount)}</span>
+                  <span className="text-[10px] font-medium text-gray-600 truncate max-w-[60px]">
+                    {category.name}
+                  </span>
+                  <span className="text-[10px] font-bold text-gray-800">{formatCurrency(category.amount)}</span>
                 </div>
-                <Progress value={category.amount / maxCategoryAmount * 100} className="h-1.5 bg-gray-100" />
-              </div>) : <p className="text-xs text-gray-400 text-center py-2">Sin gastos este mes</p>}
+              ))}
+            </div> : <p className="text-xs text-gray-400 text-center py-1">Sin gastos este mes</p>}
         </div>
-      </div>
     </div>;
 };
 export default BudgetCard;
