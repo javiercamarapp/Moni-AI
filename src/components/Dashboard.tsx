@@ -1204,36 +1204,55 @@ const Dashboard = () => {
             }}
           />
           
-          {/* Header Buttons - positioned above cards */}
+          {/* Header with remaining amount and buttons */}
           <header className="relative z-20 px-6 py-2 pt-4">
-            <div className="flex items-center justify-end gap-2">
-              <div className="relative">
+            <div className="flex items-center justify-between">
+              {/* Remaining Amount - Large */}
+              <div 
+                className="cursor-pointer group" 
+                onClick={() => navigate('/budgets')}
+              >
+                <span className="text-2xl font-bold text-white group-hover:text-white/90 transition-colors">
+                  {new Intl.NumberFormat('es-MX', {
+                    style: 'currency',
+                    currency: 'MXN',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                  }).format(Math.max(0, totalBudget - currentMonthExpenses))}
+                </span>
+                <p className="text-xs text-white/70">Disponible este mes</p>
+              </div>
+              
+              {/* Buttons */}
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <button 
+                    onClick={() => navigate("/notifications")} 
+                    className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-7 w-7 shadow-sm transition-all border border-white/20"
+                  >
+                    <Bell className="h-3.5 w-3.5" />
+                  </button>
+                  {unreadNotifications > 0 && (
+                    <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-red-500 border border-white animate-pulse" />
+                  )}
+                </div>
                 <button 
-                  onClick={() => navigate("/notifications")} 
+                  onClick={() => navigate("/settings")} 
                   className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-7 w-7 shadow-sm transition-all border border-white/20"
                 >
-                  <Bell className="h-3.5 w-3.5" />
+                  <Settings className="h-3.5 w-3.5" />
                 </button>
-                {unreadNotifications > 0 && (
-                  <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-red-500 border border-white animate-pulse" />
-                )}
               </div>
-              <button 
-                onClick={() => navigate("/settings")} 
-                className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-7 w-7 shadow-sm transition-all border border-white/20"
-              >
-                <Settings className="h-3.5 w-3.5" />
-              </button>
             </div>
           </header>
 
           {/* Budget Progress Bar - over the brown background */}
-          <div className="relative z-10 px-4 pb-3">
+          <div className="relative z-10 px-4 pb-2">
             <BudgetProgressBar spent={currentMonthExpenses} totalBudget={totalBudget} />
           </div>
           
-          {/* Score and Net Worth Cards - overlapping the brown bg */}
-          <div className="relative z-10 px-4 pb-4">
+          {/* Score and Net Worth Cards - moved up */}
+          <div className="relative z-10 px-4 pb-4 -mt-1">
             <DashboardHeroSection scoreMoni={scoreMoni} />
           </div>
         </div>

@@ -41,14 +41,14 @@ const BudgetProgressBar: React.FC<BudgetProgressBarProps> = ({
         </span>
       </div>
       
-      {/* Remaining/Over text */}
-      <div className="text-center mt-0.5">
-        {isOverBudget ? <span className="text-[10px] text-red-300">
+      {/* Remaining/Over text - only show if over budget */}
+      {isOverBudget && (
+        <div className="text-center mt-0.5">
+          <span className="text-[10px] text-red-300">
             Excedido por {formatCurrency(Math.abs(remaining))}
-          </span> : <span className="text-[10px] text-white/60">
-            Te quedan {formatCurrency(remaining)} por gastar
-          </span>}
-      </div>
+          </span>
+        </div>
+      )}
     </div>;
 };
 export default BudgetProgressBar;
