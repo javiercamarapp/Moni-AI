@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { MoniLoader } from "./MoniLoader";
 
 interface SubscriptionGuardProps {
   children: React.ReactNode;
@@ -53,7 +52,7 @@ export default function SubscriptionGuard({ children }: SubscriptionGuardProps) 
     verifySubscription();
   }, [navigate]);
 
-  if (loading) return <MoniLoader />;
+  if (loading) return null;
   if (!isActive) return null;
 
   return <>{children}</>;

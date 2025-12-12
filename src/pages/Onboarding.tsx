@@ -10,22 +10,13 @@ import AnimatedArmIcon from '../components/onboarding/AnimatedArmIcon';
 import AnimatedScoreIcon from '../components/onboarding/AnimatedScoreIcon';
 import AnimatedSocialIcon from '../components/onboarding/AnimatedSocialIcon';
 import AnimatedNotificationsIcon from '../components/onboarding/AnimatedNotificationsIcon';
-import { LoadingScreen } from '@/components/LoadingScreen';
 import MultiOrbitSemiCircle from '../components/onboarding/ui/MultiOrbitSemiCircle';
 import { StackCardCarousel } from '../components/onboarding/ui/StackCard';
 import onboardingHero from '@/assets/onboarding-hero.png';
 const Onboarding: React.FC = () => {
   const [step, setStep] = useState(0);
   const [showBackground, setShowBackground] = useState(false);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  React.useEffect(() => {
-    // Splash screen timer
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2100);
-    return () => clearTimeout(timer);
-  }, []);
   const requestNotificationPermission = async () => {
     if (!("Notification" in window)) return;
     try {
@@ -699,9 +690,6 @@ const Onboarding: React.FC = () => {
       setStep(step - 1);
     }
   };
-  if (loading) {
-    return <LoadingScreen showProgress={false} />;
-  }
   return <div className="fixed inset-0 bg-bg z-50 flex flex-col h-screen justify-between font-sans overflow-hidden">
 
             {/* Background Fade-In Overlay */}

@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSubscription } from "@/hooks/useSubscription";
-import { LoadingScreen } from "@/components/LoadingScreen";
 
 interface PremiumFeatureProps {
   children: React.ReactNode;
@@ -20,7 +19,7 @@ export default function PremiumFeature({ children }: PremiumFeatureProps) {
   }, [isPremium, loading, navigate]);
 
   if (loading) {
-    return <LoadingScreen />;
+    return null;
   }
 
   if (isPremium) {

@@ -4,7 +4,6 @@ import { ArrowLeft, Users, Target, Plus, TrendingUp, Sparkles } from "lucide-rea
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { MoniLoader } from "@/components/MoniLoader";
 import BottomNav from "@/components/BottomNav";
 import { GroupGoalCard } from "@/components/goals/GroupGoalCard";
 import { CreateGroupGoalModal } from "@/components/goals/CreateGroupGoalModal";
@@ -183,9 +182,7 @@ const GroupGoals = () => {
 
         <div className="page-container py-6 space-y-6">
           {loading ? (
-            <div className="py-12">
-              <MoniLoader size="lg" message="Cargando metas grupales..." />
-            </div>
+            null
           ) : circles.length === 0 ? (
             // No Circles State
             <div className="text-center py-16">

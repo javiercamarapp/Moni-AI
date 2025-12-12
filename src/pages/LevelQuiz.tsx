@@ -13,7 +13,6 @@ import moniHouseAspiration from "@/assets/moni-house-aspiration.png";
 import moniCarAspiration from "@/assets/moni-car-aspiration.png";
 import moniSavings from "@/assets/moni-savings.png";
 import { cn } from "@/lib/utils";
-import { MoniLoader } from "@/components/MoniLoader";
 import FinancialQuotesCarousel from "@/components/FinancialQuotesCarousel";
 
 const questions = [
@@ -99,11 +98,7 @@ export default function LevelQuiz() {
 
   // Verificar estado de net worth antes de mostrar el quiz
   if (checkingNetWorth || isCheckingAspirations) {
-    return (
-      <div className="page-standard min-h-screen flex items-center justify-center">
-        <MoniLoader size="lg" />
-      </div>
-    );
+    return null;
   }
 
   // Cuestionario aspiracional

@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, Users } from "lucide-react";
 import { toast } from "sonner";
-import { MoniLoader } from "@/components/MoniLoader";
 import { SectionLoader } from "@/components/SectionLoader";
 
 interface Profile {
@@ -98,11 +97,7 @@ const CircleMembers = () => {
   };
 
   if (!circle) {
-    return (
-      <div className="page-standard min-h-screen flex items-center justify-center">
-        <MoniLoader size="lg" />
-      </div>
-    );
+    return null;
   }
 
   return (

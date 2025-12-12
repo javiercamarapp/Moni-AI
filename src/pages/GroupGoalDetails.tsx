@@ -6,7 +6,6 @@ import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { MoniLoader } from "@/components/MoniLoader";
 import { formatCurrency } from "@/lib/utils";
 import BottomNav from "@/components/BottomNav";
 import { AddFundsModal } from "@/components/goals/AddFundsModal";
@@ -211,11 +210,7 @@ const GroupGoalDetails = () => {
   };
 
   if (loading || !goal) {
-    return (
-      <div className="page-standard min-h-screen flex items-center justify-center">
-        <MoniLoader size="lg" message="Cargando meta grupal..." />
-      </div>
-    );
+    return null;
   }
 
   // Progress based on total contributions vs target

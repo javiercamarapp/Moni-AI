@@ -6,7 +6,6 @@ import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { MoniLoader } from "@/components/MoniLoader";
 import { GoalCard } from "@/components/goals/GoalCard";
 import { CreateGoalModal } from "@/components/goals/CreateGoalModal";
 import { AddFundsModal } from "@/components/goals/AddFundsModal";
@@ -300,9 +299,7 @@ const Goals = () => {
           </header>
 
           <div>
-          {loading ? <div className="py-12">
-              <MoniLoader size="lg" message="Cargando tus metas..." />
-            </div> : goals.length === 0 ?
+          {loading ? null : goals.length === 0 ?
           // Empty State
           <div className="text-center py-12">
               <div className="bg-[#F5F0EE] rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-5">

@@ -7,7 +7,6 @@ import { ChatMessageList } from "@/components/ui/chat-message-list";
 import { ChatInput } from "@/components/ui/chat-input";
 import { ArrowLeft, Camera, Send, MessageCircle, Paperclip } from "lucide-react";
 import { toast } from "sonner";
-import { MoniLoader } from "@/components/MoniLoader";
 
 interface Profile {
   id: string;
@@ -204,11 +203,7 @@ const CircleChat = () => {
   };
 
   if (!circle) {
-    return (
-      <div className="page-standard min-h-screen flex items-center justify-center">
-        <MoniLoader size="lg" />
-      </div>
-    );
+    return null;
   }
 
   return (
