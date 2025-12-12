@@ -51,7 +51,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
             name: getShortCategoryName(name),
             amount,
             icon: getCategoryIcon(name),
-            color: getCategoryColor(name)
+            color: getCategoryColor()
           }));
           setTopCategories(sorted);
         }
@@ -106,20 +106,9 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
     if (lower.includes('salidas') || lower.includes('fiestas') || lower.includes('bares')) return 'film';
     return 'shopping';
   };
-  const getCategoryColor = (name: string): string => {
-    const lower = name.toLowerCase();
-    if (lower.includes('renta') || lower.includes('hipoteca') || lower.includes('vivienda')) return 'bg-indigo-500';
-    if (lower.includes('supermercado') || lower.includes('super') || lower.includes('alimenta') || lower.includes('comida')) return 'bg-green-500';
-    if (lower.includes('educación') || lower.includes('desarrollo')) return 'bg-purple-500';
-    if (lower.includes('entreten') || lower.includes('estilo')) return 'bg-pink-500';
-    if (lower.includes('gasolina') || lower.includes('transport')) return 'bg-blue-500';
-    if (lower.includes('gimnasio') || lower.includes('gym')) return 'bg-orange-500';
-    if (lower.includes('restaur')) return 'bg-amber-500';
-    if (lower.includes('luz') || lower.includes('servicio') || lower.includes('internet')) return 'bg-yellow-500';
-    if (lower.includes('salidas') || lower.includes('fiestas') || lower.includes('bares')) return 'bg-rose-500';
-    if (lower.includes('salud')) return 'bg-red-500';
-    if (lower.includes('deuda')) return 'bg-orange-500';
-    return 'bg-gray-500';
+  const getCategoryColor = (): string => {
+    // Using consistent brown palette for all categories
+    return 'bg-[#5D4037]';
   };
   const renderIcon = (iconType: string, className: string) => {
     const props = {
