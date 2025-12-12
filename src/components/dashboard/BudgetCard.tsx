@@ -123,10 +123,12 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
     }).format(value);
   };
 
-  // Calculate progress percentages
-  const budgetUsed = totalBudget > 0 ? Math.min(expenses / totalBudget * 100, 100) : 0;
-  const incomeVsBudget = totalBudget > 0 ? Math.min(income / totalBudget * 100, 100) : 0;
+  // Calculate proportions for single compound bar
+  const total = income + expenses;
+  const incomePercent = total > 0 ? (income / total) * 100 : 50;
+  const expensePercent = total > 0 ? (expenses / total) * 100 : 50;
   const maxCategoryAmount = topCategories.length > 0 ? topCategories[0].amount : 1;
+
   return <div className="w-full bg-white rounded-2xl px-4 py-2.5 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08)] border border-gray-100 relative overflow-hidden cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/balance')}>
       {/* Header */}
       <div className="flex items-center gap-2 mb-2">
@@ -136,30 +138,27 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
         <h3 className="text-gray-800 font-bold text-sm">Balance del mes</h3>
       </div>
 
-      {/* Income & Expenses - Compact horizontal layout */}
-      <div className="grid grid-cols-2 gap-3 mb-2">
-        {/* Income */}
-        <div className="space-y-1">
-          <div className="flex items-center gap-1.5">
-            <div className="h-5 w-5 rounded-full bg-green-50 flex items-center justify-center">
-              <TrendingUp size={10} className="text-green-600" />
-            </div>
-            <span className="text-[10px] font-medium text-gray-500">Ingresos</span>
-          </div>
-          <span className="text-sm font-bold text-gray-800 block">{formatCurrency(income)}</span>
-          <Progress value={incomeVsBudget} className="h-1.5 bg-gray-100" />
+      {/* Single Compound Progress Bar - Income vs Expenses */}
+      <div className="mb-3">
+        <div className="h-4 rounded-full overflow-hidden flex w-full">
+          <div 
+            className="h-full bg-[#5D4037] rounded-l-full"
+            style={{ width: `${incomePercent}%` }}
+          />
+          <div 
+            className="h-full bg-[#BCAAA4] rounded-r-full"
+            style={{ width: `${expensePercent}%` }}
+          />
         </div>
-
-        {/* Expenses */}
-        <div className="space-y-1">
+        <div className="flex justify-between mt-2">
           <div className="flex items-center gap-1.5">
-            <div className="h-5 w-5 rounded-full bg-red-50 flex items-center justify-center">
-              <TrendingDown size={10} className="text-red-600" />
-            </div>
-            <span className="text-[10px] font-medium text-gray-500">Gastos</span>
+            <div className="w-2.5 h-2.5 rounded-full bg-[#5D4037]"></div>
+            <span className="text-xs text-gray-800 font-bold">{formatCurrency(income)}</span>
           </div>
-          <span className="text-sm font-bold text-gray-800 block">{formatCurrency(expenses)}</span>
-          <Progress value={budgetUsed} className={`h-1.5 ${budgetUsed > 80 ? 'bg-red-100' : 'bg-gray-100'}`} />
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#BCAAA4]"></div>
+            <span className="text-xs text-gray-800 font-bold">{formatCurrency(expenses)}</span>
+          </div>
         </div>
       </div>
 
