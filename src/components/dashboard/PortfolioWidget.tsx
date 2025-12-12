@@ -73,9 +73,9 @@ export const PortfolioWidget: React.FC = () => {
 
   if (activos.length === 0) {
     return (
-      <Card 
+      <Card
         className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer"
-        onClick={() => navigate('/net-worth')}
+        onClick={() => navigate('/portfolio')}
       >
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
@@ -96,9 +96,9 @@ export const PortfolioWidget: React.FC = () => {
   }
 
   return (
-    <Card 
+    <Card
       className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer"
-      onClick={() => navigate('/net-worth')}
+      onClick={() => navigate('/portfolio')}
     >
       <CardContent className="p-4">
         {/* Header */}

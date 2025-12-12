@@ -73,6 +73,8 @@ import FriendChallenges from './pages/FriendChallenges';
 import FriendsListPage from './pages/FriendsListPage';
 import StatsPage from './pages/StatsPage';
 import ChallengesPage from './pages/ChallengesPage';
+import Portfolio from './pages/Portfolio';
+
 
 import NotFound from "./pages/NotFound";
 import Subscribe from './pages/Subscribe';
@@ -132,6 +134,7 @@ function App() {
           <Route path="/notifications" element={<NotificationHistory />} />
           <Route path="/notification-settings" element={<NotificationSettings />} />
           <Route path="/net-worth" element={<NetWorth />} />
+          <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/score-moni" element={
             <PremiumFeature featureName="Score Moni con IA">
               <ScoreMoni />

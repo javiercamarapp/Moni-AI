@@ -559,8 +559,8 @@ const Dashboard = () => {
     const groupedByDescription: Record<string, any[]> = {};
     expenses.forEach(tx => {
       const normalizedDesc = tx.description.toLowerCase().replace(/\d+/g, '') // Remove numbers
-      .replace(/[^\w\s]/g, '') // Remove special chars
-      .trim();
+        .replace(/[^\w\s]/g, '') // Remove special chars
+        .trim();
 
       // Verificar si contiene palabras excluidas
       const isExcluded = excludedKeywords.some(keyword => normalizedDesc.includes(keyword.toLowerCase()));
@@ -1099,73 +1099,73 @@ const Dashboard = () => {
   const achievements: any[] = []; // Los logros se implementarán en el futuro basados en la actividad del usuario
 
   return <>
-      <div className="min-h-screen bg-[#faf9f8] text-gray-800 font-sans pb-20">
-        {/* Hero Section with Brown Background */}
-        <div className="relative">
-          {/* Brown background - extended to fit budget bar */}
-          <div className="absolute inset-x-0 top-0 h-44 rounded-b-[2rem]" style={{
+    <div className="min-h-screen bg-[#faf9f8] text-gray-800 font-sans pb-20">
+      {/* Hero Section with Brown Background */}
+      <div className="relative">
+        {/* Brown background - extended to fit budget bar */}
+        <div className="absolute inset-x-0 top-0 h-44 rounded-b-[2rem]" style={{
           background: 'linear-gradient(135deg, #8D6E63 0%, #6D4C41 50%, #5D4037 100%)'
         }} />
-          
-          {/* Header with remaining amount and buttons */}
-          <header className="relative z-20 px-6 py-2 pt-4">
-            <div className="flex items-center justify-between">
-              {/* Remaining Amount - Large */}
-              <div className="cursor-pointer group" onClick={() => navigate('/budgets')}>
-                <span className="text-2xl font-bold text-white group-hover:text-white/90 transition-colors">
-                  {new Intl.NumberFormat('es-MX', {
+
+        {/* Header with remaining amount and buttons */}
+        <header className="relative z-20 px-6 lg:max-w-5xl lg:mx-auto py-2 pt-4">
+          <div className="flex items-center justify-between">
+            {/* Remaining Amount - Large */}
+            <div className="cursor-pointer group" onClick={() => navigate('/budgets')}>
+              <span className="text-2xl font-bold text-white group-hover:text-white/90 transition-colors">
+                {new Intl.NumberFormat('es-MX', {
                   style: 'currency',
                   currency: 'MXN',
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 0
                 }).format(Math.max(0, totalBudget - currentMonthExpenses))}
-                </span>
-                <p className="text-xs text-white/70 flex items-center gap-1">
-                  Disponible este mes
-                  <span className="text-white/50 group-hover:text-white/80 transition-colors">›</span>
-                </p>
-              </div>
-              
-              {/* Buttons */}
-              <div className="flex items-center gap-2">
-                <div className="relative">
-                  <button onClick={() => navigate("/notifications")} className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-7 w-7 shadow-sm transition-all border border-white/20">
-                    <Bell className="h-3.5 w-3.5" />
-                  </button>
-                  {unreadNotifications > 0 && <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />}
-                </div>
-                <button onClick={() => navigate("/settings")} className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-7 w-7 shadow-sm transition-all border border-white/20">
-                  <Settings className="h-3.5 w-3.5" />
-                </button>
-              </div>
+              </span>
+              <p className="text-xs text-white/70 flex items-center gap-1">
+                Disponible este mes
+                <span className="text-white/50 group-hover:text-white/80 transition-colors">›</span>
+              </p>
             </div>
-          </header>
 
-          {/* Budget Progress Bar - over the brown background */}
-          <div className="relative z-10 px-4 pb-2">
-            <BudgetProgressBar spent={currentMonthExpenses} totalBudget={totalBudget} />
+            {/* Buttons */}
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <button onClick={() => navigate("/notifications")} className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-7 w-7 shadow-sm transition-all border border-white/20">
+                  <Bell className="h-3.5 w-3.5" />
+                </button>
+                {unreadNotifications > 0 && <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />}
+              </div>
+              <button onClick={() => navigate("/settings")} className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-7 w-7 shadow-sm transition-all border border-white/20">
+                <Settings className="h-3.5 w-3.5" />
+              </button>
+            </div>
           </div>
-          
-          {/* Score and Net Worth Cards - moved up */}
-          <div className="relative z-10 px-4 pb-4 mt-1">
-            <DashboardHeroSection scoreMoni={scoreMoni} />
-          </div>
+        </header>
+
+        {/* Budget Progress Bar - over the brown background */}
+        <div className="relative z-10 px-6 lg:max-w-5xl lg:mx-auto pb-2">
+          <BudgetProgressBar spent={currentMonthExpenses} totalBudget={totalBudget} />
         </div>
 
-        <div className="page-container pt-2 py-0">
-          {/* Balance Card - links to resumen */}
-          <div className="mb-3">
-            <BudgetCard income={monthlyIncome} expenses={monthlyExpenses} totalBudget={totalBudget} />
-          </div>
+        {/* Score and Net Worth Cards - moved up */}
+        <div className="relative z-10 px-6 lg:max-w-5xl lg:mx-auto pb-4 mt-1">
+          <DashboardHeroSection scoreMoni={scoreMoni} />
+        </div>
+      </div>
 
-          {/* Portfolio Widget */}
-          <div className="mb-3">
-            <PortfolioWidget />
-          </div>
+      <div className="px-6 lg:max-w-5xl lg:mx-auto pt-2 py-0">
+        {/* Balance Card - links to resumen */}
+        <div className="mb-3">
+          <BudgetCard income={monthlyIncome} expenses={monthlyExpenses} totalBudget={totalBudget} />
+        </div>
 
-          {/* Goals Section - Personal & Group */}
-          <div className="mt-4">
-            <GoalsWidget personalGoals={goals.map(g => ({
+        {/* Portfolio Widget */}
+        <div className="mb-3">
+          <PortfolioWidget />
+        </div>
+
+        {/* Goals Section - Personal & Group */}
+        <div className="mt-4">
+          <GoalsWidget personalGoals={goals.map(g => ({
             id: g.id,
             name: g.title || 'Meta',
             target: Number(g.target),
@@ -1180,31 +1180,31 @@ const Dashboard = () => {
             deadline: g.deadline,
             is_group: true
           }))} />
-          </div>
-
-          {/* Accounts Carousel */}
-          <div className="mb-6 bg-[#faf9f8]">
-            
-          </div>
-
-          {/* Recent Transactions - disabled for now */}
-          {false && <div className="max-w-5xl mx-auto px-6">
-              {/* <RecentTransactionsWidget transactions={recentTransactions} /> */}
-            </div>}
         </div>
 
-        <QuickRecordFAB />
-        <BottomNav />
+        {/* Accounts Carousel */}
+        <div className="mb-6 bg-[#faf9f8]">
+
+        </div>
+
+        {/* Recent Transactions - disabled for now */}
+        {false && <div className="max-w-5xl mx-auto px-6">
+          {/* <RecentTransactionsWidget transactions={recentTransactions} /> */}
+        </div>}
+      </div>
+
+      <QuickRecordFAB />
+      <BottomNav />
 
 
 
 
-        <CreateGoalModal isOpen={isCreateGoalModalOpen} onClose={() => setIsCreateGoalModalOpen(false)} onSuccess={() => {
+      <CreateGoalModal isOpen={isCreateGoalModalOpen} onClose={() => setIsCreateGoalModalOpen(false)} onSuccess={() => {
         setIsCreateGoalModalOpen(false);
         navigate('/goals');
       }} />
 
-        <CreateGroupGoalModal isOpen={isCreateGroupGoalModalOpen} onClose={() => setIsCreateGroupGoalModalOpen(false)} circles={userCircles} onSuccess={() => {
+      <CreateGroupGoalModal isOpen={isCreateGroupGoalModalOpen} onClose={() => setIsCreateGroupGoalModalOpen(false)} circles={userCircles} onSuccess={() => {
         confetti({
           particleCount: 120,
           spread: 80,
@@ -1219,7 +1219,7 @@ const Dashboard = () => {
         setIsCreateGroupGoalModalOpen(false);
         navigate('/goals');
       }} />
-      </div>
-    </>;
+    </div>
+  </>;
 };
 export default Dashboard;
