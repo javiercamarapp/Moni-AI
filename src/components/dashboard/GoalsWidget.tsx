@@ -21,56 +21,35 @@ interface GoalsWidgetProps {
 
 const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) => {
     const navigate = useNavigate();
-    const [personalApi, setPersonalApi] = useState<CarouselApi>();
-    const [groupApi, setGroupApi] = useState<CarouselApi>();
+    const [api, setApi] = useState<CarouselApi>();
 
-    // Enable trackpad scrolling for personal goals
+    // Combine all goals with group flag
+    const allGoals = [
+        ...personalGoals.map(g => ({ ...g, is_group: false })),
+        ...groupGoals.map(g => ({ ...g, is_group: true }))
+    ];
+
+    // Enable trackpad scrolling
     useEffect(() => {
-        if (!personalApi) return;
+        if (!api) return;
 
         const onWheel = (e: WheelEvent) => {
-            // Check if horizontal scroll is dominant
             if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
                 e.preventDefault();
                 if (e.deltaX > 0) {
-                    personalApi.scrollNext();
+                    api.scrollNext();
                 } else {
-                    personalApi.scrollPrev();
+                    api.scrollPrev();
                 }
             }
         };
 
-        // Add passive: false to allow preventDefault
-        personalApi.containerNode().addEventListener("wheel", onWheel, { passive: false });
+        api.containerNode().addEventListener("wheel", onWheel, { passive: false });
 
         return () => {
-            personalApi.containerNode().removeEventListener("wheel", onWheel);
+            api.containerNode().removeEventListener("wheel", onWheel);
         };
-    }, [personalApi]);
-
-    // Enable trackpad scrolling for group goals
-    useEffect(() => {
-        if (!groupApi) return;
-
-        const onWheel = (e: WheelEvent) => {
-            // Check if horizontal scroll is dominant
-            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-                e.preventDefault();
-                if (e.deltaX > 0) {
-                    groupApi.scrollNext();
-                } else {
-                    groupApi.scrollPrev();
-                }
-            }
-        };
-
-        // Add passive: false to allow preventDefault
-        groupApi.containerNode().addEventListener("wheel", onWheel, { passive: false });
-
-        return () => {
-            groupApi.containerNode().removeEventListener("wheel", onWheel);
-        };
-    }, [groupApi]);
+    }, [api]);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(amount);
@@ -100,23 +79,22 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
 
     return (
         <div className="mb-6">
-
-            {/* --- Personal Goals Section --- */}
+            {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <button 
                     onClick={() => navigate('/goals')}
                     className={`${headingSection} text-lg hover:text-[#8D6E63] transition-colors flex items-center gap-1.5 group`}
                 >
-                    Tus Metas
+                    Metas
                     <ChevronRight size={18} className="text-gray-400 group-hover:text-[#8D6E63] group-hover:translate-x-0.5 transition-all" />
                 </button>
                 <div className="flex items-center gap-3">
-                    {personalGoals.length > 0 && (
+                    {allGoals.length > 0 && (
                         <div className="hidden md:flex gap-2">
-                            <button onClick={() => personalApi?.scrollPrev()} className="p-1.5 rounded-full bg-white border border-gray-100 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors shadow-sm">
+                            <button onClick={() => api?.scrollPrev()} className="p-1.5 rounded-full bg-white border border-gray-100 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors shadow-sm">
                                 <ChevronLeft size={16} />
                             </button>
-                            <button onClick={() => personalApi?.scrollNext()} className="p-1.5 rounded-full bg-white border border-gray-100 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors shadow-sm">
+                            <button onClick={() => api?.scrollNext()} className="p-1.5 rounded-full bg-white border border-gray-100 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors shadow-sm">
                                 <ChevronRight size={16} />
                             </button>
                         </div>
@@ -131,8 +109,8 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                 </div>
             </div>
 
-            {/* Personal Goals Carousel */}
-            {personalGoals.length === 0 ? (
+            {/* Goals Carousel */}
+            {allGoals.length === 0 ? (
                 <div>
                     <div
                         className="bg-white rounded-[1.75rem] p-6 border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center gap-3 cursor-pointer hover:bg-gray-50 transition-colors"
@@ -149,145 +127,55 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                 </div>
             ) : (
                 <Carousel
-                    setApi={setPersonalApi}
+                    setApi={setApi}
                     opts={{
                         align: "start",
                         dragFree: true,
                     }}
                     className="w-full"
                 >
-                    <CarouselContent className="-ml-4 pb-8">
-                        {personalGoals.map((goal, index) => {
+                    <CarouselContent className="-ml-3 pb-4">
+                        {allGoals.map((goal, index) => {
                             const percentage = Math.min(100, Math.round((goal.current / goal.target) * 100));
-                            const remaining = goal.target - goal.current;
                             const Icon = getGoalIcon(goal.name);
 
                             return (
                                 <CarouselItem key={goal.id} className="pl-3 basis-[42vw] md:basis-[160px]">
                                     <div
                                         className="w-full bg-white rounded-2xl p-3 shadow-[0_10px_20px_-8px_rgba(0,0,0,0.05)] border border-gray-50 relative overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform"
-                                        onClick={() => navigate(`/goals/${goal.id}`)}
+                                        onClick={() => navigate(goal.is_group ? `/group-goals/${goal.id}` : `/goals/${goal.id}`)}
                                     >
-                                        {/* Icon - top left */}
-                                        <div className="absolute top-2 left-2 w-7 h-7 rounded-lg bg-[#F5F0EE] flex items-center justify-center">
-                                            <Icon size={14} className="text-[#8D6E63]" />
-                                        </div>
-                                        
-                                        {/* Percentage - top right */}
-                                        <span className={`absolute top-2 right-2 text-xs font-bold ${getTextColor(index)}`}>{percentage}%</span>
-                                        
-                                        {/* Name centered */}
-                                        <div className="mt-8 mb-1">
-                                            <h3 className="text-gray-800 font-bold text-xs leading-tight text-center truncate w-full">{goal.name}</h3>
+                                        {/* Top row: Icon left, Percentage + Amount right */}
+                                        <div className="flex items-start justify-between mb-2">
+                                            {/* Icon with group badge */}
+                                            <div className="relative">
+                                                <div className="w-8 h-8 rounded-lg bg-[#F5F0EE] flex items-center justify-center">
+                                                    <Icon size={16} className="text-[#8D6E63]" />
+                                                </div>
+                                                {goal.is_group && (
+                                                    <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-indigo-500 flex items-center justify-center">
+                                                        <Users size={8} className="text-white" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            
+                                            {/* Percentage and amounts - same height as icon */}
+                                            <div className="flex flex-col items-end justify-between h-8">
+                                                <span className={`text-xs font-bold ${getTextColor(index)}`}>{percentage}%</span>
+                                                <div className="text-right">
+                                                    <span className="text-[9px] text-gray-800 font-bold">{formatCurrency(goal.current)}</span>
+                                                    <span className="text-[8px] text-gray-400">/{formatCurrency(goal.target)}</span>
+                                                </div>
+                                            </div>
                                         </div>
 
-                                        {/* Amount - above progress bar */}
-                                        <div className="text-center mb-1.5">
-                                            <span className="text-[10px] text-gray-800 font-bold">{formatCurrency(goal.current)}</span>
-                                            <span className="text-[9px] text-gray-400"> / {formatCurrency(goal.target)}</span>
-                                        </div>
+                                        {/* Name - left aligned */}
+                                        <h3 className="text-gray-800 font-bold text-xs leading-tight text-left truncate w-full mb-2">{goal.name}</h3>
 
                                         {/* Progress Bar */}
                                         <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                                             <div
                                                 className={`h-full bg-gradient-to-r ${getProgressColor(index)} rounded-full`}
-                                                style={{ width: `${percentage}%` }}
-                                            ></div>
-                                        </div>
-                                    </div>
-                                </CarouselItem>
-                            );
-                        })}
-                    </CarouselContent>
-                </Carousel>
-            )}
-
-
-            {/* --- Group Goals Section --- */}
-            <div className="flex items-center justify-between mb-4">
-                <button 
-                    onClick={() => navigate('/goals')}
-                    className={`${headingSection} text-lg hover:text-[#8D6E63] transition-colors flex items-center gap-1.5 group`}
-                >
-                    Metas Grupales
-                    <ChevronRight size={18} className="text-gray-400 group-hover:text-[#8D6E63] group-hover:translate-x-0.5 transition-all" />
-                </button>
-                <div className="flex items-center gap-3">
-                    {groupGoals.length > 0 && (
-                        <div className="hidden md:flex gap-2">
-                            <button onClick={() => groupApi?.scrollPrev()} className="p-1.5 rounded-full bg-white border border-gray-100 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors shadow-sm">
-                                <ChevronLeft size={16} />
-                            </button>
-                            <button onClick={() => groupApi?.scrollNext()} className="p-1.5 rounded-full bg-white border border-gray-100 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors shadow-sm">
-                                <ChevronRight size={16} />
-                            </button>
-                        </div>
-                    )}
-                    <button
-                        onClick={() => navigate('/goals?action=new')}
-                        className="flex items-center gap-1.5 bg-[#F5F0EE] hover:bg-[#EBE5E2] text-[#5D4037] p-2 md:px-4 md:py-2 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95 whitespace-nowrap"
-                    >
-                        <Plus size={14} strokeWidth={3} />
-                        <span className="hidden md:inline">Nueva</span>
-                    </button>
-                </div>
-            </div>
-
-            {/* Group Goals Carousel */}
-            {groupGoals.length === 0 ? (
-                <div>
-                    <div className="bg-white rounded-[1.75rem] p-6 border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center gap-2">
-                        <p className="text-sm text-gray-500">No tienes metas grupales aún</p>
-                    </div>
-                </div>
-            ) : (
-                <Carousel
-                    setApi={setGroupApi}
-                    opts={{
-                        align: "start",
-                        dragFree: true,
-                    }}
-                    className="w-full"
-                >
-                    <CarouselContent className="-ml-4 pb-4">
-                        {groupGoals.map((goal, index) => {
-                            const percentage = Math.min(100, Math.round((goal.current / goal.target) * 100));
-                            const colorIndex = index + 2;
-                            const textColorClass = getTextColor(colorIndex);
-                            const Icon = getGoalIcon(goal.name);
-
-                            return (
-                                <CarouselItem key={goal.id} className="pl-3 basis-[42vw] md:basis-[160px]">
-                                    <div
-                                        className="w-full bg-white rounded-2xl p-3 shadow-[0_10px_20px_-8px_rgba(0,0,0,0.05)] border border-gray-50 relative overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform"
-                                        onClick={() => navigate(`/group-goals/${goal.id}`)}
-                                    >
-                                        {/* Icon - top left */}
-                                        <div className="absolute top-2 left-2 w-7 h-7 rounded-lg bg-[#F5F0EE] flex items-center justify-center">
-                                            <Icon size={14} className="text-[#8D6E63]" />
-                                        </div>
-                                        
-                                        {/* Percentage - top right */}
-                                        <div className="absolute top-2 right-2 flex items-center gap-1">
-                                            <Users size={10} className="text-[#8D6E63]" />
-                                            <span className={`text-xs font-bold ${textColorClass}`}>{percentage}%</span>
-                                        </div>
-                                        
-                                        {/* Name centered */}
-                                        <div className="mt-8 mb-1">
-                                            <h3 className="text-gray-800 font-bold text-xs leading-tight text-center truncate w-full">{goal.name}</h3>
-                                        </div>
-
-                                        {/* Amount - above progress bar */}
-                                        <div className="text-center mb-1.5">
-                                            <span className="text-[10px] text-gray-800 font-bold">{formatCurrency(goal.current)}</span>
-                                            <span className="text-[9px] text-gray-400"> / {formatCurrency(goal.target)}</span>
-                                        </div>
-
-                                        {/* Progress Bar */}
-                                        <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                                            <div
-                                                className={`h-full bg-gradient-to-r ${getProgressColor(colorIndex)} rounded-full`}
                                                 style={{ width: `${percentage}%` }}
                                             ></div>
                                         </div>
