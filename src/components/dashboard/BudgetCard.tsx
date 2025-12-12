@@ -75,25 +75,26 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
           // Group by category
           const categoryMap = new Map<string, number>();
           transactions.forEach((tx: any) => {
-            const categoryName = tx.categories?.name || 'Otros';
+            const rawName = tx.categories?.name || 'Otros';
+            // Use the raw category name directly - no renaming
+            const categoryName = rawName.replace(/^[^\w\sáéíóúñ]+\s*/i, '').trim().split(' ')[0];
             const current = categoryMap.get(categoryName) || 0;
             categoryMap.set(categoryName, current + Number(tx.amount));
           });
 
-          // Sort and get ONLY top 3
-          const sorted: CategorySpending[] = Array.from(categoryMap.entries())
+          const sortedCategories = Array.from(categoryMap.entries())
             .sort((a, b) => b[1] - a[1])
             .slice(0, 3)
             .map(([name, amount]) => ({
-              name: getShortCategoryName(name),
+              name: name.length > 12 ? name.substring(0, 12) : name,
               amount,
               icon: getCategoryIcon(name),
               color: 'bg-[#5D4037]'
             }));
 
-          setTopCategories(sorted);
+          setTopCategories(sortedCategories);
           // Cache ONLY the top 3 with user id
-          setCache(CACHE_KEYS.TOP_CATEGORIES, sorted, CACHE_TTL.SHORT, user.id);
+          setCache(CACHE_KEYS.TOP_CATEGORIES, sortedCategories, CACHE_TTL.SHORT, user.id);
         }
       } catch (error) {
         console.error('Error fetching top categories:', error);
@@ -104,33 +105,6 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
 
     fetchTopCategories();
   }, []);
-  const getShortCategoryName = (name: string): string => {
-    const lower = name.toLowerCase();
-    // Remove emoji prefix first
-    const cleanName = name.replace(/^[^\w\sáéíóúñ]+\s*/i, '').trim();
-    if (lower.includes('renta') || lower.includes('hipoteca')) return 'Vivienda';
-    if (lower.includes('supermercado') || lower.includes('super')) return 'Super';
-    if (lower.includes('alimenta') || lower.includes('comida')) return 'Comida';
-    if (lower.includes('restaur') || lower.includes('comidas fuera')) return 'Restaurantes';
-    if (lower.includes('transport') || lower.includes('uber')) return 'Transporte';
-    if (lower.includes('gasolina') || lower.includes('carga')) return 'Gasolina';
-    if (lower.includes('entreten') || lower.includes('estilo')) return 'Entretenimiento';
-    if (lower.includes('netflix') || lower.includes('spotify')) return 'Streaming';
-    if (lower.includes('vivienda') || lower.includes('casa')) return 'Vivienda';
-    if (lower.includes('salud') || lower.includes('médico') || lower.includes('farmacia')) return 'Salud';
-    if (lower.includes('educación') || lower.includes('curso') || lower.includes('desarrollo')) return 'Educación';
-    if (lower.includes('gimnasio') || lower.includes('gym')) return 'Gym';
-    if (lower.includes('luz')) return 'Luz';
-    if (lower.includes('internet') || lower.includes('teléfono')) return 'Internet';
-    if (lower.includes('servicio') || lower.includes('agua')) return 'Servicios';
-    if (lower.includes('deuda') || lower.includes('crédito') || lower.includes('tarjeta')) return 'Deudas';
-    if (lower.includes('compras') || lower.includes('ropa')) return 'Compras';
-    if (lower.includes('salidas') || lower.includes('fiestas') || lower.includes('bares')) return 'Salidas';
-
-    // Get first word only as fallback
-    const firstWord = cleanName.split(' ')[0];
-    return firstWord.length > 12 ? firstWord.substring(0, 12) : firstWord;
-  };
   const getCategoryIcon = (name: string): string => {
     const lower = name.toLowerCase();
     if (lower.includes('renta') || lower.includes('hipoteca') || lower.includes('vivienda') || lower.includes('casa')) return 'home';
