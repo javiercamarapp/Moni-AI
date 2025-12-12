@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { TrendingUp, Wallet, LineChart, Bitcoin, Landmark, Briefcase, Home, Car, CreditCard, PiggyBank, Check } from "lucide-react";
+import { TrendingUp, Wallet, LineChart, Bitcoin, Landmark, Briefcase, Home, Car, CreditCard, PiggyBank, Check, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -65,10 +65,11 @@ interface FirstMillionQuizProps {
     monthlyInvestmentCapacity: number;
     breakdown: Record<string, number>;
   }) => void;
+  onBack: () => void;
   isSaving: boolean;
 }
 
-export default function FirstMillionQuiz({ onComplete, isSaving }: FirstMillionQuizProps) {
+export default function FirstMillionQuiz({ onComplete, onBack, isSaving }: FirstMillionQuizProps) {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [step, setStep] = useState(1);
 
@@ -137,13 +138,22 @@ export default function FirstMillionQuiz({ onComplete, isSaving }: FirstMillionQ
       <div className="bg-gradient-to-b from-[#4E342E] via-[#4E342E] to-[#4E342E]/95 pb-8 rounded-b-[2rem]">
         <div className="sticky top-0 z-40 pt-4">
           <div className="max-w-2xl mx-auto px-4">
-            <div className="flex items-center justify-center mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={step === 1 ? onBack : prevStep}
+                className="h-10 w-10 rounded-full bg-white/20 hover:bg-white/30 text-white"
+              >
+                <ArrowLeft size={18} />
+              </Button>
               <div className="flex flex-col items-center">
                 <span className="text-xs font-medium text-white/70 tracking-wide">Paso {step} de 3</span>
                 <h1 className="text-lg font-bold text-white">
                   Mi Primer Millón
                 </h1>
               </div>
+              <div className="w-10" />
             </div>
             
             {/* Progress bar */}

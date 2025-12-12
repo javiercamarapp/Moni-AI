@@ -297,13 +297,15 @@ export default function LevelQuiz() {
   }
 
   // Render appropriate quiz based on selection
+  const handleBack = () => setSelectedJourney(null);
+
   switch (selectedJourney) {
     case 'financial_life':
-      return <FinancialLifeQuiz onComplete={handleFinancialLifeComplete} isSaving={isSaving} />;
+      return <FinancialLifeQuiz onComplete={handleFinancialLifeComplete} onBack={handleBack} isSaving={isSaving} />;
     case 'first_million':
-      return <FirstMillionQuiz onComplete={handleFirstMillionComplete} isSaving={isSaving} />;
+      return <FirstMillionQuiz onComplete={handleFirstMillionComplete} onBack={handleBack} isSaving={isSaving} />;
     case 'first_property':
-      return <FirstPropertyQuiz onComplete={handleFirstPropertyComplete} isSaving={isSaving} />;
+      return <FirstPropertyQuiz onComplete={handleFirstPropertyComplete} onBack={handleBack} isSaving={isSaving} />;
     default:
       return <JourneyTypeSelector onSelect={setSelectedJourney} />;
   }
