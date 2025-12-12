@@ -14,7 +14,6 @@ const BottomNav = () => {
 
   const navItems = [
     { path: '/dashboard', icon: Home, label: 'Inicio' },
-    { path: '/goals', icon: Target, label: 'Metas' },
     { path: '/analysis', icon: BarChart3, label: 'Análisis' },
     { path: '/retos', icon: Trophy, label: 'Retos' },
     { path: '/financial-journey', icon: Sparkles, label: 'Journey' },

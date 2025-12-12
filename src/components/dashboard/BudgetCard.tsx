@@ -48,8 +48,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
 
           // Sort and get top 3
           const sorted = Array.from(categoryMap.entries()).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([name, amount]) => ({
-            name: name.replace(/^[^\w\s]+\s*/, ''),
-            // Remove emoji prefix
+            name: getShortCategoryName(name),
             amount,
             icon: getCategoryIcon(name),
             color: getCategoryColor(name)
@@ -64,14 +63,31 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
     };
     fetchTopCategories();
   }, []);
+
+  const getShortCategoryName = (name: string): string => {
+    const lower = name.toLowerCase();
+    if (lower.includes('alimenta') || lower.includes('comida') || lower.includes('super')) return 'Super';
+    if (lower.includes('restaur')) return 'Comida';
+    if (lower.includes('transport') || lower.includes('uber') || lower.includes('gasolina')) return 'Transporte';
+    if (lower.includes('entreten') || lower.includes('netflix') || lower.includes('spotify') || lower.includes('cine') || lower.includes('ocio')) return 'Ocio';
+    if (lower.includes('vivienda') || lower.includes('renta') || lower.includes('casa')) return 'Vivienda';
+    if (lower.includes('salud') || lower.includes('médico') || lower.includes('farmacia')) return 'Salud';
+    if (lower.includes('educación') || lower.includes('curso') || lower.includes('desarrollo')) return 'Ocio';
+    if (lower.includes('servicio') || lower.includes('luz') || lower.includes('agua')) return 'Servicios';
+    if (lower.includes('deuda') || lower.includes('crédito') || lower.includes('tarjeta')) return 'Deudas';
+    if (lower.includes('compras') || lower.includes('ropa')) return 'Compras';
+    // Get first word only as fallback
+    const cleanName = name.replace(/^[^\w\s]+\s*/, '').split(' ')[0];
+    return cleanName.length > 10 ? cleanName.substring(0, 10) : cleanName;
+  };
   const getCategoryIcon = (name: string): string => {
     const lower = name.toLowerCase();
-    if (lower.includes('alimenta') || lower.includes('comida') || lower.includes('restaur')) return 'food';
+    if (lower.includes('alimenta') || lower.includes('comida') || lower.includes('restaur') || lower.includes('super')) return 'food';
     if (lower.includes('transport') || lower.includes('uber') || lower.includes('gasolina')) return 'car';
-    if (lower.includes('entreten') || lower.includes('netflix') || lower.includes('spotify')) return 'film';
+    if (lower.includes('entreten') || lower.includes('netflix') || lower.includes('spotify') || lower.includes('cine') || lower.includes('ocio')) return 'film';
     if (lower.includes('vivienda') || lower.includes('renta') || lower.includes('casa')) return 'home';
     if (lower.includes('salud') || lower.includes('médico') || lower.includes('farmacia')) return 'health';
-    if (lower.includes('educación') || lower.includes('curso')) return 'education';
+    if (lower.includes('educación') || lower.includes('curso') || lower.includes('desarrollo')) return 'film';
     if (lower.includes('servicio') || lower.includes('luz') || lower.includes('agua')) return 'zap';
     if (lower.includes('deuda') || lower.includes('crédito') || lower.includes('tarjeta')) return 'credit';
     return 'shopping';
