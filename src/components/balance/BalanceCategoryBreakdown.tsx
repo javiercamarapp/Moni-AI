@@ -60,18 +60,18 @@ const BalanceCategoryBreakdown: React.FC<BalanceCategoryBreakdownProps> = ({ tit
     const [integerPart, decimalPart] = formattedTotal.split('.');
 
     return (
-        <div className="bg-gradient-to-br from-[#FAF8F6] to-[#F5F0EE] rounded-[1.75rem] p-5 shadow-sm border border-[#EBE5E2]/50 h-full">
-            <div className="flex items-center gap-3 mb-4">
-                <div className={`w-8 h-8 rounded-full ${iconBg} flex items-center justify-center`}>
-                    <Icon className={`w-4 h-4 ${iconColor}`} />
+        <div className="bg-gradient-to-br from-[#FAF8F6] to-[#F5F0EE] rounded-[1.75rem] p-4 shadow-sm border border-[#EBE5E2]/50 h-full">
+            <div className="flex items-center gap-2 mb-3">
+                <div className={`w-6 h-6 rounded-full ${iconBg} flex items-center justify-center`}>
+                    <Icon className={`w-3 h-3 ${iconColor}`} />
                 </div>
-                <span className="font-bold text-sm text-[#5D4037]">{title}</span>
+                <span className="font-bold text-xs text-[#5D4037]">{title}</span>
             </div>
 
             {/* Responsive layout: stacked on mobile, side-by-side on large screens */}
-            <div className="flex flex-col lg:flex-row-reverse lg:items-center lg:gap-8">
+            <div className="flex flex-col lg:flex-row-reverse lg:items-center lg:gap-6">
                 {/* Chart Section - Right side on large screens */}
-                <div className="h-64 lg:h-96 w-full lg:w-[45%] relative flex-shrink-0">
+                <div className="h-44 lg:h-56 w-full lg:w-[40%] relative flex-shrink-0">
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Pie
@@ -80,7 +80,7 @@ const BalanceCategoryBreakdown: React.FC<BalanceCategoryBreakdownProps> = ({ tit
                                 cy="50%"
                                 innerRadius="40%"
                                 outerRadius="70%"
-                                paddingAngle={4}
+                                paddingAngle={3}
                                 dataKey="amount"
                                 stroke="none"
                             >
@@ -94,8 +94,8 @@ const BalanceCategoryBreakdown: React.FC<BalanceCategoryBreakdownProps> = ({ tit
                                     color: '#fff',
                                     borderRadius: '8px',
                                     border: 'none',
-                                    fontSize: '11px',
-                                    padding: '6px 10px',
+                                    fontSize: '10px',
+                                    padding: '4px 8px',
                                 }}
                                 itemStyle={{ color: '#fff' }}
                                 formatter={(value: number, _name: string, props: any) => [
@@ -108,12 +108,12 @@ const BalanceCategoryBreakdown: React.FC<BalanceCategoryBreakdownProps> = ({ tit
                     {/* Center Text - Formatted Amount */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
                         <div className="flex flex-col items-center">
-                            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wide">Total</span>
+                            <span className="text-[8px] font-medium text-gray-400 uppercase tracking-wide">Total</span>
                             <div className="flex items-baseline gap-[1px]">
-                                <span className="text-base lg:text-xl font-black text-[#5D4037] tracking-tighter leading-none">
+                                <span className="text-sm lg:text-base font-black text-[#5D4037] tracking-tighter leading-none">
                                     ${integerPart}
                                 </span>
-                                <span className="text-[10px] lg:text-xs font-bold text-gray-500 opacity-70">
+                                <span className="text-[8px] lg:text-[10px] font-bold text-gray-500 opacity-70">
                                     .{decimalPart}
                                 </span>
                             </div>
@@ -122,23 +122,21 @@ const BalanceCategoryBreakdown: React.FC<BalanceCategoryBreakdownProps> = ({ tit
                 </div>
 
                 {/* Legend List - Left side on large screens */}
-                <div className="flex flex-col gap-3 mt-6 lg:mt-0 lg:w-1/2">
+                <div className="flex flex-col gap-1.5 mt-3 lg:mt-0 lg:w-[55%]">
                     {data.map((item, index) => {
                         const IconComponent = getCategoryIcon(item.name, type);
                         return (
-                            <div key={index} className="flex items-center justify-between group hover:bg-gray-50 rounded-xl p-2 -mx-2 transition-colors">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm" style={{ backgroundColor: `${item.color}15` }}>
-                                        <IconComponent className="w-4 h-4" style={{ color: item.color }} />
+                            <div key={index} className="flex items-center justify-between group hover:bg-white/50 rounded-lg p-1.5 -mx-1.5 transition-colors">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-7 h-7 rounded-lg flex items-center justify-center shadow-sm" style={{ backgroundColor: `${item.color}15` }}>
+                                        <IconComponent className="w-3 h-3" style={{ color: item.color }} />
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-xs font-semibold text-gray-700">{item.name}</span>
-                                        <span className="text-[10px] text-gray-400">{item.percent}% del total</span>
+                                        <span className="text-[11px] font-semibold text-gray-700">{item.name}</span>
+                                        <span className="text-[9px] text-gray-400">{item.percent}%</span>
                                     </div>
                                 </div>
-                                <div className="flex flex-col items-end">
-                                    <span className="text-sm font-bold text-[#5D4037]">${item.amount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
-                                </div>
+                                <span className="text-xs font-bold text-[#5D4037]">${item.amount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
                             </div>
                         );
                     })}

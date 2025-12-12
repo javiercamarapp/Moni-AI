@@ -9,11 +9,12 @@ import { SectionLoader } from '@/components/SectionLoader';
 import BalanceCard from '@/components/balance/BalanceCard';
 import StatCard from '@/components/balance/StatCard';
 import BalanceCategoryBreakdown from '@/components/balance/BalanceCategoryBreakdown';
+import BreakdownCarousel from '@/components/balance/BreakdownCarousel';
 import BalanceInsights from '@/components/balance/BalanceInsights';
 import BalanceEvolutionChart from '@/components/balance/BalanceEvolutionChart';
 import ExpenseBreakdownWidget from '@/components/dashboard/ExpenseBreakdownWidget';
 import AddTransactionModal from '@/components/dashboard/AddTransactionModal';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 
 interface CategoryBalance {
   id: string;
@@ -1015,58 +1016,10 @@ const Balance = () => {
 
         {/* 5. Breakdown Charts Carousel */}
         {(ingresosByCategory.length > 0 || gastosByCategory.length > 0) && (
-          <div className="space-y-2">
-            {/* Tab Indicators */}
-            <div className="flex justify-center">
-              <div className="flex bg-white rounded-full p-1 shadow-sm border border-gray-100">
-                <button
-                  className="px-3 py-1 rounded-full text-[10px] font-bold transition-all bg-[#8D6E63] text-white"
-                  disabled
-                >
-                  Ingresos
-                </button>
-                <button
-                  className="px-3 py-1 rounded-full text-[10px] font-bold transition-all text-gray-400"
-                  disabled
-                >
-                  Gastos
-                </button>
-              </div>
-            </div>
-            
-            <Carousel className="w-full">
-              <CarouselContent>
-                {ingresosByCategory.length > 0 && (
-                  <CarouselItem>
-                    <BalanceCategoryBreakdown
-                      title="Ingresos"
-                      data={ingresosByCategory.map(cat => ({
-                        name: cat.name,
-                        amount: cat.total,
-                        color: cat.color,
-                        percent: Math.round(cat.percentage)
-                      }))}
-                      type="income"
-                    />
-                  </CarouselItem>
-                )}
-                {gastosByCategory.length > 0 && (
-                  <CarouselItem>
-                    <BalanceCategoryBreakdown
-                      title="Gastos"
-                      data={gastosByCategory.map(cat => ({
-                        name: cat.name,
-                        amount: cat.total,
-                        color: cat.color,
-                        percent: Math.round(cat.percentage)
-                      }))}
-                      type="expense"
-                    />
-                  </CarouselItem>
-                )}
-              </CarouselContent>
-            </Carousel>
-          </div>
+          <BreakdownCarousel 
+            ingresosByCategory={ingresosByCategory}
+            gastosByCategory={gastosByCategory}
+          />
         )}
 
       </main>
