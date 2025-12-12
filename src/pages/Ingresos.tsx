@@ -656,24 +656,24 @@ const Ingresos = () => {
           <AnimatePresence>
             {isFabOpen && (
               <>
-                {/* Mic button - top */}
+                {/* Mic button - north */}
                 <motion.button
-                  initial={{ opacity: 0, scale: 0.5, y: 0 }}
-                  animate={{ opacity: 1, scale: 1, y: -140 }}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1, y: -70 }}
                   exit={{ opacity: 0, scale: 0.5, y: 0 }}
-                  transition={{ duration: 0.2 }}
+                  transition={{ duration: 0.15 }}
                   onClick={() => { setIsFabOpen(false); setIsVoiceModalOpen(true); }}
                   className="absolute bottom-0 right-0 w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
                 >
                   <Mic className="w-5 h-5" />
                 </motion.button>
                 
-                {/* Camera button - left */}
+                {/* Camera button - northwest */}
                 <motion.button
-                  initial={{ opacity: 0, scale: 0.5, x: 0 }}
-                  animate={{ opacity: 1, scale: 1, x: -60, y: -100 }}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1, x: -50, y: -50 }}
                   exit={{ opacity: 0, scale: 0.5, x: 0, y: 0 }}
-                  transition={{ duration: 0.2, delay: 0.05 }}
+                  transition={{ duration: 0.15, delay: 0.05 }}
                   onClick={() => { setIsFabOpen(false); handleCameraCapture(); }}
                   disabled={isProcessingReceipt}
                   className="absolute bottom-0 right-0 w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200 disabled:opacity-50"
@@ -681,12 +681,12 @@ const Ingresos = () => {
                   <Camera className="w-5 h-5" />
                 </motion.button>
                 
-                {/* Calculator button - right */}
+                {/* Calculator button - west */}
                 <motion.button
-                  initial={{ opacity: 0, scale: 0.5, x: 0 }}
-                  animate={{ opacity: 1, scale: 1, x: 60, y: -100 }}
-                  exit={{ opacity: 0, scale: 0.5, x: 0, y: 0 }}
-                  transition={{ duration: 0.2, delay: 0.1 }}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1, x: -70 }}
+                  exit={{ opacity: 0, scale: 0.5, x: 0 }}
+                  transition={{ duration: 0.15, delay: 0.1 }}
                   onClick={() => { setIsFabOpen(false); setShowAddDialog(true); }}
                   className="absolute bottom-0 right-0 w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
                 >
