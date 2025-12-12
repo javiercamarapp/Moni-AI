@@ -4,7 +4,7 @@ import * as React from "react"
  
 import { useState } from "react";
 
-import { Lock, Mail, Loader2, ArrowLeft } from "lucide-react";
+import { Lock, Mail, Loader2, ArrowLeft, User } from "lucide-react";
 import moniLogo from "@/assets/moni-auth-logo.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -184,11 +184,11 @@ const SignIn2 = ({ onSignIn, onSocialLogin, loading, isLogin, setIsLogin }: Sign
           <form onSubmit={handleSubmit} className="contents">
             {!isLogin && (
               <div className="relative group">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-gray-900 transition-colors">
-                  <Mail className="w-5 h-5" />
-                </span>
-                <input
-                  placeholder="Nombre Completo"
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-gray-900 transition-colors">
+                <User className="w-5 h-5" />
+              </span>
+              <input
+                placeholder="Nombre Completo"
                   type="text"
                   value={fullName}
                   disabled={loading}
