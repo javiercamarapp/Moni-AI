@@ -9,6 +9,7 @@ interface BalanceCardProps {
     savings: number;
     groupSavings: number;
     available: number;
+    defaultExpanded?: boolean;
 }
 
 const BalanceCard: React.FC<BalanceCardProps> = ({
@@ -16,23 +17,23 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
     expenses,
     savings,
     groupSavings,
-    available
+    available,
+    defaultExpanded = false
 }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(defaultExpanded);
     const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
     const [isAddIncomeOpen, setIsAddIncomeOpen] = useState(false);
     const navigate = useNavigate();
 
     return (
-        <div className="w-full bg-white rounded-[2rem] px-4 pt-4 pb-3 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] border border-white relative overflow-hidden">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-2 mb-3">
+        <div className="w-full bg-white rounded-2xl px-4 py-3 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08)] border border-gray-100 relative overflow-hidden">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-2 mb-2">
                 <div className="flex items-center gap-2">
-                    <div className="h-10 w-10 rounded-2xl bg-[#F5F0EE] flex items-center justify-center text-[#8D6E63]">
-                        <Wallet size={20} />
+                    <div className="h-8 w-8 rounded-xl bg-[#F5F0EE] flex items-center justify-center text-[#8D6E63]">
+                        <Wallet size={16} />
                     </div>
                     <div>
-                        <h3 className="text-gray-800 font-bold text-base leading-tight">Balance del mes</h3>
-                        <p className="text-gray-400 text-[10px] font-medium">Resumen financiero</p>
+                        <h3 className="text-gray-800 font-bold text-sm leading-tight">Balance del mes</h3>
                     </div>
                 </div>
 
