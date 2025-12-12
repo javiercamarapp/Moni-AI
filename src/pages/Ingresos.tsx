@@ -596,38 +596,36 @@ const Ingresos = () => {
                 return (
                   <div
                     key={tx.id}
-                    className="bg-white rounded-3xl p-4 shadow-sm flex items-center justify-between group cursor-pointer hover:shadow-md transition-all animate-in slide-in-from-bottom-2 duration-500 shrink-0"
+                    className="bg-white rounded-3xl p-4 shadow-sm flex items-center gap-3 group cursor-pointer hover:shadow-md transition-all animate-in slide-in-from-bottom-2 duration-500 shrink-0"
                     style={{ animationDelay: `${index * 50}ms` }}
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-600">
-                        <Landmark className="w-6 h-6" />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-gray-900">{tx.description}</h4>
-                        <p className="text-xs text-gray-500 font-medium">
-                          {txDate.toLocaleDateString('es-MX', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric'
-                          })}
-                        </p>
-                        <div className="flex gap-1 mt-1">
-                          {tx.categories && (
-                            <Badge className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-green-50 text-green-600 border-0">
-                              {tx.categories.name}
-                            </Badge>
-                          )}
-                          {tx.payment_method && (
-                            <Badge className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 border-0 uppercase tracking-wide">
-                              {tx.payment_method}
-                            </Badge>
-                          )}
-                        </div>
+                    <div className="w-11 h-11 rounded-2xl bg-[#EFEBE9] flex items-center justify-center flex-shrink-0">
+                      <Landmark className="w-5 h-5 text-[#5D4037]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-gray-900 truncate">{tx.description}</h4>
+                      <p className="text-xs text-gray-500 font-medium">
+                        {txDate.toLocaleDateString('es-MX', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric'
+                        })}
+                      </p>
+                      <div className="flex gap-1 mt-1 flex-wrap">
+                        {tx.categories && (
+                          <Badge className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-[#EFEBE9] text-[#5D4037] border-0">
+                            {tx.categories.name.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '').trim()}
+                          </Badge>
+                        )}
+                        {tx.payment_method && (
+                          <Badge className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-gray-100 text-gray-600 border-0 capitalize">
+                            {tx.payment_method}
+                          </Badge>
+                        )}
                       </div>
                     </div>
-                    <div className="text-right">
-                      <span className="block font-bold text-gray-900 text-lg">
+                    <div className="text-right flex-shrink-0">
+                      <span className="block font-bold text-[#5D4037] text-base">
                         +${Number(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                       </span>
                     </div>
