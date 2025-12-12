@@ -1232,24 +1232,25 @@ const Dashboard = () => {
         </div>
 
         <div className="page-container pt-2">
-          {/* Quick Stats */}
-          <div>
-            <QuickStats
-              summaryValue={`$${(currentMonth.balance / 1000).toFixed(0)}k`}
-              netWorthValue={netWorth >= 1000000 ? `$${(netWorth / 1000000).toFixed(1)}M` : `$${(netWorth / 1000).toFixed(0)}k`}
-              goalsCount={goals.length}
-              journeyLevel={totalAspiration > 0 ? Math.floor((netWorth / totalAspiration) * 10000) : 0}
-            />
-          </div>
-
-          {/* Balance Card */}
-          <div className="mb-4 mt-4">
+          {/* Balance Card - Compact, above QuickStats */}
+          <div className="mb-3">
             <BalanceCard
               income={monthlyIncome}
               expenses={monthlyExpenses}
               savings={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12}
               groupSavings={0}
               available={monthlyIncome - monthlyExpenses}
+              defaultExpanded={true}
+            />
+          </div>
+
+          {/* Quick Stats */}
+          <div className="mb-4">
+            <QuickStats
+              summaryValue={`$${(currentMonth.balance / 1000).toFixed(0)}k`}
+              netWorthValue={netWorth >= 1000000 ? `$${(netWorth / 1000000).toFixed(1)}M` : `$${(netWorth / 1000).toFixed(0)}k`}
+              goalsCount={goals.length}
+              journeyLevel={totalAspiration > 0 ? Math.floor((netWorth / totalAspiration) * 10000) : 0}
             />
           </div>
 
