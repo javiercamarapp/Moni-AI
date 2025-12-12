@@ -20,7 +20,7 @@ const journeyOptions = [
   },
   {
     type: 'first_property' as JourneyType,
-    title: 'Mi Primera Propiedad',
+    title: 'Comprar una propiedad',
     subtitle: 'Tu nuevo hogar',
     description: 'Genera un plan de ahorro para alcanzar la casa de tus sueños.',
     icon: Home,
