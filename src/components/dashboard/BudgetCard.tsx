@@ -176,6 +176,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
             </div> : topCategories.length > 0 ? <div className="flex justify-around items-center">
               {topCategories.map((category, index) => (
                 <div key={index} className="flex flex-col items-center gap-1">
+                  <span className="text-[9px] font-medium text-gray-600 truncate max-w-[60px] text-center">{category.name}</span>
                   <div className={`h-8 w-8 rounded-full ${category.color}/20 flex items-center justify-center`}>
                     {renderIcon(category.icon, `${category.color.replace('bg-', 'text-')}`)}
                   </div>
