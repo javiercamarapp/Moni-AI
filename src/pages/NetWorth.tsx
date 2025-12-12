@@ -223,14 +223,16 @@ const NetWorth: React.FC = () => {
       {/* Brown Background Header - Portfolio Style */}
       <div className="bg-[#5D4037] pb-32 pt-6 px-6 rounded-b-[40px] shadow-lg relative z-0">
         <div className="max-w-md mx-auto">
-          {/* Back button and title */}
-          <div className="flex items-center gap-4 mb-6">
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="bg-white/20 p-3 rounded-full backdrop-blur-sm hover:bg-white/30 transition-all active:scale-95"
-            >
-              <ArrowLeft size={20} className="text-white" />
-            </button>
+          {/* Back button */}
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="bg-white/20 p-2.5 rounded-full backdrop-blur-sm hover:bg-white/30 transition-all active:scale-95 mb-4"
+          >
+            <ArrowLeft size={18} className="text-white" />
+          </button>
+          
+          {/* Title and value - matching portfolio style */}
+          <div className="flex justify-between items-center mb-6">
             <div>
               <p className="text-[10px] text-[#D7CCC8] font-bold uppercase tracking-widest">Patrimonio Neto</p>
               <h1 className="text-3xl font-bold font-['DM_Sans'] tracking-tight text-white">
