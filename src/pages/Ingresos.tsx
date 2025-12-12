@@ -641,23 +641,21 @@ const Ingresos = () => {
         </div>
 
         {/* Floating Actions */}
-        <div className="fixed bottom-20 left-0 right-0 px-6 flex justify-center z-50">
-          <div className="flex gap-2">
-            <button
-              onClick={handleCameraCapture}
-              disabled={isProcessingReceipt}
-              className="bg-white text-gray-700 rounded-full p-4 shadow-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
-            >
-              <Camera className="w-5 h-5" />
-            </button>
+        <div className="fixed bottom-24 right-6 z-50 flex flex-col items-end gap-3">
+          <button
+            onClick={handleCameraCapture}
+            disabled={isProcessingReceipt}
+            className="w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200 disabled:opacity-50"
+          >
+            <Camera className="w-5 h-5" />
+          </button>
 
-            <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-              <DialogTrigger asChild>
-                <button className="bg-[#8D6E63] text-white rounded-full px-6 py-4 shadow-xl flex items-center gap-3 hover:scale-105 active:scale-95 transition-all">
-                  <Plus className="w-5 h-5" />
-                  <span className="font-semibold">Nuevo Ingreso</span>
-                </button>
-              </DialogTrigger>
+          <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+            <DialogTrigger asChild>
+              <button className="w-14 h-14 rounded-full bg-[#A1887F] text-white shadow-xl flex items-center justify-center hover:bg-[#8D6E63] transition-colors">
+                <Plus className="w-6 h-6" />
+              </button>
+            </DialogTrigger>
               <DialogContent className="bg-white rounded-[20px] shadow-xl border border-gray-100 max-h-[85vh] overflow-y-auto max-w-md w-[90%]">
                 <DialogHeader>
                   <DialogTitle className="text-2xl font-bold text-gray-900">
@@ -795,7 +793,6 @@ const Ingresos = () => {
                 </form>
               </DialogContent>
             </Dialog>
-          </div>
         </div>
       </div>
 
