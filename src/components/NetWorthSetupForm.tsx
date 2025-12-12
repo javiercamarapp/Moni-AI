@@ -664,7 +664,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                             <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasEntries ? 'bg-[#5D4037]/10 text-[#5D4037]' : 'bg-[#A1887F]/10 text-[#A1887F]'}`}>
                               {hasEntries ? <Check size={18} strokeWidth={3} /> : <asset.icon size={18} />}
                             </div>
-                            <span className={`font-semibold text-sm ${hasEntries ? 'text-gray-900' : 'text-gray-600'}`}>{asset.name}</span>
+                            <span className={`font-semibold text-sm ${hasEntries ? 'text-[#3E2723]' : 'text-[#8D6E63]'}`}>{asset.name}</span>
                           </div>
                           <Button
                             variant="ghost"
@@ -686,7 +686,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                                     placeholder={entry.placeholder}
                                     value={entry.name}
                                     onChange={(e) => updateAssetEntry(entry.id, 'name', e.target.value)}
-                                    className="h-11 text-sm bg-[#F5F0EE] border-0 focus:ring-2 focus:ring-[#5D4037]/20 rounded-xl text-gray-900"
+                                    className="h-11 text-sm bg-[#F5F0EE] border-0 focus:ring-2 focus:ring-[#5D4037]/20 rounded-xl text-[#3E2723]"
                                   />
                                   <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4037] text-sm font-bold">$</span>
@@ -718,7 +718,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                               <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasStocks ? 'bg-[#5D4037]/10 text-[#5D4037]' : 'bg-[#A1887F]/10 text-[#A1887F]'}`}>
                                 {hasStocks ? <Check size={18} strokeWidth={3} /> : <TrendingUp size={18} />}
                               </div>
-                              <span className="font-semibold text-sm text-gray-900">¿Tienes acciones o ETFs?</span>
+                              <span className="font-semibold text-sm text-[#3E2723]">¿Tienes acciones o ETFs?</span>
                             </div>
                             <div className="flex gap-2">
                               <Button
@@ -842,7 +842,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                               <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasCrypto ? 'bg-[#5D4037]/10 text-[#5D4037]' : 'bg-[#A1887F]/10 text-[#A1887F]'}`}>
                                 {hasCrypto ? <Check size={18} strokeWidth={3} /> : <Bitcoin size={18} />}
                               </div>
-                              <span className="font-semibold text-sm text-gray-900">¿Tienes criptomonedas?</span>
+                              <span className="font-semibold text-sm text-[#3E2723]">¿Tienes criptomonedas?</span>
                             </div>
                             <div className="flex gap-2">
                               <Button
@@ -966,7 +966,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               {/* Custom Assets */}
               <div className="pt-2">
                 <div className="flex items-center justify-between mb-3 px-1">
-                  <h3 className="text-sm font-bold text-gray-700">Otros Activos</h3>
+                  <h3 className="text-sm font-bold text-[#5D4037]">Otros Activos</h3>
                   <Button onClick={addCustomAsset} variant="outline" size="sm" className="text-xs h-9 rounded-xl border-[#5D4037]/20 text-[#5D4037] hover:bg-[#5D4037]/10">
                     <Plus size={12} className="mr-1" />
                     Nueva Categoría
@@ -979,9 +979,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         placeholder="Nombre de la categoría (ej. Arte)" 
                         value={customAsset.name}
                         onChange={(e) => updateCustomAssetName(customAsset.id, e.target.value)}
-                        className="h-11 font-semibold text-sm bg-gray-50 border-0 rounded-xl"
+                        className="h-11 font-semibold text-sm bg-[#F5F0EE] border-0 rounded-xl text-[#3E2723]"
                       />
-                      <Button size="icon" variant="ghost" onClick={() => removeCustomAsset(customAsset.id)} className="h-11 w-11 text-gray-400 hover:text-white hover:bg-[#5D4037] rounded-xl">
+                      <Button size="icon" variant="ghost" onClick={() => removeCustomAsset(customAsset.id)} className="h-11 w-11 text-[#A1887F] hover:text-white hover:bg-[#5D4037] rounded-xl">
                         <X size={18} />
                       </Button>
                     </div>
@@ -992,15 +992,15 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                             placeholder="Nombre del item" 
                             value={acc.name}
                             onChange={(e) => updateCustomAssetAccount(customAsset.id, acc.id, 'name', e.target.value)}
-                            className="h-10 text-sm bg-gray-50 border-0 rounded-xl"
+                            className="h-10 text-sm bg-[#F5F0EE] border-0 rounded-xl text-[#3E2723]"
                           />
                           <Input 
                             placeholder="0.00" 
                             value={formatNumberWithCommas(acc.value)}
                             onChange={(e) => updateCustomAssetAccount(customAsset.id, acc.id, 'value', parseFormattedNumber(e.target.value))}
-                            className="h-10 text-sm w-32 bg-gray-50 border-0 rounded-xl"
+                            className="h-10 text-sm w-32 bg-[#F5F0EE] border-0 rounded-xl text-[#3E2723]"
                           />
-                          <button onClick={() => removeCustomAssetAccount(customAsset.id, acc.id)} className="text-gray-300 hover:text-white hover:bg-[#5D4037] p-1 rounded-lg transition-colors">
+                          <button onClick={() => removeCustomAssetAccount(customAsset.id, acc.id)} className="text-[#A1887F] hover:text-white hover:bg-[#5D4037] p-1 rounded-lg transition-colors">
                             <X size={14} />
                           </button>
                         </div>
@@ -1028,10 +1028,10 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasCreditCards ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-400'}`}>
+                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasCreditCards ? 'bg-red-100 text-red-600' : 'bg-[#A1887F]/20 text-[#8D6E63]'}`}>
                         {hasCreditCards ? <Check size={18} strokeWidth={3} /> : <CreditCard size={18} />}
                       </div>
-                      <span className="font-semibold text-sm text-gray-900">¿Tienes tarjetas de crédito?</span>
+                      <span className="font-semibold text-sm text-[#3E2723]">¿Tienes tarjetas de crédito?</span>
                     </div>
                     <div className="flex gap-2">
                       <Button
@@ -1057,7 +1057,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         }}
                         className={cn(
                           "text-xs h-9 px-5 rounded-xl font-bold transition-all",
-                          hasCreditCards === false ? "bg-gray-600 hover:bg-gray-700 text-white shadow-md" : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300"
+                          hasCreditCards === false ? "bg-[#8D6E63] hover:bg-[#6D4C41] text-white shadow-md" : "border-[#A1887F]/30 text-[#8D6E63] hover:bg-[#A1887F]/20 hover:border-[#8D6E63]/50"
                         )}
                       >
                         No
@@ -1109,7 +1109,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                           <Button
                             variant="outline"
                             size="sm"
-                            className="w-full h-10 text-xs text-gray-500 border-dashed border-gray-300 hover:bg-gray-50 rounded-xl"
+                            className="w-full h-10 text-xs text-[#8D6E63] border-dashed border-[#A1887F]/30 hover:bg-[#A1887F]/10 rounded-xl"
                           >
                             <Upload size={14} className="mr-2" />
                             Subir estado de cuenta (opcional)
@@ -1135,10 +1135,10 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasLoans ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-400'}`}>
+                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasLoans ? 'bg-red-100 text-red-600' : 'bg-[#A1887F]/20 text-[#8D6E63]'}`}>
                         {hasLoans ? <Check size={18} strokeWidth={3} /> : <Briefcase size={18} />}
                       </div>
-                      <span className="font-semibold text-sm text-gray-900">¿Tienes algún préstamo a tu nombre?</span>
+                      <span className="font-semibold text-sm text-[#3E2723]">¿Tienes algún préstamo a tu nombre?</span>
                     </div>
                     <div className="flex gap-2">
                       <Button
@@ -1161,7 +1161,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         }}
                         className={cn(
                           "text-xs h-9 px-5 rounded-xl font-bold transition-all",
-                          hasLoans === false ? "bg-gray-600 hover:bg-gray-700 text-white shadow-md" : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300"
+                          hasLoans === false ? "bg-[#8D6E63] hover:bg-[#6D4C41] text-white shadow-md" : "border-[#A1887F]/30 text-[#8D6E63] hover:bg-[#A1887F]/20 hover:border-[#8D6E63]/50"
                         )}
                       >
                         No
@@ -1173,7 +1173,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                     <div className="space-y-4 mt-4 pt-4 border-t border-red-100">
                       {/* Loan type selection */}
                       <div className="space-y-2">
-                        <Label className="text-xs font-bold text-gray-600 uppercase tracking-wide">Tipo de préstamo</Label>
+                        <Label className="text-xs font-bold text-[#5D4037] uppercase tracking-wide">Tipo de préstamo</Label>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                           {(Object.keys(loanTypeLabels) as LoanType[]).map((type) => {
                             const { label, icon: Icon } = loanTypeLabels[type];
@@ -1214,7 +1214,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                             
                             <div className="grid grid-cols-2 gap-2">
                               <div>
-                                <Label className="text-[10px] text-gray-500 mb-1 block">Monto original</Label>
+                                <Label className="text-[10px] text-[#8D6E63] mb-1 block">Monto original</Label>
                                 <div className="relative">
                                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-red-500 text-sm font-bold">$</span>
                                   <Input
@@ -1226,7 +1226,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                                 </div>
                               </div>
                               <div>
-                                <Label className="text-[10px] text-gray-500 mb-1 block">Saldo actual</Label>
+                                <Label className="text-[10px] text-[#8D6E63] mb-1 block">Saldo actual</Label>
                                 <div className="relative">
                                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-red-500 text-sm font-bold">$</span>
                                   <Input
@@ -1241,7 +1241,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
 
                             <div className="grid grid-cols-3 gap-2">
                               <div>
-                                <Label className="text-[10px] text-gray-500 mb-1 block">Tasa de interés</Label>
+                                <Label className="text-[10px] text-[#8D6E63] mb-1 block">Tasa de interés</Label>
                                 <div className="relative">
                                   <Input
                                     placeholder="0.00"
@@ -1249,11 +1249,11 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                                     onChange={(e) => updateLoanEntry(entry.id, 'interestRate', e.target.value)}
                                     className="h-11 text-sm pr-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200"
                                   />
-                                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">%</span>
+                                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A1887F] text-sm">%</span>
                                 </div>
                               </div>
                               <div>
-                                <Label className="text-[10px] text-gray-500 mb-1 block">Plazo (meses)</Label>
+                                <Label className="text-[10px] text-[#8D6E63] mb-1 block">Plazo (meses)</Label>
                                 <Input
                                   placeholder="12"
                                   value={entry.termMonths}
@@ -1262,7 +1262,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                                 />
                               </div>
                               <div>
-                                <Label className="text-[10px] text-gray-500 mb-1 block">Mensualidad</Label>
+                                <Label className="text-[10px] text-[#8D6E63] mb-1 block">Mensualidad</Label>
                                 <div className="relative">
                                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-red-500 text-sm font-bold">$</span>
                                   <Input
@@ -1276,7 +1276,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                             </div>
 
                             <div>
-                              <Label className="text-[10px] text-gray-500 mb-1 block">Fecha de vencimiento</Label>
+                              <Label className="text-[10px] text-[#8D6E63] mb-1 block">Fecha de vencimiento</Label>
                               <Popover>
                                 <PopoverTrigger asChild>
                                   <Button
@@ -1323,7 +1323,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               <Card className="bg-white rounded-3xl p-6 shadow-xl border-0 text-center relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#A1887F] via-[#5D4037] to-[#A1887F]"></div>
                 <span className="text-xs font-bold text-[#8D6E63] tracking-widest uppercase">PATRIMONIO NETO</span>
-                <div className="text-4xl font-black text-gray-900 mt-3 tracking-tight">
+                <div className="text-4xl font-black text-[#3E2723] mt-3 tracking-tight">
                   ${totals.netWorth.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
                 </div>
                 
