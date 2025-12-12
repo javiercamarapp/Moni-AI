@@ -1151,7 +1151,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="page-container pt-2">
+        <div className="page-container pt-2 py-0">
           {/* Balance Card - links to resumen */}
           <div className="mb-3">
             <BudgetCard income={monthlyIncome} expenses={monthlyExpenses} totalBudget={totalBudget} />

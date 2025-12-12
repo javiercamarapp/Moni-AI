@@ -69,7 +69,7 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({
   };
   return <div className="mb-6">
             {/* Header */}
-            <div className="flex items-center justify-between mb-4 my-[20px]">
+            <div className="mb-4 my-[5px] gap-0 flex-row flex items-center justify-between">
                 <button onClick={() => navigate('/goals')} className={`${headingSection} text-lg hover:text-[#8D6E63] transition-colors flex items-center gap-1.5 group`}>
                     Metas
                     <ChevronRight size={18} className="text-gray-400 group-hover:text-[#8D6E63] group-hover:translate-x-0.5 transition-all" />
