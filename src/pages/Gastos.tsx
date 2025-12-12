@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   ChevronLeft,
   ChevronRight,
@@ -11,8 +11,11 @@ import {
   Tags,
   Camera,
   ArrowLeft,
-  Mic
+  Mic,
+  Calculator,
+  X
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   AreaChart,
   Area,
@@ -69,6 +72,7 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
 
 const Gastos = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [viewMode, setViewMode] = useState<'month' | 'year'>('month');
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -86,6 +90,10 @@ const Gastos = () => {
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [isProcessingReceipt, setIsProcessingReceipt] = useState(false);
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
+  const [isFabOpen, setIsFabOpen] = useState(false);
+
+  // Get the referrer to determine where to navigate back
+  const referrer = location.state?.from || 'dashboard';
 
   useEffect(() => {
     fetchData();
@@ -367,14 +375,14 @@ const Gastos = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
-                onClick={() => navigate('/balance')}
+                onClick={() => navigate(referrer === 'balance' ? '/balance' : '/dashboard')}
                 className="p-3 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors"
               >
                 <ArrowLeft className="w-5 h-5 text-gray-700" />
               </button>
 
               <div className="flex flex-col">
-                <h1 className={headingPage}>Tus Gastos</h1>
+                <h1 className={headingPage}>Gastos</h1>
                 <div className="flex items-center gap-0.5 sm:gap-1 text-xs sm:text-sm text-gray-500 font-medium -ml-0.5">
                   {viewMode === 'month' && <ChevronLeft onClick={handlePreviousPeriod} className="w-2.5 h-2.5 sm:w-3 sm:h-3 cursor-pointer" />}
                   <span className="animate-in fade-in duration-300 whitespace-nowrap">{getPeriodLabel()}</span>
@@ -643,28 +651,66 @@ const Gastos = () => {
         </div>
 
         {/* Floating Actions */}
-        <div className="fixed bottom-24 right-6 z-50 flex flex-col items-end gap-3">
-          <button
-            onClick={handleCameraCapture}
-            disabled={isProcessingReceipt}
-            className="w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200 disabled:opacity-50"
-          >
-            <Camera className="w-5 h-5" />
-          </button>
+        <div className="fixed bottom-24 right-6 z-50">
+          <AnimatePresence>
+            {isFabOpen && (
+              <>
+                {/* Mic button - top */}
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.5, y: 0 }}
+                  animate={{ opacity: 1, scale: 1, y: -140 }}
+                  exit={{ opacity: 0, scale: 0.5, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => { setIsFabOpen(false); setIsVoiceModalOpen(true); }}
+                  className="absolute bottom-0 right-0 w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
+                >
+                  <Mic className="w-5 h-5" />
+                </motion.button>
+                
+                {/* Camera button - left */}
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.5, x: 0 }}
+                  animate={{ opacity: 1, scale: 1, x: -60, y: -100 }}
+                  exit={{ opacity: 0, scale: 0.5, x: 0, y: 0 }}
+                  transition={{ duration: 0.2, delay: 0.05 }}
+                  onClick={() => { setIsFabOpen(false); handleCameraCapture(); }}
+                  disabled={isProcessingReceipt}
+                  className="absolute bottom-0 right-0 w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200 disabled:opacity-50"
+                >
+                  <Camera className="w-5 h-5" />
+                </motion.button>
+                
+                {/* Calculator button - right */}
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.5, x: 0 }}
+                  animate={{ opacity: 1, scale: 1, x: 60, y: -100 }}
+                  exit={{ opacity: 0, scale: 0.5, x: 0, y: 0 }}
+                  transition={{ duration: 0.2, delay: 0.1 }}
+                  onClick={() => { setIsFabOpen(false); setShowAddDialog(true); }}
+                  className="absolute bottom-0 right-0 w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
+                >
+                  <Calculator className="w-5 h-5" />
+                </motion.button>
+              </>
+            )}
+          </AnimatePresence>
 
-          <button
-            onClick={() => setIsVoiceModalOpen(true)}
-            className="w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
+          {/* Main FAB */}
+          <motion.button
+            onClick={() => setIsFabOpen(!isFabOpen)}
+            className="w-14 h-14 rounded-full bg-[#5D4037] text-white shadow-xl flex items-center justify-center hover:bg-[#4E342E] transition-colors"
+            whileTap={{ scale: 0.95 }}
           >
-            <Mic className="w-5 h-5" />
-          </button>
+            <motion.div
+              animate={{ rotate: isFabOpen ? 45 : 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {isFabOpen ? <X className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
+            </motion.div>
+          </motion.button>
+        </div>
 
-          <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-            <DialogTrigger asChild>
-              <button className="w-14 h-14 rounded-full bg-[#5D4037] text-white shadow-xl flex items-center justify-center hover:bg-[#4E342E] transition-colors">
-                <Plus className="w-6 h-6" />
-              </button>
-              </DialogTrigger>
+        <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
               <DialogContent className="bg-white rounded-[20px] shadow-xl border border-gray-100 max-h-[85vh] overflow-y-auto max-w-md w-[90%]">
                 <DialogHeader>
                   <DialogTitle className="text-2xl font-bold text-gray-900">
@@ -810,7 +856,6 @@ const Gastos = () => {
                 </form>
               </DialogContent>
             </Dialog>
-        </div>
 
         <VoiceRecordingModal
           isOpen={isVoiceModalOpen}

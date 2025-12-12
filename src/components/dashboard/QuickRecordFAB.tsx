@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, X, TrendingUp, TrendingDown, Mic } from 'lucide-react';
+import { Plus, X, TrendingUp, TrendingDown, Mic, Camera, Calculator } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import VoiceRecordingModal from './VoiceRecordingModal';
@@ -29,48 +29,45 @@ const QuickRecordFAB: React.FC = () => {
       <div className="fixed bottom-24 right-6 z-50">
         <AnimatePresence>
           {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: 10, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.9 }}
-              transition={{ duration: 0.15 }}
-              className="absolute bottom-16 right-0 flex flex-col items-end gap-2"
-            >
-              {/* Income button */}
+            <>
+              {/* Income button - top left */}
               <motion.button
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.1 }}
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1, x: -70, y: -70 }}
+                exit={{ opacity: 0, scale: 0.5, x: 0, y: 0 }}
+                transition={{ duration: 0.15 }}
                 onClick={() => handleRecord('income')}
-                className="flex items-center gap-2 bg-[#A1887F] text-white rounded-full px-4 py-2.5 shadow-lg hover:bg-[#8D6E63] transition-colors"
+                className="absolute bottom-0 right-0 flex items-center gap-2 bg-[#A1887F] text-white rounded-full px-4 py-2.5 shadow-lg hover:bg-[#8D6E63] transition-colors"
               >
                 <TrendingUp className="w-4 h-4" />
                 <span className="text-sm font-medium">Ingreso</span>
               </motion.button>
 
-              {/* Expense button */}
+              {/* Expense button - top */}
               <motion.button
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.1, delay: 0.05 }}
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1, y: -110 }}
+                exit={{ opacity: 0, scale: 0.5, y: 0 }}
+                transition={{ duration: 0.15, delay: 0.05 }}
                 onClick={() => handleRecord('expense')}
-                className="flex items-center gap-2 bg-[#5D4037] text-white rounded-full px-4 py-2.5 shadow-lg hover:bg-[#4E342E] transition-colors"
+                className="absolute bottom-0 right-0 flex items-center gap-2 bg-[#5D4037] text-white rounded-full px-4 py-2.5 shadow-lg hover:bg-[#4E342E] transition-colors"
               >
                 <TrendingDown className="w-4 h-4" />
                 <span className="text-sm font-medium">Gasto</span>
               </motion.button>
 
-              {/* Voice button */}
+              {/* Voice button - top right */}
               <motion.button
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.1, delay: 0.1 }}
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1, x: 70, y: -70 }}
+                exit={{ opacity: 0, scale: 0.5, x: 0, y: 0 }}
+                transition={{ duration: 0.15, delay: 0.1 }}
                 onClick={openVoiceRecording}
-                className="flex items-center justify-center w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
+                className="absolute bottom-0 right-0 flex items-center justify-center w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
               >
                 <Mic className="w-5 h-5" />
               </motion.button>
-            </motion.div>
+            </>
           )}
         </AnimatePresence>
 
