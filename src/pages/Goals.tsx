@@ -299,7 +299,7 @@ const Goals = () => {
             </button>
           </header>
 
-          <div className="space-y-4">
+          <div>
           {loading ? <div className="py-12">
               <MoniLoader size="lg" message="Cargando tus metas..." />
             </div> : goals.length === 0 ?
@@ -319,11 +319,8 @@ const Goals = () => {
                 Crear mi primera meta
               </button>
             </div> : <>
-              {/* Stats Summary */}
-              
-
               {/* AI Insights Banner */}
-              {aiInsights.length > 0 && <Carousel className="w-full" opts={{
+              {aiInsights.length > 0 && <Carousel className="w-full mb-3" opts={{
               align: "center",
               loop: true
             }} plugins={[insightsAutoplayPlugin.current]}>
