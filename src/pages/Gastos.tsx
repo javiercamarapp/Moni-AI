@@ -8,14 +8,8 @@ import {
   Plus,
   ShoppingCart,
   ChevronDown,
-  Tags,
-  Camera,
-  ArrowLeft,
-  Mic,
-  Calculator,
-  X
+  ArrowLeft
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   AreaChart,
   Area,
@@ -23,29 +17,10 @@ import {
 } from 'recharts';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { TransactionSchema } from '@/lib/validation';
 import { headingPage, headingSection, kpiNumberPrimary } from '@/styles/typography';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import whatsappLogo from '@/assets/whatsapp-logo.png';
 import BottomNav from '@/components/BottomNav';
-import VoiceRecordingModal from '@/components/dashboard/VoiceRecordingModal';
+import QuickRecordModal from '@/components/dashboard/QuickRecordModal';
 
 interface Transaction {
   id: string;
@@ -76,21 +51,10 @@ const Gastos = () => {
   const { toast } = useToast();
   const [viewMode, setViewMode] = useState<'month' | 'year'>('month');
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [showAddDialog, setShowAddDialog] = useState(false);
-  const [amount, setAmount] = useState('');
-  const [description, setDescription] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('');
-  const [account, setAccount] = useState('');
-  const [category, setCategory] = useState('');
-  const [frequency, setFrequency] = useState('');
-  const [date, setDate] = useState('');
-  const [categories, setCategories] = useState<Array<{ id: string; name: string; color: string }>>([]);
+  const [isQuickRecordOpen, setIsQuickRecordOpen] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [sortOption, setSortOption] = useState<SortOption>('date-desc');
   const [isSortOpen, setIsSortOpen] = useState(false);
-  const [isProcessingReceipt, setIsProcessingReceipt] = useState(false);
-  const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
-  const [isFabOpen, setIsFabOpen] = useState(false);
 
   // Get the referrer to determine where to navigate back
   const referrer = location.state?.from || 'dashboard';
@@ -106,14 +70,6 @@ const Gastos = () => {
         navigate('/auth');
         return;
       }
-
-      const { data: categoriesData } = await supabase
-        .from('categories')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('type', 'gasto');
-
-      setCategories(categoriesData || []);
 
       let startDate: Date, endDate: Date;
 
@@ -165,161 +121,7 @@ const Gastos = () => {
     return `Año ${currentMonth.getFullYear()}`;
   };
 
-  const handleCameraCapture = async () => {
-    try {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/*';
-      input.capture = 'environment';
-
-      input.onchange = async (e: any) => {
-        const file = e.target?.files?.[0];
-        if (!file) return;
-
-        setIsProcessingReceipt(true);
-        toast({
-          title: "Procesando ticket",
-          description: "Analizando la imagen con AI...",
-        });
-
-        try {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-
-          reader.onload = async () => {
-            const base64Image = reader.result as string;
-
-            const { data: receiptData, error } = await supabase.functions.invoke('analyze-receipt', {
-              body: { imageBase64: base64Image, type: 'gasto' }
-            });
-
-            if (error) throw error;
-
-            setAmount(receiptData.amount.toString());
-            setDescription(receiptData.description);
-            setPaymentMethod(receiptData.payment_method);
-            setDate(receiptData.date);
-
-            const matchingCategory = categories.find(
-              cat => cat.name.toLowerCase().includes(receiptData.category.toLowerCase())
-            );
-            if (matchingCategory) {
-              setCategory(matchingCategory.id);
-            }
-
-            setShowAddDialog(true);
-            setIsProcessingReceipt(false);
-
-            toast({
-              title: "Ticket analizado",
-              description: "Revisa los datos y confirma el registro",
-            });
-          };
-        } catch (error) {
-          console.error('Error processing receipt:', error);
-          toast({
-            title: "Error",
-            description: "No se pudo procesar el ticket",
-            variant: "destructive",
-          });
-          setIsProcessingReceipt(false);
-        }
-      };
-
-      input.click();
-    } catch (error) {
-      console.error('Error capturing image:', error);
-      toast({
-        title: "Error",
-        description: "No se pudo acceder a la cámara",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const validationResult = TransactionSchema.safeParse({
-        amount: parseFloat(amount),
-        description,
-        payment_method: paymentMethod,
-        account,
-        category_id: category || null,
-        frequency,
-        transaction_date: date,
-        type: 'gasto'
-      });
-
-      if (!validationResult.success) {
-        const firstError = validationResult.error.errors[0];
-        toast({
-          title: "Datos inválidos",
-          description: firstError.message,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const { data: newTransaction, error } = await supabase
-        .from('transactions')
-        .insert({
-          user_id: user.id,
-          amount: validationResult.data.amount,
-          description: validationResult.data.description,
-          payment_method: validationResult.data.payment_method,
-          account: validationResult.data.account,
-          category_id: validationResult.data.category_id,
-          frequency: validationResult.data.frequency,
-          transaction_date: validationResult.data.transaction_date,
-          type: validationResult.data.type,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      if (!validationResult.data.category_id && newTransaction) {
-        supabase.functions.invoke('categorize-transaction', {
-          body: {
-            transactionId: newTransaction.id,
-            userId: user.id,
-            description: validationResult.data.description,
-            amount: validationResult.data.amount,
-            type: validationResult.data.type
-          }
-        }).catch(error => {
-          console.error('Error categorizando transacción:', error);
-        });
-      }
-
-      toast({
-        title: "Gasto registrado",
-        description: "Tu gasto ha sido agregado exitosamente",
-      });
-
-      setShowAddDialog(false);
-      setAmount('');
-      setDescription('');
-      setPaymentMethod('');
-      setAccount('');
-      setCategory('');
-      setFrequency('');
-      setDate('');
-      fetchData();
-    } catch (error) {
-      console.error('Error adding transaction:', error);
-      toast({
-        title: "Error",
-        description: "No se pudo registrar el gasto",
-        variant: "destructive",
-      });
-    }
-  };
+  // Removed handleCameraCapture and handleSubmit - now handled by QuickRecordModal
 
   // Generate chart data from transactions
   const chartData: ChartPoint[] = useMemo(() => {
@@ -650,216 +452,22 @@ const Gastos = () => {
           </div>
         </div>
 
-        {/* Floating Actions */}
-        <div className="fixed bottom-24 right-6 z-50">
-          <AnimatePresence>
-            {isFabOpen && (
-              <>
-                {/* Mic button - north */}
-                <motion.button
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1, y: -70 }}
-                  exit={{ opacity: 0, scale: 0.5, y: 0 }}
-                  transition={{ duration: 0.15 }}
-                  onClick={() => { setIsFabOpen(false); setIsVoiceModalOpen(true); }}
-                  className="absolute bottom-0 right-0 w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
-                >
-                  <Mic className="w-5 h-5" />
-                </motion.button>
-                
-                {/* Camera button - northwest */}
-                <motion.button
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1, x: -50, y: -50 }}
-                  exit={{ opacity: 0, scale: 0.5, x: 0, y: 0 }}
-                  transition={{ duration: 0.15, delay: 0.05 }}
-                  onClick={() => { setIsFabOpen(false); handleCameraCapture(); }}
-                  disabled={isProcessingReceipt}
-                  className="absolute bottom-0 right-0 w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200 disabled:opacity-50"
-                >
-                  <Camera className="w-5 h-5" />
-                </motion.button>
-                
-                {/* Calculator button - west */}
-                <motion.button
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1, x: -70 }}
-                  exit={{ opacity: 0, scale: 0.5, x: 0 }}
-                  transition={{ duration: 0.15, delay: 0.1 }}
-                  onClick={() => { setIsFabOpen(false); setShowAddDialog(true); }}
-                  className="absolute bottom-0 right-0 w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
-                >
-                  <Calculator className="w-5 h-5" />
-                </motion.button>
-              </>
-            )}
-          </AnimatePresence>
+        {/* Floating Action Button */}
+        <button
+          onClick={() => setIsQuickRecordOpen(true)}
+          className="fixed bottom-24 right-6 md:bottom-16 md:right-10 z-50 w-14 h-14 rounded-full bg-[#5D4037] text-white shadow-xl flex items-center justify-center hover:bg-[#4E342E] transition-all hover:scale-110 active:scale-95"
+        >
+          <Plus className="w-6 h-6" />
+        </button>
 
-          {/* Main FAB */}
-          <motion.button
-            onClick={() => setIsFabOpen(!isFabOpen)}
-            className="w-14 h-14 rounded-full bg-[#5D4037] text-white shadow-xl flex items-center justify-center hover:bg-[#4E342E] transition-colors"
-            whileTap={{ scale: 0.95 }}
-          >
-            <motion.div
-              animate={{ rotate: isFabOpen ? 45 : 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              {isFabOpen ? <X className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
-            </motion.div>
-          </motion.button>
-        </div>
-
-        <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-              <DialogContent className="bg-white rounded-[20px] shadow-xl border border-gray-100 max-h-[85vh] overflow-y-auto max-w-md w-[90%]">
-                <DialogHeader>
-                  <DialogTitle className="text-2xl font-bold text-gray-900">
-                    Registrar Gasto
-                  </DialogTitle>
-                </DialogHeader>
-
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="space-y-2">
-                    <Label htmlFor="amount" className="text-gray-900 text-base">
-                      ¿Cuál es el monto de tu gasto?
-                    </Label>
-                    <Input
-                      id="amount"
-                      type="number"
-                      step="0.01"
-                      placeholder="$0.00"
-                      value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
-                      required
-                      className="bg-gray-50 border-gray-200 text-gray-900 h-14 text-lg"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="description" className="text-gray-900 text-base">
-                      ¿Qué nombre le quieres dar?
-                    </Label>
-                    <Input
-                      id="description"
-                      placeholder="Nombre de tu gasto"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      required
-                      className="bg-gray-50 border-gray-200 text-gray-900 h-14"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-gray-900 text-base">
-                      ¿El pago fue en efectivo?
-                    </Label>
-                    <Select value={paymentMethod} onValueChange={(value) => {
-                      setPaymentMethod(value);
-                      if (value === 'efectivo') {
-                        setAccount('efectivo');
-                      } else {
-                        setAccount('');
-                      }
-                    }} required>
-                      <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900 h-14">
-                        <SelectValue placeholder="Selecciona una opción" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white border-gray-200 z-50">
-                        <SelectItem value="efectivo">Sí</SelectItem>
-                        <SelectItem value="tarjeta">No</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {paymentMethod === 'tarjeta' && (
-                    <div className="space-y-2">
-                      <Label className="text-gray-900 text-base">
-                        ¿De cuál tarjeta/cuenta salió el gasto?
-                      </Label>
-                      <Select value={account} onValueChange={setAccount} required>
-                        <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900 h-14">
-                          <SelectValue placeholder="Escoge o agrega tu tarjeta/cuenta" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white border-gray-200 z-50">
-                          <SelectItem value="banco1">Cuenta Principal</SelectItem>
-                          <SelectItem value="banco2">Cuenta de Ahorros</SelectItem>
-                          <SelectItem value="banco3">Tarjeta Nómina</SelectItem>
-                          <SelectItem value="otro">Otra cuenta</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-
-                  <div className="space-y-2">
-                    <Label className="text-gray-900 text-base">
-                      Categoría de tu gasto
-                    </Label>
-                    <Select value={category} onValueChange={setCategory} required>
-                      <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900 h-14">
-                        <SelectValue placeholder="Categorías" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white border-gray-200 z-50">
-                        {categories.length === 0 ? (
-                          <SelectItem value="none" disabled>
-                            No hay categorías. Créalas en Gestionar Categorías
-                          </SelectItem>
-                        ) : (
-                          categories.map((cat) => (
-                            <SelectItem key={cat.id} value={cat.id}>
-                              {cat.name}
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-gray-900 text-base">
-                      ¿Cada cuánto tienes este gasto?
-                    </Label>
-                    <Select value={frequency} onValueChange={setFrequency} required>
-                      <SelectTrigger className="bg-gray-50 border-gray-200 text-gray-900 h-14">
-                        <SelectValue placeholder="Sin frecuencia" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white border-gray-200 z-50">
-                        <SelectItem value="unico">Sin frecuencia</SelectItem>
-                        <SelectItem value="diario">Diario</SelectItem>
-                        <SelectItem value="semanal">Semanal</SelectItem>
-                        <SelectItem value="quincenal">Quincenal</SelectItem>
-                        <SelectItem value="mensual">Mensual</SelectItem>
-                        <SelectItem value="anual">Anual</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="date" className="text-gray-900 text-base">
-                      Fecha de tu gasto
-                    </Label>
-                    <Input
-                      id="date"
-                      type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      required
-                      className="bg-gray-50 border-gray-200 text-gray-900 h-14"
-                    />
-                  </div>
-
-                  <Button
-                    type="submit"
-                    className="w-full bg-[#8D6E63] hover:bg-[#795E56] text-white h-14 text-lg font-semibold rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all duration-200"
-                  >
-                    Agregar Gasto
-                  </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
-
-        <VoiceRecordingModal
-          isOpen={isVoiceModalOpen}
-          onClose={() => setIsVoiceModalOpen(false)}
+        {/* Quick Record Modal */}
+        <QuickRecordModal
+          isOpen={isQuickRecordOpen}
+          onClose={() => {
+            setIsQuickRecordOpen(false);
+            fetchData(); // Refresh data after closing
+          }}
+          mode="expense"
         />
       </div>
 

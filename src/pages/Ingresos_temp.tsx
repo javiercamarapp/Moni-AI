@@ -6,7 +6,7 @@ import {
   Download,
   TrendingDown,
   Plus,
-  Landmark,
+  ShoppingCart,
   ChevronDown,
   ArrowLeft
 } from 'lucide-react';
@@ -45,7 +45,7 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'amount-asc', label: 'Menor cantidad' },
 ];
 
-const Ingresos = () => {
+const Gastos = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
@@ -85,7 +85,7 @@ const Ingresos = () => {
         .from('transactions')
         .select('*, categories(name, color)')
         .eq('user_id', user.id)
-        .eq('type', 'ingreso')
+        .eq('type', 'gasto')
         .gte('transaction_date', startDate.toISOString().split('T')[0])
         .lte('transaction_date', endDate.toISOString().split('T')[0])
         .order('transaction_date', { ascending: false });
@@ -96,7 +96,7 @@ const Ingresos = () => {
     }
   };
 
-  const totalIngresos = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
+  const totalGastos = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
 
   const handlePreviousPeriod = () => {
     if (viewMode === 'month') {
@@ -184,7 +184,7 @@ const Ingresos = () => {
               </button>
 
               <div className="flex flex-col">
-                <h1 className={headingPage}>Ingresos</h1>
+                <h1 className={headingPage}>Gastos</h1>
                 <div className="flex items-center gap-0.5 sm:gap-1 text-xs sm:text-sm text-gray-500 font-medium -ml-0.5">
                   {viewMode === 'month' && <ChevronLeft onClick={handlePreviousPeriod} className="w-2.5 h-2.5 sm:w-3 sm:h-3 cursor-pointer" />}
                   <span className="animate-in fade-in duration-300 whitespace-nowrap">{getPeriodLabel()}</span>
@@ -222,14 +222,14 @@ const Ingresos = () => {
           <div className="flex justify-between items-start mb-6">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-bold text-gray-400 tracking-wider uppercase">Ingresos Totales</span>
+                <span className="text-xs font-bold text-gray-400 tracking-wider uppercase">Gastos Totales</span>
               </div>
               <div className="flex items-baseline gap-1">
                 <span className={kpiNumberPrimary}>
-                  ${totalIngresos.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+                  ${totalGastos.toLocaleString('en-US', { maximumFractionDigits: 0 })}
                 </span>
                 <span className="text-xl text-gray-400 font-medium">
-                  {totalIngresos % 1 === 0 ? '.00' : `.${totalIngresos.toFixed(2).split('.')[1]}`}
+                  {totalGastos % 1 === 0 ? '.00' : `.${totalGastos.toFixed(2).split('.')[1]}`}
                 </span>
               </div>
               <div className="flex items-center gap-2 mt-2">
@@ -267,7 +267,7 @@ const Ingresos = () => {
                       viewMode: viewMode === 'month' ? 'mensual' : 'anual',
                       month: currentMonth.getMonth() + 1,
                       year: currentMonth.getFullYear(),
-                      type: 'ingreso'
+                      type: 'gasto'
                     }
                   });
 
@@ -277,7 +277,7 @@ const Ingresos = () => {
                   const url = window.URL.createObjectURL(blob);
                   const a = document.createElement('a');
                   a.href = url;
-                  a.download = data.filename || `ingresos_${viewMode === 'month' ? `${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}` : currentMonth.getFullYear()}.html`;
+                  a.download = data.filename || `gastos_${viewMode === 'month' ? `${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}` : currentMonth.getFullYear()}.html`;
                   document.body.appendChild(a);
                   a.click();
                   window.URL.revokeObjectURL(url);
@@ -306,7 +306,7 @@ const Ingresos = () => {
           {/* Chart Section */}
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h3 className={headingSection}>Evolución de Ingresos</h3>
+              <h3 className={headingSection}>Evolución de Gastos</h3>
               <div className="flex gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-[#8D6E63]"></div>
                 <div className="w-2 h-2 rounded-full bg-[#8D6E63] opacity-30"></div>
@@ -362,7 +362,7 @@ const Ingresos = () => {
         {/* Transaction History */}
         <div className="mb-24 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
           <div className="flex items-center justify-between mb-4 px-2 relative z-10">
-            <h3 className="text-lg font-bold text-gray-900">Historial de Ingresos</h3>
+            <h3 className="text-lg font-bold text-gray-900">Historial de Gastos</h3>
 
             <div className="relative">
               <button
@@ -412,7 +412,7 @@ const Ingresos = () => {
                     style={{ animationDelay: `${index * 50}ms` }}
                   >
                     <div className="w-9 h-9 rounded-xl bg-[#EFEBE9] flex items-center justify-center flex-shrink-0">
-                      <Landmark className="w-4 h-4 text-[#A1887F]" />
+                      <ShoppingCart className="w-4 h-4 text-[#5D4037]" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-gray-900 text-sm truncate">{tx.description}</h4>
@@ -425,7 +425,7 @@ const Ingresos = () => {
                       </p>
                       <div className="flex gap-1 mt-0.5 flex-wrap">
                         {tx.categories && (
-                          <Badge className="text-[9px] font-medium px-1.5 py-0 rounded bg-[#EFEBE9] text-[#A1887F] border-0">
+                          <Badge className="text-[9px] font-medium px-1.5 py-0 rounded bg-[#EFEBE9] text-[#5D4037] border-0">
                             {tx.categories.name.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '').trim()}
                           </Badge>
                         )}
@@ -437,7 +437,7 @@ const Ingresos = () => {
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <span className="block font-bold text-[#A1887F] text-sm">
+                      <span className="block font-bold text-[#5D4037] text-sm">
                         -${Number(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                       </span>
                     </div>
@@ -455,7 +455,7 @@ const Ingresos = () => {
         {/* Floating Action Button */}
         <button
           onClick={() => setIsQuickRecordOpen(true)}
-          className="fixed bottom-24 right-6 md:bottom-16 md:right-10 z-50 w-14 h-14 rounded-full bg-[#A1887F] text-white shadow-xl flex items-center justify-center hover:bg-[#8D6E63] transition-all hover:scale-110 active:scale-95"
+          className="fixed bottom-24 lg:bottom-20 right-6 z-50 w-14 h-14 rounded-full bg-[#5D4037] text-white shadow-xl flex items-center justify-center hover:bg-[#4E342E] transition-all hover:scale-110 active:scale-95"
         >
           <Plus className="w-6 h-6" />
         </button>
@@ -476,4 +476,4 @@ const Ingresos = () => {
   );
 };
 
-export default Ingresos;
+export default Gastos;

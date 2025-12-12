@@ -27,21 +27,21 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ score }) => {
 
     return (
         <div
-            className="bg-white rounded-[1.5rem] px-2 sm:px-5 py-2 sm:py-1 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.08)] border border-white cursor-pointer hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-200"
+            className="bg-white rounded-[1.5rem] px-2 sm:px-5 lg:px-6 py-2 sm:py-1 lg:py-3 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.08)] border border-white cursor-pointer hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-200"
             onClick={() => navigate('/score-moni')}
         >
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-1 sm:gap-2">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-1 sm:gap-2 lg:gap-4">
                 {/* Left Side: Text Info */}
                 <div className="flex flex-col gap-1 items-center sm:items-start">
-                    <span className="text-[8px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider">Score Moni</span>
-                    <span className={`text-[9px] sm:text-[11px] font-bold ${status.color} uppercase tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 ${status.bgColor} rounded-full w-fit`}>
+                    <span className="text-[8px] sm:text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-wider">Score Moni</span>
+                    <span className={`text-[9px] sm:text-[11px] lg:text-xs font-bold ${status.color} uppercase tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 lg:px-3 lg:py-1.5 ${status.bgColor} rounded-full w-fit`}>
                         {status.label}
                     </span>
                 </div>
 
                 {/* Right Side: Circle with Score Inside */}
                 <div className="relative flex items-center justify-center flex-shrink-0 overflow-visible">
-                    <svg className="transform -rotate-90 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 overflow-visible" viewBox="0 0 100 100">
+                    <svg className="transform -rotate-90 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-20 lg:h-20 overflow-visible" viewBox="0 0 100 100">
                         {/* Track */}
                         <circle
                             cx="50"
@@ -66,7 +66,7 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ score }) => {
                     </svg>
                     {/* Score Number Inside Circle */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-base sm:text-base md:text-lg font-black text-gray-800 leading-none">{safeScore}</span>
+                        <span className="text-base sm:text-base md:text-lg lg:text-2xl font-black text-gray-800 leading-none">{safeScore}</span>
                     </div>
                 </div>
             </div>

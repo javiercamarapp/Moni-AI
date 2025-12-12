@@ -1,22 +1,19 @@
 import React, { useState } from 'react';
-import { Plus, X, TrendingUp, TrendingDown, Mic, Camera, Calculator } from 'lucide-react';
+import { Plus, X, Mic } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import VoiceRecordingModal from './VoiceRecordingModal';
+import QuickRecordModal from './QuickRecordModal';
 
 const QuickRecordFAB: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
-  const navigate = useNavigate();
+  const [isQuickRecordOpen, setIsQuickRecordOpen] = useState(false);
+  const [recordMode, setRecordMode] = useState<'expense' | 'income'>('expense');
 
   const handleRecord = (type: 'income' | 'expense') => {
     setIsOpen(false);
-    navigate('/movimientos', { 
-      state: { 
-        openAddModal: true, 
-        defaultType: type
-      } 
-    });
+    setRecordMode(type);
+    setIsQuickRecordOpen(true);
   };
 
   const openVoiceRecording = () => {
@@ -26,7 +23,7 @@ const QuickRecordFAB: React.FC = () => {
 
   return (
     <>
-      <div className="fixed bottom-24 right-6 z-50">
+      <div className="fixed bottom-24 right-6 md:bottom-16 md:right-10 z-50">
         <AnimatePresence>
           {isOpen && (
             <>
@@ -51,7 +48,7 @@ const QuickRecordFAB: React.FC = () => {
                 onClick={() => handleRecord('income')}
                 className="absolute bottom-0 right-0 flex items-center justify-center w-11 h-11 bg-[#A1887F] text-white rounded-full shadow-lg hover:bg-[#8D6E63] transition-colors"
               >
-                <TrendingUp className="w-5 h-5" />
+                <span className="text-sm font-bold">↗</span>
               </motion.button>
 
               {/* Expense button - west */}
@@ -63,7 +60,7 @@ const QuickRecordFAB: React.FC = () => {
                 onClick={() => handleRecord('expense')}
                 className="absolute bottom-0 right-0 flex items-center justify-center w-11 h-11 bg-[#5D4037] text-white rounded-full shadow-lg hover:bg-[#4E342E] transition-colors"
               >
-                <TrendingDown className="w-5 h-5" />
+                <span className="text-sm font-bold">↘</span>
               </motion.button>
             </>
           )}
@@ -87,6 +84,12 @@ const QuickRecordFAB: React.FC = () => {
       <VoiceRecordingModal
         isOpen={isVoiceModalOpen}
         onClose={() => setIsVoiceModalOpen(false)}
+      />
+
+      <QuickRecordModal
+        isOpen={isQuickRecordOpen}
+        onClose={() => setIsQuickRecordOpen(false)}
+        mode={recordMode}
       />
     </>
   );
