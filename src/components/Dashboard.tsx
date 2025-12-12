@@ -36,6 +36,7 @@ import AccountsCarousel from '@/components/dashboard/AccountsCarousel';
 import GoalsWidget from '@/components/dashboard/GoalsWidget';
 // import RecentTransactionsWidget from '@/components/dashboard/RecentTransactionsWidget';
 import BudgetWidget from '@/components/dashboard/BudgetWidget';
+import QuickRecordFAB from '@/components/dashboard/QuickRecordFAB';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -1208,19 +1209,19 @@ const Dashboard = () => {
               <div className="relative">
                 <button 
                   onClick={() => navigate("/notifications")} 
-                  className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-9 w-9 sm:h-10 sm:w-10 shadow-sm transition-all border border-white/20"
+                  className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-7 w-7 shadow-sm transition-all border border-white/20"
                 >
-                  <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <Bell className="h-3.5 w-3.5" />
                 </button>
                 {unreadNotifications > 0 && (
-                  <div className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500 border-2 border-white animate-pulse" />
+                  <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-red-500 border border-white animate-pulse" />
                 )}
               </div>
               <button 
                 onClick={() => navigate("/settings")} 
-                className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-9 w-9 sm:h-10 sm:w-10 shadow-sm transition-all border border-white/20"
+                className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-7 w-7 shadow-sm transition-all border border-white/20"
               >
-                <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
+                <Settings className="h-3.5 w-3.5" />
               </button>
             </div>
           </header>
@@ -1290,6 +1291,7 @@ const Dashboard = () => {
           )}
         </div>
 
+        <QuickRecordFAB />
         <BottomNav />
 
 

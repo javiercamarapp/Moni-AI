@@ -30,18 +30,12 @@ const QuickStats: React.FC<QuickStatsProps> = ({
     route: '/balance'
   }, {
     id: '2',
-    label: 'PATRIMONIO',
-    value: netWorthValue,
-    icon: 'trend',
-    route: '/net-worth'
-  }, {
-    id: '3',
     label: 'METAS',
     value: goalsCount.toString(),
     icon: 'target',
     route: '/goals'
   }, {
-    id: '4',
+    id: '3',
     label: 'JOURNEY',
     value: formatJourneyLevel(journeyLevel),
     icon: 'rocket',
@@ -66,7 +60,7 @@ const QuickStats: React.FC<QuickStatsProps> = ({
   };
   return (
     <div className="px-6 mb-4">
-      <div className="grid grid-cols-4 gap-2 lg:gap-4">
+      <div className="grid grid-cols-3 gap-2 lg:gap-4">
         {stats.map(stat => (
           <button
             key={stat.id}

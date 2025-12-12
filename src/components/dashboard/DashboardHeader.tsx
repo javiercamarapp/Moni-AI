@@ -53,21 +53,21 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         <div className="relative">
           <button 
             onClick={() => navigate("/notifications")} 
-            className={`inline-flex items-center justify-center ${buttonBg} backdrop-blur-sm rounded-full ${iconColor} h-9 w-9 sm:h-10 sm:w-10 shadow-sm transition-all border ${borderColor}`}
+            className={`inline-flex items-center justify-center ${buttonBg} backdrop-blur-sm rounded-full ${iconColor} h-7 w-7 shadow-sm transition-all border ${borderColor}`}
           >
-            <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
+            <Bell className="h-3.5 w-3.5" />
           </button>
           {unreadNotifications > 0 && (
-            <div className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500 border-2 border-white animate-pulse" />
+            <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-red-500 border border-white animate-pulse" />
           )}
         </div>
 
         {/* Ajustes */}
         <button 
           onClick={() => navigate("/settings")} 
-          className={`inline-flex items-center justify-center ${buttonBg} backdrop-blur-sm rounded-full ${iconColor} h-9 w-9 sm:h-10 sm:w-10 shadow-sm transition-all border ${borderColor}`}
+          className={`inline-flex items-center justify-center ${buttonBg} backdrop-blur-sm rounded-full ${iconColor} h-7 w-7 shadow-sm transition-all border ${borderColor}`}
         >
-          <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
+          <Settings className="h-3.5 w-3.5" />
         </button>
       </div>
     </header>
