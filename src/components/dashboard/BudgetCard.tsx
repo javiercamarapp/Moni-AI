@@ -183,7 +183,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
 
         {/* Top 3 Categories - Icons only, evenly distributed */}
         <div>
-          <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide block text-center mb-2">
+          <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide block mb-2">
             Top categorías
           </span>
           
