@@ -107,19 +107,24 @@ export function useNetWorth(timeRange: TimeRange) {
 
       // Format date labels based on time range
       const formatDateLabel = (date: Date, range: TimeRange): string => {
+        const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        const month = months[date.getMonth()];
+        const day = date.getDate();
+        const year = date.getFullYear().toString().slice(-2);
+        
         switch (range) {
           case '1M':
-            return format(date, 'd MMM');
+            return `${day} ${month}`;
           case '3M':
-            return format(date, 'd MMM');
+            return `${day} ${month}`;
           case '6M':
-            return format(date, 'MMM');
+            return month;
           case '1Y':
-            return format(date, 'MMM');
+            return month;
           case 'All':
-            return format(date, 'MMM yy').substring(0, 6);
+            return `${month} ${year}`;
           default:
-            return format(date, 'MMM dd');
+            return `${day} ${month}`;
         }
       };
 
