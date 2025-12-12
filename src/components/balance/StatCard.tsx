@@ -1,14 +1,13 @@
 import React from 'react';
-import { TrendingUp, TrendingDown, ChevronRight, Plus } from 'lucide-react';
+import { TrendingUp, TrendingDown, ChevronRight } from 'lucide-react';
 
 interface StatCardProps {
     type: 'income' | 'expense';
     amount: number;
     onClick?: () => void;
-    onAdd?: () => void;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ type, amount, onClick, onAdd }) => {
+const StatCard: React.FC<StatCardProps> = ({ type, amount, onClick }) => {
     const isIncome = type === 'income';
     const Icon = isIncome ? TrendingUp : TrendingDown;
     const iconBg = isIncome ? 'bg-emerald-50' : 'bg-red-50';
@@ -42,25 +41,11 @@ const StatCard: React.FC<StatCardProps> = ({ type, amount, onClick, onAdd }) => 
                 </div>
             </div>
 
-            <div className="flex items-center gap-1 shrink-0">
-                {onAdd && (
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onAdd();
-                        }}
-                        className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#F5F0EE] flex items-center justify-center hover:bg-[#8D6E63] hover:text-white text-[#5D4037] transition-all active:scale-95 shadow-sm"
-                    >
-                        <Plus className="w-3 h-3 sm:w-4 sm:h-4" strokeWidth={2.5} />
-                    </button>
-                )}
-                
-                {onClick && (
-                    <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#F5F0EE] group-hover:text-[#5D4037] transition-colors">
-                        <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-400 group-hover:text-[#5D4037] transition-colors" strokeWidth={2.5} />
-                    </div>
-                )}
-            </div>
+            {onClick && (
+                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#F5F0EE] group-hover:text-[#5D4037] transition-colors shrink-0">
+                    <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-400 group-hover:text-[#5D4037] transition-colors" strokeWidth={2.5} />
+                </div>
+            )}
         </div>
     );
 };
