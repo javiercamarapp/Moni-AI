@@ -11,12 +11,28 @@ import {
 // Cache stale time: 5 minutes (React Query in-memory)
 const STALE_TIME = 5 * 60 * 1000;
 
+interface Transaction {
+  id: string;
+  user_id: string;
+  amount: number;
+  type: string;
+  description: string;
+  transaction_date: string;
+  category_id: string | null;
+  account: string | null;
+  payment_method: string | null;
+  frequency: string | null;
+  created_at: string;
+  updated_at: string;
+  categories: { name: string; color: string } | null;
+}
+
 export const useTransactions = (startDate?: Date, endDate?: Date) => {
   const cacheKey = startDate && endDate
     ? `${CACHE_KEYS.TRANSACTIONS}_${startDate.getMonth()}_${startDate.getFullYear()}`
     : CACHE_KEYS.TRANSACTIONS;
 
-  return useQuery({
+  return useQuery<Transaction[]>({
     queryKey: ['transactions', startDate?.toISOString(), endDate?.toISOString()],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -44,12 +60,36 @@ export const useTransactions = (startDate?: Date, endDate?: Date) => {
     },
     staleTime: STALE_TIME,
     gcTime: 10 * 60 * 1000,
-    initialData: () => getCache(cacheKey),
+    initialData: () => getCache<Transaction[]>(cacheKey) ?? undefined,
   });
 };
 
+export interface Goal {
+  id: string;
+  user_id: string;
+  title: string;
+  description?: string | null;
+  target: number;
+  current: number;
+  deadline?: string | null;
+  color: string;
+  icon?: string | null;
+  type: string;
+  category?: string | null;
+  is_public?: boolean | null;
+  members?: number | null;
+  start_date?: string | null;
+  ai_confidence?: number | null;
+  predicted_completion_date?: string | null;
+  required_weekly_saving?: number | null;
+  required_daily_saving?: number | null;
+  last_contribution_date?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export const useGoals = () => {
-  return useQuery({
+  return useQuery<Goal[]>({
     queryKey: ['goals'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -69,12 +109,40 @@ export const useGoals = () => {
       return data || [];
     },
     staleTime: STALE_TIME,
-    initialData: () => getCache(CACHE_KEYS.GOALS),
+    initialData: () => getCache<Goal[]>(CACHE_KEYS.GOALS) ?? undefined,
   });
 };
 
+export interface GroupGoal {
+  id: string;
+  circle_id: string;
+  title: string;
+  description?: string | null;
+  target_amount: number;
+  deadline?: string | null;
+  icon?: string | null;
+  category?: string | null;
+  is_public?: boolean | null;
+  completed_members: number;
+  start_date?: string | null;
+  ai_confidence?: number | null;
+  predicted_completion_date?: string | null;
+  required_weekly_saving?: number | null;
+  created_at: string;
+  user_progress?: {
+    id: string;
+    goal_id: string;
+    user_id: string;
+    current_amount: number;
+    completed: boolean;
+    completed_at?: string | null;
+    created_at: string;
+    updated_at: string;
+  } | null;
+}
+
 export const useGroupGoals = () => {
-  return useQuery({
+  return useQuery<GroupGoal[]>({
     queryKey: ['groupGoals'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -114,7 +182,7 @@ export const useGroupGoals = () => {
       return goals.map(goal => ({
         ...goal,
         user_progress: progress?.find(p => p.goal_id === goal.id) || null
-      }));
+      })) as GroupGoal[];
     },
     staleTime: STALE_TIME,
   });
@@ -189,8 +257,21 @@ export const useNetWorth = () => {
   });
 };
 
+interface BankConnection {
+  id: string;
+  bank_name: string;
+  account_id: string;
+  access_token: string;
+  is_active: boolean | null;
+  last_sync: string | null;
+  plaid_item_id: string | null;
+  user_id: string;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
 export const useBankConnections = () => {
-  return useQuery({
+  return useQuery<BankConnection[]>({
     queryKey: ['bankConnections'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -210,14 +291,20 @@ export const useBankConnections = () => {
       return data || [];
     },
     staleTime: STALE_TIME,
-    initialData: () => getCache(CACHE_KEYS.BANK_CONNECTIONS),
+    initialData: () => getCache<BankConnection[]>(CACHE_KEYS.BANK_CONNECTIONS) ?? undefined,
   });
 };
+
+interface MonthlyTotals {
+  income: number;
+  expenses: number;
+  fixed: number;
+}
 
 export const useMonthlyTotals = (monthOffset: number = 0) => {
   const cacheKey = `${CACHE_KEYS.MONTHLY_TOTALS}_${monthOffset}`;
 
-  return useQuery({
+  return useQuery<MonthlyTotals>({
     queryKey: ['monthlyTotals', monthOffset],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -271,12 +358,20 @@ export const useMonthlyTotals = (monthOffset: number = 0) => {
       return result;
     },
     staleTime: STALE_TIME,
-    initialData: () => getCache(cacheKey),
+    initialData: () => getCache<MonthlyTotals>(cacheKey) ?? undefined,
   });
 };
 
+interface AccountItem {
+  id: string;
+  bank_name: string;
+  account_name: string;
+  balance: number;
+  type: 'asset' | 'liability';
+}
+
 export const useAccountsList = () => {
-  return useQuery({
+  return useQuery<AccountItem[]>({
     queryKey: ['accountsList'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -317,24 +412,24 @@ export const useAccountsList = () => {
         return included.some(term => text.includes(term));
       };
 
-      const assetAccounts = (assets || [])
+      const assetAccounts: AccountItem[] = (assets || [])
         .filter(a => isCardOrBank(a.name, a.category))
         .map(a => ({
           id: a.id,
           bank_name: a.category || 'Banco',
           account_name: a.name,
           balance: Number(a.value),
-          type: 'asset',
+          type: 'asset' as const,
         }));
 
-      const liabilityAccounts = (liabilities || [])
+      const liabilityAccounts: AccountItem[] = (liabilities || [])
         .filter(l => isCardOrBank(l.name, l.category))
         .map(l => ({
           id: l.id,
           bank_name: l.category || 'Banco',
           account_name: l.name,
           balance: Number(l.value),
-          type: 'liability',
+          type: 'liability' as const,
         }));
 
       const result = [...assetAccounts, ...liabilityAccounts];
@@ -345,7 +440,7 @@ export const useAccountsList = () => {
       return result;
     },
     staleTime: STALE_TIME,
-    initialData: () => getCache(CACHE_KEYS.ACCOUNTS_LIST),
+    initialData: () => getCache<AccountItem[]>(CACHE_KEYS.ACCOUNTS_LIST) ?? undefined,
   });
 };
 

@@ -1,6 +1,16 @@
-import { useQueries } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useMonthlyTotals, useGoals, useGroupGoals, useScoreMoni, useNetWorth, useBankConnections, useTransactions, useAccountsList } from './useFinancialData';
+import { 
+  useMonthlyTotals, 
+  useGoals, 
+  useGroupGoals, 
+  useScoreMoni, 
+  useNetWorth, 
+  useBankConnections, 
+  useTransactions, 
+  useAccountsList,
+  Goal,
+  GroupGoal
+} from './useFinancialData';
 
 // Cache time: 5 minutes
 const STALE_TIME = 5 * 60 * 1000;
@@ -25,31 +35,31 @@ export const useDashboardData = (monthOffset: number = 0) => {
   );
 
   return {
-    goals: goals.data || [],
+    goals: (goals.data || []) as Goal[],
     isLoadingGoals: goals.isLoading,
 
-    groupGoals: groupGoals.data || [],
+    groupGoals: (groupGoals.data || []) as GroupGoal[],
     isLoadingGroupGoals: groupGoals.isLoading,
 
-    scoreMoni: scoreMoni.data || 40,
+    scoreMoni: scoreMoni.data ?? 40,
     isLoadingScore: scoreMoni.isLoading,
 
-    netWorth: netWorth.data || 0,
+    netWorth: netWorth.data ?? 0,
     isLoadingNetWorth: netWorth.isLoading,
 
-    hasBankConnections: (bankConnections.data?.length || 0) > 0,
+    hasBankConnections: ((bankConnections.data as any[])?.length || 0) > 0,
     bankConnections: bankConnections.data || [],
     isLoadingBankConnections: bankConnections.isLoading,
 
     accounts: accountsList.data || [],
     isLoadingAccounts: accountsList.isLoading,
 
-    monthlyIncome: monthlyTotals.data?.income || 0,
-    monthlyExpenses: monthlyTotals.data?.expenses || 0,
-    fixedExpenses: monthlyTotals.data?.fixed || 0,
+    monthlyIncome: monthlyTotals.data?.income ?? 0,
+    monthlyExpenses: monthlyTotals.data?.expenses ?? 0,
+    fixedExpenses: monthlyTotals.data?.fixed ?? 0,
     isLoadingMonthly: monthlyTotals.isLoading,
 
-    recentTransactions: monthOffset === 0 ? (recentTransactions.data || []).slice(0, 20) : [],
+    recentTransactions: monthOffset === 0 ? ((recentTransactions.data || []) as any[]).slice(0, 20) : [],
     isLoadingTransactions: recentTransactions.isLoading,
 
     isLoading: goals.isLoading || groupGoals.isLoading || scoreMoni.isLoading || netWorth.isLoading ||
