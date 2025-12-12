@@ -288,7 +288,7 @@ const Goals = () => {
               </button>
               <div className="flex flex-col">
                 <h1 className={`${headingPage} mb-1`}>Mis Metas</h1>
-                <p className="text-xs text-gray-500">Alcanza tus objetivos con AI</p>
+                
               </div>
             </div>
             
@@ -329,14 +329,7 @@ const Goals = () => {
             }} plugins={[insightsAutoplayPlugin.current]}>
                   <CarouselContent>
                     {aiInsights.map((insight, index) => <CarouselItem key={index}>
-                        <div className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100/50">
-                          <div className="flex items-center gap-2 justify-center">
-                            <Sparkles className="w-4 h-4 text-[#8D6E63]" />
-                            <p className="text-xs text-gray-600 font-medium text-center">
-                              {insight}
-                            </p>
-                          </div>
-                        </div>
+                        
                       </CarouselItem>)}
                   </CarouselContent>
                 </Carousel>}
