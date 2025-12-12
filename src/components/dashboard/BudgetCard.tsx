@@ -195,6 +195,24 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
             <span className="text-xs text-gray-800 font-bold">{formatCurrency(expenses)}</span>
           </div>
         </div>
+        
+        {/* Navigation buttons */}
+        <div className="flex gap-2 mt-3">
+          <button 
+            onClick={(e) => { e.stopPropagation(); navigate('/ingresos'); }}
+            className="flex-1 flex items-center justify-center gap-1.5 bg-[#5D4037]/10 hover:bg-[#5D4037]/20 text-[#5D4037] rounded-xl py-2 transition-colors"
+          >
+            <TrendingUp size={14} />
+            <span className="text-xs font-semibold">Ingresos</span>
+          </button>
+          <button 
+            onClick={(e) => { e.stopPropagation(); navigate('/gastos'); }}
+            className="flex-1 flex items-center justify-center gap-1.5 bg-[#BCAAA4]/20 hover:bg-[#BCAAA4]/30 text-[#5D4037] rounded-xl py-2 transition-colors"
+          >
+            <TrendingDown size={14} />
+            <span className="text-xs font-semibold">Gastos</span>
+          </button>
+        </div>
       </div>
 
       {/* Divider */}
