@@ -484,99 +484,217 @@ const Goals = () => {
 
       {/* Expanded Goal Modal (Small Screens) */}
       {expandedGoal && <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 lg:hidden" onClick={() => setExpandedGoal(null)}>
-          <div className="bg-[#f5f0ee] w-full max-w-sm rounded-[2rem] p-5 max-h-[80vh] overflow-y-auto animate-in zoom-in-95 fade-in duration-200" onClick={e => e.stopPropagation()}>
-            {/* Close Button */}
-            <div className="flex justify-end mb-2">
-              <button onClick={() => setExpandedGoal(null)} className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
-                <X className="w-4 h-4 text-gray-500" />
-              </button>
-            </div>
+          <div className="bg-white w-full max-w-sm rounded-[1.75rem] max-h-[80vh] overflow-y-auto animate-in zoom-in-95 fade-in duration-200 shadow-xl relative" onClick={e => e.stopPropagation()}>
+            {/* Close Button - Positioned inside the card */}
+            <button 
+              onClick={() => setExpandedGoal(null)} 
+              className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+            >
+              <X className="w-4 h-4 text-gray-500" />
+            </button>
             
-            {/* Full Goal Card */}
-            <GoalCard goal={expandedGoal} onAddFunds={() => {
-          setExpandedGoal(null);
-          setAddFundsModal({
-            open: true,
-            goal: expandedGoal
-          });
-        }} onViewDetails={() => {
-          setExpandedGoal(null);
-          navigate(`/goals/${expandedGoal.id}`);
-        }} onComplete={() => {
-          setExpandedGoal(null);
-          handleCompleteGoal(expandedGoal.id);
-        }} />
+            {/* Goal Content - Inline instead of using GoalCard to avoid double container */}
+            {(() => {
+              const Icon = getGoalIcon(expandedGoal.title);
+              const progress = (expandedGoal.current / expandedGoal.target) * 100;
+              const remaining = expandedGoal.target - expandedGoal.current;
+              
+              return (
+                <div className="p-5 pt-6">
+                  {/* Header */}
+                  <div className="flex items-start justify-between mb-4 pr-8">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-[#F5F0EE] flex items-center justify-center flex-shrink-0">
+                        <Icon className="w-5 h-5 text-[#8D6E63]" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-[#5D4037] text-lg">{expandedGoal.title}</h3>
+                        <p className="text-xs text-gray-400 uppercase tracking-wide">{expandedGoal.category}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Progress */}
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm text-gray-500">Progreso</span>
+                    <span className="text-xl font-bold text-[#5D4037]">{progress.toFixed(0)}%</span>
+                  </div>
+                  <div className="w-full bg-gray-100 rounded-full h-2 mb-4 overflow-hidden">
+                    <div 
+                      className={`h-2 rounded-full transition-all ${
+                        progress >= 75 ? 'bg-emerald-500' : 
+                        progress >= 50 ? 'bg-blue-500' : 
+                        progress >= 25 ? 'bg-amber-500' : 'bg-gray-400'
+                      }`} 
+                      style={{ width: `${Math.min(progress, 100)}%` }} 
+                    />
+                  </div>
+
+                  {/* Stats */}
+                  <div className="flex justify-between items-center mb-4">
+                    <div>
+                      <p className="text-xs text-gray-400 mb-0.5">Actual</p>
+                      <p className="font-bold text-[#5D4037]">{formatCurrency(expandedGoal.current)}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-gray-400 mb-0.5">Falta</p>
+                      <p className="font-bold text-[#5D4037]">{formatCurrency(remaining)}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-400 mb-0.5">Meta</p>
+                      <p className="font-bold text-[#5D4037]">{formatCurrency(expandedGoal.target)}</p>
+                    </div>
+                  </div>
+
+                  {/* AI Prediction */}
+                  {expandedGoal.predicted_completion_date && (
+                    <div className="bg-[#F5F0EE] rounded-xl p-3 mb-4">
+                      <div className="flex items-start gap-2">
+                        <Sparkles className="h-4 w-4 text-[#8D6E63] mt-0.5 flex-shrink-0" />
+                        <div className="flex-1">
+                          <p className="text-xs text-[#5D4037] font-medium mb-0.5">
+                            Podrías lograrlo el {new Date(expandedGoal.predicted_completion_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
+                          </p>
+                          {expandedGoal.required_weekly_saving && (
+                            <p className="text-[10px] text-[#8D6E63]">
+                              💰 {formatCurrency(expandedGoal.required_weekly_saving)}/semana
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Actions */}
+                  <div className="flex gap-2">
+                    {progress >= 100 ? (
+                      <button
+                        onClick={() => {
+                          setExpandedGoal(null);
+                          handleCompleteGoal(expandedGoal.id);
+                        }}
+                        className="flex-1 h-11 bg-emerald-500 hover:bg-emerald-600 rounded-xl text-white font-bold text-sm transition-all flex items-center justify-center gap-2 active:scale-95"
+                      >
+                        <Sparkles className="h-4 w-4" />
+                        Completar
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setExpandedGoal(null);
+                          setAddFundsModal({ open: true, goal: expandedGoal });
+                        }}
+                        className="flex-1 h-11 bg-[#8D6E63] hover:bg-[#795548] rounded-xl text-white font-bold text-sm transition-all flex items-center justify-center gap-2 active:scale-95"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Agregar
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        setExpandedGoal(null);
+                        navigate(`/goals/${expandedGoal.id}`);
+                      }}
+                      className="h-11 px-5 bg-[#F5F0EE] hover:bg-[#EBE5E2] rounded-xl text-[#5D4037] font-bold text-sm transition-all active:scale-95"
+                    >
+                      Detalles
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>}
 
       {/* Expanded Group Goal Modal (Small Screens) */}
       {expandedGroupGoal && <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 lg:hidden" onClick={() => setExpandedGroupGoal(null)}>
-          <div className="bg-[#f5f0ee] w-full max-w-sm rounded-[2rem] p-5 max-h-[80vh] overflow-y-auto animate-in zoom-in-95 fade-in duration-200" onClick={e => e.stopPropagation()}>
-            {/* Close Button */}
-            <div className="flex justify-end mb-2">
-              <button onClick={() => setExpandedGroupGoal(null)} className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
-                <X className="w-4 h-4 text-gray-500" />
-              </button>
-            </div>
+          <div className="bg-white w-full max-w-sm rounded-[1.75rem] max-h-[80vh] overflow-y-auto animate-in zoom-in-95 fade-in duration-200 shadow-xl relative" onClick={e => e.stopPropagation()}>
+            {/* Close Button - Positioned inside the card */}
+            <button 
+              onClick={() => setExpandedGroupGoal(null)} 
+              className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+            >
+              <X className="w-4 h-4 text-gray-500" />
+            </button>
             
-            {/* Group Goal Card Content */}
-            <div className="bg-white rounded-[1.75rem] p-5 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.08)]">
+            {/* Group Goal Content */}
+            <div className="p-5 pt-6">
               {/* Header */}
-              <div className="flex items-start gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-[#F5F0EE] flex items-center justify-center flex-shrink-0">
-                  <Users className="w-6 h-6 text-[#8D6E63]" />
+              <div className="flex items-start gap-3 mb-4 pr-8">
+                <div className="w-10 h-10 rounded-xl bg-[#F5F0EE] flex items-center justify-center flex-shrink-0">
+                  <Users className="w-5 h-5 text-[#8D6E63]" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-[#5D4037] text-lg">{expandedGroupGoal.title}</h3>
                   <p className="text-xs text-gray-400">{expandedGroupGoal.circle_name}</p>
-                  {expandedGroupGoal.deadline && <p className="text-[10px] text-gray-400 mt-1">
+                  {expandedGroupGoal.deadline && (
+                    <p className="text-[10px] text-gray-400 mt-1">
                       Fecha límite: {new Date(expandedGroupGoal.deadline).toLocaleDateString('es-MX', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric'
-                })}
-                    </p>}
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                      })}
+                    </p>
+                  )}
                 </div>
               </div>
 
               {/* Progress */}
               {(() => {
-            const progress = expandedGroupGoal.current_amount / expandedGroupGoal.target_amount * 100;
-            return <>
+                const progress = expandedGroupGoal.current_amount / expandedGroupGoal.target_amount * 100;
+                return (
+                  <>
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm text-gray-500">Progreso</span>
-                      <span className="text-lg font-bold text-[#5D4037]">{progress.toFixed(0)}%</span>
+                      <span className="text-xl font-bold text-[#5D4037]">{progress.toFixed(0)}%</span>
                     </div>
-                    <div className="w-full bg-gray-100 rounded-full h-2.5 mb-3 overflow-hidden">
-                      <div className={`h-2.5 rounded-full transition-all ${progress >= 75 ? 'bg-emerald-500' : progress >= 50 ? 'bg-blue-500' : progress >= 25 ? 'bg-amber-500' : 'bg-gray-400'}`} style={{
-                  width: `${Math.min(progress, 100)}%`
-                }} />
+                    <div className="w-full bg-gray-100 rounded-full h-2 mb-4 overflow-hidden">
+                      <div 
+                        className={`h-2 rounded-full transition-all ${
+                          progress >= 75 ? 'bg-emerald-500' : 
+                          progress >= 50 ? 'bg-blue-500' : 
+                          progress >= 25 ? 'bg-amber-500' : 'bg-gray-400'
+                        }`} 
+                        style={{ width: `${Math.min(progress, 100)}%` }} 
+                      />
                     </div>
                     <div className="flex justify-between items-center mb-4">
                       <div>
-                        <span className="font-bold text-[#5D4037]">{formatCurrency(expandedGroupGoal.current_amount)}</span>
-                        <span className="text-gray-400 text-sm"> / {formatCurrency(expandedGroupGoal.target_amount)}</span>
+                        <p className="text-xs text-gray-400 mb-0.5">Actual</p>
+                        <p className="font-bold text-[#5D4037]">{formatCurrency(expandedGroupGoal.current_amount)}</p>
                       </div>
-                      <span className="text-xs text-gray-400">
-                        Faltan {formatCurrency(expandedGroupGoal.target_amount - expandedGroupGoal.current_amount)}
-                      </span>
+                      <div className="text-center">
+                        <p className="text-xs text-gray-400 mb-0.5">Falta</p>
+                        <p className="font-bold text-[#5D4037]">{formatCurrency(expandedGroupGoal.target_amount - expandedGroupGoal.current_amount)}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-gray-400 mb-0.5">Meta</p>
+                        <p className="font-bold text-[#5D4037]">{formatCurrency(expandedGroupGoal.target_amount)}</p>
+                      </div>
                     </div>
-                  </>;
-          })()}
+                  </>
+                );
+              })()}
 
               {/* Action Buttons */}
               <div className="flex gap-2">
-                <button onClick={() => {
-              setExpandedGroupGoal(null);
-              navigate(`/group-goals/${expandedGroupGoal.id}/contribute`);
-            }} className="flex-1 h-10 bg-[#8D6E63] hover:bg-[#795548] rounded-xl shadow-sm text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 active:scale-95">
+                <button 
+                  onClick={() => {
+                    setExpandedGroupGoal(null);
+                    navigate(`/group-goals/${expandedGroupGoal.id}/contribute`);
+                  }} 
+                  className="flex-1 h-11 bg-[#8D6E63] hover:bg-[#795548] rounded-xl text-white font-bold text-sm transition-all flex items-center justify-center gap-2 active:scale-95"
+                >
                   <Plus className="h-4 w-4" />
                   Agregar
                 </button>
-                <button onClick={() => {
-              setExpandedGroupGoal(null);
-              navigate(`/group-goals/${expandedGroupGoal.id}`);
-            }} className="h-10 px-4 bg-[#F5F0EE] hover:bg-[#EBE5E2] rounded-xl text-[#5D4037] font-bold text-xs transition-all active:scale-95">
+                <button 
+                  onClick={() => {
+                    setExpandedGroupGoal(null);
+                    navigate(`/group-goals/${expandedGroupGoal.id}`);
+                  }} 
+                  className="h-11 px-5 bg-[#F5F0EE] hover:bg-[#EBE5E2] rounded-xl text-[#5D4037] font-bold text-sm transition-all active:scale-95"
+                >
                   Detalles
                 </button>
               </div>
