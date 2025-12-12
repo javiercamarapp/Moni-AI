@@ -19,14 +19,14 @@ const TIME_RANGES: TimeRange[] = ['1M', '3M', '6M', '1Y', 'All'];
 const NetWorthChart: React.FC<{ data: ChartDataPoint[] }> = ({ data }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="w-full h-72 flex items-center justify-center text-gray-400">
+      <div className="w-full h-80 flex items-center justify-center text-gray-400">
         No hay datos disponibles
       </div>
     );
   }
 
   return (
-    <div className="w-full h-72">
+    <div className="w-full h-80">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}
@@ -218,24 +218,21 @@ const NetWorth: React.FC = () => {
   const periodProfit = currentNetWorth - startValue;
 
   return (
-    <div className="min-h-screen pb-24 relative overflow-hidden bg-[#F5F5F5]">
+    <div className="min-h-screen pb-24 relative overflow-hidden bg-gradient-to-b from-[#FAFAF9] to-white">
       
       {/* Brown Background Header - Portfolio Style */}
       <div className="bg-[#5D4037] pb-32 pt-6 px-6 rounded-b-[40px] shadow-lg relative z-0">
-        <div className="max-w-md mx-auto">
-          {/* Back button */}
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="bg-white/20 p-2.5 rounded-full backdrop-blur-sm hover:bg-white/30 transition-all active:scale-95 mb-4"
-          >
-            <ArrowLeft size={18} className="text-white" />
-          </button>
-          
-          {/* Title and value - matching portfolio style */}
-          <div className="flex justify-between items-center mb-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center gap-4 mb-6">
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="h-10 w-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-[#5D4037] hover:bg-white shadow-sm hover:shadow-md transition-all"
+            >
+              <ArrowLeft size={20} />
+            </button>
             <div>
               <p className="text-[10px] text-[#D7CCC8] font-bold uppercase tracking-widest">Patrimonio Neto</p>
-              <h1 className="text-3xl font-bold font-['DM_Sans'] tracking-tight text-white">
+              <h1 className="text-3xl font-bold tracking-tight text-white">
                 ${currentNetWorth.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </h1>
             </div>
@@ -244,7 +241,7 @@ const NetWorth: React.FC = () => {
       </div>
 
       {/* Main Content - Pulled up with negative margin to overlap header */}
-      <div className="relative z-10 px-6 -mt-32 max-w-md mx-auto">
+      <div className="relative z-10 px-6 -mt-32 max-w-5xl mx-auto">
 
         {/* Main Chart Card - Portfolio Style */}
         <div className="bg-white rounded-3xl p-6 shadow-xl mb-6 ring-1 ring-black/5">
