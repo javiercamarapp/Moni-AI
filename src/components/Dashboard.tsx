@@ -1203,7 +1203,7 @@ const Dashboard = () => {
           />
           
           {/* Header Buttons - positioned above cards */}
-          <header className="relative z-20 px-6 py-4 pt-6">
+          <header className="relative z-20 px-6 py-2 pt-4">
             <div className="flex items-center justify-end gap-2">
               <div className="relative">
                 <button 
