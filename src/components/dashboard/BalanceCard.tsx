@@ -43,26 +43,26 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
         </div>
       </div>
 
-      {/* Single Compound Bar - Income vs Expenses */}
+      {/* Single Compound Bar - Income vs Expenses as one seamless bar */}
       <div className="mb-3">
-        <div className="h-3 bg-gray-100 rounded-full overflow-hidden flex">
+        <div className="h-4 rounded-full overflow-hidden flex w-full">
           <div 
-            className="h-full bg-[#5D4037] transition-all duration-500 relative"
+            className="h-full bg-[#5D4037] rounded-l-full"
             style={{ width: `${incomePercent}%` }}
           />
           <div 
-            className="h-full bg-[#D7CCC8] transition-all duration-500"
+            className="h-full bg-[#BCAAA4] rounded-r-full"
             style={{ width: `${expensePercent}%` }}
           />
         </div>
-        <div className="flex justify-between mt-1.5">
-          <div className="flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full bg-[#5D4037]"></div>
-            <span className="text-[10px] text-gray-800 font-bold">${income.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+        <div className="flex justify-between mt-2">
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#5D4037]"></div>
+            <span className="text-xs text-gray-800 font-bold">${income.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full bg-[#D7CCC8]"></div>
-            <span className="text-[10px] text-gray-800 font-bold">${expenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#BCAAA4]"></div>
+            <span className="text-xs text-gray-800 font-bold">${expenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
           </div>
         </div>
       </div>
