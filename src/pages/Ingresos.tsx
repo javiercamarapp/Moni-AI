@@ -373,7 +373,7 @@ const Ingresos = () => {
 
               <div className="flex flex-col">
                 <h1 className={headingPage}>Tus Ingresos</h1>
-                <div className="flex items-center gap-1 text-sm text-gray-500 font-medium">
+                <div className="flex items-center gap-1 text-sm text-gray-500 font-medium -ml-0.5">
                   {viewMode === 'month' && <ChevronLeft onClick={handlePreviousPeriod} className="w-3 h-3 cursor-pointer" />}
                   <span className="animate-in fade-in duration-300 whitespace-nowrap">{getPeriodLabel()}</span>
                   {viewMode === 'month' && <ChevronRight onClick={handleNextPeriod} className="w-3 h-3 cursor-pointer" />}
