@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, Check, Home, Car, Wallet, Shield, LineChart, Bitcoin, Landmark, Briefcase, Building2, MapPin, Sparkles, Target } from "lucide-react";
+import { ArrowLeft, Check, Home, Car, Wallet, Shield, LineChart, Bitcoin, Landmark, Briefcase, Building2, MapPin, Target } from "lucide-react";
 import { useHasNetWorthData } from "@/hooks/useNetWorth";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -286,18 +286,19 @@ export default function LevelQuiz() {
                       </div>
                     </div>
                     
-                    <div className="relative ml-13 pl-10">
-                      <span className="absolute left-13 top-1/2 -translate-y-1/2 text-[#5D4037] text-sm font-bold">$</span>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4037] text-sm font-bold">$</span>
                       <Input
                         type="text"
                         inputMode="numeric"
+                        pattern="[0-9]*"
                         placeholder={q.placeholder}
                         value={formatNumberWithCommas(aspirationalAnswers[q.id] || "")}
                         onChange={(e) => {
                           const value = e.target.value.replace(/[^0-9]/g, '');
                           handleAnswer(q.id, value);
                         }}
-                        className="h-11 text-sm pl-7 bg-[#F5F0EE] border-0 focus:ring-2 focus:ring-[#5D4037]/20 rounded-xl font-semibold text-[#5D4037]"
+                        className="h-11 text-sm pl-8 bg-[#F5F0EE] border-0 focus:ring-2 focus:ring-[#5D4037]/20 rounded-xl font-semibold text-[#5D4037]"
                       />
                     </div>
                   </div>
@@ -345,18 +346,10 @@ export default function LevelQuiz() {
                   Guardando...
                 </span>
               ) : (
-                <span className="flex items-center gap-2">
-                  <Sparkles size={18} />
-                  Guardar Aspiraciones
-                </span>
+                "Guardar Aspiraciones"
               )}
             </Button>
           )}
-        </div>
-        
-        {/* Progress indicator */}
-        <div className="mt-3 text-center text-xs text-[#8D6E63]">
-          {answeredRequired} de {requiredIds.length} preguntas obligatorias
         </div>
       </div>
     </div>
