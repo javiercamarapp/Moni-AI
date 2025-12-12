@@ -152,11 +152,22 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
   const maxCategoryAmount = topCategories.length > 0 ? topCategories[0].amount : 1;
   return <div className="w-full bg-white rounded-2xl px-4 py-2.5 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08)] border border-gray-100 relative overflow-hidden cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/balance')}>
       {/* Header */}
-      <div className="flex items-center gap-2 mb-2">
-        <div className="h-7 w-7 rounded-xl bg-[#F5F0EE] flex items-center justify-center text-[#8D6E63]">
-          <PiggyBank size={14} />
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <div className="h-7 w-7 rounded-xl bg-[#F5F0EE] flex items-center justify-center text-[#8D6E63]">
+            <PiggyBank size={14} />
+          </div>
+          <h3 className="text-gray-800 font-bold text-sm">Balance mensual</h3>
         </div>
-        <h3 className="text-gray-800 font-bold text-sm">Balance mensual</h3>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate('/balance');
+          }}
+          className="text-xs text-[#8D6E63] font-medium hover:text-[#5D4037] transition-colors"
+        >
+          Ver resumen ›
+        </button>
       </div>
 
       {/* Single Compound Progress Bar - Income vs Expenses */}
