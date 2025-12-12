@@ -5,7 +5,7 @@ import { headingPage } from '@/styles/typography';
 import { supabase } from '@/integrations/supabase/client';
 import BottomNav from '@/components/BottomNav';
 import { useToast } from '@/hooks/use-toast';
-import { LoadingScreen } from '@/components/LoadingScreen';
+import { SectionLoader } from '@/components/SectionLoader';
 import BalanceCard from '@/components/balance/BalanceCard';
 import StatCard from '@/components/balance/StatCard';
 import BalanceCategoryBreakdown from '@/components/balance/BalanceCategoryBreakdown';
@@ -815,9 +815,13 @@ const Balance = () => {
   // We check localStorage directly to avoid any state synchronization issues
   const hasCachedData = localStorage.getItem('balance_ingresos') && localStorage.getItem('balance_gastos');
 
-  // Only show loading screen if we are loading AND have no data at all
+  // Only show loading if we are loading AND have no data at all
   if (loading && !hasInitialData && !hasCachedData) {
-    return <LoadingScreen />;
+    return (
+      <div className="page-standard min-h-screen pb-20 flex items-center justify-center">
+        <SectionLoader size="lg" />
+      </div>
+    );
   }
 
   // Determine status label based on savings rate

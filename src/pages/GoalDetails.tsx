@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { LoadingScreen } from "@/components/LoadingScreen";
+import { SectionLoader } from "@/components/SectionLoader";
 import { formatCurrency } from "@/lib/utils";
 import BottomNav from "@/components/BottomNav";
 import { AddFundsModal } from "@/components/goals/AddFundsModal";
@@ -139,7 +139,11 @@ const GoalDetails = () => {
   };
 
   if (loading || !goal) {
-    return <LoadingScreen />;
+    return (
+      <div className="page-standard min-h-screen pb-20 flex items-center justify-center">
+        <SectionLoader size="lg" />
+      </div>
+    );
   }
 
   const progress = (goal.current / goal.target) * 100;

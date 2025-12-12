@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { MoniLoader } from "@/components/MoniLoader";
+import { SectionLoader } from "@/components/SectionLoader";
 import { Users, CheckCircle, XCircle } from "lucide-react";
 
 const JoinCircle = () => {
@@ -120,7 +120,7 @@ const JoinCircle = () => {
   if (loading) {
     return (
       <div className="page-standard min-h-screen flex items-center justify-center">
-        <MoniLoader size="lg" />
+        <SectionLoader size="lg" />
       </div>
     );
   }
