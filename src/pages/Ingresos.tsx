@@ -493,10 +493,10 @@ const Ingresos = () => {
                 });
               }
             }}
-            className="w-full py-3.5 border border-gray-100 bg-gray-50 rounded-2xl flex items-center justify-center gap-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 transition-colors mb-8"
+            className="py-2 px-4 border border-gray-100 bg-gray-50 rounded-xl flex items-center justify-center gap-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 transition-colors mb-6"
           >
-            <Download className="w-4 h-4 text-gray-500" />
-            Descargar reporte de ingresos en PDF
+            <Download className="w-3 h-3 text-gray-500" />
+            Descargar Reporte
           </button>
 
           {/* Chart Section */}
@@ -509,7 +509,7 @@ const Ingresos = () => {
               </div>
             </div>
 
-            <div className="h-48 w-full">
+            <div className="h-32 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData}>
                   <defs>
