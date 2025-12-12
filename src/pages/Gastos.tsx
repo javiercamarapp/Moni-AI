@@ -375,10 +375,10 @@ const Gastos = () => {
 
               <div className="flex flex-col">
                 <h1 className={headingPage}>Tus Gastos</h1>
-                <div className="flex items-center gap-1 text-sm text-gray-500 font-medium">
-                  {viewMode === 'month' && <ChevronLeft onClick={handlePreviousPeriod} className="w-3 h-3 cursor-pointer" />}
-                  <span className="animate-in fade-in duration-300">{getPeriodLabel()}</span>
-                  {viewMode === 'month' && <ChevronRight onClick={handleNextPeriod} className="w-3 h-3 cursor-pointer" />}
+                <div className="flex items-center gap-0.5 sm:gap-1 text-xs sm:text-sm text-gray-500 font-medium -ml-0.5">
+                  {viewMode === 'month' && <ChevronLeft onClick={handlePreviousPeriod} className="w-2.5 h-2.5 sm:w-3 sm:h-3 cursor-pointer" />}
+                  <span className="animate-in fade-in duration-300 whitespace-nowrap">{getPeriodLabel()}</span>
+                  {viewMode === 'month' && <ChevronRight onClick={handleNextPeriod} className="w-2.5 h-2.5 sm:w-3 sm:h-3 cursor-pointer" />}
                 </div>
               </div>
             </div>
@@ -434,73 +434,64 @@ const Gastos = () => {
             </div>
 
             <button
-              onClick={() => navigate('/categorias')}
-              className="w-14 h-14 rounded-2xl bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition-colors shadow-sm ml-4"
-              aria-label="Editar categorías"
-            >
-              <Tags className="w-7 h-7 text-[#8D6E63]" />
-            </button>
-          </div>
+              onClick={async () => {
+                try {
+                  const { data: { user } } = await supabase.auth.getUser();
+                  if (!user) {
+                    toast({
+                      title: "Error",
+                      description: "Debes iniciar sesión para descargar el reporte",
+                      variant: "destructive"
+                    });
+                    return;
+                  }
 
-          {/* Download Button */}
-          <button
-            onClick={async () => {
-              try {
-                const { data: { user } } = await supabase.auth.getUser();
-                if (!user) {
+                  toast({
+                    title: "Generando reporte",
+                    description: "Por favor espera...",
+                  });
+
+                  const { data, error } = await supabase.functions.invoke('generate-statement-pdf', {
+                    body: {
+                      userId: user.id,
+                      viewMode: viewMode === 'month' ? 'mensual' : 'anual',
+                      month: currentMonth.getMonth() + 1,
+                      year: currentMonth.getFullYear(),
+                      type: 'gasto'
+                    }
+                  });
+
+                  if (error) throw error;
+
+                  const blob = new Blob([data.html], { type: 'text/html' });
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = data.filename || `gastos_${viewMode === 'month' ? `${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}` : currentMonth.getFullYear()}.html`;
+                  document.body.appendChild(a);
+                  a.click();
+                  window.URL.revokeObjectURL(url);
+                  document.body.removeChild(a);
+
+                  toast({
+                    title: "Reporte generado",
+                    description: "Abre el archivo y usa Ctrl+P para guardar como PDF",
+                  });
+                } catch (error) {
+                  console.error('Error al generar reporte:', error);
                   toast({
                     title: "Error",
-                    description: "Debes iniciar sesión para descargar el reporte",
+                    description: "No se pudo generar el reporte",
                     variant: "destructive"
                   });
-                  return;
                 }
-
-                toast({
-                  title: "Generando reporte",
-                  description: "Por favor espera...",
-                });
-
-                const { data, error } = await supabase.functions.invoke('generate-statement-pdf', {
-                  body: {
-                    userId: user.id,
-                    viewMode: viewMode === 'month' ? 'mensual' : 'anual',
-                    month: currentMonth.getMonth() + 1,
-                    year: currentMonth.getFullYear(),
-                    type: 'gasto'
-                  }
-                });
-
-                if (error) throw error;
-
-                const blob = new Blob([data.html], { type: 'text/html' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = data.filename || `gastos_${viewMode === 'month' ? `${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}` : currentMonth.getFullYear()}.html`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-
-                toast({
-                  title: "Reporte generado",
-                  description: "Abre el archivo y usa Ctrl+P para guardar como PDF",
-                });
-              } catch (error) {
-                console.error('Error al generar reporte:', error);
-                toast({
-                  title: "Error",
-                  description: "No se pudo generar el reporte",
-                  variant: "destructive"
-                });
-              }
-            }}
-            className="w-full py-3.5 border border-gray-100 bg-gray-50 rounded-2xl flex items-center justify-center gap-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 transition-colors mb-8"
-          >
-            <Download className="w-4 h-4 text-gray-500" />
-            Descargar reporte de gastos en PDF
-          </button>
+              }}
+              className="w-14 h-14 rounded-2xl bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition-colors shadow-sm ml-4"
+              aria-label="Descargar reporte"
+            >
+              <Download className="w-6 h-6 text-[#8D6E63]" />
+            </button>
+          </div>
 
           {/* Chart Section */}
           <div>
@@ -512,7 +503,7 @@ const Gastos = () => {
               </div>
             </div>
 
-            <div className="h-48 w-full">
+            <div className="h-32 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData}>
                   <defs>
@@ -607,38 +598,36 @@ const Gastos = () => {
                 return (
                   <div
                     key={tx.id}
-                    className="bg-white rounded-3xl p-4 shadow-sm flex items-center justify-between group cursor-pointer hover:shadow-md transition-all animate-in slide-in-from-bottom-2 duration-500 shrink-0"
+                    className="bg-white rounded-2xl p-3 shadow-sm flex items-center gap-3 group cursor-pointer hover:shadow-md transition-all animate-in slide-in-from-bottom-2 duration-500 shrink-0"
                     style={{ animationDelay: `${index * 50}ms` }}
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-[#F5F0EE] flex items-center justify-center text-[#8D6E63]">
-                        <ShoppingCart className="w-6 h-6" />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-gray-900">{tx.description}</h4>
-                        <p className="text-xs text-gray-500 font-medium">
-                          {txDate.toLocaleDateString('es-MX', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric'
-                          })}
-                        </p>
-                        <div className="flex gap-1 mt-1">
-                          {tx.categories && (
-                            <Badge className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#F5F0EE] text-[#8D6E63] border-0">
-                              {tx.categories.name}
-                            </Badge>
-                          )}
-                          {tx.payment_method && (
-                            <Badge className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 border-0 uppercase tracking-wide">
-                              {tx.payment_method}
-                            </Badge>
-                          )}
-                        </div>
+                    <div className="w-9 h-9 rounded-xl bg-[#EFEBE9] flex items-center justify-center flex-shrink-0">
+                      <ShoppingCart className="w-4 h-4 text-[#5D4037]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-gray-900 text-sm truncate">{tx.description}</h4>
+                      <p className="text-[10px] text-gray-500 font-medium">
+                        {txDate.toLocaleDateString('es-MX', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric'
+                        })}
+                      </p>
+                      <div className="flex gap-1 mt-0.5 flex-wrap">
+                        {tx.categories && (
+                          <Badge className="text-[9px] font-medium px-1.5 py-0 rounded bg-[#EFEBE9] text-[#5D4037] border-0">
+                            {tx.categories.name.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '').trim()}
+                          </Badge>
+                        )}
+                        {tx.payment_method && (
+                          <Badge className="text-[9px] font-medium px-1.5 py-0 rounded bg-gray-100 text-gray-600 border-0 capitalize">
+                            {tx.payment_method}
+                          </Badge>
+                        )}
                       </div>
                     </div>
-                    <div className="text-right">
-                      <span className="block font-bold text-gray-900 text-lg">
+                    <div className="text-right flex-shrink-0">
+                      <span className="block font-bold text-[#5D4037] text-sm">
                         -${Number(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                       </span>
                     </div>
