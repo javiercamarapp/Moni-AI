@@ -72,6 +72,8 @@ type CreditCardEntry = {
   cardName: string;
   cutoffDate: string;
   amountOwed: string;
+  statementFile?: File;
+  statementFileName?: string;
 };
 
 // Loan Types
@@ -237,10 +239,17 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     setCreditCardEntries(creditCardEntries.filter(entry => entry.id !== id));
   };
 
-  const updateCreditCardEntry = (id: string, field: keyof CreditCardEntry, value: string) => {
+  const updateCreditCardEntry = (id: string, field: keyof CreditCardEntry, value: string | File) => {
     setCreditCardEntries(creditCardEntries.map(entry => 
       entry.id === id ? { ...entry, [field]: value } : entry
     ));
+  };
+
+  const handleStatementUpload = (id: string, file: File) => {
+    setCreditCardEntries(creditCardEntries.map(entry => 
+      entry.id === id ? { ...entry, statementFile: file, statementFileName: file.name } : entry
+    ));
+    toast.success(`Archivo "${file.name}" adjuntado`);
   };
 
   const calculateCreditCardsTotal = () => {
@@ -1118,14 +1127,33 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                               </div>
                             </div>
                           </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full h-10 text-xs text-[#8D6E63] border-dashed border-[#A1887F]/30 hover:bg-[#A1887F]/10 rounded-xl"
-                          >
-                            <Upload size={14} className="mr-2" />
-                            Subir estado de cuenta (opcional)
-                          </Button>
+                          <div className="relative">
+                            <input
+                              type="file"
+                              id={`statement-${entry.id}`}
+                              accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleStatementUpload(entry.id, file);
+                              }}
+                            />
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              type="button"
+                              onClick={() => document.getElementById(`statement-${entry.id}`)?.click()}
+                              className={cn(
+                                "w-full h-10 text-xs border-dashed rounded-xl transition-all",
+                                entry.statementFileName 
+                                  ? "text-green-600 border-green-300 bg-green-50 hover:bg-green-100" 
+                                  : "text-[#8D6E63] border-[#A1887F]/30 hover:bg-[#A1887F]/10"
+                              )}
+                            >
+                              <Upload size={14} className="mr-2" />
+                              {entry.statementFileName || "Subir estado de cuenta (opcional)"}
+                            </Button>
+                          </div>
                         </div>
                       ))}
                       <Button
