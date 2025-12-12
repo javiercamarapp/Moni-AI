@@ -19,6 +19,10 @@ export default {
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
+        hover: {
+          DEFAULT: "hsl(var(--hover))",
+          light: "hsl(var(--hover-light))",
+        },
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
