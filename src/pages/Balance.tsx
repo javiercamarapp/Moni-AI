@@ -1015,38 +1015,59 @@ const Balance = () => {
 
         {/* 5. Breakdown Charts Carousel */}
         {(ingresosByCategory.length > 0 || gastosByCategory.length > 0) && (
-          <Carousel className="w-full">
-            <CarouselContent>
-              {ingresosByCategory.length > 0 && (
-                <CarouselItem>
-                  <BalanceCategoryBreakdown
-                    title="Ingresos"
-                    data={ingresosByCategory.map(cat => ({
-                      name: cat.name,
-                      amount: cat.total,
-                      color: cat.color,
-                      percent: Math.round(cat.percentage)
-                    }))}
-                    type="income"
-                  />
-                </CarouselItem>
-              )}
-              {gastosByCategory.length > 0 && (
-                <CarouselItem>
-                  <BalanceCategoryBreakdown
-                    title="Gastos"
-                    data={gastosByCategory.map(cat => ({
-                      name: cat.name,
-                      amount: cat.total,
-                      color: cat.color,
-                      percent: Math.round(cat.percentage)
-                    }))}
-                    type="expense"
-                  />
-                </CarouselItem>
-              )}
-            </CarouselContent>
-          </Carousel>
+          <div className="space-y-2">
+            {/* Tab Indicators */}
+            <div className="flex justify-center gap-2">
+              <div className="flex bg-white rounded-full p-1 shadow-sm border border-gray-100">
+                <button
+                  className="px-3 py-1 rounded-full text-[10px] font-bold transition-all bg-[#8D6E63] text-white"
+                  disabled
+                >
+                  Ingresos
+                </button>
+                <button
+                  className="px-3 py-1 rounded-full text-[10px] font-bold transition-all text-gray-400"
+                  disabled
+                >
+                  Gastos
+                </button>
+              </div>
+              <span className="text-[9px] text-gray-400 self-center">← Desliza →</span>
+            </div>
+            
+            <Carousel className="w-full">
+              <CarouselContent>
+                {ingresosByCategory.length > 0 && (
+                  <CarouselItem>
+                    <BalanceCategoryBreakdown
+                      title="Ingresos"
+                      data={ingresosByCategory.map(cat => ({
+                        name: cat.name,
+                        amount: cat.total,
+                        color: cat.color,
+                        percent: Math.round(cat.percentage)
+                      }))}
+                      type="income"
+                    />
+                  </CarouselItem>
+                )}
+                {gastosByCategory.length > 0 && (
+                  <CarouselItem>
+                    <BalanceCategoryBreakdown
+                      title="Gastos"
+                      data={gastosByCategory.map(cat => ({
+                        name: cat.name,
+                        amount: cat.total,
+                        color: cat.color,
+                        percent: Math.round(cat.percentage)
+                      }))}
+                      type="expense"
+                    />
+                  </CarouselItem>
+                )}
+              </CarouselContent>
+            </Carousel>
+          </div>
         )}
 
       </main>
