@@ -22,27 +22,27 @@ const StatCard: React.FC<StatCardProps> = ({ type, amount, onClick, onAdd }) => 
     return (
         <div
             onClick={onClick}
-            className={`bg-white rounded-[1.25rem] p-4 shadow-sm flex flex-row items-center justify-between border border-white/50 w-full hover:-translate-y-1 hover:shadow-md transition-all duration-300 group ${onClick ? 'cursor-pointer' : 'cursor-default'}`}
+            className={`bg-white rounded-[1.25rem] p-3 sm:p-4 shadow-sm flex flex-row items-center justify-between border border-white/50 w-full hover:-translate-y-1 hover:shadow-md transition-all duration-300 group ${onClick ? 'cursor-pointer' : 'cursor-default'}`}
         >
-            <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl ${iconBg} flex items-center justify-center shrink-0`}>
-                    <Icon className={`w-5 h-5 ${iconColor}`} strokeWidth={2.5} />
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl ${iconBg} flex items-center justify-center shrink-0`}>
+                    <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${iconColor}`} strokeWidth={2.5} />
                 </div>
 
-                <div className="flex flex-col">
-                    <span className="text-gray-500 text-[10px] font-bold leading-tight">{label}</span>
+                <div className="flex flex-col min-w-0">
+                    <span className="text-gray-500 text-[9px] sm:text-[10px] font-bold leading-tight">{label}</span>
                     <div className="flex items-baseline gap-0.5 mt-0.5">
-                        <span className="text-[#5D4037] text-lg font-black tracking-tight leading-none">
+                        <span className="text-[#5D4037] text-sm sm:text-lg font-black tracking-tight leading-none truncate">
                             {integerPart}
                         </span>
-                        <span className="text-gray-500 text-[10px] font-bold opacity-60">
+                        <span className="text-gray-500 text-[9px] sm:text-[10px] font-bold opacity-60">
                             .{decimalPart}
                         </span>
                     </div>
                 </div>
             </div>
 
-            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <div className="flex items-center gap-1 shrink-0">
                 {onAdd && (
                     <button
                         onClick={(e) => {
