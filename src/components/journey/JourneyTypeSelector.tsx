@@ -116,14 +116,16 @@ export default function JourneyTypeSelector({ onSelect }: JourneyTypeSelectorPro
                 key={option.type}
                 className={cn(
                   "absolute w-[85%] max-w-sm h-80 rounded-3xl",
-                  "bg-gradient-to-br shadow-lg",
-                  option.gradient
+                  "bg-gradient-to-br shadow-lg backdrop-blur-md",
+                  option.gradient,
+                  "bg-opacity-70"
                 )}
+                style={{ background: `linear-gradient(to bottom right, rgba(93, 64, 55, 0.7), rgba(141, 110, 99, 0.7))` }}
                 initial={false}
                 animate={{
                   scale: 0.9,
                   y: offset * 20,
-                  opacity: 0.5,
+                  opacity: 0.4,
                   zIndex: -Math.abs(offset),
                 }}
                 transition={{ duration: 0.3 }}
@@ -155,11 +157,17 @@ export default function JourneyTypeSelector({ onSelect }: JourneyTypeSelectorPro
               className={cn(
                 "absolute w-[85%] max-w-sm cursor-pointer",
                 "p-8 rounded-3xl text-left",
-                "bg-gradient-to-br shadow-2xl",
-                "hover:shadow-3xl transition-shadow duration-300",
-                currentOption.gradient
+                "shadow-2xl backdrop-blur-md",
+                "hover:shadow-3xl transition-shadow duration-300"
               )}
-              style={{ touchAction: 'pan-y' }}
+              style={{ 
+                touchAction: 'pan-y',
+                background: currentIndex === 0 
+                  ? 'linear-gradient(to bottom right, rgba(93, 64, 55, 0.85), rgba(141, 110, 99, 0.85))'
+                  : currentIndex === 1
+                  ? 'linear-gradient(to bottom right, rgba(78, 52, 46, 0.85), rgba(109, 76, 65, 0.85))'
+                  : 'linear-gradient(to bottom right, rgba(62, 39, 35, 0.85), rgba(93, 64, 55, 0.85))'
+              }}
             >
               <div className="flex flex-col h-full">
                 <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-6">
@@ -188,16 +196,16 @@ export default function JourneyTypeSelector({ onSelect }: JourneyTypeSelectorPro
           </AnimatePresence>
         </div>
 
-        {/* Navigation arrows */}
+        {/* Navigation arrows - hidden on mobile */}
         <button
           onClick={() => paginate(-1)}
-          className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm shadow-lg flex items-center justify-center text-[#5D4037] hover:bg-white transition-colors z-10"
+          className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm shadow-lg items-center justify-center text-[#5D4037] hover:bg-white transition-colors z-10"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
         <button
           onClick={() => paginate(1)}
-          className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm shadow-lg flex items-center justify-center text-[#5D4037] hover:bg-white transition-colors z-10"
+          className="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm shadow-lg items-center justify-center text-[#5D4037] hover:bg-white transition-colors z-10"
         >
           <ChevronRight className="w-5 h-5" />
         </button>
