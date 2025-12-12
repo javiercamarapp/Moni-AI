@@ -149,7 +149,8 @@ const Ingresos = () => {
 
   const getPeriodLabel = () => {
     if (viewMode === 'month') {
-      return currentMonth.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
+      const label = currentMonth.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
+      return label.charAt(0).toUpperCase() + label.slice(1);
     }
     return `Año ${currentMonth.getFullYear()}`;
   };
@@ -374,7 +375,7 @@ const Ingresos = () => {
                 <h1 className={headingPage}>Tus Ingresos</h1>
                 <div className="flex items-center gap-1 text-sm text-gray-500 font-medium">
                   {viewMode === 'month' && <ChevronLeft onClick={handlePreviousPeriod} className="w-3 h-3 cursor-pointer" />}
-                  <span className="animate-in fade-in duration-300">{getPeriodLabel()}</span>
+                  <span className="animate-in fade-in duration-300 whitespace-nowrap">{getPeriodLabel()}</span>
                   {viewMode === 'month' && <ChevronRight onClick={handleNextPeriod} className="w-3 h-3 cursor-pointer" />}
                 </div>
               </div>
