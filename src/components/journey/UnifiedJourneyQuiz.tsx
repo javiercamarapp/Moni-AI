@@ -776,6 +776,7 @@ export default function UnifiedJourneyQuiz({ journeyType, onComplete, onBack }: 
                   <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#A1887F]" />
                   <Input
                     type="number"
+                    step={10000}
                     value={data.targetAmount || ''}
                     onChange={(e) => updateData({ targetAmount: Number(e.target.value) })}
                     placeholder={journeyType === 'first_million' ? "1,000,000" : "3,000,000"}
@@ -807,6 +808,7 @@ export default function UnifiedJourneyQuiz({ journeyType, onComplete, onBack }: 
                   <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#A1887F]" />
                   <Input
                     type="number"
+                    step={500}
                     value={data.monthlyCapacity || ''}
                     onChange={(e) => updateData({ monthlyCapacity: Number(e.target.value) })}
                     placeholder="5,000"
