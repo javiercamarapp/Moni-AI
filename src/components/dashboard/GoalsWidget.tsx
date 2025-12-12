@@ -168,29 +168,31 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                                         className="w-full bg-white rounded-2xl p-3 shadow-[0_10px_20px_-8px_rgba(0,0,0,0.05)] border border-gray-50 relative overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform"
                                         onClick={() => navigate(`/goals/${goal.id}`)}
                                     >
+                                        {/* Icon - top left */}
+                                        <div className="absolute top-2 left-2 w-7 h-7 rounded-lg bg-[#F5F0EE] flex items-center justify-center">
+                                            <Icon size={14} className="text-[#8D6E63]" />
+                                        </div>
+                                        
                                         {/* Percentage - top right */}
                                         <span className={`absolute top-2 right-2 text-xs font-bold ${getTextColor(index)}`}>{percentage}%</span>
                                         
-                                        {/* Icon and name */}
-                                        <div className="flex flex-col items-center mb-2">
-                                            <div className="w-9 h-9 rounded-xl bg-[#F5F0EE] flex items-center justify-center mb-1.5">
-                                                <Icon size={18} className="text-[#8D6E63]" />
-                                            </div>
+                                        {/* Name centered */}
+                                        <div className="mt-8 mb-1">
                                             <h3 className="text-gray-800 font-bold text-xs leading-tight text-center truncate w-full">{goal.name}</h3>
                                         </div>
 
+                                        {/* Amount - above progress bar */}
+                                        <div className="text-center mb-1.5">
+                                            <span className="text-[10px] text-gray-800 font-bold">{formatCurrency(goal.current)}</span>
+                                            <span className="text-[9px] text-gray-400"> / {formatCurrency(goal.target)}</span>
+                                        </div>
+
                                         {/* Progress Bar */}
-                                        <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden mb-1.5">
+                                        <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                                             <div
                                                 className={`h-full bg-gradient-to-r ${getProgressColor(index)} rounded-full`}
                                                 style={{ width: `${percentage}%` }}
                                             ></div>
-                                        </div>
-
-                                        {/* Amount */}
-                                        <div className="text-center">
-                                            <span className="text-[10px] text-gray-800 font-bold">{formatCurrency(goal.current)}</span>
-                                            <span className="text-[9px] text-gray-400"> / {formatCurrency(goal.target)}</span>
                                         </div>
                                     </div>
                                 </CarouselItem>
@@ -260,34 +262,34 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                                         className="w-full bg-white rounded-2xl p-3 shadow-[0_10px_20px_-8px_rgba(0,0,0,0.05)] border border-gray-50 relative overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform"
                                         onClick={() => navigate(`/group-goals/${goal.id}`)}
                                     >
-                                        {/* Percentage - top right */}
-                                        <span className={`absolute top-2 right-2 text-xs font-bold ${textColorClass}`}>{percentage}%</span>
-                                        
-                                        {/* Grupal badge - top left */}
-                                        <div className="absolute top-2 left-2">
-                                            <Users size={10} className="text-[#8D6E63]" />
+                                        {/* Icon - top left */}
+                                        <div className="absolute top-2 left-2 w-7 h-7 rounded-lg bg-[#F5F0EE] flex items-center justify-center">
+                                            <Icon size={14} className="text-[#8D6E63]" />
                                         </div>
                                         
-                                        {/* Icon and name */}
-                                        <div className="flex flex-col items-center mb-2 mt-2">
-                                            <div className="w-9 h-9 rounded-xl bg-[#F5F0EE] flex items-center justify-center mb-1.5">
-                                                <Icon size={18} className="text-[#8D6E63]" />
-                                            </div>
+                                        {/* Percentage - top right */}
+                                        <div className="absolute top-2 right-2 flex items-center gap-1">
+                                            <Users size={10} className="text-[#8D6E63]" />
+                                            <span className={`text-xs font-bold ${textColorClass}`}>{percentage}%</span>
+                                        </div>
+                                        
+                                        {/* Name centered */}
+                                        <div className="mt-8 mb-1">
                                             <h3 className="text-gray-800 font-bold text-xs leading-tight text-center truncate w-full">{goal.name}</h3>
                                         </div>
 
+                                        {/* Amount - above progress bar */}
+                                        <div className="text-center mb-1.5">
+                                            <span className="text-[10px] text-gray-800 font-bold">{formatCurrency(goal.current)}</span>
+                                            <span className="text-[9px] text-gray-400"> / {formatCurrency(goal.target)}</span>
+                                        </div>
+
                                         {/* Progress Bar */}
-                                        <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden mb-1.5">
+                                        <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                                             <div
                                                 className={`h-full bg-gradient-to-r ${getProgressColor(colorIndex)} rounded-full`}
                                                 style={{ width: `${percentage}%` }}
                                             ></div>
-                                        </div>
-
-                                        {/* Amount */}
-                                        <div className="text-center">
-                                            <span className="text-[10px] text-gray-800 font-bold">{formatCurrency(goal.current)}</span>
-                                            <span className="text-[9px] text-gray-400"> / {formatCurrency(goal.target)}</span>
                                         </div>
                                     </div>
                                 </CarouselItem>
