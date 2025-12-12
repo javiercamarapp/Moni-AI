@@ -31,7 +31,7 @@ import { CreateGroupGoalModal } from '@/components/goals/CreateGroupGoalModal';
 import confetti from 'canvas-confetti';
 import DashboardHeroSection from '@/components/dashboard/DashboardHeroSection';
 import QuickStats from '@/components/dashboard/QuickStats';
-import BalanceCard from '@/components/dashboard/BalanceCard';
+import BudgetCard from '@/components/dashboard/BudgetCard';
 import AccountsCarousel from '@/components/dashboard/AccountsCarousel';
 import GoalsWidget from '@/components/dashboard/GoalsWidget';
 // import RecentTransactionsWidget from '@/components/dashboard/RecentTransactionsWidget';
@@ -1233,15 +1233,12 @@ const Dashboard = () => {
         </div>
 
         <div className="page-container pt-2">
-          {/* Balance Card - Compact, above QuickStats */}
+          {/* Budget Card - Compact, above QuickStats */}
           <div className="mb-3">
-            <BalanceCard
+            <BudgetCard
               income={monthlyIncome}
               expenses={monthlyExpenses}
-              savings={goals.reduce((sum, g) => sum + (Number(g.target) - Number(g.current)), 0) / 12}
-              groupSavings={0}
-              available={monthlyIncome - monthlyExpenses}
-              defaultExpanded={true}
+              totalBudget={totalBudget}
             />
           </div>
 
