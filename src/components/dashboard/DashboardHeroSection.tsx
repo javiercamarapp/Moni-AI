@@ -156,8 +156,16 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
                           axisLine={false}
                           tickLine={false}
                           tick={{ fontSize: 9, fill: '#9ca3af' }}
-                          interval="preserveStartEnd"
-                          hide={typeof window !== 'undefined' && window.innerWidth < 1024}
+                          interval={0}
+                          tickFormatter={(value, index) => {
+                            // Deduplicate: only show if different from previous
+                            const data = netWorthData?.chartData || [];
+                            if (index > 0 && data[index - 1]?.date === value) {
+                              return '';
+                            }
+                            return value;
+                          }}
+                          hide={typeof window !== 'undefined' && window.innerWidth < 768}
                         />
                         <YAxis 
                           axisLine={false}
@@ -165,7 +173,7 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
                           tick={{ fontSize: 9, fill: '#9ca3af' }}
                           tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
                           width={40}
-                          hide={typeof window !== 'undefined' && window.innerWidth < 1024}
+                          hide={typeof window !== 'undefined' && window.innerWidth < 768}
                         />
                         <Area
                           type="monotone"
