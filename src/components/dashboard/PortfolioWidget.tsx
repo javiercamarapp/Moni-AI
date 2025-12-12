@@ -40,8 +40,8 @@ export const PortfolioWidget: React.FC = () => {
     .filter(a => a.tasa_rendimiento !== null)
     .sort((a, b) => (b.tasa_rendimiento || 0) - (a.tasa_rendimiento || 0));
 
-  const topPerformers = sortedByPerformance.slice(0, 3);
-  const bottomPerformers = sortedByPerformance.slice(-3).reverse();
+  const topPerformers = sortedByPerformance.slice(0, 2);
+  const bottomPerformers = sortedByPerformance.slice(-2).reverse();
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('es-MX', {
@@ -74,7 +74,7 @@ export const PortfolioWidget: React.FC = () => {
   if (activos.length === 0) {
     return (
       <Card 
-        className="bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer"
+        className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer"
         onClick={() => navigate('/net-worth')}
       >
         <CardContent className="p-4">
@@ -97,7 +97,7 @@ export const PortfolioWidget: React.FC = () => {
 
   return (
     <Card 
-      className="bg-card rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer"
+      className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer"
       onClick={() => navigate('/net-worth')}
     >
       <CardContent className="p-4">
