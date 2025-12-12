@@ -157,10 +157,19 @@ const VoiceRecordingModal: React.FC<VoiceRecordingModalProps> = ({ isOpen, onClo
 
       if (error) throw error;
 
-      // Invalidate queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['dashboard-data'] });
-      queryClient.invalidateQueries({ queryKey: ['financial-data'] });
+      // Invalidate ALL relevant queries to refresh data immediately
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['transactions'] }),
+        queryClient.invalidateQueries({ queryKey: ['dashboard-data'] }),
+        queryClient.invalidateQueries({ queryKey: ['financial-data'] }),
+        queryClient.invalidateQueries({ queryKey: ['monthly-totals'] }),
+        queryClient.invalidateQueries({ queryKey: ['balance-data'] }),
+        queryClient.invalidateQueries({ queryKey: ['recent-transactions'] }),
+      ]);
+
+      // Force refetch to ensure immediate update
+      queryClient.refetchQueries({ queryKey: ['transactions'] });
+      queryClient.refetchQueries({ queryKey: ['monthly-totals'] });
 
       toast.success(`${type === 'ingreso' ? 'Ingreso' : 'Gasto'} registrado correctamente`);
       onClose();
@@ -191,12 +200,15 @@ const VoiceRecordingModal: React.FC<VoiceRecordingModalProps> = ({ isOpen, onClo
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 flex flex-col items-center justify-center"
+        className="fixed inset-0 z-[100] flex flex-col items-center justify-center"
+        style={{
+          background: 'linear-gradient(135deg, hsl(48 25% 92%) 0%, hsl(48 20% 88%) 50%, hsl(40 20% 85%) 100%)'
+        }}
       >
         {/* Close button */}
         <button
           onClick={handleClose}
-          className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-all"
+          className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/60 backdrop-blur-sm flex items-center justify-center text-[#5D4037]/70 hover:bg-white/80 hover:text-[#5D4037] transition-all shadow-sm"
         >
           <X className="w-5 h-5" />
         </button>
@@ -213,7 +225,7 @@ const VoiceRecordingModal: React.FC<VoiceRecordingModalProps> = ({ isOpen, onClo
               {[...Array(3)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="absolute rounded-full border-2 border-white/20"
+                  className="absolute rounded-full border-2 border-[#5D4037]/20"
                   style={{
                     width: `${100 + i * 40}%`,
                     height: `${100 + i * 40}%`,
@@ -233,7 +245,7 @@ const VoiceRecordingModal: React.FC<VoiceRecordingModalProps> = ({ isOpen, onClo
               {/* Center mic button */}
               <motion.button
                 onClick={stopRecording}
-                className="w-24 h-24 rounded-full bg-red-500 flex items-center justify-center shadow-2xl shadow-red-500/30"
+                className="w-24 h-24 rounded-full bg-[#5D4037] flex items-center justify-center shadow-xl"
                 animate={{
                   scale: [1, 1 + audioLevel * 0.1, 1],
                 }}
@@ -248,11 +260,11 @@ const VoiceRecordingModal: React.FC<VoiceRecordingModalProps> = ({ isOpen, onClo
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="mt-8 text-white/80 text-lg font-light"
+              className="mt-8 text-[#5D4037] text-lg font-medium"
             >
               Escuchando...
             </motion.p>
-            <p className="mt-2 text-white/40 text-sm">
+            <p className="mt-2 text-[#8D6E63] text-sm">
               Toca para terminar
             </p>
           </motion.div>
@@ -265,10 +277,10 @@ const VoiceRecordingModal: React.FC<VoiceRecordingModalProps> = ({ isOpen, onClo
             animate={{ scale: 1, opacity: 1 }}
             className="flex flex-col items-center"
           >
-            <div className="w-24 h-24 rounded-full bg-white/10 flex items-center justify-center">
-              <Loader2 className="w-10 h-10 text-white animate-spin" />
+            <div className="w-24 h-24 rounded-full bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-lg">
+              <Loader2 className="w-10 h-10 text-[#5D4037] animate-spin" />
             </div>
-            <p className="mt-8 text-white/80 text-lg font-light">
+            <p className="mt-8 text-[#5D4037] text-lg font-medium">
               Procesando...
             </p>
           </motion.div>
@@ -281,10 +293,10 @@ const VoiceRecordingModal: React.FC<VoiceRecordingModalProps> = ({ isOpen, onClo
             animate={{ scale: 1, opacity: 1 }}
             className="flex flex-col items-center"
           >
-            <div className="w-24 h-24 rounded-full bg-white/10 flex items-center justify-center">
-              <Loader2 className="w-10 h-10 text-white animate-spin" />
+            <div className="w-24 h-24 rounded-full bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-lg">
+              <Loader2 className="w-10 h-10 text-[#5D4037] animate-spin" />
             </div>
-            <p className="mt-8 text-white/80 text-lg font-light">
+            <p className="mt-8 text-[#5D4037] text-lg font-medium">
               Guardando...
             </p>
           </motion.div>
@@ -297,15 +309,17 @@ const VoiceRecordingModal: React.FC<VoiceRecordingModalProps> = ({ isOpen, onClo
             animate={{ scale: 1, opacity: 1 }}
             className="flex flex-col items-center px-8 max-w-md w-full"
           >
-            <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mb-6">
-              <Check className="w-8 h-8 text-green-400" />
+            <div className="w-16 h-16 rounded-full bg-[#5D4037]/10 flex items-center justify-center mb-6">
+              <Check className="w-8 h-8 text-[#5D4037]" />
             </div>
             
-            <p className="text-white/90 text-xl text-center font-light leading-relaxed mb-8">
-              "{transcription}"
-            </p>
+            <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg w-full mb-6">
+              <p className="text-[#5D4037] text-lg text-center font-medium leading-relaxed">
+                "{transcription}"
+              </p>
+            </div>
 
-            <p className="text-white/50 text-sm mb-6">
+            <p className="text-[#8D6E63] text-sm mb-6">
               ¿Cómo quieres registrarlo?
             </p>
 
@@ -314,7 +328,7 @@ const VoiceRecordingModal: React.FC<VoiceRecordingModalProps> = ({ isOpen, onClo
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => saveTransaction('gasto')}
-                className="flex-1 flex items-center justify-center gap-2 bg-[#5D4037] text-white rounded-2xl py-4 font-medium shadow-lg shadow-[#5D4037]/20"
+                className="flex-1 flex items-center justify-center gap-2 bg-[#5D4037] text-white rounded-2xl py-4 font-medium shadow-lg"
               >
                 <TrendingDown className="w-5 h-5" />
                 Gasto
@@ -324,7 +338,7 @@ const VoiceRecordingModal: React.FC<VoiceRecordingModalProps> = ({ isOpen, onClo
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => saveTransaction('ingreso')}
-                className="flex-1 flex items-center justify-center gap-2 bg-[#A1887F] text-white rounded-2xl py-4 font-medium shadow-lg shadow-[#A1887F]/20"
+                className="flex-1 flex items-center justify-center gap-2 bg-[#A1887F] text-white rounded-2xl py-4 font-medium shadow-lg"
               >
                 <TrendingUp className="w-5 h-5" />
                 Ingreso
@@ -333,7 +347,7 @@ const VoiceRecordingModal: React.FC<VoiceRecordingModalProps> = ({ isOpen, onClo
 
             <button
               onClick={handleClose}
-              className="mt-6 text-white/40 text-sm hover:text-white/60 transition-colors"
+              className="mt-6 text-[#8D6E63] text-sm hover:text-[#5D4037] transition-colors"
             >
               Cancelar
             </button>
