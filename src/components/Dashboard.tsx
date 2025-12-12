@@ -1158,7 +1158,7 @@ const Dashboard = () => {
           </div>
 
           {/* Goals Section - Personal & Group */}
-          <div>
+          <div className="mt-4">
             <GoalsWidget personalGoals={goals.map(g => ({
             id: g.id,
             name: g.title || 'Meta',
