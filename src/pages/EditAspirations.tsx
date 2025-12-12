@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import moniHouseAspiration from "@/assets/moni-house-aspiration.png";
 import moniCarAspiration from "@/assets/moni-car-aspiration.png";
 import moniSavings from "@/assets/moni-savings.png";
-import { MoniLoader } from "@/components/MoniLoader";
 
 const aspirationalQuestions = [
   {
@@ -282,11 +281,7 @@ export default function EditAspirations() {
   const isComplete = answeredRequiredQuestions === requiredQuestionsIds.length;
 
   if (isLoading) {
-    return (
-      <div className="page-standard min-h-screen flex items-center justify-center">
-        <MoniLoader size="lg" />
-      </div>
-    );
+    return null;
   }
 
   const realestateQuestions = aspirationalQuestions.filter(q => q.group === "realestate");
