@@ -279,9 +279,9 @@ const Goals = () => {
   return <>
       <div className="page-standard min-h-screen pb-24">
         
-        <main className="page-container pt-6 space-y-4">
+        <main className="page-container pt-4 space-y-3">
           {/* Header Row */}
-          <header className="flex items-center justify-between mb-4">
+          <header className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
               <button onClick={() => navigate('/dashboard')} className="w-9 h-9 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all active:scale-95 text-[#5D4037]/70">
                 <ChevronLeft className="w-5 h-5" />
