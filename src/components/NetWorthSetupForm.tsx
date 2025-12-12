@@ -1037,8 +1037,8 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasCreditCards ? 'bg-red-100 text-red-600' : 'bg-[#A1887F]/20 text-[#8D6E63]'}`}>
-                        {hasCreditCards ? <Check size={18} strokeWidth={3} /> : <CreditCard size={18} />}
+                      <div className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[#A1887F]/20 text-[#8D6E63]">
+                        <CreditCard size={18} />
                       </div>
                       <span className="font-semibold text-sm text-[#3E2723]">¿Tienes tarjetas de crédito?</span>
                     </div>
@@ -1175,8 +1175,8 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasLoans ? 'bg-red-100 text-red-600' : 'bg-[#A1887F]/20 text-[#8D6E63]'}`}>
-                        {hasLoans ? <Check size={18} strokeWidth={3} /> : <Briefcase size={18} />}
+                      <div className="w-10 h-10 rounded-2xl flex items-center justify-center bg-[#A1887F]/20 text-[#8D6E63]">
+                        <Briefcase size={18} />
                       </div>
                       <span className="font-semibold text-sm text-[#3E2723]">¿Tienes algún préstamo a tu nombre?</span>
                     </div>
