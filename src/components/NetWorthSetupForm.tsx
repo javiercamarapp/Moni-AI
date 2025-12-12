@@ -1076,34 +1076,46 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                             </button>
                           </div>
                           <div className="grid grid-cols-2 gap-2">
-                            <Input
-                              placeholder="Nombre del banco"
-                              value={entry.bankName}
-                              onChange={(e) => updateCreditCardEntry(entry.id, 'bankName', e.target.value)}
-                              className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200"
-                            />
-                            <Input
-                              placeholder="Nombre de tarjeta"
-                              value={entry.cardName}
-                              onChange={(e) => updateCreditCardEntry(entry.id, 'cardName', e.target.value)}
-                              className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200"
-                            />
+                            <div>
+                              <Label className="text-[10px] text-[#8D6E63] mb-1 block">Banco</Label>
+                              <Input
+                                placeholder="Ej: BBVA, Banamex, Santander"
+                                value={entry.bankName}
+                                onChange={(e) => updateCreditCardEntry(entry.id, 'bankName', e.target.value)}
+                                className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-[10px] text-[#8D6E63] mb-1 block">Nombre de tarjeta</Label>
+                              <Input
+                                placeholder="Ej: Platinum, Oro, Azul"
+                                value={entry.cardName}
+                                onChange={(e) => updateCreditCardEntry(entry.id, 'cardName', e.target.value)}
+                                className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200"
+                              />
+                            </div>
                           </div>
                           <div className="grid grid-cols-2 gap-2">
-                            <Input
-                              placeholder="Fecha de corte (ej: 15)"
-                              value={entry.cutoffDate}
-                              onChange={(e) => updateCreditCardEntry(entry.id, 'cutoffDate', e.target.value)}
-                              className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200"
-                            />
-                            <div className="relative">
-                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-red-500 text-sm font-bold">$</span>
+                            <div>
+                              <Label className="text-[10px] text-[#8D6E63] mb-1 block">Día de corte</Label>
                               <Input
-                                placeholder="Monto que debes"
-                                value={formatNumberWithCommas(entry.amountOwed)}
-                                onChange={(e) => updateCreditCardEntry(entry.id, 'amountOwed', parseFormattedNumber(e.target.value))}
-                                className="h-11 text-sm pl-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200 font-semibold text-red-600"
+                                placeholder="Ej: 15 (día del mes)"
+                                value={entry.cutoffDate}
+                                onChange={(e) => updateCreditCardEntry(entry.id, 'cutoffDate', e.target.value)}
+                                className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200"
                               />
+                            </div>
+                            <div>
+                              <Label className="text-[10px] text-[#8D6E63] mb-1 block">Deuda actual</Label>
+                              <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-red-500 text-sm font-bold">$</span>
+                                <Input
+                                  placeholder="Ej: 15,000"
+                                  value={formatNumberWithCommas(entry.amountOwed)}
+                                  onChange={(e) => updateCreditCardEntry(entry.id, 'amountOwed', parseFormattedNumber(e.target.value))}
+                                  className="h-11 text-sm pl-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200 font-semibold text-red-600"
+                                />
+                              </div>
                             </div>
                           </div>
                           <Button
