@@ -720,7 +720,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                                     />
                                   </div>
                                 </div>
-                                <button onClick={() => removeAssetEntry(entry.id)} className="text-[#A1887F] hover:text-red-500 transition-colors p-2">
+                                <button onClick={() => removeAssetEntry(entry.id)} className="text-[#A1887F] hover:text-white hover:bg-[#5D4037] transition-colors p-2 rounded-lg">
                                   <X size={18} />
                                 </button>
                               </div>
@@ -780,7 +780,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                                 <div key={entry.id} className="bg-[#F5F0EE] rounded-2xl p-4 space-y-3">
                                   <div className="flex items-center justify-between">
                                     <span className="text-xs font-bold text-[#5D4037] uppercase tracking-wide">Acción / ETF</span>
-                                    <button onClick={() => removeStockEntry(entry.id)} className="text-[#A1887F] hover:text-red-500 transition-colors p-1">
+                                    <button onClick={() => removeStockEntry(entry.id)} className="text-[#A1887F] hover:text-white hover:bg-[#5D4037] transition-colors p-1 rounded-lg">
                                       <X size={16} />
                                     </button>
                                   </div>
@@ -904,7 +904,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                                 <div key={entry.id} className="bg-[#F5F0EE] rounded-2xl p-4 space-y-3">
                                   <div className="flex items-center justify-between">
                                     <span className="text-xs font-bold text-[#5D4037] uppercase tracking-wide">Criptomoneda</span>
-                                    <button onClick={() => removeCryptoEntry(entry.id)} className="text-[#A1887F] hover:text-red-500 transition-colors p-1">
+                                    <button onClick={() => removeCryptoEntry(entry.id)} className="text-[#A1887F] hover:text-white hover:bg-[#5D4037] transition-colors p-1 rounded-lg">
                                       <X size={16} />
                                     </button>
                                   </div>
@@ -1003,7 +1003,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         onChange={(e) => updateCustomAssetName(customAsset.id, e.target.value)}
                         className="h-11 font-semibold text-sm bg-gray-50 border-0 rounded-xl"
                       />
-                      <Button size="icon" variant="ghost" onClick={() => removeCustomAsset(customAsset.id)} className="h-11 w-11 text-gray-400 hover:text-red-500 rounded-xl">
+                      <Button size="icon" variant="ghost" onClick={() => removeCustomAsset(customAsset.id)} className="h-11 w-11 text-gray-400 hover:text-white hover:bg-[#5D4037] rounded-xl">
                         <X size={18} />
                       </Button>
                     </div>
@@ -1022,7 +1022,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                             onChange={(e) => updateCustomAssetAccount(customAsset.id, acc.id, 'value', parseFormattedNumber(e.target.value))}
                             className="h-10 text-sm w-32 bg-gray-50 border-0 rounded-xl"
                           />
-                          <button onClick={() => removeCustomAssetAccount(customAsset.id, acc.id)} className="text-gray-300 hover:text-red-500 p-1">
+                          <button onClick={() => removeCustomAssetAccount(customAsset.id, acc.id)} className="text-gray-300 hover:text-white hover:bg-[#5D4037] p-1 rounded-lg transition-colors">
                             <X size={14} />
                           </button>
                         </div>
@@ -1091,7 +1091,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                                   />
                                 </div>
                               </div>
-                              <button onClick={() => removeLiabilityEntry(entry.id)} className="text-gray-300 hover:text-red-500 transition-colors p-2">
+                              <button onClick={() => removeLiabilityEntry(entry.id)} className="text-gray-300 hover:text-white hover:bg-[#5D4037] transition-colors p-2 rounded-lg">
                                 <X size={18} />
                               </button>
                             </div>
@@ -1121,7 +1121,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         onChange={(e) => updateCustomLiabilityName(customLiability.id, e.target.value)}
                         className="h-11 font-semibold text-sm bg-gray-50 border-0 rounded-xl"
                       />
-                      <Button size="icon" variant="ghost" onClick={() => removeCustomLiability(customLiability.id)} className="h-11 w-11 text-gray-400 hover:text-red-500 rounded-xl">
+                      <Button size="icon" variant="ghost" onClick={() => removeCustomLiability(customLiability.id)} className="h-11 w-11 text-gray-400 hover:text-white hover:bg-[#5D4037] rounded-xl">
                         <X size={18} />
                       </Button>
                     </div>
@@ -1140,7 +1140,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                             onChange={(e) => updateCustomLiabilityAccount(customLiability.id, acc.id, 'value', parseFormattedNumber(e.target.value))}
                             className="h-10 text-sm w-32 bg-gray-50 border-0 rounded-xl"
                           />
-                          <button onClick={() => removeCustomLiabilityAccount(customLiability.id, acc.id)} className="text-gray-300 hover:text-red-500 p-1">
+                          <button onClick={() => removeCustomLiabilityAccount(customLiability.id, acc.id)} className="text-gray-300 hover:text-white hover:bg-[#5D4037] p-1 rounded-lg transition-colors">
                             <X size={14} />
                           </button>
                         </div>
