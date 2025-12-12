@@ -1210,7 +1210,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
             <Button
               variant="outline"
               onClick={prevStep}
-              className="flex-1 h-12 rounded-2xl border-gray-200 text-gray-700 font-bold hover:bg-gray-50"
+              className="flex-1 h-12 rounded-2xl border-gray-200 text-gray-700 font-bold hover:bg-hover-light"
             >
               Atrás
             </Button>
