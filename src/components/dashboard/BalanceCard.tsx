@@ -56,21 +56,31 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
           />
         </div>
         <div className="flex justify-between mt-2">
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#5D4037]"></div>
+            <span className="text-xs text-gray-800 font-bold">${income.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#BCAAA4]"></div>
+            <span className="text-xs text-gray-800 font-bold">${expenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+          </div>
+        </div>
+        
+        {/* Navigation buttons */}
+        <div className="flex gap-2 mt-3">
           <button 
             onClick={() => navigate('/ingresos')}
-            className="flex items-center gap-1.5 hover:bg-gray-50 rounded-lg px-2 py-1 -ml-2 transition-colors group"
+            className="flex-1 flex items-center justify-center gap-1.5 bg-[#5D4037]/10 hover:bg-[#5D4037]/20 text-[#5D4037] rounded-xl py-2 transition-colors"
           >
-            <div className="w-2.5 h-2.5 rounded-full bg-[#5D4037]"></div>
-            <span className="text-xs text-gray-800 font-bold group-hover:text-[#5D4037]">${income.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
-            <TrendingUp size={12} className="text-gray-400 group-hover:text-[#5D4037]" />
+            <TrendingUp size={14} />
+            <span className="text-xs font-semibold">Ingresos</span>
           </button>
           <button 
             onClick={() => navigate('/gastos')}
-            className="flex items-center gap-1.5 hover:bg-gray-50 rounded-lg px-2 py-1 -mr-2 transition-colors group"
+            className="flex-1 flex items-center justify-center gap-1.5 bg-[#BCAAA4]/20 hover:bg-[#BCAAA4]/30 text-[#5D4037] rounded-xl py-2 transition-colors"
           >
-            <TrendingDown size={12} className="text-gray-400 group-hover:text-[#BCAAA4]" />
-            <span className="text-xs text-gray-800 font-bold group-hover:text-[#5D4037]">${expenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
-            <div className="w-2.5 h-2.5 rounded-full bg-[#BCAAA4]"></div>
+            <TrendingDown size={14} />
+            <span className="text-xs font-semibold">Gastos</span>
           </button>
         </div>
       </div>
