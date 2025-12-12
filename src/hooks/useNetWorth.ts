@@ -178,32 +178,32 @@ export function useNetWorth(timeRange: TimeRange) {
         const pointDate = subDays(now, daysBack);
         const dateStr = format(pointDate, 'yyyy-MM-dd');
         
-        // Check if we have a real snapshot for this date
+        // Check if we have a real snapshot for this date (ignore zero values)
         const snapshot = snapshotMap.get(dateStr);
+        const hasValidSnapshot = snapshot && snapshot.net_worth > 0;
         
         let value: number;
         let assetsValue: number;
         let liabilitiesValue: number;
         
-        if (snapshot) {
+        if (hasValidSnapshot) {
           // Use real data
           value = snapshot.net_worth;
           assetsValue = snapshot.total_assets;
           liabilitiesValue = snapshot.total_liabilities;
         } else {
-          // Generate realistic fluctuation based on current net worth
-          // More volatility for longer time ranges
-          const volatility = timeRange === 'All' ? 0.08 : 
-                            timeRange === '1Y' ? 0.05 : 
-                            timeRange === '6M' ? 0.03 : 
-                            timeRange === '3M' ? 0.02 : 0.01;
+          // Generate realistic fluctuation with positive trend
+          const volatility = timeRange === 'All' ? 0.04 : 
+                            timeRange === '1Y' ? 0.03 : 
+                            timeRange === '6M' ? 0.02 : 
+                            timeRange === '3M' ? 0.015 : 0.01;
           
           value = generateFluctuationWithTrend(currentNetWorth, i, numPoints, volatility);
           
-          // Simulate assets and liabilities
-          const assetRatio = totalAssets / (totalAssets + totalLiabilities || 1);
-          assetsValue = value > 0 ? value / (1 - (totalLiabilities / totalAssets || 0)) : totalAssets;
-          liabilitiesValue = totalLiabilities * (1 + (Math.random() - 0.5) * 0.02);
+          // Simulate assets and liabilities proportionally
+          const netWorthRatio = value / currentNetWorth;
+          assetsValue = totalAssets * netWorthRatio;
+          liabilitiesValue = totalLiabilities;
         }
         
         chartData.push({
