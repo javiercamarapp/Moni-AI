@@ -247,13 +247,19 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
       {loading ? <div className="flex justify-around">
         {[1, 2, 3].map(i => <div key={i} className="animate-pulse h-12 w-12 lg:h-14 lg:w-14 rounded-full bg-gray-200" />)}
       </div> : topCategories.length > 0 ? <div className="flex justify-around items-center">
-        {topCategories.map((category, index) => <div key={index} className="flex flex-col items-center gap-1">
-          <span className="text-[10px] lg:text-xs font-medium text-gray-600 text-center leading-tight">{category.name}</span>
-          <div className={`h-10 w-10 lg:h-12 lg:w-12 rounded-full ${category.color}/20 flex items-center justify-center`}>
-            {renderIcon(category.icon, `${category.color.replace('bg-', 'text-')}`)}
-          </div>
-          <span className="text-xs lg:text-sm font-bold text-gray-800">{formatCurrency(category.amount)}</span>
-        </div>)}
+        {topCategories.filter(c => c && c.name).map((category, index) => {
+          const colorClass = category.color || 'bg-[#5D4037]';
+          const textColorClass = colorClass.replace('bg-', 'text-') || 'text-[#5D4037]';
+          return (
+            <div key={index} className="flex flex-col items-center gap-1">
+              <span className="text-[10px] lg:text-xs font-medium text-gray-600 text-center leading-tight">{category.name}</span>
+              <div className={`h-10 w-10 lg:h-12 lg:w-12 rounded-full ${colorClass}/20 flex items-center justify-center`}>
+                {renderIcon(category.icon || 'shopping', textColorClass)}
+              </div>
+              <span className="text-xs lg:text-sm font-bold text-gray-800">{formatCurrency(category.amount || 0)}</span>
+            </div>
+          );
+        })}
       </div> : <p className="text-xs text-gray-400 text-center py-1">Sin gastos este mes</p>}
     </div>
   </div>;
