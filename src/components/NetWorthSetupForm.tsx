@@ -618,7 +618,7 @@ export default function NetWorthSetupForm({
         <div className="sticky top-0 z-40 pt-4">
           <div className="max-w-2xl mx-auto px-4">
             <div className="flex items-center justify-between mb-4">
-              <Button variant="ghost" size="icon" onClick={() => step === 1 ? onBack ? onBack() : navigate(-1) : prevStep()} className="h-10 w-10 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm">
+              <Button variant="ghost" size="icon" onClick={() => step === 1 ? onBack ? onBack() : navigate(-1) : prevStep()} className="h-10 w-10 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white shadow-sm hover:shadow-md text-[#5D4037]">
                 <ArrowLeft size={18} />
               </Button>
               <div className="flex flex-col items-center">
