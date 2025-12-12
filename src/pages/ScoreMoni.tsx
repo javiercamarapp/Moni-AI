@@ -8,6 +8,7 @@ import { useInvalidateFinancialData } from '@/hooks/useFinancialData';
 const ScoreMoni = () => {
   const navigate = useNavigate();
   const invalidateFinancialData = useInvalidateFinancialData();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [score, setScore] = useState(() => {
     // Load from localStorage first for instant display
     const cached = localStorage.getItem('scoreMoni');
@@ -57,8 +58,9 @@ const ScoreMoni = () => {
       <ScoreDetail
         onBack={() => navigate('/dashboard')}
         score={score}
+        onModalChange={setIsModalOpen}
       />
-      <BottomNav />
+      {!isModalOpen && <BottomNav />}
     </div>
   );
 };
