@@ -60,7 +60,7 @@ const BalanceCategoryBreakdown: React.FC<BalanceCategoryBreakdownProps> = ({ tit
     const [integerPart, decimalPart] = formattedTotal.split('.');
 
     return (
-        <div className="bg-white rounded-[1.75rem] p-5 shadow-sm border border-white/50 h-full">
+        <div className="bg-gradient-to-br from-[#FAF8F6] to-[#F5F0EE] rounded-[1.75rem] p-5 shadow-sm border border-[#EBE5E2]/50 h-full">
             <div className="flex items-center gap-3 mb-4">
                 <div className={`w-8 h-8 rounded-full ${iconBg} flex items-center justify-center`}>
                     <Icon className={`w-4 h-4 ${iconColor}`} />
