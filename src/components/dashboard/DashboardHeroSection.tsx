@@ -150,40 +150,8 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
                         <stop offset="95%" stopColor="#8D6E63" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <XAxis
-                      dataKey="date"
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{ fontSize: 9, fill: '#9ca3af' }}
-                      interval="preserveStartEnd"
-                      tickFormatter={(value) => {
-                        // Show only month abbreviation (first 3 chars)
-                        return value;
-                      }}
-                      ticks={(() => {
-                        const data = netWorthData?.chartData || [];
-                        if (data.length === 0) return [];
-                        // Get unique months - show only first occurrence of each month
-                        const seenMonths = new Set<string>();
-                        return data
-                          .filter(d => {
-                            const month = d.date.split(' ')[0]; // Get month part (e.g., "Dic")
-                            if (seenMonths.has(month)) return false;
-                            seenMonths.add(month);
-                            return true;
-                          })
-                          .map(d => d.date);
-                      })()}
-                      hide={typeof window !== 'undefined' && window.innerWidth < 768}
-                    />
-                    <YAxis
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{ fontSize: 9, fill: '#9ca3af' }}
-                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
-                      width={40}
-                      hide={typeof window !== 'undefined' && window.innerWidth < 768}
-                    />
+                    <XAxis dataKey="date" hide />
+                    <YAxis hide />
                     <Area
                       type="monotone"
                       dataKey="value"
