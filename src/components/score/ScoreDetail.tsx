@@ -122,56 +122,53 @@ const ScoreDetail: React.FC<ScoreDetailProps> = ({ onBack, score }) => {
               }}
               className="w-full"
             >
-              <CarouselContent className="-ml-4 py-4">
-                {SCORE_COMPONENTS.map((comp) => (
-                  <CarouselItem key={comp.id} className="pl-4 basis-[45%] md:basis-1/3 lg:basis-[20%]">
-                    <button 
-                      onClick={() => setSelectedComponent(comp)}
-                      className={`w-full h-[260px] rounded-3xl p-4 shadow-lg hover:shadow-xl flex flex-col items-center text-center relative overflow-hidden transition-all active:scale-[0.98] hover:-translate-y-1 border
-                        ${comp.name === 'Ahorro' 
-                          ? 'bg-gradient-to-br from-[#5D4037] to-[#8D6E63] border-[#5D4037]/20' 
-                          : 'bg-card border-gray-100/50'
-                        }
-                      `}
-                    >
-                      {comp.name === 'Ahorro' ? (
-                        <>
-                          <div className="mt-3 mb-3 relative">
-                            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
-                              <span className="text-xl font-bold text-[#5D4037]">100%</span>
-                            </div>
+            <CarouselContent className="-ml-4 py-4">
+                {SCORE_COMPONENTS.map((comp) => {
+                  const percentage = (comp.score / comp.maxScore) * 100;
+                  // Dynamic color: darker brown for higher scores, lighter for lower
+                  // Range from #F5EDE8 (light, 0%) to #5D4037 (dark brown, 100%)
+                  const isHighScore = percentage >= 80;
+                  const isMediumScore = percentage >= 50 && percentage < 80;
+                  
+                  const getCardStyle = () => {
+                    if (percentage >= 90) return 'bg-gradient-to-br from-[#5D4037] to-[#6D4C41]';
+                    if (percentage >= 75) return 'bg-gradient-to-br from-[#6D4C41] to-[#795548]';
+                    if (percentage >= 60) return 'bg-gradient-to-br from-[#8D6E63] to-[#A1887F]';
+                    if (percentage >= 45) return 'bg-gradient-to-br from-[#A1887F] to-[#BCAAA4]';
+                    if (percentage >= 30) return 'bg-gradient-to-br from-[#D7CCC8] to-[#E8DDD4]';
+                    return 'bg-gradient-to-br from-[#EFEBE9] to-[#F5EDE8]';
+                  };
+                  
+                  const textColor = percentage >= 60 ? 'text-white' : 'text-[#5D4037]';
+                  const subTextColor = percentage >= 60 ? 'text-white/80' : 'text-[#8D6E63]';
+                  const circleStyle = percentage >= 60 
+                    ? 'bg-white text-[#5D4037]' 
+                    : 'bg-[#5D4037]/10 text-[#5D4037] border border-[#5D4037]/20';
+                  
+                  return (
+                    <CarouselItem key={comp.id} className="pl-4 basis-[45%] md:basis-1/3 lg:basis-[20%]">
+                      <button 
+                        onClick={() => setSelectedComponent(comp)}
+                        className={`w-full h-[260px] rounded-3xl p-4 shadow-lg hover:shadow-xl flex flex-col items-center text-center relative overflow-hidden transition-all active:scale-[0.98] hover:-translate-y-1 border border-[#5D4037]/10 ${getCardStyle()}`}
+                      >
+                        <div className="mt-3 mb-3 relative">
+                          <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg ${circleStyle}`}>
+                            <span className="text-xl font-bold">{percentage.toFixed(0)}%</span>
                           </div>
-                          
-                          <h4 className="text-base font-bold text-white mb-1">{comp.name}</h4>
-                          <div className="text-xl font-bold text-white/90 mb-2">
-                            {comp.score}/{comp.maxScore}
-                          </div>
-                          
-                          <p className="text-[11px] text-white/80 font-medium leading-tight px-2">
-                            {comp.description}
-                          </p>
-                        </>
-                      ) : (
-                        <>
-                          <div className="mt-3 mb-3 relative">
-                            <div className="w-16 h-16 bg-[#F5EDE8] rounded-full flex items-center justify-center shadow-inner border border-[#E8DDD4]">
-                              <span className="text-xl font-bold text-[#5D4037]">{(comp.score / comp.maxScore * 100).toFixed(0)}%</span>
-                            </div>
-                          </div>
-                          
-                          <h4 className="text-base font-bold text-gray-900 mb-1">{comp.name}</h4>
-                          <div className="text-xl font-bold text-[#A1887F] mb-2">
-                            {comp.score}/{comp.maxScore}
-                          </div>
-                          
-                          <p className="text-[11px] text-[#8D6E63] font-medium leading-tight px-2">
-                            {comp.description}
-                          </p>
-                        </>
-                      )}
-                    </button>
-                  </CarouselItem>
-                ))}
+                        </div>
+                        
+                        <h4 className={`text-base font-bold mb-1 ${textColor}`}>{comp.name}</h4>
+                        <div className={`text-xl font-bold mb-2 ${subTextColor}`}>
+                          {comp.score}/{comp.maxScore}
+                        </div>
+                        
+                        <p className={`text-[11px] font-medium leading-tight px-2 ${subTextColor}`}>
+                          {comp.description}
+                        </p>
+                      </button>
+                    </CarouselItem>
+                  );
+                })}
               </CarouselContent>
             </Carousel>
           </div>
