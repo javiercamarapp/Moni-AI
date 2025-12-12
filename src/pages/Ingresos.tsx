@@ -432,73 +432,64 @@ const Ingresos = () => {
             </div>
 
             <button
-              onClick={() => navigate('/categorias')}
-              className="w-14 h-14 rounded-2xl bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition-colors shadow-sm ml-4"
-              aria-label="Editar categorías"
-            >
-              <Tags className="w-7 h-7 text-[#8D6E63]" />
-            </button>
-          </div>
+              onClick={async () => {
+                try {
+                  const { data: { user } } = await supabase.auth.getUser();
+                  if (!user) {
+                    toast({
+                      title: "Error",
+                      description: "Debes iniciar sesión para descargar el reporte",
+                      variant: "destructive"
+                    });
+                    return;
+                  }
 
-          {/* Download Button */}
-          <button
-            onClick={async () => {
-              try {
-                const { data: { user } } = await supabase.auth.getUser();
-                if (!user) {
+                  toast({
+                    title: "Generando reporte",
+                    description: "Por favor espera...",
+                  });
+
+                  const { data, error } = await supabase.functions.invoke('generate-statement-pdf', {
+                    body: {
+                      userId: user.id,
+                      viewMode: viewMode === 'month' ? 'mensual' : 'anual',
+                      month: currentMonth.getMonth() + 1,
+                      year: currentMonth.getFullYear(),
+                      type: 'ingreso'
+                    }
+                  });
+
+                  if (error) throw error;
+
+                  const blob = new Blob([data.html], { type: 'text/html' });
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = data.filename || `ingresos_${viewMode === 'month' ? `${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}` : currentMonth.getFullYear()}.html`;
+                  document.body.appendChild(a);
+                  a.click();
+                  window.URL.revokeObjectURL(url);
+                  document.body.removeChild(a);
+
+                  toast({
+                    title: "Reporte generado",
+                    description: "Abre el archivo y usa Ctrl+P para guardar como PDF",
+                  });
+                } catch (error) {
+                  console.error('Error al generar reporte:', error);
                   toast({
                     title: "Error",
-                    description: "Debes iniciar sesión para descargar el reporte",
+                    description: "No se pudo generar el reporte",
                     variant: "destructive"
                   });
-                  return;
                 }
-
-                toast({
-                  title: "Generando reporte",
-                  description: "Por favor espera...",
-                });
-
-                const { data, error } = await supabase.functions.invoke('generate-statement-pdf', {
-                  body: {
-                    userId: user.id,
-                    viewMode: viewMode === 'month' ? 'mensual' : 'anual',
-                    month: currentMonth.getMonth() + 1,
-                    year: currentMonth.getFullYear(),
-                    type: 'ingreso'
-                  }
-                });
-
-                if (error) throw error;
-
-                const blob = new Blob([data.html], { type: 'text/html' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = data.filename || `ingresos_${viewMode === 'month' ? `${currentMonth.getMonth() + 1}_${currentMonth.getFullYear()}` : currentMonth.getFullYear()}.html`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-
-                toast({
-                  title: "Reporte generado",
-                  description: "Abre el archivo y usa Ctrl+P para guardar como PDF",
-                });
-              } catch (error) {
-                console.error('Error al generar reporte:', error);
-                toast({
-                  title: "Error",
-                  description: "No se pudo generar el reporte",
-                  variant: "destructive"
-                });
-              }
-            }}
-            className="py-2 px-4 border border-gray-100 bg-gray-50 rounded-xl flex items-center justify-center gap-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 transition-colors mb-6"
-          >
-            <Download className="w-3 h-3 text-gray-500" />
-            Descargar Reporte
-          </button>
+              }}
+              className="w-14 h-14 rounded-2xl bg-gray-50 hover:bg-gray-100 flex items-center justify-center transition-colors shadow-sm ml-4"
+              aria-label="Descargar reporte"
+            >
+              <Download className="w-6 h-6 text-[#8D6E63]" />
+            </button>
+          </div>
 
           {/* Chart Section */}
           <div>
