@@ -1220,7 +1220,10 @@ const Dashboard = () => {
                     maximumFractionDigits: 0
                   }).format(Math.max(0, totalBudget - currentMonthExpenses))}
                 </span>
-                <p className="text-xs text-white/70">Disponible este mes</p>
+                <p className="text-xs text-white/70 flex items-center gap-1">
+                  Disponible este mes
+                  <span className="text-white/50 group-hover:text-white/80 transition-colors">›</span>
+                </p>
               </div>
               
               {/* Buttons */}
@@ -1252,7 +1255,7 @@ const Dashboard = () => {
           </div>
           
           {/* Score and Net Worth Cards - moved up */}
-          <div className="relative z-10 px-4 pb-4 -mt-1">
+          <div className="relative z-10 px-4 pb-4 mt-1">
             <DashboardHeroSection scoreMoni={scoreMoni} />
           </div>
         </div>

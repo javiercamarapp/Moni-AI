@@ -52,10 +52,10 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
     : 0;
 
   return (
-    <div className="grid grid-cols-3 gap-3 max-w-md mx-auto">
-          {/* Score Moni Card */}
+    <div className="grid grid-cols-5 gap-3 max-w-md mx-auto">
+          {/* Score Moni Card - slightly wider */}
           <div 
-            className="bg-white/95 backdrop-blur-sm rounded-2xl p-3 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5"
+            className="col-span-2 bg-white/95 backdrop-blur-sm rounded-2xl p-3 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5"
             onClick={() => navigate('/score-moni')}
           >
             <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">
@@ -64,7 +64,7 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
             
             {/* Semi-circle gauge */}
             <div className="relative flex items-center justify-center mt-1 mb-0.5">
-              <svg className="w-16 h-10" viewBox="0 0 100 55">
+              <svg className="w-20 h-12" viewBox="0 0 100 55">
                 {/* Background track */}
                 <path
                   d="M 10 50 A 40 40 0 0 1 90 50"
@@ -104,7 +104,7 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
 
           {/* Net Worth Card */}
           <div 
-            className="col-span-2 bg-white/95 backdrop-blur-sm rounded-2xl p-3 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 flex flex-col"
+            className="col-span-3 bg-white/95 backdrop-blur-sm rounded-2xl p-3 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 flex flex-col"
             onClick={() => navigate('/net-worth')}
           >
             <div className="flex items-center justify-between mb-1">
