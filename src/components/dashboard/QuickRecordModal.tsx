@@ -353,13 +353,13 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 bg-black/50 z-[100] flex items-end justify-center">
+      <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
         <motion.div
-          initial={{ opacity: 0, y: 100 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 100 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="bg-[#FAFAF9] rounded-t-3xl w-full max-w-md shadow-2xl"
+          className="bg-[#FAFAF9] rounded-3xl w-full max-w-md shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
