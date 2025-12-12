@@ -163,40 +163,34 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                             const Icon = getGoalIcon(goal.name);
 
                             return (
-                                <CarouselItem key={goal.id} className="pl-4 basis-[85vw] md:basis-auto">
+                                <CarouselItem key={goal.id} className="pl-3 basis-[42vw] md:basis-[160px]">
                                     <div
-                                        className="w-full md:w-80 bg-white rounded-[1.75rem] p-5 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.05)] border border-white relative overflow-hidden group cursor-pointer hover:scale-[1.02] transition-transform"
+                                        className="w-full bg-white rounded-2xl p-3 shadow-[0_10px_20px_-8px_rgba(0,0,0,0.05)] border border-gray-50 relative overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform"
                                         onClick={() => navigate(`/goals/${goal.id}`)}
                                     >
-                                        <div className="flex justify-between items-start mb-1">
-                                            <div className="flex items-start gap-3">
-                                                <div className="w-10 h-10 rounded-xl bg-[#F5F0EE] flex items-center justify-center flex-shrink-0">
-                                                    <Icon size={20} className="text-[#8D6E63]" />
-                                                </div>
-                                                <div>
-                                                    <h3 className="text-gray-800 font-bold text-lg leading-tight truncate">{goal.name}</h3>
-                                                    <span className="text-[10px] font-medium text-gray-400">
-                                                        {goal.deadline ? new Date(goal.deadline).toLocaleDateString('es-MX') : 'Sin fecha'}
-                                                    </span>
-                                                </div>
+                                        {/* Percentage - top right */}
+                                        <span className={`absolute top-2 right-2 text-xs font-bold ${getTextColor(index)}`}>{percentage}%</span>
+                                        
+                                        {/* Icon and name */}
+                                        <div className="flex flex-col items-center mb-2">
+                                            <div className="w-9 h-9 rounded-xl bg-[#F5F0EE] flex items-center justify-center mb-1.5">
+                                                <Icon size={18} className="text-[#8D6E63]" />
                                             </div>
-                                            <div className="text-right">
-                                                <div className="text-gray-800 font-bold text-sm">{formatCurrency(goal.current)}</div>
-                                                <div className="text-[10px] text-gray-400">de {formatCurrency(goal.target)}</div>
-                                            </div>
+                                            <h3 className="text-gray-800 font-bold text-xs leading-tight text-center truncate w-full">{goal.name}</h3>
                                         </div>
 
                                         {/* Progress Bar */}
-                                        <div className="h-2 w-full bg-gray-100 rounded-full mt-3 mb-3 overflow-hidden">
+                                        <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden mb-1.5">
                                             <div
                                                 className={`h-full bg-gradient-to-r ${getProgressColor(index)} rounded-full`}
                                                 style={{ width: `${percentage}%` }}
                                             ></div>
                                         </div>
 
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-[10px] font-bold text-gray-500">{formatCurrency(remaining)} restante</span>
-                                            <span className={`text-sm font-bold ${getTextColor(index)}`}>{percentage}%</span>
+                                        {/* Amount */}
+                                        <div className="text-center">
+                                            <span className="text-[10px] text-gray-800 font-bold">{formatCurrency(goal.current)}</span>
+                                            <span className="text-[9px] text-gray-400"> / {formatCurrency(goal.target)}</span>
                                         </div>
                                     </div>
                                 </CarouselItem>
@@ -256,51 +250,44 @@ const GoalsWidget: React.FC<GoalsWidgetProps> = ({ personalGoals, groupGoals }) 
                     <CarouselContent className="-ml-4 pb-4">
                         {groupGoals.map((goal, index) => {
                             const percentage = Math.min(100, Math.round((goal.current / goal.target) * 100));
-                            const remaining = goal.target - goal.current;
-                            // Offset index for variety in colors
                             const colorIndex = index + 2;
                             const textColorClass = getTextColor(colorIndex);
                             const Icon = getGoalIcon(goal.name);
 
                             return (
-                                <CarouselItem key={goal.id} className="pl-4 basis-[85vw] md:basis-auto">
+                                <CarouselItem key={goal.id} className="pl-3 basis-[42vw] md:basis-[160px]">
                                     <div
-                                        className="w-full md:w-80 bg-white rounded-[1.75rem] p-5 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.05)] border border-white relative overflow-hidden group cursor-pointer hover:scale-[1.02] transition-transform"
+                                        className="w-full bg-white rounded-2xl p-3 shadow-[0_10px_20px_-8px_rgba(0,0,0,0.05)] border border-gray-50 relative overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform"
                                         onClick={() => navigate(`/group-goals/${goal.id}`)}
                                     >
-                                        {/* Elegant Grupal badge - top right */}
-                                        <div className="absolute top-4 right-4">
-                                            <div className="bg-[#F5F0EE] px-2.5 py-1 rounded-full flex items-center gap-1.5">
-                                                <Users size={10} className="text-[#8D6E63]" />
-                                                <span className="text-[9px] font-semibold text-[#5D4037] tracking-wide">Grupal</span>
-                                            </div>
+                                        {/* Percentage - top right */}
+                                        <span className={`absolute top-2 right-2 text-xs font-bold ${textColorClass}`}>{percentage}%</span>
+                                        
+                                        {/* Grupal badge - top left */}
+                                        <div className="absolute top-2 left-2">
+                                            <Users size={10} className="text-[#8D6E63]" />
                                         </div>
-                                        <div className="flex items-start gap-3 mb-1 pr-16">
-                                            <div className="w-10 h-10 rounded-xl bg-[#F5F0EE] flex items-center justify-center flex-shrink-0">
-                                                <Icon size={20} className="text-[#8D6E63]" />
+                                        
+                                        {/* Icon and name */}
+                                        <div className="flex flex-col items-center mb-2 mt-2">
+                                            <div className="w-9 h-9 rounded-xl bg-[#F5F0EE] flex items-center justify-center mb-1.5">
+                                                <Icon size={18} className="text-[#8D6E63]" />
                                             </div>
-                                            <div className="min-w-0 flex-1">
-                                                <h3 className="text-gray-800 font-bold text-base leading-tight truncate">{goal.name}</h3>
-                                                <span className="text-[10px] font-medium text-gray-400">
-                                                    {goal.deadline ? new Date(goal.deadline).toLocaleDateString('es-MX') : 'Sin fecha'}
-                                                </span>
-                                            </div>
+                                            <h3 className="text-gray-800 font-bold text-xs leading-tight text-center truncate w-full">{goal.name}</h3>
                                         </div>
 
                                         {/* Progress Bar */}
-                                        <div className="h-2 w-full bg-gray-100 rounded-full mt-3 mb-3 overflow-hidden">
+                                        <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden mb-1.5">
                                             <div
                                                 className={`h-full bg-gradient-to-r ${getProgressColor(colorIndex)} rounded-full`}
                                                 style={{ width: `${percentage}%` }}
                                             ></div>
                                         </div>
 
-                                        <div className="flex justify-between items-center">
-                                            <div>
-                                                <span className="text-gray-800 font-bold text-sm">{formatCurrency(goal.current)}</span>
-                                                <span className="text-[10px] text-gray-400"> / {formatCurrency(goal.target)}</span>
-                                            </div>
-                                            <span className={`text-sm font-bold ${textColorClass}`}>{percentage}%</span>
+                                        {/* Amount */}
+                                        <div className="text-center">
+                                            <span className="text-[10px] text-gray-800 font-bold">{formatCurrency(goal.current)}</span>
+                                            <span className="text-[9px] text-gray-400"> / {formatCurrency(goal.target)}</span>
                                         </div>
                                     </div>
                                 </CarouselItem>
