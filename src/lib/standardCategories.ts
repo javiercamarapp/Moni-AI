@@ -31,7 +31,7 @@ export const STANDARD_EXPENSE_CATEGORIES: StandardCategory[] = [
   { id: 'std_transporte', name: 'Transporte', icon: 'Car', IconComponent: Car },
   { id: 'std_servicios', name: 'Servicios', icon: 'Zap', IconComponent: Zap },
   { id: 'std_salud', name: 'Salud', icon: 'Heart', IconComponent: Heart },
-  { id: 'std_ocio', name: 'Ocio', icon: 'Gamepad2', IconComponent: Gamepad2 },
+  { id: 'std_entretenimiento', name: 'Entretenimiento', icon: 'Gamepad2', IconComponent: Gamepad2 },
 ];
 
 // 6 standard income categories - short names only
@@ -89,9 +89,9 @@ export function normalizeCategory(name: string): string {
     return 'Salud';
   }
   
-  // Ocio (entertainment, shopping, etc)
+  // Entretenimiento (entertainment, shopping, etc)
   if (lower.includes('entreten') || lower.includes('ocio') || lower.includes('cine') || lower.includes('fiesta') || lower.includes('bar') || lower.includes('ropa') || lower.includes('compra') || lower.includes('educación') || lower.includes('curso')) {
-    return 'Ocio';
+    return 'Entretenimiento';
   }
   
   // Default: return first word cleaned
@@ -109,7 +109,7 @@ export function getCategoryIconName(name: string): string {
     case 'Transporte': return 'Car';
     case 'Servicios': return 'Zap';
     case 'Salud': return 'Heart';
-    case 'Ocio': return 'Gamepad2';
+    case 'Entretenimiento': return 'Gamepad2';
     default: return 'ShoppingCart';
   }
 }
