@@ -27,8 +27,8 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-blue-100 bg-gradient-to-b from-sky-50/95 to-white/95 text-gray-900",
-        destructive: "destructive group border-red-100 bg-gradient-to-b from-red-50/95 to-white/95 text-red-900",
+        default: "border-[#A1887F]/30 bg-gradient-to-b from-[#EFEBE9]/95 to-white/95 text-[#5D4037]",
+        destructive: "destructive group border-[#5D4037]/30 bg-gradient-to-b from-[#D7CCC8]/95 to-white/95 text-[#5D4037]",
       },
     },
     defaultVariants: {
@@ -67,7 +67,7 @@ const ToastClose = React.forwardRef<
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
-      "absolute right-3 top-3 rounded-full p-1 text-gray-400 opacity-70 transition-all hover:opacity-100 hover:bg-gray-100 group-[.destructive]:text-red-400 hover:text-gray-600 group-[.destructive]:hover:text-red-600 group-[.destructive]:hover:bg-red-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-blue-200 group-[.destructive]:focus:ring-red-200",
+      "absolute right-3 top-3 rounded-full p-1 text-[#8D6E63] opacity-70 transition-all hover:opacity-100 hover:bg-[#EFEBE9] group-[.destructive]:text-[#5D4037] hover:text-[#5D4037] group-[.destructive]:hover:text-[#5D4037] group-[.destructive]:hover:bg-[#D7CCC8] focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-[#A1887F]/30 group-[.destructive]:focus:ring-[#5D4037]/30",
       className,
     )}
     toast-close=""
@@ -82,7 +82,7 @@ const ToastTitle = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Title>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
 >(({ className, ...props }, ref) => (
-  <ToastPrimitives.Title ref={ref} className={cn("text-sm font-bold text-gray-900", className)} {...props} />
+  <ToastPrimitives.Title ref={ref} className={cn("text-sm font-bold text-[#5D4037]", className)} {...props} />
 ));
 ToastTitle.displayName = ToastPrimitives.Title.displayName;
 
@@ -90,7 +90,7 @@ const ToastDescription = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Description>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description>
 >(({ className, ...props }, ref) => (
-  <ToastPrimitives.Description ref={ref} className={cn("text-sm text-gray-600", className)} {...props} />
+  <ToastPrimitives.Description ref={ref} className={cn("text-sm text-[#8D6E63]", className)} {...props} />
 ));
 ToastDescription.displayName = ToastPrimitives.Description.displayName;
 
