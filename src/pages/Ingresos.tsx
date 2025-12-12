@@ -10,7 +10,8 @@ import {
   ChevronDown,
   Tags,
   Camera,
-  ArrowLeft
+  ArrowLeft,
+  Mic
 } from 'lucide-react';
 import {
   AreaChart,
@@ -41,6 +42,7 @@ import {
 } from "@/components/ui/select";
 import whatsappLogo from '@/assets/whatsapp-logo.png';
 import BottomNav from '@/components/BottomNav';
+import VoiceRecordingModal from '@/components/dashboard/VoiceRecordingModal';
 
 interface Transaction {
   id: string;
@@ -83,6 +85,7 @@ const Ingresos = () => {
   const [sortOption, setSortOption] = useState<SortOption>('date-desc');
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [isProcessingReceipt, setIsProcessingReceipt] = useState(false);
+  const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -650,6 +653,13 @@ const Ingresos = () => {
             <Camera className="w-5 h-5" />
           </button>
 
+          <button
+            onClick={() => setIsVoiceModalOpen(true)}
+            className="w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
+          >
+            <Mic className="w-5 h-5" />
+          </button>
+
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
             <DialogTrigger asChild>
               <button className="w-14 h-14 rounded-full bg-[#A1887F] text-white shadow-xl flex items-center justify-center hover:bg-[#8D6E63] transition-colors">
@@ -794,6 +804,11 @@ const Ingresos = () => {
               </DialogContent>
             </Dialog>
         </div>
+
+        <VoiceRecordingModal
+          isOpen={isVoiceModalOpen}
+          onClose={() => setIsVoiceModalOpen(false)}
+        />
       </div>
 
       <BottomNav />
