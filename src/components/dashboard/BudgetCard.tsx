@@ -165,23 +165,20 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
       {/* Divider */}
       <div className="h-px bg-gray-100 my-2" />
 
-        {/* Top 3 Categories - Compact */}
+        {/* Top 3 Categories - Icons only, evenly distributed */}
         <div className="space-y-1.5">
           <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">
             Top categorías
           </span>
           
-          {loading ? <div className="flex gap-2">
-              {[1, 2, 3].map(i => <div key={i} className="animate-pulse h-6 w-16 rounded-full bg-gray-200" />)}
-            </div> : topCategories.length > 0 ? <div className="flex flex-wrap gap-1.5">
+          {loading ? <div className="flex justify-around">
+              {[1, 2, 3].map(i => <div key={i} className="animate-pulse h-10 w-10 rounded-full bg-gray-200" />)}
+            </div> : topCategories.length > 0 ? <div className="flex justify-around items-center">
               {topCategories.map((category, index) => (
-                <div key={index} className="flex items-center gap-1.5 bg-gray-50 rounded-full px-2 py-1">
-                  <div className={`h-4 w-4 rounded-full ${category.color}/10 flex items-center justify-center`}>
+                <div key={index} className="flex flex-col items-center gap-1">
+                  <div className={`h-8 w-8 rounded-full ${category.color}/20 flex items-center justify-center`}>
                     {renderIcon(category.icon, `${category.color.replace('bg-', 'text-')}`)}
                   </div>
-                  <span className="text-[10px] font-medium text-gray-600 truncate max-w-[60px]">
-                    {category.name}
-                  </span>
                   <span className="text-[10px] font-bold text-gray-800">{formatCurrency(category.amount)}</span>
                 </div>
               ))}
