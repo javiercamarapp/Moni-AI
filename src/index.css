@@ -45,6 +45,10 @@
     --warning: 38 75% 48%;
     --warning-foreground: 0 0% 98%;
 
+    /* Hover colors - Brown/Café */
+    --hover: 16 25% 38%;
+    --hover-light: 16 20% 58%;
+
     /* Interactive elements */
     --border: 0 0% 85%;
     --input: 0 0% 30%;
@@ -277,6 +281,11 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* Global hover brown/café override - replaces grey hovers */
+  .hover-cafe:hover {
+    background-color: hsl(var(--hover-light)) !important;
   }
 }
 

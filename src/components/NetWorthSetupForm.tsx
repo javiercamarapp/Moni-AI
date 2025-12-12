@@ -7,7 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X, Banknote, ChevronRight, Wallet, Shield } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X, Banknote, ChevronRight, Wallet, Shield, CalendarIcon, Building2, Home, Car, PiggyBank, HandCoins, Watch, LucideIcon, Bitcoin } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { headingPage, headingSection } from "@/styles/typography";
@@ -72,23 +75,30 @@ type CustomLiability = {
   accounts: CustomLiabilityAccount[];
 };
 
-const assetCategories = [
-  { name: 'Cuentas bancarias (ahorro + cheques)', category: 'Checking', examples: ['BBVA Cuenta Ahorro', 'Santander Nómina', 'Banorte Smart'] },
-  { name: 'Inversiones financieras (fondos, CETES, bonos)', category: 'Investments', examples: ['CETES 28 días', 'Fondo GBM+', 'Bonos HSBC'] },
-  { name: 'Acciones o ETFs en bolsa', category: 'Investments', examples: ['Apple (AAPL)', 'Tesla (TSLA)', 'VOO ETF'] },
-  { name: 'Criptomonedas', category: 'Investments', examples: ['Bitcoin (BTC)', 'Ethereum (ETH)', 'USDT Stablecoin'] },
-  { name: 'Propiedad principal (casa o departamento)', category: 'Property', examples: ['Casa Polanco', 'Depto Reforma', 'Casa Santa Fe'] },
-  { name: 'Propiedades adicionales (en renta o inversión)', category: 'Property', examples: ['Depto en Renta Centro', 'Local Comercial', 'Casa Playa'] },
-  { name: 'Vehículos (auto o moto)', category: 'Other', examples: ['Toyota Corolla 2020', 'Honda CRV', 'Moto Italika'] },
-  { name: 'Ahorro para el retiro (Afore o plan privado)', category: 'Savings', examples: ['Afore Sura', 'Plan Pensión', 'Afore XXI Banorte'] },
-  { name: 'Seguros con valor de rescate / inversión', category: 'Savings', examples: ['Seguro Vida GNP', 'Plan Metlife', 'AXA Inversión'] },
-  { name: 'Dinero prestado a terceros (por cobrar)', category: 'Other', examples: ['Préstamo a Juan', 'Deuda Socio', 'Préstamo Hermano'] },
-  { name: 'Participaciones en empresas o startups', category: 'Investments', examples: ['Startup Tech', 'Negocio Restaurante', 'Empresa Familiar'] },
-  { name: 'Propiedad intelectual (marca, royalties, licencias)', category: 'Other', examples: ['Marca Registrada', 'Royalties Libro', 'Patente Software'] },
-  { name: 'Saldos en apps fintech (MercadoPago, PayPal, Revolut)', category: 'Checking', examples: ['Mercado Pago', 'PayPal USD', 'Revolut EUR'] },
-  { name: 'Inventario o mercancía para venta', category: 'Other', examples: ['Inventario Tienda', 'Productos Bodega', 'Mercancía Online'] },
-  { name: 'Obras de arte / joyas / metales preciosos', category: 'Other', examples: ['Anillo Oro', 'Cuadro Arte', 'Monedas Plata'] },
-  { name: 'Otros activos personalizados', category: 'Other', examples: ['Otro Activo 1', 'Activo Diverso', 'Activo Personal'] },
+type StockEntry = {
+  id: string;
+  name: string;
+  quantity: string;
+  purchasePrice: string;
+  purchaseDate: Date | undefined;
+};
+
+type CryptoEntry = {
+  id: string;
+  name: string;
+  quantity: string;
+  purchasePrice: string;
+  purchaseDate: Date | undefined;
+};
+
+const assetCategories: { name: string; category: string; examples: string[]; icon: LucideIcon }[] = [
+  { name: 'Cuentas bancarias (ahorro + cheques)', category: 'Checking', examples: ['BBVA Cuenta Ahorro', 'Santander Nómina', 'Banorte Smart'], icon: Banknote },
+  { name: 'Propiedad principal', category: 'Property', examples: ['Casa Polanco', 'Depto Reforma', 'Casa Santa Fe'], icon: Home },
+  { name: 'Otras propiedades', category: 'Property', examples: ['Depto en Renta Centro', 'Local Comercial', 'Casa Playa'], icon: Building2 },
+  { name: 'Vehículos', category: 'Other', examples: ['Toyota Corolla 2020', 'Honda CRV', 'Moto Italika'], icon: Car },
+  { name: 'Fondos de ahorro', category: 'Savings', examples: ['Afore Sura', 'Fondo GBM+', 'CETES'], icon: PiggyBank },
+  { name: 'Préstamos otorgados', category: 'Other', examples: ['Préstamo a Juan', 'Deuda Socio', 'Préstamo Hermano'], icon: HandCoins },
+  { name: 'Relojes o joyas', category: 'Other', examples: ['Rolex Submariner', 'Anillo Oro', 'Collar Diamantes'], icon: Watch },
 ];
 
 const liabilityCategories = [
@@ -116,6 +126,10 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
   const [liabilityEntries, setLiabilityEntries] = useState<LiabilityEntry[]>([]);
   const [customAssets, setCustomAssets] = useState<CustomAsset[]>([]);
   const [customLiabilities, setCustomLiabilities] = useState<CustomLiability[]>([]);
+  const [hasStocks, setHasStocks] = useState<boolean | null>(null);
+  const [stockEntries, setStockEntries] = useState<StockEntry[]>([]);
+  const [hasCrypto, setHasCrypto] = useState<boolean | null>(null);
+  const [cryptoEntries, setCryptoEntries] = useState<CryptoEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
@@ -176,6 +190,66 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     setLiabilityEntries(liabilityEntries.map(entry => 
       entry.id === id ? { ...entry, [field]: value } : entry
     ));
+  };
+
+  // Stock/ETF functions
+  const addStockEntry = () => {
+    const newEntry: StockEntry = {
+      id: Date.now().toString(),
+      name: '',
+      quantity: '',
+      purchasePrice: '',
+      purchaseDate: undefined
+    };
+    setStockEntries([...stockEntries, newEntry]);
+  };
+
+  const removeStockEntry = (id: string) => {
+    setStockEntries(stockEntries.filter(entry => entry.id !== id));
+  };
+
+  const updateStockEntry = (id: string, field: keyof StockEntry, value: any) => {
+    setStockEntries(stockEntries.map(entry => 
+      entry.id === id ? { ...entry, [field]: value } : entry
+    ));
+  };
+
+  const calculateStockTotal = () => {
+    return stockEntries.reduce((sum, entry) => {
+      const qty = parseFloat(parseFormattedNumber(entry.quantity)) || 0;
+      const price = parseFloat(parseFormattedNumber(entry.purchasePrice)) || 0;
+      return sum + (qty * price);
+    }, 0);
+  };
+
+  // Crypto functions
+  const addCryptoEntry = () => {
+    const newEntry: CryptoEntry = {
+      id: Date.now().toString(),
+      name: '',
+      quantity: '',
+      purchasePrice: '',
+      purchaseDate: undefined
+    };
+    setCryptoEntries([...cryptoEntries, newEntry]);
+  };
+
+  const removeCryptoEntry = (id: string) => {
+    setCryptoEntries(cryptoEntries.filter(entry => entry.id !== id));
+  };
+
+  const updateCryptoEntry = (id: string, field: keyof CryptoEntry, value: any) => {
+    setCryptoEntries(cryptoEntries.map(entry => 
+      entry.id === id ? { ...entry, [field]: value } : entry
+    ));
+  };
+
+  const calculateCryptoTotal = () => {
+    return cryptoEntries.reduce((sum, entry) => {
+      const qty = parseFloat(parseFormattedNumber(entry.quantity)) || 0;
+      const price = parseFloat(parseFormattedNumber(entry.purchasePrice)) || 0;
+      return sum + (qty * price);
+    }, 0);
   };
 
   // Custom Assets functions
@@ -315,7 +389,17 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
       };
 
       // Preparar activos válidos
-      const validAssets = assetEntries
+      const validAssets: Array<{
+        user_id: string;
+        nombre: string;
+        valor: number;
+        categoria: string;
+        subcategoria: string;
+        moneda: string;
+        es_activo_fijo: boolean;
+        liquidez_porcentaje: number;
+        fecha_adquisicion?: string | null;
+      }> = assetEntries
         .filter(entry => entry.name.trim() && parseFloat(entry.value) > 0)
         .map(entry => ({
           user_id: user.id,
@@ -344,6 +428,42 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                 liquidez_porcentaje: 50
               });
             }
+          });
+        }
+      });
+
+      // Agregar acciones/ETFs como activos
+      stockEntries.forEach(stock => {
+        if (stock.name.trim() && parseFloat(stock.quantity) > 0 && parseFloat(stock.purchasePrice) > 0) {
+          const totalValue = parseFloat(stock.quantity) * parseFloat(stock.purchasePrice);
+          validAssets.push({
+            user_id: user.id,
+            nombre: stock.name.trim(),
+            valor: totalValue,
+            categoria: 'Acciones y ETFs',
+            subcategoria: `${stock.quantity} acciones @ $${stock.purchasePrice}`,
+            moneda: 'MXN',
+            es_activo_fijo: false,
+            liquidez_porcentaje: 90,
+            fecha_adquisicion: stock.purchaseDate ? format(stock.purchaseDate, 'yyyy-MM-dd') : null
+          });
+        }
+      });
+
+      // Agregar criptomonedas como activos
+      cryptoEntries.forEach(crypto => {
+        if (crypto.name.trim() && parseFloat(crypto.quantity) > 0 && parseFloat(crypto.purchasePrice) > 0) {
+          const totalValue = parseFloat(crypto.quantity) * parseFloat(crypto.purchasePrice);
+          validAssets.push({
+            user_id: user.id,
+            nombre: crypto.name.trim(),
+            valor: totalValue,
+            categoria: 'Criptomonedas',
+            subcategoria: `${crypto.quantity} unidades @ $${crypto.purchasePrice}`,
+            moneda: 'MXN',
+            es_activo_fijo: false,
+            liquidez_porcentaje: 85,
+            fecha_adquisicion: crypto.purchaseDate ? format(crypto.purchaseDate, 'yyyy-MM-dd') : null
           });
         }
       });
@@ -450,6 +570,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
       return sum + asset.accounts.reduce((accSum, acc) => accSum + parseFloat(parseFormattedNumber(acc.value) || '0'), 0);
     }, 0);
 
+    const stocksTotal = calculateStockTotal();
+    const cryptoTotal = calculateCryptoTotal();
+
     const liabilitiesTotal = liabilityEntries
       .filter(e => parseFloat(e.value) > 0)
       .reduce((sum, e) => sum + parseFloat(parseFormattedNumber(e.value)), 0);
@@ -459,9 +582,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     }, 0);
 
     return {
-      assets: assetsTotal + customAssetsTotal,
+      assets: assetsTotal + customAssetsTotal + stocksTotal + cryptoTotal,
       liabilities: liabilitiesTotal + customLiabilitiesTotal,
-      netWorth: (assetsTotal + customAssetsTotal) - (liabilitiesTotal + customLiabilitiesTotal)
+      netWorth: (assetsTotal + customAssetsTotal + stocksTotal + cryptoTotal) - (liabilitiesTotal + customLiabilitiesTotal)
     };
   };
 
@@ -478,66 +601,90 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9f8] pb-32">
-      {/* Header & Progress */}
-      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-100">
-        <div className="max-w-2xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => step === 1 ? (onBack ? onBack() : navigate(-1)) : prevStep()}
-              className="h-9 w-9 rounded-full hover:bg-gray-100 text-gray-600"
-            >
-              <ArrowLeft size={18} />
-            </Button>
-            <div className="flex flex-col items-center">
-              <span className="text-xs font-bold text-gray-400 tracking-widest uppercase">Paso {step} de 3</span>
-              <h1 className="text-sm font-bold text-[#5D4037]">
-                {step === 1 && "Tus Activos"}
-                {step === 2 && "Tus Pasivos"}
-                {step === 3 && "Resumen Patrimonial"}
-              </h1>
+    <div className="min-h-screen bg-gradient-to-b from-[#FAF7F5] to-[#F5F0EE] pb-32">
+      {/* Header - Brown gradient like dashboard */}
+      <div className="bg-gradient-to-b from-[#5D4037] via-[#5D4037] to-[#5D4037]/95 pb-8 rounded-b-[2rem]">
+        <div className="sticky top-0 z-40 pt-4">
+          <div className="max-w-2xl mx-auto px-4">
+            <div className="flex items-center justify-between mb-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => step === 1 ? (onBack ? onBack() : navigate(-1)) : prevStep()}
+                className="h-10 w-10 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
+              >
+                <ArrowLeft size={18} />
+              </Button>
+              <div className="flex flex-col items-center">
+                <span className="text-xs font-medium text-white/70 tracking-wide">Paso {step} de 3</span>
+                <h1 className="text-lg font-bold text-white">
+                  {step === 1 && "Tus Activos"}
+                  {step === 2 && "Tus Pasivos"}
+                  {step === 3 && "Resumen Patrimonial"}
+                </h1>
+              </div>
+              <div className="w-10" />
             </div>
-            <div className="w-9" /> {/* Spacer */}
+            
+            {/* Progress bar */}
+            <div className="flex gap-2 mb-6">
+              {[1, 2, 3].map((i) => (
+                <div 
+                  key={i} 
+                  className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                    i <= step ? 'bg-white' : 'bg-white/30'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Icon and description inside header */}
+            <div className="text-center pb-2">
+              <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-3">
+                {step === 1 && <TrendingUp className="w-7 h-7 text-white" />}
+                {step === 2 && <TrendingDown className="w-7 h-7 text-white" />}
+                {step === 3 && <Shield className="w-7 h-7 text-white" />}
+              </div>
+              <h2 className="text-xl font-bold text-white">
+                {step === 1 && "¿Qué posees?"}
+                {step === 2 && "¿Qué debes?"}
+                {step === 3 && "Tu Patrimonio Neto"}
+              </h2>
+              <p className="text-white/70 text-sm mt-1 max-w-sm mx-auto">
+                {step === 1 && "Registra tus cuentas, propiedades y bienes."}
+                {step === 2 && "Registra tus deudas y créditos."}
+                {step === 3 && "Así se ven tus finanzas hoy."}
+              </p>
+            </div>
           </div>
-          <Progress value={(step / 3) * 100} className="h-1.5 bg-gray-100" indicatorClassName="bg-[#8D6E63]" />
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 pt-6">
+      {/* Content area with cards */}
+      <div className="max-w-2xl mx-auto px-4 -mt-4">
         <AnimatePresence mode="wait">
           {step === 1 && (
             <motion.div
               key="step1"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-4"
             >
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                  <TrendingUp className="w-8 h-8 text-emerald-600" />
-                </div>
-                <h2 className={headingPage}>¿Qué posees?</h2>
-                <p className="text-gray-500 text-sm mt-2 max-w-md mx-auto">
-                  Registra tus cuentas bancarias, inversiones, propiedades y otros bienes de valor.
-                </p>
-              </div>
-
               {/* Assets Categories */}
-              <div className="space-y-4">
-                {assetCategories.map((asset, index) => {
-                  const entries = assetEntries.filter(e => e.categoryType === asset.name);
-                  const hasEntries = entries.length > 0;
-                  
-                  return (
-                    <div key={index} className={`bg-white rounded-2xl border transition-all ${hasEntries ? 'border-emerald-100 shadow-sm' : 'border-gray-100'}`}>
+              {assetCategories.map((asset, index) => {
+                const entries = assetEntries.filter(e => e.categoryType === asset.name);
+                const hasEntries = entries.length > 0;
+                const isBankAccount = asset.name === 'Cuentas bancarias (ahorro + cheques)';
+                
+                return (
+                  <div key={index}>
+                    <Card className={`bg-white rounded-3xl shadow-lg transition-all border-0 ${hasEntries ? 'ring-2 ring-[#A1887F]/30' : ''}`}>
                       <div className="p-4">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${hasEntries ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-50 text-gray-400'}`}>
-                              {hasEntries ? <Check size={14} strokeWidth={3} /> : <Plus size={14} />}
+                            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasEntries ? 'bg-[#5D4037]/10 text-[#5D4037]' : 'bg-[#A1887F]/10 text-[#A1887F]'}`}>
+                              {hasEntries ? <Check size={18} strokeWidth={3} /> : <asset.icon size={18} />}
                             </div>
                             <span className={`font-semibold text-sm ${hasEntries ? 'text-gray-900' : 'text-gray-600'}`}>{asset.name}</span>
                           </div>
@@ -545,93 +692,346 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                             variant="ghost"
                             size="sm"
                             onClick={() => addAssetEntry(asset.name, asset.category, asset.examples)}
-                            className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 text-xs font-bold h-8 px-3 rounded-lg"
+                            className="text-[#5D4037] hover:text-[#4E342E] hover:bg-[#A1887F]/20 text-xs font-bold h-9 px-4 rounded-xl"
                           >
-                            <Plus size={12} className="mr-1" />
+                            <Plus size={14} className="mr-1" />
                             Agregar
                           </Button>
                         </div>
 
                         {entries.length > 0 && (
-                          <div className="space-y-3 pl-11">
+                          <div className="space-y-3 ml-13 pl-10 border-l-2 border-[#5D4037]/10">
                             {entries.map((entry) => (
-                              <div key={entry.id} className="flex gap-3 items-center animate-in slide-in-from-top-2 duration-200">
-                                <div className="flex-1 grid grid-cols-2 gap-3">
+                              <div key={entry.id} className="flex gap-3 items-center">
+                                <div className="flex-1 grid grid-cols-2 gap-2">
                                   <Input
                                     placeholder={entry.placeholder}
                                     value={entry.name}
                                     onChange={(e) => updateAssetEntry(entry.id, 'name', e.target.value)}
-                                    className="h-9 text-xs bg-gray-50/50 border-gray-200 focus:bg-white transition-all"
+                                    className="h-11 text-sm bg-[#F5F0EE] border-0 focus:ring-2 focus:ring-[#5D4037]/20 rounded-xl text-gray-900"
                                   />
                                   <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">$</span>
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4037] text-sm font-bold">$</span>
                                     <Input
                                       placeholder="0.00"
                                       value={formatNumberWithCommas(entry.value)}
                                       onChange={(e) => updateAssetEntry(entry.id, 'value', parseFormattedNumber(e.target.value))}
-                                      className="h-9 text-xs pl-6 bg-gray-50/50 border-gray-200 focus:bg-white transition-all font-medium text-gray-900"
+                                      className="h-11 text-sm pl-7 bg-[#F5F0EE] border-0 focus:ring-2 focus:ring-[#5D4037]/20 rounded-xl font-semibold text-[#5D4037]"
                                     />
                                   </div>
                                 </div>
-                                <button onClick={() => removeAssetEntry(entry.id)} className="text-gray-300 hover:text-red-500 transition-colors">
-                                  <X size={14} />
+                                <button onClick={() => removeAssetEntry(entry.id)} className="text-[#A1887F] hover:text-white hover:bg-[#5D4037] transition-colors p-2 rounded-lg">
+                                  <X size={18} />
                                 </button>
                               </div>
                             ))}
                           </div>
                         )}
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    </Card>
+
+                    {/* Stocks/ETFs Question - Right after Cuentas bancarias */}
+                    {isBankAccount && (
+                      <>
+                      <Card className="bg-white rounded-3xl shadow-lg border-0 overflow-hidden mt-4">
+                        <div className="p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasStocks ? 'bg-[#5D4037]/10 text-[#5D4037]' : 'bg-[#A1887F]/10 text-[#A1887F]'}`}>
+                                {hasStocks ? <Check size={18} strokeWidth={3} /> : <TrendingUp size={18} />}
+                              </div>
+                              <span className="font-semibold text-sm text-gray-900">¿Tienes acciones o ETFs?</span>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                variant={hasStocks === true ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => {
+                                  setHasStocks(true);
+                                  if (stockEntries.length === 0) addStockEntry();
+                                }}
+                                className={cn(
+                                  "text-xs h-9 px-5 rounded-xl font-bold transition-all",
+                                  hasStocks === true ? "bg-[#5D4037] hover:bg-[#4E342E] text-white shadow-md" : "border-[#A1887F]/30 text-[#5D4037] hover:bg-[#A1887F]/20 hover:border-[#5D4037]/50"
+                                )}
+                              >
+                                Sí
+                              </Button>
+                              <Button
+                                variant={hasStocks === false ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => {
+                                  setHasStocks(false);
+                                  setStockEntries([]);
+                                }}
+                                className={cn(
+                                  "text-xs h-9 px-5 rounded-xl font-bold transition-all",
+                                  hasStocks === false ? "bg-[#8D6E63] hover:bg-[#6D4C41] text-white shadow-md" : "border-[#A1887F]/30 text-[#8D6E63] hover:bg-[#A1887F]/20 hover:border-[#8D6E63]/50"
+                                )}
+                              >
+                                No
+                              </Button>
+                            </div>
+                          </div>
+
+                          {hasStocks && (
+                            <div className="space-y-3 mt-4 pt-4 border-t border-[#A1887F]/20">
+                              {stockEntries.map((entry) => (
+                                <div key={entry.id} className="bg-[#F5F0EE] rounded-2xl p-4 space-y-3">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs font-bold text-[#5D4037] uppercase tracking-wide">Acción / ETF</span>
+                                    <button onClick={() => removeStockEntry(entry.id)} className="text-[#A1887F] hover:text-white hover:bg-[#5D4037] transition-colors p-1 rounded-lg">
+                                      <X size={16} />
+                                    </button>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <Input
+                                      placeholder="Ej: Apple, VOO, SPY"
+                                      value={entry.name}
+                                      onChange={(e) => updateStockEntry(entry.id, 'name', e.target.value)}
+                                      className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
+                                    />
+                                    <Input
+                                      placeholder="Cantidad"
+                                      value={formatNumberWithCommas(entry.quantity)}
+                                      onChange={(e) => updateStockEntry(entry.id, 'quantity', parseFormattedNumber(e.target.value))}
+                                      className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
+                                    />
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <div className="relative">
+                                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4037] text-sm font-bold">$</span>
+                                      <Input
+                                        placeholder="Precio"
+                                        value={formatNumberWithCommas(entry.purchasePrice)}
+                                        onChange={(e) => updateStockEntry(entry.id, 'purchasePrice', parseFormattedNumber(e.target.value))}
+                                        className="h-11 text-sm pl-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
+                                      />
+                                    </div>
+                                    <Popover>
+                                      <PopoverTrigger asChild>
+                                        <Button
+                                          variant="outline"
+                                          className={cn(
+                                            "h-11 text-sm justify-start text-left font-normal bg-white border-0 rounded-xl hover:bg-[#A1887F]/10",
+                                            !entry.purchaseDate && "text-muted-foreground"
+                                          )}
+                                        >
+                                          <CalendarIcon className="mr-2 h-4 w-4 text-[#5D4037]" />
+                                          {entry.purchaseDate ? format(entry.purchaseDate, "dd/MM/yyyy") : <span>Fecha</span>}
+                                        </Button>
+                                      </PopoverTrigger>
+                                      <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                          mode="single"
+                                          selected={entry.purchaseDate}
+                                          onSelect={(date) => updateStockEntry(entry.id, 'purchaseDate', date)}
+                                          initialFocus
+                                          className={cn("p-3 pointer-events-auto")}
+                                        />
+                                      </PopoverContent>
+                                    </Popover>
+                                  </div>
+                                  {entry.quantity && entry.purchasePrice && (
+                                    <div className="text-right bg-[#5D4037]/5 rounded-xl p-3">
+                                      <span className="text-xs text-[#8D6E63]">Valor total: </span>
+                                      <span className="text-sm font-bold text-[#5D4037]">
+                                        ${formatNumberWithCommas(String((parseFloat(parseFormattedNumber(entry.quantity)) || 0) * (parseFloat(parseFormattedNumber(entry.purchasePrice)) || 0)))}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={addStockEntry}
+                                className="text-[#5D4037] hover:text-[#4E342E] hover:bg-[#A1887F]/20 text-xs font-bold h-10 px-4 rounded-xl w-full"
+                              >
+                                <Plus size={14} className="mr-2" />
+                                Agregar otra acción
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </Card>
+
+                      {/* Crypto Question - Right after Stocks */}
+                      <Card className="bg-white rounded-3xl shadow-lg border-0 overflow-hidden mt-4">
+                        <div className="p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasCrypto ? 'bg-[#5D4037]/10 text-[#5D4037]' : 'bg-[#A1887F]/10 text-[#A1887F]'}`}>
+                                {hasCrypto ? <Check size={18} strokeWidth={3} /> : <Bitcoin size={18} />}
+                              </div>
+                              <span className="font-semibold text-sm text-gray-900">¿Tienes criptomonedas?</span>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                variant={hasCrypto === true ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => {
+                                  setHasCrypto(true);
+                                  if (cryptoEntries.length === 0) addCryptoEntry();
+                                }}
+                                className={cn(
+                                  "text-xs h-9 px-5 rounded-xl font-bold transition-all",
+                                  hasCrypto === true ? "bg-[#5D4037] hover:bg-[#4E342E] text-white shadow-md" : "border-[#A1887F]/30 text-[#5D4037] hover:bg-[#A1887F]/20 hover:border-[#5D4037]/50"
+                                )}
+                              >
+                                Sí
+                              </Button>
+                              <Button
+                                variant={hasCrypto === false ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => {
+                                  setHasCrypto(false);
+                                  setCryptoEntries([]);
+                                }}
+                                className={cn(
+                                  "text-xs h-9 px-5 rounded-xl font-bold transition-all",
+                                  hasCrypto === false ? "bg-[#8D6E63] hover:bg-[#6D4C41] text-white shadow-md" : "border-[#A1887F]/30 text-[#8D6E63] hover:bg-[#A1887F]/20 hover:border-[#8D6E63]/50"
+                                )}
+                              >
+                                No
+                              </Button>
+                            </div>
+                          </div>
+
+                          {hasCrypto && (
+                            <div className="space-y-3 mt-4 pt-4 border-t border-[#A1887F]/20">
+                              {cryptoEntries.map((entry) => (
+                                <div key={entry.id} className="bg-[#F5F0EE] rounded-2xl p-4 space-y-3">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs font-bold text-[#5D4037] uppercase tracking-wide">Criptomoneda</span>
+                                    <button onClick={() => removeCryptoEntry(entry.id)} className="text-[#A1887F] hover:text-white hover:bg-[#5D4037] transition-colors p-1 rounded-lg">
+                                      <X size={16} />
+                                    </button>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <Input
+                                      placeholder="Ej: Bitcoin, Ethereum"
+                                      value={entry.name}
+                                      onChange={(e) => updateCryptoEntry(entry.id, 'name', e.target.value)}
+                                      className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
+                                    />
+                                    <Input
+                                      placeholder="Cantidad"
+                                      value={formatNumberWithCommas(entry.quantity)}
+                                      onChange={(e) => updateCryptoEntry(entry.id, 'quantity', parseFormattedNumber(e.target.value))}
+                                      className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
+                                    />
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <div className="relative">
+                                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4037] text-sm font-bold">$</span>
+                                      <Input
+                                        placeholder="Precio"
+                                        value={formatNumberWithCommas(entry.purchasePrice)}
+                                        onChange={(e) => updateCryptoEntry(entry.id, 'purchasePrice', parseFormattedNumber(e.target.value))}
+                                        className="h-11 text-sm pl-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
+                                      />
+                                    </div>
+                                    <Popover>
+                                      <PopoverTrigger asChild>
+                                        <Button
+                                          variant="outline"
+                                          className={cn(
+                                            "h-11 text-sm justify-start text-left font-normal bg-white border-0 rounded-xl hover:bg-[#A1887F]/10",
+                                            !entry.purchaseDate && "text-muted-foreground"
+                                          )}
+                                        >
+                                          <CalendarIcon className="mr-2 h-4 w-4 text-[#5D4037]" />
+                                          {entry.purchaseDate ? format(entry.purchaseDate, "dd/MM/yyyy") : <span>Fecha</span>}
+                                        </Button>
+                                      </PopoverTrigger>
+                                      <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                          mode="single"
+                                          selected={entry.purchaseDate}
+                                          onSelect={(date) => updateCryptoEntry(entry.id, 'purchaseDate', date)}
+                                          initialFocus
+                                          className={cn("p-3 pointer-events-auto")}
+                                        />
+                                      </PopoverContent>
+                                    </Popover>
+                                  </div>
+                                  {entry.quantity && entry.purchasePrice && (
+                                    <div className="text-right bg-[#5D4037]/5 rounded-xl p-3">
+                                      <span className="text-xs text-[#8D6E63]">Valor total: </span>
+                                      <span className="text-sm font-bold text-[#5D4037]">
+                                        ${formatNumberWithCommas(String((parseFloat(parseFormattedNumber(entry.quantity)) || 0) * (parseFloat(parseFormattedNumber(entry.purchasePrice)) || 0)))}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={addCryptoEntry}
+                                className="text-[#5D4037] hover:text-[#4E342E] hover:bg-[#A1887F]/20 text-xs font-bold h-10 px-4 rounded-xl w-full"
+                              >
+                                <Plus size={14} className="mr-2" />
+                                Agregar otra cripto
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </Card>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
 
               {/* Custom Assets */}
-              <div className="pt-4 border-t border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-gray-900">Otros Activos</h3>
-                  <Button onClick={addCustomAsset} variant="outline" size="sm" className="text-xs h-8 rounded-lg border-gray-200">
+              <div className="pt-2">
+                <div className="flex items-center justify-between mb-3 px-1">
+                  <h3 className="text-sm font-bold text-gray-700">Otros Activos</h3>
+                  <Button onClick={addCustomAsset} variant="outline" size="sm" className="text-xs h-9 rounded-xl border-[#5D4037]/20 text-[#5D4037] hover:bg-[#5D4037]/10">
+                    <Plus size={12} className="mr-1" />
                     Nueva Categoría
                   </Button>
                 </div>
                 {customAssets.map(customAsset => (
-                  <div key={customAsset.id} className="bg-white p-4 rounded-2xl border border-gray-100 mb-4 shadow-sm">
+                  <Card key={customAsset.id} className="bg-white p-4 rounded-3xl shadow-lg border-0 mb-3">
                     <div className="flex gap-3 mb-3">
                       <Input 
                         placeholder="Nombre de la categoría (ej. Arte)" 
                         value={customAsset.name}
                         onChange={(e) => updateCustomAssetName(customAsset.id, e.target.value)}
-                        className="h-9 font-semibold text-sm border-gray-200"
+                        className="h-11 font-semibold text-sm bg-gray-50 border-0 rounded-xl"
                       />
-                      <Button size="icon" variant="ghost" onClick={() => removeCustomAsset(customAsset.id)} className="h-9 w-9 text-gray-400 hover:text-red-500">
-                        <X size={16} />
+                      <Button size="icon" variant="ghost" onClick={() => removeCustomAsset(customAsset.id)} className="h-11 w-11 text-gray-400 hover:text-white hover:bg-[#5D4037] rounded-xl">
+                        <X size={18} />
                       </Button>
                     </div>
-                    <div className="space-y-2 pl-4 border-l-2 border-gray-100">
+                    <div className="space-y-2 pl-4 border-l-2 border-[#5D4037]/10">
                       {customAsset.accounts.map(acc => (
                         <div key={acc.id} className="flex gap-2">
                           <Input 
                             placeholder="Nombre del item" 
                             value={acc.name}
                             onChange={(e) => updateCustomAssetAccount(customAsset.id, acc.id, 'name', e.target.value)}
-                            className="h-8 text-xs bg-gray-50"
+                            className="h-10 text-sm bg-gray-50 border-0 rounded-xl"
                           />
                           <Input 
                             placeholder="0.00" 
                             value={formatNumberWithCommas(acc.value)}
                             onChange={(e) => updateCustomAssetAccount(customAsset.id, acc.id, 'value', parseFormattedNumber(e.target.value))}
-                            className="h-8 text-xs w-32 bg-gray-50"
+                            className="h-10 text-sm w-32 bg-gray-50 border-0 rounded-xl"
                           />
-                          <button onClick={() => removeCustomAssetAccount(customAsset.id, acc.id)} className="text-gray-300 hover:text-red-500">
+                          <button onClick={() => removeCustomAssetAccount(customAsset.id, acc.id)} className="text-gray-300 hover:text-white hover:bg-[#5D4037] p-1 rounded-lg transition-colors">
                             <X size={14} />
                           </button>
                         </div>
                       ))}
-                      <Button variant="ghost" size="sm" onClick={() => addCustomAssetAccount(customAsset.id)} className="text-xs text-gray-500 h-7 px-2">
+                      <Button variant="ghost" size="sm" onClick={() => addCustomAssetAccount(customAsset.id)} className="text-xs text-[#5D4037] h-8 px-2 hover:bg-[#5D4037]/10 rounded-lg">
                         + Agregar item
                       </Button>
                     </div>
-                  </div>
+                  </Card>
                 ))}
               </div>
             </motion.div>
@@ -640,127 +1040,116 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
           {step === 2 && (
             <motion.div
               key="step2"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-4"
             >
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-red-50 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                  <TrendingDown className="w-8 h-8 text-red-600" />
-                </div>
-                <h2 className={headingPage}>¿Qué debes?</h2>
-                <p className="text-gray-500 text-sm mt-2 max-w-md mx-auto">
-                  Registra tus deudas de tarjetas, préstamos, créditos e hipotecas.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                {liabilityCategories.map((liability, index) => {
-                  const entries = liabilityEntries.filter(e => e.categoryType === liability.name);
-                  const hasEntries = entries.length > 0;
-                  
-                  return (
-                    <div key={index} className={`bg-white rounded-2xl border transition-all ${hasEntries ? 'border-red-100 shadow-sm' : 'border-gray-100'}`}>
-                      <div className="p-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${hasEntries ? 'bg-red-100 text-red-600' : 'bg-gray-50 text-gray-400'}`}>
-                              {hasEntries ? <Check size={14} strokeWidth={3} /> : <Plus size={14} />}
-                            </div>
-                            <span className={`font-semibold text-sm ${hasEntries ? 'text-gray-900' : 'text-gray-600'}`}>{liability.name}</span>
+              {liabilityCategories.map((liability, index) => {
+                const entries = liabilityEntries.filter(e => e.categoryType === liability.name);
+                const hasEntries = entries.length > 0;
+                
+                return (
+                  <Card key={index} className={`bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all border-0 ${hasEntries ? 'ring-2 ring-red-200/50' : ''}`}>
+                    <div className="p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasEntries ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-400'}`}>
+                            {hasEntries ? <Check size={18} strokeWidth={3} /> : <Plus size={18} />}
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => addLiabilityEntry(liability.name, liability.category, liability.examples)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs font-bold h-8 px-3 rounded-lg"
-                          >
-                            <Plus size={12} className="mr-1" />
-                            Agregar
-                          </Button>
+                          <span className={`font-semibold text-sm ${hasEntries ? 'text-gray-900' : 'text-gray-600'}`}>{liability.name}</span>
                         </div>
-
-                        {entries.length > 0 && (
-                          <div className="space-y-3 pl-11">
-                            {entries.map((entry) => (
-                              <div key={entry.id} className="flex gap-3 items-center animate-in slide-in-from-top-2 duration-200">
-                                <div className="flex-1 grid grid-cols-2 gap-3">
-                                  <Input
-                                    placeholder={entry.placeholder}
-                                    value={entry.name}
-                                    onChange={(e) => updateLiabilityEntry(entry.id, 'name', e.target.value)}
-                                    className="h-9 text-xs bg-gray-50/50 border-gray-200 focus:bg-white transition-all"
-                                  />
-                                  <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">$</span>
-                                    <Input
-                                      placeholder="0.00"
-                                      value={formatNumberWithCommas(entry.value)}
-                                      onChange={(e) => updateLiabilityEntry(entry.id, 'value', parseFormattedNumber(e.target.value))}
-                                      className="h-9 text-xs pl-6 bg-gray-50/50 border-gray-200 focus:bg-white transition-all font-medium text-gray-900"
-                                    />
-                                  </div>
-                                </div>
-                                <button onClick={() => removeLiabilityEntry(entry.id)} className="text-gray-300 hover:text-red-500 transition-colors">
-                                  <X size={14} />
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => addLiabilityEntry(liability.name, liability.category, liability.examples)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs font-bold h-9 px-4 rounded-xl"
+                        >
+                          <Plus size={14} className="mr-1" />
+                          Agregar
+                        </Button>
                       </div>
+
+                      {entries.length > 0 && (
+                        <div className="space-y-3 ml-13 pl-10 border-l-2 border-red-100">
+                          {entries.map((entry) => (
+                            <div key={entry.id} className="flex gap-3 items-center animate-in slide-in-from-top-2 duration-200">
+                              <div className="flex-1 grid grid-cols-2 gap-2">
+                                <Input
+                                  placeholder={entry.placeholder}
+                                  value={entry.name}
+                                  onChange={(e) => updateLiabilityEntry(entry.id, 'name', e.target.value)}
+                                  className="h-11 text-sm bg-gray-50 border-0 focus:ring-2 focus:ring-red-200 rounded-xl text-gray-900"
+                                />
+                                <div className="relative">
+                                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-red-500 text-sm font-bold">$</span>
+                                  <Input
+                                    placeholder="0.00"
+                                    value={formatNumberWithCommas(entry.value)}
+                                    onChange={(e) => updateLiabilityEntry(entry.id, 'value', parseFormattedNumber(e.target.value))}
+                                    className="h-11 text-sm pl-7 bg-gray-50 border-0 focus:ring-2 focus:ring-red-200 rounded-xl font-semibold text-red-600"
+                                  />
+                                </div>
+                              </div>
+                              <button onClick={() => removeLiabilityEntry(entry.id)} className="text-gray-300 hover:text-white hover:bg-[#5D4037] transition-colors p-2 rounded-lg">
+                                <X size={18} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  );
-                })}
-              </div>
+                  </Card>
+                );
+              })}
 
               {/* Custom Liabilities */}
-              <div className="pt-4 border-t border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-gray-900">Otras Deudas</h3>
-                  <Button onClick={addCustomLiability} variant="outline" size="sm" className="text-xs h-8 rounded-lg border-gray-200">
+              <div className="pt-2">
+                <div className="flex items-center justify-between mb-3 px-1">
+                  <h3 className="text-sm font-bold text-gray-700">Otras Deudas</h3>
+                  <Button onClick={addCustomLiability} variant="outline" size="sm" className="text-xs h-9 rounded-xl border-red-200 text-red-600 hover:bg-red-50">
+                    <Plus size={12} className="mr-1" />
                     Nueva Categoría
                   </Button>
                 </div>
                 {customLiabilities.map(customLiability => (
-                  <div key={customLiability.id} className="bg-white p-4 rounded-2xl border border-gray-100 mb-4 shadow-sm">
+                  <Card key={customLiability.id} className="bg-white p-4 rounded-3xl shadow-lg border-0 mb-3">
                     <div className="flex gap-3 mb-3">
                       <Input 
                         placeholder="Nombre de la categoría" 
                         value={customLiability.name}
                         onChange={(e) => updateCustomLiabilityName(customLiability.id, e.target.value)}
-                        className="h-9 font-semibold text-sm border-gray-200"
+                        className="h-11 font-semibold text-sm bg-gray-50 border-0 rounded-xl"
                       />
-                      <Button size="icon" variant="ghost" onClick={() => removeCustomLiability(customLiability.id)} className="h-9 w-9 text-gray-400 hover:text-red-500">
-                        <X size={16} />
+                      <Button size="icon" variant="ghost" onClick={() => removeCustomLiability(customLiability.id)} className="h-11 w-11 text-gray-400 hover:text-white hover:bg-[#5D4037] rounded-xl">
+                        <X size={18} />
                       </Button>
                     </div>
-                    <div className="space-y-2 pl-4 border-l-2 border-gray-100">
+                    <div className="space-y-2 pl-4 border-l-2 border-red-100">
                       {customLiability.accounts.map(acc => (
                         <div key={acc.id} className="flex gap-2">
                           <Input 
                             placeholder="Nombre del item" 
                             value={acc.name}
                             onChange={(e) => updateCustomLiabilityAccount(customLiability.id, acc.id, 'name', e.target.value)}
-                            className="h-8 text-xs bg-gray-50"
+                            className="h-10 text-sm bg-gray-50 border-0 rounded-xl"
                           />
                           <Input 
                             placeholder="0.00" 
                             value={formatNumberWithCommas(acc.value)}
                             onChange={(e) => updateCustomLiabilityAccount(customLiability.id, acc.id, 'value', parseFormattedNumber(e.target.value))}
-                            className="h-8 text-xs w-32 bg-gray-50"
+                            className="h-10 text-sm w-32 bg-gray-50 border-0 rounded-xl"
                           />
-                          <button onClick={() => removeCustomLiabilityAccount(customLiability.id, acc.id)} className="text-gray-300 hover:text-red-500">
+                          <button onClick={() => removeCustomLiabilityAccount(customLiability.id, acc.id)} className="text-gray-300 hover:text-white hover:bg-[#5D4037] p-1 rounded-lg transition-colors">
                             <X size={14} />
                           </button>
                         </div>
                       ))}
-                      <Button variant="ghost" size="sm" onClick={() => addCustomLiabilityAccount(customLiability.id)} className="text-xs text-gray-500 h-7 px-2">
+                      <Button variant="ghost" size="sm" onClick={() => addCustomLiabilityAccount(customLiability.id)} className="text-xs text-red-600 h-8 px-2 hover:bg-red-50 rounded-lg">
                         + Agregar item
                       </Button>
                     </div>
-                  </div>
+                  </Card>
                 ))}
               </div>
             </motion.div>
@@ -769,69 +1158,59 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
           {step === 3 && (
             <motion.div
               key="step3"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-4"
             >
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-indigo-50 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                  <Shield className="w-8 h-8 text-indigo-600" />
-                </div>
-                <h2 className={headingPage}>Tu Patrimonio Neto</h2>
-                <p className="text-gray-500 text-sm mt-2">
-                  Así se ven tus finanzas hoy. ¡Buen trabajo completando la información!
-                </p>
-              </div>
-
-              {/* Summary Card */}
-              <div className="bg-white rounded-[2rem] p-6 shadow-lg border border-indigo-50 text-center relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 via-indigo-500 to-emerald-400"></div>
-                <span className="text-xs font-bold text-gray-400 tracking-widest uppercase">PATRIMONIO NETO TOTAL</span>
-                <div className="text-4xl font-black text-[#5D4037] mt-2 tracking-tight">
+              {/* Main Summary Card */}
+              <Card className="bg-white rounded-3xl p-6 shadow-xl border-0 text-center relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#A1887F] via-[#5D4037] to-[#A1887F]"></div>
+                <span className="text-xs font-bold text-[#8D6E63] tracking-widest uppercase">PATRIMONIO NETO</span>
+                <div className="text-4xl font-black text-gray-900 mt-3 tracking-tight">
                   ${totals.netWorth.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4 mt-8">
-                  <div className="bg-emerald-50 rounded-2xl p-4">
-                    <div className="flex items-center justify-center gap-2 mb-1">
-                      <TrendingUp size={14} className="text-emerald-600" />
-                      <span className="text-xs font-bold text-emerald-700">ACTIVOS</span>
+                  <div className="bg-[#5D4037]/5 rounded-2xl p-4">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <TrendingUp size={16} className="text-[#5D4037]" />
+                      <span className="text-xs font-bold text-[#5D4037]">ACTIVOS</span>
                     </div>
-                    <span className="text-lg font-bold text-emerald-900">
+                    <span className="text-xl font-bold text-[#5D4037]">
                       ${totals.assets.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
                     </span>
                   </div>
                   <div className="bg-red-50 rounded-2xl p-4">
-                    <div className="flex items-center justify-center gap-2 mb-1">
-                      <TrendingDown size={14} className="text-red-600" />
-                      <span className="text-xs font-bold text-red-700">PASIVOS</span>
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <TrendingDown size={16} className="text-red-600" />
+                      <span className="text-xs font-bold text-red-600">PASIVOS</span>
                     </div>
-                    <span className="text-lg font-bold text-red-900">
+                    <span className="text-xl font-bold text-red-600">
                       ${totals.liabilities.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
                     </span>
                   </div>
                 </div>
-              </div>
+              </Card>
 
-              <div className="bg-[#F5F0EE] rounded-xl p-4 text-center">
-                <p className="text-sm text-[#5D4037] font-medium">
+              <Card className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 text-center border-0 shadow-lg">
+                <p className="text-sm text-gray-600 font-medium italic">
                   "Conocer tu patrimonio es el primer paso para hacerlo crecer."
                 </p>
-              </div>
+              </Card>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
       {/* Fixed Footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 z-50 safe-area-bottom">
-        <div className="max-w-2xl mx-auto flex gap-4">
+      <div className="fixed bottom-0 left-0 right-0 p-4 z-50 safe-area-bottom">
+        <div className="max-w-2xl mx-auto flex gap-3">
           {step > 1 && (
             <Button
               variant="outline"
               onClick={prevStep}
-              className="flex-1 h-12 rounded-xl border-gray-200 text-gray-600 font-bold"
+              className="flex-1 h-12 rounded-2xl border-gray-200 text-gray-700 font-bold hover:bg-hover-light"
             >
               Atrás
             </Button>
@@ -839,7 +1218,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
           {step < 3 ? (
             <Button
               onClick={nextStep}
-              className="flex-1 h-12 rounded-xl bg-[#5D4037] hover:bg-[#4E342E] text-white font-bold shadow-lg hover:shadow-xl transition-all"
+              className="flex-1 h-12 rounded-2xl bg-[#5D4037] text-white hover:bg-[#4E342E] font-bold shadow-lg hover:shadow-xl transition-all"
             >
               Continuar
             </Button>
@@ -847,7 +1226,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
             <Button
               onClick={handleSubmit}
               disabled={loading}
-              className="flex-1 h-12 rounded-xl bg-[#5D4037] hover:bg-[#4E342E] text-white font-bold shadow-lg hover:shadow-xl transition-all"
+              className="flex-1 h-12 rounded-2xl bg-[#5D4037] text-white hover:bg-[#4E342E] font-bold shadow-lg hover:shadow-xl transition-all"
             >
               {loading ? "Guardando..." : "Finalizar"}
             </Button>
