@@ -29,8 +29,7 @@ import BottomNav from '@/components/BottomNav';
 import { CreateGoalModal } from '@/components/goals/CreateGoalModal';
 import { CreateGroupGoalModal } from '@/components/goals/CreateGroupGoalModal';
 import confetti from 'canvas-confetti';
-import DashboardHeader from '@/components/dashboard/DashboardHeader';
-import ScoreCard from '@/components/dashboard/ScoreCard';
+import DashboardHeroSection from '@/components/dashboard/DashboardHeroSection';
 import QuickStats from '@/components/dashboard/QuickStats';
 import BalanceCard from '@/components/dashboard/BalanceCard';
 import AccountsCarousel from '@/components/dashboard/AccountsCarousel';
@@ -1193,24 +1192,41 @@ const Dashboard = () => {
   return (
     <>
       <div className="min-h-screen bg-[#faf9f8] text-gray-800 font-sans pb-20">
-
-        <div className="page-container">
-          <DashboardHeader
-            userName={user?.user_metadata?.full_name || user?.email?.split('@')[0]}
-            unreadNotifications={unreadNotifications}
-          />
-
-          {/* Score and Budget Grid */}
-          <div className="mb-4 grid grid-cols-3 gap-4">
-            <ScoreCard score={scoreMoni} />
-            <div className="col-span-2">
-              <BudgetWidget
-                totalBudget={totalBudget}
-                currentExpenses={currentMonthExpenses}
-              />
+        {/* Hero Section with Brown Background - Combined Header and Cards */}
+        <div 
+          className="relative rounded-b-[2.5rem]"
+          style={{
+            background: 'linear-gradient(135deg, #8D6E63 0%, #6D4C41 50%, #5D4037 100%)'
+          }}
+        >
+          {/* Header Buttons */}
+          <header className="relative px-6 py-4 pt-6">
+            <div className="absolute top-4 right-6 flex items-center gap-2">
+              <div className="relative">
+                <button 
+                  onClick={() => navigate("/notifications")} 
+                  className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-9 w-9 sm:h-10 sm:w-10 shadow-sm transition-all border border-white/20"
+                >
+                  <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
+                </button>
+                {unreadNotifications > 0 && (
+                  <div className="absolute top-0 right-0 w-3 h-3 rounded-full bg-red-500 border-2 border-white animate-pulse" />
+                )}
+              </div>
+              <button 
+                onClick={() => navigate("/settings")} 
+                className="inline-flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white h-9 w-9 sm:h-10 sm:w-10 shadow-sm transition-all border border-white/20"
+              >
+                <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
+              </button>
             </div>
-          </div>
+          </header>
+          
+          {/* Score and Net Worth Cards */}
+          <DashboardHeroSection scoreMoni={scoreMoni} />
+        </div>
 
+        <div className="page-container pt-4">
           {/* Quick Stats */}
           <div>
             <QuickStats
