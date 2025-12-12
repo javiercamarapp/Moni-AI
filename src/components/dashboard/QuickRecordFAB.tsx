@@ -66,9 +66,9 @@ const QuickRecordFAB: React.FC = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.1, delay: 0.1 }}
                 onClick={openVoiceRecording}
-                className="flex items-center justify-center w-10 h-10 bg-white text-gray-600 rounded-full shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
+                className="flex items-center justify-center w-11 h-11 bg-white text-[#5D4037] rounded-full shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
               >
-                <Mic className="w-4 h-4" />
+                <Mic className="w-5 h-5" />
               </motion.button>
             </motion.div>
           )}

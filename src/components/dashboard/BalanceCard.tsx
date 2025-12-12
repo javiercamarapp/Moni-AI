@@ -56,14 +56,22 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
           />
         </div>
         <div className="flex justify-between mt-2">
-          <div className="flex items-center gap-1.5">
+          <button 
+            onClick={() => navigate('/ingresos')}
+            className="flex items-center gap-1.5 hover:bg-gray-50 rounded-lg px-2 py-1 -ml-2 transition-colors group"
+          >
             <div className="w-2.5 h-2.5 rounded-full bg-[#5D4037]"></div>
-            <span className="text-xs text-gray-800 font-bold">${income.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-gray-800 font-bold group-hover:text-[#5D4037]">${income.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+            <TrendingUp size={12} className="text-gray-400 group-hover:text-[#5D4037]" />
+          </button>
+          <button 
+            onClick={() => navigate('/gastos')}
+            className="flex items-center gap-1.5 hover:bg-gray-50 rounded-lg px-2 py-1 -mr-2 transition-colors group"
+          >
+            <TrendingDown size={12} className="text-gray-400 group-hover:text-[#BCAAA4]" />
+            <span className="text-xs text-gray-800 font-bold group-hover:text-[#5D4037]">${expenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
             <div className="w-2.5 h-2.5 rounded-full bg-[#BCAAA4]"></div>
-            <span className="text-xs text-gray-800 font-bold">${expenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
-          </div>
+          </button>
         </div>
       </div>
 
