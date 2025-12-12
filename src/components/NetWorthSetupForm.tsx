@@ -616,184 +616,189 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               {assetCategories.map((asset, index) => {
                 const entries = assetEntries.filter(e => e.categoryType === asset.name);
                 const hasEntries = entries.length > 0;
+                const isBankAccount = asset.name === 'Cuentas bancarias (ahorro + cheques)';
                 
                 return (
-                  <Card key={index} className={`bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all border-0 ${hasEntries ? 'ring-2 ring-[#A1887F]/30' : ''}`}>
-                    <div className="p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasEntries ? 'bg-[#5D4037]/10 text-[#5D4037]' : 'bg-gray-100 text-gray-400'}`}>
-                            {hasEntries ? <Check size={18} strokeWidth={3} /> : <Plus size={18} />}
+                  <div key={index}>
+                    <Card className={`bg-white rounded-3xl shadow-lg transition-all border-0 ${hasEntries ? 'ring-2 ring-[#A1887F]/30' : ''}`}>
+                      <div className="p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasEntries ? 'bg-[#5D4037]/10 text-[#5D4037]' : 'bg-[#A1887F]/10 text-[#A1887F]'}`}>
+                              {hasEntries ? <Check size={18} strokeWidth={3} /> : <Plus size={18} />}
+                            </div>
+                            <span className={`font-semibold text-sm ${hasEntries ? 'text-gray-900' : 'text-gray-600'}`}>{asset.name}</span>
                           </div>
-                          <span className={`font-semibold text-sm ${hasEntries ? 'text-gray-900' : 'text-gray-600'}`}>{asset.name}</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => addAssetEntry(asset.name, asset.category, asset.examples)}
+                            className="text-[#5D4037] hover:text-[#4E342E] hover:bg-[#A1887F]/20 text-xs font-bold h-9 px-4 rounded-xl"
+                          >
+                            <Plus size={14} className="mr-1" />
+                            Agregar
+                          </Button>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => addAssetEntry(asset.name, asset.category, asset.examples)}
-                          className="text-[#5D4037] hover:text-[#4E342E] hover:bg-[#5D4037]/10 text-xs font-bold h-9 px-4 rounded-xl"
-                        >
-                          <Plus size={14} className="mr-1" />
-                          Agregar
-                        </Button>
-                      </div>
 
-                      {entries.length > 0 && (
-                        <div className="space-y-3 ml-13 pl-10 border-l-2 border-[#5D4037]/10">
-                          {entries.map((entry) => (
-                            <div key={entry.id} className="flex gap-3 items-center animate-in slide-in-from-top-2 duration-200">
-                              <div className="flex-1 grid grid-cols-2 gap-2">
-                                <Input
-                                  placeholder={entry.placeholder}
-                                  value={entry.name}
-                                  onChange={(e) => updateAssetEntry(entry.id, 'name', e.target.value)}
-                                  className="h-11 text-sm bg-gray-50 border-0 focus:ring-2 focus:ring-[#5D4037]/20 rounded-xl text-gray-900"
-                                />
-                                <div className="relative">
-                                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4037] text-sm font-bold">$</span>
+                        {entries.length > 0 && (
+                          <div className="space-y-3 ml-13 pl-10 border-l-2 border-[#5D4037]/10">
+                            {entries.map((entry) => (
+                              <div key={entry.id} className="flex gap-3 items-center">
+                                <div className="flex-1 grid grid-cols-2 gap-2">
                                   <Input
-                                    placeholder="0.00"
-                                    value={formatNumberWithCommas(entry.value)}
-                                    onChange={(e) => updateAssetEntry(entry.id, 'value', parseFormattedNumber(e.target.value))}
-                                    className="h-11 text-sm pl-7 bg-gray-50 border-0 focus:ring-2 focus:ring-[#5D4037]/20 rounded-xl font-semibold text-[#5D4037]"
+                                    placeholder={entry.placeholder}
+                                    value={entry.name}
+                                    onChange={(e) => updateAssetEntry(entry.id, 'name', e.target.value)}
+                                    className="h-11 text-sm bg-[#F5F0EE] border-0 focus:ring-2 focus:ring-[#5D4037]/20 rounded-xl text-gray-900"
                                   />
+                                  <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4037] text-sm font-bold">$</span>
+                                    <Input
+                                      placeholder="0.00"
+                                      value={formatNumberWithCommas(entry.value)}
+                                      onChange={(e) => updateAssetEntry(entry.id, 'value', parseFormattedNumber(e.target.value))}
+                                      className="h-11 text-sm pl-7 bg-[#F5F0EE] border-0 focus:ring-2 focus:ring-[#5D4037]/20 rounded-xl font-semibold text-[#5D4037]"
+                                    />
+                                  </div>
                                 </div>
+                                <button onClick={() => removeAssetEntry(entry.id)} className="text-[#A1887F] hover:text-red-500 transition-colors p-2">
+                                  <X size={18} />
+                                </button>
                               </div>
-                              <button onClick={() => removeAssetEntry(entry.id)} className="text-gray-300 hover:text-red-500 transition-colors p-2">
-                                <X size={18} />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </Card>
-                );
-              })}
-
-              {/* Stocks/ETFs Question */}
-              <Card className="bg-white rounded-3xl shadow-lg border-0 overflow-hidden">
-                <div className="p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasStocks ? 'bg-[#5D4037]/10 text-[#5D4037]' : 'bg-gray-100 text-gray-400'}`}>
-                        {hasStocks ? <Check size={18} strokeWidth={3} /> : <TrendingUp size={18} />}
+                            ))}
+                          </div>
+                        )}
                       </div>
-                      <span className="font-semibold text-sm text-gray-900">¿Tienes acciones o ETFs?</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        variant={hasStocks === true ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => {
-                          setHasStocks(true);
-                          if (stockEntries.length === 0) addStockEntry();
-                        }}
-                        className={cn(
-                          "text-xs h-9 px-5 rounded-xl font-bold transition-all",
-                          hasStocks === true ? "bg-[#5D4037] hover:bg-[#4E342E] text-white shadow-md" : "border-gray-200 text-gray-600 hover:border-[#5D4037]/30"
-                        )}
-                      >
-                        Sí
-                      </Button>
-                      <Button
-                        variant={hasStocks === false ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => {
-                          setHasStocks(false);
-                          setStockEntries([]);
-                        }}
-                        className={cn(
-                          "text-xs h-9 px-5 rounded-xl font-bold transition-all",
-                          hasStocks === false ? "bg-gray-500 hover:bg-gray-600 text-white shadow-md" : "border-gray-200 text-gray-500"
-                        )}
-                      >
-                        No
-                      </Button>
-                    </div>
-                  </div>
+                    </Card>
 
-                  {hasStocks && (
-                    <div className="space-y-3 mt-4 pt-4 border-t border-gray-100">
-                      {stockEntries.map((entry) => (
-                        <div key={entry.id} className="bg-gray-50 rounded-2xl p-4 space-y-3 animate-in slide-in-from-top-2 duration-200">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-[#5D4037] uppercase tracking-wide">Acción / ETF</span>
-                            <button onClick={() => removeStockEntry(entry.id)} className="text-gray-300 hover:text-red-500 transition-colors p-1">
-                              <X size={16} />
-                            </button>
-                          </div>
-                          <div className="grid grid-cols-2 gap-2">
-                            <Input
-                              placeholder="Ej: Apple, VOO, SPY"
-                              value={entry.name}
-                              onChange={(e) => updateStockEntry(entry.id, 'name', e.target.value)}
-                              className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
-                            />
-                            <Input
-                              placeholder="Cantidad"
-                              value={formatNumberWithCommas(entry.quantity)}
-                              onChange={(e) => updateStockEntry(entry.id, 'quantity', parseFormattedNumber(e.target.value))}
-                              className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
-                            />
-                          </div>
-                          <div className="grid grid-cols-2 gap-2">
-                            <div className="relative">
-                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4037] text-sm font-bold">$</span>
-                              <Input
-                                placeholder="Precio"
-                                value={formatNumberWithCommas(entry.purchasePrice)}
-                                onChange={(e) => updateStockEntry(entry.id, 'purchasePrice', parseFormattedNumber(e.target.value))}
-                                className="h-11 text-sm pl-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
-                              />
+                    {/* Stocks/ETFs Question - Right after Cuentas bancarias */}
+                    {isBankAccount && (
+                      <Card className="bg-white rounded-3xl shadow-lg border-0 overflow-hidden mt-4">
+                        <div className="p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasStocks ? 'bg-[#5D4037]/10 text-[#5D4037]' : 'bg-[#A1887F]/10 text-[#A1887F]'}`}>
+                                {hasStocks ? <Check size={18} strokeWidth={3} /> : <TrendingUp size={18} />}
+                              </div>
+                              <span className="font-semibold text-sm text-gray-900">¿Tienes acciones o ETFs?</span>
                             </div>
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  className={cn(
-                                    "h-11 text-sm justify-start text-left font-normal bg-white border-0 rounded-xl hover:bg-gray-50",
-                                    !entry.purchaseDate && "text-muted-foreground"
-                                  )}
-                                >
-                                  <CalendarIcon className="mr-2 h-4 w-4 text-[#5D4037]" />
-                                  {entry.purchaseDate ? format(entry.purchaseDate, "dd/MM/yyyy") : <span>Fecha</span>}
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0" align="start">
-                                <Calendar
-                                  mode="single"
-                                  selected={entry.purchaseDate}
-                                  onSelect={(date) => updateStockEntry(entry.id, 'purchaseDate', date)}
-                                  initialFocus
-                                  className={cn("p-3 pointer-events-auto")}
-                                />
-                              </PopoverContent>
-                            </Popover>
+                            <div className="flex gap-2">
+                              <Button
+                                variant={hasStocks === true ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => {
+                                  setHasStocks(true);
+                                  if (stockEntries.length === 0) addStockEntry();
+                                }}
+                                className={cn(
+                                  "text-xs h-9 px-5 rounded-xl font-bold transition-all",
+                                  hasStocks === true ? "bg-[#5D4037] hover:bg-[#4E342E] text-white shadow-md" : "border-[#A1887F]/30 text-[#5D4037] hover:bg-[#A1887F]/20 hover:border-[#5D4037]/50"
+                                )}
+                              >
+                                Sí
+                              </Button>
+                              <Button
+                                variant={hasStocks === false ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => {
+                                  setHasStocks(false);
+                                  setStockEntries([]);
+                                }}
+                                className={cn(
+                                  "text-xs h-9 px-5 rounded-xl font-bold transition-all",
+                                  hasStocks === false ? "bg-[#8D6E63] hover:bg-[#6D4C41] text-white shadow-md" : "border-[#A1887F]/30 text-[#8D6E63] hover:bg-[#A1887F]/20 hover:border-[#8D6E63]/50"
+                                )}
+                              >
+                                No
+                              </Button>
+                            </div>
                           </div>
-                          {entry.quantity && entry.purchasePrice && (
-                            <div className="text-right bg-[#5D4037]/5 rounded-xl p-3">
-                              <span className="text-xs text-gray-500">Valor total: </span>
-                              <span className="text-sm font-bold text-[#5D4037]">
-                                ${formatNumberWithCommas(String((parseFloat(parseFormattedNumber(entry.quantity)) || 0) * (parseFloat(parseFormattedNumber(entry.purchasePrice)) || 0)))}
-                              </span>
+
+                          {hasStocks && (
+                            <div className="space-y-3 mt-4 pt-4 border-t border-[#A1887F]/20">
+                              {stockEntries.map((entry) => (
+                                <div key={entry.id} className="bg-[#F5F0EE] rounded-2xl p-4 space-y-3">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs font-bold text-[#5D4037] uppercase tracking-wide">Acción / ETF</span>
+                                    <button onClick={() => removeStockEntry(entry.id)} className="text-[#A1887F] hover:text-red-500 transition-colors p-1">
+                                      <X size={16} />
+                                    </button>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <Input
+                                      placeholder="Ej: Apple, VOO, SPY"
+                                      value={entry.name}
+                                      onChange={(e) => updateStockEntry(entry.id, 'name', e.target.value)}
+                                      className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
+                                    />
+                                    <Input
+                                      placeholder="Cantidad"
+                                      value={formatNumberWithCommas(entry.quantity)}
+                                      onChange={(e) => updateStockEntry(entry.id, 'quantity', parseFormattedNumber(e.target.value))}
+                                      className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
+                                    />
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <div className="relative">
+                                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5D4037] text-sm font-bold">$</span>
+                                      <Input
+                                        placeholder="Precio"
+                                        value={formatNumberWithCommas(entry.purchasePrice)}
+                                        onChange={(e) => updateStockEntry(entry.id, 'purchasePrice', parseFormattedNumber(e.target.value))}
+                                        className="h-11 text-sm pl-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
+                                      />
+                                    </div>
+                                    <Popover>
+                                      <PopoverTrigger asChild>
+                                        <Button
+                                          variant="outline"
+                                          className={cn(
+                                            "h-11 text-sm justify-start text-left font-normal bg-white border-0 rounded-xl hover:bg-[#A1887F]/10",
+                                            !entry.purchaseDate && "text-muted-foreground"
+                                          )}
+                                        >
+                                          <CalendarIcon className="mr-2 h-4 w-4 text-[#5D4037]" />
+                                          {entry.purchaseDate ? format(entry.purchaseDate, "dd/MM/yyyy") : <span>Fecha</span>}
+                                        </Button>
+                                      </PopoverTrigger>
+                                      <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                          mode="single"
+                                          selected={entry.purchaseDate}
+                                          onSelect={(date) => updateStockEntry(entry.id, 'purchaseDate', date)}
+                                          initialFocus
+                                          className={cn("p-3 pointer-events-auto")}
+                                        />
+                                      </PopoverContent>
+                                    </Popover>
+                                  </div>
+                                  {entry.quantity && entry.purchasePrice && (
+                                    <div className="text-right bg-[#5D4037]/5 rounded-xl p-3">
+                                      <span className="text-xs text-[#8D6E63]">Valor total: </span>
+                                      <span className="text-sm font-bold text-[#5D4037]">
+                                        ${formatNumberWithCommas(String((parseFloat(parseFormattedNumber(entry.quantity)) || 0) * (parseFloat(parseFormattedNumber(entry.purchasePrice)) || 0)))}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={addStockEntry}
+                                className="text-[#5D4037] hover:text-[#4E342E] hover:bg-[#A1887F]/20 text-xs font-bold h-10 px-4 rounded-xl w-full"
+                              >
+                                <Plus size={14} className="mr-2" />
+                                Agregar otra acción
+                              </Button>
                             </div>
                           )}
                         </div>
-                      ))}
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={addStockEntry}
-                        className="text-[#5D4037] hover:text-[#4E342E] hover:bg-[#5D4037]/10 text-xs font-bold h-10 px-4 rounded-xl w-full"
-                      >
-                        <Plus size={14} className="mr-2" />
-                        Agregar otra acción
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </Card>
+                      </Card>
+                    )}
+                  </div>
+                );
+              })}
 
               {/* Custom Assets */}
               <div className="pt-2">
