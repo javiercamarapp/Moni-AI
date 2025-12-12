@@ -107,8 +107,8 @@ const BalanceCategoryBreakdown: React.FC<BalanceCategoryBreakdownProps> = ({ tit
                     </ResponsiveContainer>
                     {/* Center Text - Formatted Amount */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-                        <div className="flex flex-col items-center">
-                            <span className="text-[8px] font-medium text-gray-400 uppercase tracking-wide">Total</span>
+                        <div className="flex flex-col items-center bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-sm">
+                            <span className="text-[8px] font-medium text-gray-500 uppercase tracking-wide">Total</span>
                             <div className="flex items-baseline gap-[1px]">
                                 <span className="text-sm lg:text-base font-black text-[#5D4037] tracking-tighter leading-none">
                                     ${integerPart}
