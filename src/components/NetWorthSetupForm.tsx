@@ -7,9 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X, Banknote, ChevronRight, Wallet, Shield, CalendarIcon, Building2, Home, Car, PiggyBank, HandCoins, Watch, LucideIcon, Bitcoin, CreditCard, GraduationCap, Users, Briefcase, Upload } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X, Banknote, ChevronRight, Wallet, Shield, Building2, Home, Car, PiggyBank, HandCoins, Watch, LucideIcon, Bitcoin, CreditCard, GraduationCap, Users, Briefcase, Upload } from "lucide-react";
+import { ResponsiveCalendarPicker } from "@/components/ui/responsive-calendar-picker";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
@@ -798,32 +797,11 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                                         className="h-11 text-sm pl-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
                                       />
                                     </div>
-                                    <Popover open={openCalendars[`stock-${entry.id}`]} onOpenChange={(open) => setOpenCalendars(prev => ({ ...prev, [`stock-${entry.id}`]: open }))}>
-                                      <PopoverTrigger asChild>
-                                        <Button
-                                          variant="outline"
-                                          className={cn(
-                                            "h-11 text-sm justify-start text-left font-normal bg-white border-0 rounded-xl hover:bg-[#A1887F]/10",
-                                            !entry.purchaseDate && "text-muted-foreground"
-                                          )}
-                                        >
-                                          <CalendarIcon className="mr-2 h-4 w-4 text-[#5D4037]" />
-                                          {entry.purchaseDate ? format(entry.purchaseDate, "dd/MM/yyyy") : <span>Fecha</span>}
-                                        </Button>
-                                      </PopoverTrigger>
-                                      <PopoverContent className="w-auto p-0 z-50" align="start">
-                                        <Calendar
-                                          mode="single"
-                                          selected={entry.purchaseDate}
-                                          onSelect={(date) => {
-                                            updateStockEntry(entry.id, 'purchaseDate', date);
-                                            setOpenCalendars(prev => ({ ...prev, [`stock-${entry.id}`]: false }));
-                                          }}
-                                          initialFocus
-                                          className={cn("p-3 pointer-events-auto")}
-                                        />
-                                      </PopoverContent>
-                                    </Popover>
+                                    <ResponsiveCalendarPicker
+                                      date={entry.purchaseDate}
+                                      onSelect={(date) => updateStockEntry(entry.id, 'purchaseDate', date)}
+                                      placeholder="Fecha"
+                                    />
                                   </div>
                                   {entry.quantity && entry.purchasePrice && (
                                     <div className="text-right bg-[#5D4037]/5 rounded-xl p-3">
@@ -925,32 +903,11 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                                         className="h-11 text-sm pl-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
                                       />
                                     </div>
-                                    <Popover open={openCalendars[`crypto-${entry.id}`]} onOpenChange={(open) => setOpenCalendars(prev => ({ ...prev, [`crypto-${entry.id}`]: open }))}>
-                                      <PopoverTrigger asChild>
-                                        <Button
-                                          variant="outline"
-                                          className={cn(
-                                            "h-11 text-sm justify-start text-left font-normal bg-white border-0 rounded-xl hover:bg-[#A1887F]/10",
-                                            !entry.purchaseDate && "text-muted-foreground"
-                                          )}
-                                        >
-                                          <CalendarIcon className="mr-2 h-4 w-4 text-[#5D4037]" />
-                                          {entry.purchaseDate ? format(entry.purchaseDate, "dd/MM/yyyy") : <span>Fecha</span>}
-                                        </Button>
-                                      </PopoverTrigger>
-                                      <PopoverContent className="w-auto p-0 z-50" align="start">
-                                        <Calendar
-                                          mode="single"
-                                          selected={entry.purchaseDate}
-                                          onSelect={(date) => {
-                                            updateCryptoEntry(entry.id, 'purchaseDate', date);
-                                            setOpenCalendars(prev => ({ ...prev, [`crypto-${entry.id}`]: false }));
-                                          }}
-                                          initialFocus
-                                          className={cn("p-3 pointer-events-auto")}
-                                        />
-                                      </PopoverContent>
-                                    </Popover>
+                                    <ResponsiveCalendarPicker
+                                      date={entry.purchaseDate}
+                                      onSelect={(date) => updateCryptoEntry(entry.id, 'purchaseDate', date)}
+                                      placeholder="Fecha"
+                                    />
                                   </div>
                                   {entry.quantity && entry.purchasePrice && (
                                     <div className="text-right bg-[#5D4037]/5 rounded-xl p-3">
@@ -1326,32 +1283,13 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
 
                             <div>
                               <Label className="text-[10px] text-[#8D6E63] mb-1 block">Fecha de vencimiento</Label>
-                              <Popover open={openCalendars[`loan-${entry.id}`]} onOpenChange={(open) => setOpenCalendars(prev => ({ ...prev, [`loan-${entry.id}`]: open }))}>
-                                <PopoverTrigger asChild>
-                                  <Button
-                                    variant="outline"
-                                    className={cn(
-                                      "w-full h-11 text-sm justify-start text-left font-normal bg-white border-0 rounded-xl hover:bg-red-50",
-                                      !entry.dueDate && "text-muted-foreground"
-                                    )}
-                                  >
-                                    <CalendarIcon className="mr-2 h-4 w-4 text-red-500" />
-                                    {entry.dueDate ? format(entry.dueDate, "dd/MM/yyyy") : <span>Seleccionar fecha</span>}
-                                  </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0 z-50" align="start">
-                                  <Calendar
-                                    mode="single"
-                                    selected={entry.dueDate}
-                                    onSelect={(date) => {
-                                      updateLoanEntry(entry.id, 'dueDate', date);
-                                      setOpenCalendars(prev => ({ ...prev, [`loan-${entry.id}`]: false }));
-                                    }}
-                                    initialFocus
-                                    className={cn("p-3 pointer-events-auto")}
-                                  />
-                                </PopoverContent>
-                              </Popover>
+                              <ResponsiveCalendarPicker
+                                date={entry.dueDate}
+                                onSelect={(date) => updateLoanEntry(entry.id, 'dueDate', date)}
+                                placeholder="Seleccionar fecha"
+                                buttonClassName="w-full hover:bg-red-50"
+                                iconClassName="text-red-500"
+                              />
                             </div>
                           </div>
                         );
