@@ -58,22 +58,10 @@ const QuickStats: React.FC<QuickStatsProps> = ({
         return <BarChart3 size={size} strokeWidth={strokeWidth} className={cls} />;
     }
   };
-  return (
-    <div className="px-6 mb-4">
+  return <div className="px-6 mb-4">
       <div className="grid grid-cols-3 gap-2 lg:gap-4">
-        {stats.map(stat => (
-          <button
-            key={stat.id}
-            onClick={() => navigate(stat.route)}
-            className="flex flex-col items-center justify-center bg-card rounded-2xl p-3 shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
-          >
-            <div className="mb-1">{getIcon(stat.icon)}</div>
-            <span className="text-[10px] font-medium text-muted-foreground tracking-wide">{stat.label}</span>
-            <span className="text-sm font-bold text-foreground">{stat.value}</span>
-          </button>
-        ))}
+        {stats.map(stat => {})}
       </div>
-    </div>
-  );
+    </div>;
 };
 export default QuickStats;
