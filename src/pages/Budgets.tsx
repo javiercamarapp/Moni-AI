@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Pencil, AlertCircle, TrendingUp, Target } from "lucide-react";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
-import { LoadingScreen } from "@/components/LoadingScreen";
+import { SectionLoader } from "@/components/SectionLoader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { headingPage, headingSection } from "@/styles/typography";
 
@@ -322,7 +322,11 @@ export default function Budgets() {
   const savingsPercentage = monthlyIncome > 0 ? ((monthlyIncome - totalBudget) / monthlyIncome) * 100 : 0;
 
   if (loading) {
-    return <LoadingScreen />;
+    return (
+      <div className="page-standard min-h-screen pb-20 flex items-center justify-center">
+        <SectionLoader size="lg" />
+      </div>
+    );
   }
 
   return (

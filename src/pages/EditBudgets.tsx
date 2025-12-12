@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, ArrowRight, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
-import { LoadingScreen } from "@/components/LoadingScreen";
+import { SectionLoader } from "@/components/SectionLoader";
 
 interface Subcategory {
   id: string;
@@ -528,7 +528,11 @@ export default function EditBudgets() {
   };
 
   if (loading) {
-    return <LoadingScreen />;
+    return (
+      <div className="page-standard min-h-screen pb-20 flex items-center justify-center">
+        <SectionLoader size="lg" />
+      </div>
+    );
   }
 
   return (

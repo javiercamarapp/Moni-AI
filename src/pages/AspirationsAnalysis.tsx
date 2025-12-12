@@ -9,7 +9,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { useNetWorth } from "@/hooks/useNetWorth";
 import { motion, AnimatePresence } from "framer-motion";
 import { BadgeCarousel, BadgeCard, type Badge } from "@/components/ui/badge-carousel";
-import { LoadingScreen } from "@/components/LoadingScreen";
+import { SectionLoader } from "@/components/SectionLoader";
 import moniLogo from "@/assets/moni-ai-logo-black.png";
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#6366f1'];
@@ -472,7 +472,11 @@ export default function AspirationsAnalysis() {
   const gapPercentage = currentNetWorth > 0 ? ((gap / totalAspiration) * 100).toFixed(1) : 100;
 
   if (isLoadingData || netWorthData.isLoading) {
-    return <LoadingScreen />;
+    return (
+      <div className="page-standard min-h-screen pb-20 flex items-center justify-center">
+        <SectionLoader size="lg" />
+      </div>
+    );
   }
 
   return (

@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { LoadingScreen } from '@/components/LoadingScreen';
+import { SectionLoader } from '@/components/SectionLoader';
 interface Category {
   id: string;
   name: string;
@@ -317,7 +317,11 @@ const GestionarCategorias = () => {
     </div>;
   };
   if (loading) {
-    return <LoadingScreen />;
+    return (
+      <div className="page-standard min-h-screen pb-20 flex items-center justify-center">
+        <SectionLoader size="lg" />
+      </div>
+    );
   }
   return <div className="page-standard min-h-screen pb-20">
       {/* Header */}

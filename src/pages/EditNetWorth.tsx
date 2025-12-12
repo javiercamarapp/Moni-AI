@@ -8,7 +8,7 @@ import { ArrowLeft, ArrowRight, Trash2, Wallet, Home, TrendingUp, FileText, Spar
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { LoadingScreen } from "@/components/LoadingScreen";
+import { SectionLoader } from "@/components/SectionLoader";
 
 interface Item {
   id: string;
@@ -366,7 +366,11 @@ export default function EditNetWorth() {
   };
 
   if (loading) {
-    return <LoadingScreen />;
+    return (
+      <div className="page-standard min-h-screen pb-20 flex items-center justify-center">
+        <SectionLoader size="lg" />
+      </div>
+    );
   }
 
   return (

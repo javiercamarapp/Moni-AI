@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, ChevronLeft, ChevronRight, TrendingDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { LoadingScreen } from '@/components/LoadingScreen';
+import { SectionLoader } from '@/components/SectionLoader';
 
 // Mapeo de categorías a emojis
 const categoryEmojis: Record<string, string> = {
@@ -178,7 +178,11 @@ const CategoryExpenses = () => {
   };
 
   if (loading) {
-    return <LoadingScreen />;
+    return (
+      <div className="page-standard min-h-screen pb-20 flex items-center justify-center">
+        <SectionLoader size="lg" />
+      </div>
+    );
   }
 
   return (

@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Users, Trophy, MessageCircle, Newspaper, Plus, UserPlus, Copy, Share2 } from "lucide-react";
 import { toast } from "sonner";
-import { MoniLoader } from "@/components/MoniLoader";
+import { SectionLoader } from "@/components/SectionLoader";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const CircleDetails = () => {
@@ -141,7 +141,7 @@ const CircleDetails = () => {
   if (!circle) {
     return (
       <div className="page-standard min-h-screen flex items-center justify-center">
-        <MoniLoader size="lg" />
+        <SectionLoader size="lg" />
       </div>
     );
   }

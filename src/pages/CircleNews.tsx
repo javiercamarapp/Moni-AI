@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Newspaper, ExternalLink, Calendar } from "lucide-react";
 import { toast } from "sonner";
-import { MoniLoader } from "@/components/MoniLoader";
+import { SectionLoader } from "@/components/SectionLoader";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -60,7 +60,7 @@ const CircleNews = () => {
   if (!circle) {
     return (
       <div className="page-standard min-h-screen flex items-center justify-center">
-        <MoniLoader size="lg" />
+        <SectionLoader size="lg" />
       </div>
     );
   }
