@@ -157,6 +157,7 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
                           tickLine={false}
                           tick={{ fontSize: 9, fill: '#9ca3af' }}
                           interval="preserveStartEnd"
+                          hide={typeof window !== 'undefined' && window.innerWidth < 1024}
                         />
                         <YAxis 
                           axisLine={false}
