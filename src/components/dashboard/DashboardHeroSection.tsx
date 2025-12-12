@@ -104,10 +104,10 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
 
           {/* Net Worth Card */}
           <div 
-            className="col-span-2 bg-white/95 backdrop-blur-sm rounded-2xl p-3 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5"
+            className="col-span-2 bg-white/95 backdrop-blur-sm rounded-2xl p-3 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 flex flex-col"
             onClick={() => navigate('/net-worth')}
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-1">
               <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">
                 Patrimonio
               </span>
@@ -130,19 +130,19 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
             </div>
             
             {isLoading ? (
-              <div className="flex items-center gap-3">
-                <Skeleton className="h-5 w-20" />
-                <Skeleton className="h-8 flex-1" />
+              <div className="flex-1 flex flex-col gap-2">
+                <Skeleton className="h-5 w-24" />
+                <Skeleton className="flex-1 w-full" />
               </div>
             ) : (
-              <div className="flex items-center gap-3">
-                <span className="text-lg font-bold text-gray-900 whitespace-nowrap">
+              <div className="flex-1 flex flex-col">
+                <span className="text-lg font-bold text-gray-900 mb-1">
                   {formatFullCurrency(netWorthData?.currentNetWorth || 0)}
                 </span>
                 
-                {/* Mini chart */}
-                <div className="h-8 flex-1">
-                {netWorthData?.chartData && netWorthData.chartData.length > 0 ? (
+                {/* Chart - takes remaining space */}
+                <div className="flex-1 min-h-[48px]">
+                  {netWorthData?.chartData && netWorthData.chartData.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={netWorthData.chartData}>
                         <defs>
