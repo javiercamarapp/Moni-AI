@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X, Banknote, ChevronRight, Wallet, Shield, CalendarIcon, Building2, Home, Car, PiggyBank, HandCoins, Watch, LucideIcon, Bitcoin } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X, Banknote, ChevronRight, Wallet, Shield, CalendarIcon, Building2, Home, Car, PiggyBank, HandCoins, Watch, LucideIcon, Bitcoin, CreditCard, GraduationCap, Users, Briefcase, Upload } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
@@ -18,31 +18,17 @@ import { headingPage, headingSection } from "@/styles/typography";
 // Helper functions for number formatting
 const formatNumberWithCommas = (value: string): string => {
   if (!value) return '';
-  // Remove all non-digit and non-decimal point characters
   const cleanValue = value.replace(/[^\d.]/g, '');
-  // Split into integer and decimal parts
   const parts = cleanValue.split('.');
-  // Format integer part with commas
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  // Return formatted value (with max 2 decimals if decimal part exists)
   return parts.length > 1 ? `${parts[0]}.${parts[1].slice(0, 2)}` : parts[0];
 };
 
 const parseFormattedNumber = (value: string): string => {
-  // Remove commas and return clean number string
   return value.replace(/,/g, '');
 };
 
 type AssetEntry = {
-  id: string;
-  categoryType: string;
-  name: string;
-  value: string;
-  category: string;
-  placeholder?: string;
-};
-
-type LiabilityEntry = {
   id: string;
   categoryType: string;
   name: string;
@@ -63,18 +49,6 @@ type CustomAsset = {
   accounts: CustomAssetAccount[];
 };
 
-type CustomLiabilityAccount = {
-  id: string;
-  name: string;
-  value: string;
-};
-
-type CustomLiability = {
-  id: string;
-  name: string;
-  accounts: CustomLiabilityAccount[];
-};
-
 type StockEntry = {
   id: string;
   name: string;
@@ -91,6 +65,37 @@ type CryptoEntry = {
   purchaseDate: Date | undefined;
 };
 
+// Credit Card Types
+type CreditCardEntry = {
+  id: string;
+  bankName: string;
+  cardName: string;
+  cutoffDate: string;
+  amountOwed: string;
+};
+
+// Loan Types
+type LoanType = 'personal' | 'automotriz' | 'hipotecario' | 'educativo' | 'familiar';
+
+type LoanEntry = {
+  id: string;
+  loanType: LoanType;
+  originalAmount: string;
+  currentBalance: string;
+  interestRate: string;
+  termMonths: string;
+  monthlyPayment: string;
+  dueDate: Date | undefined;
+};
+
+const loanTypeLabels: Record<LoanType, { label: string; icon: LucideIcon }> = {
+  personal: { label: 'Personal', icon: Users },
+  automotriz: { label: 'Automotriz', icon: Car },
+  hipotecario: { label: 'Hipotecario', icon: Home },
+  educativo: { label: 'Educativo', icon: GraduationCap },
+  familiar: { label: 'Familiar', icon: Users },
+};
+
 const assetCategories: { name: string; category: string; examples: string[]; icon: LucideIcon }[] = [
   { name: 'Cuentas bancarias (ahorro + cheques)', category: 'Checking', examples: ['BBVA Cuenta Ahorro', 'Santander Nómina', 'Banorte Smart'], icon: Banknote },
   { name: 'Propiedad principal', category: 'Property', examples: ['Casa Polanco', 'Depto Reforma', 'Casa Santa Fe'], icon: Home },
@@ -101,35 +106,21 @@ const assetCategories: { name: string; category: string; examples: string[]; ico
   { name: 'Relojes o joyas', category: 'Other', examples: ['Rolex Submariner', 'Anillo Oro', 'Collar Diamantes'], icon: Watch },
 ];
 
-const liabilityCategories = [
-  { name: 'Deuda de tarjetas de crédito', category: 'Credit', examples: ['Tarjeta Banamex', 'BBVA Azul', 'Liverpool Premium'] },
-  { name: 'Préstamo personal bancario o fintech', category: 'Loans', examples: ['Préstamo Personal HSBC', 'Kueski', 'Crédito Santander'] },
-  { name: 'Crédito automotriz', category: 'Loans', examples: ['Crédito Auto VW', 'Ford Credit', 'Santander Auto'] },
-  { name: 'Hipoteca o préstamo hipotecario', category: 'Mortgage', examples: ['Hipoteca Infonavit', 'HSBC Hipotecario', 'Scotiabank Casa'] },
-  { name: 'Créditos educativos / estudiantiles', category: 'Loans', examples: ['Crédito Universidad', 'Préstamo Maestría', 'Sofes Educativo'] },
-  { name: 'Préstamos con familiares o amigos', category: 'Other', examples: ['Préstamo Mamá', 'Deuda Hermano', 'Préstamo Amigo'] },
-  { name: 'Créditos de nómina o payroll loans', category: 'Loans', examples: ['Crédito Nómina', 'Adelanto Sueldo', 'Préstamo Empresa'] },
-  { name: 'Deudas en tiendas departamentales (Liverpool, Coppel)', category: 'Credit', examples: ['Liverpool', 'Coppel', 'Palacio de Hierro'] },
-  { name: 'Pagos diferidos / meses sin intereses', category: 'Credit', examples: ['iPhone 12 MSI', 'Laptop HP', 'Muebles 18 MSI'] },
-  { name: 'Créditos empresariales / de negocio', category: 'Loans', examples: ['Crédito Pyme', 'Capital Trabajo', 'Préstamo Negocio'] },
-  { name: 'Cuotas de mantenimiento o servicios atrasados', category: 'Other', examples: ['Mantenimiento Edificio', 'Luz CFE', 'Agua Pendiente'] },
-  { name: 'Deudas con proveedores o socios', category: 'Other', examples: ['Deuda Proveedor', 'Pago Socio', 'Factura Pendiente'] },
-  { name: 'Créditos en moneda extranjera (USD/EUR)', category: 'Loans', examples: ['Crédito USD', 'Préstamo EUR', 'Deuda Dólares'] },
-  { name: 'Impuestos o multas pendientes de pago', category: 'Other', examples: ['ISR Pendiente', 'Multa Tránsito', 'IVA por Pagar'] },
-  { name: 'Arrendamientos financieros (leasing)', category: 'Loans', examples: ['Leasing Auto', 'Renta Equipo', 'Arrendamiento Oficina'] },
-  { name: 'Otros pasivos personalizados', category: 'Other', examples: ['Otro Pasivo 1', 'Deuda Diversa', 'Compromiso Personal'] },
-];
-
 export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: () => void; onBack?: () => void }) {
   const navigate = useNavigate();
   const [assetEntries, setAssetEntries] = useState<AssetEntry[]>([]);
-  const [liabilityEntries, setLiabilityEntries] = useState<LiabilityEntry[]>([]);
   const [customAssets, setCustomAssets] = useState<CustomAsset[]>([]);
-  const [customLiabilities, setCustomLiabilities] = useState<CustomLiability[]>([]);
   const [hasStocks, setHasStocks] = useState<boolean | null>(null);
   const [stockEntries, setStockEntries] = useState<StockEntry[]>([]);
   const [hasCrypto, setHasCrypto] = useState<boolean | null>(null);
   const [cryptoEntries, setCryptoEntries] = useState<CryptoEntry[]>([]);
+  
+  // New liability states
+  const [hasCreditCards, setHasCreditCards] = useState<boolean | null>(null);
+  const [creditCardEntries, setCreditCardEntries] = useState<CreditCardEntry[]>([]);
+  const [hasLoans, setHasLoans] = useState<boolean | null>(null);
+  const [loanEntries, setLoanEntries] = useState<LoanEntry[]>([]);
+  
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
@@ -160,34 +151,12 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     setAssetEntries([...assetEntries, { ...newEntry, placeholder: randomExample }] as any);
   };
 
-  const addLiabilityEntry = (categoryType: string, category: string, examples: string[]) => {
-    const randomExample = examples[Math.floor(Math.random() * examples.length)];
-    const newEntry: LiabilityEntry = {
-      id: Date.now().toString(),
-      categoryType,
-      name: '',
-      value: '',
-      category
-    };
-    setLiabilityEntries([...liabilityEntries, { ...newEntry, placeholder: randomExample }] as any);
-  };
-
   const removeAssetEntry = (id: string) => {
     setAssetEntries(assetEntries.filter(entry => entry.id !== id));
   };
 
-  const removeLiabilityEntry = (id: string) => {
-    setLiabilityEntries(liabilityEntries.filter(entry => entry.id !== id));
-  };
-
   const updateAssetEntry = (id: string, field: 'name' | 'value', value: string) => {
     setAssetEntries(assetEntries.map(entry => 
-      entry.id === id ? { ...entry, [field]: value } : entry
-    ));
-  };
-
-  const updateLiabilityEntry = (id: string, field: 'name' | 'value', value: string) => {
-    setLiabilityEntries(liabilityEntries.map(entry => 
       entry.id === id ? { ...entry, [field]: value } : entry
     ));
   };
@@ -252,6 +221,65 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     }, 0);
   };
 
+  // Credit Card functions
+  const addCreditCardEntry = () => {
+    const newEntry: CreditCardEntry = {
+      id: Date.now().toString(),
+      bankName: '',
+      cardName: '',
+      cutoffDate: '',
+      amountOwed: ''
+    };
+    setCreditCardEntries([...creditCardEntries, newEntry]);
+  };
+
+  const removeCreditCardEntry = (id: string) => {
+    setCreditCardEntries(creditCardEntries.filter(entry => entry.id !== id));
+  };
+
+  const updateCreditCardEntry = (id: string, field: keyof CreditCardEntry, value: string) => {
+    setCreditCardEntries(creditCardEntries.map(entry => 
+      entry.id === id ? { ...entry, [field]: value } : entry
+    ));
+  };
+
+  const calculateCreditCardsTotal = () => {
+    return creditCardEntries.reduce((sum, entry) => {
+      return sum + (parseFloat(parseFormattedNumber(entry.amountOwed)) || 0);
+    }, 0);
+  };
+
+  // Loan functions
+  const addLoanEntry = (loanType: LoanType) => {
+    const newEntry: LoanEntry = {
+      id: Date.now().toString(),
+      loanType,
+      originalAmount: '',
+      currentBalance: '',
+      interestRate: '',
+      termMonths: '',
+      monthlyPayment: '',
+      dueDate: undefined
+    };
+    setLoanEntries([...loanEntries, newEntry]);
+  };
+
+  const removeLoanEntry = (id: string) => {
+    setLoanEntries(loanEntries.filter(entry => entry.id !== id));
+  };
+
+  const updateLoanEntry = (id: string, field: keyof LoanEntry, value: any) => {
+    setLoanEntries(loanEntries.map(entry => 
+      entry.id === id ? { ...entry, [field]: value } : entry
+    ));
+  };
+
+  const calculateLoansTotal = () => {
+    return loanEntries.reduce((sum, entry) => {
+      return sum + (parseFloat(parseFormattedNumber(entry.currentBalance)) || 0);
+    }, 0);
+  };
+
   // Custom Assets functions
   const addCustomAsset = () => {
     const newAsset: CustomAsset = {
@@ -310,64 +338,6 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     }));
   };
 
-  // Custom Liabilities functions
-  const addCustomLiability = () => {
-    const newLiability: CustomLiability = {
-      id: Date.now().toString(),
-      name: '',
-      accounts: []
-    };
-    setCustomLiabilities([...customLiabilities, newLiability]);
-  };
-
-  const removeCustomLiability = (id: string) => {
-    setCustomLiabilities(customLiabilities.filter(liability => liability.id !== id));
-  };
-
-  const updateCustomLiabilityName = (id: string, name: string) => {
-    setCustomLiabilities(customLiabilities.map(liability => 
-      liability.id === id ? { ...liability, name } : liability
-    ));
-  };
-
-  const addCustomLiabilityAccount = (liabilityId: string) => {
-    setCustomLiabilities(customLiabilities.map(liability => {
-      if (liability.id === liabilityId) {
-        return {
-          ...liability,
-          accounts: [...liability.accounts, { id: Date.now().toString(), name: '', value: '' }]
-        };
-      }
-      return liability;
-    }));
-  };
-
-  const removeCustomLiabilityAccount = (liabilityId: string, accountId: string) => {
-    setCustomLiabilities(customLiabilities.map(liability => {
-      if (liability.id === liabilityId) {
-        return {
-          ...liability,
-          accounts: liability.accounts.filter(acc => acc.id !== accountId)
-        };
-      }
-      return liability;
-    }));
-  };
-
-  const updateCustomLiabilityAccount = (liabilityId: string, accountId: string, field: 'name' | 'value', value: string) => {
-    setCustomLiabilities(customLiabilities.map(liability => {
-      if (liability.id === liabilityId) {
-        return {
-          ...liability,
-          accounts: liability.accounts.map(acc => 
-            acc.id === accountId ? { ...acc, [field]: value } : acc
-          )
-        };
-      }
-      return liability;
-    }));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -376,7 +346,6 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     setSaveStatus('saving');
 
     try {
-      // Mapeo de categorías a nombres en español
       const categoryMap: Record<string, string> = {
         'Checking': 'Activos líquidos',
         'Savings': 'Activos líquidos',
@@ -468,34 +437,49 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
         }
       });
 
-      // Preparar pasivos válidos
-      const validLiabilities = liabilityEntries
-        .filter(entry => entry.name.trim() && parseFloat(entry.value) > 0)
-        .map(entry => ({
-          user_id: user.id,
-          nombre: entry.name.trim(),
-          valor: parseFloat(entry.value),
-          categoria: categoryMap[entry.category] || 'Otros pasivos',
-          subcategoria: entry.categoryType,
-          moneda: 'MXN',
-          es_corto_plazo: entry.category === 'Credit'
-        }));
+      // Preparar pasivos de tarjetas de crédito
+      const validLiabilities: Array<{
+        user_id: string;
+        nombre: string;
+        valor: number;
+        categoria: string;
+        subcategoria: string;
+        moneda: string;
+        es_corto_plazo: boolean;
+        tasa_interes?: number;
+        fecha_vencimiento?: string;
+      }> = [];
 
-      // Agregar pasivos personalizados
-      customLiabilities.forEach(customLiability => {
-        if (customLiability.name.trim()) {
-          customLiability.accounts.forEach(account => {
-            if (account.name.trim() && parseFloat(account.value) > 0) {
-              validLiabilities.push({
-                user_id: user.id,
-                nombre: account.name.trim(),
-                valor: parseFloat(account.value),
-                categoria: 'Pasivo personalizado',
-                subcategoria: customLiability.name.trim(),
-                moneda: 'MXN',
-                es_corto_plazo: true
-              });
-            }
+      creditCardEntries.forEach(card => {
+        if (card.cardName.trim() && parseFloat(parseFormattedNumber(card.amountOwed)) > 0) {
+          validLiabilities.push({
+            user_id: user.id,
+            nombre: `${card.bankName} - ${card.cardName}`,
+            valor: parseFloat(parseFormattedNumber(card.amountOwed)),
+            categoria: 'Pasivos corrientes (corto plazo)',
+            subcategoria: `Tarjeta de crédito - Corte: ${card.cutoffDate}`,
+            moneda: 'MXN',
+            es_corto_plazo: true
+          });
+        }
+      });
+
+      // Preparar pasivos de préstamos
+      loanEntries.forEach(loan => {
+        if (parseFloat(parseFormattedNumber(loan.currentBalance)) > 0) {
+          const loanTypeLabel = loanTypeLabels[loan.loanType].label;
+          const isShortTerm = loan.loanType === 'personal' || loan.loanType === 'familiar';
+          
+          validLiabilities.push({
+            user_id: user.id,
+            nombre: `Préstamo ${loanTypeLabel}`,
+            valor: parseFloat(parseFormattedNumber(loan.currentBalance)),
+            categoria: isShortTerm ? 'Pasivos corrientes (corto plazo)' : 'Pasivos no corrientes (largo plazo)',
+            subcategoria: `Original: $${loan.originalAmount} | Plazo: ${loan.termMonths} meses | Mensualidad: $${loan.monthlyPayment}`,
+            moneda: 'MXN',
+            es_corto_plazo: isShortTerm,
+            tasa_interes: parseFloat(loan.interestRate) || undefined,
+            fecha_vencimiento: loan.dueDate ? format(loan.dueDate, 'yyyy-MM-dd') : undefined
           });
         }
       });
@@ -527,7 +511,6 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
       // Create initial snapshot
       const totalAssets = validAssets.reduce((sum, a) => sum + a.valor, 0);
       const totalLiabilities = validLiabilities.reduce((sum, l) => sum + l.valor, 0);
-      const netWorth = totalAssets - totalLiabilities;
 
       // Call edge function to create/update snapshot
       const { data: { session } } = await supabase.auth.getSession();
@@ -573,18 +556,13 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     const stocksTotal = calculateStockTotal();
     const cryptoTotal = calculateCryptoTotal();
 
-    const liabilitiesTotal = liabilityEntries
-      .filter(e => parseFloat(e.value) > 0)
-      .reduce((sum, e) => sum + parseFloat(parseFormattedNumber(e.value)), 0);
-
-    const customLiabilitiesTotal = customLiabilities.reduce((sum, liability) => {
-      return sum + liability.accounts.reduce((accSum, acc) => accSum + parseFloat(parseFormattedNumber(acc.value) || '0'), 0);
-    }, 0);
+    const creditCardsTotal = calculateCreditCardsTotal();
+    const loansTotal = calculateLoansTotal();
 
     return {
       assets: assetsTotal + customAssetsTotal + stocksTotal + cryptoTotal,
-      liabilities: liabilitiesTotal + customLiabilitiesTotal,
-      netWorth: (assetsTotal + customAssetsTotal + stocksTotal + cryptoTotal) - (liabilitiesTotal + customLiabilitiesTotal)
+      liabilities: creditCardsTotal + loansTotal,
+      netWorth: (assetsTotal + customAssetsTotal + stocksTotal + cryptoTotal) - (creditCardsTotal + loansTotal)
     };
   };
 
@@ -652,7 +630,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               </h2>
               <p className="text-white/70 text-sm mt-1 max-w-sm mx-auto">
                 {step === 1 && "Registra tus cuentas, propiedades y bienes."}
-                {step === 2 && "Registra tus deudas y créditos."}
+                {step === 2 && "Registra tus tarjetas y préstamos."}
                 {step === 3 && "Así se ven tus finanzas hoy."}
               </p>
             </div>
@@ -856,7 +834,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                         </div>
                       </Card>
 
-                      {/* Crypto Question - Right after Stocks */}
+                      {/* Crypto Question */}
                       <Card className="bg-white rounded-3xl shadow-lg border-0 overflow-hidden mt-4">
                         <div className="p-4">
                           <div className="flex items-center justify-between mb-3">
@@ -1045,113 +1023,291 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
               exit={{ opacity: 0, y: -20 }}
               className="space-y-4"
             >
-              {liabilityCategories.map((liability, index) => {
-                const entries = liabilityEntries.filter(e => e.categoryType === liability.name);
-                const hasEntries = entries.length > 0;
-                
-                return (
-                  <Card key={index} className={`bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all border-0 ${hasEntries ? 'ring-2 ring-red-200/50' : ''}`}>
-                    <div className="p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasEntries ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-400'}`}>
-                            {hasEntries ? <Check size={18} strokeWidth={3} /> : <Plus size={18} />}
+              {/* Credit Cards Question */}
+              <Card className="bg-white rounded-3xl shadow-lg border-0 overflow-hidden">
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasCreditCards ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-400'}`}>
+                        {hasCreditCards ? <Check size={18} strokeWidth={3} /> : <CreditCard size={18} />}
+                      </div>
+                      <span className="font-semibold text-sm text-gray-900">¿Tienes tarjetas de crédito?</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant={hasCreditCards === true ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => {
+                          setHasCreditCards(true);
+                          if (creditCardEntries.length === 0) addCreditCardEntry();
+                        }}
+                        className={cn(
+                          "text-xs h-9 px-5 rounded-xl font-bold transition-all",
+                          hasCreditCards === true ? "bg-red-600 hover:bg-red-700 text-white shadow-md" : "border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+                        )}
+                      >
+                        Sí
+                      </Button>
+                      <Button
+                        variant={hasCreditCards === false ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => {
+                          setHasCreditCards(false);
+                          setCreditCardEntries([]);
+                        }}
+                        className={cn(
+                          "text-xs h-9 px-5 rounded-xl font-bold transition-all",
+                          hasCreditCards === false ? "bg-gray-600 hover:bg-gray-700 text-white shadow-md" : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300"
+                        )}
+                      >
+                        No
+                      </Button>
+                    </div>
+                  </div>
+
+                  {hasCreditCards && (
+                    <div className="space-y-4 mt-4 pt-4 border-t border-red-100">
+                      {creditCardEntries.map((entry) => (
+                        <div key={entry.id} className="bg-red-50/50 rounded-2xl p-4 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-red-600 uppercase tracking-wide">Tarjeta de Crédito</span>
+                            <button onClick={() => removeCreditCardEntry(entry.id)} className="text-red-300 hover:text-white hover:bg-red-600 transition-colors p-1 rounded-lg">
+                              <X size={16} />
+                            </button>
                           </div>
-                          <span className={`font-semibold text-sm ${hasEntries ? 'text-gray-900' : 'text-gray-600'}`}>{liability.name}</span>
+                          <div className="grid grid-cols-2 gap-2">
+                            <Input
+                              placeholder="Nombre del banco"
+                              value={entry.bankName}
+                              onChange={(e) => updateCreditCardEntry(entry.id, 'bankName', e.target.value)}
+                              className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200"
+                            />
+                            <Input
+                              placeholder="Nombre de tarjeta"
+                              value={entry.cardName}
+                              onChange={(e) => updateCreditCardEntry(entry.id, 'cardName', e.target.value)}
+                              className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200"
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <Input
+                              placeholder="Fecha de corte (ej: 15)"
+                              value={entry.cutoffDate}
+                              onChange={(e) => updateCreditCardEntry(entry.id, 'cutoffDate', e.target.value)}
+                              className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200"
+                            />
+                            <div className="relative">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-red-500 text-sm font-bold">$</span>
+                              <Input
+                                placeholder="Monto que debes"
+                                value={formatNumberWithCommas(entry.amountOwed)}
+                                onChange={(e) => updateCreditCardEntry(entry.id, 'amountOwed', parseFormattedNumber(e.target.value))}
+                                className="h-11 text-sm pl-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200 font-semibold text-red-600"
+                              />
+                            </div>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full h-10 text-xs text-gray-500 border-dashed border-gray-300 hover:bg-gray-50 rounded-xl"
+                          >
+                            <Upload size={14} className="mr-2" />
+                            Subir estado de cuenta (opcional)
+                          </Button>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => addLiabilityEntry(liability.name, liability.category, liability.examples)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs font-bold h-9 px-4 rounded-xl"
-                        >
-                          <Plus size={14} className="mr-1" />
-                          Agregar
-                        </Button>
+                      ))}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={addCreditCardEntry}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs font-bold h-10 px-4 rounded-xl w-full"
+                      >
+                        <Plus size={14} className="mr-2" />
+                        Agregar otra tarjeta
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </Card>
+
+              {/* Loans Question */}
+              <Card className="bg-white rounded-3xl shadow-lg border-0 overflow-hidden">
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${hasLoans ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-400'}`}>
+                        {hasLoans ? <Check size={18} strokeWidth={3} /> : <Briefcase size={18} />}
+                      </div>
+                      <span className="font-semibold text-sm text-gray-900">¿Tienes algún préstamo a tu nombre?</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant={hasLoans === true ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setHasLoans(true)}
+                        className={cn(
+                          "text-xs h-9 px-5 rounded-xl font-bold transition-all",
+                          hasLoans === true ? "bg-red-600 hover:bg-red-700 text-white shadow-md" : "border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+                        )}
+                      >
+                        Sí
+                      </Button>
+                      <Button
+                        variant={hasLoans === false ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => {
+                          setHasLoans(false);
+                          setLoanEntries([]);
+                        }}
+                        className={cn(
+                          "text-xs h-9 px-5 rounded-xl font-bold transition-all",
+                          hasLoans === false ? "bg-gray-600 hover:bg-gray-700 text-white shadow-md" : "border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300"
+                        )}
+                      >
+                        No
+                      </Button>
+                    </div>
+                  </div>
+
+                  {hasLoans && (
+                    <div className="space-y-4 mt-4 pt-4 border-t border-red-100">
+                      {/* Loan type selection */}
+                      <div className="space-y-2">
+                        <Label className="text-xs font-bold text-gray-600 uppercase tracking-wide">Tipo de préstamo</Label>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {(Object.keys(loanTypeLabels) as LoanType[]).map((type) => {
+                            const { label, icon: Icon } = loanTypeLabels[type];
+                            const hasThisType = loanEntries.some(e => e.loanType === type);
+                            return (
+                              <Button
+                                key={type}
+                                variant={hasThisType ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => addLoanEntry(type)}
+                                className={cn(
+                                  "h-12 text-xs rounded-xl font-bold transition-all flex flex-col items-center gap-1",
+                                  hasThisType ? "bg-red-600 hover:bg-red-700 text-white" : "border-red-200 text-red-600 hover:bg-red-50"
+                                )}
+                              >
+                                <Icon size={16} />
+                                {label}
+                              </Button>
+                            );
+                          })}
+                        </div>
                       </div>
 
-                      {entries.length > 0 && (
-                        <div className="space-y-3 ml-13 pl-10 border-l-2 border-red-100">
-                          {entries.map((entry) => (
-                            <div key={entry.id} className="flex gap-3 items-center animate-in slide-in-from-top-2 duration-200">
-                              <div className="flex-1 grid grid-cols-2 gap-2">
-                                <Input
-                                  placeholder={entry.placeholder}
-                                  value={entry.name}
-                                  onChange={(e) => updateLiabilityEntry(entry.id, 'name', e.target.value)}
-                                  className="h-11 text-sm bg-gray-50 border-0 focus:ring-2 focus:ring-red-200 rounded-xl text-gray-900"
-                                />
+                      {/* Loan entries */}
+                      {loanEntries.map((entry) => {
+                        const { label, icon: Icon } = loanTypeLabels[entry.loanType];
+                        return (
+                          <div key={entry.id} className="bg-red-50/50 rounded-2xl p-4 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <Icon size={16} className="text-red-600" />
+                                <span className="text-xs font-bold text-red-600 uppercase tracking-wide">Préstamo {label}</span>
+                              </div>
+                              <button onClick={() => removeLoanEntry(entry.id)} className="text-red-300 hover:text-white hover:bg-red-600 transition-colors p-1 rounded-lg">
+                                <X size={16} />
+                              </button>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <Label className="text-[10px] text-gray-500 mb-1 block">Monto original</Label>
                                 <div className="relative">
                                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-red-500 text-sm font-bold">$</span>
                                   <Input
                                     placeholder="0.00"
-                                    value={formatNumberWithCommas(entry.value)}
-                                    onChange={(e) => updateLiabilityEntry(entry.id, 'value', parseFormattedNumber(e.target.value))}
-                                    className="h-11 text-sm pl-7 bg-gray-50 border-0 focus:ring-2 focus:ring-red-200 rounded-xl font-semibold text-red-600"
+                                    value={formatNumberWithCommas(entry.originalAmount)}
+                                    onChange={(e) => updateLoanEntry(entry.id, 'originalAmount', parseFormattedNumber(e.target.value))}
+                                    className="h-11 text-sm pl-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200"
                                   />
                                 </div>
                               </div>
-                              <button onClick={() => removeLiabilityEntry(entry.id)} className="text-gray-300 hover:text-white hover:bg-[#5D4037] transition-colors p-2 rounded-lg">
-                                <X size={18} />
-                              </button>
+                              <div>
+                                <Label className="text-[10px] text-gray-500 mb-1 block">Saldo actual</Label>
+                                <div className="relative">
+                                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-red-500 text-sm font-bold">$</span>
+                                  <Input
+                                    placeholder="0.00"
+                                    value={formatNumberWithCommas(entry.currentBalance)}
+                                    onChange={(e) => updateLoanEntry(entry.id, 'currentBalance', parseFormattedNumber(e.target.value))}
+                                    className="h-11 text-sm pl-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200 font-semibold text-red-600"
+                                  />
+                                </div>
+                              </div>
                             </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </Card>
-                );
-              })}
 
-              {/* Custom Liabilities */}
-              <div className="pt-2">
-                <div className="flex items-center justify-between mb-3 px-1">
-                  <h3 className="text-sm font-bold text-gray-700">Otras Deudas</h3>
-                  <Button onClick={addCustomLiability} variant="outline" size="sm" className="text-xs h-9 rounded-xl border-red-200 text-red-600 hover:bg-red-50">
-                    <Plus size={12} className="mr-1" />
-                    Nueva Categoría
-                  </Button>
+                            <div className="grid grid-cols-3 gap-2">
+                              <div>
+                                <Label className="text-[10px] text-gray-500 mb-1 block">Tasa de interés</Label>
+                                <div className="relative">
+                                  <Input
+                                    placeholder="0.00"
+                                    value={entry.interestRate}
+                                    onChange={(e) => updateLoanEntry(entry.id, 'interestRate', e.target.value)}
+                                    className="h-11 text-sm pr-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200"
+                                  />
+                                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">%</span>
+                                </div>
+                              </div>
+                              <div>
+                                <Label className="text-[10px] text-gray-500 mb-1 block">Plazo (meses)</Label>
+                                <Input
+                                  placeholder="12"
+                                  value={entry.termMonths}
+                                  onChange={(e) => updateLoanEntry(entry.id, 'termMonths', e.target.value)}
+                                  className="h-11 text-sm bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-[10px] text-gray-500 mb-1 block">Mensualidad</Label>
+                                <div className="relative">
+                                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-red-500 text-sm font-bold">$</span>
+                                  <Input
+                                    placeholder="0.00"
+                                    value={formatNumberWithCommas(entry.monthlyPayment)}
+                                    onChange={(e) => updateLoanEntry(entry.id, 'monthlyPayment', parseFormattedNumber(e.target.value))}
+                                    className="h-11 text-sm pl-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-red-200"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div>
+                              <Label className="text-[10px] text-gray-500 mb-1 block">Fecha de vencimiento</Label>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    className={cn(
+                                      "w-full h-11 text-sm justify-start text-left font-normal bg-white border-0 rounded-xl hover:bg-red-50",
+                                      !entry.dueDate && "text-muted-foreground"
+                                    )}
+                                  >
+                                    <CalendarIcon className="mr-2 h-4 w-4 text-red-500" />
+                                    {entry.dueDate ? format(entry.dueDate, "dd/MM/yyyy") : <span>Seleccionar fecha</span>}
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                  <Calendar
+                                    mode="single"
+                                    selected={entry.dueDate}
+                                    onSelect={(date) => updateLoanEntry(entry.id, 'dueDate', date)}
+                                    initialFocus
+                                    className={cn("p-3 pointer-events-auto")}
+                                  />
+                                </PopoverContent>
+                              </Popover>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-                {customLiabilities.map(customLiability => (
-                  <Card key={customLiability.id} className="bg-white p-4 rounded-3xl shadow-lg border-0 mb-3">
-                    <div className="flex gap-3 mb-3">
-                      <Input 
-                        placeholder="Nombre de la categoría" 
-                        value={customLiability.name}
-                        onChange={(e) => updateCustomLiabilityName(customLiability.id, e.target.value)}
-                        className="h-11 font-semibold text-sm bg-gray-50 border-0 rounded-xl"
-                      />
-                      <Button size="icon" variant="ghost" onClick={() => removeCustomLiability(customLiability.id)} className="h-11 w-11 text-gray-400 hover:text-white hover:bg-[#5D4037] rounded-xl">
-                        <X size={18} />
-                      </Button>
-                    </div>
-                    <div className="space-y-2 pl-4 border-l-2 border-red-100">
-                      {customLiability.accounts.map(acc => (
-                        <div key={acc.id} className="flex gap-2">
-                          <Input 
-                            placeholder="Nombre del item" 
-                            value={acc.name}
-                            onChange={(e) => updateCustomLiabilityAccount(customLiability.id, acc.id, 'name', e.target.value)}
-                            className="h-10 text-sm bg-gray-50 border-0 rounded-xl"
-                          />
-                          <Input 
-                            placeholder="0.00" 
-                            value={formatNumberWithCommas(acc.value)}
-                            onChange={(e) => updateCustomLiabilityAccount(customLiability.id, acc.id, 'value', parseFormattedNumber(e.target.value))}
-                            className="h-10 text-sm w-32 bg-gray-50 border-0 rounded-xl"
-                          />
-                          <button onClick={() => removeCustomLiabilityAccount(customLiability.id, acc.id)} className="text-gray-300 hover:text-white hover:bg-[#5D4037] p-1 rounded-lg transition-colors">
-                            <X size={14} />
-                          </button>
-                        </div>
-                      ))}
-                      <Button variant="ghost" size="sm" onClick={() => addCustomLiabilityAccount(customLiability.id)} className="text-xs text-red-600 h-8 px-2 hover:bg-red-50 rounded-lg">
-                        + Agregar item
-                      </Button>
-                    </div>
-                  </Card>
-                ))}
-              </div>
+              </Card>
             </motion.div>
           )}
 
@@ -1193,42 +1349,97 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                 </div>
               </Card>
 
-              <Card className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 text-center border-0 shadow-lg">
-                <p className="text-sm text-gray-600 font-medium italic">
-                  "Conocer tu patrimonio es el primer paso para hacerlo crecer."
-                </p>
-              </Card>
+              {/* Details */}
+              {totals.assets > 0 && (
+                <Card className="bg-white rounded-3xl p-4 shadow-lg border-0">
+                  <h3 className="text-sm font-bold text-[#5D4037] mb-3 flex items-center gap-2">
+                    <TrendingUp size={16} />
+                    Detalle de Activos
+                  </h3>
+                  <div className="space-y-2">
+                    {assetEntries.filter(e => e.name && parseFloat(e.value) > 0).map(entry => (
+                      <div key={entry.id} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
+                        <span className="text-sm text-gray-600">{entry.name}</span>
+                        <span className="text-sm font-semibold text-[#5D4037]">${formatNumberWithCommas(entry.value)}</span>
+                      </div>
+                    ))}
+                    {stockEntries.filter(e => e.name && parseFloat(e.quantity) > 0).map(entry => (
+                      <div key={entry.id} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
+                        <span className="text-sm text-gray-600">{entry.name} ({entry.quantity} acciones)</span>
+                        <span className="text-sm font-semibold text-[#5D4037]">
+                          ${formatNumberWithCommas(String((parseFloat(entry.quantity) || 0) * (parseFloat(entry.purchasePrice) || 0)))}
+                        </span>
+                      </div>
+                    ))}
+                    {cryptoEntries.filter(e => e.name && parseFloat(e.quantity) > 0).map(entry => (
+                      <div key={entry.id} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
+                        <span className="text-sm text-gray-600">{entry.name} ({entry.quantity} unidades)</span>
+                        <span className="text-sm font-semibold text-[#5D4037]">
+                          ${formatNumberWithCommas(String((parseFloat(entry.quantity) || 0) * (parseFloat(entry.purchasePrice) || 0)))}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              )}
+
+              {totals.liabilities > 0 && (
+                <Card className="bg-white rounded-3xl p-4 shadow-lg border-0">
+                  <h3 className="text-sm font-bold text-red-600 mb-3 flex items-center gap-2">
+                    <TrendingDown size={16} />
+                    Detalle de Pasivos
+                  </h3>
+                  <div className="space-y-2">
+                    {creditCardEntries.filter(e => parseFloat(parseFormattedNumber(e.amountOwed)) > 0).map(entry => (
+                      <div key={entry.id} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
+                        <span className="text-sm text-gray-600">{entry.bankName} - {entry.cardName}</span>
+                        <span className="text-sm font-semibold text-red-600">${formatNumberWithCommas(entry.amountOwed)}</span>
+                      </div>
+                    ))}
+                    {loanEntries.filter(e => parseFloat(parseFormattedNumber(e.currentBalance)) > 0).map(entry => (
+                      <div key={entry.id} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
+                        <span className="text-sm text-gray-600">Préstamo {loanTypeLabels[entry.loanType].label}</span>
+                        <span className="text-sm font-semibold text-red-600">${formatNumberWithCommas(entry.currentBalance)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
       {/* Fixed Footer */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 z-50 safe-area-bottom">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-100 p-4 safe-area-pb">
         <div className="max-w-2xl mx-auto flex gap-3">
-          {step > 1 && (
-            <Button
-              variant="outline"
-              onClick={prevStep}
-              className="flex-1 h-12 rounded-2xl border-gray-200 text-gray-700 font-bold hover:bg-hover-light"
-            >
-              Atrás
-            </Button>
-          )}
           {step < 3 ? (
             <Button
               onClick={nextStep}
-              className="flex-1 h-12 rounded-2xl bg-[#5D4037] text-white hover:bg-[#4E342E] font-bold shadow-lg hover:shadow-xl transition-all"
+              className="w-full h-14 bg-[#5D4037] hover:bg-[#4E342E] text-white font-bold text-lg rounded-2xl shadow-lg"
             >
               Continuar
+              <ChevronRight className="ml-2" size={20} />
             </Button>
           ) : (
             <Button
               onClick={handleSubmit}
               disabled={loading}
-              className="flex-1 h-12 rounded-2xl bg-[#5D4037] text-white hover:bg-[#4E342E] font-bold shadow-lg hover:shadow-xl transition-all"
+              className="w-full h-14 bg-[#5D4037] hover:bg-[#4E342E] text-white font-bold text-lg rounded-2xl shadow-lg disabled:opacity-50"
             >
-              {loading ? "Guardando..." : "Finalizar"}
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Guardando...
+                </span>
+              ) : saveStatus === 'saved' ? (
+                <span className="flex items-center gap-2">
+                  <Check size={20} />
+                  ¡Guardado!
+                </span>
+              ) : (
+                'Guardar Patrimonio'
+              )}
             </Button>
           )}
         </div>
