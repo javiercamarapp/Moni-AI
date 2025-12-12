@@ -25,18 +25,18 @@ const BottomNav = () => {
       {/* Mobile: Bottom navigation (screens < 1024px) */}
       <nav className="fixed bottom-4 left-4 right-4 z-50 flex justify-center">
         <div className="
-          bg-white/20
+          bg-white/10
           backdrop-blur-3xl
           backdrop-saturate-200
           rounded-[32px]
-          shadow-[0_8px_40px_rgba(0,0,0,0.06),inset_0_0_0_0.5px_rgba(255,255,255,0.8),inset_0_1px_2px_rgba(255,255,255,0.6)]
+          shadow-[0_8px_40px_rgba(0,0,0,0.04),inset_0_0_0_0.5px_rgba(255,255,255,0.5),inset_0_1px_2px_rgba(255,255,255,0.3)]
           px-8 py-4
           flex items-center gap-8
-          border border-white/40
+          border border-white/20
           relative overflow-hidden
         ">
           {/* Glass highlight overlay */}
-          <div className="absolute inset-0 rounded-[32px] bg-gradient-to-b from-white/40 via-transparent to-white/10 pointer-events-none" />
+          <div className="absolute inset-0 rounded-[32px] bg-gradient-to-b from-white/20 via-transparent to-white/5 pointer-events-none" />
           <div className="absolute inset-0 rounded-[32px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
           
           {navItems.map(({ path, icon: Icon }) => (
