@@ -54,12 +54,12 @@ const Portfolio: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('No user');
 
-      // Fetch from activos table - filter for investment categories
+      // Fetch from activos table - filter for investment categories only (exclude savings/cash)
       const { data, error } = await supabase
         .from('activos')
         .select('*')
         .eq('user_id', user.id)
-        .or('categoria.ilike.%Acciones%,categoria.ilike.%Cripto%,categoria.ilike.%ETF%');
+        .or('categoria.ilike.%Inversiones%,categoria.ilike.%Acciones%,categoria.ilike.%Cripto%,categoria.ilike.%ETF%');
 
       if (error) throw error;
       return data || [];
