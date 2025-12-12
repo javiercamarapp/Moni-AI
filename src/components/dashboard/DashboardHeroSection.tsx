@@ -135,16 +135,16 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
                 <Skeleton className="flex-1 w-full" />
               </div>
             ) : (
-              <div className="flex-1 flex flex-col items-center">
-                <span className="text-xl md:text-2xl font-bold text-gray-900 mb-1 text-center">
+              <div className="flex-1 flex flex-col w-full">
+                <span className="text-xl md:text-2xl font-bold text-gray-900 mb-1 text-center w-full">
                   {formatFullCurrency(netWorthData?.currentNetWorth || 0)}
                 </span>
                 
                 {/* Chart - takes remaining space */}
-                <div className="flex-1 min-h-[48px] md:min-h-[80px] lg:min-h-[100px]">
+                <div className="w-full flex-1 min-h-[48px] md:min-h-[80px] lg:min-h-[100px]">
                   {netWorthData?.chartData && netWorthData.chartData.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={netWorthData.chartData} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
+                      <AreaChart data={netWorthData.chartData} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
                         <defs>
                           <linearGradient id="netWorthGradient" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="5%" stopColor="#8D6E63" stopOpacity={0.3}/>
@@ -157,15 +157,13 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
                           tickLine={false}
                           tick={{ fontSize: 9, fill: '#9ca3af' }}
                           interval="preserveStartEnd"
-                          hide={false}
                         />
                         <YAxis 
                           axisLine={false}
                           tickLine={false}
                           tick={{ fontSize: 9, fill: '#9ca3af' }}
                           tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
-                          width={45}
-                          className="hidden md:block"
+                          width={40}
                           hide={false}
                         />
                         <Area

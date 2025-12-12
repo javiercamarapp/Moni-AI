@@ -23,7 +23,19 @@ const QuickRecordFAB: React.FC = () => {
             transition={{ duration: 0.15 }}
             className="absolute bottom-16 right-0 flex items-center gap-2"
           >
-            {/* Expense button */}
+            {/* Income button - LEFT */}
+            <motion.button
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.1 }}
+              onClick={() => handleRecord('income')}
+              className="flex items-center justify-center gap-2 bg-[#5D4037] text-white rounded-full px-4 py-2.5 shadow-lg hover:bg-[#4E342E] transition-colors min-w-[100px]"
+            >
+              <TrendingUp className="w-4 h-4" />
+              <span className="text-sm font-medium">Ingreso</span>
+            </motion.button>
+
+            {/* Expense button - RIGHT */}
             <motion.button
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
@@ -33,18 +45,6 @@ const QuickRecordFAB: React.FC = () => {
             >
               <TrendingDown className="w-4 h-4" />
               <span className="text-sm font-medium">Gasto</span>
-            </motion.button>
-
-            {/* Income button */}
-            <motion.button
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.1 }}
-              onClick={() => handleRecord('income')}
-              className="flex items-center justify-center gap-2 bg-[#5D4037] text-white rounded-full px-4 py-2.5 shadow-lg hover:bg-[#4E342E] transition-colors min-w-[100px]"
-            >
-              <TrendingUp className="w-4 h-4" />
-              <span className="text-sm font-medium">Ingreso</span>
             </motion.button>
           </motion.div>
         )}
