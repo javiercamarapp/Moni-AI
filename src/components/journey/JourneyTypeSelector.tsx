@@ -11,14 +11,6 @@ interface JourneyTypeSelectorProps {
 
 const journeyOptions = [
   {
-    type: 'financial_life' as JourneyType,
-    title: 'Financial Journey',
-    subtitle: 'Para toda la vida',
-    description: 'Define tus aspiraciones financieras completas: casa, auto, inversiones y ahorro.',
-    icon: Rocket,
-    gradient: 'from-[#5D4037] to-[#8D6E63]',
-  },
-  {
     type: 'first_million' as JourneyType,
     title: 'Mi Primer Millón',
     subtitle: 'Invertido',
@@ -33,6 +25,14 @@ const journeyOptions = [
     description: 'Genera un plan de ahorro para alcanzar la casa de tus sueños.',
     icon: Home,
     gradient: 'from-[#3E2723] to-[#5D4037]',
+  },
+  {
+    type: 'financial_life' as JourneyType,
+    title: 'Financial Journey',
+    subtitle: 'Para toda la vida',
+    description: 'Define tus aspiraciones financieras completas: casa, auto, inversiones y ahorro.',
+    icon: Rocket,
+    gradient: 'from-[#5D4037] to-[#8D6E63]',
   },
 ];
 
@@ -135,7 +135,7 @@ export default function JourneyTypeSelector({ onSelect }: JourneyTypeSelectorPro
         </div>
 
         {/* Main swipeable card */}
-        <div className="relative w-full max-w-sm h-96 flex items-center justify-center">
+        <div className="relative w-full max-w-md h-96 flex items-center justify-center px-12 md:px-16">
           <AnimatePresence initial={false} custom={direction} mode="popLayout">
             <motion.div
               key={currentIndex}
@@ -196,16 +196,16 @@ export default function JourneyTypeSelector({ onSelect }: JourneyTypeSelectorPro
           </AnimatePresence>
         </div>
 
-        {/* Navigation arrows - hidden on mobile */}
+        {/* Navigation arrows - hidden on mobile, positioned close to cards */}
         <button
           onClick={() => paginate(-1)}
-          className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm shadow-lg items-center justify-center text-[#5D4037] hover:bg-white transition-colors z-10"
+          className="hidden md:flex absolute left-[calc(50%-220px)] top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm shadow-lg items-center justify-center text-[#5D4037] hover:bg-white transition-colors z-10"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
         <button
           onClick={() => paginate(1)}
-          className="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm shadow-lg items-center justify-center text-[#5D4037] hover:bg-white transition-colors z-10"
+          className="hidden md:flex absolute right-[calc(50%-220px)] top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm shadow-lg items-center justify-center text-[#5D4037] hover:bg-white transition-colors z-10"
         >
           <ChevronRight className="w-5 h-5" />
         </button>
