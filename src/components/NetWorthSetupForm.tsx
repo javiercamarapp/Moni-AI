@@ -7,7 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X, Banknote, ChevronRight, Wallet, Shield } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowLeft, Check, Plus, X, Banknote, ChevronRight, Wallet, Shield, CalendarIcon } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { headingPage, headingSection } from "@/styles/typography";
@@ -72,6 +75,14 @@ type CustomLiability = {
   accounts: CustomLiabilityAccount[];
 };
 
+type StockEntry = {
+  id: string;
+  name: string;
+  quantity: string;
+  purchasePrice: string;
+  purchaseDate: Date | undefined;
+};
+
 const assetCategories = [
   { name: 'Cuentas bancarias (ahorro + cheques)', category: 'Checking', examples: ['BBVA Cuenta Ahorro', 'Santander Nómina', 'Banorte Smart'] },
   { name: 'Propiedad principal', category: 'Property', examples: ['Casa Polanco', 'Depto Reforma', 'Casa Santa Fe'] },
@@ -107,6 +118,8 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
   const [liabilityEntries, setLiabilityEntries] = useState<LiabilityEntry[]>([]);
   const [customAssets, setCustomAssets] = useState<CustomAsset[]>([]);
   const [customLiabilities, setCustomLiabilities] = useState<CustomLiability[]>([]);
+  const [hasStocks, setHasStocks] = useState<boolean | null>(null);
+  const [stockEntries, setStockEntries] = useState<StockEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
@@ -167,6 +180,36 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     setLiabilityEntries(liabilityEntries.map(entry => 
       entry.id === id ? { ...entry, [field]: value } : entry
     ));
+  };
+
+  // Stock/ETF functions
+  const addStockEntry = () => {
+    const newEntry: StockEntry = {
+      id: Date.now().toString(),
+      name: '',
+      quantity: '',
+      purchasePrice: '',
+      purchaseDate: undefined
+    };
+    setStockEntries([...stockEntries, newEntry]);
+  };
+
+  const removeStockEntry = (id: string) => {
+    setStockEntries(stockEntries.filter(entry => entry.id !== id));
+  };
+
+  const updateStockEntry = (id: string, field: keyof StockEntry, value: any) => {
+    setStockEntries(stockEntries.map(entry => 
+      entry.id === id ? { ...entry, [field]: value } : entry
+    ));
+  };
+
+  const calculateStockTotal = () => {
+    return stockEntries.reduce((sum, entry) => {
+      const qty = parseFloat(parseFormattedNumber(entry.quantity)) || 0;
+      const price = parseFloat(parseFormattedNumber(entry.purchasePrice)) || 0;
+      return sum + (qty * price);
+    }, 0);
   };
 
   // Custom Assets functions
@@ -306,7 +349,17 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
       };
 
       // Preparar activos válidos
-      const validAssets = assetEntries
+      const validAssets: Array<{
+        user_id: string;
+        nombre: string;
+        valor: number;
+        categoria: string;
+        subcategoria: string;
+        moneda: string;
+        es_activo_fijo: boolean;
+        liquidez_porcentaje: number;
+        fecha_adquisicion?: string | null;
+      }> = assetEntries
         .filter(entry => entry.name.trim() && parseFloat(entry.value) > 0)
         .map(entry => ({
           user_id: user.id,
@@ -335,6 +388,24 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                 liquidez_porcentaje: 50
               });
             }
+          });
+        }
+      });
+
+      // Agregar acciones/ETFs como activos
+      stockEntries.forEach(stock => {
+        if (stock.name.trim() && parseFloat(stock.quantity) > 0 && parseFloat(stock.purchasePrice) > 0) {
+          const totalValue = parseFloat(stock.quantity) * parseFloat(stock.purchasePrice);
+          validAssets.push({
+            user_id: user.id,
+            nombre: stock.name.trim(),
+            valor: totalValue,
+            categoria: 'Acciones y ETFs',
+            subcategoria: `${stock.quantity} acciones @ $${stock.purchasePrice}`,
+            moneda: 'MXN',
+            es_activo_fijo: false,
+            liquidez_porcentaje: 90,
+            fecha_adquisicion: stock.purchaseDate ? format(stock.purchaseDate, 'yyyy-MM-dd') : null
           });
         }
       });
@@ -441,6 +512,8 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
       return sum + asset.accounts.reduce((accSum, acc) => accSum + parseFloat(parseFormattedNumber(acc.value) || '0'), 0);
     }, 0);
 
+    const stocksTotal = calculateStockTotal();
+
     const liabilitiesTotal = liabilityEntries
       .filter(e => parseFloat(e.value) > 0)
       .reduce((sum, e) => sum + parseFloat(parseFormattedNumber(e.value)), 0);
@@ -450,9 +523,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
     }, 0);
 
     return {
-      assets: assetsTotal + customAssetsTotal,
+      assets: assetsTotal + customAssetsTotal + stocksTotal,
       liabilities: liabilitiesTotal + customLiabilitiesTotal,
-      netWorth: (assetsTotal + customAssetsTotal) - (liabilitiesTotal + customLiabilitiesTotal)
+      netWorth: (assetsTotal + customAssetsTotal + stocksTotal) - (liabilitiesTotal + customLiabilitiesTotal)
     };
   };
 
@@ -575,6 +648,128 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                     </div>
                   );
                 })}
+              </div>
+
+              {/* Stocks/ETFs Question */}
+              <div className="bg-white rounded-2xl border border-gray-100 p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${hasStocks ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-50 text-gray-400'}`}>
+                      {hasStocks ? <Check size={14} strokeWidth={3} /> : <TrendingUp size={14} />}
+                    </div>
+                    <span className="font-semibold text-sm text-gray-700">¿Tienes acciones o ETFs?</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant={hasStocks === true ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => {
+                        setHasStocks(true);
+                        if (stockEntries.length === 0) addStockEntry();
+                      }}
+                      className={cn(
+                        "text-xs h-8 px-4 rounded-lg",
+                        hasStocks === true ? "bg-emerald-600 hover:bg-emerald-700" : "border-gray-200"
+                      )}
+                    >
+                      Sí
+                    </Button>
+                    <Button
+                      variant={hasStocks === false ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => {
+                        setHasStocks(false);
+                        setStockEntries([]);
+                      }}
+                      className={cn(
+                        "text-xs h-8 px-4 rounded-lg",
+                        hasStocks === false ? "bg-gray-600 hover:bg-gray-700" : "border-gray-200"
+                      )}
+                    >
+                      No
+                    </Button>
+                  </div>
+                </div>
+
+                {hasStocks && (
+                  <div className="space-y-3 mt-4 pt-4 border-t border-gray-100">
+                    {stockEntries.map((entry) => (
+                      <div key={entry.id} className="bg-gray-50/50 rounded-xl p-3 space-y-3 animate-in slide-in-from-top-2 duration-200">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-gray-500">Acción / ETF</span>
+                          <button onClick={() => removeStockEntry(entry.id)} className="text-gray-300 hover:text-red-500 transition-colors">
+                            <X size={14} />
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <Input
+                            placeholder="Ej: Apple, VOO, SPY"
+                            value={entry.name}
+                            onChange={(e) => updateStockEntry(entry.id, 'name', e.target.value)}
+                            className="h-9 text-xs bg-white border-gray-200"
+                          />
+                          <Input
+                            placeholder="Cantidad"
+                            value={formatNumberWithCommas(entry.quantity)}
+                            onChange={(e) => updateStockEntry(entry.id, 'quantity', parseFormattedNumber(e.target.value))}
+                            className="h-9 text-xs bg-white border-gray-200"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">$</span>
+                            <Input
+                              placeholder="Precio de compra"
+                              value={formatNumberWithCommas(entry.purchasePrice)}
+                              onChange={(e) => updateStockEntry(entry.id, 'purchasePrice', parseFormattedNumber(e.target.value))}
+                              className="h-9 text-xs pl-6 bg-white border-gray-200"
+                            />
+                          </div>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "h-9 text-xs justify-start text-left font-normal bg-white border-gray-200",
+                                  !entry.purchaseDate && "text-muted-foreground"
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-3 w-3" />
+                                {entry.purchaseDate ? format(entry.purchaseDate, "dd/MM/yyyy") : <span>Fecha compra</span>}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={entry.purchaseDate}
+                                onSelect={(date) => updateStockEntry(entry.id, 'purchaseDate', date)}
+                                initialFocus
+                                className={cn("p-3 pointer-events-auto")}
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                        {entry.quantity && entry.purchasePrice && (
+                          <div className="text-right">
+                            <span className="text-xs text-gray-500">Valor total: </span>
+                            <span className="text-xs font-bold text-emerald-600">
+                              ${formatNumberWithCommas(String((parseFloat(parseFormattedNumber(entry.quantity)) || 0) * (parseFloat(parseFormattedNumber(entry.purchasePrice)) || 0)))}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={addStockEntry}
+                      className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 text-xs font-bold h-8 px-3 rounded-lg w-full"
+                    >
+                      <Plus size={12} className="mr-1" />
+                      Agregar otra acción
+                    </Button>
+                  </div>
+                )}
               </div>
 
               {/* Custom Assets */}
