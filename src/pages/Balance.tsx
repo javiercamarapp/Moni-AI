@@ -1017,7 +1017,7 @@ const Balance = () => {
         {(ingresosByCategory.length > 0 || gastosByCategory.length > 0) && (
           <div className="space-y-2">
             {/* Tab Indicators */}
-            <div className="flex justify-center gap-2">
+            <div className="flex justify-center">
               <div className="flex bg-white rounded-full p-1 shadow-sm border border-gray-100">
                 <button
                   className="px-3 py-1 rounded-full text-[10px] font-bold transition-all bg-[#8D6E63] text-white"
@@ -1032,7 +1032,6 @@ const Balance = () => {
                   Gastos
                 </button>
               </div>
-              <span className="text-[9px] text-gray-400 self-center">← Desliza →</span>
             </div>
             
             <Carousel className="w-full">
