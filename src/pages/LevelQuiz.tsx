@@ -194,22 +194,13 @@ export default function LevelQuiz() {
       <div className="bg-gradient-to-b from-[#5D4037] via-[#5D4037] to-[#5D4037]/95 pb-8 rounded-b-[2rem]">
         <div className="sticky top-0 z-40 pt-4">
           <div className="max-w-2xl mx-auto px-4">
-            <div className="flex items-center justify-between mb-4">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => step === 1 ? navigate("/dashboard") : prevStep()} 
-                className="h-10 w-10 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white shadow-sm hover:shadow-md text-[#5D4037]"
-              >
-                <ArrowLeft size={18} />
-              </Button>
+            <div className="flex items-center justify-center mb-4">
               <div className="flex flex-col items-center">
                 <span className="text-xs font-medium text-white/70 tracking-wide">Paso {step} de 3</span>
                 <h1 className="text-lg font-bold text-white">
                   Tus Aspiraciones
                 </h1>
               </div>
-              <div className="w-10" />
             </div>
             
             {/* Progress bar */}
