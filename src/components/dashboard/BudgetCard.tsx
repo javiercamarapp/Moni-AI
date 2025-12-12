@@ -66,41 +66,60 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
 
   const getShortCategoryName = (name: string): string => {
     const lower = name.toLowerCase();
-    if (lower.includes('alimenta') || lower.includes('comida') || lower.includes('super')) return 'Super';
-    if (lower.includes('restaur')) return 'Comida';
-    if (lower.includes('transport') || lower.includes('uber') || lower.includes('gasolina')) return 'Transporte';
-    if (lower.includes('entreten') || lower.includes('netflix') || lower.includes('spotify') || lower.includes('cine') || lower.includes('ocio')) return 'Entretenimiento';
-    if (lower.includes('vivienda') || lower.includes('renta') || lower.includes('casa')) return 'Vivienda';
+    // Remove emoji prefix first
+    const cleanName = name.replace(/^[^\w\sáéíóúñ]+\s*/i, '').trim();
+    
+    if (lower.includes('renta') || lower.includes('hipoteca')) return 'Vivienda';
+    if (lower.includes('supermercado') || lower.includes('super')) return 'Super';
+    if (lower.includes('alimenta') || lower.includes('comida')) return 'Comida';
+    if (lower.includes('restaur') || lower.includes('comidas fuera')) return 'Restaurantes';
+    if (lower.includes('transport') || lower.includes('uber')) return 'Transporte';
+    if (lower.includes('gasolina') || lower.includes('carga')) return 'Gasolina';
+    if (lower.includes('entreten') || lower.includes('estilo')) return 'Entretenimiento';
+    if (lower.includes('netflix') || lower.includes('spotify')) return 'Streaming';
+    if (lower.includes('vivienda') || lower.includes('casa')) return 'Vivienda';
     if (lower.includes('salud') || lower.includes('médico') || lower.includes('farmacia')) return 'Salud';
-    if (lower.includes('educación') || lower.includes('curso') || lower.includes('desarrollo')) return 'Entretenimiento';
-    if (lower.includes('servicio') || lower.includes('luz') || lower.includes('agua')) return 'Servicios';
+    if (lower.includes('educación') || lower.includes('curso') || lower.includes('desarrollo')) return 'Educación';
+    if (lower.includes('gimnasio') || lower.includes('gym')) return 'Gym';
+    if (lower.includes('luz')) return 'Luz';
+    if (lower.includes('internet') || lower.includes('teléfono')) return 'Internet';
+    if (lower.includes('servicio') || lower.includes('agua')) return 'Servicios';
     if (lower.includes('deuda') || lower.includes('crédito') || lower.includes('tarjeta')) return 'Deudas';
     if (lower.includes('compras') || lower.includes('ropa')) return 'Compras';
+    if (lower.includes('salidas') || lower.includes('fiestas') || lower.includes('bares')) return 'Salidas';
+    
     // Get first word only as fallback
-    const cleanName = name.replace(/^[^\w\s]+\s*/, '').split(' ')[0];
-    return cleanName.length > 10 ? cleanName.substring(0, 10) : cleanName;
+    const firstWord = cleanName.split(' ')[0];
+    return firstWord.length > 12 ? firstWord.substring(0, 12) : firstWord;
   };
   const getCategoryIcon = (name: string): string => {
     const lower = name.toLowerCase();
-    if (lower.includes('alimenta') || lower.includes('comida') || lower.includes('restaur') || lower.includes('super')) return 'food';
-    if (lower.includes('transport') || lower.includes('uber') || lower.includes('gasolina')) return 'car';
-    if (lower.includes('entreten') || lower.includes('netflix') || lower.includes('spotify') || lower.includes('cine') || lower.includes('ocio')) return 'film';
-    if (lower.includes('vivienda') || lower.includes('renta') || lower.includes('casa')) return 'home';
+    if (lower.includes('renta') || lower.includes('hipoteca') || lower.includes('vivienda') || lower.includes('casa')) return 'home';
+    if (lower.includes('supermercado') || lower.includes('super') || lower.includes('alimenta')) return 'food';
+    if (lower.includes('restaur') || lower.includes('comida')) return 'food';
+    if (lower.includes('transport') || lower.includes('uber')) return 'car';
+    if (lower.includes('gasolina') || lower.includes('carga')) return 'car';
+    if (lower.includes('entreten') || lower.includes('netflix') || lower.includes('spotify') || lower.includes('cine') || lower.includes('estilo')) return 'film';
     if (lower.includes('salud') || lower.includes('médico') || lower.includes('farmacia')) return 'health';
-    if (lower.includes('educación') || lower.includes('curso') || lower.includes('desarrollo')) return 'film';
-    if (lower.includes('servicio') || lower.includes('luz') || lower.includes('agua')) return 'zap';
+    if (lower.includes('educación') || lower.includes('curso') || lower.includes('desarrollo')) return 'education';
+    if (lower.includes('gimnasio') || lower.includes('gym')) return 'health';
+    if (lower.includes('luz') || lower.includes('servicio') || lower.includes('agua') || lower.includes('internet')) return 'zap';
     if (lower.includes('deuda') || lower.includes('crédito') || lower.includes('tarjeta')) return 'credit';
+    if (lower.includes('salidas') || lower.includes('fiestas') || lower.includes('bares')) return 'film';
     return 'shopping';
   };
   const getCategoryColor = (name: string): string => {
     const lower = name.toLowerCase();
-    if (lower.includes('alimenta') || lower.includes('comida')) return 'bg-green-500';
-    if (lower.includes('transport')) return 'bg-blue-500';
-    if (lower.includes('entreten')) return 'bg-pink-500';
-    if (lower.includes('vivienda')) return 'bg-indigo-500';
+    if (lower.includes('renta') || lower.includes('hipoteca') || lower.includes('vivienda')) return 'bg-indigo-500';
+    if (lower.includes('supermercado') || lower.includes('super') || lower.includes('alimenta') || lower.includes('comida')) return 'bg-green-500';
+    if (lower.includes('educación') || lower.includes('desarrollo')) return 'bg-purple-500';
+    if (lower.includes('entreten') || lower.includes('estilo')) return 'bg-pink-500';
+    if (lower.includes('gasolina') || lower.includes('transport')) return 'bg-blue-500';
+    if (lower.includes('gimnasio') || lower.includes('gym')) return 'bg-orange-500';
+    if (lower.includes('restaur')) return 'bg-amber-500';
+    if (lower.includes('luz') || lower.includes('servicio') || lower.includes('internet')) return 'bg-yellow-500';
+    if (lower.includes('salidas') || lower.includes('fiestas') || lower.includes('bares')) return 'bg-rose-500';
     if (lower.includes('salud')) return 'bg-red-500';
-    if (lower.includes('educación')) return 'bg-purple-500';
-    if (lower.includes('servicio')) return 'bg-yellow-500';
     if (lower.includes('deuda')) return 'bg-orange-500';
     return 'bg-gray-500';
   };
