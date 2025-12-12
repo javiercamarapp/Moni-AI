@@ -8,12 +8,19 @@ import { ScoreComponent } from './types';
 interface ScoreDetailProps {
   onBack?: () => void;
   score?: number;
+  onModalChange?: (isOpen: boolean) => void;
 }
 
-const ScoreDetail: React.FC<ScoreDetailProps> = ({ onBack, score }) => {
+const ScoreDetail: React.FC<ScoreDetailProps> = ({ onBack, score, onModalChange }) => {
   const [selectedComponent, setSelectedComponent] = useState<ScoreComponent | null>(null);
   const [api, setApi] = useState<any>();
   const [showInsight, setShowInsight] = useState(true);
+
+  // Notify parent when modal opens/closes
+  const handleSelectComponent = (comp: ScoreComponent | null) => {
+    setSelectedComponent(comp);
+    onModalChange?.(comp !== null);
+  };
 
   const displayScore = score ?? 99;
 
@@ -148,7 +155,7 @@ const ScoreDetail: React.FC<ScoreDetailProps> = ({ onBack, score }) => {
                   return (
                     <CarouselItem key={comp.id} className="pl-4 basis-[45%] md:basis-1/3 lg:basis-[20%]">
                       <button 
-                        onClick={() => setSelectedComponent(comp)}
+                        onClick={() => handleSelectComponent(comp)}
                         className={`w-full h-[260px] rounded-3xl p-4 shadow-lg hover:shadow-xl flex flex-col items-center text-center relative overflow-hidden transition-all active:scale-[0.98] hover:-translate-y-1 border border-[#5D4037]/10 ${getCardStyle()}`}
                       >
                         <div className="mt-3 mb-3 relative">
@@ -180,13 +187,13 @@ const ScoreDetail: React.FC<ScoreDetailProps> = ({ onBack, score }) => {
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center">
           <div 
             className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
-            onClick={() => setSelectedComponent(null)}
+            onClick={() => handleSelectComponent(null)}
           ></div>
           
-          <div className="relative w-full sm:max-w-md bg-card rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl animate-[slideUp_0.3s_ease-out] sm:animate-[fadeIn_0.2s_ease-out] max-h-[90vh] sm:max-h-[85vh] overflow-y-auto pb-8 sm:pb-6">
+          <div className="relative w-full sm:max-w-md bg-card rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl animate-[slideUp_0.3s_ease-out] sm:animate-[fadeIn_0.2s_ease-out] max-h-[95vh] sm:max-h-[85vh] overflow-y-auto safe-bottom">
             {/* Close Button */}
             <button 
-              onClick={() => setSelectedComponent(null)}
+              onClick={() => handleSelectComponent(null)}
               className="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 sm:w-9 sm:h-9 bg-[#8D6E63] text-white hover:bg-[#5D4037] rounded-full flex items-center justify-center transition-all shadow-lg hover:shadow-xl z-10"
             >
               <X size={16} />
