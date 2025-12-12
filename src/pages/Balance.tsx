@@ -905,7 +905,7 @@ const Balance = () => {
               <ChevronLeft className="w-5 h-5" />
             </button>
             <div className="flex flex-col">
-              <h1 className={`${headingPage} mb-1`}>Resumen de balance</h1>
+              <h1 className="text-base sm:text-lg font-bold text-gray-900 mb-1">Resumen de balance</h1>
 
               {/* Date Selector */}
               <div className="flex items-center gap-2 text-gray-500">
@@ -968,13 +968,11 @@ const Balance = () => {
             type="income" 
             amount={totalIngresos} 
             onClick={() => navigate('/ingresos', { state: { from: 'balance' } })} 
-            onAdd={() => setIsAddIncomeOpen(true)}
           />
           <StatCard 
             type="expense" 
             amount={totalGastos} 
             onClick={() => navigate('/gastos', { state: { from: 'balance' } })} 
-            onAdd={() => setIsAddExpenseOpen(true)}
           />
         </div>
 

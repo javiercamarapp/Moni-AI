@@ -161,10 +161,10 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
             {/* Bottom Section: Download Button */}
             <button
                 onClick={onDownloadPDF}
-                className="w-full py-3 rounded-2xl bg-[#F5F0EE] border border-[#EBE5E2] flex items-center justify-center gap-2 text-[#5D4037] hover:bg-white hover:-translate-y-1 hover:shadow-md transition-all duration-300 group"
+                className="w-full py-2 rounded-xl bg-[#F5F0EE] border border-[#EBE5E2] flex items-center justify-center gap-1.5 text-[#5D4037] hover:bg-white hover:-translate-y-1 hover:shadow-md transition-all duration-300 group"
             >
-                <Download className="w-4 h-4 text-[#8D6E63] group-hover:text-[#5D4037]" strokeWidth={2} />
-                <span className="text-xs font-bold text-[#5D4037]/90">Descargar movimientos {periodText} en PDF</span>
+                <Download className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#8D6E63] group-hover:text-[#5D4037]" strokeWidth={2} />
+                <span className="text-[10px] sm:text-xs font-bold text-[#5D4037]/90">Descargar movimientos {periodText} en PDF</span>
             </button>
         </div>
     );
