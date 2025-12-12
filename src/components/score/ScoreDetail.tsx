@@ -175,15 +175,15 @@ const ScoreDetail: React.FC<ScoreDetailProps> = ({ onBack, score }) => {
         </div>
       </div>
 
-      {/* Detailed Modal Overlay - Dashboard style */}
+      {/* Detailed Modal Overlay - Full screen on mobile to avoid nav overlap */}
       {selectedComponent && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center">
           <div 
-            className="absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity"
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
             onClick={() => setSelectedComponent(null)}
           ></div>
           
-          <div className="relative w-full max-w-md bg-card rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl animate-[slideUp_0.3s_ease-out] sm:animate-[fadeIn_0.2s_ease-out] max-h-[80vh] overflow-y-auto mb-0 sm:mb-0">
+          <div className="relative w-full sm:max-w-md bg-card rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl animate-[slideUp_0.3s_ease-out] sm:animate-[fadeIn_0.2s_ease-out] max-h-[90vh] sm:max-h-[85vh] overflow-y-auto pb-8 sm:pb-6">
             {/* Close Button */}
             <button 
               onClick={() => setSelectedComponent(null)}
