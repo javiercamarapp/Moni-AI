@@ -123,6 +123,9 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
   const [hasLoans, setHasLoans] = useState<boolean | null>(null);
   const [loanEntries, setLoanEntries] = useState<LoanEntry[]>([]);
   
+  // Calendar popover states
+  const [openCalendars, setOpenCalendars] = useState<Record<string, boolean>>({});
+  
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
@@ -795,7 +798,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                                         className="h-11 text-sm pl-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
                                       />
                                     </div>
-                                    <Popover>
+                                    <Popover open={openCalendars[`stock-${entry.id}`]} onOpenChange={(open) => setOpenCalendars(prev => ({ ...prev, [`stock-${entry.id}`]: open }))}>
                                       <PopoverTrigger asChild>
                                         <Button
                                           variant="outline"
@@ -808,11 +811,14 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                                           {entry.purchaseDate ? format(entry.purchaseDate, "dd/MM/yyyy") : <span>Fecha</span>}
                                         </Button>
                                       </PopoverTrigger>
-                                      <PopoverContent className="w-auto p-0" align="start">
+                                      <PopoverContent className="w-auto p-0 z-50" align="start">
                                         <Calendar
                                           mode="single"
                                           selected={entry.purchaseDate}
-                                          onSelect={(date) => updateStockEntry(entry.id, 'purchaseDate', date)}
+                                          onSelect={(date) => {
+                                            updateStockEntry(entry.id, 'purchaseDate', date);
+                                            setOpenCalendars(prev => ({ ...prev, [`stock-${entry.id}`]: false }));
+                                          }}
                                           initialFocus
                                           className={cn("p-3 pointer-events-auto")}
                                         />
@@ -919,7 +925,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                                         className="h-11 text-sm pl-7 bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#5D4037]/20"
                                       />
                                     </div>
-                                    <Popover>
+                                    <Popover open={openCalendars[`crypto-${entry.id}`]} onOpenChange={(open) => setOpenCalendars(prev => ({ ...prev, [`crypto-${entry.id}`]: open }))}>
                                       <PopoverTrigger asChild>
                                         <Button
                                           variant="outline"
@@ -932,11 +938,14 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                                           {entry.purchaseDate ? format(entry.purchaseDate, "dd/MM/yyyy") : <span>Fecha</span>}
                                         </Button>
                                       </PopoverTrigger>
-                                      <PopoverContent className="w-auto p-0" align="start">
+                                      <PopoverContent className="w-auto p-0 z-50" align="start">
                                         <Calendar
                                           mode="single"
                                           selected={entry.purchaseDate}
-                                          onSelect={(date) => updateCryptoEntry(entry.id, 'purchaseDate', date)}
+                                          onSelect={(date) => {
+                                            updateCryptoEntry(entry.id, 'purchaseDate', date);
+                                            setOpenCalendars(prev => ({ ...prev, [`crypto-${entry.id}`]: false }));
+                                          }}
                                           initialFocus
                                           className={cn("p-3 pointer-events-auto")}
                                         />
@@ -1317,7 +1326,7 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
 
                             <div>
                               <Label className="text-[10px] text-[#8D6E63] mb-1 block">Fecha de vencimiento</Label>
-                              <Popover>
+                              <Popover open={openCalendars[`loan-${entry.id}`]} onOpenChange={(open) => setOpenCalendars(prev => ({ ...prev, [`loan-${entry.id}`]: open }))}>
                                 <PopoverTrigger asChild>
                                   <Button
                                     variant="outline"
@@ -1330,11 +1339,14 @@ export default function NetWorthSetupForm({ onComplete, onBack }: { onComplete: 
                                     {entry.dueDate ? format(entry.dueDate, "dd/MM/yyyy") : <span>Seleccionar fecha</span>}
                                   </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
+                                <PopoverContent className="w-auto p-0 z-50" align="start">
                                   <Calendar
                                     mode="single"
                                     selected={entry.dueDate}
-                                    onSelect={(date) => updateLoanEntry(entry.id, 'dueDate', date)}
+                                    onSelect={(date) => {
+                                      updateLoanEntry(entry.id, 'dueDate', date);
+                                      setOpenCalendars(prev => ({ ...prev, [`loan-${entry.id}`]: false }));
+                                    }}
                                     initialFocus
                                     className={cn("p-3 pointer-events-auto")}
                                   />
