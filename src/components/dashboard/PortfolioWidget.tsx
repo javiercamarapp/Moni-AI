@@ -80,8 +80,8 @@ export const PortfolioWidget: React.FC = () => {
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-emerald-100 flex items-center justify-center">
-                <Wallet className="w-5 h-5 text-emerald-600" />
+              <div className="w-10 h-10 rounded-2xl bg-[#5D4037]/10 flex items-center justify-center">
+                <Wallet className="w-5 h-5 text-[#5D4037]" />
               </div>
               <div>
                 <h3 className="font-semibold text-foreground">Portafolio</h3>
@@ -104,7 +104,7 @@ export const PortfolioWidget: React.FC = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Wallet className="w-4 h-4 text-emerald-600" />
+            <Wallet className="w-4 h-4 text-[#5D4037]" />
             <span className="text-sm font-medium text-muted-foreground">Portafolio</span>
           </div>
           <ChevronRight className="w-4 h-4 text-muted-foreground" />
@@ -124,14 +124,14 @@ export const PortfolioWidget: React.FC = () => {
             {topPerformers.length > 0 && (
               <div>
                 <div className="flex items-center gap-1 mb-1">
-                  <TrendingUp className="w-3 h-3 text-emerald-500" />
+                  <TrendingUp className="w-3 h-3 text-[#5D4037]" />
                   <span className="text-[10px] text-muted-foreground uppercase">Mejores</span>
                 </div>
                 <div className="space-y-1">
                   {topPerformers.slice(0, 2).map(asset => (
                     <div key={asset.id} className="flex items-center justify-between">
                       <span className="text-xs text-foreground truncate max-w-[80px]">{asset.nombre}</span>
-                      <span className="text-xs font-medium text-emerald-600">
+                      <span className="text-xs font-medium text-[#5D4037]">
                         {formatPercent(asset.tasa_rendimiento)}
                       </span>
                     </div>
@@ -144,14 +144,14 @@ export const PortfolioWidget: React.FC = () => {
             {bottomPerformers.length > 0 && bottomPerformers[0]?.tasa_rendimiento !== topPerformers[0]?.tasa_rendimiento && (
               <div>
                 <div className="flex items-center gap-1 mb-1">
-                  <TrendingDown className="w-3 h-3 text-red-500" />
+                  <TrendingDown className="w-3 h-3 text-[#A1887F]" />
                   <span className="text-[10px] text-muted-foreground uppercase">Menores</span>
                 </div>
                 <div className="space-y-1">
                   {bottomPerformers.slice(0, 1).map(asset => (
                     <div key={asset.id} className="flex items-center justify-between">
                       <span className="text-xs text-foreground truncate max-w-[80px]">{asset.nombre}</span>
-                      <span className={`text-xs font-medium ${(asset.tasa_rendimiento || 0) < 0 ? 'text-red-600' : 'text-muted-foreground'}`}>
+                      <span className={`text-xs font-medium ${(asset.tasa_rendimiento || 0) < 0 ? 'text-[#8D6E63]' : 'text-muted-foreground'}`}>
                         {formatPercent(asset.tasa_rendimiento)}
                       </span>
                     </div>
