@@ -43,23 +43,11 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
         </div>
       </div>
 
-      {/* Compound Progress Bar - Income vs Expenses */}
+      {/* Single Compound Bar - Income vs Expenses */}
       <div className="mb-3">
-        <div className="flex items-center justify-between mb-1.5">
-          <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-[#5D4037]"></div>
-            <span className="text-[10px] text-gray-600 font-medium">Ingresos</span>
-            <span className="text-[10px] text-gray-800 font-bold">${income.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-[#D7CCC8]"></div>
-            <span className="text-[10px] text-gray-600 font-medium">Gastos</span>
-            <span className="text-[10px] text-gray-800 font-bold">${expenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
-          </div>
-        </div>
         <div className="h-3 bg-gray-100 rounded-full overflow-hidden flex">
           <div 
-            className="h-full bg-[#5D4037] transition-all duration-500"
+            className="h-full bg-[#5D4037] transition-all duration-500 relative"
             style={{ width: `${incomePercent}%` }}
           />
           <div 
@@ -67,39 +55,37 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
             style={{ width: `${expensePercent}%` }}
           />
         </div>
-        <div className="flex justify-between mt-1">
-          <span className="text-[10px] text-gray-500">{incomePercent.toFixed(0)}%</span>
-          <span className="text-[10px] text-gray-500">{expensePercent.toFixed(0)}%</span>
+        <div className="flex justify-between mt-1.5">
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 rounded-full bg-[#5D4037]"></div>
+            <span className="text-[10px] text-gray-800 font-bold">${income.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 rounded-full bg-[#D7CCC8]"></div>
+            <span className="text-[10px] text-gray-800 font-bold">${expenses.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
+          </div>
         </div>
       </div>
 
       <div className="space-y-2">
         {isExpanded && (
           <>
-            {/* Savings */}
-            <div className="flex items-center justify-between animate-fade-in">
-              <div className="flex items-center gap-2">
-                <div className="h-7 w-7 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
-                  <PiggyBank size={14} />
+            {/* Minimal savings display - icons and values only */}
+            <div className="flex items-center justify-center gap-6 py-1 animate-fade-in">
+              <div className="flex items-center gap-1.5">
+                <div className="h-6 w-6 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
+                  <PiggyBank size={12} />
                 </div>
-                <span className="text-gray-600 text-xs font-medium">Ahorro Metas</span>
+                <span className="text-gray-800 font-bold text-xs">-${savings.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
               </div>
-              <span className="text-gray-800 font-bold text-sm">-${savings.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
-            </div>
-
-            {/* Group Savings */}
-            <div className="flex items-center justify-between animate-fade-in">
-              <div className="flex items-center gap-2">
-                <div className="h-7 w-7 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
-                  <Users size={14} />
+              <div className="flex items-center gap-1.5">
+                <div className="h-6 w-6 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                  <Users size={12} />
                 </div>
-                <span className="text-gray-600 text-xs font-medium">Metas Grupales</span>
+                <span className="text-gray-800 font-bold text-xs">-${groupSavings.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
               </div>
-              <span className="text-gray-800 font-bold text-sm">-${groupSavings.toLocaleString('es-MX', { maximumFractionDigits: 0 })}</span>
             </div>
-
-            {/* Divider */}
-            <div className="h-px bg-gray-100 my-2"></div>
+            <div className="h-px bg-gray-100 my-1"></div>
           </>
         )}
 
