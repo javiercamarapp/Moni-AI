@@ -73,7 +73,7 @@ export const PortfolioWidget: React.FC = () => {
 
   if (activos.length === 0) {
     return (
-      <Card
+      <Card 
         className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer"
         onClick={() => navigate('/portfolio')}
       >
@@ -96,7 +96,7 @@ export const PortfolioWidget: React.FC = () => {
   }
 
   return (
-    <Card
+    <Card 
       className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all cursor-pointer"
       onClick={() => navigate('/portfolio')}
     >
