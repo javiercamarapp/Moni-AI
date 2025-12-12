@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNetWorth } from '@/hooks/useNetWorth';
-import { AreaChart, Area, ResponsiveContainer, XAxis, Tooltip } from 'recharts';
+import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -52,7 +52,7 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
     : 0;
 
   return (
-    <div className="grid grid-cols-5 md:grid-cols-7 lg:grid-cols-8 gap-3 max-w-md md:max-w-2xl lg:max-w-3xl mx-auto">
+    <div className="grid grid-cols-5 md:grid-cols-8 lg:grid-cols-10 gap-3 max-w-md md:max-w-3xl lg:max-w-4xl mx-auto">
           {/* Score Moni Card - slightly wider */}
           <div 
             className="col-span-2 bg-white/95 backdrop-blur-sm rounded-2xl p-3 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5"
@@ -104,7 +104,7 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
 
           {/* Net Worth Card */}
           <div 
-            className="col-span-3 md:col-span-5 lg:col-span-6 bg-white/95 backdrop-blur-sm rounded-2xl p-3 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 flex flex-col"
+            className="col-span-3 md:col-span-6 lg:col-span-8 bg-white/95 backdrop-blur-sm rounded-2xl p-3 md:p-4 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 flex flex-col"
             onClick={() => navigate('/net-worth')}
           >
             <div className="flex items-center justify-between mb-1">
@@ -141,16 +141,32 @@ const DashboardHeroSection: React.FC<DashboardHeroSectionProps> = ({ scoreMoni }
                 </span>
                 
                 {/* Chart - takes remaining space */}
-                <div className="flex-1 min-h-[48px]">
+                <div className="flex-1 min-h-[48px] md:min-h-[80px] lg:min-h-[100px]">
                   {netWorthData?.chartData && netWorthData.chartData.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={netWorthData.chartData}>
+                      <AreaChart data={netWorthData.chartData} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
                         <defs>
                           <linearGradient id="netWorthGradient" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="5%" stopColor="#8D6E63" stopOpacity={0.3}/>
                             <stop offset="95%" stopColor="#8D6E63" stopOpacity={0}/>
                           </linearGradient>
                         </defs>
+                        <XAxis 
+                          dataKey="date" 
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fontSize: 9, fill: '#9ca3af' }}
+                          hide={false}
+                        />
+                        <YAxis 
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fontSize: 9, fill: '#9ca3af' }}
+                          tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
+                          width={45}
+                          className="hidden md:block"
+                          hide={false}
+                        />
                         <Area
                           type="monotone"
                           dataKey="value"
