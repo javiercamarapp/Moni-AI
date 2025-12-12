@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, BarChart3, Trophy, MessageCircle, Compass } from 'lucide-react';
+import { Home, BarChart3, Trophy, MessageCircle, Rocket } from 'lucide-react';
 
 const BottomNav = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const BottomNav = () => {
     { path: '/dashboard', icon: Home, label: 'Inicio' },
     { path: '/analysis', icon: BarChart3, label: 'Análisis' },
     { path: '/retos', icon: Trophy, label: 'Retos' },
-    { path: '/financial-journey', icon: Compass, label: 'Journey' },
+    { path: '/financial-journey', icon: Rocket, label: 'Journey' },
     { path: '/chat', icon: MessageCircle, label: 'Chat' },
   ];
 
@@ -39,8 +39,8 @@ const BottomNav = () => {
               key={path}
               onClick={() => navigate(path)}
               className={`relative z-10 transition-all duration-300 ${isActive(path)
-                  ? 'text-[#5D4037] scale-110'
-                  : 'text-gray-400 hover:text-gray-600 hover:scale-105 active:scale-95'
+                ? 'text-[#5D4037] scale-110'
+                : 'text-gray-400 hover:text-gray-600 hover:scale-105 active:scale-95'
                 }`}
             >
               <Icon className="w-6 h-6" strokeWidth={isActive(path) ? 2.5 : 1.8} />

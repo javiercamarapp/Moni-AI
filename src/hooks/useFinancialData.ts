@@ -1,10 +1,21 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import {
+  getCache,
+  setCache,
+  invalidateAllCache as clearAllCache,
+  CACHE_KEYS,
+  CACHE_TTL
+} from '@/lib/cacheService';
 
-// Cache stale time: 5 minutes
+// Cache stale time: 5 minutes (React Query in-memory)
 const STALE_TIME = 5 * 60 * 1000;
 
 export const useTransactions = (startDate?: Date, endDate?: Date) => {
+  const cacheKey = startDate && endDate
+    ? `${CACHE_KEYS.TRANSACTIONS}_${startDate.getMonth()}_${startDate.getFullYear()}`
+    : CACHE_KEYS.TRANSACTIONS;
+
   return useQuery({
     queryKey: ['transactions', startDate?.toISOString(), endDate?.toISOString()],
     queryFn: async () => {
@@ -25,10 +36,15 @@ export const useTransactions = (startDate?: Date, endDate?: Date) => {
 
       const { data, error } = await query;
       if (error) throw error;
+
+      // Update localStorage cache
+      setCache(cacheKey, data || [], CACHE_TTL.TRANSACTIONS);
+
       return data || [];
     },
     staleTime: STALE_TIME,
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 10 * 60 * 1000,
+    initialData: () => getCache(cacheKey),
   });
 };
 
@@ -46,9 +62,14 @@ export const useGoals = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+
+      // Update localStorage cache
+      setCache(CACHE_KEYS.GOALS, data || [], CACHE_TTL.DEFAULT);
+
       return data || [];
     },
     staleTime: STALE_TIME,
+    initialData: () => getCache(CACHE_KEYS.GOALS),
   });
 };
 
@@ -114,16 +135,21 @@ export const useScoreMoni = () => {
 
       if (error) throw error;
       const score = data?.score_moni || 40;
-      
-      // Always sync localStorage with DB value
+
+      // Update both legacy localStorage and new cache
       localStorage.setItem('scoreMoni', score.toString());
-      
+      setCache(CACHE_KEYS.SCORE_MONI, score, CACHE_TTL.DEFAULT);
+
       return score;
     },
     staleTime: STALE_TIME,
     initialData: () => {
-      const cached = localStorage.getItem('scoreMoni');
-      return cached ? Number(cached) : undefined;
+      // Try new cache first, then legacy
+      const cached = getCache<number>(CACHE_KEYS.SCORE_MONI);
+      if (cached !== null) return cached;
+
+      const legacy = localStorage.getItem('scoreMoni');
+      return legacy ? Number(legacy) : undefined;
     },
   });
 };
@@ -150,13 +176,16 @@ export const useNetWorth = () => {
 
       const totalAssets = assetsData?.reduce((sum, a) => sum + Number(a.value), 0) || 0;
       const totalLiabilities = liabilitiesData?.reduce((sum, l) => sum + Number(l.value), 0) || 0;
-      
+
       const netWorth = totalAssets - totalLiabilities;
-      console.log('Net Worth calculated:', { totalAssets, totalLiabilities, netWorth });
-      
+
+      // Update localStorage cache
+      setCache(CACHE_KEYS.NET_WORTH, netWorth, CACHE_TTL.DEFAULT);
+
       return netWorth;
     },
     staleTime: STALE_TIME,
+    initialData: () => getCache<number>(CACHE_KEYS.NET_WORTH),
   });
 };
 
@@ -174,13 +203,20 @@ export const useBankConnections = () => {
         .eq('is_active', true);
 
       if (error) throw error;
+
+      // Update localStorage cache
+      setCache(CACHE_KEYS.BANK_CONNECTIONS, data || [], CACHE_TTL.DEFAULT);
+
       return data || [];
     },
     staleTime: STALE_TIME,
+    initialData: () => getCache(CACHE_KEYS.BANK_CONNECTIONS),
   });
 };
 
 export const useMonthlyTotals = (monthOffset: number = 0) => {
+  const cacheKey = `${CACHE_KEYS.MONTHLY_TOTALS}_${monthOffset}`;
+
   return useQuery({
     queryKey: ['monthlyTotals', monthOffset],
     queryFn: async () => {
@@ -207,29 +243,35 @@ export const useMonthlyTotals = (monthOffset: number = 0) => {
 
       // Fixed expenses categories
       const fixedExpensesCategories = [
-        '22cecde3-c7c8-437e-9b9d-d73bc7f3bdfe', // Luz
-        'c88f9517-ba61-4420-bc49-ba6261c37e9c', // Agua
-        '4675137c-d5b5-4679-b308-6259762ea100', // Internet
-        'c4d8514f-54be-4fba-8300-b18164d78790', // Teléfono
-        '77bc7935-51b3-418b-9945-7028c27d47ec', // Gas
-        '8544dcaa-4114-4893-aa38-c4372c46a821', // Netflix
-        'eba3ecce-a824-41d3-8209-175902e66cb9', // Spotify
-        '94c263d1-aed5-4399-b5af-da3dfe758b58', // Amazon Prime
-        'd81abe12-0879-49bc-9d94-ebf7c3e9e315', // Disney+
-        'd9251ee1-749f-4cc7-94a2-ceb19a16fd8c', // HBO Max
-        'e50cbb0b-6f45-4afd-bf09-218e413a3086' // Gym
+        '22cecde3-c7c8-437e-9b9d-d73bc7f3bdfe',
+        'c88f9517-ba61-4420-bc49-ba6261c37e9c',
+        '4675137c-d5b5-4679-b308-6259762ea100',
+        'c4d8514f-54be-4fba-8300-b18164d78790',
+        '77bc7935-51b3-418b-9945-7028c27d47ec',
+        '8544dcaa-4114-4893-aa38-c4372c46a821',
+        'eba3ecce-a824-41d3-8209-175902e66cb9',
+        '94c263d1-aed5-4399-b5af-da3dfe758b58',
+        'd81abe12-0879-49bc-9d94-ebf7c3e9e315',
+        'd9251ee1-749f-4cc7-94a2-ceb19a16fd8c',
+        'e50cbb0b-6f45-4afd-bf09-218e413a3086'
       ];
 
       const fixed = transactions
         .filter(t => t.type === 'gasto' && (
-          fixedExpensesCategories.includes(t.category_id) || 
+          fixedExpensesCategories.includes(t.category_id) ||
           t.description?.toLowerCase().includes('renta')
         ))
         .reduce((sum, t) => sum + Number(t.amount), 0);
 
-      return { income, expenses, fixed };
+      const result = { income, expenses, fixed };
+
+      // Update localStorage cache
+      setCache(cacheKey, result, CACHE_TTL.MONTHLY_DATA);
+
+      return result;
     },
     staleTime: STALE_TIME,
+    initialData: () => getCache(cacheKey),
   });
 };
 
@@ -242,11 +284,7 @@ export const useAccountsList = () => {
 
       const [{ data: assets, error: assetsError }, { data: liabilities, error: liabilitiesError }] = await Promise.all([
         supabase.from('assets').select('*').eq('user_id', user.id),
-        supabase.from('liabilities').select('*').eq('user_id', user.id), // Table name is 'liabilities' but mapped to 'pasivos' in DB structure doc? 
-        // Wait, the code uses 'liabilities' in useNetWorth (line 141). 
-        // But DATABASE_STRUCTURE.md says 'pasivos'.
-        // If useNetWorth uses 'liabilities', I should use 'liabilities'. 
-        // Let me double check useNetWorth in the file.
+        supabase.from('liabilities').select('*').eq('user_id', user.id),
       ]);
 
       if (assetsError) throw assetsError;
@@ -255,24 +293,22 @@ export const useAccountsList = () => {
       // Helper to determine if item is a card or bank account
       const isCardOrBank = (name: string = '', category: string = '') => {
         const text = `${name} ${category}`.toLowerCase();
-        
-        // Exclude non-banking items
+
         const excluded = [
           'efectivo', 'cash', 'wallet', 'billetera',
-          'inversión', 'investment', 'bolsa', 'crypto', 'gbh', 'cet', // Investments
-          'hipoteca', 'mortgage', 'casa', 'propiedad', // Real estate
-          'préstamo', 'loan', 'crédito personal', 'automotriz', 'auto' // Loans
+          'inversión', 'investment', 'bolsa', 'crypto', 'gbh', 'cet',
+          'hipoteca', 'mortgage', 'casa', 'propiedad',
+          'préstamo', 'loan', 'crédito personal', 'automotriz', 'auto'
         ];
-        
+
         if (excluded.some(term => text.includes(term))) return false;
 
-        // Include banking items
         const included = [
-          'tarjeta', 'card', 'tdc', // Cards
-          'banco', 'bank', // General bank
-          'ahorro', 'savings', // Savings
-          'cheques', 'checking', 'corriente', // Checking
-          'nómina', 'nomina', // Payroll
+          'tarjeta', 'card', 'tdc',
+          'banco', 'bank',
+          'ahorro', 'savings',
+          'cheques', 'checking', 'corriente',
+          'nómina', 'nomina',
           'débito', 'debit',
           'crédito', 'credit',
           'cuenta'
@@ -281,7 +317,6 @@ export const useAccountsList = () => {
         return included.some(term => text.includes(term));
       };
 
-      // Transform and combine
       const assetAccounts = (assets || [])
         .filter(a => isCardOrBank(a.name, a.category))
         .map(a => ({
@@ -293,31 +328,44 @@ export const useAccountsList = () => {
         }));
 
       const liabilityAccounts = (liabilities || [])
-        .filter(l => isCardOrBank(l.name, l.category)) // liabilities uses 'name' and 'category' as fixed in previous step
+        .filter(l => isCardOrBank(l.name, l.category))
         .map(l => ({
           id: l.id,
           bank_name: l.category || 'Banco',
-          account_name: l.name, 
+          account_name: l.name,
           balance: Number(l.value),
           type: 'liability',
         }));
 
-      return [...assetAccounts, ...liabilityAccounts];
+      const result = [...assetAccounts, ...liabilityAccounts];
+
+      // Update localStorage cache
+      setCache(CACHE_KEYS.ACCOUNTS_LIST, result, CACHE_TTL.DEFAULT);
+
+      return result;
     },
     staleTime: STALE_TIME,
+    initialData: () => getCache(CACHE_KEYS.ACCOUNTS_LIST),
   });
 };
 
-// Hook to invalidate all financial queries
+// Hook to invalidate all financial queries AND localStorage cache
 export const useInvalidateFinancialData = () => {
   const queryClient = useQueryClient();
-  
+
   return () => {
+    // Invalidate React Query cache
     queryClient.invalidateQueries({ queryKey: ['transactions'] });
     queryClient.invalidateQueries({ queryKey: ['goals'] });
     queryClient.invalidateQueries({ queryKey: ['scoreMoni'] });
     queryClient.invalidateQueries({ queryKey: ['netWorth'] });
     queryClient.invalidateQueries({ queryKey: ['monthlyTotals'] });
     queryClient.invalidateQueries({ queryKey: ['bankConnections'] });
+    queryClient.invalidateQueries({ queryKey: ['accountsList'] });
+
+    // Also invalidate localStorage cache
+    clearAllCache();
+
+    console.log('All financial data caches invalidated');
   };
 };

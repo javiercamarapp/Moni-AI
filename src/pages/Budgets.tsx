@@ -1,15 +1,22 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Pencil, AlertCircle, TrendingUp, Target } from "lucide-react";
+import { ChevronLeft, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 import { SectionLoader } from "@/components/SectionLoader";
-import { Skeleton } from "@/components/ui/skeleton";
-import { headingPage, headingSection } from "@/styles/typography";
+import BudgetMonthlySummary from "@/components/budget/BudgetMonthlySummary";
+import BudgetCategorySpending, { CategorySpendingItem } from "@/components/budget/BudgetCategorySpending";
+import BudgetCategoryDetails, { Expense } from "@/components/budget/BudgetCategoryDetails";
+import { getCache, setCache, CACHE_KEYS, CACHE_TTL } from "@/lib/cacheService";
+
+
+// View states
+enum BudgetViewState {
+  IDLE = 'IDLE',
+  BUDGET_DETAILS = 'BUDGET_DETAILS',
+  CATEGORY_DETAILS = 'CATEGORY_DETAILS'
+}
 
 interface Budget {
   id: string;
@@ -24,12 +31,15 @@ interface Budget {
 
 export default function Budgets() {
   const navigate = useNavigate();
+  const [viewState, setViewState] = useState<BudgetViewState>(BudgetViewState.IDLE);
+  const [selectedCategory, setSelectedCategory] = useState<{ id: string; name: string } | null>(null);
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMonthlyData, setLoadingMonthlyData] = useState(true);
-  const [monthlyIncome, setMonthlyIncome] = useState(0);
   const [totalBudget, setTotalBudget] = useState(0);
   const [currentExpenses, setCurrentExpenses] = useState<Record<string, number>>({});
+  const [totalSpentAll, setTotalSpentAll] = useState(0); // Total ALL expenses (for consistency with Dashboard)
+  const [categoryExpenses, setCategoryExpenses] = useState<Expense[]>([]);
   const [isCategorizingExisting, setIsCategorizingExisting] = useState(false);
 
   useEffect(() => {
@@ -88,6 +98,22 @@ export default function Budgets() {
         return;
       }
 
+      // Try to load cached data first for instant display
+      const cachedBudgets = getCache<Budget[]>(CACHE_KEYS.BUDGETS);
+      const cachedExpenses = getCache<Record<string, number>>(CACHE_KEYS.MONTHLY_EXPENSES);
+
+      if (cachedBudgets && cachedBudgets.length > 0) {
+        setBudgets(cachedBudgets);
+        const total = cachedBudgets.reduce((sum, b) => sum + Number(b.monthly_budget), 0);
+        setTotalBudget(total);
+        setLoading(false);
+
+        if (cachedExpenses) {
+          setCurrentExpenses(cachedExpenses);
+          setLoadingMonthlyData(false);
+        }
+      }
+
       // Cargar solo las categorías principales (sin parent_id)
       const { data: categories, error: catError } = await supabase
         .from('categories')
@@ -120,8 +146,6 @@ export default function Budgets() {
         }
       });
 
-      console.log('📊 Gastos por categoría detectados:', expensesByCategory);
-
       // Para cada categoría principal, obtener su presupuesto O verificar si tiene gastos
       const budgetPromises = (categories || []).map(async (category) => {
         const { data: budget } = await supabase
@@ -135,9 +159,6 @@ export default function Budgets() {
 
         // Incluir la categoría si tiene presupuesto O si tiene gastos
         if (budget || hasExpenses) {
-          if (hasExpenses && !budget) {
-            console.log(`✅ Mostrando categoría "${category.name}" con gastos pero sin presupuesto asignado`);
-          }
           return {
             id: budget?.id || `temp-${category.id}`,
             category_id: category.id,
@@ -153,13 +174,14 @@ export default function Budgets() {
       });
 
       const data = (await Promise.all(budgetPromises)).filter(Boolean);
-      const error = null;
 
-      if (error) throw error;
-
+      // Update state
       setBudgets(data || []);
       const total = (data || []).reduce((sum, b) => sum + Number(b.monthly_budget), 0);
       setTotalBudget(total);
+
+      // Update cache
+      setCache(CACHE_KEYS.BUDGETS, data, CACHE_TTL.BUDGETS);
     } catch (error) {
       console.error('Error loading budgets:', error);
       toast.error("Error al cargar presupuestos");
@@ -178,20 +200,6 @@ export default function Budgets() {
       const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
       const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-      // Calcular ingresos del mes
-      const { data: incomeData } = await supabase
-        .from('transactions')
-        .select('amount')
-        .eq('user_id', user.id)
-        .eq('type', 'ingreso')
-        .gte('transaction_date', firstDay.toISOString().split('T')[0])
-        .lte('transaction_date', lastDay.toISOString().split('T')[0]);
-
-      const income = (incomeData || []).reduce((sum, t) => sum + Number(t.amount), 0);
-      setMonthlyIncome(income);
-
-      console.log('=== CALCULANDO GASTOS POR CATEGORÍA ===');
-      
       // Obtener todas las transacciones de gastos del mes con sus categorías
       const { data: expenseData } = await supabase
         .from('transactions')
@@ -201,26 +209,19 @@ export default function Budgets() {
         .gte('transaction_date', firstDay.toISOString().split('T')[0])
         .lte('transaction_date', lastDay.toISOString().split('T')[0]);
 
-      console.log('Total transacciones de gasto:', expenseData?.length);
-      
       // Contar transacciones con y sin categoría
-      const withCategory = expenseData?.filter(t => t.category_id !== null).length || 0;
       const withoutCategory = expenseData?.filter(t => t.category_id === null).length || 0;
-      console.log(`Transacciones CON categoría: ${withCategory}`);
-      console.log(`Transacciones SIN categoría: ${withoutCategory}`);
 
       // Si hay transacciones sin categoría, categorizarlas automáticamente en segundo plano
       if (withoutCategory > 0 && !isCategorizingExisting) {
-        console.log('Iniciando categorización automática en segundo plano...');
         setIsCategorizingExisting(true);
-        
+
         // Ejecutar en segundo plano sin bloquear la UI
         supabase.functions.invoke('recategorize-unidentified')
-          .then(({ data, error }) => {
+          .then(({ error }) => {
             if (error) {
               console.error('Error categorizando:', error);
             } else {
-              console.log('Categorización completada:', data);
               // Recargar datos silenciosamente después de categorizar
               setTimeout(() => {
                 loadMonthlyData();
@@ -235,37 +236,29 @@ export default function Budgets() {
           });
       }
 
-      // Calcular gastos por categoría principal
+      // Calcular gastos por categoría principal Y total de todos los gastos
       const expenses: Record<string, number> = {};
-      let unidentifiedCount = 0;
-      
+      let allExpensesTotal = 0;
+
       (expenseData || []).forEach((expense: any) => {
-        console.log('Procesando gasto:', {
-          amount: expense.amount,
-          category_id: expense.category_id,
-          category: expense.categories
-        });
+        // Add to total (all expenses)
+        allExpensesTotal += Number(expense.amount);
 
+        // For per-category breakdown, skip uncategorized
         if (!expense.category_id || !expense.categories) {
-          console.log('Gasto sin categoría detectado');
           return;
-        }
-
-        // Verificar si es la categoría de "Gastos no identificados"
-        if (expense.categories.name === 'Gastos no identificados') {
-          unidentifiedCount++;
         }
 
         // Si la categoría tiene parent_id, usar la categoría padre
         const categoryId = expense.categories.parent_id || expense.category_id;
         expenses[categoryId] = (expenses[categoryId] || 0) + Number(expense.amount);
-        
-        console.log(`Sumando ${expense.amount} a categoría ${categoryId}`);
       });
 
-      console.log('Gastos totales por categoría:', expenses);
-      console.log('Gastos no identificados:', unidentifiedCount);
       setCurrentExpenses(expenses);
+      setTotalSpentAll(allExpensesTotal);
+
+      // Update cache
+      setCache(CACHE_KEYS.MONTHLY_EXPENSES, expenses, CACHE_TTL.MONTHLY_DATA);
     } catch (error) {
       console.error('Error loading monthly data:', error);
     } finally {
@@ -273,295 +266,211 @@ export default function Budgets() {
     }
   };
 
-
-  const deleteBudget = async (budgetId: string) => {
+  const loadCategoryExpenses = async (categoryName: string) => {
     try {
-      const { error } = await supabase
-        .from('category_budgets')
-        .delete()
-        .eq('id', budgetId);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-      if (error) throw error;
+      const now = new Date();
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-      toast.success("Presupuesto eliminado");
-      loadBudgets();
+      // Get category ID from name
+      const { data: category } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('name', categoryName)
+        .maybeSingle();
+
+      if (!category) {
+        setCategoryExpenses([]);
+        return;
+      }
+
+      // Get all subcategory IDs
+      const { data: subcategories } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('parent_id', category.id);
+
+      const categoryIds = [category.id, ...(subcategories || []).map(s => s.id)];
+
+      // Get transactions for this category and its subcategories
+      const { data: transactions } = await supabase
+        .from('transactions')
+        .select('id, description, amount, transaction_date, payment_method')
+        .eq('user_id', user.id)
+        .eq('type', 'gasto')
+        .in('category_id', categoryIds)
+        .gte('transaction_date', firstDay.toISOString().split('T')[0])
+        .lte('transaction_date', lastDay.toISOString().split('T')[0])
+        .order('transaction_date', { ascending: false });
+
+      const expenses: Expense[] = (transactions || []).map(t => ({
+        id: t.id,
+        description: t.description || 'Sin descripción',
+        amount: Number(t.amount),
+        date: t.transaction_date,
+        paymentMethod: t.payment_method || 'Efectivo'
+      }));
+
+      setCategoryExpenses(expenses);
     } catch (error) {
-      console.error('Error deleting budget:', error);
-      toast.error("Error al eliminar presupuesto");
+      console.error('Error loading category expenses:', error);
+      setCategoryExpenses([]);
     }
   };
 
-  const getCategoryIcon = (name: string) => {
-    // Extraer el emoji del nombre si ya lo tiene
-    const emojiMatch = name.match(/^([\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}])/u);
-    if (emojiMatch) {
-      return emojiMatch[1];
+  const handleBack = () => {
+    if (viewState === BudgetViewState.CATEGORY_DETAILS || viewState === BudgetViewState.BUDGET_DETAILS) {
+      setViewState(BudgetViewState.IDLE);
+      setSelectedCategory(null);
+      setCategoryExpenses([]);
+    } else {
+      navigate('/dashboard');
     }
-    
-    // Fallback para categorías sin emoji en el nombre
-    const icons: Record<string, string> = {
-      'vivienda': '🏠',
-      'transporte': '🚗',
-      'alimentación': '🍽️',
-      'servicios y suscripciones': '🧾',
-      'salud y bienestar': '🩺',
-      'educación y desarrollo': '🎓',
-      'deudas y créditos': '💳',
-      'entretenimiento y estilo de vida': '🎉',
-      'ahorro e inversión': '💸',
-      'apoyos y otros': '🤝',
-      'mascotas': '🐾',
-      'categoría personalizada': '⭐',
-      'gastos no identificados': '❓',
-    };
-    return icons[name.toLowerCase()] || '📊';
   };
 
-  const percentageOfIncome = monthlyIncome > 0 ? (totalBudget / monthlyIncome) * 100 : 0;
-  const remainingBudget = totalBudget - Object.values(currentExpenses).reduce((sum, val) => sum + val, 0);
-  const savingsPercentage = monthlyIncome > 0 ? ((monthlyIncome - totalBudget) / monthlyIncome) * 100 : 0;
+  const handleOpenCategory = (categoryId: string, categoryName: string) => {
+    setSelectedCategory({ id: categoryId, name: categoryName });
+    loadCategoryExpenses(categoryName);
+    setViewState(BudgetViewState.CATEGORY_DETAILS);
+  };
+
+  // Prepare categories for the spending component
+  const categoryItems: CategorySpendingItem[] = budgets.map(budget => ({
+    id: budget.id,
+    categoryId: budget.category_id,
+    label: budget.category.name,
+    budget: Number(budget.monthly_budget),
+    spent: currentExpenses[budget.category_id] || 0,
+    color: budget.category.color
+  }));
+
+  // Use totalSpentAll for the summary (includes uncategorized expenses, consistent with Dashboard)
+  const totalSpent = totalSpentAll > 0 ? totalSpentAll : Object.values(currentExpenses).reduce((sum, val) => sum + val, 0);
+
+  // Get header text based on view state
+  const getHeaderTitle = () => {
+    switch (viewState) {
+      case BudgetViewState.BUDGET_DETAILS:
+        return "Desglose";
+      case BudgetViewState.CATEGORY_DETAILS:
+        return selectedCategory?.name || "Detalles";
+      default:
+        return "Presupuesto Mensual";
+    }
+  };
+
+  const getHeaderSubtitle = () => {
+    switch (viewState) {
+      case BudgetViewState.BUDGET_DETAILS:
+        return "Tu plan mensual";
+      case BudgetViewState.CATEGORY_DETAILS:
+        return "Historial de transacciones";
+      default:
+        return "Controla tus gastos";
+    }
+  };
 
   if (loading) {
     return (
-      <div className="page-standard min-h-screen pb-20 flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAFAF9] pb-20 flex items-center justify-center">
         <SectionLoader size="lg" />
       </div>
     );
   }
 
+  // Get data for selected category in details view
+  const selectedCategoryData = selectedCategory ? budgets.find(b => b.category_id === selectedCategory.id) : null;
+
   return (
-    <div className="page-standard min-h-screen pb-20">
-      
-      {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
-        <div className="page-container py-4">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate('/dashboard')}
-              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
-            >
-              <ArrowLeft className="h-4 w-4 text-gray-700" />
-            </Button>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Presupuesto Mensual</h1>
-              <p className="text-sm text-gray-500">Controla tus gastos</p>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate('/edit-budgets')}
-              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 flex-shrink-0"
-            >
-              <Pencil className="h-4 w-4 text-gray-700" />
-            </Button>
+    <div className="min-h-screen bg-[#FAFAF9] font-sans text-gray-800 selection:bg-stone-200">
+      {/* Max width container */}
+      <div className="max-w-5xl mx-auto min-h-screen bg-[#FAFAF9] relative">
+
+        {/* Dynamic Header */}
+        <div className="w-full flex items-center gap-4 pt-8 pb-4 px-6 bg-transparent">
+          {/* Back Button */}
+          <button
+            onClick={handleBack}
+            className="p-3 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors text-gray-700"
+            aria-label="Go back"
+          >
+            <ChevronLeft size={20} strokeWidth={2.5} />
+          </button>
+
+          <div className="flex flex-col flex-1 animate-fade-in">
+            <h1 className="text-xl font-bold text-gray-900 leading-tight">
+              {getHeaderTitle()}
+            </h1>
+            <p className="text-xs font-medium text-gray-500">
+              {getHeaderSubtitle()}
+            </p>
           </div>
         </div>
-      </div>
 
-      <div className="page-container space-y-6 pb-4">
+        {/* Content Area */}
+        <div className="pb-24">
 
-        {budgets.length === 0 ? (
-          <Card className="p-10 bg-white/90 backdrop-blur-md rounded-[24px] shadow-lg border-0 text-center">
-            <div className="text-6xl mb-5">📊</div>
-            <p className="text-lg font-semibold text-foreground mb-3">
-              Crea tu Presupuesto Mensual
-            </p>
-            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-              Controla tus gastos por categoría y recibe alertas cuando te acerques al límite
-            </p>
-            <Button
-              onClick={() => navigate('/budget-quiz')}
-              className="rounded-full px-6 py-5 h-auto shadow-md"
-            >
-              <Pencil className="h-4 w-4 mr-2" />
-              Configurar Presupuesto
-            </Button>
-          </Card>
-        ) : (
-          <>
-            {/* Resumen General */}
-            <Card className="p-2 bg-white/90 backdrop-blur-md rounded-[20px] shadow-lg border-0">
-              <div className="space-y-1.5">
-                <div className="text-center pb-0.5">
-                  <div className="text-xl mb-0.5">💰</div>
-                  <p className="text-xs font-semibold text-foreground">Resumen del Mes</p>
-                </div>
-
-                {/* Métricas principales */}
-                <div className="grid grid-cols-2 gap-1.5">
-                  <button
-                    onClick={() => navigate('/edit-budgets')}
-                    className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[16px] p-2 border-0 hover:from-white/90 hover:to-white/70 hover:scale-105 hover:shadow-md active:scale-95 transition-all duration-300 w-full cursor-pointer shadow-sm"
-                  >
-                    <div className="flex flex-col items-center gap-0.5 text-center">
-                      <Target className="h-3.5 w-3.5 text-primary transition-transform duration-300 group-hover:scale-110" />
-                      <span className="text-[9px] text-muted-foreground font-medium">Presupuestado</span>
-                      <p className="text-sm font-bold text-primary">
-                        ${(totalBudget / 1000).toFixed(0)}k
-                      </p>
-                    </div>
-                  </button>
-                  
-                  <button
-                    onClick={() => navigate('/gastos')}
-                    className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[16px] p-2 border-0 hover:from-white/90 hover:to-white/70 hover:scale-105 hover:shadow-md active:scale-95 transition-all duration-300 w-full cursor-pointer shadow-sm"
-                  >
-                    <div className="flex flex-col items-center gap-0.5 text-center">
-                      <TrendingUp className="h-3.5 w-3.5 text-destructive transition-transform duration-300 group-hover:scale-110" />
-                      <span className="text-[9px] text-muted-foreground font-medium">Gastado</span>
-                      <p className="text-sm font-bold text-destructive">
-                        ${(Object.values(currentExpenses).reduce((sum, val) => sum + val, 0) / 1000).toFixed(0)}k
-                      </p>
-                    </div>
-                  </button>
-                </div>
-
-                {/* Disponible para gastar */}
-                <div className="bg-gradient-to-br from-white/70 to-white/50 backdrop-blur-sm rounded-[16px] p-2 border-0 text-center shadow-sm animate-fade-in">
-                  <span className="text-[9px] text-muted-foreground font-medium tracking-wide">Disponible</span>
-                  <p className={`text-base font-bold mt-0.5 mb-0.5 transition-all duration-300 ${remainingBudget >= 0 ? 'text-success' : 'text-destructive'}`}>
-                    ${Math.abs(remainingBudget).toLocaleString()}
-                  </p>
-                  <p className="text-[9px] text-muted-foreground">
-                    {remainingBudget >= 0 ? 'para gastar' : 'sobre presupuesto'}
-                  </p>
-                </div>
-              </div>
-            </Card>
-
-            {/* Título de sección */}
-            <div className="text-center space-y-0.5 py-1">
-              <div className="text-2xl">📊</div>
-              <p className="text-xs font-semibold text-foreground">Presupuesto por Categoría</p>
-              <p className="text-[9px] text-muted-foreground">Progreso del mes actual</p>
-            </div>
-
-            {/* Lista de Presupuestos en dos columnas */}
-            <div className="grid grid-cols-2 gap-3">
-              {loadingMonthlyData ? (
-                // Mostrar skeletons mientras carga
-                <>
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <Skeleton key={i} className="h-36 w-full rounded-[20px]" />
-                  ))}
-                </>
-              ) : isCategorizingExisting ? (
-                // Mostrar mensaje mientras categoriza en segundo plano
-                <div className="col-span-2">
-                  <Card className="p-4 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border text-center">
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="flex gap-1">
-                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                      </div>
-                      <p className="text-xs font-semibold text-foreground">
-                        🤖 IA categorizando en segundo plano
-                      </p>
-                    </div>
-                  </Card>
-                </div>
-              ) : budgets.length === 0 ? (
-                <div className="col-span-2 text-center p-6 text-muted-foreground text-sm">
-                  No hay presupuestos configurados
-                </div>
-              ) : (
-                budgets.map((budget, index) => {
-                  const spent = currentExpenses[budget.category_id] || 0;
-                  const budgetAmount = Number(budget.monthly_budget);
-                  const percentUsed = budgetAmount > 0 ? (spent / budgetAmount) * 100 : 0;
-                  const remaining = budgetAmount - spent;
-                  const isWarning = percentUsed >= 80;
-                  const isCritical = percentUsed >= 100;
-
-                  return (
-                    <Card 
-                      key={budget.id} 
-                      className={`p-3 rounded-xl shadow-sm border hover:shadow-md transition-all cursor-pointer ${
-                        isCritical ? 'bg-rose-50/80 backdrop-blur-sm border-rose-200' :
-                        isWarning ? 'bg-amber-50/80 backdrop-blur-sm border-amber-200' :
-                        'bg-emerald-50/80 backdrop-blur-sm border-emerald-200'
-                      }`}
-                      onClick={() => {
-                        console.log('Navegando a categoría:', budget.category_id, budget.category.name);
-                        navigate(`/category-expenses?category=${budget.category.name}`);
-                      }}
+          {/* HOME VIEW */}
+          {viewState === BudgetViewState.IDLE && (
+            <>
+              {budgets.length === 0 ? (
+                <div className="px-6 mt-6">
+                  <div className="bg-white rounded-3xl p-10 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-stone-100 text-center">
+                    <div className="text-6xl mb-5">📊</div>
+                    <p className="text-lg font-bold text-[#5D4037] mb-3">
+                      Crea tu Presupuesto Mensual
+                    </p>
+                    <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+                      Controla tus gastos por categoría y recibe alertas cuando te acerques al límite
+                    </p>
+                    <button
+                      onClick={() => navigate('/budget-quiz')}
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-[#5D4037] text-white rounded-xl font-bold shadow-lg shadow-[#5D4037]/20 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
                     >
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xl">{getCategoryIcon(budget.category.name)}</span>
-                            <p className={`text-xs font-bold ${
-                              isCritical ? 'text-rose-700' :
-                              isWarning ? 'text-amber-700' :
-                              'text-emerald-700'
-                            }`}>{budget.category.name}</p>
-                          </div>
-                          <p className={`text-xs font-bold flex-shrink-0 whitespace-nowrap ${
-                            isCritical ? 'text-rose-600' :
-                            isWarning ? 'text-amber-600' :
-                            'text-emerald-600'
-                          }`}>
-                            {percentUsed.toFixed(0)}%
-                          </p>
-                        </div>
-
-                        <Progress 
-                          value={Math.min(percentUsed, 100)} 
-                          className={`h-2 ${
-                            isCritical ? 'bg-rose-200' :
-                            isWarning ? 'bg-amber-200' :
-                            'bg-emerald-200'
-                          }`}
-                        />
-
-                        <div className="flex items-center justify-between">
-                          <p className="text-xs text-muted-foreground">
-                            ${spent.toLocaleString()}
-                          </p>
-                          <p className={`text-xs font-semibold ${
-                            isCritical ? 'text-rose-700' :
-                            isWarning ? 'text-amber-700' :
-                            'text-emerald-700'
-                          }`}>
-                            {isCritical ? '⚠️ Mal' : isWarning ? '⚡ Cuidado' : '✅ Bien'}
-                          </p>
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })
-              )}
-            </div>
-
-            {/* Resumen de alertas */}
-            {budgets.some(b => {
-              const spent = currentExpenses[b.category_id] || 0;
-              const percentage = (spent / Number(b.monthly_budget)) * 100;
-              return percentage >= 80;
-            }) && (
-              <Card className="p-3 bg-gradient-to-br from-amber-50/90 to-orange-50/90 backdrop-blur-md rounded-[20px] shadow-lg border-0">
-                <div className="flex items-center gap-2.5">
-                  <AlertCircle className="h-4 w-4 text-amber-600 flex-shrink-0" />
-                  <div>
-                    <p className="text-xs font-semibold text-amber-900 mb-0.5">
-                      Atención a tus presupuestos
-                    </p>
-                    <p className="text-[10px] text-amber-700 leading-snug">
-                      {budgets.filter(b => {
-                        const spent = currentExpenses[b.category_id] || 0;
-                        const percentage = (spent / Number(b.monthly_budget)) * 100;
-                        return percentage >= 80;
-                      }).length} categoría(s) cerca o sobre el límite
-                    </p>
+                      <Pencil className="h-4 w-4" />
+                      Configurar Presupuesto
+                    </button>
                   </div>
                 </div>
-              </Card>
-            )}
-          </>
-        )}
+              ) : (
+                <>
+                  {loadingMonthlyData ? (
+                    <div className="flex items-center justify-center py-20">
+                      <SectionLoader size="md" />
+                    </div>
+                  ) : (
+                    <>
+                      <BudgetMonthlySummary
+                        totalBudget={totalBudget}
+                        totalSpent={totalSpent}
+                        onOpenBudget={() => navigate('/edit-budgets')}
+                        onOpenSpent={() => navigate('/gastos')}
+                      />
+                      <BudgetCategorySpending
+                        categories={categoryItems}
+                        onOpenCategory={handleOpenCategory}
+                      />
+                    </>
+                  )}
+                </>
+              )}
+            </>
+          )}
+
+          {/* CATEGORY DETAILS VIEW */}
+          {viewState === BudgetViewState.CATEGORY_DETAILS && selectedCategoryData && (
+            <BudgetCategoryDetails
+              categoryName={selectedCategoryData.category.name}
+              budget={Number(selectedCategoryData.monthly_budget)}
+              spent={currentExpenses[selectedCategoryData.category_id] || 0}
+              expenses={categoryExpenses}
+            />
+          )}
+        </div>
       </div>
 
       <BottomNav />

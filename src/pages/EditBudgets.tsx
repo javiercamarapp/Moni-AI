@@ -1,198 +1,64 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ArrowLeft, ArrowRight, Save, Trash2 } from "lucide-react";
+import {
+  ChevronLeft, Save, Plus, X,
+  Home, Car, Utensils, Zap, Heart, PiggyBank,
+  Dog, Film, GraduationCap, CreditCard, Gift,
+  ShoppingCart, HelpCircle, Star, Smartphone, Plane,
+  LucideIcon
+} from "lucide-react";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 import { SectionLoader } from "@/components/SectionLoader";
+import { invalidateAllCache } from "@/lib/cacheService";
 
-interface Subcategory {
+// Icon mapping for categories
+const ICON_MAP: Record<string, LucideIcon> = {
+  Home, Car, Utensils, Zap, Heart, PiggyBank, Dog, Film,
+  GraduationCap, CreditCard, Gift, ShoppingCart, Star, Smartphone, Plane
+};
+
+// Get icon for category based on name
+const getCategoryIcon = (name: string): LucideIcon => {
+  const nameLower = name.toLowerCase().replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '').trim();
+
+  if (nameLower.includes('vivienda') || nameLower.includes('casa') || nameLower.includes('renta')) return Home;
+  if (nameLower.includes('transporte') || nameLower.includes('auto') || nameLower.includes('gasolina')) return Car;
+  if (nameLower.includes('alimentación') || nameLower.includes('comida') || nameLower.includes('super')) return Utensils;
+  if (nameLower.includes('servicio') || nameLower.includes('suscripci')) return Zap;
+  if (nameLower.includes('salud') || nameLower.includes('bienestar')) return Heart;
+  if (nameLower.includes('ahorro') || nameLower.includes('inversión')) return PiggyBank;
+  if (nameLower.includes('mascota') || nameLower.includes('perro') || nameLower.includes('gato')) return Dog;
+  if (nameLower.includes('entretenimiento') || nameLower.includes('ocio') || nameLower.includes('estilo')) return Film;
+  if (nameLower.includes('educación') || nameLower.includes('desarrollo') || nameLower.includes('curso')) return GraduationCap;
+  if (nameLower.includes('deuda') || nameLower.includes('crédito')) return CreditCard;
+  if (nameLower.includes('apoyo') || nameLower.includes('regalo') || nameLower.includes('otro')) return Gift;
+  if (nameLower.includes('personal')) return Star;
+
+  return ShoppingCart;
+};
+
+interface BudgetCategory {
   id: string;
+  categoryId: string;
   name: string;
+  budget: number;
+  icon: LucideIcon;
 }
-
-interface Category {
-  id: string;
-  name: string;
-  icon: string;
-  suggestedPercentage: number;
-  subcategories: Subcategory[];
-  insight: string;
-}
-
-const DEFAULT_CATEGORIES: Category[] = [
-  { 
-    id: 'vivienda', 
-    name: 'Vivienda', 
-    icon: '🏠', 
-    suggestedPercentage: 30,
-    insight: 'Mide estabilidad y proporción ideal (<30% de ingresos)',
-    subcategories: [
-      { id: 'renta', name: 'Renta o hipoteca' },
-      { id: 'mantenimiento', name: 'Mantenimiento o predial' },
-      { id: 'luz', name: 'Luz' },
-      { id: 'agua', name: 'Agua' },
-      { id: 'gas', name: 'Gas' },
-      { id: 'internet', name: 'Internet y teléfono' },
-      { id: 'limpieza', name: 'Servicio de limpieza / seguridad' },
-    ]
-  },
-  { 
-    id: 'transporte', 
-    name: 'Transporte', 
-    icon: '🚗', 
-    suggestedPercentage: 15,
-    insight: 'Detecta sobrecostos o hábitos de transporte ineficiente',
-    subcategories: [
-      { id: 'gasolina', name: 'Gasolina / carga eléctrica' },
-      { id: 'mensualidad_auto', name: 'Mensualidad de automóvil' },
-      { id: 'publico', name: 'Transporte público' },
-      { id: 'uber', name: 'Uber, Didi, taxis' },
-      { id: 'estacionamiento', name: 'Estacionamiento o peajes' },
-      { id: 'mantenimiento_vehiculo', name: 'Mantenimiento del vehículo / seguro' },
-    ]
-  },
-  { 
-    id: 'alimentacion', 
-    name: 'Alimentación', 
-    icon: '🍽️', 
-    suggestedPercentage: 20,
-    insight: 'Es la categoría donde más fuga de dinero hay',
-    subcategories: [
-      { id: 'supermercado', name: 'Supermercado' },
-      { id: 'restaurantes', name: 'Comidas fuera de casa' },
-      { id: 'cafe', name: 'Café / snacks / antojos' },
-      { id: 'apps_comida', name: 'Apps de comida (Rappi, Uber Eats, etc.)' },
-    ]
-  },
-  { 
-    id: 'servicios', 
-    name: 'Servicios y suscripciones', 
-    icon: '🧾', 
-    suggestedPercentage: 8,
-    insight: 'Ideal para detectar "gastos hormiga" o suscripciones olvidadas',
-    subcategories: [
-      { id: 'streaming', name: 'Streaming (Netflix, Spotify, etc.)' },
-      { id: 'apps_premium', name: 'Apps premium (IA, productividad, edición, etc.)' },
-      { id: 'software', name: 'Suscripciones de software / membresías' },
-      { id: 'telefono', name: 'Teléfono móvil' },
-    ]
-  },
-  { 
-    id: 'salud', 
-    name: 'Salud y bienestar', 
-    icon: '🩺', 
-    suggestedPercentage: 5,
-    insight: 'Muestra equilibrio entre autocuidado y exceso de gasto',
-    subcategories: [
-      { id: 'seguro_medico', name: 'Seguro médico' },
-      { id: 'medicinas', name: 'Medicinas' },
-      { id: 'consultas', name: 'Consultas médicas' },
-      { id: 'gimnasio', name: 'Gimnasio, clases, suplementos' },
-    ]
-  },
-  { 
-    id: 'educacion', 
-    name: 'Educación y desarrollo', 
-    icon: '🎓', 
-    suggestedPercentage: 5,
-    insight: 'Refleja gasto de crecimiento o inversión en conocimiento',
-    subcategories: [
-      { id: 'colegiaturas', name: 'Colegiaturas' },
-      { id: 'cursos', name: 'Cursos / talleres' },
-      { id: 'libros', name: 'Libros o herramientas de aprendizaje' },
-      { id: 'extracurriculares', name: 'Clases extracurriculares' },
-    ]
-  },
-  { 
-    id: 'deudas', 
-    name: 'Deudas y créditos', 
-    icon: '💳', 
-    suggestedPercentage: 5,
-    insight: 'Ayuda a calcular el índice de endeudamiento (<35% recomendable)',
-    subcategories: [
-      { id: 'tarjetas', name: 'Tarjetas de crédito' },
-      { id: 'prestamos', name: 'Préstamos personales' },
-      { id: 'hipotecarios', name: 'Créditos hipotecarios' },
-      { id: 'intereses', name: 'Intereses / pagos mínimos' },
-    ]
-  },
-  { 
-    id: 'entretenimiento', 
-    name: 'Entretenimiento y estilo de vida', 
-    icon: '🎉', 
-    suggestedPercentage: 7,
-    insight: 'Identifica exceso de gasto emocional o impulsivo',
-    subcategories: [
-      { id: 'salidas', name: 'Salidas, fiestas, bares' },
-      { id: 'ropa', name: 'Ropa, accesorios, belleza' },
-      { id: 'viajes', name: 'Viajes o escapadas' },
-      { id: 'hobbies', name: 'Hobbies, videojuegos, mascotas' },
-    ]
-  },
-  { 
-    id: 'ahorro', 
-    name: 'Ahorro e inversión', 
-    icon: '💸', 
-    suggestedPercentage: 10,
-    insight: 'Mide disciplina financiera (objetivo: al menos 10-20% de ingresos)',
-    subcategories: [
-      { id: 'ahorro_mensual', name: 'Ahorro mensual' },
-      { id: 'fondo_emergencia', name: 'Fondo de emergencia' },
-      { id: 'inversion', name: 'Inversión (fondos, CETES, cripto, etc.)' },
-      { id: 'retiro', name: 'Aportación a retiro (AFORE, IRA, etc.)' },
-    ]
-  },
-  { 
-    id: 'apoyos', 
-    name: 'Apoyos y otros', 
-    icon: '🤝', 
-    suggestedPercentage: 0,
-    insight: 'Permite ajustar el "balance neto real" del mes',
-    subcategories: [
-      { id: 'apoyo_familiar', name: 'Apoyo familiar / hijos / pareja' },
-      { id: 'donaciones', name: 'Donaciones' },
-      { id: 'otros', name: 'Otros gastos no clasificados' },
-    ]
-  },
-  { 
-    id: 'mascotas', 
-    name: 'Mascotas', 
-    icon: '🐾', 
-    suggestedPercentage: 3,
-    insight: 'Cuida de tus compañeros peludos de forma responsable',
-    subcategories: [
-      { id: 'comida_mascotas', name: 'Comida y snacks' },
-      { id: 'veterinario', name: 'Veterinario y medicinas' },
-      { id: 'accesorios_mascotas', name: 'Accesorios y juguetes' },
-      { id: 'estetica_mascotas', name: 'Estética y cuidado' },
-      { id: 'seguro_mascotas', name: 'Seguro de mascotas' },
-    ]
-  },
-  { 
-    id: 'personalizada', 
-    name: 'Categoría personalizada', 
-    icon: '⭐', 
-    suggestedPercentage: 0,
-    insight: 'Crea tu propia categoría para gastos específicos',
-    subcategories: [
-      { id: 'personalizado_1', name: 'Concepto 1' },
-    ]
-  },
-];
 
 export default function EditBudgets() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
-  const [budgets, setBudgets] = useState<Record<string, number>>({});
-  const [subcategoryBudgets, setSubcategoryBudgets] = useState<Record<string, number>>({});
-  const [customSubcategories, setCustomSubcategories] = useState<Record<string, string>>({});
-  const [customSubcategoriesByCategory, setCustomSubcategoriesByCategory] = useState<Record<string, Subcategory[]>>({});
+  const [hasChanges, setHasChanges] = useState(false);
+  const [categories, setCategories] = useState<BudgetCategory[]>([]);
+
+  // Add category form state
+  const [isAdding, setIsAdding] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newAmount, setNewAmount] = useState('');
+  const [newIcon, setNewIcon] = useState('ShoppingCart');
 
   useEffect(() => {
     loadBudgets();
@@ -206,100 +72,36 @@ export default function EditBudgets() {
         return;
       }
 
-      // Cargar todas las categorías principales del usuario
-      const { data: userCategories } = await supabase
+      // Load user's categories with their budgets
+      const { data: userCategories, error: catError } = await supabase
         .from('categories')
         .select('id, name')
         .eq('user_id', user.id)
         .is('parent_id', null);
 
-      if (!userCategories) {
-        setLoading(false);
-        return;
+      if (catError) throw catError;
+
+      // Load budgets for these categories
+      const categoryBudgets: BudgetCategory[] = [];
+
+      for (const cat of userCategories || []) {
+        const { data: budget } = await supabase
+          .from('category_budgets')
+          .select('id, monthly_budget')
+          .eq('user_id', user.id)
+          .eq('category_id', cat.id)
+          .maybeSingle();
+
+        categoryBudgets.push({
+          id: budget?.id || `new-${cat.id}`,
+          categoryId: cat.id,
+          name: cat.name.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '').trim(),
+          budget: Number(budget?.monthly_budget) || 0,
+          icon: getCategoryIcon(cat.name)
+        });
       }
 
-      // Crear mapa de categorías por nombre
-      const categoryMap = new Map(userCategories.map(c => [c.name.toLowerCase(), c.id]));
-
-      const loadedBudgets: Record<string, number> = {};
-      const loadedSubcategoryBudgets: Record<string, number> = {};
-      const loadedCustomSubcategoriesByCategory: Record<string, Subcategory[]> = {};
-
-      // Para cada categoría predeterminada
-      for (const category of DEFAULT_CATEGORIES) {
-        const catId = categoryMap.get(category.name.toLowerCase());
-        
-        if (catId) {
-          // Cargar presupuesto de categoría principal
-          const { data: budget } = await supabase
-            .from('category_budgets')
-            .select('monthly_budget')
-            .eq('user_id', user.id)
-            .eq('category_id', catId)
-            .maybeSingle();
-
-          if (budget) {
-            loadedBudgets[category.id] = Number(budget.monthly_budget);
-          }
-
-          // Cargar subcategorías
-          const { data: subcategories } = await supabase
-            .from('categories')
-            .select('id, name')
-            .eq('user_id', user.id)
-            .eq('parent_id', catId);
-
-          if (subcategories) {
-            const customSubcats: Subcategory[] = [];
-            
-            for (const subcat of subcategories) {
-              // Buscar en DEFAULT_CATEGORIES la subcategoría correspondiente
-              const defaultSubcat = category.subcategories.find(
-                s => s.name.toLowerCase() === subcat.name.toLowerCase()
-              );
-
-              if (defaultSubcat) {
-                // Cargar presupuesto de subcategoría predeterminada
-                const { data: subcatBudget } = await supabase
-                  .from('category_budgets')
-                  .select('monthly_budget')
-                  .eq('user_id', user.id)
-                  .eq('category_id', subcat.id)
-                  .maybeSingle();
-
-                if (subcatBudget) {
-                  loadedSubcategoryBudgets[defaultSubcat.id] = Number(subcatBudget.monthly_budget);
-                }
-              } else {
-                // Es una subcategoría personalizada
-                const customId = `custom_${category.id}_${subcat.id}`;
-                customSubcats.push({ id: customId, name: subcat.name });
-                
-                // Cargar presupuesto de subcategoría personalizada
-                const { data: subcatBudget } = await supabase
-                  .from('category_budgets')
-                  .select('monthly_budget')
-                  .eq('user_id', user.id)
-                  .eq('category_id', subcat.id)
-                  .maybeSingle();
-
-                if (subcatBudget) {
-                  loadedSubcategoryBudgets[customId] = Number(subcatBudget.monthly_budget);
-                }
-              }
-            }
-            
-            if (customSubcats.length > 0) {
-              loadedCustomSubcategoriesByCategory[category.id] = customSubcats;
-            }
-          }
-        }
-      }
-
-      setBudgets(loadedBudgets);
-      setSubcategoryBudgets(loadedSubcategoryBudgets);
-      setCustomSubcategoriesByCategory(loadedCustomSubcategoriesByCategory);
-
+      setCategories(categoryBudgets);
     } catch (error) {
       console.error('Error loading budgets:', error);
       toast.error("Error al cargar datos");
@@ -308,17 +110,14 @@ export default function EditBudgets() {
     }
   };
 
-  const formatCurrency = (value: number): string => {
-    if (!value || value === 0) return "";
-    return new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(value);
-  };
+  const handleAmountChange = (categoryId: string, value: string) => {
+    const cleanValue = value.replace(/[^0-9]/g, '');
+    const num = cleanValue === '' ? 0 : parseInt(cleanValue, 10);
 
-  const updateSubcategoryBudget = (subcategoryId: string, value: string) => {
-    const numValue = value === "" ? 0 : Number(value);
-    setSubcategoryBudgets({ ...subcategoryBudgets, [subcategoryId]: numValue });
+    setCategories(prev => prev.map(cat =>
+      cat.categoryId === categoryId ? { ...cat, budget: num } : cat
+    ));
+    setHasChanges(true);
   };
 
   const handleSave = async () => {
@@ -327,618 +126,304 @@ export default function EditBudgets() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Para cada categoría predeterminada
-      for (const category of DEFAULT_CATEGORIES) {
-        const categoryBudget = budgets[category.id];
-        
-        // Solo procesar si tiene presupuesto o subcategorías con presupuesto
-        const hasSubcategoryBudgets = category.subcategories.some(
-          sub => subcategoryBudgets[sub.id] && subcategoryBudgets[sub.id] > 0
-        );
-
-        if (!categoryBudget && !hasSubcategoryBudgets) continue;
-
-        // Buscar o crear categoría principal
-        let { data: existingCategory } = await supabase
-          .from('categories')
-          .select('id')
-          .eq('user_id', user.id)
-          .eq('name', category.name)
-          .is('parent_id', null)
-          .maybeSingle();
-
-        let categoryId = existingCategory?.id;
-
-        if (!categoryId) {
-          const { data: newCategory, error: catError } = await supabase
-            .from('categories')
-            .insert({
-              user_id: user.id,
-              name: category.name,
-              type: 'gasto',
-              color: 'bg-primary/20',
-              parent_id: null
-            })
-            .select('id')
-            .single();
-
-          if (catError) throw catError;
-          categoryId = newCategory.id;
-        }
-
-        // Guardar o actualizar presupuesto de categoría principal
-        if (categoryBudget && categoryBudget > 0) {
-          const { data: existingBudget } = await supabase
+      for (const cat of categories) {
+        if (cat.budget > 0) {
+          // Check if budget exists
+          const { data: existing } = await supabase
             .from('category_budgets')
             .select('id')
             .eq('user_id', user.id)
-            .eq('category_id', categoryId)
+            .eq('category_id', cat.categoryId)
             .maybeSingle();
 
-          if (existingBudget) {
+          if (existing) {
+            // Update existing budget
             await supabase
               .from('category_budgets')
-              .update({ monthly_budget: categoryBudget })
-              .eq('id', existingBudget.id);
+              .update({ monthly_budget: cat.budget })
+              .eq('id', existing.id);
           } else {
+            // Create new budget
             await supabase
               .from('category_budgets')
               .insert({
                 user_id: user.id,
-                category_id: categoryId,
-                monthly_budget: categoryBudget
+                category_id: cat.categoryId,
+                monthly_budget: cat.budget
               });
-          }
-        }
-
-        // Guardar presupuestos de subcategorías
-        for (const subcategory of category.subcategories) {
-          const subcatBudget = subcategoryBudgets[subcategory.id];
-          
-          if (subcatBudget && subcatBudget > 0) {
-            // Obtener nombre personalizado si existe (para categoría personalizada)
-            const subcatName = category.id === 'personalizada' && customSubcategories[subcategory.id]
-              ? customSubcategories[subcategory.id]
-              : subcategory.name;
-
-            // Buscar o crear subcategoría
-            let { data: existingSubcat } = await supabase
-              .from('categories')
-              .select('id')
-              .eq('user_id', user.id)
-              .eq('name', subcatName)
-              .eq('parent_id', categoryId)
-              .maybeSingle();
-
-            let subcatId = existingSubcat?.id;
-
-            if (!subcatId) {
-              const { data: newSubcat, error: subcatError } = await supabase
-                .from('categories')
-                .insert({
-                  user_id: user.id,
-                  name: subcatName,
-                  type: 'gasto',
-                  color: 'bg-primary/20',
-                  parent_id: categoryId
-                })
-                .select('id')
-                .single();
-
-              if (subcatError) throw subcatError;
-              subcatId = newSubcat.id;
-            }
-
-            // Guardar presupuesto de subcategoría
-            const { data: existingBudget } = await supabase
-              .from('category_budgets')
-              .select('id')
-              .eq('user_id', user.id)
-              .eq('category_id', subcatId)
-              .maybeSingle();
-
-            if (existingBudget) {
-              await supabase
-                .from('category_budgets')
-                .update({ monthly_budget: subcatBudget })
-                .eq('id', existingBudget.id);
-            } else {
-              await supabase
-                .from('category_budgets')
-                .insert({
-                  user_id: user.id,
-                  category_id: subcatId,
-                  monthly_budget: subcatBudget
-                });
-            }
-          }
-        }
-
-        // Procesar subcategorías personalizadas adicionales
-        const customSubcats = customSubcategoriesByCategory[category.id] || [];
-        for (const customSubcat of customSubcats) {
-          const subcatBudget = subcategoryBudgets[customSubcat.id];
-          
-          if (subcatBudget && subcatBudget > 0) {
-            // Obtener nombre personalizado
-            const subcatName = customSubcategories[customSubcat.id] || customSubcat.name;
-
-            // Buscar o crear subcategoría personalizada
-            let { data: existingSubcat } = await supabase
-              .from('categories')
-              .select('id')
-              .eq('user_id', user.id)
-              .eq('name', subcatName)
-              .eq('parent_id', categoryId)
-              .maybeSingle();
-
-            let subcatId = existingSubcat?.id;
-
-            if (!subcatId) {
-              const { data: newSubcat, error: subcatError } = await supabase
-                .from('categories')
-                .insert({
-                  user_id: user.id,
-                  name: subcatName,
-                  type: 'gasto',
-                  color: 'bg-primary/20',
-                  parent_id: categoryId
-                })
-                .select('id')
-                .single();
-
-              if (subcatError) throw subcatError;
-              subcatId = newSubcat.id;
-            }
-
-            // Guardar presupuesto de subcategoría personalizada
-            const { data: existingBudget } = await supabase
-              .from('category_budgets')
-              .select('id')
-              .eq('user_id', user.id)
-              .eq('category_id', subcatId)
-              .maybeSingle();
-
-            if (existingBudget) {
-              await supabase
-                .from('category_budgets')
-                .update({ monthly_budget: subcatBudget })
-                .eq('id', existingBudget.id);
-            } else {
-              await supabase
-                .from('category_budgets')
-                .insert({
-                  user_id: user.id,
-                  category_id: subcatId,
-                  monthly_budget: subcatBudget
-                });
-            }
           }
         }
       }
 
-      toast.success("Presupuesto actualizado");
+      // Invalidate cache so fresh data loads
+      invalidateAllCache();
+
+      toast.success("Presupuesto guardado");
+      setHasChanges(false);
       navigate('/budgets');
     } catch (error) {
       console.error('Error saving budgets:', error);
-      toast.error("Error al guardar cambios");
+      toast.error("Error al guardar");
     } finally {
       setSaving(false);
     }
   };
 
+  const handleAddCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newName.trim() || !newAmount) return;
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Create new category
+      const { data: newCat, error: catError } = await supabase
+        .from('categories')
+        .insert({
+          user_id: user.id,
+          name: newName.trim(),
+          type: 'gasto',
+          color: '#8D6E63'
+        })
+        .select('id')
+        .single();
+
+      if (catError) throw catError;
+
+      const budget = Math.abs(parseInt(newAmount) || 0);
+
+      // Create budget for new category
+      if (budget > 0) {
+        await supabase
+          .from('category_budgets')
+          .insert({
+            user_id: user.id,
+            category_id: newCat.id,
+            monthly_budget: budget
+          });
+      }
+
+      // Add to local state
+      const IconComponent = ICON_MAP[newIcon] || ShoppingCart;
+      setCategories(prev => [...prev, {
+        id: `new-${newCat.id}`,
+        categoryId: newCat.id,
+        name: newName.trim(),
+        budget,
+        icon: IconComponent
+      }]);
+
+      // Reset form
+      setNewName('');
+      setNewAmount('');
+      setIsAdding(false);
+      setHasChanges(true);
+
+      toast.success("Categoría agregada");
+    } catch (error) {
+      console.error('Error adding category:', error);
+      toast.error("Error al agregar categoría");
+    }
+  };
+
+  const total = categories.reduce((sum, cat) => sum + cat.budget, 0);
+  const maxBudget = Math.max(...categories.map(c => c.budget), 1);
+
   if (loading) {
     return (
-      <div className="page-standard min-h-screen pb-20 flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAFAF9] pb-20 flex items-center justify-center">
         <SectionLoader size="lg" />
       </div>
     );
   }
 
   return (
-    <div className="page-standard min-h-screen pb-20">
-      {/* Header */}
-      <div className="sticky top-0 z-40 bg-gradient-to-b from-[#f5f0ee]/80 to-transparent backdrop-blur-sm">
-        <div className="page-container py-4">
-          <div className="flex items-center justify-between mb-1">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/budgets')}
-              className="bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all border-0 h-10 w-10 p-0"
-            >
-              <ArrowLeft className="h-4 w-4 text-gray-700" />
-            </Button>
-            <div className="flex-1 text-center">
-              <h1 className="text-xl font-semibold text-gray-900 tracking-tight">Presupuesto</h1>
-            </div>
-            <div className="w-10" />
+    <div className="min-h-screen bg-[#FAFAF9] font-sans text-gray-800">
+      <div className="max-w-5xl mx-auto min-h-screen relative">
+
+        {/* Header */}
+        <div className="w-full flex items-center gap-4 pt-8 pb-4 px-6 bg-transparent">
+          <button
+            onClick={() => navigate('/budgets')}
+            className="p-3 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors text-gray-700"
+            aria-label="Go back"
+          >
+            <ChevronLeft size={20} strokeWidth={2.5} />
+          </button>
+
+          <div className="flex flex-col flex-1">
+            <h1 className="text-xl font-bold text-gray-900 leading-tight">
+              Editar Presupuesto
+            </h1>
+            <p className="text-xs font-medium text-gray-500">
+              Ajusta tus montos mensuales
+            </p>
           </div>
-          <p className="text-xs text-center text-gray-600">
-            Ajusta tus montos mensuales
-          </p>
         </div>
-      </div>
 
-      <div className="page-container py-6 space-y-4">
-
-        {/* Main Card */}
-        <Card className="p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-sm border-0 animate-fade-in">
-          <div className="space-y-6">
-            <div className="text-center">
-              <div className="text-3xl mb-1.5">📊</div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-1 tracking-tight">
-                Modifica tus presupuestos
-              </h2>
-              <p className="text-xs text-gray-500">
-                Toca para ver subcategorías y ajustar montos
-              </p>
+        {/* Total Assigned Section */}
+        <div className="w-full px-6 mt-4">
+          <div className="flex items-end justify-between mb-6 px-1">
+            <div>
+              <span className="text-[10px] font-bold text-[#8D6E63] uppercase tracking-widest block mb-1">
+                Total Asignado
+              </span>
+              <span className="text-3xl font-black text-[#5D4037]">
+                ${total.toLocaleString()}
+              </span>
             </div>
 
-            {/* Categories List */}
-            <div className="space-y-3">
-              {DEFAULT_CATEGORIES.map((category, index) => (
-                <div key={category.id} className="space-y-2">
-                  <button
-                    onClick={() => setExpandedCategory(
-                      expandedCategory === category.id ? null : category.id
-                    )}
-                    className="w-full p-4 rounded-2xl transition-all text-left bg-white hover:bg-gray-50 border-0 shadow-sm hover:shadow-md animate-fade-in"
-                    style={{ animationDelay: `${index * 0.05}s` }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="text-3xl">{category.icon}</span>
-                        <div>
-                          <p className="text-sm font-semibold text-gray-900">
-                            {category.name}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {category.suggestedPercentage}% sugerido
-                          </p>
+            {hasChanges && (
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="flex items-center gap-2 px-5 py-2.5 bg-[#5D4037] text-white rounded-xl shadow-lg shadow-[#5D4037]/25 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm transition-all duration-300 disabled:opacity-50"
+              >
+                <Save size={16} strokeWidth={2.5} />
+                <span className="text-xs font-bold">{saving ? 'Guardando...' : 'Guardar'}</span>
+              </button>
+            )}
+          </div>
+
+          {/* Categories List */}
+          <div className="space-y-3 pb-6">
+            {categories.map((item, index) => {
+              const relativeWidth = (item.budget / maxBudget) * 100;
+              const Icon = item.icon;
+
+              return (
+                <div
+                  key={item.categoryId}
+                  className="group flex items-center justify-between p-3.5 bg-white rounded-2xl border border-stone-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_14px_rgba(93,64,55,0.06)] hover:border-stone-200 transition-all duration-300"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <div className="flex items-center gap-4 w-full">
+                    {/* Icon Container */}
+                    <div className="w-11 h-11 flex-shrink-0 rounded-full bg-[#EFEBE9] border border-[#E0D6D2] flex items-center justify-center text-[#5D4037] group-hover:bg-[#5D4037] group-hover:text-white group-hover:scale-110 transition-all duration-300 transform">
+                      <Icon size={18} strokeWidth={1.5} />
+                    </div>
+
+                    {/* Text & Progress Track */}
+                    <div className="flex flex-col gap-1.5 w-full mr-1">
+                      <div className="flex justify-between items-end">
+                        <span className="text-sm font-bold text-[#5D4037] tracking-tight mb-0.5">{item.name}</span>
+
+                        {/* Editable Budget */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold text-gray-300 uppercase tracking-wider">Mensual</span>
+                          <div className="flex items-center gap-1">
+                            <span className="text-xs font-bold text-gray-400">$</span>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              value={item.budget === 0 ? '' : item.budget}
+                              placeholder="0"
+                              onChange={(e) => handleAmountChange(item.categoryId, e.target.value)}
+                              className="w-20 text-right text-sm font-bold text-[#5D4037] bg-[#EFEBE9]/50 rounded-lg px-2 py-1 outline-none border border-transparent focus:border-stone-300 focus:bg-white focus:ring-1 focus:ring-[#5D4037]/10 transition-all placeholder:text-stone-300"
+                            />
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {budgets[category.id] && budgets[category.id] > 0 && (
-                          <span className="text-sm font-bold text-gray-900">
-                            ${formatCurrency(budgets[category.id])}
-                          </span>
-                        )}
-                        <ArrowRight className={`h-5 w-5 text-gray-400 transition-transform ${
-                          expandedCategory === category.id ? 'rotate-90' : ''
-                        }`} />
-                      </div>
-                    </div>
-                  </button>
 
-                  {/* Expanded Panel */}
-                  {expandedCategory === category.id && (
-                    <div className="ml-2 pl-4 border-l-2 border-gray-200 space-y-2 py-3 animate-fade-in">
-                      <p className="text-xs text-gray-500 italic mb-3">
-                        💡 {category.insight}
-                      </p>
-
-                      {/* Subcategories */}
-                      <div className="space-y-2">
-                        {/* Subcategorías predeterminadas */}
-                        {category.subcategories.map((sub) => (
-                          <div key={sub.id} className="bg-gray-50/50 rounded-xl px-3 py-3 border border-gray-100">
-                            <div className="flex items-center justify-between gap-2 mb-2">
-                              {category.id === 'personalizada' ? (
-                                <>
-                                  <Input
-                                    type="text"
-                                    placeholder={sub.name}
-                                    value={customSubcategories[sub.id] || ""}
-                                    onChange={(e) => {
-                                      setCustomSubcategories({ ...customSubcategories, [sub.id]: e.target.value });
-                                    }}
-                                    className="flex-1 h-8 text-xs bg-white border-gray-200 rounded-lg"
-                                  />
-                                  <div className="relative flex items-center">
-                                    <span className="absolute left-3 text-xs font-medium text-gray-500">$</span>
-                                    <Input
-                                      type="text"
-                                      inputMode="numeric"
-                                      placeholder="0"
-                                      value={subcategoryBudgets[sub.id] ? formatCurrency(subcategoryBudgets[sub.id]) : ""}
-                                      onChange={(e) => {
-                                        const value = e.target.value.replace(/[^\d]/g, '');
-                                        updateSubcategoryBudget(sub.id, value);
-                                      }}
-                                      className="w-24 h-8 text-xs text-right font-medium pl-6 pr-3 bg-white border-gray-200 rounded-lg"
-                                    />
-                                  </div>
-                                  {sub.id.startsWith('personalizado_') && (
-                                    <Button
-                                      onClick={() => {
-                                        // Eliminar subcategoría
-                                        const index = category.subcategories.findIndex(s => s.id === sub.id);
-                                        if (index > -1) {
-                                          category.subcategories.splice(index, 1);
-                                        }
-                                        // Limpiar datos asociados
-                                        const newCustomSubcats = { ...customSubcategories };
-                                        delete newCustomSubcats[sub.id];
-                                        setCustomSubcategories(newCustomSubcats);
-                                        
-                                        const newSubcatBudgets = { ...subcategoryBudgets };
-                                        delete newSubcatBudgets[sub.id];
-                                        setSubcategoryBudgets(newSubcatBudgets);
-                                      }}
-                                      variant="ghost"
-                                      className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 rounded-lg"
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                  )}
-                                </>
-                              ) : (
-                                <>
-                                  <span className="text-xs font-medium text-gray-700 flex-1">
-                                    • {sub.name}
-                                  </span>
-                                  <div className="relative flex items-center">
-                                    <span className="absolute left-3 text-xs font-medium text-gray-500">$</span>
-                                    <Input
-                                      type="text"
-                                      inputMode="numeric"
-                                      placeholder="0"
-                                      value={subcategoryBudgets[sub.id] ? formatCurrency(subcategoryBudgets[sub.id]) : ""}
-                                      onChange={(e) => {
-                                        const value = e.target.value.replace(/[^\d]/g, '');
-                                        updateSubcategoryBudget(sub.id, value);
-                                      }}
-                                      className="w-24 h-8 text-xs text-right font-medium pl-6 pr-3 bg-white border-gray-200 rounded-lg"
-                                    />
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-
-                        {/* Subcategorías personalizadas */}
-                        {customSubcategoriesByCategory[category.id]?.map((sub) => (
-                          <div key={sub.id} className="bg-blue-50/50 rounded-xl px-3 py-3 border border-blue-200">
-                            <div className="flex items-center justify-between gap-2 mb-2">
-                              <Input
-                                type="text"
-                                placeholder="Nombre de subcategoría"
-                                value={customSubcategories[sub.id] || sub.name}
-                                onChange={(e) => {
-                                  setCustomSubcategories({ ...customSubcategories, [sub.id]: e.target.value });
-                                }}
-                                className="flex-1 h-8 text-xs bg-white border-gray-200 rounded-lg"
-                              />
-                              <div className="relative flex items-center">
-                                <span className="absolute left-3 text-xs font-medium text-gray-500">$</span>
-                                <Input
-                                  type="text"
-                                  inputMode="numeric"
-                                  placeholder="0"
-                                  value={subcategoryBudgets[sub.id] ? formatCurrency(subcategoryBudgets[sub.id]) : ""}
-                                  onChange={(e) => {
-                                    const value = e.target.value.replace(/[^\d]/g, '');
-                                    updateSubcategoryBudget(sub.id, value);
-                                  }}
-                                  className="w-24 h-8 text-xs text-right font-medium pl-6 pr-3 bg-white border-gray-200 rounded-lg"
-                                />
-                              </div>
-                              <Button
-                                onClick={() => {
-                                  // Eliminar subcategoría personalizada
-                                  const newCustomSubcats = { ...customSubcategoriesByCategory };
-                                  newCustomSubcats[category.id] = newCustomSubcats[category.id].filter(s => s.id !== sub.id);
-                                  setCustomSubcategoriesByCategory(newCustomSubcats);
-                                  
-                                  // Limpiar datos asociados
-                                  const newCustomNames = { ...customSubcategories };
-                                  delete newCustomNames[sub.id];
-                                  setCustomSubcategories(newCustomNames);
-                                  
-                                  const newSubcatBudgets = { ...subcategoryBudgets };
-                                  delete newSubcatBudgets[sub.id];
-                                  setSubcategoryBudgets(newSubcatBudgets);
-                                }}
-                                variant="ghost"
-                                className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 rounded-lg"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Add button for all categories */}
-                      <div className="flex justify-center mt-3">
-                        <Button
-                          onClick={() => {
-                            const newId = `custom_${category.id}_${Date.now()}`;
-                            const newSubcategory = { 
-                              id: newId, 
-                              name: '' 
-                            };
-                            
-                            const currentCustom = customSubcategoriesByCategory[category.id] || [];
-                            setCustomSubcategoriesByCategory({
-                              ...customSubcategoriesByCategory,
-                              [category.id]: [...currentCustom, newSubcategory]
-                            });
-                          }}
-                          variant="ghost"
-                          size="sm"
-                          className="h-9 text-xs rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-5"
-                        >
-                          + Agregar subcategoría
-                        </Button>
-                      </div>
-
-                      {/* Action Button */}
-                      <Button
-                        onClick={async () => {
-                          // Calcular total de subcategorías
-                          const subcategoryTotal = category.subcategories.reduce((sum, sub) => {
-                            return sum + (subcategoryBudgets[sub.id] || 0);
-                          }, 0);
-                          
-                          // Actualizar budget de categoría principal
-                          if (subcategoryTotal > 0) {
-                            setBudgets({ ...budgets, [category.id]: subcategoryTotal });
-                          }
-                          
-                          // Guardar automáticamente en la base de datos
-                          setSaving(true);
-                          try {
-                            const { data: { user } } = await supabase.auth.getUser();
-                            if (!user) return;
-
-                            // Buscar o crear categoría principal
-                            let { data: existingCategory } = await supabase
-                              .from('categories')
-                              .select('id')
-                              .eq('user_id', user.id)
-                              .eq('name', category.name)
-                              .is('parent_id', null)
-                              .maybeSingle();
-
-                            let categoryId = existingCategory?.id;
-
-                            if (!categoryId) {
-                              const { data: newCategory, error: catError } = await supabase
-                                .from('categories')
-                                .insert({
-                                  user_id: user.id,
-                                  name: category.name,
-                                  type: 'gasto',
-                                  color: 'bg-primary/20',
-                                  parent_id: null
-                                })
-                                .select('id')
-                                .single();
-
-                              if (catError) throw catError;
-                              categoryId = newCategory.id;
-                            }
-
-                            // Actualizar presupuesto de categoría principal con el total
-                            if (subcategoryTotal > 0) {
-                              const { data: existingBudget } = await supabase
-                                .from('category_budgets')
-                                .select('id')
-                                .eq('user_id', user.id)
-                                .eq('category_id', categoryId)
-                                .maybeSingle();
-
-                              if (existingBudget) {
-                                await supabase
-                                  .from('category_budgets')
-                                  .update({ monthly_budget: subcategoryTotal })
-                                  .eq('id', existingBudget.id);
-                              } else {
-                                await supabase
-                                  .from('category_budgets')
-                                  .insert({
-                                    user_id: user.id,
-                                    category_id: categoryId,
-                                    monthly_budget: subcategoryTotal
-                                  });
-                              }
-                            }
-
-                            // Guardar presupuestos de subcategorías
-                            for (const subcategory of category.subcategories) {
-                              const subcatBudget = subcategoryBudgets[subcategory.id];
-                              
-                              if (subcatBudget && subcatBudget > 0) {
-                                // Obtener nombre personalizado si existe
-                                const subcatName = category.id === 'personalizada' && customSubcategories[subcategory.id]
-                                  ? customSubcategories[subcategory.id]
-                                  : subcategory.name;
-
-                                // Buscar o crear subcategoría
-                                let { data: existingSubcat } = await supabase
-                                  .from('categories')
-                                  .select('id')
-                                  .eq('user_id', user.id)
-                                  .eq('name', subcatName)
-                                  .eq('parent_id', categoryId)
-                                  .maybeSingle();
-
-                                let subcatId = existingSubcat?.id;
-
-                                if (!subcatId) {
-                                  const { data: newSubcat, error: subcatError } = await supabase
-                                    .from('categories')
-                                    .insert({
-                                      user_id: user.id,
-                                      name: subcatName,
-                                      type: 'gasto',
-                                      color: 'bg-primary/20',
-                                      parent_id: categoryId
-                                    })
-                                    .select('id')
-                                    .single();
-
-                                  if (subcatError) throw subcatError;
-                                  subcatId = newSubcat.id;
-                                }
-
-                                // Guardar presupuesto de subcategoría
-                                const { data: existingBudget } = await supabase
-                                  .from('category_budgets')
-                                  .select('id')
-                                  .eq('user_id', user.id)
-                                  .eq('category_id', subcatId)
-                                  .maybeSingle();
-
-                                if (existingBudget) {
-                                  await supabase
-                                    .from('category_budgets')
-                                    .update({ monthly_budget: subcatBudget })
-                                    .eq('id', existingBudget.id);
-                                } else {
-                                  await supabase
-                                    .from('category_budgets')
-                                    .insert({
-                                      user_id: user.id,
-                                      category_id: subcatId,
-                                      monthly_budget: subcatBudget
-                                    });
-                                }
-                              }
-                            }
-
-                            toast.success(`${category.name} actualizado`);
-                            setExpandedCategory(null);
-                          } catch (error) {
-                            console.error('Error saving category:', error);
-                            toast.error("Error al guardar cambios");
-                          } finally {
-                            setSaving(false);
-                          }
-                        }}
-                        disabled={saving}
-                        className="w-full mt-4 h-11 text-sm font-medium bg-gray-900 hover:bg-gray-800 text-white rounded-xl shadow-sm hover:shadow-md transition-all disabled:opacity-50"
+                      {/* Progress Track */}
+                      <div
+                        className="h-1.5 bg-[#EFEBE9] rounded-full overflow-hidden flex transition-all duration-500"
+                        style={{ width: '100%' }}
                       >
-                        {saving ? 'Guardando...' : 'Guardar Cambios'}
-                      </Button>
+                        <div
+                          className="h-full bg-[#5D4037]/20 rounded-full transition-all duration-1000 ease-out"
+                          style={{ width: `${Math.max(relativeWidth, 5)}%` }}
+                        ></div>
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
-              ))}
-            </div>
-
-            {/* Save Button */}
-            <Button
-              onClick={handleSave}
-              disabled={saving}
-              className="w-full h-12 text-sm font-medium bg-gray-900 hover:bg-gray-800 text-white rounded-xl shadow-sm hover:shadow-md transition-all disabled:opacity-50"
-            >
-              {saving ? 'Guardando...' : 'Guardar Todo'}
-            </Button>
+              );
+            })}
           </div>
-        </Card>
+
+          {/* Add Category Section */}
+          <div className="mt-4 pb-24">
+            {!isAdding ? (
+              <button
+                onClick={() => setIsAdding(true)}
+                className="w-full py-3.5 rounded-xl border border-dashed border-stone-300 text-gray-500 font-bold flex items-center justify-center gap-2 hover:border-[#5D4037] hover:text-[#5D4037] hover:bg-[#5D4037]/5 transition-all duration-300 group text-sm"
+              >
+                <div className="w-6 h-6 rounded-full bg-stone-100 flex items-center justify-center group-hover:bg-[#5D4037] group-hover:text-white transition-colors">
+                  <Plus size={14} strokeWidth={3} />
+                </div>
+                Agregar Categoría
+              </button>
+            ) : (
+              <form onSubmit={handleAddCategory} className="bg-white p-5 rounded-2xl shadow-xl border border-stone-100">
+                <div className="flex justify-between items-center mb-5">
+                  <h3 className="font-bold text-[#5D4037] text-sm uppercase tracking-wide">Nueva Categoría</h3>
+                  <button
+                    type="button"
+                    onClick={() => setIsAdding(false)}
+                    className="p-1.5 bg-stone-50 rounded-full hover:bg-stone-100 text-gray-500 transition-colors"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-500 uppercase block mb-1.5">Nombre</label>
+                    <input
+                      type="text"
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      placeholder="Ej. Gimnasio"
+                      className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border-none focus:ring-1 focus:ring-[#5D4037] outline-none font-bold text-[#5D4037] text-sm"
+                      autoFocus
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-500 uppercase block mb-1.5">Presupuesto ($)</label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={newAmount}
+                      onChange={(e) => setNewAmount(e.target.value.replace(/[^0-9]/g, ''))}
+                      placeholder="0"
+                      className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border-none focus:ring-1 focus:ring-[#5D4037] outline-none font-bold text-[#5D4037] text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-500 uppercase block mb-2">Icono</label>
+                    <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+                      {['ShoppingCart', 'Home', 'Car', 'Utensils', 'Heart', 'Dog', 'Film', 'Gift', 'Plane', 'Star'].map((iconName) => {
+                        const Icon = ICON_MAP[iconName] || ShoppingCart;
+                        const isSelected = newIcon === iconName;
+                        return (
+                          <button
+                            key={iconName}
+                            type="button"
+                            onClick={() => setNewIcon(iconName)}
+                            className={`p-2.5 rounded-xl flex-shrink-0 transition-all ${isSelected ? 'bg-[#5D4037] text-white shadow-lg scale-105' : 'bg-stone-50 text-gray-400 hover:bg-stone-100'}`}
+                          >
+                            <Icon size={18} />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full py-3 bg-[#5D4037] text-white font-bold rounded-xl shadow-lg shadow-[#5D4037]/20 hover:shadow-xl hover:-translate-y-0.5 transition-all mt-2 text-sm"
+                  >
+                    Guardar Categoría
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
       </div>
 
       <BottomNav />

@@ -13,11 +13,13 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { TransactionSchema } from '@/lib/validation';
+import { invalidateAllCache } from '@/lib/cacheService';
 import {
   getStandardCategories,
   CATEGORY_ICONS,
   type StandardCategory
 } from '@/lib/standardCategories';
+
 
 interface QuickRecordModalProps {
   isOpen: boolean;
@@ -74,7 +76,7 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
       try {
         const { data: { user } } = await supabase.auth.getUser();
         const standardCats = getStandardCategories(mode === 'expense' ? 'expense' : 'income');
-        
+
         if (!user) {
           const cats = standardCats.map(c => ({ id: c.id, name: c.name, icon: c.icon }));
           setAllCategories(cats);
@@ -170,7 +172,7 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
 
         setAllCategories(uniqueAll);
         setDisplayedCategories(finalList);
-        
+
         // Set default selection
         if (!initialData?.categoryId && finalList.length > 0) {
           setSelectedCategoryId(finalList[0].id);
@@ -277,7 +279,7 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
       if (selectedCategoryId.startsWith('std_')) {
         const standardCats = getStandardCategories(mode === 'expense' ? 'expense' : 'income');
         const selectedStd = standardCats.find(c => c.id === selectedCategoryId);
-        
+
         if (selectedStd) {
           // Check if exists
           const { data: existing } = await supabase
@@ -340,6 +342,9 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
         });
 
       if (error) throw error;
+
+      // Invalidate cache so fresh data loads on navigation
+      invalidateAllCache();
 
       toast({
         title: isIncome ? 'Ingreso registrado' : 'Gasto registrado',
@@ -416,7 +421,7 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
               <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 block px-1">
                 CATEGORÍA
               </span>
-              
+
               {!showAddCategory ? (
                 <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar py-1.5 px-1">
                   {(showAllCategories ? allCategories : displayedCategories).map((cat) => (
@@ -425,16 +430,14 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
                       onClick={() => setSelectedCategoryId(cat.id)}
                       className="flex flex-col items-center gap-1 group min-w-[54px]"
                     >
-                      <div className={`h-11 w-11 rounded-full flex items-center justify-center shadow-md transition-all duration-200 ${
-                        selectedCategoryId === cat.id
-                          ? `${selectedColor} text-white scale-110 shadow-lg`
-                          : 'bg-white text-[#8D6E63] group-hover:bg-[#F5F0EE]'
-                      }`}>
+                      <div className={`h-11 w-11 rounded-full flex items-center justify-center shadow-md transition-all duration-200 ${selectedCategoryId === cat.id
+                        ? `${selectedColor} text-white scale-110 shadow-lg`
+                        : 'bg-white text-[#8D6E63] group-hover:bg-[#F5F0EE]'
+                        }`}>
                         {getCategoryIcon(cat.icon)}
                       </div>
-                      <span className={`text-[8px] font-bold truncate w-full text-center ${
-                        selectedCategoryId === cat.id ? 'text-[#8D6E63]' : 'text-gray-400'
-                      }`}>
+                      <span className={`text-[8px] font-bold truncate w-full text-center ${selectedCategoryId === cat.id ? 'text-[#8D6E63]' : 'text-gray-400'
+                        }`}>
                         {cat.name}
                       </span>
                     </button>
@@ -477,17 +480,16 @@ const QuickRecordModal = ({ isOpen, onClose, mode, initialData }: QuickRecordMod
                       autoFocus
                     />
                   </div>
-                  
+
                   <div className="flex items-center gap-2 mb-3 overflow-x-auto no-scrollbar">
                     {availableIcons.slice(0, 8).map((iconName) => (
                       <button
                         key={iconName}
                         onClick={() => setSelectedNewIcon(iconName)}
-                        className={`h-9 w-9 rounded-full flex items-center justify-center transition-all shrink-0 ${
-                          selectedNewIcon === iconName
-                            ? 'bg-[#8D6E63] text-white'
-                            : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                        }`}
+                        className={`h-9 w-9 rounded-full flex items-center justify-center transition-all shrink-0 ${selectedNewIcon === iconName
+                          ? 'bg-[#8D6E63] text-white'
+                          : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                          }`}
                       >
                         {getCategoryIcon(iconName)}
                       </button>

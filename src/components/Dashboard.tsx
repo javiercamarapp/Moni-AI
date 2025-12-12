@@ -39,6 +39,7 @@ import GoalsWidget from '@/components/dashboard/GoalsWidget';
 import BudgetWidget from '@/components/dashboard/BudgetWidget';
 import QuickRecordFAB from '@/components/dashboard/QuickRecordFAB';
 import { PortfolioWidget } from '@/components/dashboard/PortfolioWidget';
+import { getCache, setCache, CACHE_KEYS, CACHE_TTL } from '@/lib/cacheService';
 const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -164,7 +165,16 @@ const Dashboard = () => {
     name: string;
     amount: number;
     icon: string;
-  }>>([]);
+  }>>(() => {
+    // Best-effort load from cache immediately on mount using implicit user ID from localStorage
+    // If this hits, we show data instantly (0ms). If it misses, the useEffect will catch it safely.
+    try {
+      const cached = getCache<Array<{ name: string; amount: number; icon: string }>>(CACHE_KEYS.TOP_CATEGORIES);
+      return cached || [];
+    } catch {
+      return [];
+    }
+  });
   const [proyecciones, setProyecciones] = useState<{
     proyeccionAnual: number;
     proyeccionSemestral: number;
@@ -687,6 +697,13 @@ const Dashboard = () => {
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+        // Load cached expenses immediately for instant display (using specific user ID)
+        // This stops the 'loading' feel by showing cached data while network request flies
+        const cachedExpenses = getCache<Array<{ name: string; amount: number; icon: string }>>(CACHE_KEYS.TOP_CATEGORIES, user.id);
+        if (cachedExpenses) {
+          setDailyExpenses(cachedExpenses);
+        }
         const {
           data: dailyExpensesData
         } = await supabase.from('transactions').select('*, categories(name)').eq('user_id', user.id).eq('type', 'gasto').gte('transaction_date', startOfMonth.toISOString().split('T')[0]).lte('transaction_date', endOfMonth.toISOString().split('T')[0]).order('amount', {
@@ -721,6 +738,9 @@ const Dashboard = () => {
             icon: e.icon
           }));
           setDailyExpenses(expenses);
+
+          // Cache the expenses data for instant load next time
+          setCache(CACHE_KEYS.TOP_CATEGORIES, expenses, CACHE_TTL.SHORT, user.id);
         }
 
         // Load cached subscriptions immediately for instant display (USER-SPECIFIC)
@@ -1110,9 +1130,10 @@ const Dashboard = () => {
         {/* Header with remaining amount and buttons */}
         <header className="relative z-20 px-6 lg:max-w-5xl lg:mx-auto py-2 pt-4">
           <div className="flex items-center justify-between">
-            {/* Remaining Amount - Large */}
-            <div className="cursor-pointer group" onClick={() => navigate('/budgets')}>
-              <span className="text-2xl font-bold text-white group-hover:text-white/90 transition-colors">
+            {/* Remaining Amount - Inline Format */}
+            <div className="cursor-pointer group flex items-center gap-2" onClick={() => navigate('/budgets')}>
+              <span className="text-base text-white/90 font-semibold">Presupuesto disponible:</span>
+              <span className="text-xl font-bold text-white group-hover:text-white/90 transition-colors">
                 {new Intl.NumberFormat('es-MX', {
                   style: 'currency',
                   currency: 'MXN',
@@ -1120,10 +1141,7 @@ const Dashboard = () => {
                   maximumFractionDigits: 0
                 }).format(Math.max(0, totalBudget - currentMonthExpenses))}
               </span>
-              <p className="text-xs text-white/70 flex items-center gap-1">
-                Disponible este mes
-                <span className="text-white/50 group-hover:text-white/80 transition-colors">›</span>
-              </p>
+              <span className="text-white/70 group-hover:text-white/90 transition-colors text-xl">›</span>
             </div>
 
             {/* Buttons */}

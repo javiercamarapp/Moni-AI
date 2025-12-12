@@ -20,6 +20,7 @@ import { useNetWorth } from "@/hooks/useNetWorth"; // Integration with real data
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from '@tanstack/react-query';
+import BottomNav from '@/components/BottomNav';
 
 // Icon set to cycle through
 const ICONS = [
@@ -788,11 +789,8 @@ const FinancialJourney: React.FC = () => {
         {/* Unified Header */}
         <header className="flex-none p-4 pt-6 pb-2 z-50 relative flex justify-between items-center bg-transparent pointer-events-none">
 
-          {/* Left: Back & Title */}
+          {/* Left: Title (no back button) */}
           <div className="flex items-center gap-3 pointer-events-auto">
-            <button onClick={() => navigate('/dashboard')} className="w-10 h-10 bg-white/90 backdrop-blur rounded-full shadow-sm flex items-center justify-center text-coffee-800 border border-coffee-100 hover:bg-coffee-50 active:scale-95 transition-all" aria-label="Regresar">
-              <ArrowLeftIcon className="w-5 h-5" />
-            </button>
             <div className="flex flex-col">
               <h1 className="text-2xl font-black text-coffee-900 tracking-tight leading-none">Tu Viaje</h1>
               <p className="text-xs text-coffee-600 font-medium">Libertad Financiera</p>
@@ -880,6 +878,8 @@ const FinancialJourney: React.FC = () => {
             })}
           </div>
         </div>
+
+        <BottomNav />
       </div>
     </div>
   );
