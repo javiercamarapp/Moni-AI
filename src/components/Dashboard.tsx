@@ -32,6 +32,7 @@ import confetti from 'canvas-confetti';
 import DashboardHeroSection from '@/components/dashboard/DashboardHeroSection';
 import QuickStats from '@/components/dashboard/QuickStats';
 import BudgetCard from '@/components/dashboard/BudgetCard';
+import BudgetProgressBar from '@/components/dashboard/BudgetProgressBar';
 import AccountsCarousel from '@/components/dashboard/AccountsCarousel';
 import GoalsWidget from '@/components/dashboard/GoalsWidget';
 // import RecentTransactionsWidget from '@/components/dashboard/RecentTransactionsWidget';
@@ -1195,9 +1196,9 @@ const Dashboard = () => {
       <div className="min-h-screen bg-[#faf9f8] text-gray-800 font-sans pb-20">
         {/* Hero Section with Brown Background */}
         <div className="relative">
-          {/* Brown background - shorter, cards will overflow */}
+          {/* Brown background - extended to fit budget bar */}
           <div 
-            className="absolute inset-x-0 top-0 h-32 rounded-b-[2rem]"
+            className="absolute inset-x-0 top-0 h-44 rounded-b-[2rem]"
             style={{
               background: 'linear-gradient(135deg, #8D6E63 0%, #6D4C41 50%, #5D4037 100%)'
             }}
@@ -1225,6 +1226,11 @@ const Dashboard = () => {
               </button>
             </div>
           </header>
+
+          {/* Budget Progress Bar - over the brown background */}
+          <div className="relative z-10 px-4 pb-3">
+            <BudgetProgressBar spent={currentMonthExpenses} totalBudget={totalBudget} />
+          </div>
           
           {/* Score and Net Worth Cards - overlapping the brown bg */}
           <div className="relative z-10 px-4 pb-4">
@@ -1233,7 +1239,7 @@ const Dashboard = () => {
         </div>
 
         <div className="page-container pt-2">
-          {/* Budget Card - Compact, above QuickStats */}
+          {/* Balance Card - links to resumen */}
           <div className="mb-3">
             <BudgetCard
               income={monthlyIncome}
